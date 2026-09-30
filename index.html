@@ -1,0 +1,3366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>FAP FAP — contre Penalty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
+     so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
+<style>
+  :root{
+    --wood-dark: #150c05;
+    --wood-mid: #331f0f;
+    --wood-light: #4d3018;
+    --bulb: #f4b860;
+    --bulb-hot: #fff3d6;
+    --twilight: #211c33;
+    --twilight-edge: #0b0912;
+    --clay: #8f2f1d;
+    --cream: #f6ecd9;
+    --ink: #251c12;
+    --dust: #ab9c87;
+    --win-green: #4c8c6e;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent; user-select:none; -webkit-touch-callout:none;}
+  html,body{height:100%;}
+  html{ overflow-x:hidden; }
+  body{
+    margin:0; min-height:100vh; min-height:100dvh;
+    background: #000;
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    display:flex; flex-direction:column;
+    overflow-y:auto; overflow-x:hidden; position:relative;
+    touch-action: manipulation;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none;
+    background: radial-gradient(ellipse 100% 78% at 50% 54%, transparent 22%, rgba(0,0,0,0.55) 46%, #000 76%);
+    z-index: 5;
+  }
+  .bulb-glow{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:5;
+    background: radial-gradient(ellipse 90% 62% at 50% 46%, rgba(255,243,214,0.16) 0%, rgba(244,184,96,0.07) 30%, rgba(0,0,0,0) 58%);
+    animation: bulbSway 7s ease-in-out infinite, flicker 6s ease-in-out infinite;
+    transform-origin: 50% 34%;
+  }
+  @keyframes bulbSway{ 0%,100%{ transform:rotate(-1.1deg); } 50%{ transform:rotate(1.1deg); } }
+  @keyframes flicker{ 0%,100%{opacity:1;} 48%{opacity:1;} 49%{opacity:0.85;} 50%{opacity:1;} 92%{opacity:1;} 93%{opacity:0.9;} 94%{opacity:1;} }
+
+  /* ambient: dust motes drifting in the light cone, a couple of insects circling the bulb, a wisp of smoke */
+  .amb-layer{ position:fixed; inset:0; pointer-events:none; z-index:6; overflow:hidden; }
+  .mote{ position:absolute; top:4%; width:3px; height:3px; border-radius:50%; background:rgba(255,238,204,0.55); filter:blur(0.3px); animation: moteDrift linear infinite; }
+  @keyframes moteDrift{
+    0%{ transform:translate(0,0); opacity:0; }
+    10%{ opacity:0.8; }
+    90%{ opacity:0.5; }
+    100%{ transform:translate(var(--mx,20px), 220px); opacity:0; }
+  }
+  .bug{ position:absolute; top:6%; width:3px; height:2px; border-radius:50%; background:#1a1208; opacity:0.75;
+    animation: bugLoop ease-in-out infinite; }
+  @keyframes bugLoop{
+    0%{ transform: translate(0,0); } 25%{ transform: translate(14px,-8px); }
+    50%{ transform: translate(4px,6px); } 75%{ transform: translate(-12px,-4px); }
+    100%{ transform: translate(0,0); }
+  }
+  .smoke{ position:absolute; bottom:14%; width:14px; height:40px; border-radius:50%;
+    background: radial-gradient(ellipse at 50% 100%, rgba(230,224,214,0.10), transparent 70%);
+    filter: blur(2px); animation: smokeRise 9s ease-in infinite; }
+  @keyframes smokeRise{
+    0%{ transform: translateY(0) scaleX(1); opacity:0; }
+    15%{ opacity:0.5; }
+    100%{ transform: translateY(-140px) scaleX(2.2); opacity:0; }
+  }
+
+  h1,.display{ font-family:'Anton', sans-serif; letter-spacing:0.04em; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  header h1{
+    margin:0; font-size: 26px; color: var(--bulb);
+    text-shadow: 0 0 18px rgba(244,184,96,0.45), 1px 0 0 rgba(244,184,96,0.12), -1px 1px 0 rgba(0,0,0,0.25), 0.5px -0.5px 0 rgba(244,184,96,0.18);
+  }
+
+  header{ padding: max(8px, env(safe-area-inset-top)) 16px 4px; text-align:center; position:relative; z-index:10; }
+  header .sub{ margin-top:2px; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color: var(--dust); }
+
+  .scorebar{
+    display:flex; justify-content:space-between; align-items:center;
+    margin: 6px 12px 0; padding: 6px 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(244,184,96,0.18); border-radius: 10px;
+    font-family:'JetBrains Mono', monospace; font-size: 12px; position:relative; z-index:10;
+  }
+  .scorebar .who{ color:var(--dust); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; display:block;}
+  .scorebar .val{ font-size:18px; color:var(--cream); font-weight:600; display:inline-block; }
+  .scorebar .val.score-bump{ animation: scoreBump 0.5s cubic-bezier(.28,1.4,.4,1); }
+  @keyframes scoreBump{ 0%{ transform:scale(1); } 35%{ transform:scale(1.55); color:var(--bulb-hot); } 100%{ transform:scale(1); } }
+  .scorebar .val.me{ color: var(--bulb); }
+  .scorebar .mid{ color:var(--dust); font-size:10px; text-align:center; }
+
+  .app-shell{
+    width:100%; max-width:480px; margin:0 auto;
+    display:flex; flex-direction:column; flex:1; min-height:0;
+  }
+
+  #duoScreen{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  .gamearea{ flex:1; display:flex; min-height:0; padding: 4px 4px; gap:4px; position:relative; z-index:10; }
+
+  .centerstage{ flex:1; display:flex; flex-direction:column; min-width:0; }
+
+  .ai-zone{ display:flex; flex-direction:column; align-items:center; gap:4px; padding: 2px 0; border-radius:14px; transition: box-shadow 0.3s; position:relative; }
+  .ai-zone.active-turn{ animation: turnGlowAI 1.6s ease-in-out infinite; }
+  @keyframes turnGlowAI{ 0%,100%{ box-shadow:0 0 0 0 rgba(183,71,42,0);} 50%{ box-shadow:0 0 16px 3px rgba(183,71,42,0.35);} }
+  .ai-label{ font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dust); }
+  /* ---- Carré la Pute (4-player mode) ---- */
+  #squareScreen{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  .sq-scoreboard{
+    display:flex; justify-content:space-between; gap:4px; margin:6px 12px 0;
+    padding:6px 10px; background: rgba(255,255,255,0.03); border:1px solid rgba(244,184,96,0.18); border-radius:10px;
+    font-family:'JetBrains Mono',monospace; font-size:9px; position:relative; z-index:10;
+  }
+  .sq-score-item{ text-align:center; flex:1; border-radius:6px; padding:2px 0; transition: background 0.2s; }
+  .sq-score-item .n{ display:block; font-size:10px; color:var(--cream); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; }
+  .sq-score-item .v{ font-size:10px; color:var(--dust); }
+  .sq-score-item.turn{ background: rgba(244,184,96,0.14); }
+  .sq-score-item.turn .n{ color:var(--bulb); }
+  .sq-score-item.out{ opacity:0.4; }
+  .sq-score-item.out .n{ text-decoration:line-through; }
+
+  .sq-table{
+    flex:1; display:grid; position:relative;
+    grid-template-columns: 1fr 1.25fr 1fr; grid-template-rows: auto 1fr auto;
+    gap:2px; padding:6px 4px; min-height:300px; z-index:10; overflow:hidden;
+  }
+  /* same wooden table and single pool of light as the duel */
+  .sq-felt{
+    position:absolute; left:50%; top:50%; width:400px; height:400px; margin:-200px 0 0 -200px; border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 48%, rgba(255,236,196,0.20) 0%, rgba(244,184,96,0.08) 38%, transparent 62%),
+      radial-gradient(circle at 28% 32%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
+      radial-gradient(circle at 70% 70%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
+      linear-gradient(180deg, #4a2f14, #2a1809);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
+            mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
+    pointer-events:none; z-index:0;
+  }
+  .sq-seat{ display:flex; flex-direction:column; align-items:center; gap:3px; position:relative; z-index:1; }
+  .sq-top{ grid-column:2; grid-row:1; }
+  .sq-left{ grid-column:1; grid-row:2; align-self:center; }
+  .sq-right{ grid-column:3; grid-row:2; align-self:center; }
+  .sq-bottom{ grid-column:2; grid-row:3; }
+  .sq-seat.eliminated{ opacity:0.25; filter:grayscale(1); }
+  .sq-name{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust); font-weight:600; padding:1px 8px; border-radius:10px; }
+  .sq-seat.active-turn .sq-name{ color:#20160a; background:var(--bulb); box-shadow:0 0 12px rgba(244,184,96,0.6); }
+  .sq-cards{ display:flex; }
+  .sq-hist{ display:flex; gap:3px; flex-wrap:wrap; justify-content:center; max-width:130px; min-height:0; opacity:0.8; }
+  .sq-cur{ display:flex; justify-content:center; min-height:70px; align-items:center; }
+  .sq-cur.two .card:first-child{ transform: rotate(-7deg) translateX(8px); }
+  .sq-cur.two .card:last-child{ transform: rotate(6deg) translateX(-8px); }
+  .card.sq-size{ width:48px; height:68px; padding:3px 4px; }
+  .card.sq-size .c-rank{ font-size:12px; }
+  .card.sq-size .c-pip{ width:8px; height:8px; }
+  .card.sq-size .card-suitname{ display:none; }
+  .passe-chip.sq-size{ width:48px; height:68px; font-size:13px; }
+  .sq-bubble{
+    position:absolute; top:-4px; left:50%; margin-left:-75px; width:150px; z-index:5; min-height:12px; font-size:10.5px; font-weight:700; font-style:italic; color:var(--ink);
+    text-align:center; max-width:150px; padding:5px 9px; background:var(--cream); border-radius:12px 12px 12px 3px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.5), 0 0 0 2px rgba(244,184,96,0.5);
+    opacity:0; transform:translateY(-6px) scale(0.85); transition:opacity 0.2s, transform 0.3s cubic-bezier(.3,1.7,.4,1);
+  }
+  .sq-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
+  .sq-top .sq-bubble{ top:auto; bottom:-34px; }
+  .sq-demand{
+    grid-column:2; grid-row:2; align-self:center; justify-self:center;
+    font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust);
+    background: rgba(10,7,4,0.5); padding:4px 10px; border-radius:20px; border:1px solid rgba(244,184,96,0.18);
+  }
+  .sq-demand b{ color:var(--bulb); }
+  .sq-demand{ position:relative; z-index:2; }
+
+  .sq-eliminated-box{ text-align:center; padding:10px 0; }
+  .sq-eliminated-box p{ font-size:12px; color:var(--dust); margin:0 0 10px; }
+  #sqFastForward.active{ background: var(--bulb-hot,#fff3d6); box-shadow:0 0 0 3px rgba(244,184,96,0.4); }
+
+  .stats-block{ width:100%; max-width:320px; text-align:left; }
+  .stats-group{ margin-bottom:14px; }
+  .stats-group h3{ font-family:'Anton',sans-serif; font-size:14px; color:var(--bulb); letter-spacing:0.03em; margin:0 0 6px; }
+  .stats-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-bottom:1px solid rgba(244,184,96,0.1); }
+  .stats-row .label{ color:var(--dust); }
+  .stats-row .value{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cream); }
+
+  .penalty-bubble{
+    position:absolute; top:100%; left:50%; margin-left:-125px; width:250px; margin-top:-6px; /* floats: never pushes the table */
+    min-height:16px; font-size:13.5px; font-weight:700; font-style:italic; color: var(--ink);
+    text-align:center; max-width:250px; padding:7px 12px;
+    background: var(--cream);
+    border-radius:14px 14px 14px 3px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5), 0 0 0 2px rgba(244,184,96,0.55);
+    opacity:0; transform:translateY(-8px) scale(0.85); transition: opacity 0.2s ease, transform 0.35s cubic-bezier(.3,1.7,.4,1);
+    z-index:9;
+  }
+  .penalty-bubble::after{
+    content:""; position:absolute; left:16px; top:-6px; width:12px; height:12px;
+    background: var(--cream); clip-path: polygon(0 100%, 100% 100%, 30% 0%);
+  }
+  .penalty-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
+  .ai-hands{ display:flex; align-items:flex-end; justify-content:center; gap:0; transform-origin:50% 0; }
+  .ai-cards{ display:flex; position:relative; z-index:2; margin:0 -9px 6px; }
+  .opp-arm{ width:32px; height:48px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.6)); position:relative; z-index:3; }
+  .opp-arm.left{ transform: rotate(14deg); }
+  .opp-arm.right{ transform: rotate(-14deg) scaleX(-1); }
+  .ai-hands.impatient .opp-arm.right{ animation: fingerTap 0.9s ease-in-out infinite; }
+  .facedown{
+    width:26px; height:38px; border-radius:4px; margin-left:-12px;
+    border: 1px solid rgba(244,184,96,0.35);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.3);
+    background:
+      repeating-linear-gradient(45deg, rgba(244,184,96,0.10) 0 2px, transparent 2px 7px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,0.18) 0 2px, transparent 2px 7px),
+      linear-gradient(160deg, #3c1016, #230a0d 70%);
+    position:relative;
+  }
+  .facedown::after{
+    content:"FF"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:'Playfair Display',serif; font-weight:900; font-size:8px; color: rgba(244,184,96,0.55);
+    letter-spacing:-0.02em;
+  }
+  .facedown:first-child{margin-left:0;}
+  .facedown:not(:last-child)::after{ display:none; } /* the monogram only shows on the top card of the fan */
+  @keyframes fingerTap{
+    0%,100%{ transform:rotate(-14deg) scaleX(-1) translateY(0); }
+    20%{ transform:rotate(-14deg) scaleX(-1) translateY(-3px); }
+    40%{ transform:rotate(-14deg) scaleX(-1) translateY(0); }
+    60%{ transform:rotate(-14deg) scaleX(-1) translateY(-2px); }
+  }
+
+  .table{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-around; gap: 6px; position:relative; min-height: 330px; padding: 22px 0 6px;
+    overflow:hidden; /* the onlookers' arms reach in from beyond the screen edge */
+  }
+  /* one sharp pool of light on the wood, opaque black all around it — like the reference photo */
+  .table::before{
+    content:""; position:absolute; left:50%; top:50%; width:430px; height:430px; margin:-215px 0 0 -215px;
+    background:
+      radial-gradient(circle at 50% 46%, rgba(255,236,196,0.20) 0%, rgba(244,184,96,0.08) 38%, transparent 62%),
+      radial-gradient(circle at 26% 30%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
+      radial-gradient(circle at 74% 66%, rgba(50,30,14,0.4) 0%, rgba(50,30,14,0.2) 5%, transparent 9%),
+      radial-gradient(circle at 70% 28%, rgba(10,6,3,0.6) 0%, rgba(10,6,3,0.35) 1.4%, transparent 2.6%),
+      radial-gradient(circle at 33% 72%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
+      linear-gradient(180deg, #4a2f14, #2a1809);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
+            mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
+    border-radius: 50%;
+    z-index:0; pointer-events:none;
+  }
+  .table-carving{
+    position:absolute; z-index:1; font-family:'JetBrains Mono',monospace; font-weight:600;
+    color: rgba(244,184,96,0.16); text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    pointer-events:none;
+  }
+  .demand-badge{
+    position:relative; align-self:center;
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dust);
+    background: rgba(10,7,4,0.55); padding:4px 12px; border-radius: 20px; border:1px solid rgba(244,184,96,0.16);
+    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s; z-index:5; min-height:22px;
+  }
+  .demand-badge:empty{ visibility:hidden; }
+  .demand-badge b{ color:var(--bulb); font-weight:700; }
+  .demand-badge .pip{ margin-left:2px; }
+  .demand-badge.your-turn, .sq-demand.your-turn{
+    color:var(--cream); border-color:var(--bulb); animation: turnPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes turnPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,184,96,0.0);} 50%{ box-shadow:0 0 14px 2px rgba(244,184,96,0.45);} }
+
+  .slot-wrap{ display:flex; flex-direction:column; align-items:center; gap:3px; position:relative; z-index:2; }
+  .slot-hist{ display:flex; gap:3px; min-height:26px; align-items:center; justify-content:center; opacity:0.8; }
+  .mini-card{
+    width:19px; height:26px; border-radius:3px; background:var(--cream);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;
+    font-family:'Playfair Display',serif; font-weight:900; font-size:10px; line-height:1;
+    box-shadow:0 1px 3px rgba(0,0,0,0.5); color:#161616;
+  }
+  .mini-card .mini-pip{ width:8px; height:8px; margin-top:1px; }
+  .mini-card.suit-Coubie, .mini-card.suit-Zing{ color:#9c1a1a; }
+  .mini-card.rank-ten{ background: linear-gradient(165deg, #f6ecd9, #ecdca8); }
+  .mini-card.rank-ten span{ color:#8a5a12; }
+  .mini-card.passe{ background:rgba(255,255,255,0.06); border:1px dashed rgba(241,230,212,0.35); color:var(--dust); font-family:'Anton',sans-serif; font-size:11px; }
+
+  /* onlookers: forearms resting on the table edge, half in the shadow */
+  .side-sil{ position:absolute; top:44%; width:46px; height:69px; z-index:1; opacity:0.85; filter:brightness(0.75); }
+  .side-sil.left{ left:-6px; }
+  .side-sil.right{ right:-6px; }
+  .side-arm{ width:100%; height:100%; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.6)); }
+  .side-sil.left .side-arm{ transform: rotate(-78deg); }
+  .side-sil.right .side-arm{ transform: rotate(78deg) scaleX(-1); }
+  .side-fx{ position:absolute; width:10px; height:26px; pointer-events:none; }
+  .side-sil.left .side-fx{ left:6px; top:-10px; }
+  .side-sil.right .side-fx{ right:6px; top:-10px; }
+
+  /* random idle behaviour, assigned once per side at load: smoke / laugh / whisper-lean */
+  .side-sil.behavior-smoke .side-fx{
+    border-radius:50%; background: radial-gradient(ellipse at 50% 100%, rgba(230,224,214,0.16), transparent 70%);
+    filter: blur(1.5px); animation: sideSmoke 6s ease-in infinite;
+  }
+  @keyframes sideSmoke{ 0%{ transform:translateY(0) scaleX(1); opacity:0;} 18%{opacity:0.55;} 100%{ transform:translateY(-46px) scaleX(2); opacity:0;} }
+  .side-sil.behavior-laugh{ animation: sideLaugh 2.6s ease-in-out infinite; }
+  @keyframes sideLaugh{ 0%,100%{ transform:translateY(0) rotate(0deg);} 8%{ transform:translateY(-2px) rotate(-2deg);} 16%{ transform:translateY(0) rotate(2deg);} 24%{ transform:translateY(-1px) rotate(0deg);} 60%{ transform:translateY(0) rotate(0deg);} }
+  .side-sil.behavior-whisper{ animation: sideWhisper 5.5s ease-in-out infinite; }
+  @keyframes sideWhisper{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(-4deg) translateX(-2px);} }
+  .slot-label{ font-size:8px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust); }
+  .slot{
+    width:140px; height:98px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .slot:empty::before{
+    content:""; width:62px; height:88px; border-radius:7px; border:1px dashed rgba(244,184,96,0.16);
+  }
+  .stack-item{ position:relative; }
+  .slot.two .stack-item:first-child{ transform: rotate(-7deg) translateX(10px); }
+  .slot.two .stack-item:last-child{ transform: rotate(6deg) translateX(-10px); }
+  .card.holding{ box-shadow: 0 0 0 2px var(--bulb), 0 0 16px rgba(244,184,96,0.55), 0 3px 7px rgba(0,0,0,0.45); }
+
+  .card{
+    width:62px; height:88px; border-radius:7px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 32%), var(--cream);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(180,130,60,0.35), inset 0 0 0 4px rgba(255,252,244,0.5);
+    display:flex; flex-direction:column; justify-content:space-between; padding:5px 6px; color: var(--ink); font-weight:700;
+    position:relative; flex-shrink:0;
+    transition: box-shadow 0.35s ease;
+    backface-visibility:hidden;
+  }
+  .card.dealt{ animation: dealFlip 0.44s cubic-bezier(.22,.75,.32,1) backwards; }
+  .card.played{ animation: playFlip 0.46s cubic-bezier(.2,.75,.25,1.15); }
+  .card.trickwin{ animation: winPulse 0.7s cubic-bezier(.25,.8,.3,1); }
+  @keyframes dealFlip{
+    from{ transform: perspective(700px) translateY(-22px) rotateY(-110deg) scale(0.85); opacity:0;}
+    55%{ transform: perspective(700px) translateY(2px) rotateY(14deg) scale(1.03); opacity:1;}
+    to{ transform: perspective(700px) translateY(0) rotateY(0deg) scale(1); opacity:1;} }
+  @keyframes playFlip{
+    0%{ transform: perspective(700px) translateY(30px) rotateY(-95deg) scale(0.8); opacity:0;}
+    60%{ transform: perspective(700px) translateY(-5px) rotateY(12deg) scale(1.05); opacity:1;}
+    100%{ transform: perspective(700px) translateY(0) rotateY(0deg) scale(1); opacity:1;} }
+  @keyframes winPulse{
+    0%{ box-shadow:0 3px 7px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(180,130,60,0.35), 0 0 0 0 rgba(244,184,96,0.55); transform:scale(1);}
+    40%{ box-shadow:0 4px 14px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(180,130,60,0.35), 0 0 0 10px rgba(244,184,96,0); transform:scale(1.12);}
+    100%{ box-shadow:0 3px 7px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(180,130,60,0.35), 0 0 0 0 rgba(244,184,96,0); transform:scale(1);} }
+
+  .card .corner-idx{ display:flex; flex-direction:column; align-items:center; line-height:1; position:relative; z-index:2; }
+  .card .corner-idx.tl{ align-self:flex-start; }
+  .card .corner-idx.br{ align-self:flex-end; transform:rotate(180deg); }
+  .card .c-rank{ font-family:'Playfair Display',serif; font-weight:900; font-size:15px; }
+  .card .c-pip{ width:9px; height:9px; margin-top:1px; }
+  .card .card-watermark{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    opacity:0.92; pointer-events:none; z-index:1;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  }
+  .card .card-watermark .wm-svg{ width:66%; height:66%; }
+  .card .card-suitname{
+    position:absolute; bottom:4px; left:0; right:0; text-align:center;
+    font-size:6.5px; letter-spacing:0.06em; text-transform:uppercase; opacity:0.7; z-index:2;
+  }
+  .card.suit-Black{ color:#161616; } .card.suit-Tchaka{ color:#161616; }
+  .card.suit-Coubie{ color:#9c1a1a; } .card.suit-Zing{ color:#9c1a1a; }
+  .card.rank-ten{
+    background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 32%), linear-gradient(165deg, #f6ecd9, #ecdca8);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(180,130,60,0.5), inset 0 0 0 2px rgba(244,184,96,0.85);
+  }
+  .card.rank-ten .c-rank{ color:#8a5a12; }
+
+  .passe-chip{
+    width:62px; height:88px; border-radius:7px;
+    background: rgba(18,12,7,0.75); border:2px dashed rgba(244,184,96,0.55);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:'Anton',sans-serif; font-size:17px; letter-spacing:0.06em; color:var(--bulb);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.45);
+  }
+
+  /* the frame is always there (no layout jump); only its glow changes with the turn */
+  .hand-zone{ padding: 6px 0 max(8px, env(safe-area-inset-bottom)); border-radius:14px; border:1px solid rgba(244,184,96,0.10); background:rgba(0,0,0,0.35); transition: box-shadow 0.3s, border-color 0.3s; position:relative; z-index:10; }
+  .hand-zone.active-turn{ border-color: rgba(244,184,96,0.45); animation: turnGlowHand 1.6s ease-in-out infinite; }
+  @keyframes turnGlowHand{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,184,96,0);} 50%{ box-shadow:0 0 18px 3px rgba(244,184,96,0.3);} }
+  .hand-label{ text-align:center; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dust); margin-bottom:4px; min-height:14px; transition: color 0.2s; }
+  .hand-label.your-turn{ color:var(--bulb); font-weight:700; font-size:12px; text-shadow:0 0 10px rgba(244,184,96,0.5); }
+  .hand-pov-wrap{ position:relative; }
+  .hand{ display:flex; justify-content:center; align-items:flex-end; gap:4px; flex-wrap:nowrap; min-height:100px; perspective:700px; position:relative; z-index:2; }
+  .hand .card{ cursor:pointer; transition: transform 0.15s, box-shadow 0.15s; width:64px; height:90px; }
+  .hand .card .c-rank{ font-size:17px; } .hand .card .c-pip{ width:11px; height:11px; }
+  .hand .card .card-suitname{ font-size:7px; bottom:5px; }
+  .hand .card:nth-child(1){ transform: rotate(-9deg) translateY(4px); }
+  .hand .card:nth-child(2){ transform: rotate(-4deg) translateY(1px); }
+  .hand .card:nth-child(3){ transform: rotate(0deg); }
+  .hand .card:nth-child(4){ transform: rotate(4deg) translateY(1px); }
+  .hand .card:nth-child(5){ transform: rotate(9deg) translateY(4px); }
+  .hand .card.playable{ box-shadow: 0 0 0 2px var(--bulb), 0 4px 10px rgba(0,0,0,0.45); }
+  .hand .card.playable:active{ transform: translateY(-6px) scale(1.04) !important; }
+  /* illegal this turn: pushed back and dimmed, but still perfectly readable */
+  .hand .card.blocked{ filter: brightness(0.62) saturate(0.6); top:8px; cursor:default; }
+  /* not your turn: normal look, simply not clickable */
+  .hand .card.idle{ cursor:default; }
+
+  .actions{ display:flex; gap:8px; justify-content:center; align-items:center; margin-top:8px; flex-wrap:wrap; min-height:42px; }
+  button{
+    font-family:'Work Sans', sans-serif; font-weight:600; font-size:13px; padding:10px 16px; border-radius:8px;
+    border:1px solid rgba(241,230,212,0.2); background: rgba(255,255,255,0.04); color: var(--cream); cursor:pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  button:active{ transform: scale(0.94); filter: brightness(0.92); }
+  button.primary{ background: var(--bulb); color:#20160a; border-color:var(--bulb); }
+  button.danger{ background: var(--clay); color:var(--cream); border-color:var(--clay); }
+  button.passe-option{ background: rgba(244,184,96,0.14); color: var(--bulb); border-color: var(--bulb); font-weight:700; animation: passePulse 1.8s ease-in-out infinite; }
+  @keyframes passePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,184,96,0.35);} 50%{ box-shadow:0 0 0 6px rgba(244,184,96,0);} }
+  button.ghost{ background:transparent; text-decoration:underline; font-size:11px; padding:6px 10px; color:var(--dust); }
+  button:disabled{ opacity:0.3; cursor:default; }
+  button:focus-visible{ outline:2px solid var(--bulb); outline-offset:2px; }
+
+  .toast{
+    position:fixed; left:50%; top:16%; transform:translate(-50%,0) scale(0.85);
+    background: rgba(18,12,7,0.97); border:2px solid var(--bulb); color: var(--bulb);
+    padding: 16px 26px; border-radius:12px; font-family:'Anton', sans-serif; letter-spacing:0.03em; font-size:20px;
+    z-index:50; text-align:center; box-shadow: 0 0 40px rgba(244,184,96,0.35), 0 8px 30px rgba(0,0,0,0.5);
+    max-width: 88vw; opacity:0; pointer-events:none; transition: opacity 0.25s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0) scale(1); }
+  .net-banner{
+    position:fixed; left:50%; top:max(8px, env(safe-area-inset-top)); transform:translateX(-50%); z-index:55;
+    display:flex; align-items:center; gap:8px; max-width:92vw;
+    background: rgba(18,12,7,0.96); border:1px solid var(--clay); border-radius:20px; padding:4px 6px 4px 12px;
+    font-size:11.5px; color:var(--cream); box-shadow:0 6px 20px rgba(0,0,0,0.6);
+  }
+  .net-banner .ghost{ font-size:11px; padding:4px 8px; }
+  .net-dot{ width:8px; height:8px; border-radius:50%; background:#d9542e; flex-shrink:0; animation: netBlink 1s ease-in-out infinite; }
+  @keyframes netBlink{ 0%,100%{ opacity:1; } 50%{ opacity:0.25; } }
+  .toast.big{ font-size:26px; border-width:3px; }
+  .toast .sub{ display:block; font-family:'Work Sans'; font-size:12px; color:var(--cream); font-weight:500; letter-spacing:0.02em; margin-top:6px; }
+  @keyframes burst{ 0%{ box-shadow:0 0 0 0 rgba(244,184,96,0.6);} 100%{ box-shadow:0 0 0 40px rgba(244,184,96,0);} }
+  .toast.celebrate::after{
+    content:""; position:absolute; inset:-3px; border-radius:14px; pointer-events:none;
+    animation: burst 0.9s ease-out;
+  }
+
+  .log{ display:none; }
+  .log span{ display:block; } .log .fresh{ color: var(--cream); }
+
+  .confetti-piece{
+    position:fixed; top:30%; left:50%; width:7px; height:13px; pointer-events:none; z-index:70;
+    opacity:1; border-radius:2px; will-change:transform,opacity;
+    animation: confettiFly 1.15s cubic-bezier(.16,.72,.28,1) forwards;
+  }
+  @keyframes confettiFly{
+    0%{ transform: translate(-50%,-50%) rotate(0deg) scale(1); opacity:1; }
+    100%{ transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(0.35); opacity:0; }
+  }
+
+  .overlay{
+    position:fixed; inset:0; background:#080503; display:flex; align-items:center; justify-content:center; z-index:60; flex-direction:column; gap:14px; padding:24px; text-align:center;
+    animation: pageTurnIn 0.42s cubic-bezier(.22,.8,.3,1);
+  }
+  @keyframes pageTurnIn{
+    from{ opacity:0; transform: perspective(1200px) rotateY(-16deg) scale(0.97); }
+    to{ opacity:1; transform: perspective(1200px) rotateY(0deg) scale(1); }
+  }
+  .stamp{
+    position:absolute; bottom:8%; right:8%;
+    font-family:'Anton', sans-serif; font-size:13px; line-height:1.25; letter-spacing:0.06em;
+    color: var(--clay); border: 3px solid var(--clay); border-radius:8px; padding:8px 12px;
+    transform: rotate(-14deg) scale(1);
+    opacity:0.82; mix-blend-mode: multiply;
+    animation: stampDown 0.5s cubic-bezier(.2,1.8,.4,1) 0.35s backwards;
+    pointer-events:none;
+  }
+  @keyframes stampDown{
+    0%{ opacity:0; transform: rotate(-14deg) scale(2.4); }
+    60%{ opacity:0.9; transform: rotate(-14deg) scale(0.92); }
+    100%{ opacity:0.82; transform: rotate(-14deg) scale(1); }
+  }
+
+  body.shake{ animation: screenShake 0.5s cubic-bezier(.2,.8,.3,1); }
+  @keyframes screenShake{
+    0%,100%{ transform:translate(0,0); } 15%{ transform:translate(-6px,2px); } 30%{ transform:translate(5px,-3px); }
+    45%{ transform:translate(-4px,3px); } 60%{ transform:translate(4px,-2px); } 75%{ transform:translate(-2px,1px); } 90%{ transform:translate(2px,-1px); }
+  }
+  .light-burst{
+    position:fixed; inset:0; z-index:65; pointer-events:none; opacity:0;
+    background: radial-gradient(circle at 50% 38%, rgba(255,246,222,0.9), rgba(244,184,96,0.25) 40%, transparent 72%);
+  }
+  .light-burst.fire{ animation: lightBurst 0.65s ease-out; }
+  @keyframes lightBurst{ 0%{ opacity:0.95; } 100%{ opacity:0; } }
+
+  .cert-overlay{
+    position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center;
+    background: rgba(6,4,2,0); pointer-events:none;
+    opacity:0; transition: opacity 0.3s ease, background 0.3s ease;
+  }
+  .cert-overlay.show{ opacity:1; background: rgba(6,4,2,0.72); pointer-events:auto; }
+  .cert-card{
+    width:82%; max-width:300px; padding:22px 18px 18px;
+    background: linear-gradient(160deg, #f8efd9, #ecdfc0);
+    border-radius:10px; border: 2px solid #7a4a1f;
+    box-shadow: 0 0 0 5px rgba(244,184,96,0.18), 0 20px 50px rgba(0,0,0,0.6);
+    text-align:center; position:relative; color:#3a2510;
+    transform: scale(0.7) rotate(-3deg); transition: transform 0.4s cubic-bezier(.2,1.6,.4,1);
+  }
+  .cert-overlay.show .cert-card{ transform: scale(1) rotate(0deg); }
+  .cert-crest{ font-size:15px; letter-spacing:0.3em; color:#a5701f; opacity:0.7; margin-bottom:4px; }
+  .cert-title{
+    font-family:'Anton',sans-serif; font-size:30px; letter-spacing:0.04em; color:#8a2a1a;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  }
+  .cert-sub{ font-family:'Work Sans',sans-serif; font-size:13px; font-weight:600; color:#5a3d1c; margin-top:2px; }
+  .cert-line{ height:1px; background: linear-gradient(90deg, transparent, #a5701f, transparent); margin:14px 0; }
+  .cert-sign{ font-family:'JetBrains Mono',monospace; font-size:9.5px; color:#7a5a2c; letter-spacing:0.03em; }
+  .cert-stamp{
+    position:absolute; bottom:-14px; right:-10px;
+    font-family:'Anton',sans-serif; font-size:12px; color:#8a2a1a; border:2px solid #8a2a1a; border-radius:50%;
+    width:56px; height:56px; display:flex; align-items:center; justify-content:center;
+    transform: rotate(14deg); opacity:0.85; mix-blend-mode:multiply;
+    animation: stampDown 0.5s cubic-bezier(.2,1.8,.4,1) 0.25s backwards;
+  }
+  .overlay h2{ font-family:'Anton'; color:var(--bulb); font-size:24px; margin:0; }
+  .overlay p{ color:var(--cream); font-size:13px; max-width:320px; margin:0; }
+  .overlay .btnrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+  .mp-input{
+    font-family:'Work Sans', sans-serif; font-size:16px; padding:12px 14px; border-radius:8px;
+    border:1px solid rgba(244,184,96,0.3); background: rgba(255,255,255,0.05); color: var(--cream);
+    width:100%; max-width:240px; text-align:center; outline:none;
+  }
+  .mp-input:focus{ border-color: var(--bulb); }
+  .mp-code{
+    font-family:'JetBrains Mono', monospace; font-size:40px; font-weight:700; letter-spacing:0.25em;
+    color: var(--bulb); background: rgba(244,184,96,0.08); border:1px dashed rgba(244,184,96,0.4);
+    border-radius:10px; padding:14px 10px; margin: 4px 0;
+  }
+  .hidden{ display:none !important; }
+  .cutstack{ display:flex; gap:2px; }
+  .cutstack .cs{ width:18px; height:26px; background: repeating-linear-gradient(135deg, var(--clay), var(--clay) 3px, #8f3620 3px, #8f3620 6px); border-radius:3px; border:1px solid rgba(0,0,0,0.4); }
+
+  .level-list{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:340px; }
+  .level-btn{
+    display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left;
+    background: rgba(241,230,212,0.04); border:1.5px solid rgba(241,230,212,0.14); border-radius:10px;
+    padding:12px 14px; cursor:pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  }
+  .level-btn:hover, .level-btn:active{ border-color: var(--bulb); background: rgba(244,184,96,0.08); transform: translateY(-1px); }
+  .level-btn .lvl-name{ font-family:'Anton'; letter-spacing:0.04em; color: var(--bulb); font-size:15px; }
+  .level-btn .lvl-desc{ font-size:11px; color: var(--dust); line-height:1.4; }
+</style>
+</head>
+<body>
+<!-- shared forearm + hand silhouette (sleeve at the top, loose fist at the bottom), reused around the table -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="skinG" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#1e1108"/><stop offset="0.42" stop-color="#4f2e16"/>
+      <stop offset="0.68" stop-color="#6a4020"/><stop offset="1" stop-color="#1c1007"/>
+    </linearGradient>
+    <linearGradient id="sleeveG" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0a0604"/><stop offset="0.6" stop-color="#231710"/><stop offset="1" stop-color="#0a0604"/>
+    </linearGradient>
+    <symbol id="armShape" viewBox="0 0 60 90">
+      <path fill="url(#skinG)" d="M18 0 H42 C43 20 44 38 45 51 C51 55 54 62 53 70 C52 79 46 86 37 87 C29 88 20 87 15 83 C9 78 7 70 9 63 C11 57 13 54 15 51 C16 35 17 18 18 0 Z"/>
+      <path fill="#5c3619" d="M45 57 C51 55 56 59 55 65 C54 69 49 70 46 66 Z"/>
+      <path d="M21 77 V86 M29 78 V87 M37 77 V86" stroke="rgba(0,0,0,0.38)" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M14 80 C21 84 31 85 41 82" stroke="rgba(255,214,160,0.16)" stroke-width="1.2" fill="none"/>
+      <path fill="url(#sleeveG)" d="M14 0 H46 L45 24 C37 28 23 28 15 24 Z"/>
+      <path d="M15 24 C23 28 37 28 45 24" stroke="rgba(244,184,96,0.22)" stroke-width="1" fill="none"/>
+    </symbol>
+  </defs>
+</svg>
+<div class="bulb-glow"></div>
+<div class="amb-layer">
+  <div class="mote" style="left:38%; animation-duration:11s; animation-delay:0s; --mx:14px;"></div>
+  <div class="mote" style="left:47%; animation-duration:13s; animation-delay:2.4s; --mx:-18px;"></div>
+  <div class="mote" style="left:55%; animation-duration:9.5s; animation-delay:4.8s; --mx:10px;"></div>
+  <div class="mote" style="left:44%; animation-duration:14s; animation-delay:1.2s; --mx:-8px;"></div>
+  <div class="mote" style="left:60%; animation-duration:10.5s; animation-delay:6s; --mx:16px;"></div>
+  <div class="bug" style="left:41%; animation-duration:3.2s;"></div>
+  <div class="bug" style="left:58%; animation-duration:2.7s; animation-delay:0.6s;"></div>
+  <div class="smoke" style="left:16%; animation-delay:1s;"></div>
+  <div class="smoke" style="left:82%; animation-delay:4.5s;"></div>
+</div>
+
+
+
+<div class="app-shell">
+<header>
+  <button id="btnRestartGame" class="ghost" style="position:absolute; top:8px; left:10px; font-size:16px; text-decoration:none; padding:4px 8px;">↺</button>
+  <button id="btnMute" class="ghost" style="position:absolute; top:8px; right:10px; font-size:16px; text-decoration:none; padding:4px 8px;">🔊</button>
+  <h1>FAP FAP</h1>
+  <div class="sub">Duel de quartier · Toi contre Penalty</div>
+</header>
+
+<div id="duoScreen">
+<div class="scorebar">
+  <div><span class="who">Toi</span><span class="val me mono" id="scoreYou">0</span></div>
+  <div class="mid">Premier à <span id="targetScore">5</span></div>
+  <div style="text-align:right;"><span class="who">Penalty</span><span class="val mono" id="scoreAI">0</span></div>
+</div>
+
+<div class="gamearea">
+  <div class="centerstage">
+    <div class="ai-zone">
+      <div class="ai-label"><span id="oppLabelName">Penalty</span> · <span id="aiCount">5 cartes</span></div>
+      <div class="ai-hands">
+        <svg class="opp-arm left" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg>
+        <div class="ai-cards" id="aiCardsRow"></div>
+        <svg class="opp-arm right" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg>
+      </div>
+      <div class="penalty-bubble" id="penaltyBubble"></div>
+    </div>
+
+    <div class="table">
+      <div class="table-carving" style="top:16%; left:14%; font-size:9px; transform:rotate(-8deg);">R+M '19</div>
+      <div class="table-carving" style="top:64%; right:12%; font-size:8px; transform:rotate(6deg);">K.O était là</div>
+      <div class="side-sil left" id="silLeft"><svg class="side-arm" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg><div class="side-fx"></div></div>
+      <div class="side-sil right" id="silRight"><svg class="side-arm" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg><div class="side-fx"></div></div>
+      <div class="slot-wrap"><div class="slot-hist" id="aiHist"></div><span class="slot-label" id="oppSlotLabel">Penalty</span><div class="slot" id="aiSlot"></div></div>
+      <div class="demand-badge" id="demandBadge"></div>
+      <div class="slot-wrap"><div class="slot" id="youSlot"></div><span class="slot-label">Toi</span><div class="slot-hist" id="youHist"></div></div>
+    </div>
+
+    <div class="hand-zone">
+      <div class="hand-label" id="handLabel">Ta main</div>
+      <div class="hand-pov-wrap">
+        <div class="hand" id="playerHand"></div>
+      </div>
+      <div class="actions">
+        <button id="btnAnnounce" class="danger hidden">Annoncer victoire !</button>
+        <button id="btnPasse" class="passe-option hidden">🤚 Je suis en passe</button>
+        <button id="btnDump" class="primary hidden">Poser mes 2 cartes</button>
+        <button id="btnNext" class="primary hidden">Manche suivante</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /duoScreen -->
+
+<div id="squareScreen" class="hidden">
+  <div class="sq-scoreboard" id="sqScoreboard"></div>
+
+  <div class="sq-table">
+    <div class="sq-felt" aria-hidden="true"></div>
+    <div class="sq-seat sq-top" id="sqSeatPenalty">
+      <div class="sq-name">Penalty</div>
+      <div class="sq-cards" id="sqCardsPenalty"></div>
+      <div class="sq-hist" id="sqHistPenalty"></div>
+      <div class="sq-cur" id="sqCurPenalty"></div>
+      <div class="sq-bubble" id="sqBubblePenalty"></div>
+    </div>
+    <div class="sq-seat sq-left" id="sqSeatAristide">
+      <div class="sq-name">Aristide</div>
+      <div class="sq-cards" id="sqCardsAristide"></div>
+      <div class="sq-hist" id="sqHistAristide"></div>
+      <div class="sq-cur" id="sqCurAristide"></div>
+      <div class="sq-bubble" id="sqBubbleAristide"></div>
+    </div>
+    <div class="sq-seat sq-right" id="sqSeatGervais">
+      <div class="sq-name">Gervais</div>
+      <div class="sq-cards" id="sqCardsGervais"></div>
+      <div class="sq-hist" id="sqHistGervais"></div>
+      <div class="sq-cur" id="sqCurGervais"></div>
+      <div class="sq-bubble" id="sqBubbleGervais"></div>
+    </div>
+    <div class="sq-demand" id="sqDemand"></div>
+    <div class="sq-seat sq-bottom" id="sqSeatYou">
+      <div class="sq-cur" id="sqCurYou"></div>
+      <div class="sq-hist" id="sqHistYou"></div>
+      <div class="sq-name">Toi</div>
+    </div>
+  </div>
+
+  <div class="hand-zone">
+    <div class="hand-label" id="sqHandLabel">Ta main</div>
+    <div class="hand" id="sqPlayerHand"></div>
+    <div class="sq-eliminated-box hidden" id="sqEliminatedBox">
+      <p>Tu as été éliminé. La partie continue sans toi.</p>
+      <button id="sqFastForward" class="primary">⏩ Avance rapide</button>
+    </div>
+    <div class="actions">
+      <button id="sqBtnAnnounce" class="danger hidden">Annoncer victoire !</button>
+      <button id="sqBtnPasse" class="passe-option hidden">🤚 Je suis en passe</button>
+      <button id="sqBtnDump" class="primary hidden">Poser mes 2 cartes</button>
+      <button id="sqBtnNext" class="primary hidden">Manche suivante</button>
+    </div>
+  </div>
+</div><!-- /squareScreen -->
+</div>
+
+<div class="light-burst" id="lightBurst"></div>
+
+<div class="cert-overlay" id="certOverlay">
+  <div class="cert-card">
+    <div class="cert-crest">♠ ♥ ♦ ♣</div>
+    <div class="cert-title" id="certTitle">CORA</div>
+    <div class="cert-sub" id="certSub">Gain multiplié par 2</div>
+    <div class="cert-line"></div>
+    <div class="cert-sign">Authentifié par <b>Penalty</b> — Éditions du Quartier</div>
+    <div class="cert-stamp">CERTIFIÉ</div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="toastMain"></span><span class="sub" id="toastSub"></span></div>
+<div class="net-banner hidden" id="netBanner">
+  <span class="net-dot"></span><span id="netBannerText"></span>
+  <button class="ghost" id="btnNetQuit">Quitter</button>
+</div>
+
+<!-- Dealer/cut flow overlays -->
+<div class="overlay hidden" id="dealAnnounceOverlay">
+  <h2 id="dealAnnounceTitle">Nouvelle manche</h2>
+  <p id="dealAnnounceText"></p>
+  <button class="primary" id="btnDealContinue">Continuer</button>
+</div>
+
+<div class="overlay hidden" id="choiceOverlay">
+  <h2>Je partage ou je dépose ?</h2>
+  <p id="choiceText"></p>
+  <div class="btnrow">
+    <button class="primary" id="btnPartage">Je partage</button>
+    <button id="btnDepose">Je dépose</button>
+  </div>
+  <button class="ghost" id="btnRemix">🔀 Exiger un nouveau mélange</button>
+</div>
+
+<div class="overlay hidden" id="cutOverlay">
+  <h2>La coupe</h2>
+  <p>Où coupes-tu le deck ?</p>
+  <div class="cutstack" id="cutStackVisual"></div>
+  <div class="btnrow">
+    <button id="cutLow">Couper bas (1/3)</button>
+    <button id="cutMid">Couper au milieu</button>
+    <button id="cutHigh">Couper haut (2/3)</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="pileOverlay">
+  <h2>Prends quel tas ?</h2>
+  <p>Les deux tas ont été repositionnés en ordre inverse.</p>
+  <div class="btnrow">
+    <button class="primary" id="pileTop">Le tas du haut</button>
+    <button class="primary" id="pileBottom">Le tas du bas</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="eliminateOverlay">
+  <h2 id="eliminateTitle">Tu as gagné la manche !</h2>
+  <p id="eliminateHint">Choisis qui tu élimines de la table.</p>
+  <div class="btnrow" id="eliminateChoices" style="flex-direction:column; width:100%; max-width:260px;"></div>
+</div>
+
+<div class="overlay hidden" id="matchOverOverlay">
+  <div class="cert-card" style="transform:none;">
+    <div class="cert-crest">♠ ♥ ♦ ♣</div>
+    <h2 id="matchOverTitle" class="cert-title" style="font-size:24px;">Victoire !</h2>
+    <p id="matchOverText" class="cert-sub" style="margin-top:6px;"></p>
+    <div class="cert-line"></div>
+    <div class="cert-sign">Fait à Yaoundé — Éditions du Quartier</div>
+    <div class="cert-stamp" style="font-size:10px;">PENALTY</div>
+  </div>
+  <button class="primary" id="btnRestart" style="margin-top:18px;">Rejouer</button>
+</div>
+
+<div class="overlay hidden" id="confirmRestartOverlay">
+  <h2>Recommencer ?</h2>
+  <p>La manche en cours sera perdue.</p>
+  <div class="btnrow">
+    <button class="primary" id="btnConfirmRestartYes">Oui, recommencer</button>
+    <button id="btnConfirmRestartNo">Annuler</button>
+  </div>
+</div>
+
+<div class="overlay" id="menuOverlay">
+  <h2>FAP FAP</h2>
+  <p>Duel de quartier. Comment veux-tu jouer ?</p>
+  <div class="level-list">
+    <button class="level-btn" id="modeAI">
+      <span class="lvl-name">Contre Penalty</span>
+      <span class="lvl-desc">Il ne voit jamais tes cartes, compte les tiennes jouées, bluffe — et retient comment tu joues d'une partie à l'autre</span>
+    </button>
+    <button class="level-btn" id="modeMP">
+      <span class="lvl-name">Avec un ami</span>
+      <span class="lvl-desc">En ligne — chacun sur son téléphone</span>
+    </button>
+    <button class="level-btn" id="modeSquare">
+      <span class="lvl-name">Carré la Pute</span>
+      <span class="lvl-desc">4 joueurs — Penalty, Aristide, Gervais et toi. Le vainqueur de chaque manche élimine qui il veut, jusqu'au dernier survivant</span>
+    </button>
+  </div>
+  <button class="ghost" id="btnShowStats" style="margin-top:6px;">📊 Mes statistiques</button>
+  <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
+</div>
+
+<div class="overlay hidden" id="statsOverlay">
+  <h2>Tes statistiques</h2>
+  <div class="stats-block" id="statsContent"></div>
+  <button class="primary" id="btnCloseStats" style="margin-top:14px;">Retour</button>
+</div>
+
+
+<div class="overlay hidden" id="mpLobbyOverlay">
+  <h2>Avec un ami</h2>
+  <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
+  <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
+  <div class="btnrow">
+    <button class="primary" id="btnMpHost">Créer une partie</button>
+    <button id="btnMpJoin">Rejoindre une partie</button>
+  </div>
+  <button class="ghost" id="btnBackFromMpLobby">← Retour</button>
+</div>
+
+<div class="overlay hidden" id="mpHostOverlay">
+  <h2>Ton code</h2>
+  <p id="mpHostStatus">Partage ce code avec ton ami :</p>
+  <div class="mp-code" id="mpCodeDisplay">----</div>
+  <div class="btnrow">
+    <button id="btnCopyCode">📋 Copier le code</button>
+  </div>
+  <button class="ghost" id="btnCancelHost">Annuler</button>
+</div>
+
+<div class="overlay hidden" id="mpJoinOverlay">
+  <h2>Rejoindre</h2>
+  <p>Entre le code de ton ami :</p>
+  <input id="mpCodeInput" class="mp-input" maxlength="4" placeholder="CODE" style="text-transform:uppercase; text-align:center; letter-spacing:0.3em; font-family:'JetBrains Mono',monospace; font-size:20px;">
+  <div class="btnrow">
+    <button class="primary" id="btnMpConnect">Rejoindre</button>
+  </div>
+  <p id="mpJoinStatus" style="font-size:11px;color:var(--dust); min-height:14px;"></p>
+  <button class="ghost" id="btnCancelJoin">Annuler</button>
+</div>
+
+
+<script>
+(function(){
+  const SUITS = ['Black','Tchaka','Coubie','Zing'];
+  const PIP = {Black:'♠',Tchaka:'♣',Coubie:'♥',Zing:'♦'};
+  const SUIT_PATH = {
+    Black: 'M16 2C16 2 4 13 4 20.5C4 24.6 7.4 28 11.5 28C13.2 28 14.7 27.4 16 26.4C15.2 29 13 31 9 32H23C19 31 16.8 29 16 26.4C17.3 27.4 18.8 28 20.5 28C24.6 28 28 24.6 28 20.5C28 13 16 2 16 2Z',
+    Coubie: 'M16 29C16 29 3 20 3 11.8C3 6.9 6.8 3 11.5 3C13.7 3 15.6 4.2 16 6.8C16.4 4.2 18.3 3 20.5 3C25.2 3 29 6.9 29 11.8C29 20 16 29 16 29Z',
+    Zing:  'M16 1L30 16L16 31L2 16Z',
+    // a true club: three round leaves + a flared stem
+    Tchaka: 'M10.2 9.2a5.8 5.8 0 1 0 11.6 0a5.8 5.8 0 1 0 -11.6 0Z M3.6 18a5.8 5.8 0 1 0 11.6 0a5.8 5.8 0 1 0 -11.6 0Z M16.8 18a5.8 5.8 0 1 0 11.6 0a5.8 5.8 0 1 0 -11.6 0Z M13 12.5V20H19V12.5Z M14.7 17C14.7 23 13.4 27 10.2 30.5H21.8C18.6 27 17.3 23 17.3 17Z'
+  };
+  function suitSvg(suit, cls){
+    return '<svg class="'+(cls||'')+'" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="'+SUIT_PATH[suit]+'"/></svg>';
+  }
+  const TARGET_SCORE = 5;
+  function isMatchPoint(){
+    return scores.you>=TARGET_SCORE-1 || scores.ai>=TARGET_SCORE-1;
+  }
+
+  function buildDeck(){
+    let deck=[];
+    for(const s of SUITS){
+      for(let r=3;r<=9;r++) deck.push({rank:r,suit:s});
+      if(s!=='Black') deck.push({rank:10,suit:s});
+    }
+    return deck;
+  }
+  function shuffle(arr){
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+  function hasSuit(hand,suit){ return hand.some(c=>c.suit===suit); }
+  function canPasse(hand, leadSuit){
+    if(!leadSuit) return false;
+    if(hand.length!==2) return false;
+    if(hasSuit(hand, leadSuit)) return false;
+    if(hand[0].suit===hand[1].suit) return true; // the classic reserve-pair case
+    return hand.some(c=>c.rank===3); // different suits only justified when a 3 is "worthless right now" and worth saving
+  }
+  function checkAutoWin(hand){
+    const total = hand.reduce((s,c)=>s+c.rank,0);
+    if(total<=21) return {type:'total21', label:'Total ≤ 21 ('+total+')'};
+    const rankCounts={};
+    hand.forEach(c=>rankCounts[c.rank]=(rankCounts[c.rank]||0)+1);
+    // "les 4 symboles": the same value in all four suits (Black, Tchaka, Coubie, Zing) — any value 3..9
+    const quadRank = Object.keys(rankCounts).map(Number).find(r=>
+      SUITS.every(s=>hand.some(c=>c.rank===r && c.suit===s)));
+    if(quadRank) return {type:'quad', label:'Les 4 symboles ('+quadRank+')'};
+    const tripleRank = [3,7].find(r=>(rankCounts[r]||0)>=3);
+    if(tripleRank) return {type:'triple', label:'Trois '+tripleRank+' identiques'};
+    const suitsInHand = new Set(hand.map(c=>c.suit));
+    if(suitsInHand.size===1) return {type:'flush5', label:'Cinq cartes '+hand[0].suit};
+    return null;
+  }
+  function sortHand(hand){ return [...hand].sort((a,b)=> a.suit===b.suit ? a.rank-b.rank : a.suit.localeCompare(b.suit)); }
+  // End of a Passe: the passer answers the last lead by laying BOTH reserved cards at once.
+  // Only their best card in the commanded suit counts; with no card of that suit they play free and never take control.
+  function dumpBestFollow(cards, leadSuit){
+    const follow = cards.filter(c=>c.suit===leadSuit).sort((a,b)=>b.rank-a.rank);
+    return follow.length ? follow[0] : null;
+  }
+
+  // ---- Minimax over one fully-specified deal (PIMC below feeds it sampled hands — it never sees the real ones) ----
+  function evalTerminal(w1,w2){
+    // uncontested control (via passe, or opponent out of cards) never counts for CORA/33 Glacée
+    const cora = w1 && w1.rank===3 && !w1.viaPasse;
+    const glacee = cora && w2 && w2.rank===3 && !w2.viaPasse && w2.actor===w1.actor;
+    const pts = glacee?3:(cora?2:1);
+    if(w1.actor==='ai') return pts; // winning big is still good — keep chasing CORA/glacée
+    return -1; // losing is losing — never use Passe just to shave a point off a loss it can't avoid anyway
+  }
+  function search(youHand, aiHand, lead, turn, w1, w2, alpha, beta){
+    if(alpha===undefined) alpha=-Infinity;
+    if(beta===undefined) beta=Infinity;
+    if(youHand.length===0 && aiHand.length===0 && !lead) return evalTerminal(w1,w2);
+    if(!lead){
+      const turnHand = turn==='ai'?aiHand:youHand;
+      if(turnHand.length===0){
+        // this side holds control but has nothing left to lead with — the hand ends right here,
+        // in their favor. No free handoff of control to the other side (that would be the same bug
+        // the real game had).
+        return evalTerminal(w1, w2);
+      }
+      let best = turn==='ai' ? -Infinity : Infinity;
+      for(const c of turnHand){
+        const restHand = turnHand.filter(x=>x!==c);
+        const newYou = turn==='you'?restHand:youHand;
+        const newAI = turn==='ai'?restHand:aiHand;
+        const val = search(newYou, newAI, {suit:c.suit, rank:c.rank, actor:turn}, turn==='ai'?'you':'ai', w1, w2, alpha, beta);
+        if(turn==='ai'){ best=Math.max(best,val); alpha=Math.max(alpha,best); } else { best=Math.min(best,val); beta=Math.min(beta,best); }
+        if(alpha>=beta) break;
+      }
+      return best;
+    } else {
+      const defHand = turn==='ai'?aiHand:youHand;
+      const atkHand = turn==='ai'?youHand:aiHand;
+      if(defHand.length===0){
+        const newW1 = {rank:lead.rank, actor:lead.actor, viaPasse:false}; // opponent out of cards ≠ Passe — CORA still possible
+        return search(youHand, aiHand, null, lead.actor, newW1, w1, alpha, beta);
+      }
+      if(atkHand.length===0 && defHand.length===2){
+        // only reachable right after a Passe: the passer lays both reserved cards on the final lead
+        const best = dumpBestFollow(defHand, lead.suit);
+        const beats = best && best.rank>lead.rank;
+        const newW1 = beats ? {rank:best.rank, actor:turn} : {rank:lead.rank, actor:lead.actor};
+        return evalTerminal(newW1, w1);
+      }
+      let options = [];
+      if(canPasse(defHand, lead.suit)) options.push({type:'passe'});
+      const followCards = defHand.filter(c=>c.suit===lead.suit);
+      if(followCards.length>0) followCards.forEach(c=>options.push({type:'card',card:c}));
+      else defHand.forEach(c=>options.push({type:'card',card:c}));
+      let best = turn==='ai' ? -Infinity : Infinity;
+      for(const opt of options){
+        let val;
+        if(opt.type==='passe'){
+          const newW1 = {rank:lead.rank, actor:lead.actor, viaPasse:true}; // uncontested — no CORA
+          val = search(youHand, aiHand, null, lead.actor, newW1, w1, alpha, beta);
+        } else {
+          const c = opt.card;
+          const restHand = defHand.filter(x=>x!==c);
+          const newYou = turn==='you'?restHand:youHand;
+          const newAI = turn==='ai'?restHand:aiHand;
+          const winnerActor = (c.suit===lead.suit && c.rank>lead.rank) ? turn : lead.actor;
+          const winRank = winnerActor===turn ? c.rank : lead.rank;
+          const newW1 = {rank:winRank, actor:winnerActor};
+          val = search(newYou, newAI, null, winnerActor, newW1, w1, alpha, beta);
+        }
+        if(turn==='ai'){ best=Math.max(best,val); alpha=Math.max(alpha,best); } else { best=Math.min(best,val); beta=Math.min(beta,best); }
+        if(alpha>=beta) break;
+      }
+      return best;
+    }
+  }
+  function bestAILead(youHand, aiHand, w1, w2){
+    let bestVal=-Infinity, bestCard=null;
+    for(const c of aiHand){
+      const rest = aiHand.filter(x=>x!==c);
+      const val = search(youHand, rest, {suit:c.suit,rank:c.rank,actor:'ai'}, 'you', w1, w2);
+      if(val>bestVal){ bestVal=val; bestCard=c; }
+    }
+    return bestCard;
+  }
+  function bestAIDefend(youHand, aiHand, lead, w1, w2){
+    let options = [];
+    const followCards = aiHand.filter(c=>c.suit===lead.suit);
+    if(followCards.length>0) followCards.forEach(c=>options.push({type:'card',card:c}));
+    else aiHand.forEach(c=>options.push({type:'card',card:c}));
+    if(canPasse(aiHand, lead.suit)) options.push({type:'passe'}); // evaluated last: only wins ties it truly deserves
+    let bestVal=-Infinity, bestOpt=options[0];
+    for(const opt of options){
+      let val;
+      if(opt.type==='passe'){
+        const rest = aiHand;
+        const newW1 = {rank:lead.rank, actor:lead.actor, viaPasse:true}; // uncontested — no CORA
+        val = search(youHand, rest, null, lead.actor, newW1, w1);
+      } else {
+        const c = opt.card;
+        const rest = aiHand.filter(x=>x!==c);
+        const winnerActor = (c.suit===lead.suit && c.rank>lead.rank) ? 'ai' : lead.actor;
+        const winRank = winnerActor==='ai' ? c.rank : lead.rank;
+        const newW1 = {rank:winRank, actor:winnerActor};
+        val = search(youHand, rest, null, winnerActor, newW1, w1);
+      }
+      if(val>bestVal){ bestVal=val; bestOpt=opt; }
+    }
+    return bestOpt;
+  }
+
+  // ---- PIMC (Perfect-Information Monte Carlo): Penalty's real strength, without cheating.
+  // At each decision, it samples many hands the opponent COULD plausibly hold — consistent with
+  // its own hand, every card played so far, and every suit the opponent has proven not to have
+  // (by free-playing off it, or by passing on it) — then solves each sampled world exactly with
+  // the same search() engine, and picks whichever move performs best on average across all of them.
+  // It never looks at the player's actual hand.
+  const PIMC_TIME_BUDGET_MS = 450;
+  const PIMC_MAX_SAMPLES = 120;
+  function unseenPoolFor(myHand){
+    const usedKeys = new Set();
+    myHand.forEach(c=>usedKeys.add(c.suit+'-'+c.rank));
+    state.history.forEach(e=>{ if(e.type==='card') usedKeys.add(e.card.suit+'-'+e.card.rank); });
+    return buildDeck().filter(c=>!usedKeys.has(c.suit+'-'+c.rank));
+  }
+  function sampleOpponentHand(pool, size, voidSuits){
+    let p = pool;
+    if(voidSuits && voidSuits.size>0) p = p.filter(c=>!voidSuits.has(c.suit));
+    if(p.length<size) p = pool; // constraints too tight (shouldn't normally happen) — fall back to the full pool
+    return shuffle(p).slice(0, size);
+  }
+  function pimcBestLead(){
+    const pool = unseenPoolFor(state.aiHand);
+    const voidSuits = state.knownVoid ? state.knownVoid.you : null;
+    const oppSize = state.playerHand.length;
+    const totals = {}; state.aiHand.forEach(c=>totals[c.suit+'-'+c.rank]=0);
+    const startedAt = Date.now();
+    let ran = 0;
+    for(let i=0;i<PIMC_MAX_SAMPLES;i++){
+      if(Date.now()-startedAt > PIMC_TIME_BUDGET_MS) break;
+      const sampledYou = sampleOpponentHand(pool, oppSize, voidSuits);
+      const [w1,w2] = lastTwoWinners();
+      for(const c of state.aiHand){
+        const rest = state.aiHand.filter(x=>x!==c);
+        totals[c.suit+'-'+c.rank] += search(sampledYou, rest, {suit:c.suit,rank:c.rank,actor:'ai'}, 'you', w1, w2);
+      }
+      ran++;
+    }
+    if(ran===0) return heuristicLead(state.aiHand);
+    let bestCard=null, bestAvg=-Infinity;
+    state.aiHand.forEach(c=>{
+      const avg = totals[c.suit+'-'+c.rank]/ran;
+      if(avg>bestAvg){ bestAvg=avg; bestCard=c; }
+    });
+    return bestCard;
+  }
+  function pimcBestDefend(lead){
+    const hand = state.aiHand;
+    let options = [];
+    if(!state.passer && canPasse(hand, lead.suit)) options.push({type:'passe'});
+    const followCards = hand.filter(c=>c.suit===lead.suit);
+    if(followCards.length>0) followCards.forEach(c=>options.push({type:'card',card:c}));
+    else hand.forEach(c=>options.push({type:'card',card:c}));
+    if(options.length===1) return options[0];
+    const pool = unseenPoolFor(hand);
+    const voidSuits = state.knownVoid ? state.knownVoid.you : null;
+    const oppSize = state.playerHand.length;
+    const totals = options.map(()=>0);
+    const startedAt = Date.now();
+    let ran = 0;
+    for(let i=0;i<PIMC_MAX_SAMPLES;i++){
+      if(Date.now()-startedAt > PIMC_TIME_BUDGET_MS) break;
+      const sampledYou = sampleOpponentHand(pool, oppSize, voidSuits);
+      const [w1,w2] = lastTwoWinners();
+      options.forEach((opt,idx)=>{
+        let val;
+        if(opt.type==='passe'){
+          const newW1 = {rank:lead.rank, actor:lead.actor, viaPasse:true};
+          val = search(sampledYou, hand, null, lead.actor, newW1, w1);
+        } else {
+          const c = opt.card;
+          const rest = hand.filter(x=>x!==c);
+          const winnerActor = (c.suit===lead.suit && c.rank>lead.rank) ? 'ai' : lead.actor;
+          const winRank = winnerActor==='ai' ? c.rank : lead.rank;
+          const newW1 = {rank:winRank, actor:winnerActor};
+          val = search(sampledYou, rest, null, winnerActor, newW1, w1);
+        }
+        totals[idx] += val;
+      });
+      ran++;
+    }
+    if(ran===0) return heuristicDefend(hand, lead);
+    let bestIdx=0, bestAvg=-Infinity;
+    totals.forEach((sum,idx)=>{ const avg=sum/ran; if(avg>bestAvg){ bestAvg=avg; bestIdx=idx; } });
+    return options[bestIdx];
+  }
+
+  // ---- game state ----
+  let state = null;
+  let scores = {you:0, ai:0};
+  let dealer = Math.random()<0.5 ? 'you' : 'ai';
+  let locked = false;
+  let mode = 'ai'; // 'ai' | 'mp'
+
+  // ---- Multiplayer: Supabase Realtime ----
+  // Both phones talk through Supabase's relay server instead of a direct phone-to-phone link, so it works
+  // on any network (4G, Wi-Fi, firewalls). Fill in the two values from your Supabase project
+  // (Project Settings → API). The anon / publishable key is meant to be public: it's fine in this file.
+  const SUPABASE_URL = 'https://cydmvgwdnxawlhblkkpc.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_xjGudDvslcfN0bdadc3fbw__EaFG_uu';
+
+  let mpNet = null, mpIsHost = false;
+  let myName = 'Toi', oppNameVal = 'Ton ami';
+  const myNetId = Math.random().toString(36).slice(2,10);
+  const MP_LOCAL = /[?&]mplocal\b/.test(location.search); // test mode: two tabs of this browser, no server
+  function oppName(){ return mode==='mp' ? oppNameVal : 'Penalty'; }
+  function applyOppNameToUI(){
+    const n = oppName();
+    const a = document.getElementById('oppLabelName'); if(a) a.textContent = n;
+    const b = document.getElementById('oppSlotLabel'); if(b) b.textContent = n;
+    const sub = document.querySelector('header .sub');
+    if(sub) sub.textContent = mode==='mp' ? ('Duel de quartier · Toi contre '+n) : 'Duel de quartier · Toi contre Penalty';
+  }
+  function randomRoomCode(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I ambiguity
+    let s=''; for(let i=0;i<4;i++) s += chars[Math.floor(Math.random()*chars.length)];
+    return s;
+  }
+  const mpSleep = ms => new Promise(r=>setTimeout(r, ms));
+
+  // ---- Reliable delivery on top of the relay ----
+  // Every game message is numbered and kept until the other phone acknowledges it; unacknowledged ones are
+  // resent every 1.2s, and the receiver applies them strictly in order, once. So a message lost while a phone
+  // was in the background (sharing the code on WhatsApp...) or during a 4G blip is simply delivered late.
+  let mpOutSeq = 0, mpInNext = 1, mpPeerId = null, mpResendTimer = null, mpLastPresence = [];
+  const mpOutbox = new Map(), mpInBuffer = new Map();
+  let mpMatchStarted = false;
+
+  function mpSend(msg){
+    if(!mpNet) return;
+    const pkt = {k:'d', s:++mpOutSeq, from:myNetId, m:msg};
+    mpOutbox.set(pkt.s, pkt);
+    mpNet.send(pkt);
+  }
+  function mpResendPending(){
+    if(!mpNet) return;
+    mpOutbox.forEach(pkt=> mpNet.send(pkt));
+  }
+  function mpOnPacket(p){
+    if(!p || p.from===myNetId) return;
+    if(mpPeerId && p.from!==mpPeerId) return; // a third phone typing the same code — ignored
+    if(p.k==='a'){ mpOutbox.delete(p.s); return; }
+    if(p.k!=='d') return;
+    if(!mpPeerId) mpPeerId = p.from; // lock onto the first opponent who actually talks
+    mpNet.send({k:'a', s:p.s, from:myNetId});
+    if(p.s<mpInNext || mpInBuffer.has(p.s)) return; // duplicate
+    mpInBuffer.set(p.s, p.m);
+    while(mpInBuffer.has(mpInNext)){
+      const m = mpInBuffer.get(mpInNext);
+      mpInBuffer.delete(mpInNext);
+      mpInNext++;
+      try{ handleMpMessage(m); }catch(e){ console.error('mp message failed', m, e); }
+    }
+  }
+  function mpOnPresence(list){
+    mpLastPresence = list;
+    if(!mpMatchStarted) return;
+    const here = list.some(m=>m && m.id===mpPeerId);
+    showNetBanner(here ? null : oppNameVal+' s’est déconnecté — en attente de son retour…');
+    if(here) mpResendPending();
+  }
+  function mpOnStatus(up){
+    if(!mpMatchStarted) return;
+    showNetBanner(up ? null : 'Connexion perdue — reconnexion en cours…');
+    if(up) mpResendPending();
+  }
+  function showNetBanner(text){
+    const b = document.getElementById('netBanner');
+    if(!b) return;
+    b.classList.toggle('hidden', !text);
+    if(text) document.getElementById('netBannerText').textContent = text;
+  }
+
+  function mpTeardown(){
+    try{ if(mpNet) mpNet.close(); }catch(e){}
+    mpNet = null; mpIsHost = false; mpMatchStarted = false;
+    clearInterval(mpResendTimer); mpResendTimer = null;
+    mpOutSeq = 0; mpInNext = 1; mpPeerId = null; mpLastPresence = [];
+    mpOutbox.clear(); mpInBuffer.clear();
+    showNetBanner(null);
+  }
+
+  // ---- Transports: Supabase Realtime (real play) and BroadcastChannel (?mplocal, testing two tabs) ----
+  const SUPABASE_CDN_URLS = [
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+  ];
+  let supabaseLoadPromise = null, supaClient = null;
+  function loadSupabase(){
+    if(window.supabase && window.supabase.createClient) return Promise.resolve(true);
+    if(supabaseLoadPromise) return supabaseLoadPromise;
+    supabaseLoadPromise = (async ()=>{
+      for(const url of SUPABASE_CDN_URLS){
+        try{
+          await new Promise((resolve, reject)=>{
+            const s = document.createElement('script');
+            s.src = url;
+            s.onload = ()=> (window.supabase && window.supabase.createClient) ? resolve() : reject(new Error('no supabase'));
+            s.onerror = ()=> reject(new Error('load failed: '+url));
+            document.head.appendChild(s);
+          });
+          return true;
+        }catch(e){ /* try the next CDN */ }
+      }
+      supabaseLoadPromise = null; // allow a later retry
+      return false;
+    })();
+    return supabaseLoadPromise;
+  }
+  function preloadNet(){ if(!MP_LOCAL && SUPABASE_URL) loadSupabase(); }
+
+  async function openSupabaseNet(code, meta){
+    if(!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('not-configured');
+    if(!(await loadSupabase())) throw new Error('lib');
+    if(!supaClient) supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession:false, autoRefreshToken:false },
+      realtime: { params: { eventsPerSecond: 30 } }
+    });
+    const ch = supaClient.channel('fapfap-'+code, { config: { broadcast:{ self:false }, presence:{ key: meta.id } } });
+    ch.on('broadcast', {event:'p'}, ({payload})=> mpOnPacket(payload));
+    ch.on('presence', {event:'sync'}, ()=>{
+      const st = ch.presenceState();
+      mpOnPresence(Object.values(st).map(a=>a && a[0]).filter(Boolean));
+    });
+    await new Promise((resolve, reject)=>{
+      let settled = false;
+      const timer = setTimeout(()=>{ if(!settled){ settled=true; reject(new Error('timeout')); } }, 12000);
+      ch.subscribe(async (status)=>{
+        if(status==='SUBSCRIBED'){
+          try{ await ch.track(meta); }catch(e){}
+          if(!settled){ settled=true; clearTimeout(timer); resolve(); }
+          mpOnStatus(true); // also fires again after an automatic reconnection
+        } else if(status==='CHANNEL_ERROR' || status==='TIMED_OUT' || status==='CLOSED'){
+          if(!settled){ settled=true; clearTimeout(timer); reject(new Error(status)); }
+          else mpOnStatus(false);
+        }
+      });
+    });
+    return {
+      send: pkt=>{ try{ ch.send({type:'broadcast', event:'p', payload:pkt}); }catch(e){} },
+      close: ()=>{ try{ ch.untrack(); }catch(e){} try{ supaClient.removeChannel(ch); }catch(e){} }
+    };
+  }
+
+  // same behaviour, inside one browser: presence by heartbeat; ?drop=0.3 randomly loses 30% of packets
+  async function openLocalNet(code, meta){
+    const bc = new BroadcastChannel('fapfap-local-'+code);
+    const peers = new Map();
+    const drop = Number((location.search.match(/[?&]drop=([\d.]+)/)||[])[1]||0);
+    const emit = ()=> mpOnPresence([meta, ...[...peers.values()].map(p=>p.meta)]);
+    bc.onmessage = (e)=>{
+      const d = e.data;
+      if(d.kind==='hb'){ const isNew=!peers.has(d.meta.id); peers.set(d.meta.id, {meta:d.meta, t:Date.now()}); if(isNew) emit(); }
+      else if(d.kind==='bye'){ peers.delete(d.id); emit(); }
+      else if(d.kind==='p'){ if(Math.random()<drop) return; mpOnPacket(d.pkt); }
+    };
+    const beat = ()=>{
+      bc.postMessage({kind:'hb', meta});
+      let changed = false; const now = Date.now();
+      peers.forEach((p,id)=>{ if(now-p.t>3500){ peers.delete(id); changed=true; } });
+      if(changed) emit();
+    };
+    beat();
+    const timer = setInterval(beat, 1000);
+    setTimeout(emit, 30);
+    return {
+      send: pkt=>{ if(Math.random()<drop) return; bc.postMessage({kind:'p', pkt}); },
+      close: ()=>{ clearInterval(timer); try{ bc.postMessage({kind:'bye', id:meta.id}); bc.close(); }catch(e){} }
+    };
+  }
+
+  async function mpOpen(code, role){
+    const meta = {id: myNetId, role, name: myName};
+    mpNet = MP_LOCAL ? await openLocalNet(code, meta) : await openSupabaseNet(code, meta);
+    clearInterval(mpResendTimer);
+    mpResendTimer = setInterval(mpResendPending, 1200);
+  }
+  function netErrorText(e){
+    const m = e && e.message;
+    if(m==='not-configured') return "Le jeu en ligne n'est pas encore configuré (clé Supabase manquante).";
+    if(m==='lib') return "Impossible de charger le module réseau. Vérifie ta connexion internet et réessaie.";
+    return "Connexion au serveur impossible. Vérifie ta connexion internet et réessaie.";
+  }
+  function presentOthers(){ return mpLastPresence.filter(m=>m && m.id!==myNetId); }
+  // closing / reloading the page tells the other phone right away (switching apps does NOT fire this:
+  // a phone that goes to the background simply catches up when it comes back)
+  window.addEventListener('pagehide', ()=>{ try{ if(mpNet) mpNet.close(); }catch(e){} });
+
+  async function hostGame(){
+    const status = document.getElementById('mpHostStatus');
+    mpTeardown();
+    mpIsHost = true;
+    const code = randomRoomCode();
+    document.getElementById('mpCodeDisplay').textContent = code;
+    status.textContent = 'Connexion au serveur...';
+    try{ await mpOpen(code, 'host'); }
+    catch(e){ status.textContent = netErrorText(e); mpTeardown(); return; }
+    await mpSleep(600); // first presence sync
+    if(!mpNet) return; // cancelled meanwhile
+    if(presentOthers().some(m=>m.role==='host')){ mpTeardown(); return hostGame(); } // code already in use: pick another
+    status.textContent = 'Partage ce code avec ton ami :';
+  }
+
+  async function joinGame(code){
+    const status = document.getElementById('mpJoinStatus');
+    code = code.trim().toUpperCase();
+    mpTeardown();
+    mpIsHost = false;
+    status.textContent = 'Connexion au serveur...';
+    try{ await mpOpen(code, 'guest'); }
+    catch(e){ status.textContent = netErrorText(e); mpTeardown(); return; }
+    status.textContent = 'Recherche de la partie...';
+    let host = null;
+    for(let i=0;i<24 && mpNet;i++){
+      host = presentOthers().find(m=>m.role==='host');
+      if(host) break;
+      await mpSleep(250);
+    }
+    if(!mpNet) return; // cancelled meanwhile
+    if(!host){ status.textContent = "Aucune partie avec ce code. Vérifie le code, et que ton ami a toujours l'écran « Ton code » ouvert."; mpTeardown(); return; }
+    if(presentOthers().some(m=>m.role==='guest')){ status.textContent = 'Cette partie a déjà deux joueurs.'; mpTeardown(); return; }
+    mpPeerId = host.id;
+    status.textContent = 'Partie trouvée ! Lancement...';
+    mpSend({t:'hello', name: myName});
+  }
+
+  function startMpMatch(){
+    if(mpMatchStarted) return;
+    mpMatchStarted = true;
+    document.getElementById('mpHostOverlay').classList.add('hidden');
+    document.getElementById('mpJoinOverlay').classList.add('hidden');
+    mode = 'mp';
+    scores = {you:0, ai:0};
+    document.getElementById('scoreYou').textContent = '0';
+    document.getElementById('scoreAI').textContent = '0';
+    document.getElementById('matchOverOverlay').classList.add('hidden');
+    if(mpIsHost){
+      dealer = Math.random()<0.5 ? 'you' : 'ai';
+      mpSend({t:'hello', name: myName}); // so the guest knows who they're facing
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you'}); // flip perspective for the other side
+      beginHand();
+    }
+    // guest waits for the 'start' message to know who deals first
+  }
+
+  function handleMpMessage(msg){
+    if(msg.t==='hello'){
+      oppNameVal = msg.name || 'Ton ami';
+      applyOppNameToUI();
+      if(mpIsHost) startMpMatch();
+      return;
+    }
+    if(msg.t==='start'){
+      if(mpMatchStarted) return;
+      mpMatchStarted = true;
+      document.getElementById('mpJoinOverlay').classList.add('hidden');
+      mode = 'mp';
+      applyOppNameToUI();
+      scores = {you:0, ai:0};
+      document.getElementById('scoreYou').textContent = '0';
+      document.getElementById('scoreAI').textContent = '0';
+      document.getElementById('matchOverOverlay').classList.add('hidden');
+      dealer = msg.dealer;
+      beginHand();
+      return;
+    }
+    if(msg.t==='needCutChoice'){
+      // I'm the non-dealer this hand and the host needs my choice
+      openChoiceForPlayer(true);
+      return;
+    }
+    if(msg.t==='cutChoice'){
+      mpApplyRemoteCutChoice(msg);
+      return;
+    }
+    if(msg.t==='dealt'){
+      // the host dealt: whatever screen the guest was still on (end of the previous hand), move on
+      ['dealAnnounceOverlay','choiceOverlay','cutOverlay','pileOverlay'].forEach(id=> document.getElementById(id).classList.add('hidden'));
+      document.getElementById('btnNext').classList.add('hidden');
+      clearSlots();
+      state = {
+        playerHand: msg.yourHand,
+        aiHand: new Array(msg.oppCount).fill(0).map(()=>({rank:0,suit:'?'})),
+        playerOriginalHand: [...msg.yourHand],
+        aiOriginalHand: null, // never known — the remote side announces its own auto-win
+        leader: msg.leader,
+        leadSuit: null,
+        cardsPlayedThisHand: 0,
+        trickWinners: [],
+        history: [],
+        handOver: false,
+        dealer: msg.dealer
+      };
+      locked = !state.handOver && state.leader==='ai';
+      renderAll(true);
+      checkAutoWinWindow();
+      return;
+    }
+    if(msg.t==='play'){
+      if(!state || state.handOver) return;
+      removeOpponentCard(msg.card);
+      resolvePlay('ai', msg.card, false);
+      return;
+    }
+    if(msg.t==='passe'){
+      if(!state || state.handOver) return;
+      resolvePlay('ai', null, true);
+      return;
+    }
+    if(msg.t==='dump'){
+      if(!state || state.handOver) return;
+      msg.cards.forEach(c=>removeOpponentCard(c));
+      resolveDump('ai', msg.cards);
+      return;
+    }
+    if(msg.t==='autowinRequest'){
+      // only meaningful on the host: confirm (or, extremely rarely, reject if a hand-over race already landed)
+      if(!state.handOver) endHandAutoWin('ai', msg.label);
+      return;
+    }
+    if(msg.t==='handOver'){
+      // host is the sole authority on when/how a hand ends — we just apply the result, never recompute it
+      if(state && !state.handOver){
+        state.handOver = true;
+        if(/automatique/i.test(msg.label||'')){
+          showToast(msg.winner==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', msg.label.replace(/^Victoire automatique — /,''), {big:true, celebrate:true, ms:3000});
+          sfxBigWin(); bigImpact();
+        }
+        awardPoints(msg.winner, msg.pts, msg.label);
+      }
+      return;
+    }
+  }
+
+  function removeOpponentCard(card){
+    // host knows the real card and can match it exactly; guest only holds placeholders
+    const idx = state.aiHand.findIndex(c=>c.suit===card.suit && c.rank===card.rank);
+    if(idx>-1) state.aiHand.splice(idx,1);
+    else state.aiHand.pop();
+  }
+
+  // ---- Sound engine (synthesized, no external files) ----
+  let soundOn = true;
+  let audioCtx = null;
+  function vibrate(pattern){
+    try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+  }
+
+  function ensureAudio(){
+    if(!soundOn) return null;
+    try{
+      if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      setupReverb(audioCtx);
+      startAmbientLoop(audioCtx);
+      return audioCtx;
+    }catch(e){ return null; }
+  }
+  let ambientStarted = false;
+  let ambientMasterGain = null;
+  function getAmbientMasterGain(ctx){
+    if(!ambientMasterGain){
+      ambientMasterGain = ctx.createGain();
+      ambientMasterGain.gain.value = soundOn ? 1 : 0;
+      ambientMasterGain.connect(ctx.destination);
+    }
+    return ambientMasterGain;
+  }
+  function setAmbientMuted(muted){
+    if(ambientMasterGain) ambientMasterGain.gain.value = muted ? 0 : 1;
+  }
+  function startAmbientLoop(ctx){
+    if(ambientStarted) return;
+    ambientStarted = true;
+    const bus = getAmbientMasterGain(ctx);
+    try{
+      // continuous distant-room rumble
+      const rumbleBuf = noiseBuffer(ctx, 4);
+      const rumble = ctx.createBufferSource();
+      rumble.buffer = rumbleBuf; rumble.loop = true;
+      const rumbleFilter = ctx.createBiquadFilter();
+      rumbleFilter.type = 'lowpass'; rumbleFilter.frequency.value = 220; rumbleFilter.Q.value = 0.3;
+      const rumbleGain = ctx.createGain();
+      rumbleGain.gain.value = 0.03;
+      rumble.connect(rumbleFilter); rumbleFilter.connect(rumbleGain); rumbleGain.connect(bus);
+      rumble.start();
+    }catch(e){}
+    try{
+      // continuous low murmur bed — voices always present in the shadows, not just occasional bursts
+      const murmurBuf = noiseBuffer(ctx, 6);
+      const murmur = ctx.createBufferSource();
+      murmur.buffer = murmurBuf; murmur.loop = true;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 0.7;
+      const murmurGain = ctx.createGain();
+      murmurGain.gain.value = 0.05;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.13;
+      const lfoGain = ctx.createGain(); lfoGain.gain.value = 0.022;
+      lfo.connect(lfoGain); lfoGain.connect(murmurGain.gain);
+      lfo.start();
+      murmur.connect(bp); bp.connect(murmurGain); murmurGain.connect(bus);
+      murmur.start();
+    }catch(e){}
+    startJazzLoop(ctx, bus);
+    scheduleAmbientTicks(ctx, bus);
+  }
+
+  // ---- a continuous, soft lounge-jazz loop under the whole game — synthesized, not a recording ----
+  function startJazzLoop(ctx, bus){
+    // ii - V - I - VI turnaround (Dm7, G7, Cmaj7, A7), the classic jazz-lounge cadence
+    const chords = [
+      { bass:146.83, notes:[293.66,349.23,440.00,523.25] },  // Dm7
+      { bass:196.00, notes:[392.00,493.88,587.33,698.46] },  // G7
+      { bass:130.81, notes:[261.63,329.63,392.00,493.88] },  // Cmaj7
+      { bass:110.00, notes:[220.00,277.18,329.63,392.00] }   // A7
+    ];
+    const chordDur = 3.6;
+    let idx = 0;
+    function playChord(){
+      if(!soundOn){ setTimeout(playChord, chordDur*1000); return; }
+      const ch = chords[idx % chords.length]; idx++;
+      try{
+        // soft upright-bass-ish note on the downbeat
+        jazzTone(ch.bass, chordDur*0.55, 'sine', 0.05, 0, bus, 700);
+        jazzTone(ch.bass*1.5, chordDur*0.32, 'sine', 0.025, chordDur*0.5, bus, 700);
+        // warm rhodes-like chord, notes arriving slightly staggered like a real comping pattern
+        ch.notes.forEach((f,i)=>{
+          jazzTone(f, chordDur*0.8, 'triangle', 0.035, 0.06*i, bus, 2200);
+          jazzTone(f*2, chordDur*0.5, 'sine', 0.008, 0.06*i, bus, 2200);
+        });
+      }catch(e){}
+      setTimeout(playChord, chordDur*1000);
+    }
+    setTimeout(playChord, 800);
+  }
+  function jazzTone(freq, dur, type, vol, delay, bus, lowpassHz){
+    const ctx = bus.context;
+    const start = ctx.currentTime + delay;
+    const osc = ctx.createOscillator();
+    osc.type = type; osc.frequency.setValueAtTime(freq, start);
+    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value = lowpassHz||2000; lp.Q.value=0.25;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(vol, start+0.08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start+dur);
+    osc.connect(lp); lp.connect(gain); gain.connect(bus);
+    if(reverbNode) gain.connect(reverbNode);
+    osc.start(start); osc.stop(start+dur+0.05);
+  }
+  function scheduleAmbientTicks(ctx, bus){
+    const tick = ()=>{
+      if(!soundOn){ setTimeout(tick, 4000); return; }
+      try{
+        // an occasional closer, more distinct murmur swell or cricket-ish flicker layered on top of the bed
+        const roll = Math.random();
+        if(roll<0.5){
+          const f = 3800+Math.random()*900;
+          jazzTone(f, 0.05, 'sine', 0.012, 0, bus, 6000);
+        } else {
+          const dur = 0.8+Math.random()*0.6;
+          const buf = noiseBuffer(ctx, dur);
+          const src = ctx.createBufferSource(); src.buffer = buf;
+          const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value = 450+Math.random()*250; bp.Q.value=1.1;
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.0001, ctx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.035, ctx.currentTime+dur*0.3);
+          g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+          src.connect(bp); bp.connect(g); g.connect(bus);
+          src.start();
+        }
+      }catch(e){}
+      setTimeout(tick, 3000+Math.random()*4000);
+    };
+    setTimeout(tick, 1500+Math.random()*2000);
+  }
+  // a small synthesized room tone — turns dry chimes into something that feels like it's
+  // actually resonating in a space, instead of a flat synthesizer beep
+  let reverbNode = null, reverbSendGain = null;
+  function setupReverb(ctx){
+    if(reverbNode) return;
+    try{
+      const dur = 1.3, rate = ctx.sampleRate, len = Math.floor(rate*dur);
+      const impulse = ctx.createBuffer(2, len, rate);
+      for(let ch=0; ch<2; ch++){
+        const data = impulse.getChannelData(ch);
+        for(let i=0;i<len;i++){ data[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.7); }
+      }
+      reverbNode = ctx.createConvolver();
+      reverbNode.buffer = impulse;
+      reverbSendGain = ctx.createGain();
+      reverbSendGain.gain.value = 0.16;
+      reverbNode.connect(reverbSendGain);
+      reverbSendGain.connect(ctx.destination);
+    }catch(e){ reverbNode = null; }
+  }
+  function tone(freq, dur, type, vol, delay, opts){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    opts = opts||{};
+    const start = ctx.currentTime + (delay||0);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type||'sine';
+    osc.frequency.setValueAtTime(freq, start);
+    if(opts.glideTo) osc.frequency.exponentialRampToValueAtTime(opts.glideTo, start+dur);
+    let node = osc;
+    if(opts.lowpass){
+      const lp = ctx.createBiquadFilter();
+      lp.type = 'lowpass'; lp.frequency.value = opts.lowpass; lp.Q.value = 0.3;
+      osc.connect(lp); node = lp;
+    }
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(vol||0.15, start+(opts.attack||0.014));
+    gain.gain.exponentialRampToValueAtTime(0.0001, start+dur);
+    let outNode = gain;
+    if(opts.pan){
+      try{
+        const panner = ctx.createStereoPanner();
+        panner.pan.value = opts.pan;
+        gain.connect(panner);
+        outNode = panner;
+      }catch(e){}
+    }
+    node.connect(gain);
+    outNode.connect(ctx.destination);
+    if(!opts.dry && reverbNode){ outNode.connect(reverbNode); }
+    osc.start(start); osc.stop(start+dur+0.03);
+  }
+  // a soft, refined "chime" — fundamental plus two quiet overtones, like a small bell or glass note
+  function chime(freq, dur, vol, delay, pan){
+    delay = delay||0;
+    tone(freq, dur, 'sine', vol, delay, {lowpass:3200, pan:pan});
+    tone(freq*2.003, dur*0.75, 'sine', vol*0.32, delay+0.004, {lowpass:4200, pan:pan});
+    tone(freq*1.5, dur*0.85, 'triangle', vol*0.22, delay+0.008, {lowpass:3000, pan:pan});
+  }
+  // a soft filtered-noise texture, used for card-touch and murmur sounds
+  function noiseTexture(dur, filterType, freq, q, vol, attack){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    try{
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer(ctx, dur);
+      const filt = ctx.createBiquadFilter();
+      filt.type = filterType; filt.frequency.value = freq; filt.Q.value = q;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(vol, ctx.currentTime+(attack||0.01));
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+      noise.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+      noise.start(); noise.stop(ctx.currentTime+dur+0.02);
+    }catch(e){}
+  }
+  // the crisp little snap of a card touching a wooden table, not an electronic beep
+  function sfxCardPlay(){
+    noiseTexture(0.05, 'highpass', 2600, 0.9, 0.05, 0.002);
+    tone(180, 0.05, 'sine', 0.045, 0, {lowpass:900});
+  }
+  function sfxPasse(){ noiseTexture(0.22, 'bandpass', 480, 0.6, 0.045, 0.05); }
+  function sfxTrickWinYou(){ chime(660,0.2,0.09,0,0.25); chime(880,0.24,0.075,0.1,0.25); }
+  function sfxTrickWinAI(){ chime(392,0.18,0.07,0,-0.25); chime(330,0.22,0.06,0.1,-0.25); }
+  function sfxHandWin(){ chime(523,0.24,0.11,0,0.15); chime(659,0.24,0.10,0.11,-0.1); chime(784,0.32,0.11,0.22,0.2); }
+  function sfxHandLose(){ chime(392,0.24,0.08,0,-0.15); chime(330,0.3,0.07,0.15,-0.2); }
+  function sfxBigWin(){ chime(523,0.22,0.12,0,-0.2); chime(659,0.22,0.12,0.12,0); chime(784,0.22,0.13,0.24,0.2); chime(1047,0.4,0.14,0.36,0); }
+  function sfxMatchWin(){ chime(523,0.24,0.13,0,-0.25); chime(659,0.24,0.13,0.13,0.1); chime(784,0.24,0.14,0.26,-0.1); chime(1047,0.42,0.15,0.39,0.25); chime(1319,0.5,0.13,0.54,0); }
+  function sfxMatchLose(){ chime(392,0.3,0.10,0,0); chime(330,0.34,0.09,0.18,-0.1); chime(262,0.45,0.09,0.37,0.1); }
+
+  // ---- Invisible crowd — you never see them, but they react ----
+  function noiseBuffer(ctx, dur){
+    const size = Math.max(1, Math.floor(ctx.sampleRate*dur));
+    const buf = ctx.createBuffer(1, size, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<size;i++) data[i] = Math.random()*2-1;
+    return buf;
+  }
+  // intensity: 'murmur' (quiet, most control-takes) or 'gasp' (big "waaaohh!" near match point)
+  function sfxCrowd(intensity){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    const big = intensity==='gasp';
+    const dur = big ? 1.15 : 0.5;
+    try{
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer(ctx, dur);
+      const band = ctx.createBiquadFilter();
+      band.type = 'bandpass';
+      band.Q.value = big ? 0.6 : 0.9;
+      band.frequency.setValueAtTime(big?620:520, ctx.currentTime);
+      band.frequency.exponentialRampToValueAtTime(big?230:340, ctx.currentTime+dur*0.85);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(big?0.16:0.07, ctx.currentTime+dur*0.22);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
+      noise.connect(band); band.connect(gain); gain.connect(ctx.destination);
+      noise.start(); noise.stop(ctx.currentTime+dur+0.05);
+    }catch(e){}
+    // a few detuned murmuring voices underneath, like a small crowd reacting together
+    const n = big ? 4 : 2;
+    for(let i=0;i<n;i++){
+      const f = (big ? 130 : 150) + Math.random()*40 + i*14;
+      tone(f, dur*0.85, 'sine', (big?0.05:0.025)+Math.random()*0.02, Math.random()*0.05);
+    }
+  }
+
+
+  const PENALTY_CONTROL_LINES = [
+    "Eh la, c'est fini pour toi.","Facile. Trop facile.","Range tes cartes, sérieux.",
+    "Penalty ne rate jamais, tu le savais pas ?","C'est moi le patron ici.","Tu appelles ça une carte ?",
+    "Merci pour le cadeau.","On se calme, on respire.","T'as vu comment j'ai fait ça ?",
+    "Tu voulais jouer contre qui exactement ?","Aïe. Ça, ça fait mal.","Je peux continuer comme ça toute la nuit.",
+    "T'as vraiment cru que ça allait passer ?","Reste concentré, ça devient triste.",
+    "Je vais commencer à m'ennuyer si tu continues comme ça.","Encore. Toujours moi.",
+    "Tu comptais sur quoi, exactement ?","Ho ho ho. Regarde-moi ça."
+  ];
+  const PENALTY_WIN_LINES = [
+    "Encore une manche pour Penalty. Normal.","Je t'avais prévenu dans le livre.",
+    "Chapitre 9, mon gars. Relis-le.","C'est écrit dans le manuel : je gagne.",
+    "Une de plus. Compte les points.","Tu veux ma photo dédicacée ?",
+    "On dirait que le quartier a un nouveau chapitre à écrire sur toi.",
+    "Tu vas rentrer raconter quoi à tes amis, là ?","Sérieux, tu voulais vraiment jouer contre moi ?"
+  ];
+  const PENALTY_CORA_LINES = ["LE CORA ! Tu as vu ça ?!","Note ça dans tes cahiers, petit.","Ça, c'est pour le manuel, chapitre 5."];
+  const PENALTY_GLACEE_LINES = ["33 GLACÉE ! Je suis une légende !","Ça, ça rentre dans le manuel direct.","Personne ne va me croire. Tant pis pour eux."];
+  const PENALTY_SURPRISE_LINES = ["Quel bail ?!","Eh mais... quel bail !","Non mais quel bail celui-là !","Attends... quel bail !","Ah bon ?! Depuis quand ?!"];
+  const PENALTY_LOSE_LINES = ["Bon. Ça arrive.","Une fois n'est pas coutume.","Je te laisse gagner celle-là.","Mouais. La prochaine est pour moi."];
+  // fired when Penalty is BEHIND on the scoreboard — he talks trash anyway, trying to rattle you
+  const PENALTY_BEHIND_TAUNT_LINES = [
+    "Ça veut rien dire pour la suite.","Profite bien, ça va pas durer.","Tu trembles déjà ? Bien.",
+    "Tu joues bien pour un débutant.","Continue comme ça, ça m'arrange.","Je te laisse le score, pas la partie.",
+    "T'inquiète, je m'échauffe.","On va voir qui rigole à la fin.","Petite victoire. Petit joueur.",
+    "C'est là que ça devient intéressant pour moi."
+  ];
+
+  let bubbleTimer = null;
+  function penaltySay(lines){
+    if(mode==='mp') return;
+    const bubble = document.getElementById('penaltyBubble');
+    if(!bubble || !lines || lines.length===0) return;
+    bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
+    bubble.classList.remove('show');
+    void bubble.offsetWidth; // restart animation if already showing
+    bubble.classList.add('show');
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(()=> bubble.classList.remove('show'), 3200);
+  }
+  // when Penalty is behind, mix in a defiant taunt instead of the "normal" line — he's trying to destabilize you
+  function penaltySayMaybeTaunting(normalLines){
+    if(mode!=='ai'){ penaltySay(normalLines); return; }
+    if(scores.ai < scores.you && Math.random()<0.55){ penaltySay(PENALTY_BEHIND_TAUNT_LINES); }
+    else { penaltySay(normalLines); }
+  }
+
+  function lastTwoWinners(){
+    const n = state.trickWinners.length;
+    return [ n>=1?state.trickWinners[n-1]:null, n>=2?state.trickWinners[n-2]:null ];
+  }
+
+  // ---- Difficulty levels ----
+  // 'hard'   = full-knowledge minimax (existing search/bestAILead/bestAIDefend below) — sees your hand, near-unbeatable
+  // 'normal' = solid heuristic AI — counts played cards, plays sure winners, sandbags smartly, no cheating
+  // 'easy'   = same heuristic, but often just plays a random legal card — makes real mistakes
+  // ---- Penalty's memory of THIS player, persisted on this device across games ----
+  const PROFILE_KEY = 'fapfap_penalty_profile_v1';
+  function defaultProfile(){
+    return {
+      gamesPlayed: 0, gamesWon: 0, gamesLost: 0,
+      passeOpportunities: 0, passeTaken: 0,
+      sandbagBaseRate: 0.35,
+      handsWithSandbag: 0, handsWithSandbagWon: 0,
+      handsNoSandbag: 0, handsNoSandbagWon: 0,
+      squareGamesPlayed: 0, squareWins: 0
+    };
+  }
+  function loadProfile(){
+    try{
+      const raw = localStorage.getItem(PROFILE_KEY);
+      if(raw) return Object.assign(defaultProfile(), JSON.parse(raw));
+    }catch(e){}
+    return defaultProfile();
+  }
+  function saveProfile(){ try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }catch(e){} }
+  let profile = loadProfile();
+
+  // known-void tracking: which suits each side has proven (by playing off-suit, or by Passe) that they lack —
+  // reset fresh every hand, updated as real information is revealed. Never touches the opponent's actual hand.
+  function resetVoidTracking(){ state.knownVoid = {you:new Set(), ai:new Set()}; }
+  function markVoid(actor, suit){ if(state.knownVoid) state.knownVoid[actor].add(suit); }
+
+  function allSeenCards(){
+    let seen = [...state.aiHand];
+    state.history.forEach(e=>{ if(e.type==='card') seen.push(e.card); });
+    return seen;
+  }
+  function isSureWinner(card, seen){
+    if(state.knownVoid && state.knownVoid.you.has(card.suit)) return true; // player can't contest this suit anymore, period
+    const deck = buildDeck();
+    const key = c=>c.suit+'-'+c.rank;
+    const seenKeys = new Set(seen.map(key));
+    const remaining = deck.filter(c=>!seenKeys.has(key(c)));
+    return !remaining.some(c=>c.suit===card.suit && c.rank>card.rank);
+  }
+  function heuristicLead(hand){
+    const seen = allSeenCards();
+    const sureWinners = hand.filter(c=>isSureWinner(c, seen)).sort((a,b)=>a.rank-b.rank);
+    if(sureWinners.length>0) return sureWinners[0];
+    const bySuit = {};
+    hand.forEach(c=>{ (bySuit[c.suit]=bySuit[c.suit]||[]).push(c); });
+    let bestSuit=null, bestScore=-1;
+    Object.keys(bySuit).forEach(s=>{
+      const cards = bySuit[s];
+      const score = cards.length*10 - Math.max(...cards.map(c=>c.rank));
+      if(score>bestScore){ bestScore=score; bestSuit=s; }
+    });
+    const options = bySuit[bestSuit].sort((a,b)=>a.rank-b.rank);
+    return hand.length<=2 ? options[options.length-1] : options[0];
+  }
+  function heuristicDefend(hand, lead){
+    if(!state.passer && canPasse(hand, lead.suit)){
+      const sameSuit = hand[0].suit===hand[1].suit;
+      const three = hand.find(c=>c.rank===3);
+      if(sameSuit){
+        // the classic reserve-pair use case from the manual — usually the right move, but not robotic
+        if(Math.random()<0.85) return {type:'passe'};
+      } else if(three){
+        // worth protecting the 3 for a possible CORA later — either hold both, or discard the OTHER
+        // card now and keep the 3 in reserve (exactly the "play the 10, keep the 3" feint)
+        if(Math.random()<0.5) return {type:'passe'};
+        const other = hand.find(c=>c.rank!==3);
+        return {type:'card', card: other};
+      } else if(Math.random()<0.22){
+        // no special reason to hold both — occasionally pass anyway, just to stay unpredictable
+        return {type:'passe'};
+      }
+      // otherwise: play normally, discarding the weaker of the two now
+      const weaker = [...hand].sort((a,b)=>a.rank-b.rank)[0];
+      return {type:'card', card: weaker};
+    }
+    if(hasSuit(hand, lead.suit)){
+      const options = hand.filter(c=>c.suit===lead.suit).sort((a,b)=>a.rank-b.rank);
+      const canBeat = options.filter(c=>c.rank>lead.rank);
+      if(canBeat.length>0){
+        const seen = allSeenCards();
+        const lowOptions = options.filter(c=>c.rank<lead.rank);
+        const wouldKeepSureWinner = canBeat.some(c=>isSureWinner(c, seen));
+        const behindBoost = (mode==='ai' && scores.ai<scores.you) ? 0.15 : 0;
+        const effectiveSandbagRate = Math.min(0.7, profile.sandbagBaseRate + behindBoost);
+        if(lowOptions.length>0 && wouldKeepSureWinner && hand.length>2 && Math.random()<effectiveSandbagRate){
+          state.sandbaggedThisHand = true;
+          return {type:'card', card: lowOptions[0]};
+        }
+        return {type:'card', card: canBeat[0]};
+      }
+      return {type:'card', card: options[0]};
+    }
+    const seen = allSeenCards();
+    const disposable = hand.filter(c=>!isSureWinner(c, seen));
+    const pool = disposable.length>0 ? disposable : hand;
+    return {type:'card', card: [...pool].sort((a,b)=>a.rank-b.rank)[0]};
+  }
+  function easyLead(hand){
+    if(Math.random()<0.5) return hand[Math.floor(Math.random()*hand.length)];
+    return heuristicLead(hand);
+  }
+  function easyDefend(hand, lead){
+    if(Math.random()<0.5){
+      if(hasSuit(hand, lead.suit)){
+        const options = hand.filter(c=>c.suit===lead.suit);
+        return {type:'card', card: options[Math.floor(Math.random()*options.length)]};
+      }
+      if(canPasse(hand, lead.suit) && Math.random()<0.5) return {type:'passe'};
+      return {type:'card', card: hand[Math.floor(Math.random()*hand.length)]};
+    }
+    return heuristicDefend(hand, lead);
+  }
+
+  document.getElementById('btnMute').addEventListener('click', ()=>{
+    soundOn = !soundOn;
+    document.getElementById('btnMute').textContent = soundOn ? '🔊' : '🔇';
+    setAmbientMuted(!soundOn);
+    if(soundOn) ensureAudio();
+  });
+  document.getElementById('btnRestartGame').addEventListener('click', ()=>{
+    const p = document.querySelector('#confirmRestartOverlay p');
+    if(p) p.textContent = mode==='mp' ? 'Tu quitteras la partie en ligne en cours.' : 'La manche en cours sera perdue.';
+    document.getElementById('confirmRestartOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnConfirmRestartYes').addEventListener('click', ()=>{
+    document.getElementById('confirmRestartOverlay').classList.add('hidden');
+    if(mode==='mp'){
+      mpTeardown();
+      mode = 'ai';
+      applyOppNameToUI();
+      document.getElementById('matchOverOverlay').classList.add('hidden');
+      document.getElementById('menuOverlay').classList.remove('hidden');
+    } else if(mode==='square'){
+      mode = 'ai';
+      applyOppNameToUI();
+      document.getElementById('squareScreen').classList.add('hidden');
+      document.getElementById('duoScreen').classList.remove('hidden');
+      document.querySelector('header .sub').textContent = 'Duel de quartier · Toi contre Penalty';
+      document.getElementById('menuOverlay').classList.remove('hidden');
+    } else {
+      newMatch();
+    }
+  });
+  document.getElementById('btnNetQuit').addEventListener('click', ()=>{
+    document.getElementById('btnRestartGame').click();
+  });
+  document.getElementById('btnConfirmRestartNo').addEventListener('click', ()=>{
+    document.getElementById('confirmRestartOverlay').classList.add('hidden');
+  });
+
+  function newMatch(){
+    scores = {you:0, ai:0};
+    document.getElementById('scoreYou').textContent = '0';
+    document.getElementById('scoreAI').textContent = '0';
+    document.getElementById('matchOverOverlay').classList.add('hidden');
+    dealer = Math.random()<0.5 ? 'you' : 'ai';
+    beginHand();
+  }
+
+  function logMsg(msg, keepOne){
+    return; // narrator removed — commentary is silent now
+  }
+  function showToast(main, sub, opts){
+    opts = opts||{};
+    const t = document.getElementById('toast');
+    document.getElementById('toastMain').textContent = main;
+    document.getElementById('toastSub').textContent = sub||'';
+    t.classList.toggle('big', !!opts.big);
+    t.classList.toggle('celebrate', !!opts.celebrate);
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=> t.classList.remove('show'), opts.ms||2200);
+  }
+
+  // ---- Hand setup: dealer/cut flow ----
+  let workingDeck = null;
+
+  function beginHand(){
+    document.getElementById('btnNext').classList.add('hidden');
+    clearSlots();
+
+    if(mode==='mp' && !mpIsHost){
+      // guest: host drives the deal; just show the announcement, then wait for network messages
+      const overlay = document.getElementById('dealAnnounceOverlay');
+      document.getElementById('dealAnnounceTitle').textContent = 'Nouvelle manche';
+      document.getElementById('dealAnnounceText').textContent =
+        (dealer==='you' ? 'Tu mélanges les cartes.' : oppName()+' mélange les cartes.');
+      overlay.classList.remove('hidden');
+      document.getElementById('btnDealContinue').onclick = ()=>{ overlay.classList.add('hidden'); };
+      return;
+    }
+
+    workingDeck = shuffle(buildDeck());
+    const nonDealer = dealer==='you' ? 'ai' : 'you';
+    const overlay = document.getElementById('dealAnnounceOverlay');
+    document.getElementById('dealAnnounceTitle').textContent = 'Nouvelle manche';
+    document.getElementById('dealAnnounceText').textContent =
+      (dealer==='you' ? 'Tu mélanges les cartes.' : oppName()+' mélange les cartes.');
+    overlay.classList.remove('hidden');
+    document.getElementById('btnDealContinue').onclick = ()=>{
+      overlay.classList.add('hidden');
+      if(nonDealer==='you'){
+        openChoiceForPlayer(false);
+      } else if(mode==='mp'){
+        mpSend({t:'needCutChoice'});
+        logMsg('En attente du choix de '+oppName()+'...', true);
+      } else {
+        aiChoosesPartageOrDepose();
+      }
+    };
+  }
+
+  function openChoiceForPlayer(isRemote){
+    const ov = document.getElementById('choiceOverlay');
+    document.getElementById('choiceText').textContent = oppName()+' mélange. À toi de choisir.';
+    ov.classList.remove('hidden');
+    document.getElementById('btnRemix').classList.toggle('hidden', !!isRemote);
+    document.getElementById('btnPartage').onclick = ()=>{
+      ov.classList.add('hidden');
+      if(isRemote){ mpSend({t:'cutChoice', choice:'partage'}); }
+      else { dealFinalize(workingDeck); }
+    };
+    document.getElementById('btnDepose').onclick = ()=>{ ov.classList.add('hidden'); openCutForPlayer(isRemote); };
+    document.getElementById('btnRemix').onclick = ()=>{
+      workingDeck = shuffle(buildDeck()); logMsg('Tu exiges un nouveau mélange.', true);
+    };
+  }
+
+  function openCutForPlayer(isRemote){
+    const ov = document.getElementById('cutOverlay');
+    const vis = document.getElementById('cutStackVisual');
+    vis.innerHTML='';
+    for(let i=0;i<10;i++){ const d=document.createElement('div'); d.className='cs'; vis.appendChild(d); }
+    ov.classList.remove('hidden');
+    const doCut = (frac)=>{
+      ov.classList.add('hidden');
+      if(isRemote){
+        openPileChoice(null, null, true, frac);
+        return;
+      }
+      const idx = Math.round(workingDeck.length*frac);
+      const partA = workingDeck.slice(0, idx); // originally on top
+      const partB = workingDeck.slice(idx);    // originally on bottom
+      // "reposées en ordre inverse": bottom part goes on top
+      openPileChoice(partB, partA, false);
+    };
+    document.getElementById('cutLow').onclick = ()=> doCut(1/3);
+    document.getElementById('cutMid').onclick = ()=> doCut(1/2);
+    document.getElementById('cutHigh').onclick = ()=> doCut(2/3);
+  }
+
+  function openPileChoice(topPile, bottomPile, isRemote, frac){
+    const ov = document.getElementById('pileOverlay');
+    ov.classList.remove('hidden');
+    document.getElementById('pileTop').onclick = ()=>{
+      ov.classList.add('hidden');
+      if(isRemote){ mpSend({t:'cutChoice', choice:'depose', frac, pile:'top'}); return; }
+      logMsg('Toi : "Prends le tas du haut."', true);
+      dealFinalize(topPile.length>=10 ? topPile : topPile.concat(bottomPile));
+    };
+    document.getElementById('pileBottom').onclick = ()=>{
+      ov.classList.add('hidden');
+      if(isRemote){ mpSend({t:'cutChoice', choice:'depose', frac, pile:'bottom'}); return; }
+      logMsg('Toi : "Prends le tas du bas."', true);
+      dealFinalize(bottomPile.length>=10 ? bottomPile : bottomPile.concat(topPile));
+    };
+  }
+
+  function mpApplyRemoteCutChoice(msg){
+    let deckOrder;
+    if(msg.choice==='partage'){
+      logMsg(oppNameVal+' : "Je partage."', true);
+      deckOrder = workingDeck;
+    } else {
+      const idx = Math.round(workingDeck.length*msg.frac);
+      const partA = workingDeck.slice(0, idx);
+      const partB = workingDeck.slice(idx);
+      const chosen = msg.pile==='top' ? partB : partA;
+      const rest = msg.pile==='top' ? partA : partB;
+      logMsg(oppNameVal+' : "Je dépose, prends le tas du '+(msg.pile==='top'?'haut':'bas')+'."', true);
+      deckOrder = chosen.length>=10 ? chosen : chosen.concat(rest);
+    }
+    finalizeDealFromDeckHost(deckOrder);
+  }
+
+  function aiChoosesPartageOrDepose(){
+    // player is dealer; AI (as adversaire) makes the choice — resolved automatically, briefly narrated
+    const wantsDepose = Math.random()<0.5;
+    if(!wantsDepose){
+      logMsg('Penalty : "Je partage."', true);
+      finalizeDealFromDeck(workingDeck);
+    } else {
+      logMsg('Penalty : "Je dépose."', true);
+      const frac = [1/3,1/2,2/3][Math.floor(Math.random()*3)];
+      const idx = Math.round(workingDeck.length*frac);
+      const partA = workingDeck.slice(0, idx);
+      const partB = workingDeck.slice(idx);
+      const takeTop = Math.random()<0.5;
+      logMsg('Penalty coupe et prend le tas du ' + (takeTop?'haut':'bas') + '.', true);
+      const chosen = takeTop ? partB : partA;
+      finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB));
+    }
+  }
+
+  function finalizeDealFromDeck(deckOrder){
+    const playerHand = deckOrder.slice(0,5);
+    const aiHand = deckOrder.slice(5,10);
+    const nonDealer = dealer==='you' ? 'ai' : 'you'; // dealer never starts
+    state = {
+      playerHand, aiHand,
+      playerOriginalHand: [...playerHand], // la main TELLE QUE DISTRIBUÉE — référence fixe pour la victoire automatique
+      aiOriginalHand: [...aiHand],
+      leader: nonDealer,
+      leadSuit: null,
+      cardsPlayedThisHand: 0,
+      trickWinners: [],
+      history: [],
+      handOver: false,
+      dealer
+    };
+    resetVoidTracking();
+    state.sandbaggedThisHand = false;
+    locked = !state.handOver && state.leader==='ai';
+    renderAll(true);
+    checkAutoWinWindow();
+    if(!state.handOver && state.leader==='ai'){
+      setTimeout(aiTakeTurn, 900);
+    }
+  }
+
+  function dealFinalize(deckOrder){
+    if(mode==='mp' && mpIsHost) finalizeDealFromDeckHost(deckOrder);
+    else finalizeDealFromDeck(deckOrder);
+  }
+
+  function finalizeDealFromDeckHost(deckOrder){
+    const hostHand = deckOrder.slice(0,5);
+    const guestHand = deckOrder.slice(5,10);
+    const nonDealer = dealer==='you' ? 'ai' : 'you';
+    state = {
+      playerHand: hostHand, aiHand: guestHand,
+      playerOriginalHand: [...hostHand],
+      aiOriginalHand: [...guestHand], // known locally for bookkeeping only — never rendered to screen
+      leader: nonDealer,
+      leadSuit: null, cardsPlayedThisHand: 0, trickWinners: [], history: [], handOver: false, dealer
+    };
+    mpSend({
+      t:'dealt',
+      yourHand: guestHand,
+      oppCount: hostHand.length,
+      leader: nonDealer==='you' ? 'ai' : 'you', // flip perspective for the guest
+      dealer: dealer==='you' ? 'ai' : 'you'
+    });
+    locked = !state.handOver && state.leader==='ai';
+    renderAll(true);
+    checkAutoWinWindow();
+    // in MP mode the "ai" side never plays locally — we just wait for their network message
+  }
+
+  // ---- rendering ----
+  function cardEl(card, opts){
+    opts = opts||{};
+    const d = document.createElement('div');
+    const isTen = card.rank===10;
+    d.className = 'card suit-'+card.suit + (isTen?' rank-ten':'') + (opts.extraClass?(' '+opts.extraClass):'');
+    if(opts.style) d.style.cssText = opts.style;
+    d.dataset.key = card.suit+'-'+card.rank;
+    const cornerHtml = '<span class="c-rank">'+card.rank+'</span>'+suitSvg(card.suit,'c-pip');
+    d.innerHTML =
+      '<div class="corner-idx tl">'+cornerHtml+'</div>'+
+      '<div class="card-watermark">'+suitSvg(card.suit,'wm-svg')+'</div>'+
+      '<div class="card-suitname">'+card.suit+'</div>'+
+      '<div class="corner-idx br">'+cornerHtml+'</div>';
+    return d;
+  }
+
+  function renderAll(isDeal){
+    const aiRow = document.getElementById('aiCardsRow');
+    aiRow.innerHTML='';
+    for(let i=0;i<state.aiHand.length;i++){ const fd=document.createElement('div'); fd.className='facedown'; aiRow.appendChild(fd); }
+    const nAi = state.aiHand.length;
+    document.getElementById('aiCount').textContent = nAi + (nAi>1 ? ' cartes' : ' carte');
+
+    // Uno-style "your turn" state, shown in three places at once: badge, hand label, hand glow
+    const yourTurn = !locked && !state.handOver && (
+      (!state.leadSuit && state.leader==='you') ||
+      (!!state.leadSuit && state._leadActor==='ai')
+    );
+    const dumping = yourTurn && isDumpTurn('you');
+
+    const badge = document.getElementById('demandBadge');
+    badge.classList.toggle('your-turn', yourTurn);
+    if(state.handOver){
+      badge.textContent = 'manche terminée';
+    } else if(state.leadSuit){
+      badge.innerHTML = 'commande : <b>'+state.leadSuit+'</b> <span class="pip">'+PIP[state.leadSuit]+'</span>';
+    } else {
+      badge.textContent = state.leader==='you' ? 'à toi de commander' : oppName()+' commande';
+    }
+    const handLabel = document.getElementById('handLabel');
+    handLabel.classList.toggle('your-turn', yourTurn);
+    handLabel.textContent = state.handOver ? 'Ta main'
+      : dumping ? 'Pose tes 2 cartes'
+      : yourTurn ? (state.leadSuit ? 'À toi de répondre' : 'À toi de commander')
+      : oppName()+' réfléchit…';
+
+    const handEl = document.getElementById('playerHand');
+    handEl.innerHTML='';
+    const sorted = sortHand(state.playerHand);
+    const mustFollow = state.leadSuit && hasSuit(state.playerHand, state.leadSuit);
+    sorted.forEach((card,i)=>{
+      const legal = yourTurn && (dumping || !state.leadSuit || !mustFollow || card.suit===state.leadSuit);
+      // "idle" = not your turn: cards stay fully readable, just not clickable. "blocked" = your turn but illegal.
+      const cls = legal ? 'playable' : (yourTurn ? 'blocked' : 'idle');
+      const style = isDeal ? ('animation-delay:'+(i*70)+'ms') : '';
+      const el = cardEl(card, {extraClass: cls + (isDeal?' dealt':''), style});
+      if(legal) el.addEventListener('click', ()=> playerPlays(card));
+      handEl.appendChild(el);
+    });
+
+    const passeBtn = document.getElementById('btnPasse');
+    const eligible = !locked && !state.passer && state.leader==='ai' && state.leadSuit && canPasse(state.playerHand, state.leadSuit) && !state.handOver;
+    passeBtn.classList.toggle('hidden', !eligible);
+    if(eligible && mode==='ai' && !state._passeOppLogged){
+      state._passeOppLogged = true;
+      profile.passeOpportunities += 1;
+    }
+    document.getElementById('btnDump').classList.toggle('hidden', !dumping);
+
+    document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
+    document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
+    const armEl = document.querySelector('.ai-hands');
+    if(armEl) armEl.classList.toggle('impatient', locked && !yourTurn && !state.handOver);
+  }
+
+  function pushHistory(entry){
+    state.history.push(entry);
+  }
+
+  function checkAutoWinWindow(){
+    if(state.cardsPlayedThisHand>=2 || state.handOver) return;
+    const win = checkAutoWin(state.playerOriginalHand);
+    const btn = document.getElementById('btnAnnounce');
+    btn.classList.toggle('hidden', !win);
+    if(win) btn.dataset.label = win.label;
+    if(mode!=='mp'){
+      const aiWin = checkAutoWin(state.aiOriginalHand);
+      if(aiWin && !state.handOver){
+        if(!state.aiAnnouncePlan) state.aiAnnouncePlan = pickAnnouncePlan();
+        const plan = state.aiAnnouncePlan;
+        if(plan==='now' || (plan==='late' && state.cardsPlayedThisHand>=1)) endHandAutoWin('ai', aiWin.label);
+        // 'miss': Penalty is distracted too, and the window closes on him — he only notices after the hand
+      }
+    }
+  }
+  // like any player at a real table, an AI sometimes announces a beat late (tolerated after the 1st card),
+  // and now and then misses the window entirely (after the 2nd card the automatic win is lost)
+  function pickAnnouncePlan(){
+    const r = Math.random();
+    return r<0.70 ? 'now' : (r<0.90 ? 'late' : 'miss');
+  }
+  const PENALTY_MISSED_ANNOUNCE_LINES = [
+    "Attends... j'avais une victoire automatique, moi !","Eh, j'ai oublié d'annoncer. Ça reste entre nous.",
+    "Le plafond m'a distrait. Trop tard pour annoncer."
+  ];
+  document.getElementById('btnAnnounce').addEventListener('click', ()=>{
+    const label = document.getElementById('btnAnnounce').dataset.label;
+    if(mode==='mp' && !mpIsHost){
+      // guest never resolves this locally — only the host is authoritative, exactly like normal hand endings
+      mpSend({t:'autowinRequest', label});
+      return;
+    }
+    endHandAutoWin('you', label);
+  });
+  function endHandAutoWin(who, label){
+    if(state.handOver) return; // already resolved (e.g. a near-simultaneous announcement lost the race)
+    state.handOver = true;
+    document.getElementById('btnAnnounce').classList.add('hidden');
+    document.getElementById('btnPasse').classList.add('hidden');
+    showToast(who==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
+    sfxBigWin();
+    bigImpact();
+    if(who==='you') burstConfetti(28);
+    penaltySay(who==='you' ? PENALTY_SURPRISE_LINES : PENALTY_WIN_LINES);
+    if(mode==='mp' && mpIsHost){
+      mpSend({t:'handOver', winner: who==='you'?'ai':'you', pts:1, label:'Victoire automatique — '+label});
+    }
+    awardPoints(who, 1, 'Victoire automatique — '+label);
+  }
+
+  // ---- playing cards ----
+  function isDumpTurn(actor){
+    return !!state && !state.handOver && !!state.leadSuit && state.passer===actor && state._leadActor!==actor;
+  }
+  function playerDump(){
+    if(state.handOver || locked || !isDumpTurn('you')) return;
+    locked = true;
+    const cards = [...state.playerHand];
+    state.playerHand.length = 0;
+    if(mode==='mp') mpSend({t:'dump', cards});
+    resolveDump('you', cards);
+  }
+  document.getElementById('btnDump').addEventListener('click', playerDump);
+  function playerPlays(card){
+    if(state.handOver || locked) return;
+    if(isDumpTurn('you')) return playerDump();
+    if(state.leadSuit){
+      const mustFollow = hasSuit(state.playerHand, state.leadSuit);
+      if(mustFollow && card.suit!==state.leadSuit) return;
+    }
+    locked = true;
+    removeCard(state.playerHand, card);
+    if(mode==='mp') mpSend({t:'play', card});
+    resolvePlay('you', card, false);
+  }
+  document.getElementById('btnPasse').addEventListener('click', ()=>{
+    if(state.handOver || locked) return;
+    if(state.passer || !canPasse(state.playerHand, state.leadSuit)) return;
+    locked = true;
+    if(mode==='ai') profile.passeTaken += 1;
+    logMsg('Toi : "Je suis en passe."');
+    if(mode==='mp') mpSend({t:'passe'});
+    resolvePlay('you', null, true);
+  });
+  function removeCard(hand, card){
+    const idx = hand.findIndex(c=>c.suit===card.suit && c.rank===card.rank);
+    if(idx>-1) hand.splice(idx,1);
+  }
+
+  function resolvePlay(actor, card, isPasse){
+    if(isPasse){
+      markVoid(actor, state.leadSuit);
+      state.passer = actor; // this side will answer the final lead with both reserved cards at once
+      sfxPasse();
+      pushHistory({type:'passe', actor});
+      showSlot(actor, null);
+      // trick resolves uncontested: leader (the one who led) keeps control with their led card.
+      // Uncontested = never eligible for CORA / 33 Glacée, even if the card is a 3.
+      const winner = state._leadActor;
+      const winCard = state._leadCard;
+      state.trickWinners.push({rank:winCard.rank, winner, viaPasse:true});
+      state.leader = winner;
+      state.leadSuit = null; state._leadCard=null; state._leadActor=null;
+      renderAll();
+      if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(PENALTY_CONTROL_LINES); }
+      sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
+      setTimeout(()=>{ afterTurn(); }, 1100);
+      return;
+    }
+
+    sfxCardPlay();
+    vibrate(12);
+    state.cardsPlayedThisHand += 1;
+    pushHistory({type:'card', actor, card});
+    if(!state.leadSuit) archiveTrick(); // a new trick opens: the previous one moves to the small history row
+    showSlot(actor, card, true);
+
+    if(!state.leadSuit){
+      state.leadSuit = card.suit; state._leadCard = card; state._leadActor = actor; state._passeOppLogged = false;
+      logMsg((actor==='you'?'Toi':'Penalty')+' commande '+card.suit+' avec le '+card.rank+'.');
+      renderAll();
+      afterTurn();
+      return;
+    }
+
+    const leadCard = state._leadCard;
+    const leadActor = state._leadActor;
+    let winner, winningCard, winEl;
+    if(card.suit===leadCard.suit && card.rank>leadCard.rank){
+      winner = actor; winningCard = card;
+      logMsg((actor==='you'?'Toi':'Penalty')+' prend le contrôle avec le '+card.rank+'.');
+    } else {
+      winner = leadActor; winningCard = leadCard;
+      if(card.suit!==leadCard.suit) markVoid(actor, leadCard.suit);
+      logMsg((actor==='you'?'Toi':'Penalty')+(card.suit!==leadCard.suit?' joue libre — pas de contrôle.':' suit mais reste plus faible.'));
+    }
+    state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA/glacée
+    state.leader = winner;
+    state.leadSuit = null; state._leadCard=null; state._leadActor=null;
+    renderAll();
+
+    if(winner==='ai'){
+      sfxTrickWinAI();
+      penaltySayMaybeTaunting(PENALTY_CONTROL_LINES);
+    } else {
+      sfxTrickWinYou();
+      vibrate(20);
+      if(actor==='you' && leadActor==='ai'){
+        // you just beat Penalty's own command — that stings for him
+        penaltySayMaybeTaunting(PENALTY_SURPRISE_LINES);
+      }
+    }
+    sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
+
+    setTimeout(()=> highlightTrickWin(winner, winningCard), 60);
+    setTimeout(()=>{ afterTurn(); }, 1450);
+  }
+
+  // the passer answers the final lead with both reserved cards at once (see dumpBestFollow)
+  function resolveDump(actor, cards){
+    sfxCardPlay();
+    vibrate(12);
+    state.cardsPlayedThisHand += cards.length;
+    cards.forEach(c=>{ pushHistory({type:'card', actor, card:c}); showSlot(actor, c, true); });
+    const leadCard = state._leadCard;
+    const leadActor = state._leadActor;
+    const best = dumpBestFollow(cards, leadCard.suit);
+    let winner, winningCard;
+    if(best && best.rank>leadCard.rank){ winner = actor; winningCard = best; }
+    else {
+      winner = leadActor; winningCard = leadCard;
+      if(!best) markVoid(actor, leadCard.suit);
+    }
+    state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA
+    state.passer = null;
+    state.leader = winner;
+    state.leadSuit = null; state._leadCard=null; state._leadActor=null;
+    renderAll();
+    if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(PENALTY_CONTROL_LINES); }
+    else { sfxTrickWinYou(); vibrate(20); if(actor==='you') penaltySayMaybeTaunting(PENALTY_SURPRISE_LINES); }
+    sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
+    setTimeout(()=> highlightTrickWin(winner, winningCard), 60);
+    setTimeout(()=>{ afterTurn(); }, 1450);
+  }
+
+  function highlightTrickWin(actor, card){
+    const slotEl = document.getElementById(actor==='you' ? 'youSlot' : 'aiSlot');
+    const c = slotEl && slotEl.querySelector('.card[data-key="'+card.suit+'-'+card.rank+'"]');
+    if(c) c.classList.add('trickwin');
+  }
+
+  // The table only shows the trick in progress, full size. Every earlier trick is kept as a row of
+  // small cards above each seat, so nothing is lost but the current trick is never ambiguous.
+  function slotIds(actor){ return actor==='you' ? ['youSlot','youHist'] : ['aiSlot','aiHist']; }
+  function showSlot(actor, card, animate){
+    const slot = document.getElementById(slotIds(actor)[0]);
+    const wrap = document.createElement('div');
+    wrap.className = 'stack-item';
+    if(card){
+      wrap.dataset.key = card.suit+'-'+card.rank;
+      wrap.appendChild(cardEl(card, {extraClass: animate?'played':''}));
+    } else {
+      wrap.dataset.passe = '1';
+      const p = document.createElement('div'); p.className='passe-chip'; p.textContent='Passe'; wrap.appendChild(p);
+    }
+    slot.appendChild(wrap);
+    slot.classList.toggle('two', slot.children.length>1);
+  }
+  function miniCardEl(card){
+    const d = document.createElement('div');
+    if(!card){ d.className='mini-card passe'; d.textContent='P'; return d; }
+    d.className = 'mini-card suit-'+card.suit+(card.rank===10?' rank-ten':'');
+    d.innerHTML = '<span>'+card.rank+'</span>'+suitSvg(card.suit,'mini-pip');
+    return d;
+  }
+  function archiveTrick(){
+    ['you','ai'].forEach(actor=>{
+      const [slotId, histId] = slotIds(actor);
+      const slot = document.getElementById(slotId), hist = document.getElementById(histId);
+      [...slot.children].forEach(w=>{
+        if(w.dataset.key){ const [s,r] = w.dataset.key.split('-'); hist.appendChild(miniCardEl({suit:s, rank:Number(r)})); }
+        else if(w.dataset.passe) hist.appendChild(miniCardEl(null));
+      });
+      slot.innerHTML=''; slot.classList.remove('two');
+    });
+  }
+  function clearSlots(){
+    ['youSlot','aiSlot','youHist','aiHist'].forEach(id=>{ const el=document.getElementById(id); el.innerHTML=''; el.classList.remove('two'); });
+  }
+  function showEmptyMarker(actor){
+    // makes it obvious this side has no card left to answer with
+    const slot = document.getElementById(slotIds(actor)[0]);
+    const wrap = document.createElement('div');
+    wrap.className = 'stack-item';
+    const p = document.createElement('div');
+    p.className='passe-chip';
+    p.style.fontSize='11px';
+    p.textContent = 'plus de cartes';
+    wrap.appendChild(p);
+    slot.appendChild(wrap);
+  }
+
+  function afterTurn(){
+    checkAutoWinWindow();
+    if(state.handOver) return;
+
+    const guestPassive = (mode==='mp' && !mpIsHost);
+
+    // if whoever must defend has no cards left to respond to an ACTIVE lead, that lead wins the trick
+    // uncontested — and since that side can never contest again, the hand ends right there. This is NOT
+    // a Passe declaration (nobody chose it), so unlike a real Passe it does not block CORA/33 Glacée.
+    // Only the host is authoritative for this — a guest deciding it independently is exactly what caused
+    // real desyncs in testing, since hand-length bookkeeping for the OTHER side is inherently just an estimate.
+    if(!guestPassive && state.leadSuit){
+      const defenderActor = state._leadActor==='ai' ? 'you' : 'ai';
+      const defHand = state._leadActor==='ai' ? state.playerHand : state.aiHand;
+      if(defHand.length===0){
+        showEmptyMarker(defenderActor);
+        logMsg((defenderActor==='you'?'Toi':'Penalty')+" n'a plus de cartes — "+(state._leadActor==='you'?'tu gardes':'Penalty garde')+' le contrôle.');
+        state.trickWinners.push({rank: state._leadCard.rank, winner: state._leadActor, viaPasse:false});
+        state.leader = state._leadActor;
+        state.leadSuit = null; state._leadCard=null; state._leadActor=null;
+        renderAll();
+        setTimeout(()=>finishHandNormal(), 1100);
+        return;
+      }
+    }
+
+    if(!guestPassive){
+      const bothEmpty = state.playerHand.length===0 && state.aiHand.length===0;
+      if(bothEmpty) return finishHandNormal();
+    }
+
+    if(!guestPassive && !state.leadSuit){
+      const leaderHand = state.leader==='you' ? state.playerHand : state.aiHand;
+      if(leaderHand.length===0){
+        // The leader still holds control (nobody ever beat them) but has no card left to open a new trick.
+        // The manche ends right here, in the leader's favor — this is the real risk of Passe: cards you
+        // reserved but never got to play (because the suit never came back around) simply go to waste.
+        // The other side never gets a "free" turn just because the leader ran dry — that would be cheating.
+        return finishHandNormal();
+      }
+    }
+
+    const aiShouldAct =
+      (state.leader==='ai' && !state.leadSuit && state.aiHand.length>0) ||
+      (state._leadActor==='you' && state.leadSuit && state.aiHand.length>0);
+
+    if(aiShouldAct){
+      locked = true;
+      renderAll();
+      if(mode!=='mp') setTimeout(aiTakeTurn, 1000);
+      // in MP mode: just wait — the opponent's 'play'/'passe' network message will call resolvePlay('ai', ...) directly
+    } else {
+      locked = false;
+      renderAll();
+    }
+  }
+
+  function aiTakeTurn(){
+    if(state.handOver){ locked=false; return; }
+    const isAIsTurnToLead = !state.leadSuit && state.leader==='ai' && state.aiHand.length>0;
+    const isAIsTurnToDefend = !!state.leadSuit && state._leadActor==='you' && state.aiHand.length>0;
+    if(!isAIsTurnToLead && !isAIsTurnToDefend){ locked=false; renderAll(); return; }
+
+    const [w1,w2] = lastTwoWinners();
+    if(!state.leadSuit){
+      const card = mode==='ai' ? pimcBestLead() : heuristicLead(state.aiHand);
+      removeCard(state.aiHand, card);
+      if(mode==='ai' && scores.ai<scores.you && Math.random()<0.18) penaltySay(PENALTY_BEHIND_TAUNT_LINES);
+      resolvePlay('ai', card, false);
+    } else if(isDumpTurn('ai')){
+      const cards = [...state.aiHand];
+      state.aiHand.length = 0;
+      resolveDump('ai', cards);
+    } else {
+      const leadInfo = {suit:state.leadSuit, rank:state._leadCard.rank, actor:state._leadActor};
+      const opt = mode==='ai' ? pimcBestDefend(leadInfo) : heuristicDefend(state.aiHand, leadInfo);
+      if(opt.type==='card' && opt.card.suit===leadInfo.suit && opt.card.rank<leadInfo.rank){
+        const hadWinner = state.aiHand.some(c=>c.suit===leadInfo.suit && c.rank>leadInfo.rank);
+        if(hadWinner) state.sandbaggedThisHand = true;
+      }
+      if(opt.type==='passe'){
+        logMsg('Penalty : "Je suis en passe."');
+        resolvePlay('ai', null, true);
+      } else {
+        removeCard(state.aiHand, opt.card);
+        resolvePlay('ai', opt.card, false);
+      }
+    }
+  }
+
+  // ---- end of hand ----
+  function finishHandNormal(){
+    state.handOver = true;
+    const n = state.trickWinners.length;
+    const last = state.trickWinners[n-1];
+    const prev = state.trickWinners[n-2];
+    const cora = last && last.rank===3 && !last.viaPasse;
+    const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
+    const winner = last.winner;
+    const pts = glacee?3:(cora?2:1);
+    const label = glacee?'LA 33 GLACÉE !':(cora?'CORA — gain x2 !':'Manche remportée');
+    if(mode==='mp' && mpIsHost){
+      mpSend({t:'handOver', winner: winner==='you'?'ai':'you', pts, label});
+    }
+    awardPoints(winner, pts, label);
+    if(mode==='ai' && state.aiAnnouncePlan==='miss'){
+      setTimeout(()=> penaltySay(PENALTY_MISSED_ANNOUNCE_LINES), 3400);
+    }
+  }
+
+  let certTimer = null;
+  function showCertificate(title, sub, holdMs){
+    const ov = document.getElementById('certOverlay');
+    document.getElementById('certTitle').textContent = title;
+    document.getElementById('certSub').textContent = sub;
+    ov.classList.add('show');
+    clearTimeout(certTimer);
+    const dismiss = ()=>{ ov.classList.remove('show'); ov.onclick = null; };
+    ov.onclick = dismiss;
+    certTimer = setTimeout(dismiss, holdMs||3400);
+  }
+
+  function bigImpact(){
+    document.body.classList.remove('shake'); void document.body.offsetWidth;
+    document.body.classList.add('shake');
+    const lb = document.getElementById('lightBurst');
+    lb.classList.remove('fire'); void lb.offsetWidth;
+    lb.classList.add('fire');
+    vibrate([30,60,30,60,80]);
+  }
+
+  function burstConfetti(count){
+    count = count || 24;
+    const colors = ['#f4b860','#fff3d6','#d9a441','#8f2f1d','#f6ecd9'];
+    for(let i=0;i<count;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      const angle = Math.random()*Math.PI*2;
+      const dist = 70 + Math.random()*150;
+      const dx = Math.cos(angle)*dist;
+      const dy = Math.sin(angle)*dist - 30;
+      el.style.setProperty('--dx', dx.toFixed(0)+'px');
+      el.style.setProperty('--dy', dy.toFixed(0)+'px');
+      el.style.setProperty('--rot', (Math.random()*720-360).toFixed(0)+'deg');
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDelay = (Math.random()*0.08)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>{ el.remove(); }, 1400);
+    }
+  }
+
+  function bumpScore(el){
+    el.classList.remove('score-bump');
+    void el.offsetWidth;
+    el.classList.add('score-bump');
+  }
+
+  function awardPoints(who, pts, label){
+    if(who==='you') scores.you += pts; else scores.ai += pts;
+    const scoreEl = document.getElementById(who==='you'?'scoreYou':'scoreAI');
+    scoreEl.textContent = who==='you'?scores.you:scores.ai;
+    bumpScore(scoreEl);
+
+    if(mode==='ai'){
+      const aiWonHand = (who==='ai');
+      if(state.sandbaggedThisHand){
+        profile.handsWithSandbag += 1;
+        if(aiWonHand) profile.handsWithSandbagWon += 1;
+      } else {
+        profile.handsNoSandbag += 1;
+        if(aiWonHand) profile.handsNoSandbagWon += 1;
+      }
+      // nudge the sandbag rate toward whichever style has actually been working against THIS player
+      if(profile.handsWithSandbag>=4 && profile.handsNoSandbag>=4){
+        const sandbagRate = profile.handsWithSandbagWon/profile.handsWithSandbag;
+        const plainRate = profile.handsNoSandbagWon/profile.handsNoSandbag;
+        if(sandbagRate > plainRate+0.05) profile.sandbagBaseRate = Math.min(0.6, profile.sandbagBaseRate+0.02);
+        else if(plainRate > sandbagRate+0.05) profile.sandbagBaseRate = Math.max(0.12, profile.sandbagBaseRate-0.02);
+      }
+      saveProfile();
+    }
+
+    const isGlacee = /GLACÉE/.test(label);
+    const isCora = /CORA/.test(label);
+    const isAutoWin = /automatique/i.test(label);
+
+    if(isGlacee){
+      showCertificate('33 GLACÉE', (who==='you'?'Tu':oppName())+' remporte le gain maximum');
+      sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(40);
+    } else if(isCora){
+      showCertificate('CORA', 'Gain multiplié par 2');
+      sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(24);
+    } else if(!isAutoWin){
+      showToast(label, (who==='you'?'Tu remportes la manche':oppName()+' remporte la manche')+' (+'+pts+')', {ms:2200});
+    }
+    logMsg((who==='you'?'Toi':'Penalty')+' : '+label+' (+'+pts+' pt'+(pts>1?'s':'')+')', true);
+    document.getElementById('btnPasse').classList.add('hidden');
+    document.getElementById('btnDump').classList.add('hidden');
+    document.getElementById('btnAnnounce').classList.add('hidden');
+    renderAll();
+
+    if(who==='ai'){
+      if(!isGlacee && !isCora) sfxHandWin(); // big wins already got sfxBigWin() just above
+      if(isGlacee) penaltySay(PENALTY_GLACEE_LINES);
+      else if(isCora) penaltySay(PENALTY_CORA_LINES);
+      else if(!isAutoWin) penaltySay(PENALTY_WIN_LINES); // auto-win already spoke at its own call site
+    } else {
+      if(!isGlacee && !isCora) sfxHandLose();
+      if(isGlacee || isCora) penaltySay(PENALTY_SURPRISE_LINES);
+      else if(!isAutoWin) penaltySay(PENALTY_LOSE_LINES);
+    }
+
+    if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
+      const matchOverDelay = (isGlacee||isCora) ? 3700 : 1800;
+      setTimeout(()=> showMatchOver(scores.you>=TARGET_SCORE ? 'you':'ai'), matchOverDelay);
+    } else {
+      dealer = who; // winner deals next hand -> loser starts next hand
+      const nextDelay = (isGlacee||isCora) ? 3700 : 1000;
+      setTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, nextDelay);
+    }
+  }
+
+  document.getElementById('btnNext').addEventListener('click', ()=>{
+    document.getElementById('btnNext').classList.add('hidden');
+    beginHand();
+  });
+
+  // top-level mode choice
+  document.getElementById('modeAI').addEventListener('click', ()=>{
+    ensureAudio();
+    mode = 'ai';
+    document.getElementById('menuOverlay').classList.add('hidden');
+    applyOppNameToUI();
+    newMatch();
+  });
+  document.getElementById('modeMP').addEventListener('click', ()=>{
+    ensureAudio();
+    preloadNet();
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
+  });
+  // multiplayer lobby
+  document.getElementById('btnBackFromMpLobby').addEventListener('click', ()=>{
+    document.getElementById('mpLobbyOverlay').classList.add('hidden');
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnMpHost').addEventListener('click', ()=>{
+    ensureAudio();
+    myName = (document.getElementById('mpNameInput').value||'').trim() || 'Toi';
+    document.getElementById('mpLobbyOverlay').classList.add('hidden');
+    document.getElementById('mpHostOverlay').classList.remove('hidden');
+    hostGame();
+  });
+  document.getElementById('btnMpJoin').addEventListener('click', ()=>{
+    ensureAudio();
+    myName = (document.getElementById('mpNameInput').value||'').trim() || 'Toi';
+    document.getElementById('mpLobbyOverlay').classList.add('hidden');
+    document.getElementById('mpJoinOverlay').classList.remove('hidden');
+    document.getElementById('mpJoinStatus').textContent = '';
+  });
+  document.getElementById('btnCancelHost').addEventListener('click', ()=>{
+    mpTeardown();
+    document.getElementById('mpHostOverlay').classList.add('hidden');
+    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnCancelJoin').addEventListener('click', ()=>{
+    mpTeardown();
+    document.getElementById('mpJoinOverlay').classList.add('hidden');
+    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnMpConnect').addEventListener('click', ()=>{
+    const code = (document.getElementById('mpCodeInput').value||'').trim();
+    if(code.length<4) return;
+    mpTeardown();
+    joinGame(code);
+  });
+  document.getElementById('btnCopyCode').addEventListener('click', ()=>{
+    const code = document.getElementById('mpCodeDisplay').textContent;
+    const btn = document.getElementById('btnCopyCode');
+    const done = ()=>{ const old=btn.textContent; btn.textContent='✅ Copié !'; setTimeout(()=>btn.textContent=old, 1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(done).catch(done);
+    } else { done(); }
+  });
+
+  document.getElementById('btnRestart').addEventListener('click', ()=>{
+    mpTeardown();
+    mode = 'ai';
+    applyOppNameToUI();
+    document.getElementById('squareScreen').classList.add('hidden');
+    document.getElementById('duoScreen').classList.remove('hidden');
+    document.querySelector('header .sub').textContent = 'Duel de quartier · Toi contre Penalty';
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+
+  function showMatchOver(who){
+    if(mode==='ai'){
+      profile.gamesPlayed += 1;
+      if(who==='ai') profile.gamesWon += 1; else profile.gamesLost += 1;
+      saveProfile();
+    }
+    document.getElementById('matchOverTitle').textContent = who==='you' ? 'Tu as gagné !' : oppName()+' a gagné.';
+    let extra = '';
+    if(mode==='ai' && profile.gamesPlayed>1){
+      extra = ' (Penalty se souvient : '+profile.gamesWon+'-'+profile.gamesLost+' sur '+profile.gamesPlayed+' parties.)';
+    }
+    document.getElementById('matchOverText').textContent = (who==='you'
+      ? 'Aristide et Gervais te regardent avec un respect nouveau.'
+      : '"C\u2019est ça le Fap Fap. Tu planifies. Le jeu décide." — Penalty') + extra;
+    document.getElementById('matchOverOverlay').classList.remove('hidden');
+    if(who==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
+  }
+
+  // give each onlooker a random simple idle behaviour — purely decorative, never tied to game state
+  (function initSideSilhouettes(){
+    const behaviors = ['behavior-smoke','behavior-laugh','behavior-whisper'];
+    ['silLeft','silRight'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      const pick = behaviors[Math.floor(Math.random()*behaviors.length)];
+      el.classList.add(pick);
+    });
+  })();
+
+  // ===================== CARRÉ SANS PITIÉ — 4-player elimination mode =====================
+  // A deliberately separate engine, reusing shared helpers (buildDeck, shuffle, hasSuit, canPasse,
+  // checkAutoWin, cardEl, suitSvg, sfx*, vibrate, showToast, showCertificate, burstConfetti, bigImpact)
+  // but never touching the tested 2-player `state` object, to keep the classic duel mode 100% safe.
+  const SQ_SEAT_ORDER = ['you','gervais','penalty','aristide'];
+  const SQ_PERSONAS = {
+    penalty: {
+      name:'Penalty',
+      control: PENALTY_CONTROL_LINES, win: PENALTY_WIN_LINES, cora: PENALTY_CORA_LINES,
+      glacee: PENALTY_GLACEE_LINES, lose: PENALTY_LOSE_LINES
+    },
+    aristide: {
+      name:'Aristide',
+      control: ["Ha, je savais.","Toujours aussi prévisible.","Facile, facile.","Regarde et apprends.","Tu vois ce que je viens de faire ?"],
+      win: ["Comme d'habitude.","Une routine, franchement.","Je devrais arrêter de vous prévenir.","Notez la date, ça compte pas souvent contre moi."],
+      cora: ["LE CORA ! Évidemment que c'est moi.","Notez la date."],
+      glacee: ["33 GLACÉE ! Je vous avais dit de faire attention.","Personne ne va me croire, et tant pis."],
+      lose: ["Bon. Une fois n'est pas coutume.","Ça arrive même aux meilleurs, apparemment."]
+    },
+    gervais: {
+      name:'Gervais',
+      control: ["Hmm... intéressant.","Je le sentais venir.","Voilà, je te l'avais dit.","Chut, laisse-moi jouer.","Ah... exactement ça."],
+      win: ["Je savais que ça allait arriver.","Toujours la même histoire.","C'est écrit d'avance, je te dis.","Bon, à qui le tour ?"],
+      cora: ["Le CORA... je le sentais dans l'air.","Comme prévu, non ?"],
+      glacee: ["33 Glacée... je n'y crois pas moi-même.","Wow. Vraiment wow."],
+      lose: ["Bon... ça arrive.","La chance tourne, c'est tout."]
+    }
+  };
+  function sqName(id){ return id==='you' ? 'Toi' : SQ_PERSONAS[id].name; }
+  function sqSay(id, category){
+    if(id==='you') return;
+    const lines = SQ_PERSONAS[id][category];
+    if(!lines || lines.length===0) return;
+    const bubble = document.getElementById('sqBubble'+id.charAt(0).toUpperCase()+id.slice(1));
+    if(!bubble) return;
+    bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
+    bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
+    clearTimeout(bubble._t);
+    bubble._t = setTimeout(()=> bubble.classList.remove('show'), 3000);
+  }
+
+  let sq = null;
+
+  function sqActivePlayers(){ return SQ_SEAT_ORDER.filter(id=> sq.players[id] && !sq.players[id].eliminated); }
+  function sqDelay(ms){ return sq.fastForward ? Math.max(20, Math.round(ms/10)) : ms; }
+  function sqNextActive(fromId){
+    const active = sqActivePlayers();
+    const idx = active.indexOf(fromId);
+    if(idx===-1) return active[0];
+    return active[(idx+1)%active.length];
+  }
+
+  function sqNewGame(){
+    mode = 'square';
+    sq = {
+      gen: 0,
+      players: {
+        you:{eliminated:false, hand:[], originalHand:[]},
+        penalty:{eliminated:false, hand:[], originalHand:[]},
+        aristide:{eliminated:false, hand:[], originalHand:[]},
+        gervais:{eliminated:false, hand:[], originalHand:[]}
+      },
+      dealerIdx: Math.floor(Math.random()*4),
+      leader:null, leadSuit:null, leadCard:null, leadActor:null,
+      trickWinners:[], trickQueue:[], trickBest:null, trickHadPasse:false,
+      cardsPlayedThisHand:0, handOver:false, locked:false,
+      history:{you:[],penalty:[],aristide:[],gervais:[]},
+      knownVoid:{you:new Set(),penalty:new Set(),aristide:new Set(),gervais:new Set()},
+      fastForward:false
+    };
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('duoScreen').classList.add('hidden');
+    document.getElementById('squareScreen').classList.remove('hidden');
+    document.querySelector('header .sub').textContent = 'Carré la Pute · 4 joueurs, un seul survivant';
+    sqBeginHand();
+  }
+
+  function sqBeginHand(){
+    sq.gen++;
+    const active = sqActivePlayers();
+    const deck = shuffle(buildDeck());
+    let i=0;
+    active.forEach(id=>{
+      const hand = deck.slice(i, i+5); i+=5;
+      sq.players[id].hand = hand;
+      sq.players[id].originalHand = [...hand];
+      sq.history[id] = [];
+      sq.knownVoid[id] = new Set();
+    });
+    sq.leader=null; sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null;
+    sq.trickWinners=[]; sq.cardsPlayedThisHand=0; sq.handOver=false;
+    sq.passers = new Set();   // players who passed: they answer the final lead with both reserved cards
+    sq.trickNo = 0;           // lets the table show the trick in progress apart from the older ones
+    sq.announcePlan = {};     // per-AI: announce an automatic win now / a beat late / miss it
+    sq.trickQueue = [];
+    sq.dealerIdx = sq.dealerIdx % active.length;
+    const nonDealerIdx = (sq.dealerIdx+1) % active.length;
+    sq.leader = active[nonDealerIdx];
+    document.getElementById('sqBtnNext').classList.add('hidden');
+    renderSquare(true);
+    checkSquareAutoWins();
+    if(!sq.handOver) sqLeadPhase();
+  }
+
+  function markSquareVoid(id, suit){ if(suit) sq.knownVoid[id].add(suit); }
+  function sqAllSeenCards(myId){
+    let seen = [...sq.players[myId].hand];
+    Object.keys(sq.history).forEach(id=>{
+      sq.history[id].forEach(e=>{ if(e.type==='card') seen.push(e.card); });
+    });
+    return seen;
+  }
+  function sqIsSureWinner(myId, card, seen){
+    const others = sqActivePlayers().filter(id=>id!==myId);
+    if(others.length>0 && others.every(id=> sq.knownVoid[id].has(card.suit))) return true;
+    const deck = buildDeck();
+    const key = c=>c.suit+'-'+c.rank;
+    const seenKeys = new Set(seen.map(key));
+    const remaining = deck.filter(c=>!seenKeys.has(key(c)));
+    return !remaining.some(c=>c.suit===card.suit && c.rank>card.rank);
+  }
+  function sqHeuristicLead(myId, hand){
+    const seen = sqAllSeenCards(myId);
+    const sureWinners = hand.filter(c=>sqIsSureWinner(myId,c,seen)).sort((a,b)=>a.rank-b.rank);
+    if(sureWinners.length>0) return sureWinners[0];
+    const bySuit = {};
+    hand.forEach(c=>{ (bySuit[c.suit]=bySuit[c.suit]||[]).push(c); });
+    let bestSuit=null, bestScore=-1;
+    Object.keys(bySuit).forEach(s=>{
+      const cards = bySuit[s];
+      const score = cards.length*10 - Math.max(...cards.map(c=>c.rank));
+      if(score>bestScore){ bestScore=score; bestSuit=s; }
+    });
+    const options = bySuit[bestSuit].sort((a,b)=>a.rank-b.rank);
+    return hand.length<=2 ? options[options.length-1] : options[0];
+  }
+  function sqHeuristicDefend(myId, hand, lead){
+    if(canPasse(hand, lead.suit)){
+      const sameSuit = hand[0].suit===hand[1].suit;
+      const three = hand.find(c=>c.rank===3);
+      if(sameSuit){ if(Math.random()<0.85) return {type:'passe'}; }
+      else if(three){
+        if(Math.random()<0.5) return {type:'passe'};
+        return {type:'card', card: hand.find(c=>c.rank!==3)};
+      } else if(Math.random()<0.22){ return {type:'passe'}; }
+      return {type:'card', card:[...hand].sort((a,b)=>a.rank-b.rank)[0]};
+    }
+    if(hasSuit(hand, lead.suit)){
+      const options = hand.filter(c=>c.suit===lead.suit).sort((a,b)=>a.rank-b.rank);
+      const canBeat = options.filter(c=>c.rank>lead.rank);
+      if(canBeat.length>0){
+        const seen = sqAllSeenCards(myId);
+        const lowOptions = options.filter(c=>c.rank<lead.rank);
+        const wouldKeepSureWinner = canBeat.some(c=>sqIsSureWinner(myId,c,seen));
+        if(lowOptions.length>0 && wouldKeepSureWinner && hand.length>2 && Math.random()<0.35){
+          return {type:'card', card: lowOptions[0]};
+        }
+        return {type:'card', card: canBeat[0]};
+      }
+      return {type:'card', card: options[0]};
+    }
+    const seen = sqAllSeenCards(myId);
+    const disposable = hand.filter(c=>!sqIsSureWinner(myId,c,seen));
+    const pool = disposable.length>0 ? disposable : hand;
+    return {type:'card', card:[...pool].sort((a,b)=>a.rank-b.rank)[0]};
+  }
+
+  function sqPushHistory(id, entry){ entry.trick = sq.trickNo; sq.history[id].push(entry); }
+
+  function checkSquareAutoWins(){
+    if(sq.cardsPlayedThisHand>=2 || sq.handOver) return;
+    const yourWin = checkAutoWin(sq.players.you.originalHand);
+    const btn = document.getElementById('sqBtnAnnounce');
+    btn.classList.toggle('hidden', !yourWin);
+    if(yourWin) btn.dataset.label = yourWin.label;
+    for(const id of sqActivePlayers()){
+      if(id==='you') continue;
+      const win = checkAutoWin(sq.players[id].originalHand);
+      if(!win) continue;
+      if(!sq.announcePlan[id]) sq.announcePlan[id] = pickAnnouncePlan();
+      const plan = sq.announcePlan[id];
+      if(plan==='now' || (plan==='late' && sq.cardsPlayedThisHand>=1)){ sqEndHandAutoWin(id, win.label); return; }
+    }
+  }
+  document.getElementById('sqBtnAnnounce').addEventListener('click', ()=>{
+    sqEndHandAutoWin('you', document.getElementById('sqBtnAnnounce').dataset.label);
+  });
+  function sqEndHandAutoWin(winnerId, label){
+    if(sq.handOver) return;
+    sq.handOver = true;
+    document.getElementById('sqBtnAnnounce').classList.add('hidden');
+    document.getElementById('sqBtnPasse').classList.add('hidden');
+    showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
+    sfxBigWin(); bigImpact(); vibrate([30,60,30,60,80]);
+    if(winnerId==='you') burstConfetti(28);
+    sqSay(winnerId, 'win');
+    renderSquare();
+    const myGen = sq.gen;
+    setTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winnerId, 'Victoire automatique — '+label); }, sqDelay(1400));
+  }
+
+  function sqLeadPhase(){
+    renderSquare();
+    if(sq.handOver) return;
+    const leaderId = sq.leader;
+    if(leaderId==='you'){ sq.locked=false; renderSquare(); return; }
+    sq.locked = true; renderSquare();
+    const myGen = sq.gen;
+    setTimeout(()=>{
+      if(sq.gen!==myGen || sq.handOver) return;
+      if(sq.players[leaderId].hand.length===0) return; // stale — this player emptied out since scheduling
+      const card = sqHeuristicLead(leaderId, sq.players[leaderId].hand);
+      sqLeaderPlays(leaderId, card);
+    }, sqDelay(700+Math.random()*500));
+  }
+
+  function sqLeaderPlays(leaderId, card){
+    removeCard(sq.players[leaderId].hand, card);
+    sq.leadSuit = card.suit; sq.leadCard = card; sq.leadActor = leaderId;
+    sq.cardsPlayedThisHand++;
+    sq.trickBest = {card, actorId:leaderId};
+    sq.trickHadPasse = false;
+    sq.trickNo++;
+    sqPushHistory(leaderId, {type:'card', card});
+    sfxCardPlay(); vibrate(12);
+    const active = sqActivePlayers();
+    const startIdx = active.indexOf(leaderId);
+    sq.trickQueue = [];
+    for(let i=1;i<active.length;i++) sq.trickQueue.push(active[(startIdx+i)%active.length]);
+    renderSquare();
+    checkSquareAutoWins();
+    if(!sq.handOver) sqAdvanceTrick();
+  }
+
+  function sqAdvanceTrick(){
+    if(sq.handOver) return;
+    while(sq.trickQueue.length>0 && sq.players[sq.trickQueue[0]].hand.length===0) sq.trickQueue.shift();
+    if(sq.trickQueue.length===0){ sqFinishTrick(); return; }
+    const nextId = sq.trickQueue[0];
+    if(nextId==='you'){ sq.locked=false; renderSquare(); return; }
+    sq.locked = true; renderSquare();
+    const myGen = sq.gen;
+    setTimeout(()=>{
+      if(sq.gen!==myGen || sq.handOver) return;
+      const hand = sq.players[nextId].hand;
+      if(hand.length===0) return; // stale
+      if(sq.passers.has(nextId)){ sqApplyResponse(nextId, {type:'dump'}); return; }
+      const leadInfo = {suit:sq.leadSuit, rank:sq.leadCard.rank, actor:sq.leadActor};
+      const opt = sqHeuristicDefend(nextId, hand, leadInfo);
+      sqApplyResponse(nextId, opt);
+    }, sqDelay(650+Math.random()*450));
+  }
+
+  function sqApplyResponse(actorId, opt){
+    sq.trickQueue.shift();
+    if(opt.type==='passe'){
+      markSquareVoid(actorId, sq.leadSuit);
+      sqPushHistory(actorId, {type:'passe'});
+      sq.trickHadPasse = true;
+      sq.passers.add(actorId);
+      sfxPasse();
+      if(actorId!=='you') sqSay(actorId, 'control');
+    } else if(opt.type==='dump'){
+      // end of a Passe: both reserved cards land at once; only the best one in the commanded suit counts
+      const cards = [...sq.players[actorId].hand];
+      sq.players[actorId].hand.length = 0;
+      sq.passers.delete(actorId);
+      sq.cardsPlayedThisHand += cards.length;
+      cards.forEach(c=> sqPushHistory(actorId, {type:'card', card:c}));
+      sfxCardPlay(); vibrate(12);
+      const best = dumpBestFollow(cards, sq.leadSuit);
+      if(best && best.rank>sq.trickBest.card.rank) sq.trickBest = {card:best, actorId};
+      else if(!best) markSquareVoid(actorId, sq.leadSuit);
+    } else {
+      const card = opt.card;
+      removeCard(sq.players[actorId].hand, card);
+      sq.cardsPlayedThisHand++;
+      sqPushHistory(actorId, {type:'card', card});
+      sfxCardPlay(); vibrate(12);
+      if(card.suit===sq.leadSuit && card.rank>sq.trickBest.card.rank){
+        sq.trickBest = {card, actorId};
+      } else if(card.suit!==sq.leadSuit){
+        markSquareVoid(actorId, sq.leadSuit);
+      }
+    }
+    renderSquare();
+    checkSquareAutoWins();
+    if(!sq.handOver){ const myGen = sq.gen; setTimeout(()=>{ if(sq.gen===myGen) sqAdvanceTrick(); }, sqDelay(500)); }
+  }
+
+  function sqPlayerPlays(card){
+    if(sq.handOver || sq.locked) return;
+    if(!sq.leadSuit){
+      if(sq.leader!=='you') return;
+      sqLeaderPlays('you', card);
+    } else {
+      if(!sq.trickQueue.length || sq.trickQueue[0]!=='you') return;
+      if(sq.passers.has('you')){ sqApplyResponse('you', {type:'dump'}); return; }
+      const mustFollow = hasSuit(sq.players.you.hand, sq.leadSuit);
+      if(mustFollow && card.suit!==sq.leadSuit) return;
+      sqApplyResponse('you', {type:'card', card});
+    }
+  }
+  document.getElementById('sqBtnPasse').addEventListener('click', ()=>{
+    if(sq.handOver || sq.locked) return;
+    if(!sq.trickQueue.length || sq.trickQueue[0]!=='you') return;
+    if(sq.passers.has('you') || !canPasse(sq.players.you.hand, sq.leadSuit)) return;
+    sqApplyResponse('you', {type:'passe'});
+  });
+  document.getElementById('sqBtnDump').addEventListener('click', ()=>{
+    if(sq.handOver || sq.locked) return;
+    if(!sq.trickQueue.length || sq.trickQueue[0]!=='you' || !sq.passers.has('you')) return;
+    sqApplyResponse('you', {type:'dump'});
+  });
+
+  function sqFinishTrick(){
+    const winner = sq.trickBest.actorId;
+    const winCard = sq.trickBest.card;
+    sq.trickWinners.push({rank:winCard.rank, winner, viaPasse: sq.trickHadPasse});
+    sq.leader = winner;
+    sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null;
+    renderSquare();
+    const myGen = sq.gen;
+    setTimeout(()=>{
+      if(sq.gen!==myGen) return;
+      const el = document.querySelector('#sqCur'+winner.charAt(0).toUpperCase()+winner.slice(1)+' .card[data-key="'+winCard.suit+'-'+winCard.rank+'"]');
+      if(el) el.classList.add('trickwin', 'holding');
+    }, sqDelay(30));
+    if(winner!=='you'){ sfxTrickWinAI(); sqSay(winner, 'control'); } else { sfxTrickWinYou(); vibrate(20); }
+    const active = sqActivePlayers();
+    const allEmpty = active.every(id=>sq.players[id].hand.length===0);
+    if(allEmpty){ setTimeout(()=>{ if(sq.gen===myGen) sqFinishHand(); }, sqDelay(1000)); return; }
+    setTimeout(()=>{
+      if(sq.gen!==myGen || sq.handOver) return;
+      if(sq.players[sq.leader].hand.length===0){
+        let nid = sqNextActive(sq.leader), guard=0;
+        while(sq.players[nid].hand.length===0 && guard++<8) nid = sqNextActive(nid);
+        if(sq.players[nid].hand.length===0){ sqFinishHand(); return; } // safety net — shouldn't normally happen
+        sq.leader = nid;
+      }
+      sqLeadPhase();
+    }, sqDelay(750));
+  }
+
+  function sqFinishHand(){
+    sq.handOver = true;
+    const n = sq.trickWinners.length;
+    const last = sq.trickWinners[n-1];
+    const prev = sq.trickWinners[n-2];
+    const cora = last && last.rank===3 && !last.viaPasse;
+    const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
+    const winner = last.winner;
+    let label = 'Manche remportée';
+    if(glacee){ label='LA 33 GLACÉE !'; showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(40); }
+    else if(cora){ label='CORA — gain x2 !'; showCertificate('CORA', sqName(winner)+' double la mise'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(24); }
+    else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); }
+    sqSay(winner, glacee?'glacee':(cora?'cora':'win'));
+    const myGen = sq.gen;
+    // a CORA or a 33 Glacée lets the winner knock out TWO players instead of one
+    setTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 3500 : 1400));
+  }
+
+  function sqShowEliminationChoice(winnerId, label, count){
+    const others = sqActivePlayers().filter(id=>id!==winnerId);
+    if(others.length===0){ return sqShowChampion(winnerId); }
+    const n = Math.min(count||1, others.length);
+    if(winnerId==='you'){
+      const ov = document.getElementById('eliminateOverlay');
+      const picked = [];
+      const box = document.getElementById('eliminateChoices');
+      const hint = document.getElementById('eliminateHint');
+      const draw = ()=>{
+        document.getElementById('eliminateTitle').textContent = n>1 ? (label.replace(/ —.*| !$/,'')+' ! Double élimination') : 'Tu as gagné la manche !';
+        hint.textContent = n>1
+          ? (picked.length===0 ? 'Choisis le premier joueur à éliminer (sur 2).' : 'Choisis le deuxième joueur à éliminer.')
+          : 'Choisis qui tu élimines de la table.';
+        box.innerHTML = '';
+        others.filter(id=>!picked.includes(id)).forEach(id=>{
+          const b = document.createElement('button');
+          b.className='primary'; b.style.width='100%';
+          b.textContent = 'Éliminer '+sqName(id);
+          b.onclick = ()=>{
+            picked.push(id);
+            if(picked.length<n){ draw(); return; }
+            ov.classList.add('hidden');
+            sqEliminate(picked);
+          };
+          box.appendChild(b);
+        });
+      };
+      draw();
+      ov.classList.remove('hidden');
+    } else {
+      const targets = shuffle(others).slice(0, n);
+      const names = targets.map(sqName).join(' et ');
+      const left = sqActivePlayers().length - targets.length;
+      showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que lui.', {ms:2600});
+      const myGen = sq.gen;
+      setTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(1600));
+    }
+  }
+
+  function sqEliminate(ids){
+    ids = Array.isArray(ids) ? ids : [ids];
+    ids.forEach(id=>{
+      sq.players[id].eliminated = true;
+      const seatEl = document.getElementById('sqSeat'+id.charAt(0).toUpperCase()+id.slice(1));
+      if(seatEl) seatEl.classList.add('eliminated');
+    });
+    const remaining = sqActivePlayers();
+    const myGen = sq.gen;
+    if(remaining.length<=1){
+      setTimeout(()=>{ if(sq.gen===myGen) sqShowChampion(remaining[0]); }, sqDelay(900));
+      return;
+    }
+    if(sq.dealerIdx>=remaining.length) sq.dealerIdx = 0;
+    if(sq.players.you.eliminated && sq.fastForward){
+      setTimeout(()=>{ if(sq.gen===myGen) sqBeginHand(); }, sqDelay(600));
+      return;
+    }
+    setTimeout(()=>{ if(sq.gen===myGen) document.getElementById('sqBtnNext').classList.remove('hidden'); }, sqDelay(600));
+  }
+  document.getElementById('sqBtnNext').addEventListener('click', ()=>{
+    document.getElementById('sqBtnNext').classList.add('hidden');
+    sqBeginHand();
+  });
+
+  function sqShowChampion(id){
+    profile.squareGamesPlayed += 1;
+    if(id==='you') profile.squareWins += 1;
+    saveProfile();
+    document.getElementById('matchOverTitle').textContent = id==='you' ? 'Tu es le dernier survivant !' : sqName(id)+' rafle tout.';
+    document.getElementById('matchOverText').textContent = id==='you'
+      ? "Trois éliminés, un seul debout. Carré la Pute t'appartient ce soir."
+      : sqName(id)+" a éliminé tout le monde — y compris toi. La prochaine est pour toi.";
+    document.getElementById('matchOverOverlay').classList.remove('hidden');
+    if(id==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
+  }
+
+  function sqTurnId(){
+    if(!sq || sq.handOver) return null;
+    if(!sq.leadSuit) return sq.leader;
+    return (sq.trickQueue && sq.trickQueue[0]) || null;
+  }
+
+  function renderSquare(isDeal){
+    const active = sqActivePlayers();
+    const turnId = sqTurnId();
+    const sb = document.getElementById('sqScoreboard');
+    sb.innerHTML = SQ_SEAT_ORDER.map(id=>{
+      const out = sq.players[id].eliminated;
+      const n = sq.players[id].hand.length;
+      return '<div class="sq-score-item'+(out?' out':'')+(id===turnId?' turn':'')+'"><span class="n">'+sqName(id)+'</span>'+
+        '<span class="v">'+(out?'éliminé':(n+(n>1?' cartes':' carte')))+'</span></div>';
+    }).join('');
+
+    ['penalty','aristide','gervais'].forEach(id=>{
+      const cardsEl = document.getElementById('sqCards'+id.charAt(0).toUpperCase()+id.slice(1));
+      cardsEl.innerHTML='';
+      const n = sq.players[id].eliminated ? 0 : sq.players[id].hand.length;
+      for(let i=0;i<n;i++){ const fd=document.createElement('div'); fd.className='facedown'; fd.style.width='20px'; fd.style.height='29px'; cardsEl.appendChild(fd); }
+    });
+
+    // the trick in progress is drawn as real cards in front of each seat; earlier tricks shrink to a history row
+    ['you','penalty','aristide','gervais'].forEach(id=>{
+      const cap = id.charAt(0).toUpperCase()+id.slice(1);
+      const histEl = document.getElementById('sqHist'+cap);
+      const curEl = document.getElementById('sqCur'+cap);
+      histEl.innerHTML=''; curEl.innerHTML='';
+      sq.history[id].forEach(entry=>{
+        const isCurrent = entry.trick===sq.trickNo;
+        if(!isCurrent){ histEl.appendChild(miniCardEl(entry.type==='card' ? entry.card : null)); return; }
+        if(entry.type==='passe'){ const p=document.createElement('div'); p.className='passe-chip sq-size'; p.textContent='Passe'; curEl.appendChild(p); }
+        else curEl.appendChild(cardEl(entry.card, {extraClass:'sq-size'}));
+      });
+      curEl.classList.toggle('two', curEl.children.length>1);
+    });
+    // glow the card currently holding control of the trick
+    if(sq.leadSuit && sq.trickBest){
+      const w = sq.trickBest.actorId;
+      const el = document.querySelector('#sqCur'+w.charAt(0).toUpperCase()+w.slice(1)+' .card[data-key="'+sq.trickBest.card.suit+'-'+sq.trickBest.card.rank+'"]');
+      if(el) el.classList.add('holding');
+    }
+
+    ['sqSeatPenalty','sqSeatAristide','sqSeatGervais','sqSeatYou'].forEach((elId, i)=>{
+      const id = ['penalty','aristide','gervais','you'][i];
+      const seatEl = document.getElementById(elId);
+      seatEl.classList.toggle('eliminated', sq.players[id].eliminated);
+      seatEl.classList.toggle('active-turn', turnId===id);
+    });
+
+    const demandEl = document.getElementById('sqDemand');
+    demandEl.classList.toggle('your-turn', turnId==='you' && !sq.locked);
+    if(sq.handOver){ demandEl.textContent = 'manche terminée'; }
+    else if(sq.leadSuit){ demandEl.innerHTML = 'commande : <b>'+sq.leadSuit+'</b> <span class="pip">'+PIP[sq.leadSuit]+'</span>'; }
+    else { demandEl.textContent = sq.leader==='you' ? 'à toi de commander' : (sqName(sq.leader)+' commande'); }
+
+    const handEl = document.getElementById('sqPlayerHand');
+    handEl.innerHTML='';
+    const eliminatedBox = document.getElementById('sqEliminatedBox');
+    const myTurn = turnId==='you' && !sq.locked;
+    const dumping = myTurn && !!sq.leadSuit && sq.passers.has('you');
+    const handLabel = document.getElementById('sqHandLabel');
+    if(!sq.players.you.eliminated){
+      eliminatedBox.classList.add('hidden');
+      handLabel.classList.toggle('your-turn', myTurn);
+      handLabel.textContent = sq.handOver ? 'Ta main'
+        : dumping ? 'Pose tes 2 cartes'
+        : myTurn ? (sq.leadSuit ? 'À toi de répondre' : 'À toi de commander')
+        : (turnId ? sqName(turnId)+' réfléchit…' : 'Ta main');
+      const sorted = sortHand(sq.players.you.hand);
+      const mustFollow = sq.leadSuit && hasSuit(sq.players.you.hand, sq.leadSuit);
+      sorted.forEach(card=>{
+        const legal = myTurn && (dumping || !sq.leadSuit || !mustFollow || card.suit===sq.leadSuit);
+        const cls = legal ? 'playable' : (myTurn ? 'blocked' : 'idle');
+        const el = cardEl(card, {extraClass: cls+(isDeal?' dealt':'')});
+        if(legal) el.addEventListener('click', ()=> sqPlayerPlays(card));
+        handEl.appendChild(el);
+      });
+    } else {
+      handLabel.classList.remove('your-turn');
+      handLabel.textContent = 'Éliminé';
+      eliminatedBox.classList.remove('hidden');
+      document.getElementById('sqFastForward').classList.toggle('active', sq.fastForward);
+    }
+    const passeBtn = document.getElementById('sqBtnPasse');
+    const passeEligible = myTurn && !sq.handOver && sq.leadSuit && !sq.passers.has('you') && canPasse(sq.players.you.hand, sq.leadSuit);
+    passeBtn.classList.toggle('hidden', !passeEligible);
+    document.getElementById('sqBtnDump').classList.toggle('hidden', !dumping);
+  }
+
+  document.getElementById('sqFastForward').addEventListener('click', ()=>{
+    if(!sq) return;
+    sq.fastForward = !sq.fastForward;
+    document.getElementById('sqFastForward').classList.toggle('active', sq.fastForward);
+    document.getElementById('sqFastForward').textContent = sq.fastForward ? '⏩ Avance rapide (activée)' : '⏩ Avance rapide';
+    const nextBtn = document.getElementById('sqBtnNext');
+    if(sq.fastForward && !nextBtn.classList.contains('hidden')){
+      nextBtn.classList.add('hidden');
+      sqBeginHand();
+    }
+  });
+
+  function renderStats(){
+    const p = profile;
+    const winRate = p.gamesPlayed>0 ? Math.round(100*p.gamesWon/p.gamesPlayed) : 0;
+    const passeRate = p.passeOpportunities>0 ? Math.round(100*p.passeTaken/p.passeOpportunities) : 0;
+    const sqWinRate = p.squareGamesPlayed>0 ? Math.round(100*p.squareWins/p.squareGamesPlayed) : 0;
+    const box = document.getElementById('statsContent');
+    box.innerHTML =
+      '<div class="stats-group"><h3>Contre Penalty</h3>'+
+        '<div class="stats-row"><span class="label">Parties jouées</span><span class="value">'+p.gamesPlayed+'</span></div>'+
+        '<div class="stats-row"><span class="label">Victoires</span><span class="value">'+p.gamesWon+'</span></div>'+
+        '<div class="stats-row"><span class="label">Défaites</span><span class="value">'+p.gamesLost+'</span></div>'+
+        '<div class="stats-row"><span class="label">Taux de victoire</span><span class="value">'+winRate+'%</span></div>'+
+      '</div>'+
+      '<div class="stats-group"><h3>Carré la Pute</h3>'+
+        '<div class="stats-row"><span class="label">Parties jouées</span><span class="value">'+p.squareGamesPlayed+'</span></div>'+
+        '<div class="stats-row"><span class="label">Dernier survivant</span><span class="value">'+p.squareWins+'</span></div>'+
+        '<div class="stats-row"><span class="label">Taux de victoire</span><span class="value">'+sqWinRate+'%</span></div>'+
+      '</div>'+
+      '<div class="stats-group"><h3>Ton style de jeu</h3>'+
+        '<div class="stats-row"><span class="label">Occasions de Passe</span><span class="value">'+p.passeOpportunities+'</span></div>'+
+        '<div class="stats-row"><span class="label">Passe utilisée</span><span class="value">'+passeRate+'%</span></div>'+
+        '<div class="stats-row"><span class="label">Taux de bluff de Penalty (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
+      '</div>';
+  }
+  document.getElementById('btnShowStats').addEventListener('click', ()=>{
+    renderStats();
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('statsOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnCloseStats').addEventListener('click', ()=>{
+    document.getElementById('statsOverlay').classList.add('hidden');
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+
+  document.getElementById('modeSquare').addEventListener('click', ()=>{
+    ensureAudio();
+    sqNewGame();
+  });
+
+  // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
+  if(/[?&]debug\b/.test(location.search)){
+    window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
+      getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare,
+      getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
+  }
+
+})();
+</script>
+</body>
+</html>
