@@ -5,10 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>FAP FAP — contre Penalty</title>
+<title>FAP FAP — le jeu du quartier</title>
+<meta name="description" content="Le jeu de cartes camerounais : affronte Penalty, relève le défi du jour et défie tes amis en ligne.">
+<meta name="theme-color" content="#080503">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -25,6 +30,11 @@
     --ink: #251c12;
     --dust: #ab9c87;
     --win-green: #4c8c6e;
+    --font-display: 'Bricolage Grotesque', 'Manrope', sans-serif; /* titles, card values, big numbers */
+    --font-ui: 'Manrope', system-ui, sans-serif;                     /* everything else */
+    /* the single pool of light over the table (changed by the 'ambiance' skins) */
+    --pool: rgba(255,236,196,0.20); --pool2: rgba(244,184,96,0.08);
+    --glow1: rgba(255,243,214,0.16); --glow2: rgba(244,184,96,0.07);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent; user-select:none; -webkit-touch-callout:none;}
   html,body{height:100%;}
@@ -33,7 +43,8 @@
     margin:0; min-height:100vh; min-height:100dvh;
     background: #000;
     color: var(--cream);
-    font-family: 'Work Sans', sans-serif;
+    font-family: var(--font-ui);
+    font-variant-numeric: tabular-nums; /* scores and counters don't wobble */
     display:flex; flex-direction:column;
     overflow-y:auto; overflow-x:hidden; position:relative;
     touch-action: manipulation;
@@ -45,7 +56,7 @@
   }
   .bulb-glow{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:5;
-    background: radial-gradient(ellipse 90% 62% at 50% 46%, rgba(255,243,214,0.16) 0%, rgba(244,184,96,0.07) 30%, rgba(0,0,0,0) 58%);
+    background: radial-gradient(ellipse 90% 62% at 50% 46%, var(--glow1) 0%, var(--glow2) 30%, rgba(0,0,0,0) 58%);
     animation: bulbSway 7s ease-in-out infinite, flicker 6s ease-in-out infinite;
     transform-origin: 50% 34%;
   }
@@ -77,8 +88,8 @@
     100%{ transform: translateY(-140px) scaleX(2.2); opacity:0; }
   }
 
-  h1,.display{ font-family:'Anton', sans-serif; letter-spacing:0.04em; }
-  .mono{ font-family:'JetBrains Mono', monospace; }
+  h1,.display{ font-family:var(--font-display); letter-spacing:-0.01em; }
+  .mono{ font-family:var(--font-ui); }
 
   header h1{
     margin:0; font-size: 26px; color: var(--bulb);
@@ -86,20 +97,20 @@
   }
 
   header{ padding: max(8px, env(safe-area-inset-top)) 16px 4px; text-align:center; position:relative; z-index:10; }
-  header .sub{ margin-top:2px; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color: var(--dust); }
+  header .sub{ margin-top:2px; font-size:11px; letter-spacing:0.01em; font-weight:600; color: var(--dust); }
 
   .scorebar{
     display:flex; justify-content:space-between; align-items:center;
     margin: 6px 12px 0; padding: 6px 12px;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(244,184,96,0.18); border-radius: 10px;
-    font-family:'JetBrains Mono', monospace; font-size: 12px; position:relative; z-index:10;
+    font-family:var(--font-ui); font-size: 12px; position:relative; z-index:10;
   }
-  .scorebar .who{ color:var(--dust); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; display:block;}
-  .scorebar .val{ font-size:18px; color:var(--cream); font-weight:600; display:inline-block; }
+  .scorebar .who{ color:var(--dust); font-size:11px; letter-spacing:0.01em; font-weight:600; display:block;}
+  .scorebar .val{ font-size:20px; color:var(--cream); font-weight:600; display:inline-block; }
   .scorebar .val.score-bump{ animation: scoreBump 0.5s cubic-bezier(.28,1.4,.4,1); }
   @keyframes scoreBump{ 0%{ transform:scale(1); } 35%{ transform:scale(1.55); color:var(--bulb-hot); } 100%{ transform:scale(1); } }
   .scorebar .val.me{ color: var(--bulb); }
-  .scorebar .mid{ color:var(--dust); font-size:10px; text-align:center; }
+  .scorebar .mid{ color:var(--dust); font-size:12px; text-align:center; }
 
   .app-shell{
     width:100%; max-width:480px; margin:0 auto;
@@ -114,17 +125,17 @@
   .ai-zone{ display:flex; flex-direction:column; align-items:center; gap:4px; padding: 2px 0; border-radius:14px; transition: box-shadow 0.3s; position:relative; }
   .ai-zone.active-turn{ animation: turnGlowAI 1.6s ease-in-out infinite; }
   @keyframes turnGlowAI{ 0%,100%{ box-shadow:0 0 0 0 rgba(183,71,42,0);} 50%{ box-shadow:0 0 16px 3px rgba(183,71,42,0.35);} }
-  .ai-label{ font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dust); }
+  .ai-label{ font-size:12px; letter-spacing:0.01em; font-weight:600; color:var(--dust); }
   /* ---- Carré la Pute (4-player mode) ---- */
   #squareScreen{ flex:1; display:flex; flex-direction:column; min-height:0; }
   .sq-scoreboard{
     display:flex; justify-content:space-between; gap:4px; margin:6px 12px 0;
     padding:6px 10px; background: rgba(255,255,255,0.03); border:1px solid rgba(244,184,96,0.18); border-radius:10px;
-    font-family:'JetBrains Mono',monospace; font-size:9px; position:relative; z-index:10;
+    font-family:var(--font-ui); font-size:9px; position:relative; z-index:10;
   }
   .sq-score-item{ text-align:center; flex:1; border-radius:6px; padding:2px 0; transition: background 0.2s; }
-  .sq-score-item .n{ display:block; font-size:10px; color:var(--cream); text-transform:uppercase; letter-spacing:0.05em; font-weight:600; }
-  .sq-score-item .v{ font-size:10px; color:var(--dust); }
+  .sq-score-item .n{ display:block; font-size:11.5px; color:var(--cream); letter-spacing:0.01em; font-weight:600; }
+  .sq-score-item .v{ font-size:11px; color:var(--dust); }
   .sq-score-item.turn{ background: rgba(244,184,96,0.14); }
   .sq-score-item.turn .n{ color:var(--bulb); }
   .sq-score-item.out{ opacity:0.4; }
@@ -139,7 +150,7 @@
   .sq-felt{
     position:absolute; left:50%; top:50%; width:400px; height:400px; margin:-200px 0 0 -200px; border-radius:50%;
     background:
-      radial-gradient(circle at 50% 48%, rgba(255,236,196,0.20) 0%, rgba(244,184,96,0.08) 38%, transparent 62%),
+      radial-gradient(circle at 50% 48%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
       radial-gradient(circle at 28% 32%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
       radial-gradient(circle at 70% 70%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
       repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
@@ -154,7 +165,7 @@
   .sq-right{ grid-column:3; grid-row:2; align-self:center; }
   .sq-bottom{ grid-column:2; grid-row:3; }
   .sq-seat.eliminated{ opacity:0.25; filter:grayscale(1); }
-  .sq-name{ font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust); font-weight:600; padding:1px 8px; border-radius:10px; }
+  .sq-name{ font-size:11.5px; letter-spacing:0.01em; font-weight:600; color:var(--dust); font-weight:600; padding:1px 8px; border-radius:10px; }
   .sq-seat.active-turn .sq-name{ color:#20160a; background:var(--bulb); box-shadow:0 0 12px rgba(244,184,96,0.6); }
   .sq-cards{ display:flex; }
   .sq-hist{ display:flex; gap:3px; flex-wrap:wrap; justify-content:center; max-width:130px; min-height:0; opacity:0.8; }
@@ -176,7 +187,7 @@
   .sq-top .sq-bubble{ top:auto; bottom:-34px; }
   .sq-demand{
     grid-column:2; grid-row:2; align-self:center; justify-self:center;
-    font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust);
+    font-family:var(--font-ui); font-size:11px; letter-spacing:0.01em; font-weight:600; color:var(--dust);
     background: rgba(10,7,4,0.5); padding:4px 10px; border-radius:20px; border:1px solid rgba(244,184,96,0.18);
   }
   .sq-demand b{ color:var(--bulb); }
@@ -188,10 +199,10 @@
 
   .stats-block{ width:100%; max-width:320px; text-align:left; }
   .stats-group{ margin-bottom:14px; }
-  .stats-group h3{ font-family:'Anton',sans-serif; font-size:14px; color:var(--bulb); letter-spacing:0.03em; margin:0 0 6px; }
+  .stats-group h3{ font-family:var(--font-display); font-size:14px; color:var(--bulb); letter-spacing:0.03em; margin:0 0 6px; }
   .stats-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:4px 0; border-bottom:1px solid rgba(244,184,96,0.1); }
   .stats-row .label{ color:var(--dust); }
-  .stats-row .value{ font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--cream); }
+  .stats-row .value{ font-family:var(--font-ui); font-weight:700; color:var(--cream); }
 
   .penalty-bubble{
     position:absolute; top:100%; left:50%; margin-left:-125px; width:250px; margin-top:-6px; /* floats: never pushes the table */
@@ -209,11 +220,7 @@
   }
   .penalty-bubble.show{ opacity:1; transform:translateY(0) scale(1); }
   .ai-hands{ display:flex; align-items:flex-end; justify-content:center; gap:0; transform-origin:50% 0; }
-  .ai-cards{ display:flex; position:relative; z-index:2; margin:0 -9px 6px; }
-  .opp-arm{ width:32px; height:48px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.6)); position:relative; z-index:3; }
-  .opp-arm.left{ transform: rotate(14deg); }
-  .opp-arm.right{ transform: rotate(-14deg) scaleX(-1); }
-  .ai-hands.impatient .opp-arm.right{ animation: fingerTap 0.9s ease-in-out infinite; }
+  .ai-cards{ display:flex; position:relative; z-index:2; }
   .facedown{
     width:26px; height:38px; border-radius:4px; margin-left:-12px;
     border: 1px solid rgba(244,184,96,0.35);
@@ -226,17 +233,11 @@
   }
   .facedown::after{
     content:"FF"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-family:'Playfair Display',serif; font-weight:900; font-size:8px; color: rgba(244,184,96,0.55);
+    font-family:var(--font-display); font-weight:900; font-size:8px; color: rgba(244,184,96,0.55);
     letter-spacing:-0.02em;
   }
   .facedown:first-child{margin-left:0;}
   .facedown:not(:last-child)::after{ display:none; } /* the monogram only shows on the top card of the fan */
-  @keyframes fingerTap{
-    0%,100%{ transform:rotate(-14deg) scaleX(-1) translateY(0); }
-    20%{ transform:rotate(-14deg) scaleX(-1) translateY(-3px); }
-    40%{ transform:rotate(-14deg) scaleX(-1) translateY(0); }
-    60%{ transform:rotate(-14deg) scaleX(-1) translateY(-2px); }
-  }
 
   .table{
     flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-around; gap: 6px; position:relative; min-height: 330px; padding: 22px 0 6px;
@@ -246,7 +247,7 @@
   .table::before{
     content:""; position:absolute; left:50%; top:50%; width:430px; height:430px; margin:-215px 0 0 -215px;
     background:
-      radial-gradient(circle at 50% 46%, rgba(255,236,196,0.20) 0%, rgba(244,184,96,0.08) 38%, transparent 62%),
+      radial-gradient(circle at 50% 46%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
       radial-gradient(circle at 26% 30%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
       radial-gradient(circle at 74% 66%, rgba(50,30,14,0.4) 0%, rgba(50,30,14,0.2) 5%, transparent 9%),
       radial-gradient(circle at 70% 28%, rgba(10,6,3,0.6) 0%, rgba(10,6,3,0.35) 1.4%, transparent 2.6%),
@@ -259,13 +260,13 @@
     z-index:0; pointer-events:none;
   }
   .table-carving{
-    position:absolute; z-index:1; font-family:'JetBrains Mono',monospace; font-weight:600;
+    position:absolute; z-index:1; font-family:var(--font-ui); font-weight:600;
     color: rgba(244,184,96,0.16); text-shadow: 0 1px 0 rgba(0,0,0,0.4);
     pointer-events:none;
   }
   .demand-badge{
     position:relative; align-self:center;
-    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--dust);
+    font-family:var(--font-ui); font-size:11.5px; letter-spacing:0.01em; font-weight:600; color: var(--dust);
     background: rgba(10,7,4,0.55); padding:4px 12px; border-radius: 20px; border:1px solid rgba(244,184,96,0.16);
     transition: color 0.2s, border-color 0.2s, box-shadow 0.2s; z-index:5; min-height:22px;
   }
@@ -282,37 +283,16 @@
   .mini-card{
     width:19px; height:26px; border-radius:3px; background:var(--cream);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;
-    font-family:'Playfair Display',serif; font-weight:900; font-size:10px; line-height:1;
+    font-family:var(--font-display); font-weight:900; font-size:10px; line-height:1;
     box-shadow:0 1px 3px rgba(0,0,0,0.5); color:#161616;
   }
   .mini-card .mini-pip{ width:8px; height:8px; margin-top:1px; }
   .mini-card.suit-Coubie, .mini-card.suit-Zing{ color:#9c1a1a; }
   .mini-card.rank-ten{ background: linear-gradient(165deg, #f6ecd9, #ecdca8); }
   .mini-card.rank-ten span{ color:#8a5a12; }
-  .mini-card.passe{ background:rgba(255,255,255,0.06); border:1px dashed rgba(241,230,212,0.35); color:var(--dust); font-family:'Anton',sans-serif; font-size:11px; }
+  .mini-card.passe{ background:rgba(255,255,255,0.06); border:1px dashed rgba(241,230,212,0.35); color:var(--dust); font-family:var(--font-display); font-size:11px; }
 
-  /* onlookers: forearms resting on the table edge, half in the shadow */
-  .side-sil{ position:absolute; top:44%; width:46px; height:69px; z-index:1; opacity:0.85; filter:brightness(0.75); }
-  .side-sil.left{ left:-6px; }
-  .side-sil.right{ right:-6px; }
-  .side-arm{ width:100%; height:100%; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.6)); }
-  .side-sil.left .side-arm{ transform: rotate(-78deg); }
-  .side-sil.right .side-arm{ transform: rotate(78deg) scaleX(-1); }
-  .side-fx{ position:absolute; width:10px; height:26px; pointer-events:none; }
-  .side-sil.left .side-fx{ left:6px; top:-10px; }
-  .side-sil.right .side-fx{ right:6px; top:-10px; }
-
-  /* random idle behaviour, assigned once per side at load: smoke / laugh / whisper-lean */
-  .side-sil.behavior-smoke .side-fx{
-    border-radius:50%; background: radial-gradient(ellipse at 50% 100%, rgba(230,224,214,0.16), transparent 70%);
-    filter: blur(1.5px); animation: sideSmoke 6s ease-in infinite;
-  }
-  @keyframes sideSmoke{ 0%{ transform:translateY(0) scaleX(1); opacity:0;} 18%{opacity:0.55;} 100%{ transform:translateY(-46px) scaleX(2); opacity:0;} }
-  .side-sil.behavior-laugh{ animation: sideLaugh 2.6s ease-in-out infinite; }
-  @keyframes sideLaugh{ 0%,100%{ transform:translateY(0) rotate(0deg);} 8%{ transform:translateY(-2px) rotate(-2deg);} 16%{ transform:translateY(0) rotate(2deg);} 24%{ transform:translateY(-1px) rotate(0deg);} 60%{ transform:translateY(0) rotate(0deg);} }
-  .side-sil.behavior-whisper{ animation: sideWhisper 5.5s ease-in-out infinite; }
-  @keyframes sideWhisper{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(-4deg) translateX(-2px);} }
-  .slot-label{ font-size:8px; letter-spacing:0.08em; text-transform:uppercase; color:var(--dust); }
+  .slot-label{ font-size:10.5px; letter-spacing:0.01em; font-weight:600; color:var(--dust); }
   .slot{
     width:140px; height:98px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
@@ -354,7 +334,7 @@
   .card .corner-idx{ display:flex; flex-direction:column; align-items:center; line-height:1; position:relative; z-index:2; }
   .card .corner-idx.tl{ align-self:flex-start; }
   .card .corner-idx.br{ align-self:flex-end; transform:rotate(180deg); }
-  .card .c-rank{ font-family:'Playfair Display',serif; font-weight:900; font-size:15px; }
+  .card .c-rank{ font-family:var(--font-display); font-weight:900; font-size:15px; }
   .card .c-pip{ width:9px; height:9px; margin-top:1px; }
   .card .card-watermark{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -378,7 +358,7 @@
     width:62px; height:88px; border-radius:7px;
     background: rgba(18,12,7,0.75); border:2px dashed rgba(244,184,96,0.55);
     display:flex; align-items:center; justify-content:center; text-align:center;
-    font-family:'Anton',sans-serif; font-size:17px; letter-spacing:0.06em; color:var(--bulb);
+    font-family:var(--font-display); font-size:17px; letter-spacing:0.06em; color:var(--bulb);
     box-shadow: 0 3px 7px rgba(0,0,0,0.45);
   }
 
@@ -386,8 +366,8 @@
   .hand-zone{ padding: 6px 0 max(8px, env(safe-area-inset-bottom)); border-radius:14px; border:1px solid rgba(244,184,96,0.10); background:rgba(0,0,0,0.35); transition: box-shadow 0.3s, border-color 0.3s; position:relative; z-index:10; }
   .hand-zone.active-turn{ border-color: rgba(244,184,96,0.45); animation: turnGlowHand 1.6s ease-in-out infinite; }
   @keyframes turnGlowHand{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,184,96,0);} 50%{ box-shadow:0 0 18px 3px rgba(244,184,96,0.3);} }
-  .hand-label{ text-align:center; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dust); margin-bottom:4px; min-height:14px; transition: color 0.2s; }
-  .hand-label.your-turn{ color:var(--bulb); font-weight:700; font-size:12px; text-shadow:0 0 10px rgba(244,184,96,0.5); }
+  .hand-label{ text-align:center; font-size:12px; letter-spacing:0.01em; font-weight:600; color:var(--dust); margin-bottom:4px; min-height:14px; transition: color 0.2s; }
+  .hand-label.your-turn{ color:var(--bulb); font-weight:700; font-size:13.5px; text-shadow:0 0 10px rgba(244,184,96,0.5); }
   .hand-pov-wrap{ position:relative; }
   .hand{ display:flex; justify-content:center; align-items:flex-end; gap:4px; flex-wrap:nowrap; min-height:100px; perspective:700px; position:relative; z-index:2; }
   .hand .card{ cursor:pointer; transition: transform 0.15s, box-shadow 0.15s; width:64px; height:90px; }
@@ -407,7 +387,7 @@
 
   .actions{ display:flex; gap:8px; justify-content:center; align-items:center; margin-top:8px; flex-wrap:wrap; min-height:42px; }
   button{
-    font-family:'Work Sans', sans-serif; font-weight:600; font-size:13px; padding:10px 16px; border-radius:8px;
+    font-family:var(--font-ui); font-weight:600; font-size:13px; padding:10px 16px; border-radius:8px;
     border:1px solid rgba(241,230,212,0.2); background: rgba(255,255,255,0.04); color: var(--cream); cursor:pointer;
     transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   }
@@ -416,14 +396,14 @@
   button.danger{ background: var(--clay); color:var(--cream); border-color:var(--clay); }
   button.passe-option{ background: rgba(244,184,96,0.14); color: var(--bulb); border-color: var(--bulb); font-weight:700; animation: passePulse 1.8s ease-in-out infinite; }
   @keyframes passePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(244,184,96,0.35);} 50%{ box-shadow:0 0 0 6px rgba(244,184,96,0);} }
-  button.ghost{ background:transparent; text-decoration:underline; font-size:11px; padding:6px 10px; color:var(--dust); }
+  button.ghost{ background:transparent; text-decoration:underline; font-size:13px; padding:6px 10px; color:var(--dust); }
   button:disabled{ opacity:0.3; cursor:default; }
   button:focus-visible{ outline:2px solid var(--bulb); outline-offset:2px; }
 
   .toast{
     position:fixed; left:50%; top:16%; transform:translate(-50%,0) scale(0.85);
     background: rgba(18,12,7,0.97); border:2px solid var(--bulb); color: var(--bulb);
-    padding: 16px 26px; border-radius:12px; font-family:'Anton', sans-serif; letter-spacing:0.03em; font-size:20px;
+    padding: 16px 26px; border-radius:12px; font-family:var(--font-display); letter-spacing:0.03em; font-size:20px;
     z-index:50; text-align:center; box-shadow: 0 0 40px rgba(244,184,96,0.35), 0 8px 30px rgba(0,0,0,0.5);
     max-width: 88vw; opacity:0; pointer-events:none; transition: opacity 0.25s, transform 0.35s cubic-bezier(.34,1.56,.64,1);
   }
@@ -438,7 +418,7 @@
   .net-dot{ width:8px; height:8px; border-radius:50%; background:#d9542e; flex-shrink:0; animation: netBlink 1s ease-in-out infinite; }
   @keyframes netBlink{ 0%,100%{ opacity:1; } 50%{ opacity:0.25; } }
   .toast.big{ font-size:26px; border-width:3px; }
-  .toast .sub{ display:block; font-family:'Work Sans'; font-size:12px; color:var(--cream); font-weight:500; letter-spacing:0.02em; margin-top:6px; }
+  .toast .sub{ display:block; font-family:var(--font-ui); font-size:12px; color:var(--cream); font-weight:500; letter-spacing:0.02em; margin-top:6px; }
   @keyframes burst{ 0%{ box-shadow:0 0 0 0 rgba(244,184,96,0.6);} 100%{ box-shadow:0 0 0 40px rgba(244,184,96,0);} }
   .toast.celebrate::after{
     content:""; position:absolute; inset:-3px; border-radius:14px; pointer-events:none;
@@ -467,8 +447,8 @@
     to{ opacity:1; transform: perspective(1200px) rotateY(0deg) scale(1); }
   }
   .stamp{
-    position:absolute; bottom:8%; right:8%;
-    font-family:'Anton', sans-serif; font-size:13px; line-height:1.25; letter-spacing:0.06em;
+    position:absolute; top:5%; right:6%;
+    font-family:var(--font-display); font-size:13px; line-height:1.25; letter-spacing:0.06em;
     color: var(--clay); border: 3px solid var(--clay); border-radius:8px; padding:8px 12px;
     transform: rotate(-14deg) scale(1);
     opacity:0.82; mix-blend-mode: multiply;
@@ -510,34 +490,192 @@
   .cert-overlay.show .cert-card{ transform: scale(1) rotate(0deg); }
   .cert-crest{ font-size:15px; letter-spacing:0.3em; color:#a5701f; opacity:0.7; margin-bottom:4px; }
   .cert-title{
-    font-family:'Anton',sans-serif; font-size:30px; letter-spacing:0.04em; color:#8a2a1a;
+    font-family:var(--font-display); font-size:30px; letter-spacing:0.04em; color:#8a2a1a;
     text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
   }
-  .cert-sub{ font-family:'Work Sans',sans-serif; font-size:13px; font-weight:600; color:#5a3d1c; margin-top:2px; }
+  .cert-sub{ font-family:var(--font-ui); font-size:13px; font-weight:600; color:#5a3d1c; margin-top:2px; }
   .cert-line{ height:1px; background: linear-gradient(90deg, transparent, #a5701f, transparent); margin:14px 0; }
-  .cert-sign{ font-family:'JetBrains Mono',monospace; font-size:9.5px; color:#7a5a2c; letter-spacing:0.03em; }
+  .cert-sign{ font-family:var(--font-ui); font-size:9.5px; color:#7a5a2c; letter-spacing:0.03em; }
   .cert-stamp{
     position:absolute; bottom:-14px; right:-10px;
-    font-family:'Anton',sans-serif; font-size:12px; color:#8a2a1a; border:2px solid #8a2a1a; border-radius:50%;
+    font-family:var(--font-display); font-size:12px; color:#8a2a1a; border:2px solid #8a2a1a; border-radius:50%;
     width:56px; height:56px; display:flex; align-items:center; justify-content:center;
     transform: rotate(14deg); opacity:0.85; mix-blend-mode:multiply;
     animation: stampDown 0.5s cubic-bezier(.2,1.8,.4,1) 0.25s backwards;
   }
-  .overlay h2{ font-family:'Anton'; color:var(--bulb); font-size:24px; margin:0; }
-  .overlay p{ color:var(--cream); font-size:13px; max-width:320px; margin:0; }
+  .overlay h2{ font-family:var(--font-display); color:var(--bulb); font-size:24px; margin:0; }
+  .overlay p{ color:var(--cream); font-size:14px; max-width:320px; margin:0; }
   .overlay .btnrow{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
   .mp-input{
-    font-family:'Work Sans', sans-serif; font-size:16px; padding:12px 14px; border-radius:8px;
+    font-family:var(--font-ui); font-size:16px; padding:12px 14px; border-radius:8px;
     border:1px solid rgba(244,184,96,0.3); background: rgba(255,255,255,0.05); color: var(--cream);
     width:100%; max-width:240px; text-align:center; outline:none;
   }
   .mp-input:focus{ border-color: var(--bulb); }
   .mp-code{
-    font-family:'JetBrains Mono', monospace; font-size:40px; font-weight:700; letter-spacing:0.25em;
+    font-family:var(--font-ui); font-size:40px; font-weight:700; letter-spacing:0.25em;
     color: var(--bulb); background: rgba(244,184,96,0.08); border:1px dashed rgba(244,184,96,0.4);
     border-radius:10px; padding:14px 10px; margin: 4px 0;
   }
   .hidden{ display:none !important; }
+  button.big{ font-size:15px; padding:13px 20px; border-radius:10px; min-width:150px; }
+  button.whatsapp{ background:#25d366; border-color:#25d366; color:#06281a; }
+  .icon-btn{ font-size:20px; text-decoration:none; padding:4px 10px; line-height:1; color:var(--cream); }
+  .cut-panel{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px 14px; border-radius:12px;
+    background: rgba(244,184,96,0.06); border:1px solid rgba(244,184,96,0.2); }
+  .seg{ display:flex; border:1px solid rgba(244,184,96,0.35); border-radius:10px; overflow:hidden; }
+  .seg button{ border:none; border-radius:0; padding:9px 16px; background:transparent; }
+  .seg button + button{ border-left:1px solid rgba(244,184,96,0.35); }
+  .seg button.on{ background: var(--bulb); color:#20160a; }
+  .pref-check{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--dust); cursor:pointer; }
+  .pref-check input{ width:18px; height:18px; accent-color: var(--bulb); }
+  .menu-list{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px; }
+  .menu-list button{ width:100%; font-size:15px; padding:13px 16px; text-align:left; }
+  .menu-list button.primary{ text-align:center; }
+  .rules-box{ max-width:360px; max-height:62vh; overflow-y:auto; text-align:left; padding:4px 6px; }
+  .rules-box h3{ font-family:var(--font-display); color:var(--bulb); font-size:15px; letter-spacing:0.03em; margin:12px 0 3px; }
+  .rules-box p{ font-size:13.5px; line-height:1.5; max-width:none; color:var(--cream); }
+  /* long screens (end of match + réputation) scroll instead of being cut off at the top */
+  .overlay{ overflow-y:auto; justify-content:safe center; }
+
+  /* ---- progression ---- */
+  .menu-rank{ width:100%; max-width:300px; }
+  .mr-top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:5px; }
+  .mr-name{ font-family:var(--font-display); color:var(--cream); font-size:15px; letter-spacing:0.03em; }
+  .mr-rep{ font-family:var(--font-ui); font-size:11px; color:var(--dust); }
+  .rep-bar{ height:10px; border-radius:6px; background:rgba(255,255,255,0.08); overflow:hidden; border:1px solid rgba(244,184,96,0.25); }
+  .rep-bar > div{ height:100%; width:0; border-radius:6px; background:linear-gradient(90deg, #d9a441, var(--bulb-hot)); box-shadow:0 0 10px rgba(244,184,96,0.6); }
+  .rep-bar.small{ height:7px; }
+  .rep-panel{ width:100%; max-width:300px; background:rgba(244,184,96,0.06); border:1px solid rgba(244,184,96,0.22); border-radius:12px; padding:10px 12px; text-align:left; }
+  .rep-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .rep-head span:first-child{ font-family:var(--font-display); font-size:15px; color:var(--cream); letter-spacing:0.03em; }
+  .rep-head span:last-child{ font-family:var(--font-ui); font-weight:700; color:var(--bulb); font-size:13px; }
+  .rep-next{ font-size:11.5px; color:var(--dust); margin:5px 0 6px; }
+  .rep-line{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--cream); padding:2px 0; }
+  .rep-line span:last-child{ font-family:var(--font-ui); color:var(--bulb); }
+  .rep-trophies{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+  .rep-trophy{ font-size:11.5px; background:rgba(244,184,96,0.16); border:1px solid rgba(244,184,96,0.4); border-radius:12px; padding:2px 8px; color:var(--bulb-hot); }
+  .trophy-pop{
+    position:fixed; left:50%; top:max(10px, env(safe-area-inset-top)); z-index:90; display:flex; align-items:center; gap:10px;
+    background:linear-gradient(135deg, #3a2610, #1c1208); border:2px solid var(--bulb); border-radius:14px; padding:8px 16px 8px 10px;
+    color:var(--cream); font-size:13px; line-height:1.25; box-shadow:0 8px 26px rgba(0,0,0,0.6), 0 0 22px rgba(244,184,96,0.35);
+    transform:translate(-50%,-160%); opacity:0; transition:transform 0.45s cubic-bezier(.3,1.5,.5,1), opacity 0.3s; pointer-events:none;
+  }
+  .trophy-pop.show{ transform:translate(-50%,0); opacity:1; }
+  .trophy-pop b{ color:var(--bulb); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; }
+  .tp-icon{ font-size:28px; }
+  .opp-list{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:360px; }
+  .opp-card{ display:flex; gap:12px; align-items:center; text-align:left; padding:11px 12px; border-radius:12px;
+    background:rgba(241,230,212,0.04); border:1.5px solid rgba(241,230,212,0.14); }
+  .opp-card:active{ border-color:var(--bulb); }
+  .opp-card.beaten{ border-color:rgba(76,140,110,0.6); }
+  .opp-card.locked{ opacity:0.55; cursor:default; }
+  .opp-body{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .opp-top{ display:flex; justify-content:space-between; gap:8px; }
+  .opp-name{ font-family:var(--font-display); font-size:17px; color:var(--bulb); letter-spacing:0.03em; }
+  .opp-stars{ color:var(--bulb); font-size:13px; letter-spacing:1px; }
+  .opp-stars .dim{ color:rgba(244,184,96,0.22); }
+  .opp-tag{ font-size:12.5px; color:var(--cream); line-height:1.35; font-weight:500; }
+  .opp-rec{ font-size:11px; color:var(--dust); font-family:var(--font-ui); }
+  .trophy-grid{ display:flex; flex-direction:column; gap:7px; width:100%; max-width:360px; max-height:60vh; overflow-y:auto; text-align:left; }
+  .trophy{ display:flex; gap:10px; align-items:center; padding:8px 10px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(241,230,212,0.08); opacity:0.6; }
+  .trophy.got{ opacity:1; background:rgba(244,184,96,0.08); border-color:rgba(244,184,96,0.35); }
+  .t-icon{ font-size:24px; width:32px; text-align:center; flex-shrink:0; }
+  .t-body{ display:flex; flex-direction:column; font-size:12px; color:var(--dust); }
+  .t-body b{ font-size:13.5px; color:var(--cream); }
+  .trophy.got .t-body b{ color:var(--bulb); }
+
+  /* ---- step 3: daily challenge, sharing, reactions ---- */
+  .level-btn.daily-btn{ border-color: rgba(244,184,96,0.5); background: linear-gradient(135deg, rgba(244,184,96,0.14), rgba(244,184,96,0.03)); }
+  .daily-marks{ font-size:46px; letter-spacing:6px; line-height:1.1; margin:4px 0; }
+  .cert-overlay{ flex-direction:column; gap:16px; }
+  .cert-share{ font-size:15px; padding:12px 20px; }
+  .react-btn{ position:absolute; right:8px; top:4px; z-index:4; font-size:20px; padding:4px 10px; border-radius:20px;
+    background:rgba(244,184,96,0.12); border:1px solid rgba(244,184,96,0.45); }
+  .react-palette{ position:absolute; right:8px; bottom:100%; margin-bottom:6px; z-index:20; display:grid; grid-template-columns:1fr 1fr; gap:6px;
+    padding:8px; border-radius:14px; background:rgba(18,12,7,0.97); border:1px solid rgba(244,184,96,0.4); box-shadow:0 8px 24px rgba(0,0,0,0.6); width:250px; }
+  .react-palette button{ font-size:13px; padding:9px 6px; }
+  .my-bubble{ position:absolute; left:50%; bottom:100%; margin-bottom:6px; transform:translate(-50%,6px) scale(0.85); opacity:0; z-index:15; pointer-events:none;
+    background:var(--bulb); color:#20160a; font-weight:700; font-size:13.5px; padding:7px 12px; border-radius:14px 14px 3px 14px; white-space:nowrap;
+    transition: opacity 0.2s, transform 0.3s cubic-bezier(.3,1.7,.4,1); box-shadow:0 4px 14px rgba(0,0,0,0.5); }
+  .my-bubble.show{ opacity:1; transform:translate(-50%,0) scale(1); }
+  #btnShareWin{ margin-top:4px; }
+
+  /* ---- step 4: personalisation (classes on <body>: back-*, table-*, light-*) ---- */
+  /* card backs */
+  body.back-lions .facedown{ background: linear-gradient(90deg, #007a3d 0 33.3%, #ce1126 33.3% 66.6%, #fcd116 66.6%); border-color: rgba(255,255,255,0.4); }
+  body.back-lions .facedown::after{ content:"★"; color:#fcd116; font-size:11px; text-shadow:0 0 2px #000; }
+  body.back-wax .facedown{ background:
+      radial-gradient(circle at 25% 25%, #f39c12 0 20%, transparent 22%), radial-gradient(circle at 75% 75%, #f39c12 0 20%, transparent 22%),
+      radial-gradient(circle at 75% 25%, #1f6fb2 0 15%, transparent 17%), radial-gradient(circle at 25% 75%, #1f6fb2 0 15%, transparent 17%), #7a1f3d;
+    background-size: 10px 10px; border-color: rgba(243,156,18,0.6); }
+  body.back-wax .facedown::after{ color:#fff3d6; text-shadow:0 0 3px #000; }
+  body.back-nuit .facedown{ background: repeating-linear-gradient(45deg, rgba(244,184,96,0.16) 0 1px, transparent 1px 6px), linear-gradient(160deg, #1d2a52, #0b1020); border-color: rgba(244,184,96,0.7); }
+  body.back-nuit .facedown::after{ color: var(--bulb); }
+  body.back-or .facedown{ background: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 7px), linear-gradient(160deg, #f6d27a, #a8741c); border-color:#fff3d6; }
+  body.back-or .facedown::after{ color:#5a3a08; }
+  /* tables */
+  body.table-vert .table::before, body.table-vert .sq-felt{ background:
+      radial-gradient(circle at 50% 47%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, #1f5a3a, #0e2e1d); }
+  body.table-vichy .table::before, body.table-vichy .sq-felt{ background:
+      radial-gradient(circle at 50% 47%, var(--pool) 0%, var(--pool2) 38%, rgba(0,0,0,0.25) 62%),
+      repeating-linear-gradient(90deg, rgba(150,24,30,0.55) 0 22px, transparent 22px 44px),
+      repeating-linear-gradient(0deg, rgba(150,24,30,0.55) 0 22px, transparent 22px 44px),
+      #d9cfbd; }
+  body.table-vichy .table-carving{ display:none; }
+  /* ambiances */
+  body.light-neon{ --pool: rgba(170,140,255,0.24); --pool2: rgba(220,70,200,0.10); --glow1: rgba(190,160,255,0.16); --glow2: rgba(230,60,200,0.08); }
+  body.light-pluie{ --pool: rgba(200,220,255,0.17); --pool2: rgba(120,150,200,0.07); --glow1: rgba(210,225,255,0.12); --glow2: rgba(120,150,200,0.05); }
+  .rain-layer{ position:fixed; inset:0; pointer-events:none; z-index:7; display:none;
+    background-image: linear-gradient(170deg, transparent 0 46%, rgba(200,220,255,0.18) 47% 48%, transparent 49%);
+    background-size: 22px 46px; animation: rainFall 0.55s linear infinite; opacity:0.55; }
+  body.light-pluie .rain-layer{ display:block; }
+  @keyframes rainFall{ from{ background-position: 0 0; } to{ background-position: -8px 46px; } }
+  .overlay h2.brand-title{ font-size:40px; letter-spacing:-0.025em; line-height:1; text-shadow: 0 0 24px rgba(244,184,96,0.35); }
+  header h1{ letter-spacing:-0.02em; }
+  /* ---- character medallions (illustration when art/<name>.png exists, initial otherwise) ---- */
+  .avatar{ --s:40px; position:relative; flex-shrink:0; width:var(--s); height:var(--s); border-radius:50%; overflow:hidden;
+    display:inline-flex; align-items:center; justify-content:center; vertical-align:middle;
+    background: radial-gradient(circle at 35% 30%, var(--bulb-hot), #c88a3a);
+    box-shadow: 0 0 0 2px rgba(244,184,96,0.55), 0 3px 8px rgba(0,0,0,0.5); }
+  .avatar .av-ini{ font-family:var(--font-display); font-weight:800; color:#20160a; font-size:calc(var(--s) * 0.46); line-height:1; }
+  .avatar img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .avatar.locked{ background:#2a2018; }
+  .sq-name .avatar{ margin-right:6px; }
+  .ai-hands{ gap:12px; }
+  .opp-table-art[hidden]{ display:none; }
+  .demand-badge::first-letter, .sq-demand::first-letter{ text-transform:uppercase; }
+  .ai-label{ display:flex; align-items:center; gap:8px; }
+  /* the hands picture keeps its own table background: fade its edges into the darkness so it melts into the scene */
+  .opp-table-art{ display:block; width:190px; height:auto; max-height:150px; object-fit:cover; object-position:center 75%; margin:-4px auto -14px; pointer-events:none; position:relative; z-index:1;
+    -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 42%, #000 50%, transparent 100%);
+            mask-image: radial-gradient(ellipse 58% 62% at 50% 42%, #000 50%, transparent 100%); }
+  .ai-zone.has-art .ai-hands{ display:none; }
+  /* guided game */
+  .level-btn.tuto-btn{ border-color: rgba(76,180,130,0.6); background: linear-gradient(135deg, rgba(76,180,130,0.18), rgba(76,180,130,0.04)); }
+  .level-btn.tuto-btn .lvl-name{ color:#9ee6c0; }
+  .coach{ display:flex; gap:10px; align-items:flex-start; margin:0 8px 8px; padding:9px 11px; border-radius:12px; text-align:left;
+    background: var(--cream); color: var(--ink); font-size:13.5px; line-height:1.4; font-weight:600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 0 2px rgba(244,184,96,0.6); animation: coachIn 0.35s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes coachIn{ from{ transform:translateY(8px) scale(0.96); opacity:0; } to{ transform:none; opacity:1; } }
+  /* customisation screen */
+  #skinGroups{ width:100%; max-width:360px; }
+  .skin-group{ width:100%; text-align:left; margin-bottom:6px; }
+  .skin-group h3{ font-family:var(--font-display); color:var(--bulb); font-size:15px; letter-spacing:0.03em; margin:6px 0; }
+  .skin-row{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
+  .skin-opt{ display:flex; flex-direction:column; align-items:center; gap:5px; padding:8px 6px; border-radius:10px; font-size:12px; line-height:1.25; text-align:center; }
+  .skin-opt.on{ border-color: var(--bulb); background: rgba(244,184,96,0.12); box-shadow:0 0 0 1px var(--bulb); }
+  .skin-opt.locked{ opacity:0.5; }
+  .skin-opt small{ color:var(--dust); font-size:10.5px; }
+  .skin-swatch{ width:44px; height:44px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); }
+
+  /* the generic ".overlay h2 / p" colours (light text) must not leak onto the cream certificate card */
+  .overlay .cert-card .cert-title{ color:#8a2a1a; }
+  .overlay .cert-card .cert-sub{ color:#5a3d1c; font-size:13.5px; max-width:none; line-height:1.45; }
+  .rematch-info{ min-height:18px; margin-top:12px !important; color:var(--bulb) !important; font-weight:600; }
+  .small-note{ font-size:12px !important; color:var(--dust) !important; }
   .cutstack{ display:flex; gap:2px; }
   .cutstack .cs{ width:18px; height:26px; background: repeating-linear-gradient(135deg, var(--clay), var(--clay) 3px, #8f3620 3px, #8f3620 6px); border-radius:3px; border:1px solid rgba(0,0,0,0.4); }
 
@@ -548,32 +686,13 @@
     padding:12px 14px; cursor:pointer; transition: border-color 0.2s, background 0.2s, transform 0.15s;
   }
   .level-btn:hover, .level-btn:active{ border-color: var(--bulb); background: rgba(244,184,96,0.08); transform: translateY(-1px); }
-  .level-btn .lvl-name{ font-family:'Anton'; letter-spacing:0.04em; color: var(--bulb); font-size:15px; }
-  .level-btn .lvl-desc{ font-size:11px; color: var(--dust); line-height:1.4; }
+  .level-btn .lvl-name{ font-family:var(--font-display); letter-spacing:0.04em; color: var(--bulb); font-size:17px; }
+  .level-btn .lvl-desc{ font-size:12.5px; color: var(--dust); line-height:1.4; }
 </style>
 </head>
 <body>
-<!-- shared forearm + hand silhouette (sleeve at the top, loose fist at the bottom), reused around the table -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <linearGradient id="skinG" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="#1e1108"/><stop offset="0.42" stop-color="#4f2e16"/>
-      <stop offset="0.68" stop-color="#6a4020"/><stop offset="1" stop-color="#1c1007"/>
-    </linearGradient>
-    <linearGradient id="sleeveG" x1="0" x2="1" y1="0" y2="0">
-      <stop offset="0" stop-color="#0a0604"/><stop offset="0.6" stop-color="#231710"/><stop offset="1" stop-color="#0a0604"/>
-    </linearGradient>
-    <symbol id="armShape" viewBox="0 0 60 90">
-      <path fill="url(#skinG)" d="M18 0 H42 C43 20 44 38 45 51 C51 55 54 62 53 70 C52 79 46 86 37 87 C29 88 20 87 15 83 C9 78 7 70 9 63 C11 57 13 54 15 51 C16 35 17 18 18 0 Z"/>
-      <path fill="#5c3619" d="M45 57 C51 55 56 59 55 65 C54 69 49 70 46 66 Z"/>
-      <path d="M21 77 V86 M29 78 V87 M37 77 V86" stroke="rgba(0,0,0,0.38)" stroke-width="1.3" stroke-linecap="round"/>
-      <path d="M14 80 C21 84 31 85 41 82" stroke="rgba(255,214,160,0.16)" stroke-width="1.2" fill="none"/>
-      <path fill="url(#sleeveG)" d="M14 0 H46 L45 24 C37 28 23 28 15 24 Z"/>
-      <path d="M15 24 C23 28 37 28 45 24" stroke="rgba(244,184,96,0.22)" stroke-width="1" fill="none"/>
-    </symbol>
-  </defs>
-</svg>
 <div class="bulb-glow"></div>
+<div class="rain-layer"></div>
 <div class="amb-layer">
   <div class="mote" style="left:38%; animation-duration:11s; animation-delay:0s; --mx:14px;"></div>
   <div class="mote" style="left:47%; animation-duration:13s; animation-delay:2.4s; --mx:-18px;"></div>
@@ -590,9 +709,9 @@
 
 <div class="app-shell">
 <header>
-  <button id="btnRestartGame" class="ghost" style="position:absolute; top:8px; left:10px; font-size:16px; text-decoration:none; padding:4px 8px;">↺</button>
+  <button id="btnMenu" class="ghost icon-btn" style="position:absolute; top:8px; left:10px;" aria-label="Menu">☰</button>
   <button id="btnMute" class="ghost" style="position:absolute; top:8px; right:10px; font-size:16px; text-decoration:none; padding:4px 8px;">🔊</button>
-  <h1>FAP FAP</h1>
+  <h1>Fap Fap</h1>
   <div class="sub">Duel de quartier · Toi contre Penalty</div>
 </header>
 
@@ -600,17 +719,16 @@
 <div class="scorebar">
   <div><span class="who">Toi</span><span class="val me mono" id="scoreYou">0</span></div>
   <div class="mid">Premier à <span id="targetScore">5</span></div>
-  <div style="text-align:right;"><span class="who">Penalty</span><span class="val mono" id="scoreAI">0</span></div>
+  <div style="text-align:right;"><span class="who" id="scoreOppName">Penalty</span><span class="val mono" id="scoreAI">0</span></div>
 </div>
 
 <div class="gamearea">
   <div class="centerstage">
     <div class="ai-zone">
-      <div class="ai-label"><span id="oppLabelName">Penalty</span> · <span id="aiCount">5 cartes</span></div>
+      <div class="ai-label"><span class="avatar" id="oppAvatar" style="--s:34px"></span><span><span id="oppLabelName">Penalty</span> · <span id="aiCount">5 cartes</span></span></div>
+      <img class="opp-table-art" id="oppTableArt" alt="" hidden>
       <div class="ai-hands">
-        <svg class="opp-arm left" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg>
         <div class="ai-cards" id="aiCardsRow"></div>
-        <svg class="opp-arm right" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg>
       </div>
       <div class="penalty-bubble" id="penaltyBubble"></div>
     </div>
@@ -618,14 +736,16 @@
     <div class="table">
       <div class="table-carving" style="top:16%; left:14%; font-size:9px; transform:rotate(-8deg);">R+M '19</div>
       <div class="table-carving" style="top:64%; right:12%; font-size:8px; transform:rotate(6deg);">K.O était là</div>
-      <div class="side-sil left" id="silLeft"><svg class="side-arm" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg><div class="side-fx"></div></div>
-      <div class="side-sil right" id="silRight"><svg class="side-arm" viewBox="0 0 60 90" aria-hidden="true"><use href="#armShape"/></svg><div class="side-fx"></div></div>
       <div class="slot-wrap"><div class="slot-hist" id="aiHist"></div><span class="slot-label" id="oppSlotLabel">Penalty</span><div class="slot" id="aiSlot"></div></div>
       <div class="demand-badge" id="demandBadge"></div>
       <div class="slot-wrap"><div class="slot" id="youSlot"></div><span class="slot-label">Toi</span><div class="slot-hist" id="youHist"></div></div>
     </div>
 
     <div class="hand-zone">
+      <button class="react-btn hidden" id="btnReact" aria-label="Envoyer une réaction">💬</button>
+      <div class="react-palette hidden" id="reactPalette"></div>
+      <div class="my-bubble" id="myBubble"></div>
+      <div class="coach hidden" id="coach"><span class="avatar" data-char="penalty" style="--s:38px"></span><span id="coachText"></span></div>
       <div class="hand-label" id="handLabel">Ta main</div>
       <div class="hand-pov-wrap">
         <div class="hand" id="playerHand"></div>
@@ -647,21 +767,21 @@
   <div class="sq-table">
     <div class="sq-felt" aria-hidden="true"></div>
     <div class="sq-seat sq-top" id="sqSeatPenalty">
-      <div class="sq-name">Penalty</div>
+      <div class="sq-name"><span class="avatar" data-char="penalty" style="--s:26px"></span>Penalty</div>
       <div class="sq-cards" id="sqCardsPenalty"></div>
       <div class="sq-hist" id="sqHistPenalty"></div>
       <div class="sq-cur" id="sqCurPenalty"></div>
       <div class="sq-bubble" id="sqBubblePenalty"></div>
     </div>
     <div class="sq-seat sq-left" id="sqSeatAristide">
-      <div class="sq-name">Aristide</div>
+      <div class="sq-name"><span class="avatar" data-char="aristide" style="--s:26px"></span>RALL</div>
       <div class="sq-cards" id="sqCardsAristide"></div>
       <div class="sq-hist" id="sqHistAristide"></div>
       <div class="sq-cur" id="sqCurAristide"></div>
       <div class="sq-bubble" id="sqBubbleAristide"></div>
     </div>
     <div class="sq-seat sq-right" id="sqSeatGervais">
-      <div class="sq-name">Gervais</div>
+      <div class="sq-name"><span class="avatar" data-char="gervais" style="--s:26px"></span>Joëlle</div>
       <div class="sq-cards" id="sqCardsGervais"></div>
       <div class="sq-hist" id="sqHistGervais"></div>
       <div class="sq-cur" id="sqCurGervais"></div>
@@ -703,48 +823,75 @@
     <div class="cert-sign">Authentifié par <b>Penalty</b> — Éditions du Quartier</div>
     <div class="cert-stamp">CERTIFIÉ</div>
   </div>
+  <button class="primary whatsapp hidden cert-share" id="btnCertShare">📲 Partager mon exploit</button>
 </div>
 <div class="toast" id="toast"><span id="toastMain"></span><span class="sub" id="toastSub"></span></div>
+<div class="trophy-pop" id="trophyPop"></div>
 <div class="net-banner hidden" id="netBanner">
   <span class="net-dot"></span><span id="netBannerText"></span>
   <button class="ghost" id="btnNetQuit">Quitter</button>
 </div>
 
-<!-- Dealer/cut flow overlays -->
-<div class="overlay hidden" id="dealAnnounceOverlay">
-  <h2 id="dealAnnounceTitle">Nouvelle manche</h2>
-  <p id="dealAnnounceText"></p>
-  <button class="primary" id="btnDealContinue">Continuer</button>
-</div>
-
+<!-- The whole "je partage ou je dépose" ritual on one screen: share in one tap, or cut + pick a pile -->
 <div class="overlay hidden" id="choiceOverlay">
   <h2>Je partage ou je dépose ?</h2>
   <p id="choiceText"></p>
   <div class="btnrow">
-    <button class="primary" id="btnPartage">Je partage</button>
-    <button id="btnDepose">Je dépose</button>
+    <button class="primary big" id="btnPartage">Je partage</button>
+    <button class="big" id="btnDepose">Je dépose ✂️</button>
   </div>
+  <div class="cut-panel hidden" id="cutPanel">
+    <p>Où coupes-tu le paquet ?</p>
+    <div class="seg" id="cutSeg">
+      <button data-f="0.3333">Bas</button><button data-f="0.5" class="on">Milieu</button><button data-f="0.6667">Haut</button>
+    </div>
+    <p>Puis prends le tas :</p>
+    <div class="btnrow">
+      <button class="primary" id="pileTop">Du haut</button>
+      <button class="primary" id="pileBottom">Du bas</button>
+    </div>
+  </div>
+  <label class="pref-check"><input type="checkbox" id="prefAlwaysShare"> Toujours partager (ne plus me demander)</label>
   <button class="ghost" id="btnRemix">🔀 Exiger un nouveau mélange</button>
 </div>
 
-<div class="overlay hidden" id="cutOverlay">
-  <h2>La coupe</h2>
-  <p>Où coupes-tu le deck ?</p>
-  <div class="cutstack" id="cutStackVisual"></div>
-  <div class="btnrow">
-    <button id="cutLow">Couper bas (1/3)</button>
-    <button id="cutMid">Couper au milieu</button>
-    <button id="cutHigh">Couper haut (2/3)</button>
+<div class="overlay hidden" id="pauseOverlay">
+  <h2>Pause</h2>
+  <div class="menu-list">
+    <button class="primary" id="btnResume">▶ Reprendre</button>
+    <button id="btnOpenRules">📖 Les règles du jeu</button>
+    <button id="btnToggleSound">🔊 Son : activé</button>
+    <button id="btnToggleShare">🃏 Toujours partager : non</button>
+    <button id="btnToggleStats">📈 Statistiques anonymes : oui</button>
+    <button class="danger" id="btnQuitGame">Quitter la partie</button>
   </div>
 </div>
 
-<div class="overlay hidden" id="pileOverlay">
-  <h2>Prends quel tas ?</h2>
-  <p>Les deux tas ont été repositionnés en ordre inverse.</p>
-  <div class="btnrow">
-    <button class="primary" id="pileTop">Le tas du haut</button>
-    <button class="primary" id="pileBottom">Le tas du bas</button>
+<div class="overlay hidden" id="rulesOverlay">
+  <h2>Les règles en bref</h2>
+  <div class="rules-box">
+    <h3>Le jeu</h3>
+    <p>31 cartes : du 3 au 9 dans les 4 couleurs (<b>Black ♠, Tchaka ♣, Coubie ♥, Zing ♦</b>), plus le 10 en Tchaka, Coubie et Zing. Pas de 10 Black. 5 cartes chacun.</p>
+    <h3>Commande &amp; contrôle</h3>
+    <p>Celui qui pose la première carte <b>commande</b> sa couleur. Les autres doivent la suivre s'ils en ont. Sinon, ils jouent ce qu'ils veulent (« jouer libre »), mais ne prennent jamais le contrôle. La plus forte carte dans la couleur demandée prend le <b>contrôle</b> et commande le tour suivant.</p>
+    <h3>Gagner la manche</h3>
+    <p>Celui qui a le contrôle sur la <b>dernière carte</b> gagne : +1 point. Premier à 5 points.</p>
+    <h3>CORA &amp; 33 Glacée</h3>
+    <p><b>CORA</b> : la dernière carte gagnante est un 3 → +2. <b>33 Glacée</b> : les deux dernières cartes gagnantes sont des 3 → +3.</p>
+    <h3>La Passe</h3>
+    <p>Avec 2 cartes en main, sans la couleur demandée : soit 2 cartes de même couleur, soit 2 couleurs différentes dont un 3. Tu peux passer : tu ne joues pas ce tour, puis tu poses <b>tes 2 cartes d'un coup</b> au dernier tour.</p>
+    <h3>Victoires automatiques</h3>
+    <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → +1.</p>
   </div>
+  <button class="primary" id="btnCloseRules">J'ai compris</button>
+</div>
+
+<div class="overlay hidden" id="inviteOverlay">
+  <h2>On t'invite à jouer !</h2>
+  <p id="inviteText">Partie de Fap Fap</p>
+  <input id="inviteNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
+  <button class="primary big" id="btnInviteJoin">Rejoindre la partie</button>
+  <button class="ghost" id="btnInviteNo">Non merci</button>
 </div>
 
 <div class="overlay hidden" id="eliminateOverlay">
@@ -762,25 +909,44 @@
     <div class="cert-sign">Fait à Yaoundé — Éditions du Quartier</div>
     <div class="cert-stamp" style="font-size:10px;">PENALTY</div>
   </div>
-  <button class="primary" id="btnRestart" style="margin-top:18px;">Rejouer</button>
+  <div class="rep-panel hidden" id="repPanel">
+    <div class="rep-head"><span id="repRankName"></span><span id="repGain"></span></div>
+    <div class="rep-bar"><div id="repBarFill"></div></div>
+    <div class="rep-next" id="repNext"></div>
+    <div class="rep-lines" id="repLines"></div>
+    <div class="rep-trophies" id="repTrophies"></div>
+  </div>
+  <p id="rematchInfo" class="rematch-info"></p>
+  <button class="primary big" id="btnRematch" style="margin-top:6px;">🔁 Revanche</button>
+  <button class="whatsapp hidden" id="btnShareWin">📲 Partager ma victoire</button>
+  <button class="ghost" id="btnToMenu">Retour au menu</button>
 </div>
 
 <div class="overlay hidden" id="confirmRestartOverlay">
-  <h2>Recommencer ?</h2>
-  <p>La manche en cours sera perdue.</p>
+  <h2>Quitter la partie ?</h2>
+  <p id="confirmQuitText">La manche en cours sera perdue.</p>
   <div class="btnrow">
-    <button class="primary" id="btnConfirmRestartYes">Oui, recommencer</button>
-    <button id="btnConfirmRestartNo">Annuler</button>
+    <button class="danger" id="btnConfirmRestartYes">Oui, quitter</button>
+    <button id="btnConfirmRestartNo">Continuer à jouer</button>
   </div>
 </div>
 
 <div class="overlay" id="menuOverlay">
-  <h2>FAP FAP</h2>
+  <h2 class="brand-title">Fap Fap</h2>
+  <div class="menu-rank" id="menuRank"></div>
   <p>Duel de quartier. Comment veux-tu jouer ?</p>
   <div class="level-list">
+    <button class="level-btn tuto-btn" id="modeTuto">
+      <span class="lvl-name">🎓 Nouveau ? Apprends à jouer</span>
+      <span class="lvl-desc">2 minutes avec Penalty, qui t'explique tout en jouant. Idéal pour commencer.</span>
+    </button>
+    <button class="level-btn daily-btn" id="modeDaily">
+      <span class="lvl-name">📅 Le défi du jour</span>
+      <span class="lvl-desc" id="dailyDesc">La même donne pour tout le monde aujourd'hui. 3 manches contre Penalty.</span>
+    </button>
     <button class="level-btn" id="modeAI">
-      <span class="lvl-name">Contre Penalty</span>
-      <span class="lvl-desc">Il ne voit jamais tes cartes, compte les tiennes jouées, bluffe — et retient comment tu joues d'une partie à l'autre</span>
+      <span class="lvl-name">La route du quartier</span>
+      <span class="lvl-desc">Affronte Joëlle, RALL, Penalty… puis Mr Kamga, le Vétéran. Aucun ne voit tes cartes.</span>
     </button>
     <button class="level-btn" id="modeMP">
       <span class="lvl-name">Avec un ami</span>
@@ -788,11 +954,65 @@
     </button>
     <button class="level-btn" id="modeSquare">
       <span class="lvl-name">Carré la Pute</span>
-      <span class="lvl-desc">4 joueurs — Penalty, Aristide, Gervais et toi. Le vainqueur de chaque manche élimine qui il veut, jusqu'au dernier survivant</span>
+      <span class="lvl-desc">4 joueurs — Penalty, RALL, Joëlle et toi. Le vainqueur de chaque manche élimine qui il veut, jusqu'au dernier survivant</span>
     </button>
   </div>
-  <button class="ghost" id="btnShowStats" style="margin-top:6px;">📊 Mes statistiques</button>
+  <div class="btnrow" style="margin-top:4px;">
+    <button id="btnShowTrophies">🏆 Trophées</button>
+    <button id="btnShowSkins">🎨 Décors</button>
+    <button id="btnShowStats">📊 Stats</button>
+  </div>
+  <button class="ghost hidden" id="btnTutoAgain">🎓 Revoir la partie guidée</button>
+  <button class="primary hidden" id="btnInstall">📲 Installer le jeu sur ce téléphone</button>
   <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
+</div>
+
+<div class="overlay hidden" id="dailyOverlay">
+  <h2 id="dailyTitle">Défi du jour</h2>
+  <div class="daily-marks" id="dailyMarks"></div>
+  <p id="dailyScore"></p>
+  <p id="dailyRep" class="rematch-info"></p>
+  <button class="primary big whatsapp" id="btnDailyShare">📲 Partager mon résultat</button>
+  <p id="dailyNext" class="small-note"></p>
+  <button class="ghost" id="btnDailyMenu">Retour au menu</button>
+</div>
+
+<div class="overlay hidden" id="oppSelectOverlay">
+  <h2>La route du quartier</h2>
+  <p>Choisis ton adversaire.</p>
+  <div class="opp-list" id="oppList"></div>
+  <button class="ghost" id="btnBackFromOpp">← Retour</button>
+</div>
+
+<div class="overlay hidden" id="iosInstallOverlay">
+  <h2>Installer Fap Fap</h2>
+  <p>Sur iPhone : touche le bouton <b>Partager</b> (le carré avec une flèche ↑) en bas de Safari, puis <b>« Sur l'écran d'accueil »</b>.</p>
+  <p class="small-note">Le jeu s'ouvrira alors en plein écran, comme une vraie application.</p>
+  <button class="primary" id="btnCloseIosInstall">Compris</button>
+</div>
+
+<div class="overlay hidden" id="tutoDoneOverlay">
+  <h2>Bravo, tu sais jouer ! 🎉</h2>
+  <p>Tu viens de réussir un CORA contre Penalty. Tu connais l'essentiel : commander, suivre la couleur, prendre le contrôle, et gagner sur la dernière carte.</p>
+  <p class="small-note">Il reste deux armes à découvrir : la Passe et les victoires automatiques. Tout est dans les règles.</p>
+  <p id="tutoRep" class="rematch-info"></p>
+  <button class="primary big" id="btnTutoPlay">Affronter Joëlle (★)</button>
+  <button id="btnTutoRules">📖 Lire les règles</button>
+  <button class="ghost" id="btnTutoMenu">Retour au menu</button>
+</div>
+
+<div class="overlay hidden" id="skinsOverlay">
+  <h2>Tes décors</h2>
+  <p>Tout se gagne en jouant : rangs, trophées, défis.</p>
+  <div id="skinGroups"></div>
+  <button class="primary" id="btnCloseSkins">Retour</button>
+</div>
+
+<div class="overlay hidden" id="trophiesOverlay">
+  <h2>Tes trophées</h2>
+  <p id="trophiesCount"></p>
+  <div class="trophy-grid" id="trophyGrid"></div>
+  <button class="primary" id="btnCloseTrophies">Retour</button>
 </div>
 
 <div class="overlay hidden" id="statsOverlay">
@@ -817,16 +1037,19 @@
   <h2>Ton code</h2>
   <p id="mpHostStatus">Partage ce code avec ton ami :</p>
   <div class="mp-code" id="mpCodeDisplay">----</div>
+  <button class="primary big whatsapp" id="btnInviteWhatsApp">📲 Inviter sur WhatsApp</button>
   <div class="btnrow">
-    <button id="btnCopyCode">📋 Copier le code</button>
+    <button id="btnShareLink" class="hidden">📤 Partager le lien</button>
+    <button id="btnCopyCode">📋 Copier le lien</button>
   </div>
+  <p class="small-note">Ton ami clique sur le lien et arrive directement dans la partie.</p>
   <button class="ghost" id="btnCancelHost">Annuler</button>
 </div>
 
 <div class="overlay hidden" id="mpJoinOverlay">
   <h2>Rejoindre</h2>
   <p>Entre le code de ton ami :</p>
-  <input id="mpCodeInput" class="mp-input" maxlength="4" placeholder="CODE" style="text-transform:uppercase; text-align:center; letter-spacing:0.3em; font-family:'JetBrains Mono',monospace; font-size:20px;">
+  <input id="mpCodeInput" class="mp-input" maxlength="4" placeholder="CODE" style="text-transform:uppercase; text-align:center; letter-spacing:0.3em; font-family:var(--font-ui); font-size:20px;">
   <div class="btnrow">
     <button class="primary" id="btnMpConnect">Rejoindre</button>
   </div>
@@ -1011,8 +1234,9 @@
   // (by free-playing off it, or by passing on it) — then solves each sampled world exactly with
   // the same search() engine, and picks whichever move performs best on average across all of them.
   // It never looks at the player's actual hand.
-  const PIMC_TIME_BUDGET_MS = 450;
-  const PIMC_MAX_SAMPLES = 120;
+  // how hard to think comes from the opponent (Penalty: 450 ms / 120 deals, Mr Kamga: 900 ms / 260 deals)
+  function pimcBudgetMs(){ return oppPersona().pimcMs || 450; }
+  function pimcMaxSamples(){ return oppPersona().pimcSamples || 120; }
   function unseenPoolFor(myHand){
     const usedKeys = new Set();
     myHand.forEach(c=>usedKeys.add(c.suit+'-'+c.rank));
@@ -1032,8 +1256,8 @@
     const totals = {}; state.aiHand.forEach(c=>totals[c.suit+'-'+c.rank]=0);
     const startedAt = Date.now();
     let ran = 0;
-    for(let i=0;i<PIMC_MAX_SAMPLES;i++){
-      if(Date.now()-startedAt > PIMC_TIME_BUDGET_MS) break;
+    for(let i=0, max=pimcMaxSamples(), budget=pimcBudgetMs(); i<max; i++){
+      if(Date.now()-startedAt > budget) break;
       const sampledYou = sampleOpponentHand(pool, oppSize, voidSuits);
       const [w1,w2] = lastTwoWinners();
       for(const c of state.aiHand){
@@ -1064,8 +1288,8 @@
     const totals = options.map(()=>0);
     const startedAt = Date.now();
     let ran = 0;
-    for(let i=0;i<PIMC_MAX_SAMPLES;i++){
-      if(Date.now()-startedAt > PIMC_TIME_BUDGET_MS) break;
+    for(let i=0, max=pimcMaxSamples(), budget=pimcBudgetMs(); i<max; i++){
+      if(Date.now()-startedAt > budget) break;
       const sampledYou = sampleOpponentHand(pool, oppSize, voidSuits);
       const [w1,w2] = lastTwoWinners();
       options.forEach((opt,idx)=>{
@@ -1109,13 +1333,21 @@
   let myName = 'Toi', oppNameVal = 'Ton ami';
   const myNetId = Math.random().toString(36).slice(2,10);
   const MP_LOCAL = /[?&]mplocal\b/.test(location.search); // test mode: two tabs of this browser, no server
-  function oppName(){ return mode==='mp' ? oppNameVal : 'Penalty'; }
+  function oppName(){ return mode==='mp' ? oppNameVal : oppPersona().name; }
   function applyOppNameToUI(){
     const n = oppName();
     const a = document.getElementById('oppLabelName'); if(a) a.textContent = n;
     const b = document.getElementById('oppSlotLabel'); if(b) b.textContent = n;
+    const c = document.getElementById('scoreOppName'); if(c) c.textContent = n;
+    // the opponent's medallion (and optional "at the table" illustration); an online friend gets their initial
+    if(mode==='mp'){ fillAvatar(document.getElementById('oppAvatar'), null, n); showTableArt(null); }
+    else { fillAvatar(document.getElementById('oppAvatar'), duelOpp); showTableArt(duelOpp); }
     const sub = document.querySelector('header .sub');
-    if(sub) sub.textContent = mode==='mp' ? ('Duel de quartier · Toi contre '+n) : 'Duel de quartier · Toi contre Penalty';
+    if(sub) sub.textContent = 'Duel de quartier · Toi contre '+n;
+    // quick reactions only exist in online play
+    const react = document.getElementById('btnReact');
+    if(react) react.classList.toggle('hidden', mode!=='mp');
+    if(mode!=='mp'){ const pal = document.getElementById('reactPalette'); if(pal) pal.classList.add('hidden'); }
   }
   function randomRoomCode(){
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I ambiguity
@@ -1183,6 +1415,7 @@
     clearInterval(mpResendTimer); mpResendTimer = null;
     mpOutSeq = 0; mpInNext = 1; mpPeerId = null; mpLastPresence = [];
     mpOutbox.clear(); mpInBuffer.clear();
+    mpRematch = {me:false, opp:false};
     showNetBanner(null);
   }
 
@@ -1333,9 +1566,11 @@
   function startMpMatch(){
     if(mpMatchStarted) return;
     mpMatchStarted = true;
+    startMatchTracking();
     document.getElementById('mpHostOverlay').classList.add('hidden');
     document.getElementById('mpJoinOverlay').classList.add('hidden');
     mode = 'mp';
+    applyOppNameToUI();
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
@@ -1359,6 +1594,7 @@
     if(msg.t==='start'){
       if(mpMatchStarted) return;
       mpMatchStarted = true;
+      startMatchTracking();
       document.getElementById('mpJoinOverlay').classList.add('hidden');
       mode = 'mp';
       applyOppNameToUI();
@@ -1368,6 +1604,21 @@
       document.getElementById('matchOverOverlay').classList.add('hidden');
       dealer = msg.dealer;
       beginHand();
+      return;
+    }
+    if(msg.t==='react'){
+      const text = REACTIONS[msg.i|0];
+      if(text){ showOppBubble(text); try{ chime(740,0.12,0.05,0,-0.3); }catch(e){} }
+      return;
+    }
+    if(msg.t==='rematch'){
+      mpRematch.opp = true;
+      refreshRematchUI();
+      mpMaybeStartRematch();
+      return;
+    }
+    if(msg.t==='newMatch'){
+      mpStartRematchLocal(msg.dealer);
       return;
     }
     if(msg.t==='needCutChoice'){
@@ -1381,7 +1632,7 @@
     }
     if(msg.t==='dealt'){
       // the host dealt: whatever screen the guest was still on (end of the previous hand), move on
-      ['dealAnnounceOverlay','choiceOverlay','cutOverlay','pileOverlay'].forEach(id=> document.getElementById(id).classList.add('hidden'));
+      document.getElementById('choiceOverlay').classList.add('hidden');
       document.getElementById('btnNext').classList.add('hidden');
       clearSlots();
       state = {
@@ -1736,6 +1987,106 @@
     "C'est là que ça devient intéressant pour moi."
   ];
 
+  // ---- La route du quartier: four duel opponents, from the nervous beginner to the boss ----
+  // Every one of them is honest — none ever looks at your cards. They differ only in how well they think:
+  //   'easy'      = often plays a random legal card (real mistakes)
+  //   'heuristic' = counts cards, plays sure winners, sandbags sometimes
+  //   'pimc'      = imagines your possible hands and solves each one (pimcMs / pimcSamples = how hard it thinks)
+  // announce = [chance to announce an automatic win at once, chance to announce at most one card late]
+  const DUEL_PERSONAS = {
+    gervais: {
+      name:'Joëlle', stars:1, brain:'easy', announce:[0.5, 0.8], repWin:50,
+      tagline:'Nerveuse et superstitieuse. Elle joue vite… et se trompe souvent.',
+      lines:{
+        control:["Hmm... je le sentais.","Chut, chut… laisse-moi jouer.","Ah… exactement ça.","Je savais que cette carte allait sortir.","Touche pas la table, ça porte malheur."],
+        win:["Je savais que ça allait arriver.","C'est écrit d'avance, je te dis.","Les cartes m'aiment ce soir…","Ouf. J'ai cru que j'allais perdre."],
+        cora:["Le CORA… je le sentais dans l'air.","Un 3 ! Mon chiffre porte-bonheur !"],
+        glacee:["33 Glacée… je n'y crois pas moi-même.","Wow. Vraiment wow. Personne ne bouge."],
+        surprise:["Hein ?! Comment t'as fait ?","Non non non… pas ça.","Ça, je l'avais pas vu venir…","Aïe aïe aïe."],
+        lose:["Bon… ça arrive.","La chance tourne, c'est tout.","C'est la faute de la chaise, elle grince."],
+        behind:["Doucement… je vais me refaire.","Attends, je change de place.","Ça va tourner, je le sens.","Me regarde pas comme ça, ça me déconcentre."],
+        missed:["Attends… j'avais une victoire automatique ! Trop tard…","J'ai encore oublié d'annoncer…"]
+      }
+    },
+    aristide: {
+      name:'RALL', stars:2, brain:'heuristic', announce:[0.7, 0.9], repWin:100,
+      tagline:'Moqueur et solide. Il joue proprement, sans grande finesse.',
+      lines:{
+        control:["Ha, je savais.","Toujours aussi prévisible.","Facile, facile.","Regarde et apprends.","Tu vois ce que je viens de faire ?"],
+        win:["Comme d'habitude.","Une routine, franchement.","Je te l'avais bien dit.","Note la date… ah non, ça t'arrive tout le temps."],
+        cora:["LE CORA ! Évidemment que c'est moi.","Un CORA, et sans transpirer."],
+        glacee:["33 GLACÉE ! Je vous avais dit de faire attention.","Personne ne va me croire, et tant pis."],
+        surprise:["Tiens donc… tu sais jouer, en fait ?","Pas mal. Pour une fois.","Quel bail ! T'as triché ou quoi ?"],
+        lose:["Bon. Une fois n'est pas coutume.","Ça arrive même aux meilleurs, apparemment.","Profite, ça se reproduira pas."],
+        behind:["Je te laisse croire que tu gagnes.","Continue, ça me fait rire.","Tu vas redescendre, t'inquiète.","C'est mignon, ce petit score."],
+        missed:["J'avais une victoire automatique… je voulais te laisser une chance.","Bah, j'ai pas besoin d'annoncer pour te battre."]
+      }
+    },
+    penalty: {
+      name:'Penalty', stars:3, brain:'pimc', pimcMs:450, pimcSamples:120, announce:[0.7, 0.9], repWin:150,
+      tagline:'L’auteur du manuel. Compte les cartes, bluffe, et retient ta façon de jouer.',
+      lines:{
+        control:PENALTY_CONTROL_LINES, win:PENALTY_WIN_LINES, cora:PENALTY_CORA_LINES, glacee:PENALTY_GLACEE_LINES,
+        surprise:PENALTY_SURPRISE_LINES, lose:PENALTY_LOSE_LINES, behind:PENALTY_BEHIND_TAUNT_LINES,
+        missed:["Attends... j'avais une victoire automatique, moi !","Eh, j'ai oublié d'annoncer. Ça reste entre nous.","Le plafond m'a distrait. Trop tard pour annoncer."]
+      }
+    },
+    mbarga: {
+      name:'Mr Kamga', stars:4, brain:'pimc', pimcMs:900, pimcSamples:260, announce:[1, 1], repWin:220,
+      tagline:'Le Vétéran : 14 ans de Fap Fap. Il calcule tout et ne laisse rien passer.',
+      lockedHint:'Bats Penalty pour défier Mr Kamga.',
+      lines:{
+        control:["Hm.","Je l'ai vu venir.","Tu planifies. Le jeu décide.","Patience, petit.","Quatorze ans que je vois ce coup-là."],
+        win:["C'est ça le Fap Fap.","Tu cherchais quelque chose. Je l'ai vu.","Reviens quand tu auras relu le manuel.","Il va apprendre."],
+        cora:["CORA. Sans un bruit.","Le 3, petit. Toujours le 3."],
+        glacee:["La 33 Glacée. Retiens bien ce soir.","Deux 3. Silence sur la terrasse."],
+        surprise:["Hm. Pas mal.","Tu as lu le chapitre 8, toi.","Intéressant…"],
+        lose:["Bien joué. Vraiment.","Tu progresses. Ça se voit.","Une manche. Pas le match."],
+        behind:["Le score ne veut rien dire.","Calme-toi, ce n'est pas fini.","J'ai vu pire. Et j'ai gagné quand même."],
+        missed:[]
+      }
+    }
+  };
+  const DUEL_ORDER = ['gervais','aristide','penalty','mbarga'];
+
+  // ---- Character illustrations ----
+  // Drop the pictures in an "art" folder next to index.html and they appear everywhere automatically
+  // (.jpg tried first, then .png):
+  //   art/penalty.jpg, art/joelle.jpg, art/rall.jpg, art/kamga.jpg        square portraits (medallions)
+  //   art/penalty-table.jpg, art/joelle-table.jpg, …                      optional: arms + hands holding the
+  //                                                                       cards, seen from across the table
+  // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
+  const ART_FILE = {penalty:'penalty', gervais:'joelle', aristide:'rall', mbarga:'kamga'};
+  function artImgTag(base){
+    return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
+      'onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\';}else{this.remove();}">';
+  }
+  function fillAvatar(el, charId, label){
+    if(!el) return;
+    const p = DUEL_PERSONAS[charId];
+    const initial = ((label || (p && p.name) || '?').trim().charAt(0) || '?').toUpperCase();
+    el.innerHTML = '<span class="av-ini">'+initial+'</span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : '');
+  }
+  function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
+  // the opponent's hands holding their cards replace the row of face-down cards when the picture exists
+  function showTableArt(charId){
+    const img = document.getElementById('oppTableArt');
+    const zone = document.querySelector('.ai-zone');
+    if(!img || !zone) return;
+    const off = ()=>{ img.hidden = true; zone.classList.remove('has-art'); };
+    off();
+    if(!ART_FILE[charId]) return;
+    const base = 'art/'+ART_FILE[charId]+'-table';
+    let triedPng = false;
+    img.onload = ()=>{ img.hidden = false; zone.classList.add('has-art'); };
+    img.onerror = ()=>{ if(!triedPng){ triedPng = true; img.src = base+'.png'; } else off(); };
+    img.src = base+'.jpg';
+  }
+  let duelOpp = 'penalty';
+  function oppPersona(){ return DUEL_PERSONAS[duelOpp] || DUEL_PERSONAS.penalty; }
+  function L(kind){ const l = oppPersona().lines[kind]; return (l && l.length) ? l : DUEL_PERSONAS.penalty.lines[kind]; }
+  function isOppUnlocked(id){ return id!=='mbarga' || (profile.ladder.penalty.w>0); }
+
   let bubbleTimer = null;
   function penaltySay(lines){
     if(mode==='mp') return;
@@ -1748,10 +2099,44 @@
     clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(()=> bubble.classList.remove('show'), 3200);
   }
+  // ---- Quick reactions in online play: a fixed list (no free text, so nothing to moderate) ----
+  const REACTIONS = ['Tu dors ?','Quel bail !','Range tes cartes','Bien joué 👏','😂','🔥','Hmm… 🤔','On se calme'];
+  function showOppBubble(text){
+    const bubble = document.getElementById('penaltyBubble');
+    bubble.textContent = text;
+    bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(()=> bubble.classList.remove('show'), 3000);
+  }
+  let myBubbleTimer = null, lastReactAt = 0;
+  function showMyBubble(text){
+    const b = document.getElementById('myBubble');
+    b.textContent = text;
+    b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+    clearTimeout(myBubbleTimer);
+    myBubbleTimer = setTimeout(()=> b.classList.remove('show'), 2400);
+  }
+  (function buildReactPalette(){
+    const pal = document.getElementById('reactPalette');
+    REACTIONS.forEach((r,i)=>{
+      const b = document.createElement('button');
+      b.textContent = r;
+      b.addEventListener('click', ()=>{
+        pal.classList.add('hidden');
+        if(Date.now()-lastReactAt < 1500) return; // light anti-spam
+        lastReactAt = Date.now();
+        mpSend({t:'react', i});
+        showMyBubble(r);
+      });
+      pal.appendChild(b);
+    });
+    document.getElementById('btnReact').addEventListener('click', ()=> pal.classList.toggle('hidden'));
+  })();
+
   // when Penalty is behind, mix in a defiant taunt instead of the "normal" line — he's trying to destabilize you
   function penaltySayMaybeTaunting(normalLines){
     if(mode!=='ai'){ penaltySay(normalLines); return; }
-    if(scores.ai < scores.you && Math.random()<0.55){ penaltySay(PENALTY_BEHIND_TAUNT_LINES); }
+    if(scores.ai < scores.you && Math.random()<0.55){ penaltySay(L('behind')); }
     else { penaltySay(normalLines); }
   }
 
@@ -1760,11 +2145,8 @@
     return [ n>=1?state.trickWinners[n-1]:null, n>=2?state.trickWinners[n-2]:null ];
   }
 
-  // ---- Difficulty levels ----
-  // 'hard'   = full-knowledge minimax (existing search/bestAILead/bestAIDefend below) — sees your hand, near-unbeatable
-  // 'normal' = solid heuristic AI — counts played cards, plays sure winners, sandbags smartly, no cheating
-  // 'easy'   = same heuristic, but often just plays a random legal card — makes real mistakes
-  // ---- Penalty's memory of THIS player, persisted on this device across games ----
+  // ---- The player's profile, persisted on this device: the AIs' memory of how you play, plus your progression ----
+  // gamesPlayed / gamesWon / gamesLost count every duel against the AIs (gamesWon = the AI won).
   const PROFILE_KEY = 'fapfap_penalty_profile_v1';
   function defaultProfile(){
     return {
@@ -1773,18 +2155,257 @@
       sandbagBaseRate: 0.35,
       handsWithSandbag: 0, handsWithSandbagWon: 0,
       handsNoSandbag: 0, handsNoSandbagWon: 0,
-      squareGamesPlayed: 0, squareWins: 0
+      squareGamesPlayed: 0, squareWins: 0,
+      rep: 0,                 // "réputation": drives the neighbourhood ranks
+      trophies: {},           // id -> unlock timestamp
+      ladder: {gervais:{w:0,l:0}, aristide:{w:0,l:0}, penalty:{w:0,l:0}, mbarga:{w:0,l:0}}, // your wins/losses vs each
+      winStreak: 0,
+      lastDuel: null,         // {opp, won} — for the "revanche servie" trophy
+      onlineWins: 0, onlineGames: 0
     };
   }
   function loadProfile(){
     try{
       const raw = localStorage.getItem(PROFILE_KEY);
-      if(raw) return Object.assign(defaultProfile(), JSON.parse(raw));
+      if(raw){
+        const saved = JSON.parse(raw);
+        const p = Object.assign(defaultProfile(), saved);
+        if(!saved.ladder){
+          // profile from before the ladder existed: every past duel was against Penalty
+          p.ladder.penalty = {w: saved.gamesLost||0, l: saved.gamesWon||0};
+        }
+        DUEL_ORDER.forEach(id=>{ if(!p.ladder[id]) p.ladder[id] = {w:0,l:0}; });
+        if(!p.trophies) p.trophies = {};
+        return p;
+      }
     }catch(e){}
     return defaultProfile();
   }
   function saveProfile(){ try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }catch(e){} }
   let profile = loadProfile();
+
+  // player preferences, remembered on this device: first name (online play) and "always share"
+  const PREFS_KEY = 'fapfap_prefs_v1';
+  function loadPrefs(){
+    const base = {alwaysShare:false, name:''};
+    try{ return Object.assign(base, JSON.parse(localStorage.getItem(PREFS_KEY)||'{}')); }catch(e){ return base; }
+  }
+  function savePrefs(){ try{ localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }catch(e){} }
+  let prefs = loadPrefs();
+
+  // ===================== Progression: réputation, neighbourhood ranks, trophies =====================
+  const RANKS = [
+    {name:'Petit joueur', at:0}, {name:'Joueur du dimanche', at:300}, {name:'Joueur sérieux', at:900},
+    {name:'Redouté', at:2000}, {name:'Caïd du quartier', at:3800}, {name:'Légende de Melen', at:6500}
+  ];
+  function rankIndex(rep){ let i=0; RANKS.forEach((r,k)=>{ if(rep>=r.at) i=k; }); return i; }
+  // progress inside the current rank, 0..1 (1 at the top rank)
+  function rankProgress(rep){
+    const i = rankIndex(rep);
+    if(i===RANKS.length-1) return 1;
+    return (rep-RANKS[i].at)/(RANKS[i+1].at-RANKS[i].at);
+  }
+
+  const TROPHIES = [
+    {id:'premiere',     icon:'🥇', name:'Première victoire',         desc:'Gagner ton premier match.'},
+    {id:'cora',         icon:'3️⃣', name:'Chapitre 5',                desc:'Réussir un CORA.'},
+    {id:'glacee',       icon:'🧊', name:'La Nuit de la 33 Glacée',   desc:'Réussir une 33 Glacée.'},
+    {id:'auto',         icon:'⚡', name:'Victoire sur table',        desc:'Annoncer une victoire automatique.'},
+    {id:'quad',         icon:'🃏', name:'Les 4 symboles',            desc:'Gagner avec la même valeur dans les 4 couleurs.'},
+    {id:'passe',        icon:'✋', name:'L’art de différer',      desc:'Gagner une manche après avoir passé.'},
+    {id:'sommeil',      icon:'😴', name:'Tu dors ?',                 desc:'Jouer faible alors que tu avais plus fort, et gagner la manche.'},
+    {id:'sans_appel',   icon:'💯', name:'Sans appel',                desc:'Gagner un match 5 à 0.'},
+    {id:'remontada',    icon:'🔥', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
+    {id:'serie3',       icon:'📈', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
+    {id:'revanche',     icon:'🔁', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
+    {id:'beat_gervais', icon:'🙂', name:'Joëlle calmée',             desc:'Battre Joëlle.'},
+    {id:'beat_aristide',icon:'😏', name:'RALL se tait',              desc:'Battre RALL.'},
+    {id:'beat_penalty', icon:'📕', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
+    {id:'beat_mbarga',  icon:'👑', name:'Le Vétéran est tombé',      desc:'Battre Mr Kamga.'},
+    {id:'survivant',    icon:'🏚️', name:'Dernier survivant',         desc:'Gagner une partie de Carré la Pute.'},
+    {id:'double',       icon:'✌️', name:'Coup double',               desc:'Éliminer deux joueurs d’un coup en Carré.'},
+    {id:'en_ligne',     icon:'🌍', name:'Roi du quartier en ligne',  desc:'Gagner un match contre un ami en ligne.'},
+    {id:'apprenti',     icon:'🎓', name:'Apprenti du quartier',      desc:'Terminer la partie guidée avec Penalty.'},
+    {id:'defi',         icon:'📅', name:'Rendez-vous quotidien',     desc:'Terminer un défi du jour.'},
+    {id:'defi_parfait', icon:'🌟', name:'Défi parfait',              desc:'Gagner les 3 manches d’un défi du jour.'},
+    {id:'streak3',      icon:'🔥', name:'Fidèle au quartier',        desc:'Jouer 3 jours d’affilée.'},
+    {id:'streak7',      icon:'🗓️', name:'Une semaine au tripot',     desc:'Jouer 7 jours d’affilée.'}
+  ];
+  const TROPHY_BY_ID = Object.fromEntries(TROPHIES.map(t=>[t.id, t]));
+  const TROPHY_REP = 50;
+
+  // réputation earned during the current match, shown line by line on the end-of-match screen
+  let matchRep = null;
+  function repStart(){ matchRep = {lines:[], trophies:[], total:0}; }
+  function repAdd(amount, label){
+    if(!matchRep) repStart();
+    matchRep.total += amount;
+    const line = matchRep.lines.find(l=>l.label===label);
+    if(line){ line.amount += amount; line.count++; } else matchRep.lines.push({label, amount, count:1});
+  }
+  function unlockTrophy(id){
+    if(profile.trophies[id] || !TROPHY_BY_ID[id]) return;
+    profile.trophies[id] = Date.now();
+    saveProfile();
+    const t = TROPHY_BY_ID[id];
+    repAdd(TROPHY_REP, 'Trophées');
+    if(matchRep) matchRep.trophies.push(t);
+    trophyPop(t);
+  }
+  // ---- Days-in-a-row streak: the first finished game of each day extends it and pays a bonus ----
+  function dayKey(d){
+    d = d || new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function yesterdayKey(){ const d = new Date(); d.setDate(d.getDate()-1); return dayKey(d); }
+  function touchDayStreak(){
+    const today = dayKey();
+    if(profile.lastPlayDay===today) return; // already counted today
+    profile.dayStreak = (profile.lastPlayDay===yesterdayKey()) ? (profile.dayStreak||0)+1 : 1;
+    profile.lastPlayDay = today;
+    saveProfile();
+    if(profile.dayStreak>=2) repAdd(Math.min(10*profile.dayStreak, 70), 'Bonus de série 🔥 '+profile.dayStreak+' jours');
+    if(profile.dayStreak>=3) unlockTrophy('streak3');
+    if(profile.dayStreak>=7) unlockTrophy('streak7');
+  }
+  // a streak is only "alive" if you played today or yesterday
+  function liveDayStreak(){
+    return (profile.lastPlayDay===dayKey() || profile.lastPlayDay===yesterdayKey()) ? (profile.dayStreak||0) : 0;
+  }
+
+  // ===================== Personalisation: card backs, tables, ambiances — earned, never bought =====================
+  // req(profile) says whether it's unlocked; hint is shown on locked items
+  const SKINS = {
+    back: [
+      {id:'classique', name:'Bordeaux',       swatch:'linear-gradient(160deg,#3c1016,#230a0d 70%)', req:()=>true},
+      {id:'lions',     name:'Lions Indomptables', swatch:'linear-gradient(90deg,#007a3d 0 33%,#ce1126 33% 66%,#fcd116 66%)', req:p=>rankIndex(p.rep)>=1, hint:'Rang « Joueur du dimanche »'},
+      {id:'wax',       name:'Pagne wax',      swatch:'radial-gradient(circle at 30% 30%,#f39c12 0 22%,transparent 24%),radial-gradient(circle at 70% 70%,#1f6fb2 0 18%,transparent 20%),#7a1f3d', req:p=>rankIndex(p.rep)>=2, hint:'Rang « Joueur sérieux »'},
+      {id:'nuit',      name:'Nuit de Melen',  swatch:'linear-gradient(160deg,#1d2a52,#0b1020)', req:p=>!!p.trophies.defi, hint:'Trophée « Rendez-vous quotidien »'},
+      {id:'or',        name:'Or de légende',  swatch:'linear-gradient(160deg,#f6d27a,#a8741c)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'}
+    ],
+    table: [
+      {id:'tripot', name:'Bois du tripot',          swatch:'linear-gradient(180deg,#4a2f14,#2a1809)', req:()=>true},
+      {id:'vichy',  name:'Nappe de Mama Cécile',    swatch:'repeating-linear-gradient(90deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),repeating-linear-gradient(0deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),#d9cfbd', req:p=>!!p.trophies.streak3, hint:'Trophée « Fidèle au quartier » (3 jours)'},
+      {id:'vert',   name:'Tapis vert du bar',       swatch:'linear-gradient(180deg,#1f5a3a,#0e2e1d)', req:p=>!!p.trophies.beat_penalty, hint:'Battre Penalty'}
+    ],
+    light: [
+      {id:'ampoule', name:'Ampoule jaune',     swatch:'radial-gradient(circle,#fff3d6,#f4b860 45%,#2a1809 75%)', req:()=>true},
+      {id:'neon',    name:'Néon du maquis',    swatch:'radial-gradient(circle,#e3d4ff,#a98cff 40%,#c43cc0 60%,#120a1e 80%)', req:p=>rankIndex(p.rep)>=2, hint:'Rang « Joueur sérieux »'},
+      {id:'pluie',   name:'Pluie sur la tôle', swatch:'repeating-linear-gradient(170deg,rgba(200,220,255,.5) 0 1px,transparent 1px 6px),#1a2230', req:p=>!!p.trophies.glacee, hint:'Trophée « La Nuit de la 33 Glacée »'}
+    ]
+  };
+  const SKIN_LABEL = {back:'Dos de cartes', table:'Table', light:'Ambiance'};
+  function skinUnlocked(kind, id){ const s = SKINS[kind].find(x=>x.id===id); return !!s && s.req(profile); }
+  function applySkins(){
+    const sk = Object.assign({back:'classique', table:'tripot', light:'ampoule'}, prefs.skin||{});
+    ['back','table','light'].forEach(kind=>{
+      if(!skinUnlocked(kind, sk[kind])) sk[kind] = SKINS[kind][0].id; // e.g. after clearing the profile
+      SKINS[kind].forEach(s=> document.body.classList.toggle(kind+'-'+s.id, s.id===sk[kind] && s.id!==SKINS[kind][0].id));
+    });
+  }
+  // after progress is banked: announce every newly earned item once
+  function announceNewSkins(){
+    const known = prefs.knownSkins || [];
+    let changed = false;
+    ['back','table','light'].forEach(kind=> SKINS[kind].forEach(s=>{
+      const key = kind+':'+s.id;
+      if(s.req(profile) && !known.includes(key)){
+        known.push(key); changed = true;
+        if(s.hint) trophyPop({icon:'🎨', name:SKIN_LABEL[kind]+' : '+s.name, kind:'Nouveau décor débloqué'});
+      }
+    }));
+    if(changed){ prefs.knownSkins = known; savePrefs(); }
+  }
+
+  // banks the match's réputation and returns what the end screen needs to animate
+  function repCommit(){
+    if(!matchRep) repStart();
+    const before = profile.rep;
+    profile.rep += matchRep.total;
+    saveProfile();
+    setTimeout(announceNewSkins, 2000);
+    const res = {before, after:profile.rep, gained:matchRep.total, lines:matchRep.lines, trophies:matchRep.trophies};
+    matchRep = null;
+    return res;
+  }
+
+  // small gold banner at the top for an unlocked trophy; queued so two never overlap
+  const trophyQueue = [];
+  let trophyShowing = false;
+  function trophyPop(t){ trophyQueue.push(t); if(!trophyShowing) nextTrophyPop(); }
+  function nextTrophyPop(){
+    const t = trophyQueue.shift();
+    const el = document.getElementById('trophyPop');
+    if(!t){ trophyShowing = false; return; }
+    trophyShowing = true;
+    el.innerHTML = '<span class="tp-icon">'+t.icon+'</span><span><b>'+(t.kind||'Trophée débloqué')+'</b><br>'+t.name+'</span>';
+    el.classList.add('show');
+    vibrate([20,40,20]);
+    try{ chime(988,0.18,0.08,0,0); chime(1319,0.28,0.08,0.09,0); }catch(e){}
+    setTimeout(()=>{ el.classList.remove('show'); setTimeout(nextTrophyPop, 350); }, 2600);
+  }
+
+  // fills the réputation panel of the end-of-match screen, with the bar filling up (and a rank-up moment)
+  function renderRepPanel(res){
+    const panel = document.getElementById('repPanel');
+    if(!res){ panel.classList.add('hidden'); return; }
+    panel.classList.remove('hidden');
+    const rBefore = rankIndex(res.before), rAfter = rankIndex(res.after);
+    document.getElementById('repGain').textContent = '+'+res.gained+' réputation';
+    document.getElementById('repLines').innerHTML = res.lines.map(l=>
+      '<div class="rep-line"><span>'+l.label+(l.count>1?' ×'+l.count:'')+'</span><span>+'+l.amount+'</span></div>').join('');
+    document.getElementById('repTrophies').innerHTML = res.trophies.map(t=>'<span class="rep-trophy" title="'+t.desc+'">'+t.icon+' '+t.name+'</span>').join('');
+    const fill = document.getElementById('repBarFill');
+    const nameEl = document.getElementById('repRankName');
+    const nextEl = document.getElementById('repNext');
+    const setFor = (rep)=>{
+      const i = rankIndex(rep);
+      nameEl.textContent = RANKS[i].name;
+      nextEl.textContent = i===RANKS.length-1 ? 'Rang maximum atteint. Respect.' : 'Encore '+(RANKS[i+1].at-rep)+' avant « '+RANKS[i+1].name+' »';
+    };
+    fill.style.transition = 'none';
+    fill.style.width = (rankProgress(res.before)*100)+'%';
+    setFor(res.before);
+    void fill.offsetWidth;
+    setTimeout(()=>{
+      fill.style.transition = 'width 1.1s cubic-bezier(.2,.8,.3,1)';
+      if(rAfter>rBefore){
+        fill.style.width = '100%';
+        setTimeout(()=>{
+          fill.style.transition = 'none'; fill.style.width = '0%'; void fill.offsetWidth;
+          fill.style.transition = 'width 0.9s cubic-bezier(.2,.8,.3,1)';
+          fill.style.width = (rankProgress(res.after)*100)+'%';
+          setFor(res.after);
+          showToast('⬆️ Nouveau rang !', RANKS[rAfter].name, {big:true, celebrate:true, ms:2600});
+          sfxBigWin(); burstConfetti(30);
+        }, 1150);
+      } else {
+        fill.style.width = (rankProgress(res.after)*100)+'%';
+        setFor(res.after);
+      }
+    }, 450);
+  }
+
+  // rank badge shown on the home screen
+  function renderMenuRank(){
+    const el = document.getElementById('menuRank');
+    if(!el) return;
+    const i = rankIndex(profile.rep);
+    const nTroph = Object.keys(profile.trophies).length;
+    const streak = liveDayStreak();
+    // newcomers get the guided game as the first, highlighted choice; afterwards it shrinks to a small link
+    document.getElementById('modeTuto').classList.toggle('hidden', !!profile.tutoDone);
+    document.getElementById('btnTutoAgain').classList.toggle('hidden', !profile.tutoDone);
+    const dd = document.getElementById('dailyDesc');
+    if(dd){
+      const p = profile.daily;
+      dd.textContent = (p && p.date===dayKey())
+        ? 'Fait aujourd’hui : '+dailyMarksLine(p)+' — touche pour revoir et partager ton résultat.'
+        : 'La même donne pour tout le monde aujourd’hui. 3 manches contre Penalty.';
+    }
+    el.innerHTML = '<div class="mr-top"><span class="mr-name">'+RANKS[i].name+'</span><span class="mr-rep">'+(streak>0?'🔥 '+streak+' j · ':'')+profile.rep+' rép. · 🏆 '+nTroph+'/'+TROPHIES.length+'</span></div>'+
+      '<div class="rep-bar small"><div style="width:'+(rankProgress(profile.rep)*100)+'%"></div></div>';
+  }
 
   // known-void tracking: which suits each side has proven (by playing off-suit, or by Passe) that they lack —
   // reset fresh every hand, updated as real information is revealed. Never touches the opponent's actual hand.
@@ -1872,50 +2493,83 @@
         const options = hand.filter(c=>c.suit===lead.suit);
         return {type:'card', card: options[Math.floor(Math.random()*options.length)]};
       }
-      if(canPasse(hand, lead.suit) && Math.random()<0.5) return {type:'passe'};
+      if(!state.passer && canPasse(hand, lead.suit) && Math.random()<0.5) return {type:'passe'};
       return {type:'card', card: hand[Math.floor(Math.random()*hand.length)]};
     }
     return heuristicDefend(hand, lead);
   }
 
-  document.getElementById('btnMute').addEventListener('click', ()=>{
-    soundOn = !soundOn;
+  function setSound(on){
+    soundOn = on;
     document.getElementById('btnMute').textContent = soundOn ? '🔊' : '🔇';
+    document.getElementById('btnToggleSound').textContent = '🔊 Son : '+(soundOn ? 'activé' : 'coupé');
     setAmbientMuted(!soundOn);
     if(soundOn) ensureAudio();
-  });
-  document.getElementById('btnRestartGame').addEventListener('click', ()=>{
-    const p = document.querySelector('#confirmRestartOverlay p');
-    if(p) p.textContent = mode==='mp' ? 'Tu quitteras la partie en ligne en cours.' : 'La manche en cours sera perdue.';
-    document.getElementById('confirmRestartOverlay').classList.remove('hidden');
-  });
-  document.getElementById('btnConfirmRestartYes').addEventListener('click', ()=>{
-    document.getElementById('confirmRestartOverlay').classList.add('hidden');
-    if(mode==='mp'){
-      mpTeardown();
-      mode = 'ai';
-      applyOppNameToUI();
-      document.getElementById('matchOverOverlay').classList.add('hidden');
-      document.getElementById('menuOverlay').classList.remove('hidden');
-    } else if(mode==='square'){
-      mode = 'ai';
-      applyOppNameToUI();
-      document.getElementById('squareScreen').classList.add('hidden');
-      document.getElementById('duoScreen').classList.remove('hidden');
-      document.querySelector('header .sub').textContent = 'Duel de quartier · Toi contre Penalty';
-      document.getElementById('menuOverlay').classList.remove('hidden');
-    } else {
-      newMatch();
-    }
-  });
-  document.getElementById('btnNetQuit').addEventListener('click', ()=>{
-    document.getElementById('btnRestartGame').click();
-  });
-  document.getElementById('btnConfirmRestartNo').addEventListener('click', ()=>{
-    document.getElementById('confirmRestartOverlay').classList.add('hidden');
-  });
+  }
+  document.getElementById('btnMute').addEventListener('click', ()=> setSound(!soundOn));
 
+  // ---- Pause menu (replaces the old ambiguous ↺ button) ----
+  const show = id=> document.getElementById(id).classList.remove('hidden');
+  const hide = id=> document.getElementById(id).classList.add('hidden');
+  function refreshPauseMenu(){
+    document.getElementById('btnToggleSound').textContent = '🔊 Son : '+(soundOn ? 'activé' : 'coupé');
+    document.getElementById('btnToggleShare').textContent = '🃏 Toujours partager : '+(prefs.alwaysShare ? 'oui' : 'non');
+    document.getElementById('btnToggleStats').textContent = '📈 Statistiques anonymes : '+(prefs.noStats ? 'non' : 'oui');
+  }
+  document.getElementById('btnToggleStats').addEventListener('click', ()=>{ prefs.noStats = !prefs.noStats; savePrefs(); refreshPauseMenu(); });
+  document.getElementById('btnMenu').addEventListener('click', ()=>{
+    if(!document.getElementById('menuOverlay').classList.contains('hidden')) return; // already on the home screen
+    refreshPauseMenu();
+    show('pauseOverlay');
+  });
+  document.getElementById('btnResume').addEventListener('click', ()=> hide('pauseOverlay'));
+  document.getElementById('btnToggleSound').addEventListener('click', ()=>{ setSound(!soundOn); refreshPauseMenu(); });
+  document.getElementById('btnToggleShare').addEventListener('click', ()=>{ prefs.alwaysShare = !prefs.alwaysShare; savePrefs(); refreshPauseMenu(); });
+  document.getElementById('btnOpenRules').addEventListener('click', ()=> show('rulesOverlay'));
+  document.getElementById('btnCloseRules').addEventListener('click', ()=> hide('rulesOverlay'));
+  function askQuit(){
+    document.getElementById('confirmQuitText').textContent =
+      daily ? 'Le défi du jour comptera comme joué : tu ne pourras pas le recommencer aujourd’hui.'
+      : mode==='mp' ? 'Tu quitteras la partie en ligne : '+oppName()+' sera prévenu.'
+      : mode==='square' ? 'La partie de Carré la Pute en cours sera perdue.'
+      : 'Le match en cours contre '+oppName()+' sera perdu.';
+    hide('pauseOverlay');
+    show('confirmRestartOverlay');
+  }
+  document.getElementById('btnQuitGame').addEventListener('click', askQuit);
+  document.getElementById('btnNetQuit').addEventListener('click', askQuit);
+  document.getElementById('btnConfirmRestartYes').addEventListener('click', ()=>{
+    hide('confirmRestartOverlay');
+    goToMainMenu();
+  });
+  document.getElementById('btnConfirmRestartNo').addEventListener('click', ()=> hide('confirmRestartOverlay'));
+
+  // back to the home screen from any mode, leaving nothing running behind
+  function goToMainMenu(){
+    if(mode==='mp' || mpNet) mpTeardown();
+    daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
+    tuto = null;
+    document.getElementById('coach').classList.add('hidden');
+    if(sq) sq.gen++; // cancels every pending Carré timer
+    if(state) state.handOver = true; // stops pending duel AI turns
+    locked = false;
+    mode = 'ai';
+    applyOppNameToUI();
+    ['matchOverOverlay','pauseOverlay','choiceOverlay','eliminateOverlay'].forEach(hide);
+    document.getElementById('squareScreen').classList.add('hidden');
+    document.getElementById('duoScreen').classList.remove('hidden');
+    document.querySelector('header .sub').textContent = 'Duel de quartier';
+    renderMenuRank();
+    show('menuOverlay');
+  }
+
+  let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
+  function startMatchTracking(){
+    repStart(); matchMaxDeficit = 0;
+    document.querySelector('.scorebar .mid').textContent = 'Premier à '+TARGET_SCORE;
+  }
   function newMatch(){
+    startMatchTracking();
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
@@ -1942,95 +2596,79 @@
   // ---- Hand setup: dealer/cut flow ----
   let workingDeck = null;
 
+  // No more "Nouvelle manche → Continuer" screen: a short toast announces who shuffles, and the
+  // ritual question only appears when it's actually your call (and never again if you always share).
   function beginHand(){
     document.getElementById('btnNext').classList.add('hidden');
     clearSlots();
+    const shuffler = dealer==='you' ? 'Tu mélanges' : oppName()+' mélange';
+
+    if(daily && mode==='ai'){
+      // daily challenge: today's seeded deals, the same for every player, no cut ritual
+      const i = daily.marks.length;
+      workingDeck = dailyDeck(daily.date, i);
+      dealer = (i%2===0) ? 'ai' : 'you';
+      showToast('Défi du jour', 'Manche '+(i+1)+' sur '+DAILY_HANDS+' · même donne pour tout le monde', {ms:1700});
+      setTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
+      return;
+    }
 
     if(mode==='mp' && !mpIsHost){
-      // guest: host drives the deal; just show the announcement, then wait for network messages
-      const overlay = document.getElementById('dealAnnounceOverlay');
-      document.getElementById('dealAnnounceTitle').textContent = 'Nouvelle manche';
-      document.getElementById('dealAnnounceText').textContent =
-        (dealer==='you' ? 'Tu mélanges les cartes.' : oppName()+' mélange les cartes.');
-      overlay.classList.remove('hidden');
-      document.getElementById('btnDealContinue').onclick = ()=>{ overlay.classList.add('hidden'); };
+      // guest: the host drives the deal; a 'needCutChoice' or 'dealt' message follows
+      showToast('Nouvelle manche', shuffler+' les cartes…', {ms:1400});
       return;
     }
 
     workingDeck = shuffle(buildDeck());
     const nonDealer = dealer==='you' ? 'ai' : 'you';
-    const overlay = document.getElementById('dealAnnounceOverlay');
-    document.getElementById('dealAnnounceTitle').textContent = 'Nouvelle manche';
-    document.getElementById('dealAnnounceText').textContent =
-      (dealer==='you' ? 'Tu mélanges les cartes.' : oppName()+' mélange les cartes.');
-    overlay.classList.remove('hidden');
-    document.getElementById('btnDealContinue').onclick = ()=>{
-      overlay.classList.add('hidden');
-      if(nonDealer==='you'){
-        openChoiceForPlayer(false);
-      } else if(mode==='mp'){
-        mpSend({t:'needCutChoice'});
-        logMsg('En attente du choix de '+oppName()+'...', true);
-      } else {
-        aiChoosesPartageOrDepose();
-      }
-    };
+    if(nonDealer==='you'){
+      openChoiceForPlayer(false);
+    } else if(mode==='mp'){
+      showToast('Nouvelle manche', 'Tu mélanges · '+oppName()+' choisit…', {ms:1800});
+      mpSend({t:'needCutChoice'});
+    } else {
+      aiChoosesPartageOrDepose();
+    }
   }
 
+  // one screen for the whole ritual: share in one tap, or cut (bas / milieu / haut) and take a pile
   function openChoiceForPlayer(isRemote){
-    const ov = document.getElementById('choiceOverlay');
-    document.getElementById('choiceText').textContent = oppName()+' mélange. À toi de choisir.';
-    ov.classList.remove('hidden');
-    document.getElementById('btnRemix').classList.toggle('hidden', !!isRemote);
-    document.getElementById('btnPartage').onclick = ()=>{
-      ov.classList.add('hidden');
-      if(isRemote){ mpSend({t:'cutChoice', choice:'partage'}); }
-      else { dealFinalize(workingDeck); }
-    };
-    document.getElementById('btnDepose').onclick = ()=>{ ov.classList.add('hidden'); openCutForPlayer(isRemote); };
-    document.getElementById('btnRemix').onclick = ()=>{
-      workingDeck = shuffle(buildDeck()); logMsg('Tu exiges un nouveau mélange.', true);
-    };
-  }
-
-  function openCutForPlayer(isRemote){
-    const ov = document.getElementById('cutOverlay');
-    const vis = document.getElementById('cutStackVisual');
-    vis.innerHTML='';
-    for(let i=0;i<10;i++){ const d=document.createElement('div'); d.className='cs'; vis.appendChild(d); }
-    ov.classList.remove('hidden');
-    const doCut = (frac)=>{
-      ov.classList.add('hidden');
-      if(isRemote){
-        openPileChoice(null, null, true, frac);
-        return;
-      }
+    const send = (choice, frac, pile)=>{
+      document.getElementById('choiceOverlay').classList.add('hidden');
+      if(isRemote){ mpSend(choice==='partage' ? {t:'cutChoice', choice} : {t:'cutChoice', choice, frac, pile}); return; }
+      if(choice==='partage'){ dealFinalize(workingDeck); return; }
       const idx = Math.round(workingDeck.length*frac);
       const partA = workingDeck.slice(0, idx); // originally on top
-      const partB = workingDeck.slice(idx);    // originally on bottom
-      // "reposées en ordre inverse": bottom part goes on top
-      openPileChoice(partB, partA, false);
+      const partB = workingDeck.slice(idx);    // originally on bottom — "reposées en ordre inverse": it goes on top
+      const chosen = pile==='top' ? partB : partA, rest = pile==='top' ? partA : partB;
+      dealFinalize(chosen.length>=10 ? chosen : chosen.concat(rest));
     };
-    document.getElementById('cutLow').onclick = ()=> doCut(1/3);
-    document.getElementById('cutMid').onclick = ()=> doCut(1/2);
-    document.getElementById('cutHigh').onclick = ()=> doCut(2/3);
-  }
-
-  function openPileChoice(topPile, bottomPile, isRemote, frac){
-    const ov = document.getElementById('pileOverlay');
+    if(prefs.alwaysShare){
+      showToast('Nouvelle manche', oppName()+' mélange · tu partages', {ms:1300});
+      setTimeout(()=> send('partage'), 450);
+      return;
+    }
+    const ov = document.getElementById('choiceOverlay');
+    document.getElementById('choiceText').textContent = oppName()+' a mélangé les cartes. À toi de choisir.';
+    document.getElementById('cutPanel').classList.add('hidden');
+    document.getElementById('btnRemix').classList.toggle('hidden', !!isRemote);
+    const pref = document.getElementById('prefAlwaysShare');
+    pref.checked = !!prefs.alwaysShare;
+    pref.onchange = ()=>{ prefs.alwaysShare = pref.checked; savePrefs(); };
+    let frac = 0.5;
+    document.querySelectorAll('#cutSeg button').forEach(b=>{
+      b.classList.toggle('on', b.dataset.f==='0.5');
+      b.onclick = ()=>{ frac = Number(b.dataset.f); document.querySelectorAll('#cutSeg button').forEach(x=>x.classList.toggle('on', x===b)); };
+    });
+    document.getElementById('btnPartage').onclick = ()=> send('partage');
+    document.getElementById('btnDepose').onclick = ()=> document.getElementById('cutPanel').classList.toggle('hidden');
+    document.getElementById('pileTop').onclick = ()=> send('depose', frac, 'top');
+    document.getElementById('pileBottom').onclick = ()=> send('depose', frac, 'bottom');
+    document.getElementById('btnRemix').onclick = ()=>{
+      workingDeck = shuffle(buildDeck());
+      showToast('Nouveau mélange', oppName()+' remélange les cartes.', {ms:1300});
+    };
     ov.classList.remove('hidden');
-    document.getElementById('pileTop').onclick = ()=>{
-      ov.classList.add('hidden');
-      if(isRemote){ mpSend({t:'cutChoice', choice:'depose', frac, pile:'top'}); return; }
-      logMsg('Toi : "Prends le tas du haut."', true);
-      dealFinalize(topPile.length>=10 ? topPile : topPile.concat(bottomPile));
-    };
-    document.getElementById('pileBottom').onclick = ()=>{
-      ov.classList.add('hidden');
-      if(isRemote){ mpSend({t:'cutChoice', choice:'depose', frac, pile:'bottom'}); return; }
-      logMsg('Toi : "Prends le tas du bas."', true);
-      dealFinalize(bottomPile.length>=10 ? bottomPile : bottomPile.concat(topPile));
-    };
   }
 
   function mpApplyRemoteCutChoice(msg){
@@ -2054,18 +2692,17 @@
     // player is dealer; AI (as adversaire) makes the choice — resolved automatically, briefly narrated
     const wantsDepose = Math.random()<0.5;
     if(!wantsDepose){
-      logMsg('Penalty : "Je partage."', true);
-      finalizeDealFromDeck(workingDeck);
+      showToast('Nouvelle manche', 'Tu mélanges · '+oppName()+' : « Je partage. »', {ms:1500});
+      setTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
     } else {
-      logMsg('Penalty : "Je dépose."', true);
       const frac = [1/3,1/2,2/3][Math.floor(Math.random()*3)];
       const idx = Math.round(workingDeck.length*frac);
       const partA = workingDeck.slice(0, idx);
       const partB = workingDeck.slice(idx);
       const takeTop = Math.random()<0.5;
-      logMsg('Penalty coupe et prend le tas du ' + (takeTop?'haut':'bas') + '.', true);
+      showToast('Nouvelle manche', oppName()+' coupe et prend le tas du '+(takeTop?'haut':'bas')+'.', {ms:1500});
       const chosen = takeTop ? partB : partA;
-      finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB));
+      setTimeout(()=> finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB)), 500);
     }
   }
 
@@ -2176,7 +2813,8 @@
     const sorted = sortHand(state.playerHand);
     const mustFollow = state.leadSuit && hasSuit(state.playerHand, state.leadSuit);
     sorted.forEach((card,i)=>{
-      const legal = yourTurn && (dumping || !state.leadSuit || !mustFollow || card.suit===state.leadSuit);
+      let legal = yourTurn && (dumping || !state.leadSuit || !mustFollow || card.suit===state.leadSuit);
+      if(tuto) legal = yourTurn && tuto.youQueue[0]===card.suit+'-'+card.rank; // guided game: only the suggested card
       // "idle" = not your turn: cards stay fully readable, just not clickable. "blocked" = your turn but illegal.
       const cls = legal ? 'playable' : (yourTurn ? 'blocked' : 'idle');
       const style = isDeal ? ('animation-delay:'+(i*70)+'ms') : '';
@@ -2186,13 +2824,16 @@
     });
 
     const passeBtn = document.getElementById('btnPasse');
-    const eligible = !locked && !state.passer && state.leader==='ai' && state.leadSuit && canPasse(state.playerHand, state.leadSuit) && !state.handOver;
+    const eligible = !tuto && !locked && !state.passer && state.leader==='ai' && state.leadSuit && canPasse(state.playerHand, state.leadSuit) && !state.handOver;
+    tutoCoach();
     passeBtn.classList.toggle('hidden', !eligible);
     if(eligible && mode==='ai' && !state._passeOppLogged){
       state._passeOppLogged = true;
       profile.passeOpportunities += 1;
     }
     document.getElementById('btnDump').classList.toggle('hidden', !dumping);
+    document.getElementById('btnReact').classList.toggle('hidden', mode!=='mp');
+    if(mode!=='mp') document.getElementById('reactPalette').classList.add('hidden');
 
     document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
     document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
@@ -2213,23 +2854,21 @@
     if(mode!=='mp'){
       const aiWin = checkAutoWin(state.aiOriginalHand);
       if(aiWin && !state.handOver){
-        if(!state.aiAnnouncePlan) state.aiAnnouncePlan = pickAnnouncePlan();
+        if(!state.aiAnnouncePlan) state.aiAnnouncePlan = pickAnnouncePlan(oppPersona().announce);
         const plan = state.aiAnnouncePlan;
         if(plan==='now' || (plan==='late' && state.cardsPlayedThisHand>=1)) endHandAutoWin('ai', aiWin.label);
-        // 'miss': Penalty is distracted too, and the window closes on him — he only notices after the hand
+        // 'miss': the opponent is distracted too, and the window closes on him — he only notices after the hand
       }
     }
   }
   // like any player at a real table, an AI sometimes announces a beat late (tolerated after the 1st card),
-  // and now and then misses the window entirely (after the 2nd card the automatic win is lost)
-  function pickAnnouncePlan(){
+  // and now and then misses the window entirely (after the 2nd card the automatic win is lost).
+  // odds = [chance to announce at once, chance to announce at most one card late]
+  function pickAnnouncePlan(odds){
+    odds = odds || [0.70, 0.90];
     const r = Math.random();
-    return r<0.70 ? 'now' : (r<0.90 ? 'late' : 'miss');
+    return r<odds[0] ? 'now' : (r<odds[1] ? 'late' : 'miss');
   }
-  const PENALTY_MISSED_ANNOUNCE_LINES = [
-    "Attends... j'avais une victoire automatique, moi !","Eh, j'ai oublié d'annoncer. Ça reste entre nous.",
-    "Le plafond m'a distrait. Trop tard pour annoncer."
-  ];
   document.getElementById('btnAnnounce').addEventListener('click', ()=>{
     const label = document.getElementById('btnAnnounce').dataset.label;
     if(mode==='mp' && !mpIsHost){
@@ -2248,7 +2887,7 @@
     sfxBigWin();
     bigImpact();
     if(who==='you') burstConfetti(28);
-    penaltySay(who==='you' ? PENALTY_SURPRISE_LINES : PENALTY_WIN_LINES);
+    penaltySay(who==='you' ? L('surprise') : L('win'));
     if(mode==='mp' && mpIsHost){
       mpSend({t:'handOver', winner: who==='you'?'ai':'you', pts:1, label:'Victoire automatique — '+label});
     }
@@ -2274,6 +2913,14 @@
     if(state.leadSuit){
       const mustFollow = hasSuit(state.playerHand, state.leadSuit);
       if(mustFollow && card.suit!==state.leadSuit) return;
+      // "le Sommeil" (manual, chap. 8): following low while holding a card that would have taken control
+      const leadRank = state._leadCard ? state._leadCard.rank : 99;
+      if(card.suit===state.leadSuit && card.rank<leadRank &&
+         state.playerHand.some(c=>c.suit===state.leadSuit && c.rank>leadRank)) state.youSlept = true;
+    }
+    if(tuto){
+      if(tuto.youQueue[0]!==card.suit+'-'+card.rank) return;
+      tuto.youQueue.shift();
     }
     locked = true;
     removeCard(state.playerHand, card);
@@ -2309,7 +2956,7 @@
       state.leader = winner;
       state.leadSuit = null; state._leadCard=null; state._leadActor=null;
       renderAll();
-      if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(PENALTY_CONTROL_LINES); }
+      if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(L('control')); }
       sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
       setTimeout(()=>{ afterTurn(); }, 1100);
       return;
@@ -2348,13 +2995,13 @@
 
     if(winner==='ai'){
       sfxTrickWinAI();
-      penaltySayMaybeTaunting(PENALTY_CONTROL_LINES);
+      penaltySayMaybeTaunting(L('control'));
     } else {
       sfxTrickWinYou();
       vibrate(20);
       if(actor==='you' && leadActor==='ai'){
         // you just beat Penalty's own command — that stings for him
-        penaltySayMaybeTaunting(PENALTY_SURPRISE_LINES);
+        penaltySayMaybeTaunting(L('surprise'));
       }
     }
     sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
@@ -2383,8 +3030,8 @@
     state.leader = winner;
     state.leadSuit = null; state._leadCard=null; state._leadActor=null;
     renderAll();
-    if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(PENALTY_CONTROL_LINES); }
-    else { sfxTrickWinYou(); vibrate(20); if(actor==='you') penaltySayMaybeTaunting(PENALTY_SURPRISE_LINES); }
+    if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(L('control')); }
+    else { sfxTrickWinYou(); vibrate(20); if(actor==='you') penaltySayMaybeTaunting(L('surprise')); }
     sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
     setTimeout(()=> highlightTrickWin(winner, winningCard), 60);
     setTimeout(()=>{ afterTurn(); }, 1450);
@@ -2509,12 +3156,20 @@
     const isAIsTurnToLead = !state.leadSuit && state.leader==='ai' && state.aiHand.length>0;
     const isAIsTurnToDefend = !!state.leadSuit && state._leadActor==='you' && state.aiHand.length>0;
     if(!isAIsTurnToLead && !isAIsTurnToDefend){ locked=false; renderAll(); return; }
+    if(tuto){
+      // guided game: Penalty plays his scripted card
+      const card = tuto.aiQueue.shift();
+      removeCard(state.aiHand, card);
+      resolvePlay('ai', card, false);
+      return;
+    }
 
     const [w1,w2] = lastTwoWinners();
     if(!state.leadSuit){
-      const card = mode==='ai' ? pimcBestLead() : heuristicLead(state.aiHand);
+      const brain = oppPersona().brain;
+      const card = brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand);
       removeCard(state.aiHand, card);
-      if(mode==='ai' && scores.ai<scores.you && Math.random()<0.18) penaltySay(PENALTY_BEHIND_TAUNT_LINES);
+      if(mode==='ai' && scores.ai<scores.you && Math.random()<0.18) penaltySay(L('behind'));
       resolvePlay('ai', card, false);
     } else if(isDumpTurn('ai')){
       const cards = [...state.aiHand];
@@ -2522,7 +3177,8 @@
       resolveDump('ai', cards);
     } else {
       const leadInfo = {suit:state.leadSuit, rank:state._leadCard.rank, actor:state._leadActor};
-      const opt = mode==='ai' ? pimcBestDefend(leadInfo) : heuristicDefend(state.aiHand, leadInfo);
+      const brain = oppPersona().brain;
+      const opt = brain==='pimc' ? pimcBestDefend(leadInfo) : brain==='easy' ? easyDefend(state.aiHand, leadInfo) : heuristicDefend(state.aiHand, leadInfo);
       if(opt.type==='card' && opt.card.suit===leadInfo.suit && opt.card.rank<leadInfo.rank){
         const hadWinner = state.aiHand.some(c=>c.suit===leadInfo.suit && c.rank>leadInfo.rank);
         if(hadWinner) state.sandbaggedThisHand = true;
@@ -2553,20 +3209,82 @@
     }
     awardPoints(winner, pts, label);
     if(mode==='ai' && state.aiAnnouncePlan==='miss'){
-      setTimeout(()=> penaltySay(PENALTY_MISSED_ANNOUNCE_LINES), 3400);
+      setTimeout(()=> penaltySay(L('missed')), 3400);
     }
   }
 
   let certTimer = null;
-  function showCertificate(title, sub, holdMs){
+  // shareable = it's the player's own feat: offer to send it as an image (it then stays up a bit longer)
+  function showCertificate(title, sub, holdMs, shareable){
     const ov = document.getElementById('certOverlay');
     document.getElementById('certTitle').textContent = title;
     document.getElementById('certSub').textContent = sub;
+    const shareBtn = document.getElementById('btnCertShare');
+    shareBtn.classList.toggle('hidden', !shareable);
     ov.classList.add('show');
     clearTimeout(certTimer);
     const dismiss = ()=>{ ov.classList.remove('show'); ov.onclick = null; };
     ov.onclick = dismiss;
-    certTimer = setTimeout(dismiss, holdMs||3400);
+    shareBtn.onclick = (e)=>{
+      e.stopPropagation();
+      clearTimeout(certTimer);
+      const opp = mode==='square' ? 'la table de Carré la Pute' : oppName();
+      shareFeat(title, myDisplayName()+' a réussi '+(title==='CORA' ? 'un CORA' : 'la 33 Glacée')+' contre '+opp+' !').finally(dismiss);
+    };
+    certTimer = setTimeout(dismiss, holdMs || (shareable ? 5200 : 3400));
+  }
+
+  // ---- Sharing a feat as an image (a certificate drawn on a canvas), for WhatsApp ----
+  function myDisplayName(){ return (prefs.name||'').trim() || 'Un joueur'; }
+  function wrapCanvasText(ctx, text, maxW){
+    const words = text.split(' '); const lines = []; let cur = '';
+    words.forEach(w=>{ const t = cur ? cur+' '+w : w; if(ctx.measureText(t).width>maxW && cur){ lines.push(cur); cur = w; } else cur = t; });
+    if(cur) lines.push(cur);
+    return lines;
+  }
+  async function makeFeatImage(title, line){
+    try{ await Promise.all(['800 150px "Bricolage Grotesque"','600 40px Manrope','600 26px Manrope'].map(f=>document.fonts.load(f))); }catch(e){}
+    const c = document.createElement('canvas'); c.width = 1080; c.height = 1080;
+    const g = c.getContext('2d');
+    const bg = g.createRadialGradient(540,520,80,540,540,760);
+    bg.addColorStop(0,'#4a2f14'); bg.addColorStop(0.55,'#1c1208'); bg.addColorStop(1,'#000');
+    g.fillStyle = bg; g.fillRect(0,0,1080,1080);
+    g.textAlign = 'center';
+    g.fillStyle = '#f4b860'; g.font = '800 84px "Bricolage Grotesque", sans-serif'; g.fillText('Fap Fap', 540, 130);
+    // the cream certificate card
+    const card = g.createLinearGradient(0,190,0,900); card.addColorStop(0,'#f8efd9'); card.addColorStop(1,'#ecdfc0');
+    g.fillStyle = card; g.strokeStyle = '#7a4a1f'; g.lineWidth = 8;
+    g.beginPath(); if(g.roundRect) g.roundRect(120,190,840,700,26); else g.rect(120,190,840,700); g.fill(); g.stroke();
+    g.fillStyle = '#a5701f'; g.font = '48px serif'; g.fillText('♠  ♥  ♦  ♣', 540, 290);
+    g.fillStyle = '#8a2a1a'; g.font = '800 '+(title.length>10 ? '110px' : '140px')+' "Bricolage Grotesque", sans-serif'; g.fillText(title, 540, 460);
+    g.fillStyle = '#5a3d1c'; g.font = '600 40px Manrope, sans-serif';
+    wrapCanvasText(g, line, 720).slice(0,3).forEach((l,i)=> g.fillText(l, 540, 560+i*54));
+    g.strokeStyle = '#a5701f'; g.lineWidth = 2; g.beginPath(); g.moveTo(260,745); g.lineTo(820,745); g.stroke();
+    g.fillStyle = '#7a5a2c'; g.font = '26px Manrope, sans-serif'; g.fillText('Authentifié par Penalty — Éditions du Quartier', 540, 800);
+    // the red stamp
+    g.save(); g.translate(880,850); g.rotate(0.24);
+    g.strokeStyle = 'rgba(138,42,26,0.85)'; g.lineWidth = 6; g.beginPath(); g.arc(0,0,92,0,Math.PI*2); g.stroke();
+    g.fillStyle = 'rgba(138,42,26,0.85)'; g.font = '800 34px "Bricolage Grotesque", sans-serif'; g.fillText('CERTIFIÉ', 0, 12); g.restore();
+    g.fillStyle = '#ab9c87'; g.font = '30px Manrope, sans-serif'; g.fillText('Joue toi aussi : '+location.host+location.pathname.replace(/index\.html$/,''), 540, 1010);
+    return new Promise(res=> c.toBlob(res, 'image/png'));
+  }
+  async function shareFeat(title, line){
+    const text = line+' 🃏 Viens me défier au Fap Fap : '+location.origin+location.pathname;
+    try{
+      const blob = await makeFeatImage(title, line);
+      const file = new File([blob], 'fapfap-'+title.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.png', {type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], text});
+        return;
+      }
+      // no image sharing on this device: save the picture, then open WhatsApp with the message
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = file.name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=> URL.revokeObjectURL(a.href), 4000);
+      showToast('Image enregistrée', 'Ajoute-la à ton message WhatsApp.', {ms:2600});
+      window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank');
+    }catch(e){ /* share sheet closed by the player: nothing to do */ }
   }
 
   function bigImpact(){
@@ -2633,11 +3351,23 @@
     const isCora = /CORA/.test(label);
     const isAutoWin = /automatique/i.test(label);
 
+    // progression: réputation for every hand you take, trophies for the manual's big moments
+    // (not during the guided game: its CORA is handed to you, it shouldn't count)
+    if(who==='you' && !tuto){
+      repAdd(5, 'Manches gagnées');
+      if(isGlacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); }
+      else if(isCora){ repAdd(15, 'CORA'); unlockTrophy('cora'); }
+      if(isAutoWin){ repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); if(/4 symboles/.test(label)) unlockTrophy('quad'); }
+      if(state && state.history.some(e=>e.type==='passe' && e.actor==='you')) unlockTrophy('passe');
+      if(state && state.youSlept) unlockTrophy('sommeil');
+    }
+    matchMaxDeficit = Math.max(matchMaxDeficit, scores.ai - scores.you);
+
     if(isGlacee){
-      showCertificate('33 GLACÉE', (who==='you'?'Tu':oppName())+' remporte le gain maximum');
+      showCertificate('33 GLACÉE', (who==='you'?'Tu':oppName())+' remporte le gain maximum', 0, who==='you');
       sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(40);
     } else if(isCora){
-      showCertificate('CORA', 'Gain multiplié par 2');
+      showCertificate('CORA', 'Gain multiplié par 2', 0, who==='you');
       sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(24);
     } else if(!isAutoWin){
       showToast(label, (who==='you'?'Tu remportes la manche':oppName()+' remporte la manche')+' (+'+pts+')', {ms:2200});
@@ -2650,13 +3380,26 @@
 
     if(who==='ai'){
       if(!isGlacee && !isCora) sfxHandWin(); // big wins already got sfxBigWin() just above
-      if(isGlacee) penaltySay(PENALTY_GLACEE_LINES);
-      else if(isCora) penaltySay(PENALTY_CORA_LINES);
-      else if(!isAutoWin) penaltySay(PENALTY_WIN_LINES); // auto-win already spoke at its own call site
+      if(isGlacee) penaltySay(L('glacee'));
+      else if(isCora) penaltySay(L('cora'));
+      else if(!isAutoWin) penaltySay(L('win')); // auto-win already spoke at its own call site
     } else {
       if(!isGlacee && !isCora) sfxHandLose();
-      if(isGlacee || isCora) penaltySay(PENALTY_SURPRISE_LINES);
-      else if(!isAutoWin) penaltySay(PENALTY_LOSE_LINES);
+      if(isGlacee || isCora) penaltySay(L('surprise'));
+      else if(!isAutoWin) penaltySay(L('lose'));
+    }
+
+    if(tuto){ setTimeout(finishTuto, (isGlacee||isCora) ? 3800 : 1600); return; }
+
+    if(daily && mode==='ai'){
+      // daily challenge: a fixed number of hands, scored hand by hand, instead of "first to 5"
+      daily.marks.push(who==='you' ? (isGlacee?'🧊':isCora?'🟨':isAutoWin?'⚡':'🟩') : '🟥');
+      if(who==='you') daily.points += pts;
+      saveProfile();
+      const delay = (isGlacee||isCora) ? 3700 : 1400;
+      if(daily.marks.length>=DAILY_HANDS) setTimeout(finishDaily, delay);
+      else setTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, delay);
+      return;
     }
 
     if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
@@ -2675,16 +3418,276 @@
   });
 
   // top-level mode choice
-  document.getElementById('modeAI').addEventListener('click', ()=>{
-    ensureAudio();
+  // ===================== La partie guidée (tutorial) =====================
+  // A hand-picked deal on rails: Penalty's cards are scripted and only the card the coach suggests is playable,
+  // so in 5 tricks the beginner sees commande, suivre, contrôle, the last trick deciding the hand, and a CORA.
+  let tuto = null;
+  const C = (rank, suit)=>({rank, suit});
+  const TUTO_YOU = [C(7,'Black'), C(9,'Coubie'), C(4,'Tchaka'), C(9,'Zing'), C(3,'Tchaka')];  // in the order you'll play them
+  const TUTO_AI  = [C(5,'Black'), C(10,'Coubie'), C(8,'Tchaka'), C(6,'Zing'), C(7,'Zing')];  // Penalty's scripted cards
+  const TUTO_TIPS = [
+    "Bienvenue au quartier ! Je suis Penalty. Ici c’est toi qui ouvres : la carte que tu poses « commande » sa couleur. Pose ton 7 Black : si j’ai du Black, je suis obligé de suivre.",
+    "J’avais du Black, j’ai dû suivre… mais mon 5 est plus faible que ton 7. Tu gardes le contrôle, donc tu commandes encore. Essaie ton 9 Coubie.",
+    "Aïe ! Mon 10 Coubie, la plus forte carte du jeu, m’a donné le contrôle : maintenant c’est moi qui commande, en Tchaka. Tu as du Tchaka, tu DOIS suivre. Joue le 4… et garde bien ton 3.",
+    "Je commande Zing avec mon 6. Ton 9 Zing est plus fort : pose-le et reprends le contrôle !",
+    "Dernier tour ! Celui qui contrôle la DERNIÈRE carte gagne la manche. Et si cette carte gagnante est un 3… c’est un CORA, gain doublé. Pose ton 3 Tchaka !"
+  ];
+  function startTuto(){
+    tuto = {youQueue: TUTO_YOU.map(c=>c.suit+'-'+c.rank), aiQueue: TUTO_AI.slice()};
+    daily = null;
     mode = 'ai';
+    duelOpp = 'penalty';
+    applyOppNameToUI();
+    document.querySelector('header .sub').textContent = 'Apprendre à jouer · avec Penalty';
+    startMatchTracking();
+    document.querySelector('.scorebar .mid').textContent = 'Partie guidée';
+    scores = {you:0, ai:0};
+    document.getElementById('scoreYou').textContent = '0';
+    document.getElementById('scoreAI').textContent = '0';
     document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('btnNext').classList.add('hidden');
+    clearSlots();
+    dealer = 'ai'; // so you lead first
+    finalizeDealFromDeck(TUTO_YOU.concat(TUTO_AI).map(c=>({...c})));
+  }
+  function tutoCoach(){
+    const el = document.getElementById('coach');
+    if(!tuto || !state || state.handOver){ el.classList.add('hidden'); return; }
+    const k = TUTO_YOU.length - tuto.youQueue.length;
+    document.getElementById('coachText').textContent = TUTO_TIPS[Math.min(k, TUTO_TIPS.length-1)];
+    el.classList.remove('hidden');
+  }
+  function finishTuto(){
+    tuto = null;
+    document.getElementById('coach').classList.add('hidden');
+    const first = !profile.tutoDone;
+    profile.tutoDone = true;
+    saveProfile();
+    if(first){ repAdd(50, 'Partie guidée'); unlockTrophy('apprenti'); }
+    track('tuto_end', {first});
+    touchDayStreak();
+    const res = repCommit();
+    document.getElementById('tutoRep').textContent = res.gained>0 ? '+'+res.gained+' réputation' : '';
+    document.getElementById('tutoDoneOverlay').classList.remove('hidden');
+  }
+  document.getElementById('modeTuto').addEventListener('click', ()=>{ ensureAudio(); startTuto(); });
+  document.getElementById('btnTutoAgain').addEventListener('click', ()=>{ ensureAudio(); startTuto(); });
+  document.getElementById('btnTutoPlay').addEventListener('click', ()=>{
+    document.getElementById('tutoDoneOverlay').classList.add('hidden');
+    duelOpp = 'gervais';
+    mode = 'ai';
     applyOppNameToUI();
     newMatch();
   });
+  document.getElementById('btnTutoRules').addEventListener('click', ()=> document.getElementById('rulesOverlay').classList.remove('hidden'));
+  document.getElementById('btnTutoMenu').addEventListener('click', ()=>{
+    document.getElementById('tutoDoneOverlay').classList.add('hidden');
+    goToMainMenu();
+  });
+
+  // ===================== Le défi du jour =====================
+  // Everyone gets the same three deals today (seeded by the date), always against Penalty, no cut ritual.
+  // One attempt per day: quitting halfway counts as played, so nobody can fish for a better deal.
+  const DAILY_HANDS = 3;
+  let daily = null; // the attempt in progress (same object as profile.daily), or null
+  function mulberry32(a){
+    return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15, 1|a); t=t+Math.imul(t^t>>>7, 61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+  }
+  function hashStr(s){ let h=2166136261; for(const ch of s){ h^=ch.charCodeAt(0); h=Math.imul(h,16777619); } return h>>>0; }
+  function dailyDeck(date, i){
+    const rng = mulberry32(hashStr('fapfap-'+date+'-'+i));
+    const a = buildDeck();
+    for(let k=a.length-1;k>0;k--){ const j=Math.floor(rng()*(k+1)); [a[k],a[j]]=[a[j],a[k]]; }
+    return a;
+  }
+  function dailyNumber(date){
+    const [y,m,d] = date.split('-').map(Number);
+    return Math.round((new Date(y,m-1,d) - new Date(2026,9,1))/86400000) + 1; // n°1 = 1er octobre 2026
+  }
+  function dailyMarksLine(d){
+    const marks = d.marks.slice();
+    while(marks.length<DAILY_HANDS) marks.push('⬜');
+    return marks.join('');
+  }
+  function dailyDoneToday(){ return !!(profile.daily && profile.daily.date===dayKey() && profile.daily.done); }
+
+  function startDaily(){
+    const today = dayKey();
+    if(profile.daily && profile.daily.date===today){
+      if(!profile.daily.done){ profile.daily.done = true; profile.daily.abandoned = true; saveProfile(); }
+      showDailyResult(null);
+      return;
+    }
+    profile.daily = {date:today, done:false, marks:[], points:0};
+    saveProfile();
+    daily = profile.daily;
+    mode = 'ai';
+    duelOpp = 'penalty';
+    applyOppNameToUI();
+    document.querySelector('header .sub').textContent = 'Défi du jour n°'+dailyNumber(today)+' · contre Penalty';
+    startMatchTracking();
+    document.querySelector('.scorebar .mid').textContent = 'Défi : '+DAILY_HANDS+' manches';
+    scores = {you:0, ai:0};
+    document.getElementById('scoreYou').textContent = '0';
+    document.getElementById('scoreAI').textContent = '0';
+    document.getElementById('menuOverlay').classList.add('hidden');
+    beginHand();
+  }
+  function finishDaily(){
+    const d = daily;
+    daily = null;
+    d.done = true;
+    saveProfile();
+    const wins = d.marks.filter(m=>m!=='🟥').length;
+    if(wins>0) repAdd(30*wins, 'Manches du défi');
+    repAdd(40, 'Défi terminé');
+    unlockTrophy('defi');
+    if(wins===DAILY_HANDS) unlockTrophy('defi_parfait');
+    track('daily_end', {n: dailyNumber(d.date), wins, points: d.points});
+    touchDayStreak();
+    showDailyResult(repCommit());
+  }
+  function untilTomorrow(){
+    const now = new Date(), next = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
+    const mins = Math.max(1, Math.round((next-now)/60000));
+    return Math.floor(mins/60)+' h '+String(mins%60).padStart(2,'0');
+  }
+  function dailyShareText(d){
+    const wins = d.marks.filter(m=>m!=='🟥').length;
+    return 'Fap Fap 🃏 Défi du jour n°'+dailyNumber(d.date)+'\n'+dailyMarksLine(d)+'  '+wins+'/'+DAILY_HANDS+' manches · '+d.points+(d.points>1?' pts':' pt')+'\n'+
+      'Même donne pour tout le monde. Fais mieux que moi : '+location.origin+location.pathname;
+  }
+  function showDailyResult(res){
+    const d = profile.daily;
+    const wins = d.marks.filter(m=>m!=='🟥').length;
+    document.getElementById('dailyTitle').textContent = 'Défi du jour n°'+dailyNumber(d.date);
+    document.getElementById('dailyMarks').textContent = dailyMarksLine(d);
+    document.getElementById('dailyScore').textContent = d.abandoned && d.marks.length<DAILY_HANDS
+      ? 'Défi abandonné : '+wins+' manche'+(wins>1?'s':'')+' gagnée'+(wins>1?'s':'')+'.'
+      : wins+' manche'+(wins>1?'s':'')+' gagnée'+(wins>1?'s':'')+' sur '+DAILY_HANDS+' · '+d.points+' point'+(d.points>1?'s':'');
+    document.getElementById('dailyRep').textContent = res ? '+'+res.gained+' réputation'+(res.trophies.length ? ' · 🏆 '+res.trophies.map(t=>t.name).join(', ') : '') : '';
+    document.getElementById('dailyNext').textContent = 'Prochain défi dans '+untilTomorrow()+' (un nouveau défi chaque jour à minuit).';
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('dailyOverlay').classList.remove('hidden');
+    if(res && wins===DAILY_HANDS){ sfxMatchWin(); burstConfetti(40); }
+  }
+  document.getElementById('modeDaily').addEventListener('click', ()=>{ ensureAudio(); startDaily(); });
+  document.getElementById('btnDailyShare').addEventListener('click', ()=> shareText(dailyShareText(profile.daily)));
+  document.getElementById('btnDailyMenu').addEventListener('click', ()=>{
+    document.getElementById('dailyOverlay').classList.add('hidden');
+    goToMainMenu();
+  });
+
+  // shares plain text: the phone's share sheet when there is one, otherwise WhatsApp directly
+  function shareText(text){
+    if(navigator.share){ navigator.share({text}).catch(()=>{}); return; }
+    window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank');
+  }
+
+  // ---- La route du quartier: pick an opponent ----
+  function renderOppSelect(){
+    const list = document.getElementById('oppList');
+    list.innerHTML = '';
+    DUEL_ORDER.forEach(id=>{
+      const p = DUEL_PERSONAS[id];
+      const rec = profile.ladder[id];
+      const open = isOppUnlocked(id);
+      const beaten = rec.w>0;
+      const b = document.createElement('button');
+      b.className = 'opp-card'+(open?'':' locked')+(beaten?' beaten':'');
+      b.innerHTML =
+        (open ? '<span class="avatar" data-char="'+id+'" style="--s:52px"></span>'
+              : '<span class="avatar locked" style="--s:52px"><span class="av-ini">🔒</span></span>')+
+        '<span class="opp-body">'+
+          '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+'★'.repeat(p.stars)+'<span class="dim">'+'★'.repeat(4-p.stars)+'</span></span></span>'+
+          '<span class="opp-tag">'+(open ? p.tagline : p.lockedHint)+'</span>'+
+          '<span class="opp-rec">'+(rec.w+rec.l>0 ? (beaten?'✅ ':'')+'Ton bilan : '+rec.w+'V – '+rec.l+'D' : 'Jamais affronté')+' · +'+p.repWin+' rép. si tu gagnes</span>'+
+        '</span>';
+      if(open) b.addEventListener('click', ()=>{
+        duelOpp = id;
+        prefs.lastOpp = id; savePrefs();
+        document.getElementById('oppSelectOverlay').classList.add('hidden');
+        mode = 'ai';
+        applyOppNameToUI();
+        newMatch();
+      });
+      list.appendChild(b);
+    });
+    fillAllAvatars(list);
+  }
+  document.getElementById('modeAI').addEventListener('click', ()=>{
+    ensureAudio();
+    renderOppSelect();
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('oppSelectOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnBackFromOpp').addEventListener('click', ()=>{
+    document.getElementById('oppSelectOverlay').classList.add('hidden');
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+
+  // ---- Trophies screen ----
+  function renderTrophies(){
+    const n = Object.keys(profile.trophies).length;
+    document.getElementById('trophiesCount').textContent = n+' sur '+TROPHIES.length+' · chaque trophée rapporte '+TROPHY_REP+' de réputation';
+    document.getElementById('trophyGrid').innerHTML = TROPHIES.map(t=>{
+      const got = !!profile.trophies[t.id];
+      return '<div class="trophy'+(got?' got':'')+'"><span class="t-icon">'+(got?t.icon:'🔒')+'</span>'+
+        '<span class="t-body"><b>'+t.name+'</b><span>'+t.desc+'</span></span></div>';
+    }).join('');
+  }
+  document.getElementById('btnShowTrophies').addEventListener('click', ()=>{
+    renderTrophies();
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('trophiesOverlay').classList.remove('hidden');
+  });
+  // ---- Décors screen ----
+  function renderSkins(){
+    const sk = Object.assign({back:'classique', table:'tripot', light:'ampoule'}, prefs.skin||{});
+    const box = document.getElementById('skinGroups');
+    box.innerHTML = '';
+    ['back','table','light'].forEach(kind=>{
+      const g = document.createElement('div'); g.className = 'skin-group';
+      g.innerHTML = '<h3>'+SKIN_LABEL[kind]+'</h3>';
+      const row = document.createElement('div'); row.className = 'skin-row';
+      SKINS[kind].forEach(s=>{
+        const open = s.req(profile);
+        const b = document.createElement('button');
+        b.className = 'skin-opt'+(sk[kind]===s.id?' on':'')+(open?'':' locked');
+        b.innerHTML = '<span class="skin-swatch" style="background:'+s.swatch+'"></span><span>'+(open?'':'🔒 ')+s.name+'</span>'+(open?'':'<small>'+s.hint+'</small>');
+        if(open) b.addEventListener('click', ()=>{
+          prefs.skin = Object.assign({}, sk, {[kind]: s.id});
+          savePrefs(); applySkins(); renderSkins();
+        });
+        row.appendChild(b);
+      });
+      g.appendChild(row);
+      box.appendChild(g);
+    });
+  }
+  document.getElementById('btnShowSkins').addEventListener('click', ()=>{
+    renderSkins();
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('skinsOverlay').classList.remove('hidden');
+  });
+  document.getElementById('btnCloseSkins').addEventListener('click', ()=>{
+    document.getElementById('skinsOverlay').classList.add('hidden');
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+  applySkins();
+  fillAllAvatars();
+  applyOppNameToUI();
+
+  document.getElementById('btnCloseTrophies').addEventListener('click', ()=>{
+    document.getElementById('trophiesOverlay').classList.add('hidden');
+    renderMenuRank();
+    document.getElementById('menuOverlay').classList.remove('hidden');
+  });
+  renderMenuRank();
   document.getElementById('modeMP').addEventListener('click', ()=>{
     ensureAudio();
     preloadNet();
+    document.getElementById('mpNameInput').value = prefs.name || '';
     document.getElementById('menuOverlay').classList.add('hidden');
     document.getElementById('mpLobbyOverlay').classList.remove('hidden');
   });
@@ -2693,20 +3696,67 @@
     document.getElementById('mpLobbyOverlay').classList.add('hidden');
     document.getElementById('menuOverlay').classList.remove('hidden');
   });
+  // the first name is remembered, so it's typed once ever
+  function takeName(inputId){
+    const typed = (document.getElementById(inputId).value||'').trim();
+    if(typed){ prefs.name = typed; savePrefs(); }
+    myName = typed || prefs.name || 'Toi';
+  }
   document.getElementById('btnMpHost').addEventListener('click', ()=>{
     ensureAudio();
-    myName = (document.getElementById('mpNameInput').value||'').trim() || 'Toi';
+    takeName('mpNameInput');
     document.getElementById('mpLobbyOverlay').classList.add('hidden');
     document.getElementById('mpHostOverlay').classList.remove('hidden');
+    document.getElementById('btnShareLink').classList.toggle('hidden', !navigator.share);
     hostGame();
   });
   document.getElementById('btnMpJoin').addEventListener('click', ()=>{
     ensureAudio();
-    myName = (document.getElementById('mpNameInput').value||'').trim() || 'Toi';
+    takeName('mpNameInput');
     document.getElementById('mpLobbyOverlay').classList.add('hidden');
     document.getElementById('mpJoinOverlay').classList.remove('hidden');
     document.getElementById('mpJoinStatus').textContent = '';
   });
+
+  // ---- Invitation links: …/?partie=CODE opens the game straight into that room ----
+  function inviteUrl(code){ return location.origin + location.pathname + '?partie=' + code; }
+  function inviteMessage(code){
+    return myName+' te défie au Fap Fap ! 🃏 Clique pour rejoindre la partie : '+inviteUrl(code)+'  (code : '+code+')';
+  }
+  function currentCode(){ return (document.getElementById('mpCodeDisplay').textContent||'').trim(); }
+  document.getElementById('btnInviteWhatsApp').addEventListener('click', ()=>{
+    const code = currentCode(); if(!/^[A-Z0-9]{4}$/.test(code)) return;
+    window.open('https://wa.me/?text='+encodeURIComponent(inviteMessage(code)), '_blank');
+  });
+  document.getElementById('btnShareLink').addEventListener('click', ()=>{
+    const code = currentCode(); if(!/^[A-Z0-9]{4}$/.test(code)) return;
+    navigator.share({ title:'Fap Fap', text: myName+' te défie au Fap Fap ! 🃏 (code : '+code+')', url: inviteUrl(code) }).catch(()=>{});
+  });
+  (function handleInviteLink(){
+    const m = location.search.match(/[?&]partie=([A-Za-z0-9]{4})\b/);
+    if(!m) return;
+    const code = m[1].toUpperCase();
+    // forget the code in the address bar, so a later reload doesn't try to rejoin an old room
+    try{ history.replaceState(null, '', location.pathname + location.search.replace(/[?&]partie=[A-Za-z0-9]{4}/,'').replace(/^&/,'?')); }catch(e){}
+    document.getElementById('menuOverlay').classList.add('hidden');
+    document.getElementById('inviteText').textContent = 'Une partie de Fap Fap t’attend (code '+code+'). Entre ton prénom et c’est parti !';
+    document.getElementById('inviteNameInput').value = prefs.name || '';
+    document.getElementById('inviteOverlay').classList.remove('hidden');
+    preloadNet();
+    document.getElementById('btnInviteJoin').onclick = ()=>{
+      ensureAudio();
+      takeName('inviteNameInput');
+      document.getElementById('inviteOverlay').classList.add('hidden');
+      document.getElementById('mpCodeInput').value = code;
+      document.getElementById('mpJoinStatus').textContent = '';
+      document.getElementById('mpJoinOverlay').classList.remove('hidden');
+      joinGame(code);
+    };
+    document.getElementById('btnInviteNo').onclick = ()=>{
+      document.getElementById('inviteOverlay').classList.add('hidden');
+      document.getElementById('menuOverlay').classList.remove('hidden');
+    };
+  })();
   document.getElementById('btnCancelHost').addEventListener('click', ()=>{
     mpTeardown();
     document.getElementById('mpHostOverlay').classList.add('hidden');
@@ -2724,52 +3774,135 @@
     joinGame(code);
   });
   document.getElementById('btnCopyCode').addEventListener('click', ()=>{
-    const code = document.getElementById('mpCodeDisplay').textContent;
+    const code = currentCode(); if(!/^[A-Z0-9]{4}$/.test(code)) return;
+    const text = inviteMessage(code);
     const btn = document.getElementById('btnCopyCode');
-    const done = ()=>{ const old=btn.textContent; btn.textContent='✅ Copié !'; setTimeout(()=>btn.textContent=old, 1500); };
+    const flash = (msg)=>{ btn.textContent = msg; setTimeout(()=> btn.textContent='📋 Copier le lien', 1600); };
+    const fallback = ()=>{
+      // older phones: copy through a hidden text field
+      try{
+        const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove();
+        flash(ok ? '✅ Lien copié !' : 'Copie impossible');
+      }catch(e){ flash('Copie impossible'); }
+    };
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(code).then(done).catch(done);
-    } else { done(); }
+      navigator.clipboard.writeText(text).then(()=> flash('✅ Lien copié !')).catch(fallback);
+    } else fallback();
   });
 
-  document.getElementById('btnRestart').addEventListener('click', ()=>{
-    mpTeardown();
-    mode = 'ai';
-    applyOppNameToUI();
-    document.getElementById('squareScreen').classList.add('hidden');
-    document.getElementById('duoScreen').classList.remove('hidden');
-    document.querySelector('header .sub').textContent = 'Duel de quartier · Toi contre Penalty';
-    document.getElementById('menuOverlay').classList.remove('hidden');
+  // "Partager ma victoire" on the end screen, only when you won
+  let winShare = null;
+  function setWinShare(s){
+    winShare = s;
+    document.getElementById('btnShareWin').classList.toggle('hidden', !s);
+  }
+  document.getElementById('btnShareWin').addEventListener('click', ()=>{ if(winShare) shareFeat(winShare.title, winShare.line); });
+
+  // ---- End of match: "Revanche" is the big obvious button, the menu is secondary ----
+  document.getElementById('btnToMenu').addEventListener('click', goToMainMenu);
+  document.getElementById('btnRematch').addEventListener('click', ()=>{
+    if(mode==='mp'){ mpRequestRematch(); return; }
+    hide('matchOverOverlay');
+    if(mode==='square'){ sqNewGame(); return; }
+    newMatch();
   });
+
+  // online rematch: both players must ask; the host then starts the new match for both
+  let mpRematch = {me:false, opp:false};
+  function mpRequestRematch(){
+    if(mpRematch.me) return;
+    mpRematch.me = true;
+    mpSend({t:'rematch'});
+    refreshRematchUI();
+    mpMaybeStartRematch();
+  }
+  function mpMaybeStartRematch(){
+    if(!(mpRematch.me && mpRematch.opp) || !mpIsHost) return;
+    const d = Math.random()<0.5 ? 'you' : 'ai';
+    mpSend({t:'newMatch', dealer: d==='you' ? 'ai' : 'you'});
+    mpStartRematchLocal(d);
+  }
+  function mpStartRematchLocal(d){
+    startMatchTracking();
+    mpRematch = {me:false, opp:false};
+    scores = {you:0, ai:0};
+    document.getElementById('scoreYou').textContent = '0';
+    document.getElementById('scoreAI').textContent = '0';
+    hide('matchOverOverlay');
+    dealer = d;
+    beginHand();
+  }
+  function refreshRematchUI(){
+    const info = document.getElementById('rematchInfo');
+    const btn = document.getElementById('btnRematch');
+    btn.disabled = false;
+    if(mode!=='mp'){ info.textContent = ''; btn.textContent = '🔁 Revanche'; return; }
+    if(mpRematch.me && !mpRematch.opp){ info.textContent = 'En attente de '+oppName()+'…'; btn.textContent = '⏳ Revanche demandée'; btn.disabled = true; }
+    else if(mpRematch.opp && !mpRematch.me){ info.textContent = oppName()+' veut sa revanche !'; btn.textContent = '🔥 Accepter la revanche'; }
+    else { info.textContent = ''; btn.textContent = '🔁 Revanche'; }
+  }
 
   function showMatchOver(who){
+    const won = who==='you';
+    const mine = scores.you, theirs = scores.ai;
+    let unlockedMbarga = false;
     if(mode==='ai'){
       profile.gamesPlayed += 1;
-      if(who==='ai') profile.gamesWon += 1; else profile.gamesLost += 1;
+      if(won) profile.gamesLost += 1; else profile.gamesWon += 1;
+      const rec = profile.ladder[duelOpp];
+      const firstWinVsPenalty = won && duelOpp==='penalty' && rec.w===0;
+      if(won) rec.w++; else rec.l++;
+      // progression for a duel against the AI
+      if(won){
+        repAdd(oppPersona().repWin, 'Victoire contre '+oppName());
+        unlockTrophy('premiere');
+        unlockTrophy('beat_'+duelOpp);
+        if(theirs===0) unlockTrophy('sans_appel');
+        if(matchMaxDeficit>=3) unlockTrophy('remontada');
+        if(profile.lastDuel && profile.lastDuel.opp===duelOpp && !profile.lastDuel.won) unlockTrophy('revanche');
+        profile.winStreak = (profile.winStreak||0)+1;
+        if(profile.winStreak>=3) unlockTrophy('serie3');
+        unlockedMbarga = firstWinVsPenalty;
+      } else {
+        repAdd(20, 'Match joué');
+        profile.winStreak = 0;
+      }
+      profile.lastDuel = {opp: duelOpp, won};
+      saveProfile();
+    } else if(mode==='mp'){
+      profile.onlineGames = (profile.onlineGames||0)+1;
+      if(won){ profile.onlineWins = (profile.onlineWins||0)+1; repAdd(80, 'Victoire en ligne'); unlockTrophy('premiere'); unlockTrophy('en_ligne'); }
+      else repAdd(25, 'Match en ligne');
       saveProfile();
     }
-    document.getElementById('matchOverTitle').textContent = who==='you' ? 'Tu as gagné !' : oppName()+' a gagné.';
-    let extra = '';
-    if(mode==='ai' && profile.gamesPlayed>1){
-      extra = ' (Penalty se souvient : '+profile.gamesWon+'-'+profile.gamesLost+' sur '+profile.gamesPlayed+' parties.)';
+    document.getElementById('matchOverTitle').textContent = won ? 'Tu gagnes '+mine+' à '+theirs+' !' : oppName()+' gagne '+theirs+' à '+mine+'.';
+    let text;
+    const pick = arr=> arr[Math.floor(Math.random()*arr.length)];
+    if(won){
+      text = mode==='ai' ? '« '+pick(L('lose'))+' » — '+oppName() : oppName()+' va vouloir sa revanche…';
+    } else if(theirs-mine<=1){
+      // a narrow loss is the strongest "one more game" hook there is — say it out loud
+      text = mode==='ai' ? '« T’étais à un point… Tu reviens, ou tu as peur ? » — '+oppName() : 'À un point près ! La revanche est à portée de main.';
+    } else {
+      text = mode==='ai' ? '« '+pick(L('win'))+' » — '+oppName() : 'Pas ton soir. Mais ça peut tourner…';
     }
-    document.getElementById('matchOverText').textContent = (who==='you'
-      ? 'Aristide et Gervais te regardent avec un respect nouveau.'
-      : '"C\u2019est ça le Fap Fap. Tu planifies. Le jeu décide." — Penalty') + extra;
+    if(mode==='ai'){
+      const rec = profile.ladder[duelOpp];
+      text += ' (Ton bilan contre '+oppName()+' : '+rec.w+' victoire'+(rec.w>1?'s':'')+', '+rec.l+' défaite'+(rec.l>1?'s':'')+'.)';
+    }
+    if(unlockedMbarga) text += ' 👑 Mr Kamga, le Vétéran, a entendu parler de toi… Il t’attend.';
+    document.getElementById('matchOverText').textContent = text;
+    track('match_end', {mode, opp: mode==='ai' ? duelOpp : null, won, score: mine+'-'+theirs});
+    touchDayStreak();
+    renderRepPanel(repCommit());
+    setWinShare(won ? {title:'VICTOIRE', line: myDisplayName()+' a battu '+oppName()+' '+mine+' à '+theirs+' au Fap Fap !'} : null);
+    matchMaxDeficit = 0; // this match is settled; never let it leak into the next one
+    refreshRematchUI();
     document.getElementById('matchOverOverlay').classList.remove('hidden');
     if(who==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
   }
 
-  // give each onlooker a random simple idle behaviour — purely decorative, never tied to game state
-  (function initSideSilhouettes(){
-    const behaviors = ['behavior-smoke','behavior-laugh','behavior-whisper'];
-    ['silLeft','silRight'].forEach(id=>{
-      const el = document.getElementById(id);
-      if(!el) return;
-      const pick = behaviors[Math.floor(Math.random()*behaviors.length)];
-      el.classList.add(pick);
-    });
-  })();
 
   // ===================== CARRÉ SANS PITIÉ — 4-player elimination mode =====================
   // A deliberately separate engine, reusing shared helpers (buildDeck, shuffle, hasSuit, canPasse,
@@ -2783,7 +3916,7 @@
       glacee: PENALTY_GLACEE_LINES, lose: PENALTY_LOSE_LINES
     },
     aristide: {
-      name:'Aristide',
+      name:'RALL',
       control: ["Ha, je savais.","Toujours aussi prévisible.","Facile, facile.","Regarde et apprends.","Tu vois ce que je viens de faire ?"],
       win: ["Comme d'habitude.","Une routine, franchement.","Je devrais arrêter de vous prévenir.","Notez la date, ça compte pas souvent contre moi."],
       cora: ["LE CORA ! Évidemment que c'est moi.","Notez la date."],
@@ -2791,7 +3924,7 @@
       lose: ["Bon. Une fois n'est pas coutume.","Ça arrive même aux meilleurs, apparemment."]
     },
     gervais: {
-      name:'Gervais',
+      name:'Joëlle',
       control: ["Hmm... intéressant.","Je le sentais venir.","Voilà, je te l'avais dit.","Chut, laisse-moi jouer.","Ah... exactement ça."],
       win: ["Je savais que ça allait arriver.","Toujours la même histoire.","C'est écrit d'avance, je te dis.","Bon, à qui le tour ?"],
       cora: ["Le CORA... je le sentais dans l'air.","Comme prévu, non ?"],
@@ -2825,6 +3958,7 @@
 
   function sqNewGame(){
     mode = 'square';
+    startMatchTracking();
     sq = {
       gen: 0,
       players: {
@@ -2961,6 +4095,10 @@
   function sqEndHandAutoWin(winnerId, label){
     if(sq.handOver) return;
     sq.handOver = true;
+    if(winnerId==='you'){
+      repAdd(10, 'Victoires automatiques'); unlockTrophy('auto');
+      if(/4 symboles/.test(label)) unlockTrophy('quad');
+    }
     document.getElementById('sqBtnAnnounce').classList.add('hidden');
     document.getElementById('sqBtnPasse').classList.add('hidden');
     showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
@@ -3124,8 +4262,14 @@
     const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
     const winner = last.winner;
     let label = 'Manche remportée';
-    if(glacee){ label='LA 33 GLACÉE !'; showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(40); }
-    else if(cora){ label='CORA — gain x2 !'; showCertificate('CORA', sqName(winner)+' double la mise'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(24); }
+    if(winner==='you'){
+      repAdd(5, 'Manches gagnées');
+      if(glacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); }
+      else if(cora){ repAdd(15, 'CORA'); unlockTrophy('cora'); }
+      if(sq.history.you.some(e=>e.type==='passe')) unlockTrophy('passe');
+    }
+    if(glacee){ label='LA 33 GLACÉE !'; showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif', 0, winner==='you'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(40); }
+    else if(cora){ label='CORA — gain x2 !'; showCertificate('CORA', sqName(winner)+' double la mise', 0, winner==='you'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(24); }
     else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); }
     sqSay(winner, glacee?'glacee':(cora?'cora':'win'));
     const myGen = sq.gen;
@@ -3156,6 +4300,8 @@
             picked.push(id);
             if(picked.length<n){ draw(); return; }
             ov.classList.add('hidden');
+            repAdd(15*picked.length, 'Éliminations');
+            if(picked.length>=2) unlockTrophy('double');
             sqEliminate(picked);
           };
           box.appendChild(b);
@@ -3167,7 +4313,7 @@
       const targets = shuffle(others).slice(0, n);
       const names = targets.map(sqName).join(' et ');
       const left = sqActivePlayers().length - targets.length;
-      showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que lui.', {ms:2600});
+      showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que '+sqName(winnerId)+'.', {ms:2600});
       const myGen = sq.gen;
       setTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(1600));
     }
@@ -3202,10 +4348,17 @@
     profile.squareGamesPlayed += 1;
     if(id==='you') profile.squareWins += 1;
     saveProfile();
+    if(id==='you'){ repAdd(150, 'Dernier survivant'); unlockTrophy('survivant'); unlockTrophy('premiere'); }
+    else repAdd(25, 'Partie de Carré');
+    track('square_end', {won: id==='you'});
+    touchDayStreak();
+    renderRepPanel(repCommit());
+    setWinShare(id==='you' ? {title:'SURVIVANT', line: myDisplayName()+' est le dernier survivant de Carré la Pute face à Penalty, RALL et Joëlle !'} : null);
     document.getElementById('matchOverTitle').textContent = id==='you' ? 'Tu es le dernier survivant !' : sqName(id)+' rafle tout.';
     document.getElementById('matchOverText').textContent = id==='you'
       ? "Trois éliminés, un seul debout. Carré la Pute t'appartient ce soir."
       : sqName(id)+" a éliminé tout le monde — y compris toi. La prochaine est pour toi.";
+    refreshRematchUI();
     document.getElementById('matchOverOverlay').classList.remove('hidden');
     if(id==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
   }
@@ -3316,16 +4469,23 @@
 
   function renderStats(){
     const p = profile;
-    const winRate = p.gamesPlayed>0 ? Math.round(100*p.gamesWon/p.gamesPlayed) : 0;
     const passeRate = p.passeOpportunities>0 ? Math.round(100*p.passeTaken/p.passeOpportunities) : 0;
     const sqWinRate = p.squareGamesPlayed>0 ? Math.round(100*p.squareWins/p.squareGamesPlayed) : 0;
     const box = document.getElementById('statsContent');
     box.innerHTML =
-      '<div class="stats-group"><h3>Contre Penalty</h3>'+
-        '<div class="stats-row"><span class="label">Parties jouées</span><span class="value">'+p.gamesPlayed+'</span></div>'+
-        '<div class="stats-row"><span class="label">Victoires</span><span class="value">'+p.gamesWon+'</span></div>'+
-        '<div class="stats-row"><span class="label">Défaites</span><span class="value">'+p.gamesLost+'</span></div>'+
-        '<div class="stats-row"><span class="label">Taux de victoire</span><span class="value">'+winRate+'%</span></div>'+
+      '<div class="stats-group"><h3>Ta réputation</h3>'+
+        '<div class="stats-row"><span class="label">Rang</span><span class="value">'+RANKS[rankIndex(p.rep)].name+'</span></div>'+
+        '<div class="stats-row"><span class="label">Réputation</span><span class="value">'+p.rep+'</span></div>'+
+        '<div class="stats-row"><span class="label">Trophées</span><span class="value">'+Object.keys(p.trophies).length+' / '+TROPHIES.length+'</span></div>'+
+        '<div class="stats-row"><span class="label">Série de victoires en cours</span><span class="value">'+(p.winStreak||0)+'</span></div>'+
+      '</div>'+
+      '<div class="stats-group"><h3>La route du quartier</h3>'+
+        DUEL_ORDER.map(id=>{ const r=p.ladder[id]; return '<div class="stats-row"><span class="label">Contre '+DUEL_PERSONAS[id].name+'</span><span class="value">'+r.w+'V – '+r.l+'D</span></div>'; }).join('')+
+        '<div class="stats-row"><span class="label">Taux de victoire (tous)</span><span class="value">'+(p.gamesPlayed>0 ? Math.round(100*p.gamesLost/p.gamesPlayed) : 0)+'%</span></div>'+
+      '</div>'+
+      '<div class="stats-group"><h3>En ligne</h3>'+
+        '<div class="stats-row"><span class="label">Matchs joués</span><span class="value">'+(p.onlineGames||0)+'</span></div>'+
+        '<div class="stats-row"><span class="label">Victoires</span><span class="value">'+(p.onlineWins||0)+'</span></div>'+
       '</div>'+
       '<div class="stats-group"><h3>Carré la Pute</h3>'+
         '<div class="stats-row"><span class="label">Parties jouées</span><span class="value">'+p.squareGamesPlayed+'</span></div>'+
@@ -3335,7 +4495,7 @@
       '<div class="stats-group"><h3>Ton style de jeu</h3>'+
         '<div class="stats-row"><span class="label">Occasions de Passe</span><span class="value">'+p.passeOpportunities+'</span></div>'+
         '<div class="stats-row"><span class="label">Passe utilisée</span><span class="value">'+passeRate+'%</span></div>'+
-        '<div class="stats-row"><span class="label">Taux de bluff de Penalty (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
+        '<div class="stats-row"><span class="label">Taux de bluff des adversaires (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
       '</div>';
   }
   document.getElementById('btnShowStats').addEventListener('click', ()=>{
@@ -3353,10 +4513,76 @@
     sqNewGame();
   });
 
+  // ---- Anonymous usage measures, so the game improves on facts rather than guesses ----
+  // Rows go to the Supabase table "events" (insert-only for the public key: nobody can read them back from
+  // the game). Only a random device id + event name + a few game numbers: never a name, never a message.
+  // Not sent from test pages (localhost, ?debug, ?mplocal), and every player can switch it off in the pause menu.
+  const STATS_ON = !!SUPABASE_URL && location.hostname!=='localhost' && !/[?&](debug|mplocal)\b/.test(location.search);
+  const evQueue = [];
+  let evTimer = null;
+  function deviceId(){
+    if(!prefs.did){ prefs.did = Math.random().toString(36).slice(2,12) + Date.now().toString(36).slice(-4); savePrefs(); }
+    return prefs.did;
+  }
+  function track(event, data){
+    if(!STATS_ON || prefs.noStats) return;
+    evQueue.push({device: deviceId(), event, data: data||null, v:'2026-10'});
+    clearTimeout(evTimer);
+    evTimer = setTimeout(flushEvents, 4000);
+  }
+  function flushEvents(){
+    if(!evQueue.length) return;
+    const rows = evQueue.splice(0);
+    try{
+      fetch(SUPABASE_URL+'/rest/v1/events', {
+        method:'POST', keepalive:true,
+        headers:{'apikey': SUPABASE_ANON_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'},
+        body: JSON.stringify(rows)
+      }).catch(()=>{});
+    }catch(e){}
+  }
+  window.addEventListener('pagehide', flushEvents);
+  track('session', {
+    returning: profile.gamesPlayed + profile.squareGamesPlayed + (profile.onlineGames||0) > 0,
+    installed: window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true,
+    rank: rankIndex(profile.rep), streak: liveDayStreak()
+  });
+
+  // ---- Installable app: service worker (offline play vs the AI) + an "Installer" button ----
+  if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
+    window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+  }
+  const isStandalone = ()=> window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  let installPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault(); // keep it for our own button instead of the browser's mini-banner
+    installPrompt = e;
+    document.getElementById('btnInstall').classList.remove('hidden');
+  });
+  window.addEventListener('appinstalled', ()=>{
+    track('install');
+    installPrompt = null;
+    document.getElementById('btnInstall').classList.add('hidden');
+    showToast('Fap Fap est installé !', 'Retrouve-le sur ton écran d’accueil.', {ms:2600});
+  });
+  // iPhones never fire beforeinstallprompt: explain the Safari steps instead
+  if(isIOS && !isStandalone()) document.getElementById('btnInstall').classList.remove('hidden');
+  document.getElementById('btnInstall').addEventListener('click', ()=>{
+    if(installPrompt){
+      installPrompt.prompt();
+      installPrompt.userChoice.finally(()=>{ installPrompt = null; document.getElementById('btnInstall').classList.add('hidden'); });
+    } else if(isIOS){
+      document.getElementById('iosInstallOverlay').classList.remove('hidden');
+    }
+  });
+  document.getElementById('btnCloseIosInstall').addEventListener('click', ()=> document.getElementById('iosInstallOverlay').classList.add('hidden'));
+
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
   if(/[?&]debug\b/.test(location.search)){
     window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
-      getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare,
+      getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
+      setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
   }
 
