@@ -35,6 +35,14 @@
     /* the single pool of light over the table (changed by the 'ambiance' skins) */
     --pool: rgba(255,236,196,0.20); --pool2: rgba(244,184,96,0.08);
     --glow1: rgba(255,243,214,0.16); --glow2: rgba(244,184,96,0.07);
+    /* the table surface (changed by the 'table' skins) — the pool of light is laid on top of it */
+    --felt:
+      radial-gradient(circle at 26% 30%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
+      radial-gradient(circle at 74% 66%, rgba(50,30,14,0.4) 0%, rgba(50,30,14,0.2) 5%, transparent 9%),
+      radial-gradient(circle at 70% 28%, rgba(10,6,3,0.6) 0%, rgba(10,6,3,0.35) 1.4%, transparent 2.6%),
+      radial-gradient(circle at 33% 72%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
+      linear-gradient(180deg, #4a2f14, #2a1809);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent; user-select:none; -webkit-touch-callout:none;}
   html,body{height:100%;}
@@ -149,12 +157,7 @@
   /* same wooden table and single pool of light as the duel */
   .sq-felt{
     position:absolute; left:50%; top:50%; width:400px; height:400px; margin:-200px 0 0 -200px; border-radius:50%;
-    background:
-      radial-gradient(circle at 50% 48%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
-      radial-gradient(circle at 28% 32%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
-      radial-gradient(circle at 70% 70%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
-      repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
-      linear-gradient(180deg, #4a2f14, #2a1809);
+    background: radial-gradient(circle at 50% 48%, var(--pool) 0%, var(--pool2) 38%, transparent 62%), var(--felt);
     -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
             mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
     pointer-events:none; z-index:0;
@@ -246,14 +249,7 @@
   /* one sharp pool of light on the wood, opaque black all around it — like the reference photo */
   .table::before{
     content:""; position:absolute; left:50%; top:50%; width:430px; height:430px; margin:-215px 0 0 -215px;
-    background:
-      radial-gradient(circle at 50% 46%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
-      radial-gradient(circle at 26% 30%, rgba(60,38,18,0.5) 0%, rgba(60,38,18,0.28) 4%, transparent 7%),
-      radial-gradient(circle at 74% 66%, rgba(50,30,14,0.4) 0%, rgba(50,30,14,0.2) 5%, transparent 9%),
-      radial-gradient(circle at 70% 28%, rgba(10,6,3,0.6) 0%, rgba(10,6,3,0.35) 1.4%, transparent 2.6%),
-      radial-gradient(circle at 33% 72%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.3) 1.2%, transparent 2.4%),
-      repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 34px),
-      linear-gradient(180deg, #4a2f14, #2a1809);
+    background: radial-gradient(circle at 50% 46%, var(--pool) 0%, var(--pool2) 38%, transparent 62%), var(--felt);
     -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
             mask-image: radial-gradient(circle at 50% 50%, #000 0%, #000 44%, rgba(0,0,0,0.55) 56%, transparent 70%);
     border-radius: 50%;
@@ -615,16 +611,67 @@
   body.back-or .facedown{ background: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 7px), linear-gradient(160deg, #f6d27a, #a8741c); border-color:#fff3d6; }
   body.back-or .facedown::after{ color:#5a3a08; }
   /* tables */
-  body.table-vert .table::before, body.table-vert .sq-felt{ background:
-      radial-gradient(circle at 50% 47%, var(--pool) 0%, var(--pool2) 38%, transparent 62%),
+  /* every table only redefines --felt; the carvings in the wood only exist on the wooden table */
+  body[class*="table-"] .table-carving{ display:none; }
+  /* light tables: the seat names written on the table switch to dark ink */
+  body.table-kribi .slot-label, body.table-vichy .slot-label, body.table-raphia .slot-label, body.table-or .slot-label{ color:rgba(45,28,10,0.8); font-weight:700; text-shadow:none; }
+  body.table-vert{ --felt:
       repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px),
       linear-gradient(180deg, #1f5a3a, #0e2e1d); }
-  body.table-vichy .table::before, body.table-vichy .sq-felt{ background:
-      radial-gradient(circle at 50% 47%, var(--pool) 0%, var(--pool2) 38%, rgba(0,0,0,0.25) 62%),
+  body.table-vichy{ --felt:
+      radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.25) 62%),
       repeating-linear-gradient(90deg, rgba(150,24,30,0.55) 0 22px, transparent 22px 44px),
       repeating-linear-gradient(0deg, rgba(150,24,30,0.55) 0 22px, transparent 22px 44px),
       #d9cfbd; }
-  body.table-vichy .table-carving{ display:none; }
+  body.table-kribi{ --felt:
+      radial-gradient(ellipse 130% 34% at 50% 2%, rgba(24,128,158,0.95) 0 52%, rgba(214,246,244,0.85) 56%, rgba(214,246,244,0) 62%),
+      radial-gradient(circle, rgba(255,255,255,0.10) 0 1px, transparent 1.6px) 0 0/9px 9px,
+      radial-gradient(circle, rgba(120,80,30,0.14) 0 1px, transparent 1.6px) 3px 4px/7px 7px,
+      linear-gradient(180deg, #e6c891, #c49d5f); }
+  body.table-laterite{ --felt:
+      radial-gradient(circle at 25% 35%, rgba(90,30,10,0.35) 0 3%, transparent 6%),
+      radial-gradient(circle at 70% 65%, rgba(60,20,8,0.3) 0 4%, transparent 8%),
+      radial-gradient(circle, rgba(255,200,160,0.10) 0 1px, transparent 1.6px) 0 0/6px 6px,
+      linear-gradient(180deg, #a8472a, #6b2915); }
+  body.table-wax{ --felt:
+      linear-gradient(rgba(20,10,4,0.30), rgba(20,10,4,0.30)),
+      radial-gradient(circle, #f2a516 0 18%, #1b5fa8 19% 30%, transparent 31%) 0 0/48px 48px,
+      radial-gradient(circle, #e0402a 0 12%, transparent 13%) 24px 24px/48px 48px,
+      repeating-linear-gradient(45deg, rgba(0,0,0,0.12) 0 4px, transparent 4px 12px),
+      #2e7d4f; }
+  body.table-ardoise{ --felt:
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px) 0 0/100% 26px,
+      radial-gradient(ellipse at 38% 36%, rgba(255,255,255,0.07), transparent 55%),
+      radial-gradient(ellipse at 70% 70%, rgba(255,255,255,0.04), transparent 40%),
+      linear-gradient(160deg, #33403a, #1b2420); }
+  body.table-raphia{ --felt:
+      repeating-linear-gradient(0deg, rgba(90,60,20,0.35) 0 3px, transparent 3px 9px),
+      repeating-linear-gradient(90deg, rgba(255,230,170,0.18) 0 4px, rgba(90,60,20,0.25) 4px 9px),
+      linear-gradient(180deg, #c9a15e, #8a6430); }
+  body.table-nuit{ --felt:
+      radial-gradient(circle, #fff 0 0.7px, transparent 1.3px) 0 0/37px 41px,
+      radial-gradient(circle, rgba(255,255,255,0.75) 0 0.5px, transparent 1.1px) 11px 7px/23px 29px,
+      radial-gradient(circle, rgba(200,210,255,0.95) 0 0.9px, transparent 1.6px) 5px 19px/53px 47px,
+      radial-gradient(ellipse at 62% 38%, rgba(130,95,210,0.30), transparent 60%),
+      linear-gradient(180deg, #1c2550, #0a0f24); }
+  body.table-marbre{ --felt:
+      linear-gradient(115deg, transparent 40%, rgba(212,170,90,0.5) 41%, transparent 42.4%),
+      linear-gradient(35deg, transparent 58%, rgba(212,170,90,0.32) 58.6%, transparent 59.6%),
+      linear-gradient(160deg, transparent 22%, rgba(255,255,255,0.12) 23%, transparent 25.5%),
+      linear-gradient(70deg, transparent 70%, rgba(255,255,255,0.08) 71%, transparent 73%),
+      radial-gradient(ellipse at 35% 30%, #2f2b30, #121014); }
+  body.table-velours{ --felt:
+      radial-gradient(circle, transparent 0 56%, rgba(212,170,90,0.75) 56.6% 57.6%, transparent 58.2%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.12) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% 40%, #911c2c, #440913 72%); }
+  body.table-arcade{ --felt:
+      linear-gradient(rgba(255,60,200,0.45) 1px, transparent 1px) 0 0/100% 30px,
+      linear-gradient(90deg, rgba(60,220,255,0.40) 1px, transparent 1px) 0 0/30px 100%,
+      radial-gradient(ellipse at 50% 30%, #3b1263, #120626 70%); }
+  body.table-or{ --felt:
+      radial-gradient(circle, transparent 0 55%, rgba(255,244,200,0.85) 55.6% 56.6%, transparent 57.4%),
+      repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.07) 0 6deg, transparent 6deg 12deg),
+      radial-gradient(ellipse at 40% 35%, #f3d27a, #a06c18 72%); }
   /* ambiances */
   body.light-neon{ --pool: rgba(170,140,255,0.24); --pool2: rgba(220,70,200,0.10); --glow1: rgba(190,160,255,0.16); --glow2: rgba(230,60,200,0.08); }
   body.light-pluie{ --pool: rgba(200,220,255,0.17); --pool2: rgba(120,150,200,0.07); --glow1: rgba(210,225,255,0.12); --glow2: rgba(120,150,200,0.05); }
@@ -688,6 +735,310 @@
   .level-btn:hover, .level-btn:active{ border-color: var(--bulb); background: rgba(244,184,96,0.08); transform: translateY(-1px); }
   .level-btn .lvl-name{ font-family:var(--font-display); letter-spacing:0.04em; color: var(--bulb); font-size:17px; }
   .level-btn .lvl-desc{ font-size:12.5px; color: var(--dust); line-height:1.4; }
+
+  /* =====================================================================================
+     PAGES, PAUSE, CHAT & ANIMATIONS
+     ===================================================================================== */
+  input, textarea{ -webkit-user-select:text; user-select:text; }
+
+  /* ---- full-screen pages with a header and a back button ---- */
+  .overlay.page{
+    justify-content:flex-start; align-items:stretch; padding:0; gap:0; text-align:left; animation:none;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(244,184,96,0.16), transparent 60%),
+      radial-gradient(80% 50% at 100% 100%, rgba(143,47,29,0.18), transparent 70%),
+      linear-gradient(180deg, #120b06, #070402 75%);
+    overscroll-behavior:contain;
+  }
+  .page-head{
+    position:sticky; top:0; z-index:3; display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px;
+    padding: max(10px, env(safe-area-inset-top)) 12px 10px;
+    background: linear-gradient(180deg, rgba(14,9,5,0.97), rgba(14,9,5,0.86));
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom:1px solid rgba(244,184,96,0.14);
+  }
+  .overlay .page-head h2{ text-align:center; font-size:20px; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .back-btn{
+    width:44px; height:44px; padding:0; border-radius:50%; font-size:30px; line-height:1; font-weight:400;
+    display:flex; align-items:center; justify-content:center; padding-bottom:4px;
+    background: rgba(244,184,96,0.10); border:1px solid rgba(244,184,96,0.35); color:var(--bulb);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.5);
+  }
+  .back-btn:active{ transform: translateY(3px); box-shadow:0 0 0 rgba(0,0,0,0.5); }
+  .page-body{ width:100%; max-width:440px; margin:0 auto; padding:18px 16px max(36px, env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:12px; }
+  .page-body.center{ align-items:center; text-align:center; padding-top:28px; }
+  .page-body .opp-list, .page-body .trophy-grid, .page-body #skinGroups, .page-body .rules-box{ max-width:none; max-height:none; overflow:visible; }
+  .page-intro{ color:var(--dust) !important; font-size:13.5px !important; max-width:none !important; }
+  .page-big{ font-family:var(--font-display); color:var(--cream); font-size:24px; margin:0; }
+  .page-body .mp-input{ max-width:280px; }
+  .page-body.center button.big{ min-width:240px; }
+
+  /* page slides: forward = from the right, back = from the left */
+  .pg-in-fwd{ animation: pgInFwd 0.3s cubic-bezier(.2,.8,.25,1) both; }
+  .pg-in-back{ animation: pgInBack 0.3s cubic-bezier(.2,.8,.25,1) both; }
+  .pg-out-fwd{ animation: pgOutFwd 0.24s ease-in both; pointer-events:none; }
+  .pg-out-back{ animation: pgOutBack 0.24s ease-in both; pointer-events:none; z-index:61; }
+  @keyframes pgInFwd{ from{ transform:translateX(34%); opacity:0; } to{ transform:none; opacity:1; } }
+  @keyframes pgInBack{ from{ transform:translateX(-22%); opacity:0; } to{ transform:none; opacity:1; } }
+  @keyframes pgOutFwd{ to{ transform:translateX(-22%); opacity:0; } }
+  @keyframes pgOutBack{ to{ transform:translateX(34%); opacity:0; } }
+
+  /* ---- modal sheets (pause, confirmations) ---- */
+  .overlay.modal{ background: rgba(5,3,1,0.66); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); animation: fadeIn 0.2s ease; z-index:62; }
+  #confirmRestartOverlay{ z-index:63; }
+  .sheet{
+    width:100%; max-width:340px; display:flex; flex-direction:column; align-items:center; gap:12px; padding:22px 18px 18px;
+    border-radius:22px; background: linear-gradient(170deg, #2a1b0e, #140c06);
+    border:1px solid rgba(244,184,96,0.3);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,236,196,0.08);
+    animation: sheetPop 0.36s cubic-bezier(.25,1.5,.45,1);
+  }
+  .sheet h2{ font-size:28px !important; }
+  .sheet .menu-list{ max-width:none; }
+  .sheet .menu-list button{ display:flex; align-items:center; gap:12px; border-radius:14px; padding:14px 16px; box-shadow:0 4px 0 rgba(0,0,0,0.45); }
+  .sheet .menu-list button:active{ transform:translateY(4px); box-shadow:0 0 0 rgba(0,0,0,0.45); }
+  .sheet .menu-list button.primary{ justify-content:flex-start; box-shadow:0 4px 0 #8a4e0c; font-weight:800; }
+  .mi{ width:24px; text-align:center; font-size:17px; flex-shrink:0; }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  @keyframes sheetPop{ from{ opacity:0; transform: translateY(26px) scale(0.92); } to{ opacity:1; transform:none; } }
+
+  /* ---- pressable 3D buttons (the main actions everywhere) ---- */
+  button.primary, button.danger, button.whatsapp{ box-shadow: 0 5px 0 var(--btn-depth, #8a4e0c), 0 8px 18px rgba(0,0,0,0.35); }
+  button.danger{ --btn-depth:#4e170c; }
+  button.whatsapp{ --btn-depth:#137a3a; }
+  button.primary:active, button.danger:active, button.whatsapp:active{ transform: translateY(5px); box-shadow: 0 0 0 var(--btn-depth, #8a4e0c), 0 2px 6px rgba(0,0,0,0.3); filter:none; }
+  .actions button:not(.hidden), #btnRematch{ animation: btnPop 0.42s cubic-bezier(.3,1.7,.5,1) backwards; }
+  @keyframes btnPop{ from{ opacity:0; transform: scale(0.4) translateY(14px); } to{ opacity:1; transform:none; } }
+  button.passe-option:not(.hidden){ animation: btnPop 0.42s cubic-bezier(.3,1.7,.5,1) backwards, passePulse 1.8s ease-in-out 0.42s infinite; }
+
+  /* ---- home ---- */
+  .page-home{
+    background:
+      linear-gradient(180deg, rgba(8,5,3,0.35) 0%, rgba(8,5,3,0.82) 34%, #080503 62%),
+      url('art/scene.jpg') center top / cover no-repeat, #080503 !important;
+  }
+  .home-body{ align-items:center; text-align:center; padding-top: max(34px, calc(env(safe-area-inset-top) + 22px)); gap:13px; position:relative; }
+  .home-top{ margin-bottom:2px; }
+  .overlay h2.logo{
+    font-size:68px; font-weight:800; letter-spacing:-0.03em; line-height:0.95; color:var(--bulb); margin:0;
+    text-shadow: 0 0 28px rgba(244,184,96,0.45), 0 4px 0 #6b3b0a, 0 8px 20px rgba(0,0,0,0.6);
+  }
+  .logo span{ display:inline-block; }
+  .logo .sp{ width:0.22em; }
+  .home-tag{ font-size:13px !important; letter-spacing:0.18em; text-transform:uppercase; color:var(--cream) !important; opacity:0.75; margin-top:8px !important; }
+  .page-home .menu-rank{ max-width:360px; padding:10px 12px; border-radius:14px; background:rgba(0,0,0,0.35); border:1px solid rgba(244,184,96,0.16); }
+  .hero-btn{
+    width:100%; max-width:360px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px; text-align:left;
+    padding:14px 14px 14px 16px; border-radius:18px; border:1px solid rgba(244,184,96,0.35);
+    background: linear-gradient(160deg, rgba(58,38,18,0.95), rgba(26,16,8,0.95));
+    box-shadow: 0 6px 0 #0c0703, 0 12px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,236,196,0.08);
+  }
+  .hero-btn:active{ transform: translateY(6px); box-shadow: 0 0 0 #0c0703, 0 4px 10px rgba(0,0,0,0.4); filter:none; }
+  .hero-text{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .hero-text b{ font-family:var(--font-display); font-size:19px; font-weight:800; color:var(--cream); letter-spacing:-0.01em; }
+  .hero-text small{ font-size:12px; color:var(--dust); line-height:1.35; font-weight:500; }
+  .hero-ico{ font-size:28px; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:rgba(244,184,96,0.12); }
+  .hero-go{ font-size:28px; color:var(--bulb); line-height:1; padding-bottom:3px; }
+  .hero-faces{ display:flex; }
+  .hero-faces .avatar + .avatar, .mode-faces .avatar + .avatar{ margin-left:-12px; }
+  .hero-faces .avatar, .mode-faces .avatar{ box-shadow: 0 0 0 2px #1a1008, 0 0 0 3.5px rgba(244,184,96,0.6); }
+  .hero-play{
+    padding:18px 14px 18px 16px; border:none;
+    background: linear-gradient(170deg, #ffd88c, #f4b860 45%, #d98f2e);
+    box-shadow: 0 6px 0 #8a4e0c, 0 14px 30px rgba(244,140,40,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+  .hero-play:active{ box-shadow: 0 0 0 #8a4e0c, 0 4px 12px rgba(244,140,40,0.3); }
+  .hero-play .hero-text b{ color:#20160a; font-size:26px; }
+  .hero-play .hero-text small{ color:#5a3a12; }
+  .hero-play .hero-go{ color:#20160a; }
+  .hero-play .hero-faces .avatar{ box-shadow: 0 0 0 2px #f4b860, 0 3px 8px rgba(0,0,0,0.35); }
+  .hero-tuto{ border-color:rgba(76,180,130,0.6); background: linear-gradient(160deg, rgba(30,70,50,0.95), rgba(14,32,22,0.95)); box-shadow: 0 6px 0 #07140d, 0 12px 24px rgba(0,0,0,0.45); }
+  .hero-tuto .hero-ico{ background:rgba(76,180,130,0.18); }
+  .hero-tuto .hero-text b{ color:#bff0d6; }
+  .hero-daily .hero-text b{ color:var(--bulb); }
+  .tile-grid{ width:100%; max-width:360px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:4px; }
+  .tile{
+    display:flex; flex-direction:column; align-items:center; gap:5px; padding:13px 4px 11px; border-radius:16px;
+    background: rgba(255,240,215,0.05); border:1px solid rgba(244,184,96,0.16);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.55);
+  }
+  .tile:active{ transform:translateY(4px); box-shadow:0 0 0 rgba(0,0,0,0.55); filter:none; background:rgba(244,184,96,0.12); }
+  .tile-ico{ font-size:24px; line-height:1; }
+  .tile-lbl{ font-size:12px; font-weight:700; color:var(--cream); }
+  .page-home .stamp{ top:auto; bottom:18px; right:16px; position:fixed; font-size:10px; opacity:0.5; }
+  #btnInstall{ width:100%; max-width:360px; }
+
+  /* home intro: the full show the first time, a quick version afterwards */
+  @keyframes logoIn{ from{ opacity:0; transform: translateY(-60px) scale(0.3) rotate(-14deg); } to{ opacity:1; transform:none; } }
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(12px); } to{ opacity:1; transform:none; } }
+  @keyframes heroIn{ from{ opacity:0; transform: translateY(40px) scale(0.85); } to{ opacity:1; transform:none; } }
+  @keyframes tileIn{ from{ opacity:0; transform: translateY(18px) scale(0.6); } to{ opacity:1; transform:none; } }
+  .intro .logo span{ animation: logoIn 0.7s cubic-bezier(.25,1.7,.4,1) backwards; animation-delay: calc(var(--i) * 70ms + 80ms); }
+  .intro .home-tag{ animation: fadeUp 0.5s ease 0.6s backwards; }
+  .intro .menu-rank{ animation: fadeUp 0.5s ease 0.7s backwards; }
+  .intro .hero-btn{ animation: heroIn 0.6s cubic-bezier(.25,1.5,.45,1) backwards; animation-delay: calc(var(--d) * 110ms + 760ms); }
+  .intro .tile{ animation: tileIn 0.45s cubic-bezier(.3,1.7,.5,1) backwards; animation-delay: calc(var(--k) * 60ms + 1100ms); }
+  .intro.quick .logo span{ animation-duration:0.45s; animation-delay: calc(var(--i) * 25ms); }
+  .intro.quick .home-tag, .intro.quick .menu-rank{ animation-delay:0.12s; }
+  .intro.quick .hero-btn{ animation-duration:0.45s; animation-delay: calc(var(--d) * 50ms + 120ms); }
+  .intro.quick .tile{ animation-delay: calc(var(--k) * 30ms + 260ms); }
+
+  /* ---- "Jouer" page ---- */
+  .mode-card{
+    display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-align:left; padding:16px; border-radius:20px;
+    background: linear-gradient(160deg, rgba(58,38,18,0.9), rgba(22,14,7,0.95)); border:1px solid rgba(244,184,96,0.3);
+    box-shadow: 0 6px 0 #0c0703, 0 14px 26px rgba(0,0,0,0.45);
+  }
+  .mode-card:active{ transform:translateY(6px); box-shadow:0 0 0 #0c0703, 0 4px 10px rgba(0,0,0,0.4); filter:none; }
+  .mode-card b{ font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--bulb); letter-spacing:-0.01em; }
+  .mode-card small{ font-size:13px; color:var(--cream); opacity:0.75; line-height:1.4; font-weight:500; }
+  .mode-faces{ display:flex; margin-bottom:4px; }
+  .mode-ico{ font-size:34px; line-height:1; margin-bottom:2px; }
+  .mode-online{ background: linear-gradient(160deg, rgba(22,58,44,0.92), rgba(8,22,16,0.95)); border-color:rgba(76,180,130,0.45); }
+  .mode-online b{ color:#9ee6c0; }
+  .mode-carre{ background: linear-gradient(160deg, rgba(80,24,16,0.92), rgba(30,10,6,0.95)); border-color:rgba(217,84,46,0.45); }
+  .mode-carre b{ color:#ffb199; }
+  .pg-in-fwd .mode-card, .pg-in-fwd .opp-card, .pg-in-fwd .set-group, .pg-in-fwd .trophy{ animation: heroIn 0.5s cubic-bezier(.25,1.5,.45,1) backwards; animation-delay: calc(var(--d, 0) * 80ms + 80ms); }
+  .opp-card{ border-radius:16px; box-shadow:0 4px 0 rgba(0,0,0,0.5); padding:13px 14px; }
+  .opp-card:active{ transform:translateY(4px); box-shadow:none; }
+
+  /* ---- profile ---- */
+  .profile-card{
+    padding:16px; border-radius:20px; border:1px solid rgba(244,184,96,0.35);
+    background: radial-gradient(120% 90% at 0% 0%, rgba(244,184,96,0.22), transparent 60%), linear-gradient(160deg, #2b1c0e, #140c06);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+  }
+  .pc-top{ display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  .pc-avatar{ --s:64px; }
+  .pc-name{ font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--cream); }
+  .pc-rank{ font-size:13px; font-weight:700; color:var(--bulb); letter-spacing:0.04em; text-transform:uppercase; }
+  .pc-bar{ height:10px; border-radius:6px; background:rgba(255,255,255,0.08); overflow:hidden; border:1px solid rgba(244,184,96,0.25); }
+  .pc-bar i{ display:block; height:100%; border-radius:6px; background:linear-gradient(90deg, #d9a441, var(--bulb-hot)); box-shadow:0 0 10px rgba(244,184,96,0.6); animation: barGrow 0.9s cubic-bezier(.2,.8,.3,1) 0.2s backwards; }
+  @keyframes barGrow{ from{ width:0 !important; } }
+  .pc-next{ font-size:11.5px; color:var(--dust); margin:6px 0 14px; }
+  .pc-nums{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .pc-nums div{ display:flex; flex-direction:column; align-items:center; padding:8px 2px; border-radius:12px; background:rgba(0,0,0,0.3); }
+  .pc-nums b{ font-family:var(--font-display); font-size:20px; color:var(--cream); }
+  .pc-nums span{ font-size:10.5px; color:var(--dust); }
+  .profile-links{ justify-content:stretch !important; }
+  .profile-links button{ flex:1; padding:12px; border-radius:12px; }
+  .stats-block{ padding:4px 2px; }
+
+  /* ---- settings ---- */
+  .set-group{ display:flex; flex-direction:column; gap:8px; }
+  .set-group h3{ font-family:var(--font-display); font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--bulb); margin:8px 2px 0; }
+  .set-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left;
+    padding:14px 14px; border-radius:14px; font-size:14.5px; font-weight:600;
+    background:rgba(255,240,215,0.05); border:1px solid rgba(244,184,96,0.14);
+  }
+  button.set-row:active{ transform:scale(0.98); }
+  .switch{ position:relative; flex-shrink:0; width:46px; height:28px; border-radius:14px; background:rgba(255,255,255,0.14); transition:background 0.2s; }
+  .switch::after{ content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:var(--cream); box-shadow:0 2px 5px rgba(0,0,0,0.45); transition:transform 0.25s cubic-bezier(.3,1.5,.5,1); }
+  .on > .switch{ background:var(--bulb); }
+  .on > .switch::after{ transform:translateX(18px); background:#fff8ea; }
+  .set-input{ cursor:text; }
+  .set-input .mp-input{ max-width:160px; padding:8px 10px; font-size:16px; text-align:right; }
+  .app-version{ text-align:center; margin-top:10px !important; max-width:none !important; }
+  .set-slider{ cursor:default; }
+  .set-slider input[type=range]{ width:46%; max-width:180px; accent-color: var(--bulb); height:28px; }
+  .now-playing{ color:var(--bulb) !important; font-style:italic; text-align:center; max-width:none !important; margin:2px 0 0 !important; }
+  .skin-music{ color:var(--bulb) !important; opacity:0.85; font-size:10px !important; line-height:1.2; }
+  .skin-row .skin-opt{ min-height:108px; justify-content:flex-start; }
+
+  /* ---- end of match: the certificate drops in, greyed out on a loss ---- */
+  .winner-face{ min-height:64px; display:flex; justify-content:center; }
+  #matchOverOverlay:not(.hidden) .cert-card{ animation: certDrop 0.75s cubic-bezier(.2,1.5,.4,1) 0.1s backwards; }
+  #matchOverOverlay:not(.hidden) .winner-face{ animation: fadeUp 0.5s ease 0.5s backwards; }
+  #matchOverOverlay[data-result="lose"] .cert-card{ filter: grayscale(0.7) brightness(0.88) sepia(0.15); }
+  #matchOverOverlay[data-result="lose"] .cert-stamp{ transform: rotate(-8deg); }
+  @keyframes certDrop{
+    0%{ opacity:0; transform: translateY(-80px) rotate(-6deg) scale(0.7); }
+    70%{ opacity:1; transform: translateY(6px) rotate(1deg) scale(1.02); }
+    100%{ transform:none; }
+  }
+
+  /* ---- portraits that react ---- */
+  .avatar.speaking, img.speaking{ animation: faceTalk 0.45s ease-in-out 3; }
+  .avatar.hop, img.hop{ animation: faceHop 0.6s cubic-bezier(.3,1.7,.5,1); }
+  .avatar.shake, img.shake{ animation: faceShake 0.5s ease; }
+  @keyframes faceTalk{ 0%,100%{ transform:scale(1); box-shadow: 0 0 0 2px rgba(244,184,96,0.55), 0 3px 8px rgba(0,0,0,0.5); } 50%{ transform:scale(1.08); box-shadow: 0 0 0 3px var(--bulb), 0 0 16px rgba(244,184,96,0.7); } }
+  @keyframes faceHop{ 0%,100%{ transform:none; } 35%{ transform: translateY(-10px) scale(1.22); } 60%{ transform: translateY(0) scale(0.95); } }
+  @keyframes faceShake{ 0%,100%{ transform:none; } 20%{ transform: translateX(-5px) rotate(-6deg); } 40%{ transform: translateX(5px) rotate(5deg); } 60%{ transform: translateX(-3px) rotate(-3deg); } 80%{ transform: translateX(2px); } }
+
+  /* ---- a ring where a card lands ---- */
+  .land-ring{ position:absolute; left:50%; top:50%; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; pointer-events:none; z-index:2;
+    border:2px solid var(--bulb-hot); box-shadow:0 0 14px rgba(244,184,96,0.6); animation: landRing 0.6s ease-out forwards; }
+  @keyframes landRing{ from{ opacity:0.9; transform:scale(0.3); } to{ opacity:0; transform:scale(1.9); } }
+
+  /* ---- online chat ---- */
+  .chat-fab{
+    position:fixed; right:10px; top:44%; z-index:56; width:50px; height:50px; padding:0; border-radius:50%; font-size:22px;
+    background: linear-gradient(160deg, #ffd88c, #e9a043); border:none; color:#20160a;
+    box-shadow: 0 4px 0 #8a4e0c, 0 8px 20px rgba(0,0,0,0.5); animation: btnPop 0.4s cubic-bezier(.3,1.7,.5,1);
+  }
+  .chat-fab:active{ transform:translateY(4px); box-shadow:0 0 0 #8a4e0c; }
+  .chat-badge{ position:absolute; top:-4px; right:-4px; min-width:21px; height:21px; padding:0 5px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background:#d9542e; color:#fff; font-size:11px; font-weight:800; border:2px solid #120b06; }
+  .chat-badge.pop{ animation: badgePop 0.4s cubic-bezier(.3,1.9,.5,1); }
+  @keyframes badgePop{ 0%{ transform:scale(0.2); } 100%{ transform:scale(1); } }
+  .chat-sheet{
+    position:fixed; left:0; right:0; bottom:0; margin:0 auto; max-width:520px; z-index:58; display:flex; flex-direction:column;
+    height:min(62vh, 520px); height:min(62dvh, 520px);
+    background: linear-gradient(180deg, #24170b, #120b05); border:1px solid rgba(244,184,96,0.35); border-bottom:none;
+    border-radius:22px 22px 0 0; box-shadow: 0 -18px 50px rgba(0,0,0,0.7);
+    animation: sheetUp 0.3s cubic-bezier(.2,.9,.3,1.1);
+  }
+  .chat-sheet::before{ content:""; position:absolute; top:7px; left:50%; width:40px; height:4px; margin-left:-20px; border-radius:2px; background:rgba(244,184,96,0.35); }
+  .chat-sheet.closing{ animation: sheetDown 0.2s ease-in forwards; }
+  @keyframes sheetUp{ from{ transform:translateY(100%); } to{ transform:none; } }
+  @keyframes sheetDown{ to{ transform:translateY(100%); } }
+  .chat-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 10px 8px 18px; font-family:var(--font-display); font-size:19px; font-weight:800; color:var(--bulb); }
+  .chat-head-actions{ display:flex; align-items:center; gap:2px; }
+  .chat-head .ghost{ text-decoration:none; font-family:var(--font-ui); font-size:12px; }
+  .chat-list{ flex:1; overflow-y:auto; padding:6px 14px 10px; display:flex; flex-direction:column; gap:6px; overscroll-behavior:contain; }
+  .msg{ max-width:80%; padding:8px 12px; border-radius:18px; font-size:14.5px; line-height:1.35; word-break:break-word; animation: msgIn 0.25s cubic-bezier(.3,1.5,.5,1); -webkit-user-select:text; user-select:text; }
+  .msg.me{ align-self:flex-end; background: linear-gradient(160deg, #ffd88c, #f4b860); color:#20160a; border-bottom-right-radius:5px; font-weight:600; }
+  .msg.them{ align-self:flex-start; background:rgba(255,240,215,0.09); color:var(--cream); border-bottom-left-radius:5px; }
+  .msg.sys{ align-self:center; background:none; color:var(--dust); font-size:11.5px; text-align:center; padding:2px 8px; }
+  .msg.emo{ background:none; font-size:36px; padding:0 4px; line-height:1.1; }
+  .msg-who{ display:block; font-size:10.5px; font-weight:800; color:var(--bulb); margin-bottom:2px; letter-spacing:0.03em; }
+  .msg.emo .msg-who{ font-size:10.5px; }
+  @keyframes msgIn{ from{ opacity:0; transform: translateY(10px) scale(0.9); } to{ opacity:1; transform:none; } }
+  .chat-quick{ display:flex; gap:6px; overflow-x:auto; padding:6px 12px; scrollbar-width:none; }
+  .chat-quick::-webkit-scrollbar{ display:none; }
+  .chip{ white-space:nowrap; flex-shrink:0; padding:7px 13px; border-radius:18px; font-size:12.5px; background:rgba(244,184,96,0.1); border-color:rgba(244,184,96,0.3); }
+  .chip-emo{ font-size:19px; padding:3px 9px; }
+  .chat-form{ display:flex; gap:8px; padding:8px 12px max(12px, env(safe-area-inset-bottom)); border-top:1px solid rgba(244,184,96,0.12); }
+  .chat-form input{ flex:1; min-width:0; font-family:var(--font-ui); font-size:16px; padding:11px 15px; border-radius:24px; outline:none;
+    border:1px solid rgba(244,184,96,0.3); background:rgba(255,255,255,0.06); color:var(--cream); }
+  .chat-form input:focus{ border-color:var(--bulb); }
+  .chat-form button{ width:46px; height:46px; padding:0; border-radius:50%; font-size:18px; flex-shrink:0; box-shadow:0 3px 0 #8a4e0c; }
+  .emote-layer{ position:fixed; inset:0; pointer-events:none; z-index:59; overflow:hidden; }
+  .emote{ position:absolute; left:var(--x); bottom:24%; display:flex; flex-direction:column; align-items:center; gap:2px; animation: emoteRise 2.1s cubic-bezier(.2,.8,.3,1) forwards; }
+  .emote.theirs{ bottom:auto; top:30%; animation-name: emoteFall; }
+  .emote-ico{ font-size:64px; line-height:1; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
+  .emote-who{ font-size:11px; font-weight:800; color:var(--bulb); background:rgba(10,6,3,0.85); border:1px solid rgba(244,184,96,0.4); border-radius:10px; padding:2px 8px; }
+  @keyframes emoteRise{
+    0%{ opacity:0; transform: translateY(40px) scale(0.3); }
+    18%{ opacity:1; transform: translateY(0) scale(1.15); }
+    30%{ transform: translateY(-10px) scale(1); }
+    80%{ opacity:1; }
+    100%{ opacity:0; transform: translateY(-190px) scale(0.9) rotate(-8deg); }
+  }
+  @keyframes emoteFall{
+    0%{ opacity:0; transform: translateY(-40px) scale(0.3); }
+    18%{ opacity:1; transform: translateY(0) scale(1.15); }
+    30%{ transform: translateY(10px) scale(1); }
+    80%{ opacity:1; }
+    100%{ opacity:0; transform: translateY(160px) scale(0.9) rotate(8deg); }
+  }
+
+  /* ---- "reduce animations" (setting, or the phone's own accessibility option) ---- */
+  body.calm *, body.calm *::before, body.calm *::after{
+    animation-duration:0.01ms !important; animation-delay:0s !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;
+  }
+  body.calm .amb-layer, body.calm .rain-layer{ display:none; }
 </style>
 </head>
 <body>
@@ -742,8 +1093,6 @@
     </div>
 
     <div class="hand-zone">
-      <button class="react-btn hidden" id="btnReact" aria-label="Envoyer une réaction">💬</button>
-      <div class="react-palette hidden" id="reactPalette"></div>
       <div class="my-bubble" id="myBubble"></div>
       <div class="coach hidden" id="coach"><span class="avatar" data-char="penalty" style="--s:38px"></span><span id="coachText"></span></div>
       <div class="hand-label" id="handLabel">Ta main</div>
@@ -855,43 +1204,31 @@
   <button class="ghost" id="btnRemix">🔀 Exiger un nouveau mélange</button>
 </div>
 
-<div class="overlay hidden" id="pauseOverlay">
-  <h2>Pause</h2>
-  <div class="menu-list">
-    <button class="primary" id="btnResume">▶ Reprendre</button>
-    <button id="btnOpenRules">📖 Les règles du jeu</button>
-    <button id="btnToggleSound">🔊 Son : activé</button>
-    <button id="btnToggleShare">🃏 Toujours partager : non</button>
-    <button id="btnToggleStats">📈 Statistiques anonymes : oui</button>
-    <button class="danger" id="btnQuitGame">Quitter la partie</button>
+<!-- ===================== In-game modals ===================== -->
+<div class="overlay modal hidden" id="pauseOverlay">
+  <div class="sheet">
+    <h2>Pause</h2>
+    <p class="small-note" id="pauseNote"></p>
+    <p class="small-note now-playing" id="pauseMusic"></p>
+    <div class="menu-list">
+      <button class="primary" id="btnResume"><span class="mi">▶</span>Reprendre</button>
+      <button id="btnRestartMatch"><span class="mi">↻</span>Recommencer la partie</button>
+      <button id="btnOpenRules"><span class="mi">📖</span>Les règles du jeu</button>
+      <button id="btnOpenSettings"><span class="mi">⚙️</span>Paramètres</button>
+      <button class="danger" id="btnQuitGame"><span class="mi">⌂</span>Quitter vers l'accueil</button>
+    </div>
   </div>
 </div>
 
-<div class="overlay hidden" id="rulesOverlay">
-  <h2>Les règles en bref</h2>
-  <div class="rules-box">
-    <h3>Le jeu</h3>
-    <p>31 cartes : du 3 au 9 dans les 4 couleurs (<b>Black ♠, Tchaka ♣, Coubie ♥, Zing ♦</b>), plus le 10 en Tchaka, Coubie et Zing. Pas de 10 Black. 5 cartes chacun.</p>
-    <h3>Commande &amp; contrôle</h3>
-    <p>Celui qui pose la première carte <b>commande</b> sa couleur. Les autres doivent la suivre s'ils en ont. Sinon, ils jouent ce qu'ils veulent (« jouer libre »), mais ne prennent jamais le contrôle. La plus forte carte dans la couleur demandée prend le <b>contrôle</b> et commande le tour suivant.</p>
-    <h3>Gagner la manche</h3>
-    <p>Celui qui a le contrôle sur la <b>dernière carte</b> gagne : +1 point. Premier à 5 points.</p>
-    <h3>CORA &amp; 33 Glacée</h3>
-    <p><b>CORA</b> : la dernière carte gagnante est un 3 → +2. <b>33 Glacée</b> : les deux dernières cartes gagnantes sont des 3 → +3.</p>
-    <h3>La Passe</h3>
-    <p>Avec 2 cartes en main, sans la couleur demandée : soit 2 cartes de même couleur, soit 2 couleurs différentes dont un 3. Tu peux passer : tu ne joues pas ce tour, puis tu poses <b>tes 2 cartes d'un coup</b> au dernier tour.</p>
-    <h3>Victoires automatiques</h3>
-    <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → +1.</p>
+<div class="overlay modal hidden" id="confirmRestartOverlay">
+  <div class="sheet">
+    <h2 id="confirmTitle">Quitter la partie ?</h2>
+    <p id="confirmQuitText">La manche en cours sera perdue.</p>
+    <div class="btnrow">
+      <button class="danger" id="btnConfirmRestartYes">Oui, quitter</button>
+      <button id="btnConfirmRestartNo">Continuer à jouer</button>
+    </div>
   </div>
-  <button class="primary" id="btnCloseRules">J'ai compris</button>
-</div>
-
-<div class="overlay hidden" id="inviteOverlay">
-  <h2>On t'invite à jouer !</h2>
-  <p id="inviteText">Partie de Fap Fap</p>
-  <input id="inviteNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
-  <button class="primary big" id="btnInviteJoin">Rejoindre la partie</button>
-  <button class="ghost" id="btnInviteNo">Non merci</button>
 </div>
 
 <div class="overlay hidden" id="eliminateOverlay">
@@ -901,6 +1238,7 @@
 </div>
 
 <div class="overlay hidden" id="matchOverOverlay">
+  <div class="winner-face" id="matchOverFace"></div>
   <div class="cert-card" style="transform:none;">
     <div class="cert-crest">♠ ♥ ♦ ♣</div>
     <h2 id="matchOverTitle" class="cert-title" style="font-size:24px;">Victoire !</h2>
@@ -919,76 +1257,16 @@
   <p id="rematchInfo" class="rematch-info"></p>
   <button class="primary big" id="btnRematch" style="margin-top:6px;">🔁 Revanche</button>
   <button class="whatsapp hidden" id="btnShareWin">📲 Partager ma victoire</button>
-  <button class="ghost" id="btnToMenu">Retour au menu</button>
+  <button class="ghost" id="btnToMenu">Retour à l'accueil</button>
 </div>
 
-<div class="overlay hidden" id="confirmRestartOverlay">
-  <h2>Quitter la partie ?</h2>
-  <p id="confirmQuitText">La manche en cours sera perdue.</p>
-  <div class="btnrow">
-    <button class="danger" id="btnConfirmRestartYes">Oui, quitter</button>
-    <button id="btnConfirmRestartNo">Continuer à jouer</button>
+<div class="overlay modal hidden" id="iosInstallOverlay">
+  <div class="sheet">
+    <h2>Installer Fap Fap</h2>
+    <p>Sur iPhone : touche le bouton <b>Partager</b> (le carré avec une flèche ↑) en bas de Safari, puis <b>« Sur l'écran d'accueil »</b>.</p>
+    <p class="small-note">Le jeu s'ouvrira alors en plein écran, comme une vraie application.</p>
+    <button class="primary" id="btnCloseIosInstall">Compris</button>
   </div>
-</div>
-
-<div class="overlay" id="menuOverlay">
-  <h2 class="brand-title">Fap Fap</h2>
-  <div class="menu-rank" id="menuRank"></div>
-  <p>Duel de quartier. Comment veux-tu jouer ?</p>
-  <div class="level-list">
-    <button class="level-btn tuto-btn" id="modeTuto">
-      <span class="lvl-name">🎓 Nouveau ? Apprends à jouer</span>
-      <span class="lvl-desc">2 minutes avec Penalty, qui t'explique tout en jouant. Idéal pour commencer.</span>
-    </button>
-    <button class="level-btn daily-btn" id="modeDaily">
-      <span class="lvl-name">📅 Le défi du jour</span>
-      <span class="lvl-desc" id="dailyDesc">La même donne pour tout le monde aujourd'hui. 3 manches contre Penalty.</span>
-    </button>
-    <button class="level-btn" id="modeAI">
-      <span class="lvl-name">La route du quartier</span>
-      <span class="lvl-desc">Affronte Joëlle, RALL, Penalty… puis Mr Kamga, le Vétéran. Aucun ne voit tes cartes.</span>
-    </button>
-    <button class="level-btn" id="modeMP">
-      <span class="lvl-name">Avec un ami</span>
-      <span class="lvl-desc">En ligne — chacun sur son téléphone</span>
-    </button>
-    <button class="level-btn" id="modeSquare">
-      <span class="lvl-name">Carré la Pute</span>
-      <span class="lvl-desc">4 joueurs — Penalty, RALL, Joëlle et toi. Le vainqueur de chaque manche élimine qui il veut, jusqu'au dernier survivant</span>
-    </button>
-  </div>
-  <div class="btnrow" style="margin-top:4px;">
-    <button id="btnShowTrophies">🏆 Trophées</button>
-    <button id="btnShowSkins">🎨 Décors</button>
-    <button id="btnShowStats">📊 Stats</button>
-  </div>
-  <button class="ghost hidden" id="btnTutoAgain">🎓 Revoir la partie guidée</button>
-  <button class="primary hidden" id="btnInstall">📲 Installer le jeu sur ce téléphone</button>
-  <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
-</div>
-
-<div class="overlay hidden" id="dailyOverlay">
-  <h2 id="dailyTitle">Défi du jour</h2>
-  <div class="daily-marks" id="dailyMarks"></div>
-  <p id="dailyScore"></p>
-  <p id="dailyRep" class="rematch-info"></p>
-  <button class="primary big whatsapp" id="btnDailyShare">📲 Partager mon résultat</button>
-  <p id="dailyNext" class="small-note"></p>
-  <button class="ghost" id="btnDailyMenu">Retour au menu</button>
-</div>
-
-<div class="overlay hidden" id="oppSelectOverlay">
-  <h2>La route du quartier</h2>
-  <p>Choisis ton adversaire.</p>
-  <div class="opp-list" id="oppList"></div>
-  <button class="ghost" id="btnBackFromOpp">← Retour</button>
-</div>
-
-<div class="overlay hidden" id="iosInstallOverlay">
-  <h2>Installer Fap Fap</h2>
-  <p>Sur iPhone : touche le bouton <b>Partager</b> (le carré avec une flèche ↑) en bas de Safari, puis <b>« Sur l'écran d'accueil »</b>.</p>
-  <p class="small-note">Le jeu s'ouvrira alors en plein écran, comme une vraie application.</p>
-  <button class="primary" id="btnCloseIosInstall">Compris</button>
 </div>
 
 <div class="overlay hidden" id="tutoDoneOverlay">
@@ -998,65 +1276,234 @@
   <p id="tutoRep" class="rematch-info"></p>
   <button class="primary big" id="btnTutoPlay">Affronter Joëlle (★)</button>
   <button id="btnTutoRules">📖 Lire les règles</button>
-  <button class="ghost" id="btnTutoMenu">Retour au menu</button>
+  <button class="ghost" id="btnTutoMenu">Retour à l'accueil</button>
 </div>
 
-<div class="overlay hidden" id="skinsOverlay">
-  <h2>Tes décors</h2>
-  <p>Tout se gagne en jouant : rangs, trophées, défis.</p>
-  <div id="skinGroups"></div>
-  <button class="primary" id="btnCloseSkins">Retour</button>
-</div>
+<!-- ===================== Pages (each one has a back button; the phone's back button works too) ===================== -->
+<div class="overlay page page-home" id="menuOverlay">
+  <div class="page-body home-body">
+    <div class="home-top">
+      <h2 class="logo" aria-label="Fap Fap"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></h2>
+      <p class="home-tag">Le jeu de cartes du quartier</p>
+    </div>
+    <div class="menu-rank" id="menuRank"></div>
 
-<div class="overlay hidden" id="trophiesOverlay">
-  <h2>Tes trophées</h2>
-  <p id="trophiesCount"></p>
-  <div class="trophy-grid" id="trophyGrid"></div>
-  <button class="primary" id="btnCloseTrophies">Retour</button>
-</div>
+    <button class="hero-btn hero-tuto" id="modeTuto" style="--d:0">
+      <span class="hero-ico">🎓</span>
+      <span class="hero-text"><b>Nouveau ? Apprends à jouer</b><small>2 minutes avec Penalty, qui t'explique tout en jouant</small></span>
+      <span class="hero-go">›</span>
+    </button>
+    <button class="hero-btn hero-play" id="btnGoPlay" style="--d:1">
+      <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span></span>
+      <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
+      <span class="hero-go">›</span>
+    </button>
+    <button class="hero-btn hero-daily" id="modeDaily" style="--d:2">
+      <span class="hero-ico">📅</span>
+      <span class="hero-text"><b>Le défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small></span>
+      <span class="hero-go">›</span>
+    </button>
 
-<div class="overlay hidden" id="statsOverlay">
-  <h2>Tes statistiques</h2>
-  <div class="stats-block" id="statsContent"></div>
-  <button class="primary" id="btnCloseStats" style="margin-top:14px;">Retour</button>
-</div>
-
-
-<div class="overlay hidden" id="mpLobbyOverlay">
-  <h2>Avec un ami</h2>
-  <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
-  <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
-  <div class="btnrow">
-    <button class="primary" id="btnMpHost">Créer une partie</button>
-    <button id="btnMpJoin">Rejoindre une partie</button>
+    <div class="tile-grid">
+      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ico">👤</span><span class="tile-lbl">Profil</span></button>
+      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ico">🏆</span><span class="tile-lbl">Trophées</span></button>
+      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ico">🎨</span><span class="tile-lbl">Décors</span></button>
+      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico">📖</span><span class="tile-lbl">Règles</span></button>
+      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico">⚙️</span><span class="tile-lbl">Paramètres</span></button>
+      <button class="tile hidden" id="btnTutoAgain" style="--k:5"><span class="tile-ico">🎓</span><span class="tile-lbl">Partie guidée</span></button>
+    </div>
+    <button class="primary hidden" id="btnInstall">📲 Installer le jeu sur ce téléphone</button>
+    <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
   </div>
-  <button class="ghost" id="btnBackFromMpLobby">← Retour</button>
 </div>
 
-<div class="overlay hidden" id="mpHostOverlay">
-  <h2>Ton code</h2>
-  <p id="mpHostStatus">Partage ce code avec ton ami :</p>
-  <div class="mp-code" id="mpCodeDisplay">----</div>
-  <button class="primary big whatsapp" id="btnInviteWhatsApp">📲 Inviter sur WhatsApp</button>
-  <div class="btnrow">
-    <button id="btnShareLink" class="hidden">📤 Partager le lien</button>
-    <button id="btnCopyCode">📋 Copier le lien</button>
+<div class="overlay page hidden" id="playPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Jouer</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <button class="mode-card" id="modeAI" style="--d:0">
+      <span class="mode-faces"><span class="avatar" data-char="gervais" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="mbarga" style="--s:38px"></span></span>
+      <b>La route du quartier</b>
+      <small>Affronte Joëlle, RALL, Penalty… puis Mr Kamga, le Vétéran. Aucun ne voit tes cartes.</small>
+    </button>
+    <button class="mode-card mode-online" id="modeMP" style="--d:1">
+      <span class="mode-ico">🌍</span>
+      <b>Avec un ami</b>
+      <small>En ligne, chacun sur son téléphone. Invite-le par WhatsApp, et discutez dans le chat.</small>
+    </button>
+    <button class="mode-card mode-carre" id="modeSquare" style="--d:2">
+      <span class="mode-faces"><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="gervais" style="--s:38px"></span></span>
+      <b>Carré la Pute</b>
+      <small>4 joueurs : Penalty, RALL, Joëlle et toi. Le vainqueur de chaque manche élimine qui il veut.</small>
+    </button>
   </div>
-  <p class="small-note">Ton ami clique sur le lien et arrive directement dans la partie.</p>
-  <button class="ghost" id="btnCancelHost">Annuler</button>
 </div>
 
-<div class="overlay hidden" id="mpJoinOverlay">
-  <h2>Rejoindre</h2>
-  <p>Entre le code de ton ami :</p>
-  <input id="mpCodeInput" class="mp-input" maxlength="4" placeholder="CODE" style="text-transform:uppercase; text-align:center; letter-spacing:0.3em; font-family:var(--font-ui); font-size:20px;">
-  <div class="btnrow">
-    <button class="primary" id="btnMpConnect">Rejoindre</button>
+<div class="overlay page hidden" id="oppSelectOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La route du quartier</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <p class="page-intro">Choisis ton adversaire.</p>
+    <div class="opp-list" id="oppList"></div>
   </div>
-  <p id="mpJoinStatus" style="font-size:11px;color:var(--dust); min-height:14px;"></p>
-  <button class="ghost" id="btnCancelJoin">Annuler</button>
 </div>
 
+<div class="overlay page hidden" id="dailyOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2 id="dailyTitle">Défi du jour</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <div class="daily-marks" id="dailyMarks"></div>
+    <p id="dailyScore"></p>
+    <p id="dailyRep" class="rematch-info"></p>
+    <button class="primary big whatsapp" id="btnDailyShare">📲 Partager mon résultat</button>
+    <p id="dailyNext" class="small-note"></p>
+    <button class="ghost" id="btnDailyMenu">Retour à l'accueil</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="statsOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Ton profil</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <div class="profile-card" id="profileCard"></div>
+    <div class="btnrow profile-links">
+      <button id="btnProfTrophies">🏆 Trophées</button>
+      <button id="btnProfSkins">🎨 Décors</button>
+    </div>
+    <div class="stats-block" id="statsContent"></div>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="trophiesOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Trophées</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <p class="page-intro" id="trophiesCount"></p>
+    <div class="trophy-grid" id="trophyGrid"></div>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="skinsOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Décors</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <p class="page-intro">Tout se gagne en jouant : rangs, trophées, défis.</p>
+    <div id="skinGroups"></div>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="rulesOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Les règles</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <div class="rules-box">
+      <h3>Le jeu</h3>
+      <p>31 cartes : du 3 au 9 dans les 4 couleurs (<b>Black ♠, Tchaka ♣, Coubie ♥, Zing ♦</b>), plus le 10 en Tchaka, Coubie et Zing. Pas de 10 Black. 5 cartes chacun.</p>
+      <h3>Commande &amp; contrôle</h3>
+      <p>Celui qui pose la première carte <b>commande</b> sa couleur. Les autres doivent la suivre s'ils en ont. Sinon, ils jouent ce qu'ils veulent (« jouer libre »), mais ne prennent jamais le contrôle. La plus forte carte dans la couleur demandée prend le <b>contrôle</b> et commande le tour suivant.</p>
+      <h3>Gagner la manche</h3>
+      <p>Celui qui a le contrôle sur la <b>dernière carte</b> gagne : +1 point. Premier à 5 points.</p>
+      <h3>CORA &amp; 33 Glacée</h3>
+      <p><b>CORA</b> : la dernière carte gagnante est un 3 → +2. <b>33 Glacée</b> : les deux dernières cartes gagnantes sont des 3 → +3.</p>
+      <h3>La Passe</h3>
+      <p>Avec 2 cartes en main, sans la couleur demandée : soit 2 cartes de même couleur, soit 2 couleurs différentes dont un 3. Tu peux passer : tu ne joues pas ce tour, puis tu poses <b>tes 2 cartes d'un coup</b> au dernier tour.</p>
+      <h3>Victoires automatiques</h3>
+      <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → +1.</p>
+    </div>
+    <button class="primary" id="btnCloseRules">J'ai compris</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="settingsPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Paramètres</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <div class="set-group">
+      <h3>Son &amp; musique</h3>
+      <button class="set-row" id="btnToggleSound"><span>🔊 Son</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleMusic"><span>🎵 Musique de fond</span><span class="switch"></span></button>
+      <label class="set-row set-slider"><span>Volume de la musique</span><input type="range" id="musicVol" min="0" max="100" step="5"></label>
+      <label class="set-row set-slider"><span>Volume des effets</span><input type="range" id="sfxVol" min="0" max="100" step="5"></label>
+      <p class="small-note now-playing" id="nowPlaying"></p>
+      <p class="small-note">Chaque table a sa propre musique : change de table dans « Décors ».</p>
+    </div>
+    <div class="set-group">
+      <h3>Jeu</h3>
+      <button class="set-row" id="btnToggleVibrate"><span>📳 Vibrations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleCalm"><span>🌙 Réduire les animations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleShare"><span>🃏 Toujours partager (sans couper)</span><span class="switch"></span></button>
+    </div>
+    <div class="set-group">
+      <h3>En ligne</h3>
+      <label class="set-row set-input"><span>Ton prénom</span><input id="setNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom"></label>
+      <button class="set-row" id="btnToggleChat"><span>💬 Chat avec les autres joueurs</span><span class="switch"></span></button>
+    </div>
+    <div class="set-group">
+      <h3>Confidentialité</h3>
+      <button class="set-row" id="btnToggleStats"><span>📈 Statistiques anonymes</span><span class="switch"></span></button>
+      <p class="small-note">Aucun nom ni message n'est envoyé : seulement des chiffres de jeu, pour améliorer Fap Fap.</p>
+    </div>
+    <p class="small-note app-version">Fap Fap · version du 5 octobre 2026</p>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="inviteOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Invitation</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <h3 class="page-big">On t'invite à jouer !</h3>
+    <p id="inviteText">Partie de Fap Fap</p>
+    <input id="inviteNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
+    <button class="primary big" id="btnInviteJoin">Rejoindre la partie</button>
+    <button class="ghost" id="btnInviteNo">Non merci</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="mpLobbyOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Avec un ami</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
+    <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
+    <button class="primary big" id="btnMpHost">Créer une partie</button>
+    <button class="big" id="btnMpJoin">Rejoindre une partie</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="mpHostOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Ton code</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <p id="mpHostStatus">Partage ce code avec ton ami :</p>
+    <div class="mp-code" id="mpCodeDisplay">----</div>
+    <button class="primary big whatsapp" id="btnInviteWhatsApp">📲 Inviter sur WhatsApp</button>
+    <div class="btnrow">
+      <button id="btnShareLink" class="hidden">📤 Partager le lien</button>
+      <button id="btnCopyCode">📋 Copier le lien</button>
+    </div>
+    <p class="small-note">Ton ami clique sur le lien et arrive directement dans la partie.</p>
+    <button class="ghost" id="btnCancelHost">Annuler</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="mpJoinOverlay">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Rejoindre</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <p>Entre le code de ton ami :</p>
+    <input id="mpCodeInput" class="mp-input" maxlength="4" placeholder="CODE" style="text-transform:uppercase; text-align:center; letter-spacing:0.3em; font-family:var(--font-display); font-size:22px;">
+    <button class="primary big" id="btnMpConnect">Rejoindre</button>
+    <p id="mpJoinStatus" style="font-size:12px;color:var(--dust); min-height:16px;"></p>
+    <button class="ghost" id="btnCancelJoin">Annuler</button>
+  </div>
+</div>
+
+<!-- ===================== Online chat ===================== -->
+<button class="chat-fab hidden" id="chatFab" aria-label="Ouvrir le chat">💬<span class="chat-badge hidden" id="chatBadge">0</span></button>
+<div class="emote-layer" id="emoteLayer"></div>
+<div class="chat-sheet hidden" id="chatSheet">
+  <div class="chat-head">
+    <span>Chat</span>
+    <span class="chat-head-actions">
+      <button class="ghost" id="chatMute">🔕 Couper</button>
+      <button class="icon-btn" id="chatClose" aria-label="Fermer le chat">✕</button>
+    </span>
+  </div>
+  <div class="chat-list" id="chatList"></div>
+  <div class="chat-quick" id="chatQuick"></div>
+  <form class="chat-form" id="chatForm" autocomplete="off">
+    <input id="chatInput" maxlength="200" placeholder="Écris un message…" enterkeyhint="send">
+    <button class="primary" id="chatSend" type="submit" aria-label="Envoyer">➤</button>
+  </form>
+</div>
 
 <script>
 (function(){
@@ -1345,9 +1792,7 @@
     const sub = document.querySelector('header .sub');
     if(sub) sub.textContent = 'Duel de quartier · Toi contre '+n;
     // quick reactions only exist in online play
-    const react = document.getElementById('btnReact');
-    if(react) react.classList.toggle('hidden', mode!=='mp');
-    if(mode!=='mp'){ const pal = document.getElementById('reactPalette'); if(pal) pal.classList.add('hidden'); }
+    refreshChatUI();
   }
   function randomRoomCode(){
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I ambiguity
@@ -1567,10 +2012,10 @@
     if(mpMatchStarted) return;
     mpMatchStarted = true;
     startMatchTracking();
-    document.getElementById('mpHostOverlay').classList.add('hidden');
-    document.getElementById('mpJoinOverlay').classList.add('hidden');
     mode = 'mp';
+    enterGame();
     applyOppNameToUI();
+    resetChat();
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
@@ -1595,9 +2040,10 @@
       if(mpMatchStarted) return;
       mpMatchStarted = true;
       startMatchTracking();
-      document.getElementById('mpJoinOverlay').classList.add('hidden');
       mode = 'mp';
+      enterGame();
       applyOppNameToUI();
+      resetChat();
       scores = {you:0, ai:0};
       document.getElementById('scoreYou').textContent = '0';
       document.getElementById('scoreAI').textContent = '0';
@@ -1611,6 +2057,7 @@
       if(text){ showOppBubble(text); try{ chime(740,0.12,0.05,0,-0.3); }catch(e){} }
       return;
     }
+    if(msg.t==='chat'){ chatReceive(msg); return; }
     if(msg.t==='rematch'){
       mpRematch.opp = true;
       refreshRematchUI();
@@ -1696,232 +2143,76 @@
     else state.aiHand.pop();
   }
 
-  // ---- Sound engine (synthesized, no external files) ----
+  // ===================== SOUND: modern effects + live-generated background music (all synthesized, no files) =====================
   let soundOn = true;
   let audioCtx = null;
   function vibrate(pattern){
+    if(prefs.noVibrate) return;
+    if(navigator.userActivation && !navigator.userActivation.hasBeenActive) return; // browsers refuse it before a first tap
     try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
   }
 
+  // ---- the mixing desk: effects and music each have a bus and a volume, both go through one master + a soft compressor ----
+  let master = null, sfxBus = null, musicBus = null, sfxVerb = null, musicVerb = null;
+  function makeImpulse(ctx, secs, decay, bright){
+    const rate = ctx.sampleRate, len = Math.floor(rate*secs), buf = ctx.createBuffer(2, len, rate);
+    for(let ch=0; ch<2; ch++){
+      const d = buf.getChannelData(ch); let lp = 0;
+      for(let i=0; i<len; i++){ lp += ((Math.random()*2-1) - lp)*bright; d[i] = lp*Math.pow(1-i/len, decay); }
+    }
+    return buf;
+  }
+  // levels measured on the master: music ≈ -27 dB RMS at the default volume (a soft bed), effects peak around -10 dB
+  function sfxLevel(){ return 1.45 * (prefs.sfxVol==null ? 0.8 : prefs.sfxVol); }
+  function musicLevel(){ return prefs.noMusic ? 0 : 1.7 * (prefs.musicVol==null ? 0.6 : prefs.musicVol); }
+  function setupMixer(ctx){
+    if(master) return;
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.knee.value = 14; comp.ratio.value = 3; comp.attack.value = 0.004; comp.release.value = 0.25;
+    comp.connect(ctx.destination);
+    master = ctx.createGain(); master.gain.value = soundOn ? 1 : 0; master.connect(comp);
+    sfxBus = ctx.createGain(); sfxBus.gain.value = sfxLevel(); sfxBus.connect(master);
+    musicBus = ctx.createGain(); musicBus.gain.value = musicLevel();
+    const soften = ctx.createBiquadFilter(); soften.type = 'lowpass'; soften.frequency.value = 6500; soften.Q.value = 0.3;
+    musicBus.connect(soften); soften.connect(master);
+    try{
+      sfxVerb = ctx.createConvolver(); sfxVerb.buffer = makeImpulse(ctx, 1.4, 3, 0.55);
+      const sr = ctx.createGain(); sr.gain.value = 0.22; sfxVerb.connect(sr); sr.connect(sfxBus);
+      musicVerb = ctx.createConvolver(); musicVerb.buffer = makeImpulse(ctx, 4.2, 2.2, 0.2); // long and dark: a big soft room
+      const mr = ctx.createGain(); mr.gain.value = 0.55; musicVerb.connect(mr); mr.connect(musicBus);
+    }catch(e){ sfxVerb = musicVerb = null; }
+  }
+  function applyAudioLevels(){
+    if(!audioCtx || !master) return;
+    const t = audioCtx.currentTime;
+    master.gain.setTargetAtTime(soundOn ? 1 : 0, t, 0.05);
+    sfxBus.gain.setTargetAtTime(sfxLevel(), t, 0.05);
+    musicBus.gain.setTargetAtTime(musicLevel(), t, 0.3);
+  }
+  // the mute button: silence everything and stop the audio clock (saves the battery)
+  function setAmbientMuted(muted){
+    applyAudioLevels();
+    if(muted && audioCtx){ Music.stop(); audioCtx.suspend().catch(()=>{}); }
+  }
   function ensureAudio(){
     if(!soundOn) return null;
     try{
       if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-      if(audioCtx.state==='suspended') audioCtx.resume();
-      setupReverb(audioCtx);
-      startAmbientLoop(audioCtx);
+      if(audioCtx.state==='suspended' && !document.hidden) audioCtx.resume();
+      setupMixer(audioCtx);
+      Music.kick();
       return audioCtx;
     }catch(e){ return null; }
   }
-  let ambientStarted = false;
-  let ambientMasterGain = null;
-  function getAmbientMasterGain(ctx){
-    if(!ambientMasterGain){
-      ambientMasterGain = ctx.createGain();
-      ambientMasterGain.gain.value = soundOn ? 1 : 0;
-      ambientMasterGain.connect(ctx.destination);
-    }
-    return ambientMasterGain;
-  }
-  function setAmbientMuted(muted){
-    if(ambientMasterGain) ambientMasterGain.gain.value = muted ? 0 : 1;
-  }
-  function startAmbientLoop(ctx){
-    if(ambientStarted) return;
-    ambientStarted = true;
-    const bus = getAmbientMasterGain(ctx);
-    try{
-      // continuous distant-room rumble
-      const rumbleBuf = noiseBuffer(ctx, 4);
-      const rumble = ctx.createBufferSource();
-      rumble.buffer = rumbleBuf; rumble.loop = true;
-      const rumbleFilter = ctx.createBiquadFilter();
-      rumbleFilter.type = 'lowpass'; rumbleFilter.frequency.value = 220; rumbleFilter.Q.value = 0.3;
-      const rumbleGain = ctx.createGain();
-      rumbleGain.gain.value = 0.03;
-      rumble.connect(rumbleFilter); rumbleFilter.connect(rumbleGain); rumbleGain.connect(bus);
-      rumble.start();
-    }catch(e){}
-    try{
-      // continuous low murmur bed — voices always present in the shadows, not just occasional bursts
-      const murmurBuf = noiseBuffer(ctx, 6);
-      const murmur = ctx.createBufferSource();
-      murmur.buffer = murmurBuf; murmur.loop = true;
-      const bp = ctx.createBiquadFilter();
-      bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 0.7;
-      const murmurGain = ctx.createGain();
-      murmurGain.gain.value = 0.05;
-      const lfo = ctx.createOscillator(); lfo.frequency.value = 0.13;
-      const lfoGain = ctx.createGain(); lfoGain.gain.value = 0.022;
-      lfo.connect(lfoGain); lfoGain.connect(murmurGain.gain);
-      lfo.start();
-      murmur.connect(bp); bp.connect(murmurGain); murmurGain.connect(bus);
-      murmur.start();
-    }catch(e){}
-    startJazzLoop(ctx, bus);
-    scheduleAmbientTicks(ctx, bus);
-  }
+  // nothing plays (and nothing burns the battery) while the game is in the background
+  document.addEventListener('visibilitychange', ()=>{
+    if(!audioCtx) return;
+    if(document.hidden) audioCtx.suspend().catch(()=>{});
+    else if(soundOn) audioCtx.resume().catch(()=>{});
+  });
 
-  // ---- a continuous, soft lounge-jazz loop under the whole game — synthesized, not a recording ----
-  function startJazzLoop(ctx, bus){
-    // ii - V - I - VI turnaround (Dm7, G7, Cmaj7, A7), the classic jazz-lounge cadence
-    const chords = [
-      { bass:146.83, notes:[293.66,349.23,440.00,523.25] },  // Dm7
-      { bass:196.00, notes:[392.00,493.88,587.33,698.46] },  // G7
-      { bass:130.81, notes:[261.63,329.63,392.00,493.88] },  // Cmaj7
-      { bass:110.00, notes:[220.00,277.18,329.63,392.00] }   // A7
-    ];
-    const chordDur = 3.6;
-    let idx = 0;
-    function playChord(){
-      if(!soundOn){ setTimeout(playChord, chordDur*1000); return; }
-      const ch = chords[idx % chords.length]; idx++;
-      try{
-        // soft upright-bass-ish note on the downbeat
-        jazzTone(ch.bass, chordDur*0.55, 'sine', 0.05, 0, bus, 700);
-        jazzTone(ch.bass*1.5, chordDur*0.32, 'sine', 0.025, chordDur*0.5, bus, 700);
-        // warm rhodes-like chord, notes arriving slightly staggered like a real comping pattern
-        ch.notes.forEach((f,i)=>{
-          jazzTone(f, chordDur*0.8, 'triangle', 0.035, 0.06*i, bus, 2200);
-          jazzTone(f*2, chordDur*0.5, 'sine', 0.008, 0.06*i, bus, 2200);
-        });
-      }catch(e){}
-      setTimeout(playChord, chordDur*1000);
-    }
-    setTimeout(playChord, 800);
-  }
-  function jazzTone(freq, dur, type, vol, delay, bus, lowpassHz){
-    const ctx = bus.context;
-    const start = ctx.currentTime + delay;
-    const osc = ctx.createOscillator();
-    osc.type = type; osc.frequency.setValueAtTime(freq, start);
-    const lp = ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value = lowpassHz||2000; lp.Q.value=0.25;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(vol, start+0.08);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start+dur);
-    osc.connect(lp); lp.connect(gain); gain.connect(bus);
-    if(reverbNode) gain.connect(reverbNode);
-    osc.start(start); osc.stop(start+dur+0.05);
-  }
-  function scheduleAmbientTicks(ctx, bus){
-    const tick = ()=>{
-      if(!soundOn){ setTimeout(tick, 4000); return; }
-      try{
-        // an occasional closer, more distinct murmur swell or cricket-ish flicker layered on top of the bed
-        const roll = Math.random();
-        if(roll<0.5){
-          const f = 3800+Math.random()*900;
-          jazzTone(f, 0.05, 'sine', 0.012, 0, bus, 6000);
-        } else {
-          const dur = 0.8+Math.random()*0.6;
-          const buf = noiseBuffer(ctx, dur);
-          const src = ctx.createBufferSource(); src.buffer = buf;
-          const bp = ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value = 450+Math.random()*250; bp.Q.value=1.1;
-          const g = ctx.createGain();
-          g.gain.setValueAtTime(0.0001, ctx.currentTime);
-          g.gain.exponentialRampToValueAtTime(0.035, ctx.currentTime+dur*0.3);
-          g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
-          src.connect(bp); bp.connect(g); g.connect(bus);
-          src.start();
-        }
-      }catch(e){}
-      setTimeout(tick, 3000+Math.random()*4000);
-    };
-    setTimeout(tick, 1500+Math.random()*2000);
-  }
-  // a small synthesized room tone — turns dry chimes into something that feels like it's
-  // actually resonating in a space, instead of a flat synthesizer beep
-  let reverbNode = null, reverbSendGain = null;
-  function setupReverb(ctx){
-    if(reverbNode) return;
-    try{
-      const dur = 1.3, rate = ctx.sampleRate, len = Math.floor(rate*dur);
-      const impulse = ctx.createBuffer(2, len, rate);
-      for(let ch=0; ch<2; ch++){
-        const data = impulse.getChannelData(ch);
-        for(let i=0;i<len;i++){ data[i] = (Math.random()*2-1) * Math.pow(1-i/len, 2.7); }
-      }
-      reverbNode = ctx.createConvolver();
-      reverbNode.buffer = impulse;
-      reverbSendGain = ctx.createGain();
-      reverbSendGain.gain.value = 0.16;
-      reverbNode.connect(reverbSendGain);
-      reverbSendGain.connect(ctx.destination);
-    }catch(e){ reverbNode = null; }
-  }
-  function tone(freq, dur, type, vol, delay, opts){
-    const ctx = ensureAudio();
-    if(!ctx) return;
-    opts = opts||{};
-    const start = ctx.currentTime + (delay||0);
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type||'sine';
-    osc.frequency.setValueAtTime(freq, start);
-    if(opts.glideTo) osc.frequency.exponentialRampToValueAtTime(opts.glideTo, start+dur);
-    let node = osc;
-    if(opts.lowpass){
-      const lp = ctx.createBiquadFilter();
-      lp.type = 'lowpass'; lp.frequency.value = opts.lowpass; lp.Q.value = 0.3;
-      osc.connect(lp); node = lp;
-    }
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(vol||0.15, start+(opts.attack||0.014));
-    gain.gain.exponentialRampToValueAtTime(0.0001, start+dur);
-    let outNode = gain;
-    if(opts.pan){
-      try{
-        const panner = ctx.createStereoPanner();
-        panner.pan.value = opts.pan;
-        gain.connect(panner);
-        outNode = panner;
-      }catch(e){}
-    }
-    node.connect(gain);
-    outNode.connect(ctx.destination);
-    if(!opts.dry && reverbNode){ outNode.connect(reverbNode); }
-    osc.start(start); osc.stop(start+dur+0.03);
-  }
-  // a soft, refined "chime" — fundamental plus two quiet overtones, like a small bell or glass note
-  function chime(freq, dur, vol, delay, pan){
-    delay = delay||0;
-    tone(freq, dur, 'sine', vol, delay, {lowpass:3200, pan:pan});
-    tone(freq*2.003, dur*0.75, 'sine', vol*0.32, delay+0.004, {lowpass:4200, pan:pan});
-    tone(freq*1.5, dur*0.85, 'triangle', vol*0.22, delay+0.008, {lowpass:3000, pan:pan});
-  }
-  // a soft filtered-noise texture, used for card-touch and murmur sounds
-  function noiseTexture(dur, filterType, freq, q, vol, attack){
-    const ctx = ensureAudio();
-    if(!ctx) return;
-    try{
-      const noise = ctx.createBufferSource();
-      noise.buffer = noiseBuffer(ctx, dur);
-      const filt = ctx.createBiquadFilter();
-      filt.type = filterType; filt.frequency.value = freq; filt.Q.value = q;
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(vol, ctx.currentTime+(attack||0.01));
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
-      noise.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
-      noise.start(); noise.stop(ctx.currentTime+dur+0.02);
-    }catch(e){}
-  }
-  // the crisp little snap of a card touching a wooden table, not an electronic beep
-  function sfxCardPlay(){
-    noiseTexture(0.05, 'highpass', 2600, 0.9, 0.05, 0.002);
-    tone(180, 0.05, 'sine', 0.045, 0, {lowpass:900});
-  }
-  function sfxPasse(){ noiseTexture(0.22, 'bandpass', 480, 0.6, 0.045, 0.05); }
-  function sfxTrickWinYou(){ chime(660,0.2,0.09,0,0.25); chime(880,0.24,0.075,0.1,0.25); }
-  function sfxTrickWinAI(){ chime(392,0.18,0.07,0,-0.25); chime(330,0.22,0.06,0.1,-0.25); }
-  function sfxHandWin(){ chime(523,0.24,0.11,0,0.15); chime(659,0.24,0.10,0.11,-0.1); chime(784,0.32,0.11,0.22,0.2); }
-  function sfxHandLose(){ chime(392,0.24,0.08,0,-0.15); chime(330,0.3,0.07,0.15,-0.2); }
-  function sfxBigWin(){ chime(523,0.22,0.12,0,-0.2); chime(659,0.22,0.12,0.12,0); chime(784,0.22,0.13,0.24,0.2); chime(1047,0.4,0.14,0.36,0); }
-  function sfxMatchWin(){ chime(523,0.24,0.13,0,-0.25); chime(659,0.24,0.13,0.13,0.1); chime(784,0.24,0.14,0.26,-0.1); chime(1047,0.42,0.15,0.39,0.25); chime(1319,0.5,0.13,0.54,0); }
-  function sfxMatchLose(){ chime(392,0.3,0.10,0,0); chime(330,0.34,0.09,0.18,-0.1); chime(262,0.45,0.09,0.37,0.1); }
-
-  // ---- Invisible crowd — you never see them, but they react ----
+  // ---- building blocks ----
+  const mtof = m=> 440*Math.pow(2, (m-69)/12);
   function noiseBuffer(ctx, dur){
     const size = Math.max(1, Math.floor(ctx.sampleRate*dur));
     const buf = ctx.createBuffer(1, size, ctx.sampleRate);
@@ -1929,33 +2220,357 @@
     for(let i=0;i<size;i++) data[i] = Math.random()*2-1;
     return buf;
   }
-  // intensity: 'murmur' (quiet, most control-takes) or 'gasp' (big "waaaohh!" near match point)
+  let sharedNoise = null;
+  function getNoise(ctx){ if(!sharedNoise) sharedNoise = noiseBuffer(ctx, 2); return sharedNoise; }
+  // gain → (pan) → destination, plus an optional reverb send
+  function outNode(ctx, dest, pan, verb, verbAmt){
+    const g = ctx.createGain();
+    let node = g;
+    if(pan && ctx.createStereoPanner){ const p = ctx.createStereoPanner(); p.pan.value = pan; g.connect(p); node = p; }
+    node.connect(dest);
+    if(verb && verbAmt){ const s = ctx.createGain(); s.gain.value = verbAmt; node.connect(s); s.connect(verb); }
+    return g;
+  }
+  function perc(g, t, peak, a, d){
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.0002, peak), t+a);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+a+d);
+  }
+  // FM note: the clean "electric piano / mallet / bell" family, depending on ratio and index
+  function fmNote(ctx, dest, t, freq, o){
+    const att = o.att||0.004, dur = o.dur||0.6;
+    const car = ctx.createOscillator(); car.type = 'sine'; car.frequency.value = freq;
+    const mod = ctx.createOscillator(); mod.type = 'sine'; mod.frequency.value = freq*(o.ratio||1);
+    const mg = ctx.createGain(); const idx = freq*(o.index||1.5);
+    mg.gain.setValueAtTime(idx, t); mg.gain.exponentialRampToValueAtTime(Math.max(1, idx*0.04), t+(o.decayIdx||0.35));
+    mod.connect(mg); mg.connect(car.frequency);
+    const g = outNode(ctx, dest, o.pan||0, o.verbNode, o.verb||0);
+    if(o.lp){ const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; f.Q.value = 0.4; car.connect(f); f.connect(g); }
+    else car.connect(g);
+    perc(g, t, o.vol||0.1, att, dur);
+    const end = t+att+dur+0.05;
+    car.start(t); mod.start(t); car.stop(end); mod.stop(end);
+  }
+  // one plain partial (sine/triangle…) with a percussive envelope
+  function partial(ctx, dest, t, freq, vol, dec, o){
+    o = o||{};
+    const att = o.att||0.005;
+    const osc = ctx.createOscillator(); osc.type = o.type||'sine'; osc.frequency.value = freq;
+    const g = ctx.createGain();
+    if(o.lp){ const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; f.Q.value = 0.3; osc.connect(f); f.connect(g); }
+    else osc.connect(g);
+    g.connect(dest);
+    perc(g, t, vol, att, dec);
+    osc.start(t); osc.stop(t+att+dec+0.05);
+  }
+  function sweep(ctx, dest, t, o){ // a pitched blip / thump with an optional glide
+    const att = o.att||0.005;
+    const osc = ctx.createOscillator(); osc.type = o.type||'sine';
+    osc.frequency.setValueAtTime(o.f0, t); if(o.f1) osc.frequency.exponentialRampToValueAtTime(o.f1, t+att+o.dur);
+    const g = outNode(ctx, dest, o.pan||0, sfxVerb, o.verb||0);
+    if(o.lp){ const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp; osc.connect(f); f.connect(g); }
+    else osc.connect(g);
+    perc(g, t, o.vol, att, o.dur);
+    osc.start(t); osc.stop(t+att+o.dur+0.05);
+  }
+  function noiseHit(ctx, dest, t, o){ // filtered noise: whooshes, swishes, taps, sparkles
+    const src = ctx.createBufferSource(); src.buffer = getNoise(ctx); src.loop = true;
+    const f = ctx.createBiquadFilter(); f.type = o.type||'bandpass'; f.Q.value = o.q||1;
+    f.frequency.setValueAtTime(o.f0, t); if(o.f1) f.frequency.exponentialRampToValueAtTime(o.f1, t+(o.att||0.003)+o.dur);
+    const g = outNode(ctx, dest, o.pan||0, sfxVerb, o.verb||0);
+    src.connect(f); f.connect(g);
+    perc(g, t, o.vol, o.att||0.003, o.dur);
+    src.start(t, Math.random()*1.5); src.stop(t+(o.att||0.003)+o.dur+0.05);
+  }
+  function padChord(ctx, dest, t, midis, o){ // a short soft synth chord, for big moments
+    const att = o.att||0.4;
+    midis.forEach((m,i)=>{
+      [-7,7].forEach(det=>{
+        const osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = mtof(m); osc.detune.value = det;
+        const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = o.lp||1200; f.Q.value = 0.5;
+        const g = outNode(ctx, dest, i%2 ? 0.2 : -0.2, sfxVerb, 0.5);
+        osc.connect(f); f.connect(g);
+        const v = (o.vol||0.05)/midis.length;
+        g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t+att);
+        g.gain.setTargetAtTime(0.0001, t+att+o.dur*0.3, o.dur*0.35);
+        osc.start(t); osc.stop(t+att+o.dur*2.4);
+      });
+    });
+  }
+
+  // ---- sound effects ----
+  function sfx(fn){ const ctx = ensureAudio(); if(!ctx || !sfxBus) return; try{ fn(ctx, ctx.currentTime+0.005); }catch(e){} }
+  // kept for older calls (chat, trophies…): now a soft modern mallet note
+  function chime(freq, dur, vol, delay, pan){
+    sfx((c,t)=> fmNote(c, sfxBus, t+(delay||0), freq, {vol:(vol||0.08)*1.1, dur:Math.max(0.25,(dur||0.3)*1.6), ratio:1, index:1.2, decayIdx:0.25, pan, verbNode:sfxVerb, verb:0.35, lp:5000}));
+  }
+  function tone(freq, dur, type, vol, delay, opts){
+    opts = opts||{};
+    sfx((c,t)=> sweep(c, sfxBus, t+(delay||0), {f0:freq, f1:opts.glideTo, dur, vol:vol||0.1, type, lp:opts.lowpass, pan:opts.pan, att:opts.attack, verb:opts.dry ? 0 : 0.2}));
+  }
+  function noiseTexture(dur, filterType, freq, q, vol, attack){ sfx((c,t)=> noiseHit(c, sfxBus, t, {dur, vol, type:filterType, f0:freq, q, att:attack})); }
+  const pluck = (c,t,m,vol,pan,bright)=> fmNote(c, sfxBus, t, mtof(m), {vol, dur:0.55, ratio:1, index:bright||1.6, decayIdx:0.18, pan, verbNode:sfxVerb, verb:0.3, lp:6000});
+  const sparkle = (c,t,vol)=> noiseHit(c, sfxBus, t, {dur:0.35, vol:vol||0.018, type:'highpass', f0:7000, att:0.05, verb:0.4});
+  const boom = (c,t,vol)=>{ sweep(c, sfxBus, t, {f0:95, f1:36, dur:0.6, vol:vol||0.25}); noiseHit(c, sfxBus, t, {dur:0.35, vol:0.06, type:'lowpass', f0:900, f1:120}); };
+
+  function sfxTap(){ sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:1400, f1:950, dur:0.035, vol:0.03}); noiseHit(c, sfxBus, t, {dur:0.018, vol:0.01, type:'highpass', f0:5000}); }); }
+  function sfxSwipe(back){ sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.2, vol:0.028, type:'bandpass', f0:back?2600:900, f1:back?900:2600, q:0.8, att:0.06, pan:back?-0.3:0.3})); }
+  function sfxToggle(on){ sfx((c,t)=> pluck(c, t, on ? 79 : 72, 0.05, 0, 1)); }
+  // a card sliding then landing on the table: swish + soft thud + tiny tap
+  function sfxCardPlay(){ sfx((c,t)=>{
+    noiseHit(c, sfxBus, t, {dur:0.11, vol:0.07, type:'bandpass', f0:3200, f1:700, q:0.7, att:0.01});
+    sweep(c, sfxBus, t+0.045, {f0:170, f1:62, dur:0.1, vol:0.13});
+    noiseHit(c, sfxBus, t+0.045, {dur:0.015, vol:0.03, type:'highpass', f0:4500});
+  }); }
+  function sfxDeal(n){ sfx((c,t)=>{ for(let i=0;i<(n||5);i++) noiseHit(c, sfxBus, t+i*0.07, {dur:0.07, vol:0.035, type:'bandpass', f0:3600, f1:1400, q:0.9, att:0.008, pan:i%2 ? 0.25 : -0.25}); }); }
+  function sfxPasse(){ sfx((c,t)=>{ noiseHit(c, sfxBus, t, {dur:0.35, vol:0.05, type:'lowpass', f0:2400, f1:300, q:0.5, att:0.04}); fmNote(c, sfxBus, t+0.05, mtof(57), {vol:0.06, dur:0.5, ratio:1, index:0.8, lp:1200}); }); }
+  function sfxTrickWinYou(){ sfx((c,t)=>{ pluck(c,t,76,0.09,0.2); pluck(c,t+0.07,83,0.08,0.25); sparkle(c,t+0.05); }); }
+  function sfxTrickWinAI(){ sfx((c,t)=>{ pluck(c,t,64,0.07,-0.25,0.9); pluck(c,t+0.09,59,0.06,-0.25,0.9); }); }
+  function sfxHandWin(){ sfx((c,t)=>{
+    [72,76,79,83,86].forEach((m,i)=> pluck(c, t+i*0.055, m, 0.085, (i-2)*0.15));
+    padChord(c, sfxBus, t+0.05, [60,64,67,71,74], {dur:1.2, vol:0.06, lp:1800, att:0.15});
+    sparkle(c, t+0.25, 0.02);
+  }); }
+  function sfxHandLose(){ sfx((c,t)=>{
+    pluck(c,t,62,0.07,-0.1,0.7); pluck(c,t+0.14,57,0.065,0.1,0.7);
+    padChord(c, sfxBus, t+0.05, [45,52,57,60], {dur:1.2, vol:0.05, lp:700, att:0.2});
+  }); }
+  function sfxBigWin(){ sfx((c,t)=>{
+    boom(c, t, 0.22);
+    [72,76,79,84].forEach(m=> pluck(c, t+0.02, m, 0.07, 0, 2.2));
+    [84,88,91,96,100].forEach((m,i)=> pluck(c, t+0.25+i*0.06, m, 0.045, (i-2)*0.2, 1.2));
+    padChord(c, sfxBus, t+0.05, [60,64,67,71,76], {dur:1.8, vol:0.07, lp:2600, att:0.1});
+    sparkle(c, t+0.3, 0.03);
+  }); }
+  function sfxMatchWin(){ sfx((c,t)=>{
+    boom(c, t, 0.2);
+    [60,64,67,72,76,79,84,88].forEach((m,i)=> pluck(c, t+i*0.07, m, 0.075, ((i%3)-1)*0.25, 1.6));
+    padChord(c, sfxBus, t+0.3, [53,60,64,67,71,74], {dur:2.6, vol:0.08, lp:2400, att:0.5});
+    sparkle(c, t+0.55, 0.035); sparkle(c, t+1.0, 0.025);
+  }); }
+  function sfxMatchLose(){ sfx((c,t)=>{
+    [69,65,62,57].forEach((m,i)=> pluck(c, t+i*0.16, m, 0.065, i%2 ? 0.15 : -0.15, 0.8));
+    padChord(c, sfxBus, t+0.1, [45,52,55,60,64], {dur:2.4, vol:0.06, lp:900, att:0.6});
+  }); }
+  // the crowd: only the big "ooooh" near match point is kept, as a rising swell
   function sfxCrowd(intensity){
-    const ctx = ensureAudio();
-    if(!ctx) return;
-    const big = intensity==='gasp';
-    const dur = big ? 1.15 : 0.5;
-    try{
-      const noise = ctx.createBufferSource();
-      noise.buffer = noiseBuffer(ctx, dur);
-      const band = ctx.createBiquadFilter();
-      band.type = 'bandpass';
-      band.Q.value = big ? 0.6 : 0.9;
-      band.frequency.setValueAtTime(big?620:520, ctx.currentTime);
-      band.frequency.exponentialRampToValueAtTime(big?230:340, ctx.currentTime+dur*0.85);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(big?0.16:0.07, ctx.currentTime+dur*0.22);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
-      noise.connect(band); band.connect(gain); gain.connect(ctx.destination);
-      noise.start(); noise.stop(ctx.currentTime+dur+0.05);
-    }catch(e){}
-    // a few detuned murmuring voices underneath, like a small crowd reacting together
-    const n = big ? 4 : 2;
-    for(let i=0;i<n;i++){
-      const f = (big ? 130 : 150) + Math.random()*40 + i*14;
-      tone(f, dur*0.85, 'sine', (big?0.05:0.025)+Math.random()*0.02, Math.random()*0.05);
+    if(intensity!=='gasp') return;
+    sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.9, vol:0.045, type:'bandpass', f0:350, f1:1800, q:0.9, att:0.6, verb:0.3}));
+  }
+
+  // ===================== Background music: one calm piece per table, plus one for the menus =====================
+  // Nothing is recorded: chords, melody and bass are composed live from each piece's long chord progression
+  // (two sections of 8 chords that alternate), with a soft pad, a lead instrument and sometimes an ambience.
+  const NOTE_PC = {C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11};
+  const CHORD_Q = {
+    '':[0,4,7], m:[0,3,7], maj7:[0,4,7,11], maj9:[0,4,7,11,14], 'maj7#11':[0,4,7,11,18], m7:[0,3,7,10], m9:[0,3,7,10,14],
+    m11:[0,3,7,10,14,17], '7':[0,4,7,10], '9':[0,4,7,10,14], '7sus4':[0,5,7,10], sus2:[0,2,7], sus4:[0,5,7], add9:[0,4,7,14],
+    madd9:[0,3,7,14], '6':[0,4,7,9], m6:[0,3,7,9], m7b5:[0,3,6,10], mmaj7:[0,3,7,11]
+  };
+  function parseChord(name){
+    const m = name.match(/^([A-G][b#]?)([^/]*)(?:\/([A-G][b#]?))?$/);
+    const root = NOTE_PC[m[1]];
+    return { root, iv: CHORD_Q[m[2]] || CHORD_Q[''], bass: m[3] ? NOTE_PC[m[3]] : root };
+  }
+  const PADS = {
+    warm:   {types:['triangle','sawtooth'], mix:0.35, det:7,  lp:1100, att:2.2, rel:2.6, vol:0.11},
+    soft:   {types:['sine','triangle'],     mix:0.6,  det:5,  lp:1400, att:2.6, rel:3.0, vol:0.13},
+    glass:  {types:['sine','sine'],         mix:0.45, det:9,  lp:3200, att:2.8, rel:3.2, vol:0.10, oct:true},
+    strings:{types:['sawtooth','sawtooth'], mix:1,    det:10, lp:1500, att:3.0, rel:3.0, vol:0.07},
+    synth:  {types:['sawtooth','square'],   mix:0.4,  det:12, lp:1200, att:1.6, rel:2.4, vol:0.06}
+  };
+  const TRACKS = {
+    home:    {name:'Le quartier s’éveille', mood:'doux, apaisant', dur:6.5, pad:'warm', lead:'felt', density:0.3, bass:true,
+      parts:[['Fmaj9','C/E','Dm9','Cmaj7','Bbmaj7','Am7','Gsus4','G6'], ['Am9','Fmaj7','Cmaj7','G6','Dm9','Am7','Bbmaj7','E7sus4']]},
+    tripot:  {name:'Soir au tripot', mood:'jazzy, chaleureux', dur:5.2, pad:'warm', lead:'epiano', density:0.4, bass:true, walk:true, amb:'murmur',
+      parts:[['Dm9','G9','Cmaj9','Am7','Dm9','G7sus4','Cmaj7','A7'], ['Fmaj7','Fm6','Em7','A7','Dm9','G9','Cmaj9','Cmaj9']]},
+    kribi:   {name:'Marée basse à Kribi', mood:'joyeux, aérien', dur:5.6, pad:'glass', lead:'kalimba', density:0.42, bass:true, amb:'waves',
+      parts:[['Dmaj9','Gmaj7#11','Dmaj9','Gmaj7#11','Bm9','Gmaj9','Em9','A7sus4'], ['Gmaj9','A6','F#m7','Bm9','Gmaj7','Em9','Asus4','A']]},
+    laterite:{name:'Route de Bertoua', mood:'chaleureux, plein d’espoir', dur:6, pad:'warm', lead:'balafon', density:0.38, bass:true,
+      parts:[['Emaj9','C#m9','Amaj7','B6','G#m7','C#m9','Amaj9','Bsus4'], ['C#m9','Amaj7','Emaj7/G#','F#m9','C#m7','Amaj9','F#m11','B7sus4']]},
+    wax:     {name:'Marché Mokolo', mood:'joyeux, coloré', dur:4.2, pad:'warm', lead:'balafon', density:0.8, arp:true, bass:true, walk:true,
+      parts:[['Gmaj7','Em9','Cmaj9','D6','Bm7','Em7','Am9','D7sus4'], ['Cmaj7','D','Bm7','Em7','Am7','D9','Gsus2','G6']]},
+    ardoise: {name:'Cahier d’écolier', mood:'nostalgique, un peu triste', dur:6.8, pad:'soft', lead:'felt', density:0.34, bass:false,
+      parts:[['Amadd9','Fmaj7','Cmaj7','G6','Dm7','Am7','Fmaj7','Esus4'], ['Fmaj7','G','Em7','Am7','Dm9','G7sus4','Cmaj7','E7sus4']]},
+    raphia:  {name:'Sieste au village', mood:'calme, paisible', dur:6.2, pad:'soft', lead:'kalimba', density:0.36, bass:true,
+      parts:[['Dsus2','Bm7','Gmaj7','Asus4','Dsus2','F#m7','Gmaj9','A6'], ['Em9','Gmaj7','Dmaj7/F#','Bm9','Em7','A7sus4','Dsus2','Dsus2']]},
+    nuit:    {name:'Les étoiles de Melen', mood:'rêveur, mélancolique', dur:7.2, pad:'glass', lead:'bell', density:0.26, bass:true, amb:'crickets',
+      parts:[['Ebmaj9','Cm9','Abmaj7','Bbsus4','Gm7','Cm9','Abmaj9','Bb6'], ['Abmaj7','Bbsus4','Gm7','Cm9','Fm9','Bb7sus4','Ebmaj9','Ebmaj9']]},
+    vert:    {name:'Fumée bleue', mood:'lounge, triste', dur:6, pad:'strings', lead:'epiano', density:0.32, bass:true, amb:'murmur',
+      parts:[['Am9','Dm9','Gmaj7','Cmaj7','Fmaj7','Bm7b5','E7sus4','E7'], ['Fmaj7','E7sus4','Am9','G6','Fmaj9','Dm9','Esus4','E']]},
+    vichy:   {name:'Dimanche chez Mama', mood:'joyeux, tendre', dur:4.6, pad:'warm', lead:'kalimba', density:0.75, arp:true, bass:true,
+      parts:[['C','G/B','Am7','Fmaj7','C/E','Dm7','Gsus4','G'], ['Fmaj7','G6','Em7','Am7','Dm9','G9','Csus2','C']]},
+    arcade:  {name:'Néons de minuit', mood:'synthé, mélancolique', dur:4.8, pad:'synth', lead:'synth', density:0.36, bass:true,
+      parts:[['F#m9','Dmaj7','Amaj7','E6','F#m9','Dmaj9','Bm9','C#7sus4'], ['Dmaj7','E','C#m7','F#m7','Bm9','E9','Amaj7','C#7sus4']]},
+    marbre:  {name:'Valse du palace', mood:'néoclassique, triste et beau', dur:6, pad:'strings', lead:'felt', density:0.42, bass:true,
+      parts:[['Dm','Bbmaj7','F/A','Gm7','Dm/F','Em7b5','A7sus4','A7'], ['Bbmaj7','C6','Am7','Dm9','Gm9','C9','Fmaj7','A7sus4']]},
+    velours: {name:'Velours et fumée', mood:'élégant, mystérieux', dur:5.4, pad:'warm', lead:'epiano', density:0.36, bass:true, walk:true,
+      parts:[['Cm9','Abmaj7','Fm9','G7sus4','Cm9','Ebmaj7','Abmaj9','G7'], ['Fm9','Bb9','Ebmaj9','Abmaj7','Dm7b5','G7sus4','Cm9','Cmmaj7']]},
+    or:      {name:'Couronne d’or', mood:'majestueux, lumineux', dur:5.8, pad:'strings', lead:'bell', density:0.34, bass:true,
+      parts:[['Bbmaj9','Gm9','Ebmaj9','F6','Dm7','Gm9','Ebmaj7#11','F7sus4'], ['Ebmaj7','F','Dm7','Gm7','Cm9','F9','Bbsus2','Bbmaj7']]}
+  };
+
+  function musicPad(ctx, dest, t, dur, midis, p){
+    const end = t+dur+p.rel;
+    const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 0.6;
+    f.frequency.setValueAtTime(p.lp*0.6, t); f.frequency.linearRampToValueAtTime(p.lp, t+dur*0.5); f.frequency.linearRampToValueAtTime(p.lp*0.7, end);
+    const g = ctx.createGain(); f.connect(g); g.connect(dest);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(p.vol, t+p.att);
+    g.gain.setValueAtTime(p.vol, t+dur); g.gain.linearRampToValueAtTime(0.0001, end);
+    midis.forEach(m=>{
+      p.types.forEach((type,k)=>{
+        const o = ctx.createOscillator(); o.type = type;
+        o.frequency.value = mtof(m) * (p.oct && k===1 ? 2 : 1);
+        o.detune.value = (k ? 1 : -1)*p.det + (Math.random()*4-2);
+        const vg = ctx.createGain(); vg.gain.value = (k ? p.mix : 1)/midis.length;
+        o.connect(vg); vg.connect(f); o.start(t); o.stop(end+0.05);
+      });
+    });
+  }
+  function bassNote(ctx, dest, t, dur, m){
+    const f = mtof(m);
+    partial(ctx, dest, t, f, 0.16, dur*0.9, {att:0.04, lp:400});
+    partial(ctx, dest, t, f*2, 0.025, dur*0.5, {att:0.04, type:'triangle', lp:600});
+  }
+  function leadNote(ctx, dest, t, m, vel, kind){
+    const f = mtof(m);
+    if(kind==='epiano'){
+      fmNote(ctx, dest, t, f, {vol:0.075*vel, dur:2.4, ratio:1, index:1.2, decayIdx:0.6, lp:3000, att:0.006});
+      fmNote(ctx, dest, t, f, {vol:0.014*vel, dur:0.5, ratio:14, index:0.25, decayIdx:0.08, lp:7000}); // the little metallic "tine"
+    } else if(kind==='felt'){ // a muted, felt-hammer piano
+      partial(ctx, dest, t, f, 0.09*vel, 2.6, {type:'triangle', lp:1500, att:0.008});
+      partial(ctx, dest, t, f*2, 0.018*vel, 1.2, {lp:2500});
+      partial(ctx, dest, t, f*3, 0.006*vel, 0.5);
+    } else if(kind==='kalimba'){ // the thumb piano (sanza)
+      partial(ctx, dest, t, f, 0.085*vel, 1.6, {att:0.002});
+      partial(ctx, dest, t, f*5.4, 0.022*vel, 0.12, {att:0.001});
+      partial(ctx, dest, t, f*2, 0.012*vel, 0.4);
+    } else if(kind==='balafon'){ // wooden keys
+      partial(ctx, dest, t, f, 0.09*vel, 0.75, {att:0.002});
+      partial(ctx, dest, t, f*3.9, 0.03*vel, 0.09, {att:0.001});
+      partial(ctx, dest, t, f*9.2, 0.008*vel, 0.04, {att:0.001});
+    } else if(kind==='bell'){
+      fmNote(ctx, dest, t, f, {vol:0.05*vel, dur:3.6, ratio:3.5, index:1.6, decayIdx:1.4, lp:6000, att:0.003});
+    } else if(kind==='synth'){ // soft analog lead with a slow filter and a light vibrato
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f;
+      const v = ctx.createOscillator(); v.frequency.value = 5; const vg = ctx.createGain(); vg.gain.value = f*0.004; v.connect(vg); vg.connect(o.frequency);
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass';
+      lp.frequency.setValueAtTime(600, t); lp.frequency.linearRampToValueAtTime(1800, t+0.3); lp.frequency.linearRampToValueAtTime(700, t+1.6);
+      const g = ctx.createGain(); o.connect(lp); lp.connect(g); g.connect(dest);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.03*vel, t+0.08); g.gain.exponentialRampToValueAtTime(0.0001, t+1.8);
+      o.start(t); v.start(t); o.stop(t+1.9); v.stop(t+1.9);
     }
+  }
+  // schedules one chord of the piece (pad + bass + melody) at audio time t; returns its length
+  function scheduleChord(inst, tr, t){
+    const ctx = audioCtx;
+    const part = tr.parts[inst.pi % tr.parts.length];
+    const ch = parseChord(part[inst.ci]);
+    const lastOfPart = inst.ci===part.length-1;
+    const d = tr.dur * (lastOfPart ? 1.5 : 1); // the end of each section breathes a little longer
+    // pad: chord in the middle register, sometimes inverted so the colour keeps moving
+    let base = 48 + ch.root; if(base>57) base -= 12;
+    let notes = ch.iv.map(i=> base+i);
+    if(notes.length>3 && Math.random()<0.5){ notes[0] += 12; notes.sort((a,b)=>a-b); }
+    notes = notes.map(n=> n>76 ? n-12 : n);
+    musicPad(ctx, inst.out, t, d, notes, PADS[tr.pad]);
+    // bass
+    if(tr.bass){
+      let b = 36 + ch.bass; if(b>43) b -= 12;
+      bassNote(ctx, inst.out, t, d, b);
+      if(tr.walk && Math.random()<0.6) bassNote(ctx, inst.out, t+d/2, d/2, b+7);
+    }
+    // melody: chord tones, moving mostly by small steps; every 4th chord is lighter so the music breathes
+    const pcs = new Set(ch.iv.map(i=> (ch.root+i)%12));
+    const pool = []; for(let m=67; m<=88; m++) if(pcs.has(m%12)) pool.push(m);
+    const steps = 8, stepDur = d/steps;
+    const breath = (inst.ci%4===3) ? 0.35 : 1;
+    const arpPool = pool.slice(0, 5), arpShape = [0,1,2,3,4,3,2,1];
+    for(let s=0; s<steps; s++){
+      const p = tr.density * breath * (s%2===0 ? 1.25 : 0.7);
+      if(Math.random()>p) continue;
+      let m;
+      if(tr.arp) m = arpPool[arpShape[s] % arpPool.length];
+      else {
+        const near = pool.filter(x=> Math.abs(x-inst.last)<=7 && x!==inst.last);
+        const arr = near.length ? near : pool;
+        m = arr[Math.floor(Math.random()*arr.length)];
+      }
+      inst.last = m;
+      const when = t + s*stepDur + Math.random()*0.02;
+      leadNote(ctx, inst.out, when, m, 0.6+Math.random()*0.4, tr.lead);
+      if(!tr.arp && Math.random()<0.12){ const low = pool.filter(x=> x<m-2 && x>=m-9); if(low.length) leadNote(ctx, inst.out, when+0.01, low[low.length-1], 0.5, tr.lead); }
+    }
+    inst.ci++;
+    if(inst.ci>=part.length){ inst.ci = 0; inst.pi++; }
+    return d;
+  }
+  // a quiet sound bed under some pieces: waves at Kribi, crickets under the stars, a bar's murmur, rain on the roof
+  function startAmbience(inst, kind){
+    const ctx = audioCtx;
+    if(kind==='waves' || kind==='rain' || kind==='murmur'){
+      const src = ctx.createBufferSource(); src.buffer = noiseBuffer(ctx, 3); src.loop = true;
+      const f = ctx.createBiquadFilter(); const g = ctx.createGain();
+      if(kind==='waves'){
+        f.type = 'lowpass'; f.frequency.value = 650; g.gain.value = 0.035;
+        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.085; const lg = ctx.createGain(); lg.gain.value = 0.03;
+        lfo.connect(lg); lg.connect(g.gain); lfo.start(); inst.nodes.push(lfo);
+      } else if(kind==='rain'){ f.type = 'bandpass'; f.frequency.value = 2500; f.Q.value = 0.4; g.gain.value = 0.03; }
+      else { f.type = 'bandpass'; f.frequency.value = 420; f.Q.value = 0.8; g.gain.value = 0.02; }
+      src.connect(f); f.connect(g); g.connect(inst.out); src.start(); inst.nodes.push(src);
+    } else if(kind==='crickets'){
+      const chirp = ()=>{
+        if(inst.stopped) return;
+        const t = ctx.currentTime, f = 4300+Math.random()*300;
+        for(let i=0;i<3;i++) partial(ctx, inst.out, t+i*0.07, f, 0.006, 0.04);
+        inst.ambT.push(setTimeout(chirp, 1400+Math.random()*2600));
+      };
+      chirp();
+    }
+  }
+  function startTrack(id){
+    const tr = TRACKS[id] || TRACKS.home, ctx = audioCtx;
+    const o = ctx.createGain();
+    o.gain.setValueAtTime(0.0001, ctx.currentTime); o.gain.linearRampToValueAtTime(1, ctx.currentTime+3);
+    o.connect(musicBus);
+    if(musicVerb){ const s = ctx.createGain(); s.gain.value = 0.6; o.connect(s); s.connect(musicVerb); }
+    const inst = {id, out:o, stopped:false, pi:0, ci:0, last:76, next:ctx.currentTime+0.15, timer:null, ambT:[], nodes:[]};
+    const loop = ()=>{
+      if(inst.stopped) return;
+      try{ while(inst.next < ctx.currentTime+1.5) inst.next += scheduleChord(inst, tr, inst.next); }catch(e){ console.error(e); }
+      inst.timer = setTimeout(loop, 700);
+    };
+    loop();
+    if(tr.amb) startAmbience(inst, tr.amb);
+    if(document.body.classList.contains('light-pluie')) startAmbience(inst, 'rain');
+    return inst;
+  }
+  const Music = {
+    inst:null, want:'home',
+    play(id){ this.want = TRACKS[id] ? id : 'home'; this.kick(); },
+    kick(){
+      if(!audioCtx || !musicBus) return;
+      if(prefs.noMusic || !soundOn){ this.stop(); return; }
+      if(this.inst && this.inst.id===this.want) return;
+      this.stop();
+      this.inst = startTrack(this.want);
+      refreshNowPlaying();
+    },
+    stop(){
+      const i = this.inst; if(!i) return;
+      this.inst = null; i.stopped = true;
+      clearTimeout(i.timer); i.ambT.forEach(clearTimeout);
+      try{
+        const t = audioCtx.currentTime;
+        i.out.gain.cancelScheduledValues(t); i.out.gain.setValueAtTime(i.out.gain.value, t); i.out.gain.linearRampToValueAtTime(0.0001, t+2.5);
+      }catch(e){}
+      setTimeout(()=>{ try{ i.out.disconnect(); }catch(e){} i.nodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); }, 9000);
+    }
+  };
+  function refreshNowPlaying(){
+    const tr = TRACKS[Music.want] || TRACKS.home;
+    const txt = prefs.noMusic ? 'Musique coupée' : '♪ '+tr.name+' — '+tr.mood;
+    ['nowPlaying','pauseMusic'].forEach(id=>{ const el = document.getElementById(id); if(el) el.textContent = txt; });
   }
 
 
@@ -2096,6 +2711,7 @@
     bubble.classList.remove('show');
     void bubble.offsetWidth; // restart animation if already showing
     bubble.classList.add('show');
+    avatarFx('ai', 'speaking');
     clearTimeout(bubbleTimer);
     bubbleTimer = setTimeout(()=> bubble.classList.remove('show'), 3200);
   }
@@ -2116,22 +2732,134 @@
     clearTimeout(myBubbleTimer);
     myBubbleTimer = setTimeout(()=> b.classList.remove('show'), 2400);
   }
-  (function buildReactPalette(){
-    const pal = document.getElementById('reactPalette');
-    REACTIONS.forEach((r,i)=>{
+  // ---- Online chat: free text between the two players, plus one-tap reactions ----
+  // Messages are only ever shown with textContent (never as HTML). A lone emoji also rises big over the table.
+  const CHAT_QUICK = ['👏','😂','🔥','😱','🤔','😤','Bien joué !','Tu dors ?','Quel bail !','On se calme','Revanche ?','GG 🤝'];
+  const chat = { unread:0, muted:false, sent:[] };
+  const chatEl = id=> document.getElementById(id);
+  function isEmojiOnly(t){ return t.length<=16 && /^(?:\p{Extended_Pictographic}[️‍\p{Emoji_Modifier}]*\s*)+$/u.test(t); }
+  function chatOn(){ return mode==='mp' && !prefs.noChat; }
+  function refreshChatUI(){
+    chatEl('chatFab').classList.toggle('hidden', !chatOn());
+    if(!chatOn()) closeChat();
+    chatBadge();
+  }
+  function chatBadge(){
+    const b = chatEl('chatBadge');
+    b.textContent = chat.unread>9 ? '9+' : chat.unread;
+    b.classList.toggle('hidden', chat.unread===0);
+    b.classList.remove('pop'); void b.offsetWidth; if(chat.unread) b.classList.add('pop');
+  }
+  function chatLine(who, text){
+    const list = chatEl('chatList');
+    const row = document.createElement('div');
+    row.className = 'msg '+who+(who!=='sys' && isEmojiOnly(text) ? ' emo' : '');
+    if(who==='them'){ const n = document.createElement('span'); n.className = 'msg-who'; n.textContent = oppName(); row.appendChild(n); }
+    const t = document.createElement('span'); t.className = 'msg-text'; t.textContent = text; row.appendChild(t);
+    list.appendChild(row);
+    while(list.children.length>120) list.removeChild(list.firstChild);
+    list.scrollTop = list.scrollHeight;
+  }
+  function resetChat(){
+    chat.unread = 0; chat.sent = [];
+    chatEl('chatList').innerHTML = '';
+    chatLine('sys', 'Le chat est ouvert : dis bonjour à '+oppName()+' 👋');
+    refreshChatUI();
+  }
+  function emoteRise(emoji, mine){
+    if(document.body.classList.contains('calm')) return;
+    const e = document.createElement('div');
+    e.className = 'emote '+(mine ? 'mine' : 'theirs');
+    e.style.setProperty('--x', (mine ? 58 : 18) + Math.random()*20 + '%');
+    const big = document.createElement('span'); big.className = 'emote-ico'; big.textContent = emoji;
+    const who = document.createElement('span'); who.className = 'emote-who'; who.textContent = mine ? 'Toi' : oppName();
+    e.append(big, who);
+    chatEl('emoteLayer').appendChild(e);
+    setTimeout(()=> e.remove(), 2300);
+  }
+  function chatIsOpen(){ return !chatEl('chatSheet').classList.contains('hidden'); }
+  function openChat(){
+    if(!chatOn()) return;
+    const s = chatEl('chatSheet');
+    s.classList.remove('hidden','closing');
+    chat.unread = 0; chatBadge();
+    chatEl('chatList').scrollTop = chatEl('chatList').scrollHeight;
+    // on a phone, opening the keyboard straight away would hide the table: let the player tap the field
+    if(matchMedia('(pointer:fine)').matches) chatEl('chatInput').focus();
+  }
+  function closeChat(){
+    const s = chatEl('chatSheet');
+    if(s.classList.contains('hidden')) return;
+    chatEl('chatInput').blur();
+    s.classList.add('closing');
+    setTimeout(()=>{ s.classList.add('hidden'); s.classList.remove('closing'); }, document.body.classList.contains('calm') ? 0 : 200);
+  }
+  function chatSend(raw){
+    const text = String(raw||'').replace(/\s+/g,' ').trim().slice(0,200);
+    if(!text || !chatOn()) return false;
+    const now = Date.now();
+    chat.sent = chat.sent.filter(t=> now-t < 10000);
+    if(chat.sent.length>=6 || (chat.sent.length && now-chat.sent[chat.sent.length-1] < 600)){
+      showToast('Doucement…', 'Laisse '+oppName()+' te répondre 😉', {ms:1600});
+      return false;
+    }
+    chat.sent.push(now);
+    mpSend({t:'chat', text});
+    chatLine('me', text);
+    if(isEmojiOnly(text)) emoteRise(text, true);
+    else if(!chatIsOpen()) showMyBubble(text.length>60 ? text.slice(0,58)+'…' : text);
+    try{ chime(880,0.08,0.04,0,0.3); }catch(e){}
+    return true;
+  }
+  function chatReceive(msg){
+    if(!chatOn() || typeof msg.text!=='string') return;
+    const text = msg.text.replace(/\s+/g,' ').trim().slice(0,200);
+    if(!text) return;
+    chatLine('them', text);
+    if(chat.muted) return; // still in the history, but no sound, bubble or badge
+    avatarFx('ai', 'speaking');
+    if(isEmojiOnly(text)) emoteRise(text, false);
+    else if(!chatIsOpen()) showOppBubble(text.length>80 ? text.slice(0,78)+'…' : text);
+    if(!chatIsOpen()){ chat.unread++; chatBadge(); }
+    try{ chime(740,0.12,0.05,0,-0.3); }catch(e){}
+    vibrate(20);
+  }
+  (function buildChat(){
+    const quick = chatEl('chatQuick');
+    CHAT_QUICK.forEach(r=>{
       const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip'+(isEmojiOnly(r) ? ' chip-emo' : '');
       b.textContent = r;
-      b.addEventListener('click', ()=>{
-        pal.classList.add('hidden');
-        if(Date.now()-lastReactAt < 1500) return; // light anti-spam
-        lastReactAt = Date.now();
-        mpSend({t:'react', i});
-        showMyBubble(r);
-      });
-      pal.appendChild(b);
+      b.addEventListener('click', ()=> chatSend(r));
+      quick.appendChild(b);
     });
-    document.getElementById('btnReact').addEventListener('click', ()=> pal.classList.toggle('hidden'));
+    chatEl('chatFab').addEventListener('click', ()=> chatIsOpen() ? closeChat() : openChat());
+    chatEl('chatClose').addEventListener('click', closeChat);
+    chatEl('chatForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const inp = chatEl('chatInput');
+      if(chatSend(inp.value)) inp.value = '';
+    });
+    chatEl('chatMute').addEventListener('click', ()=>{
+      chat.muted = !chat.muted;
+      chatEl('chatMute').textContent = chat.muted ? '🔔 Réactiver' : '🔕 Couper';
+      chatLine('sys', chat.muted ? 'Messages en silencieux : ils arrivent ici sans bulle ni son.' : 'Notifications du chat réactivées.');
+    });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && chatIsOpen()) closeChat(); });
   })();
+
+  // ---- Little portrait reactions: 'speaking' (pulse), 'hop' (joy), 'shake' (annoyed) ----
+  // who: 'ai' = the duel opponent (label portrait + hands on the table), or a Carré seat id
+  function avatarFx(who, kind){
+    if(document.body.classList.contains('calm')) return;
+    const sel = who==='ai' ? '#oppAvatar, #oppTableArt' : '.sq-name .avatar[data-char="'+who+'"]';
+    document.querySelectorAll(sel).forEach(el=>{
+      el.classList.remove('speaking','hop','shake'); void el.offsetWidth; el.classList.add(kind);
+      clearTimeout(el._fxT);
+      el._fxT = setTimeout(()=> el.classList.remove(kind), kind==='speaking' ? 1800 : 700);
+    });
+  }
 
   // when Penalty is behind, mix in a defiant taunt instead of the "normal" line — he's trying to destabilize you
   function penaltySayMaybeTaunting(normalLines){
@@ -2283,10 +3011,21 @@
       {id:'nuit',      name:'Nuit de Melen',  swatch:'linear-gradient(160deg,#1d2a52,#0b1020)', req:p=>!!p.trophies.defi, hint:'Trophée « Rendez-vous quotidien »'},
       {id:'or',        name:'Or de légende',  swatch:'linear-gradient(160deg,#f6d27a,#a8741c)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'}
     ],
+    // each table comes with its own background music (see TRACKS)
     table: [
-      {id:'tripot', name:'Bois du tripot',          swatch:'linear-gradient(180deg,#4a2f14,#2a1809)', req:()=>true},
-      {id:'vichy',  name:'Nappe de Mama Cécile',    swatch:'repeating-linear-gradient(90deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),repeating-linear-gradient(0deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),#d9cfbd', req:p=>!!p.trophies.streak3, hint:'Trophée « Fidèle au quartier » (3 jours)'},
-      {id:'vert',   name:'Tapis vert du bar',       swatch:'linear-gradient(180deg,#1f5a3a,#0e2e1d)', req:p=>!!p.trophies.beat_penalty, hint:'Battre Penalty'}
+      {id:'tripot',   name:'Bois du tripot',        swatch:'linear-gradient(180deg,#4a2f14,#2a1809)', req:()=>true},
+      {id:'kribi',    name:'Plage de Kribi',        swatch:'radial-gradient(ellipse 130% 40% at 50% 0%,#1880a0 0 50%,#d6f6f4 56%,transparent 64%),linear-gradient(180deg,#e6c891,#c49d5f)', req:()=>true},
+      {id:'laterite', name:'Terre rouge de l’Est',  swatch:'linear-gradient(180deg,#a8472a,#6b2915)', req:()=>true},
+      {id:'wax',      name:'Pagne wax',             swatch:'radial-gradient(circle,#f2a516 0 18%,#1b5fa8 19% 30%,transparent 31%) 0 0/16px 16px,#2e7d4f', req:()=>true},
+      {id:'ardoise',  name:'Ardoise de l’école',    swatch:'linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px) 0 0/100% 9px,linear-gradient(160deg,#33403a,#1b2420)', req:()=>true},
+      {id:'raphia',   name:'Natte de raphia',       swatch:'repeating-linear-gradient(0deg,rgba(90,60,20,.4) 0 2px,transparent 2px 6px),repeating-linear-gradient(90deg,rgba(255,230,170,.2) 0 3px,rgba(90,60,20,.3) 3px 6px),#b08a4c', req:()=>true},
+      {id:'nuit',     name:'Toit sous les étoiles', swatch:'radial-gradient(circle,#fff 0 .7px,transparent 1.3px) 0 0/11px 13px,linear-gradient(180deg,#1c2550,#0a0f24)', req:()=>true},
+      {id:'vert',     name:'Tapis vert du bar',     swatch:'linear-gradient(180deg,#1f5a3a,#0e2e1d)', req:p=>!!p.trophies.beat_penalty, hint:'Battre Penalty'},
+      {id:'vichy',    name:'Nappe de Mama Cécile',  swatch:'repeating-linear-gradient(90deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),repeating-linear-gradient(0deg,rgba(150,24,30,.6) 0 8px,transparent 8px 16px),#d9cfbd', req:p=>!!p.trophies.streak3, hint:'Trophée « Fidèle au quartier » (3 jours)'},
+      {id:'arcade',   name:'Arcade néon',           swatch:'linear-gradient(rgba(255,60,200,.6) 1px,transparent 1px) 0 0/100% 9px,linear-gradient(90deg,rgba(60,220,255,.5) 1px,transparent 1px) 0 0/9px 100%,#24093f', req:p=>rankIndex(p.rep)>=1, hint:'Rang « Joueur du dimanche »'},
+      {id:'marbre',   name:'Marbre du palace',      swatch:'linear-gradient(115deg,transparent 40%,rgba(212,170,90,.7) 42%,transparent 45%),radial-gradient(ellipse at 35% 30%,#3a353b,#121014)', req:p=>rankIndex(p.rep)>=2, hint:'Rang « Joueur sérieux »'},
+      {id:'velours',  name:'Velours du casino',     swatch:'radial-gradient(ellipse at 50% 40%,#911c2c,#440913 72%)', req:p=>rankIndex(p.rep)>=3, hint:'Rang « Redouté »'},
+      {id:'or',       name:'Table d’or',            swatch:'radial-gradient(ellipse at 40% 35%,#f3d27a,#a06c18 72%)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'}
     ],
     light: [
       {id:'ampoule', name:'Ampoule jaune',     swatch:'radial-gradient(circle,#fff3d6,#f4b860 45%,#2a1809 75%)', req:()=>true},
@@ -2499,68 +3238,265 @@
     return heuristicDefend(hand, lead);
   }
 
-  function setSound(on){
-    soundOn = on;
-    document.getElementById('btnMute').textContent = soundOn ? '🔊' : '🔇';
-    document.getElementById('btnToggleSound').textContent = '🔊 Son : '+(soundOn ? 'activé' : 'coupé');
-    setAmbientMuted(!soundOn);
-    if(soundOn) ensureAudio();
-  }
-  document.getElementById('btnMute').addEventListener('click', ()=> setSound(!soundOn));
-
-  // ---- Pause menu (replaces the old ambiguous ↺ button) ----
   const show = id=> document.getElementById(id).classList.remove('hidden');
   const hide = id=> document.getElementById(id).classList.add('hidden');
-  function refreshPauseMenu(){
-    document.getElementById('btnToggleSound').textContent = '🔊 Son : '+(soundOn ? 'activé' : 'coupé');
-    document.getElementById('btnToggleShare').textContent = '🃏 Toujours partager : '+(prefs.alwaysShare ? 'oui' : 'non');
-    document.getElementById('btnToggleStats').textContent = '📈 Statistiques anonymes : '+(prefs.noStats ? 'non' : 'oui');
+
+  // ===================== Settings (one page, reachable from home and from the pause menu) =====================
+  function setSound(on){
+    soundOn = on;
+    prefs.mute = !on; savePrefs();
+    document.getElementById('btnMute').textContent = soundOn ? '🔊' : '🔇';
+    setAmbientMuted(!soundOn);
+    if(soundOn) ensureAudio();
+    refreshSettings();
   }
-  document.getElementById('btnToggleStats').addEventListener('click', ()=>{ prefs.noStats = !prefs.noStats; savePrefs(); refreshPauseMenu(); });
-  document.getElementById('btnMenu').addEventListener('click', ()=>{
-    if(!document.getElementById('menuOverlay').classList.contains('hidden')) return; // already on the home screen
-    refreshPauseMenu();
-    show('pauseOverlay');
+  document.getElementById('btnMute').addEventListener('click', ()=> setSound(!soundOn));
+  function applyCalm(){ document.body.classList.toggle('calm', !!prefs.calm || window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  function refreshSettings(){
+    const sw = (id, on)=> document.getElementById(id).classList.toggle('on', !!on);
+    sw('btnToggleSound', soundOn);
+    sw('btnToggleMusic', !prefs.noMusic);
+    document.getElementById('musicVol').value = Math.round(100*(prefs.musicVol==null ? 0.6 : prefs.musicVol));
+    document.getElementById('sfxVol').value = Math.round(100*(prefs.sfxVol==null ? 0.8 : prefs.sfxVol));
+    refreshNowPlaying();
+    sw('btnToggleVibrate', !prefs.noVibrate);
+    sw('btnToggleCalm', !!prefs.calm);
+    sw('btnToggleShare', !!prefs.alwaysShare);
+    sw('btnToggleChat', !prefs.noChat);
+    sw('btnToggleStats', !prefs.noStats);
+    const ni = document.getElementById('setNameInput');
+    if(document.activeElement!==ni) ni.value = prefs.name || '';
+  }
+  const toggle = (id, fn)=> document.getElementById(id).addEventListener('click', ()=>{
+    fn(); savePrefs(); refreshSettings();
+    sfxToggle(document.getElementById(id).classList.contains('on'));
   });
-  document.getElementById('btnResume').addEventListener('click', ()=> hide('pauseOverlay'));
-  document.getElementById('btnToggleSound').addEventListener('click', ()=>{ setSound(!soundOn); refreshPauseMenu(); });
-  document.getElementById('btnToggleShare').addEventListener('click', ()=>{ prefs.alwaysShare = !prefs.alwaysShare; savePrefs(); refreshPauseMenu(); });
-  document.getElementById('btnOpenRules').addEventListener('click', ()=> show('rulesOverlay'));
-  document.getElementById('btnCloseRules').addEventListener('click', ()=> hide('rulesOverlay'));
+  toggle('btnToggleSound',   ()=> setSound(!soundOn));
+  toggle('btnToggleMusic',   ()=>{ prefs.noMusic = !prefs.noMusic; applyAudioLevels(); ensureAudio(); Music.kick(); });
+  // volume sliders: heard immediately while dragging, saved when let go
+  [['musicVol','musicVol'], ['sfxVol','sfxVol']].forEach(([id,key])=>{
+    const el = document.getElementById(id);
+    el.addEventListener('input', ()=>{ prefs[key] = el.value/100; applyAudioLevels(); });
+    el.addEventListener('change', ()=>{ savePrefs(); if(key==='sfxVol') sfxTrickWinYou(); });
+  });
+  toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
+  toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
+  toggle('btnToggleShare',   ()=>{ prefs.alwaysShare = !prefs.alwaysShare; });
+  toggle('btnToggleChat',    ()=>{ prefs.noChat = !prefs.noChat; refreshChatUI(); });
+  toggle('btnToggleStats',   ()=>{ prefs.noStats = !prefs.noStats; });
+  document.getElementById('setNameInput').addEventListener('change', (e)=>{
+    const v = (e.target.value||'').trim().slice(0,16);
+    prefs.name = v; savePrefs();
+    if(v) myName = v;
+  });
+  applyCalm();
+  if(prefs.mute){ soundOn = false; document.getElementById('btnMute').textContent = '🔇'; }
+
+  // ===================== Navigation between pages =====================
+  // Pages are full-screen layers kept in a stack: opening one pushes it (and a browser-history entry, so the
+  // phone's own back button works), the ‹ button or the phone's back pops it with a slide. Starting a game
+  // clears the stack; during a game the phone's back button opens the pause menu instead of leaving.
+  const Nav = {
+    stack: [],
+    cur(){ return this.stack[this.stack.length-1] || null; },
+    _in(id, dir){
+      const el = document.getElementById(id);
+      clearTimeout(el._navT);
+      el.classList.remove('hidden','pg-out-fwd','pg-out-back','pg-in-fwd','pg-in-back');
+      void el.offsetWidth;
+      el.classList.add(dir==='back' ? 'pg-in-back' : 'pg-in-fwd');
+      el.scrollTop = dir==='back' ? el.scrollTop : 0;
+      pageShown(id);
+    },
+    _out(id, dir){
+      const el = document.getElementById(id);
+      el.classList.remove('pg-in-fwd','pg-in-back');
+      el.classList.add(dir==='back' ? 'pg-out-back' : 'pg-out-fwd');
+      clearTimeout(el._navT);
+      el._navT = setTimeout(()=>{ el.classList.add('hidden'); el.classList.remove('pg-out-fwd','pg-out-back'); }, document.body.classList.contains('calm') ? 0 : 240);
+    },
+    go(id){
+      const cur = this.cur();
+      if(cur===id) return;
+      // a page opened from the pause menu (rules, settings) replaces it; the pause comes back on return
+      if(!cur && !document.getElementById('pauseOverlay').classList.contains('hidden')){ hide('pauseOverlay'); this.fromPause = true; }
+      if(cur) this._out(cur, 'fwd');
+      this.stack.push(id);
+      this._in(id, 'fwd');
+      sfxSwipe(false);
+      try{ history.pushState({fapfap: this.stack.length}, ''); }catch(e){}
+    },
+    // back button on the page → let the browser history drive it, so both back buttons behave the same
+    back(){ if(this.stack.length>1 || !inHome()) history.back(); },
+    _pop(){
+      const id = this.stack.pop();
+      if(!id) return;
+      pageLeft(id);
+      this._out(id, 'back');
+      sfxSwipe(true);
+      const prev = this.cur();
+      if(prev) this._in(prev, 'back');
+      else if(this.fromPause){ this.fromPause = false; refreshNowPlaying(); show('pauseOverlay'); }
+    },
+    home(){
+      this.stack.slice().forEach(id=>{ if(id!=='menuOverlay'){ pageLeft(id); hide(id); } });
+      this.stack = ['menuOverlay'];
+      this._in('menuOverlay', 'back');
+    },
+    clear(){ this.stack.slice().forEach(id=>{ pageLeft(id); hide(id); }); this.stack = []; this.fromPause = false; }
+  };
+  function inHome(){ return Nav.stack.length===1 && Nav.stack[0]==='menuOverlay'; }
+  function inGame(){ return Nav.stack.length===0; }
+  try{ history.replaceState({fapfap: 0}, ''); }catch(e){}
+  window.addEventListener('popstate', ()=>{
+    if(Nav.stack.length>1 || (Nav.stack.length===1 && !inHome())){ Nav._pop(); return; }
+    if(inGame()){
+      // the phone's back button during a game: pause instead of leaving the page
+      if(document.getElementById('pauseOverlay').classList.contains('hidden')) openPause();
+      try{ history.pushState({fapfap:'game'}, ''); }catch(e){}
+    }
+  });
+  document.addEventListener('click', (e)=>{ if(e.target.closest('[data-nav-back]')) Nav.back(); });
+  // the first touch anywhere wakes the audio (browsers forbid sound before it); every button answers with a soft tap
+  document.addEventListener('pointerdown', (e)=>{
+    ensureAudio();
+    const b = e.target.closest('button');
+    if(b && !b.disabled && !b.classList.contains('set-row')) sfxTap();
+  }, {passive:true});
+
+  // render what a page shows each time it appears; tidy up when it's left
+  // which piece plays: the table's own music in a game (and while choosing a table), the home theme elsewhere
+  function currentTableId(){
+    const sk = Object.assign({table:'tripot'}, prefs.skin||{});
+    return skinUnlocked('table', sk.table) ? sk.table : 'tripot';
+  }
+  function pageShown(id){
+    if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
+    if(id==='menuOverlay'){ renderMenuRank(); playHomeIntro(); }
+    else if(id==='oppSelectOverlay') renderOppSelect();
+    else if(id==='trophiesOverlay') renderTrophies();
+    else if(id==='skinsOverlay') renderSkins();
+    else if(id==='statsOverlay') renderStats();
+    else if(id==='settingsPage') refreshSettings();
+    else if(id==='mpLobbyOverlay'){ document.getElementById('mpNameInput').value = prefs.name || ''; preloadNet(); }
+  }
+  function pageLeft(id){
+    // backing out of the "your code" / "join" pages before a match starts closes the connection
+    if((id==='mpHostOverlay' || id==='mpJoinOverlay' || id==='inviteOverlay') && !mpMatchStarted) mpTeardown();
+  }
+  // the home intro (logo letters, buttons…) plays fully once per visit, then in a quicker version
+  let homeIntroCount = 0;
+  function playHomeIntro(){
+    const el = document.getElementById('menuOverlay');
+    el.classList.remove('intro'); void el.offsetWidth;
+    el.classList.toggle('quick', homeIntroCount++>0);
+    el.classList.add('intro');
+  }
+
+  // ===================== Pause (a real pause: the AIs stop playing until you resume) =====================
+  let paused = false;
+  const resumeQueue = [];
+  function runWhenUnpaused(fn){ if(paused) resumeQueue.push(fn); else fn(); }
+  // every delayed game step goes through here: it waits out a pause, and is dropped if the game it belongs to
+  // has been left or restarted in the meantime
+  let gameGen = 0;
+  function gameTimeout(fn, ms){
+    const g = gameGen;
+    return setTimeout(()=> runWhenUnpaused(()=>{ if(g===gameGen) fn(); }), ms);
+  }
+  function setPaused(p){
+    paused = p;
+    if(!p){ const q = resumeQueue.splice(0); q.forEach(fn=>{ try{ fn(); }catch(e){ console.error(e); } }); }
+  }
+  function openPause(){
+    const online = mode==='mp';
+    document.getElementById('pauseNote').textContent =
+      online ? 'En ligne, la partie continue pendant la pause : ton ami peut encore jouer.'
+      : daily ? 'Défi du jour : l’adversaire attend que tu reviennes.'
+      : 'La partie est en pause : l’adversaire attend que tu reviennes.';
+    // restarting makes no sense online (that's what "revanche" is for) nor in the one-try daily challenge
+    const canRestart = !online && !daily;
+    document.getElementById('btnRestartMatch').classList.toggle('hidden', !canRestart);
+    if(!online) setPaused(true);
+    refreshNowPlaying();
+    show('pauseOverlay');
+  }
+  function closePause(){ hide('pauseOverlay'); setPaused(false); }
+  document.getElementById('btnMenu').addEventListener('click', ()=>{ if(inGame()) openPause(); });
+  document.getElementById('btnResume').addEventListener('click', closePause);
+  document.getElementById('btnOpenRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
+  document.getElementById('btnOpenSettings').addEventListener('click', ()=> Nav.go('settingsPage'));
+  document.getElementById('btnCloseRules').addEventListener('click', ()=> Nav.back());
+
+  // one confirmation sheet for every "are you sure?"
+  let confirmYes = null;
+  function askConfirm(title, text, yesLabel, onYes){
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmQuitText').textContent = text;
+    document.getElementById('btnConfirmRestartYes').textContent = yesLabel;
+    confirmYes = onYes;
+    show('confirmRestartOverlay');
+  }
+  document.getElementById('btnConfirmRestartYes').addEventListener('click', ()=>{
+    hide('confirmRestartOverlay');
+    const fn = confirmYes; confirmYes = null;
+    if(fn) fn();
+  });
+  document.getElementById('btnConfirmRestartNo').addEventListener('click', ()=>{
+    hide('confirmRestartOverlay'); confirmYes = null;
+    if(inGame()) show('pauseOverlay'); // "no" goes back to the pause menu it came from
+  });
+
   function askQuit(){
-    document.getElementById('confirmQuitText').textContent =
+    const text =
       daily ? 'Le défi du jour comptera comme joué : tu ne pourras pas le recommencer aujourd’hui.'
       : mode==='mp' ? 'Tu quitteras la partie en ligne : '+oppName()+' sera prévenu.'
       : mode==='square' ? 'La partie de Carré la Pute en cours sera perdue.'
+      : tuto ? 'Tu pourras reprendre la partie guidée quand tu veux.'
       : 'Le match en cours contre '+oppName()+' sera perdu.';
     hide('pauseOverlay');
-    show('confirmRestartOverlay');
+    askConfirm('Quitter la partie ?', text, 'Oui, quitter', goToMainMenu);
+  }
+  function askRestart(){
+    hide('pauseOverlay');
+    askConfirm('Recommencer la partie ?', 'Le score repart à zéro.', 'Oui, recommencer', ()=>{
+      gameGen++; resumeQueue.length = 0; setPaused(false);
+      if(tuto){ startTuto(); return; }
+      if(mode==='square'){ if(sq) sq.gen++; sqNewGame(); return; }
+      if(state) state.handOver = true; // drops the AI turn that might still be pending
+      hide('choiceOverlay');
+      newMatch();
+    });
   }
   document.getElementById('btnQuitGame').addEventListener('click', askQuit);
+  document.getElementById('btnRestartMatch').addEventListener('click', askRestart);
   document.getElementById('btnNetQuit').addEventListener('click', askQuit);
-  document.getElementById('btnConfirmRestartYes').addEventListener('click', ()=>{
-    hide('confirmRestartOverlay');
-    goToMainMenu();
-  });
-  document.getElementById('btnConfirmRestartNo').addEventListener('click', ()=> hide('confirmRestartOverlay'));
 
   // back to the home screen from any mode, leaving nothing running behind
   function goToMainMenu(){
     if(mode==='mp' || mpNet) mpTeardown();
     daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
     tuto = null;
+    gameGen++; resumeQueue.length = 0; setPaused(false);
     document.getElementById('coach').classList.add('hidden');
     if(sq) sq.gen++; // cancels every pending Carré timer
     if(state) state.handOver = true; // stops pending duel AI turns
     locked = false;
     mode = 'ai';
     applyOppNameToUI();
-    ['matchOverOverlay','pauseOverlay','choiceOverlay','eliminateOverlay'].forEach(hide);
+    ['matchOverOverlay','pauseOverlay','choiceOverlay','eliminateOverlay','tutoDoneOverlay','confirmRestartOverlay'].forEach(hide);
     document.getElementById('squareScreen').classList.add('hidden');
     document.getElementById('duoScreen').classList.remove('hidden');
     document.querySelector('header .sub').textContent = 'Duel de quartier';
-    renderMenuRank();
-    show('menuOverlay');
+    refreshChatUI();
+    Nav.home();
+  }
+  // every way into a game goes through here: no page stays on top of the table
+  function enterGame(){
+    Nav.clear(); gameGen++; resumeQueue.length = 0; setPaused(false);
+    Music.play(currentTableId());
+    ['pauseOverlay','confirmRestartOverlay'].forEach(hide);
+    try{ history.pushState({fapfap:'game'}, ''); }catch(e){} // the phone's back button then opens the pause menu
   }
 
   let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
@@ -2609,7 +3545,7 @@
       workingDeck = dailyDeck(daily.date, i);
       dealer = (i%2===0) ? 'ai' : 'you';
       showToast('Défi du jour', 'Manche '+(i+1)+' sur '+DAILY_HANDS+' · même donne pour tout le monde', {ms:1700});
-      setTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
+      gameTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
       return;
     }
 
@@ -2645,7 +3581,7 @@
     };
     if(prefs.alwaysShare){
       showToast('Nouvelle manche', oppName()+' mélange · tu partages', {ms:1300});
-      setTimeout(()=> send('partage'), 450);
+      gameTimeout(()=> send('partage'), 450);
       return;
     }
     const ov = document.getElementById('choiceOverlay');
@@ -2693,7 +3629,7 @@
     const wantsDepose = Math.random()<0.5;
     if(!wantsDepose){
       showToast('Nouvelle manche', 'Tu mélanges · '+oppName()+' : « Je partage. »', {ms:1500});
-      setTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
+      gameTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
     } else {
       const frac = [1/3,1/2,2/3][Math.floor(Math.random()*3)];
       const idx = Math.round(workingDeck.length*frac);
@@ -2702,7 +3638,7 @@
       const takeTop = Math.random()<0.5;
       showToast('Nouvelle manche', oppName()+' coupe et prend le tas du '+(takeTop?'haut':'bas')+'.', {ms:1500});
       const chosen = takeTop ? partB : partA;
-      setTimeout(()=> finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB)), 500);
+      gameTimeout(()=> finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB)), 500);
     }
   }
 
@@ -2728,7 +3664,7 @@
     renderAll(true);
     checkAutoWinWindow();
     if(!state.handOver && state.leader==='ai'){
-      setTimeout(aiTakeTurn, 900);
+      gameTimeout(aiTakeTurn, 900);
     }
   }
 
@@ -2812,6 +3748,7 @@
     handEl.innerHTML='';
     const sorted = sortHand(state.playerHand);
     const mustFollow = state.leadSuit && hasSuit(state.playerHand, state.leadSuit);
+    if(isDeal) sfxDeal(sorted.length);
     sorted.forEach((card,i)=>{
       let legal = yourTurn && (dumping || !state.leadSuit || !mustFollow || card.suit===state.leadSuit);
       if(tuto) legal = yourTurn && tuto.youQueue[0]===card.suit+'-'+card.rank; // guided game: only the suggested card
@@ -2832,8 +3769,6 @@
       profile.passeOpportunities += 1;
     }
     document.getElementById('btnDump').classList.toggle('hidden', !dumping);
-    document.getElementById('btnReact').classList.toggle('hidden', mode!=='mp');
-    if(mode!=='mp') document.getElementById('reactPalette').classList.add('hidden');
 
     document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
     document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
@@ -2958,7 +3893,7 @@
       renderAll();
       if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(L('control')); }
       sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
-      setTimeout(()=>{ afterTurn(); }, 1100);
+      gameTimeout(()=>{ afterTurn(); }, 1100);
       return;
     }
 
@@ -3006,8 +3941,8 @@
     }
     sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
 
-    setTimeout(()=> highlightTrickWin(winner, winningCard), 60);
-    setTimeout(()=>{ afterTurn(); }, 1450);
+    gameTimeout(()=> highlightTrickWin(winner, winningCard), 60);
+    gameTimeout(()=>{ afterTurn(); }, 1450);
   }
 
   // the passer answers the final lead with both reserved cards at once (see dumpBestFollow)
@@ -3033,14 +3968,23 @@
     if(winner==='ai'){ sfxTrickWinAI(); penaltySayMaybeTaunting(L('control')); }
     else { sfxTrickWinYou(); vibrate(20); if(actor==='you') penaltySayMaybeTaunting(L('surprise')); }
     sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
-    setTimeout(()=> highlightTrickWin(winner, winningCard), 60);
-    setTimeout(()=>{ afterTurn(); }, 1450);
+    gameTimeout(()=> highlightTrickWin(winner, winningCard), 60);
+    gameTimeout(()=>{ afterTurn(); }, 1450);
   }
 
   function highlightTrickWin(actor, card){
     const slotEl = document.getElementById(actor==='you' ? 'youSlot' : 'aiSlot');
     const c = slotEl && slotEl.querySelector('.card[data-key="'+card.suit+'-'+card.rank+'"]');
     if(c) c.classList.add('trickwin');
+    if(mode==='ai' || mode==='mp') avatarFx('ai', actor==='ai' ? 'hop' : 'shake');
+  }
+  // a soft ring where a played card lands
+  function landRing(host){
+    if(!host || document.body.classList.contains('calm')) return;
+    const r = document.createElement('span');
+    r.className = 'land-ring';
+    host.appendChild(r);
+    setTimeout(()=> r.remove(), 700);
   }
 
   // The table only shows the trick in progress, full size. Every earlier trick is kept as a row of
@@ -3059,6 +4003,7 @@
     }
     slot.appendChild(wrap);
     slot.classList.toggle('two', slot.children.length>1);
+    if(animate && card) setTimeout(()=> landRing(wrap), 260);
   }
   function miniCardEl(card){
     const d = document.createElement('div');
@@ -3115,7 +4060,7 @@
         state.leader = state._leadActor;
         state.leadSuit = null; state._leadCard=null; state._leadActor=null;
         renderAll();
-        setTimeout(()=>finishHandNormal(), 1100);
+        gameTimeout(()=>finishHandNormal(), 1100);
         return;
       }
     }
@@ -3143,7 +4088,7 @@
     if(aiShouldAct){
       locked = true;
       renderAll();
-      if(mode!=='mp') setTimeout(aiTakeTurn, 1000);
+      if(mode!=='mp') gameTimeout(aiTakeTurn, 1000);
       // in MP mode: just wait — the opponent's 'play'/'passe' network message will call resolvePlay('ai', ...) directly
     } else {
       locked = false;
@@ -3389,7 +4334,7 @@
       else if(!isAutoWin) penaltySay(L('lose'));
     }
 
-    if(tuto){ setTimeout(finishTuto, (isGlacee||isCora) ? 3800 : 1600); return; }
+    if(tuto){ gameTimeout(finishTuto, (isGlacee||isCora) ? 3800 : 1600); return; }
 
     if(daily && mode==='ai'){
       // daily challenge: a fixed number of hands, scored hand by hand, instead of "first to 5"
@@ -3397,18 +4342,18 @@
       if(who==='you') daily.points += pts;
       saveProfile();
       const delay = (isGlacee||isCora) ? 3700 : 1400;
-      if(daily.marks.length>=DAILY_HANDS) setTimeout(finishDaily, delay);
-      else setTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, delay);
+      if(daily.marks.length>=DAILY_HANDS) gameTimeout(finishDaily, delay);
+      else gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, delay);
       return;
     }
 
     if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
       const matchOverDelay = (isGlacee||isCora) ? 3700 : 1800;
-      setTimeout(()=> showMatchOver(scores.you>=TARGET_SCORE ? 'you':'ai'), matchOverDelay);
+      gameTimeout(()=> showMatchOver(scores.you>=TARGET_SCORE ? 'you':'ai'), matchOverDelay);
     } else {
       dealer = who; // winner deals next hand -> loser starts next hand
       const nextDelay = (isGlacee||isCora) ? 3700 : 1000;
-      setTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, nextDelay);
+      gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, nextDelay);
     }
   }
 
@@ -3444,7 +4389,8 @@
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
-    document.getElementById('menuOverlay').classList.add('hidden');
+    enterGame();
+    ['tutoDoneOverlay','matchOverOverlay'].forEach(hide);
     document.getElementById('btnNext').classList.add('hidden');
     clearSlots();
     dealer = 'ai'; // so you lead first
@@ -3474,12 +4420,13 @@
   document.getElementById('btnTutoAgain').addEventListener('click', ()=>{ ensureAudio(); startTuto(); });
   document.getElementById('btnTutoPlay').addEventListener('click', ()=>{
     document.getElementById('tutoDoneOverlay').classList.add('hidden');
+    enterGame();
     duelOpp = 'gervais';
     mode = 'ai';
     applyOppNameToUI();
     newMatch();
   });
-  document.getElementById('btnTutoRules').addEventListener('click', ()=> document.getElementById('rulesOverlay').classList.remove('hidden'));
+  document.getElementById('btnTutoRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
   document.getElementById('btnTutoMenu').addEventListener('click', ()=>{
     document.getElementById('tutoDoneOverlay').classList.add('hidden');
     goToMainMenu();
@@ -3530,7 +4477,7 @@
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
-    document.getElementById('menuOverlay').classList.add('hidden');
+    enterGame();
     beginHand();
   }
   function finishDaily(){
@@ -3567,16 +4514,14 @@
       : wins+' manche'+(wins>1?'s':'')+' gagnée'+(wins>1?'s':'')+' sur '+DAILY_HANDS+' · '+d.points+' point'+(d.points>1?'s':'');
     document.getElementById('dailyRep').textContent = res ? '+'+res.gained+' réputation'+(res.trophies.length ? ' · 🏆 '+res.trophies.map(t=>t.name).join(', ') : '') : '';
     document.getElementById('dailyNext').textContent = 'Prochain défi dans '+untilTomorrow()+' (un nouveau défi chaque jour à minuit).';
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('dailyOverlay').classList.remove('hidden');
+    // just finished at the table: leave the game first, so "back" from the result lands on the home screen
+    if(res) goToMainMenu();
+    Nav.go('dailyOverlay');
     if(res && wins===DAILY_HANDS){ sfxMatchWin(); burstConfetti(40); }
   }
   document.getElementById('modeDaily').addEventListener('click', ()=>{ ensureAudio(); startDaily(); });
   document.getElementById('btnDailyShare').addEventListener('click', ()=> shareText(dailyShareText(profile.daily)));
-  document.getElementById('btnDailyMenu').addEventListener('click', ()=>{
-    document.getElementById('dailyOverlay').classList.add('hidden');
-    goToMainMenu();
-  });
+  document.getElementById('btnDailyMenu').addEventListener('click', ()=> Nav.back());
 
   // shares plain text: the phone's share sheet when there is one, otherwise WhatsApp directly
   function shareText(text){
@@ -3606,8 +4551,8 @@
       if(open) b.addEventListener('click', ()=>{
         duelOpp = id;
         prefs.lastOpp = id; savePrefs();
-        document.getElementById('oppSelectOverlay').classList.add('hidden');
         mode = 'ai';
+        enterGame();
         applyOppNameToUI();
         newMatch();
       });
@@ -3615,16 +4560,12 @@
     });
     fillAllAvatars(list);
   }
-  document.getElementById('modeAI').addEventListener('click', ()=>{
-    ensureAudio();
-    renderOppSelect();
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('oppSelectOverlay').classList.remove('hidden');
-  });
-  document.getElementById('btnBackFromOpp').addEventListener('click', ()=>{
-    document.getElementById('oppSelectOverlay').classList.add('hidden');
-    document.getElementById('menuOverlay').classList.remove('hidden');
-  });
+  document.getElementById('btnGoPlay').addEventListener('click', ()=>{ ensureAudio(); Nav.go('playPage'); });
+  document.getElementById('modeAI').addEventListener('click', ()=>{ ensureAudio(); Nav.go('oppSelectOverlay'); });
+  document.getElementById('btnShowRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
+  document.getElementById('btnShowSettings').addEventListener('click', ()=> Nav.go('settingsPage'));
+  document.getElementById('btnProfTrophies').addEventListener('click', ()=> Nav.go('trophiesOverlay'));
+  document.getElementById('btnProfSkins').addEventListener('click', ()=> Nav.go('skinsOverlay'));
 
   // ---- Trophies screen ----
   function renderTrophies(){
@@ -3636,11 +4577,7 @@
         '<span class="t-body"><b>'+t.name+'</b><span>'+t.desc+'</span></span></div>';
     }).join('');
   }
-  document.getElementById('btnShowTrophies').addEventListener('click', ()=>{
-    renderTrophies();
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('trophiesOverlay').classList.remove('hidden');
-  });
+  document.getElementById('btnShowTrophies').addEventListener('click', ()=> Nav.go('trophiesOverlay'));
   // ---- Décors screen ----
   function renderSkins(){
     const sk = Object.assign({back:'classique', table:'tripot', light:'ampoule'}, prefs.skin||{});
@@ -3654,10 +4591,13 @@
         const open = s.req(profile);
         const b = document.createElement('button');
         b.className = 'skin-opt'+(sk[kind]===s.id?' on':'')+(open?'':' locked');
-        b.innerHTML = '<span class="skin-swatch" style="background:'+s.swatch+'"></span><span>'+(open?'':'🔒 ')+s.name+'</span>'+(open?'':'<small>'+s.hint+'</small>');
+        const tune = kind==='table' && TRACKS[s.id] ? '<small class="skin-music">♪ '+TRACKS[s.id].name+'</small>' : '';
+        b.innerHTML = '<span class="skin-swatch" style="background:'+s.swatch+'"></span><span>'+(open?'':'🔒 ')+s.name+'</span>'+tune+(open?'':'<small>'+s.hint+'</small>');
         if(open) b.addEventListener('click', ()=>{
           prefs.skin = Object.assign({}, sk, {[kind]: s.id});
           savePrefs(); applySkins(); renderSkins();
+          if(kind==='table') Music.play(s.id); // hear the table's music right away
+          if(kind==='light') { Music.stop(); Music.kick(); } // the rain ambience follows the "Pluie" ambiance
         });
         row.appendChild(b);
       });
@@ -3665,37 +4605,12 @@
       box.appendChild(g);
     });
   }
-  document.getElementById('btnShowSkins').addEventListener('click', ()=>{
-    renderSkins();
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('skinsOverlay').classList.remove('hidden');
-  });
-  document.getElementById('btnCloseSkins').addEventListener('click', ()=>{
-    document.getElementById('skinsOverlay').classList.add('hidden');
-    document.getElementById('menuOverlay').classList.remove('hidden');
-  });
+  document.getElementById('btnShowSkins').addEventListener('click', ()=> Nav.go('skinsOverlay'));
   applySkins();
   fillAllAvatars();
   applyOppNameToUI();
 
-  document.getElementById('btnCloseTrophies').addEventListener('click', ()=>{
-    document.getElementById('trophiesOverlay').classList.add('hidden');
-    renderMenuRank();
-    document.getElementById('menuOverlay').classList.remove('hidden');
-  });
-  renderMenuRank();
-  document.getElementById('modeMP').addEventListener('click', ()=>{
-    ensureAudio();
-    preloadNet();
-    document.getElementById('mpNameInput').value = prefs.name || '';
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
-  });
-  // multiplayer lobby
-  document.getElementById('btnBackFromMpLobby').addEventListener('click', ()=>{
-    document.getElementById('mpLobbyOverlay').classList.add('hidden');
-    document.getElementById('menuOverlay').classList.remove('hidden');
-  });
+  document.getElementById('modeMP').addEventListener('click', ()=>{ ensureAudio(); Nav.go('mpLobbyOverlay'); });
   // the first name is remembered, so it's typed once ever
   function takeName(inputId){
     const typed = (document.getElementById(inputId).value||'').trim();
@@ -3705,17 +4620,15 @@
   document.getElementById('btnMpHost').addEventListener('click', ()=>{
     ensureAudio();
     takeName('mpNameInput');
-    document.getElementById('mpLobbyOverlay').classList.add('hidden');
-    document.getElementById('mpHostOverlay').classList.remove('hidden');
+    Nav.go('mpHostOverlay');
     document.getElementById('btnShareLink').classList.toggle('hidden', !navigator.share);
     hostGame();
   });
   document.getElementById('btnMpJoin').addEventListener('click', ()=>{
     ensureAudio();
     takeName('mpNameInput');
-    document.getElementById('mpLobbyOverlay').classList.add('hidden');
-    document.getElementById('mpJoinOverlay').classList.remove('hidden');
     document.getElementById('mpJoinStatus').textContent = '';
+    Nav.go('mpJoinOverlay');
   });
 
   // ---- Invitation links: …/?partie=CODE opens the game straight into that room ----
@@ -3732,41 +4645,32 @@
     const code = currentCode(); if(!/^[A-Z0-9]{4}$/.test(code)) return;
     navigator.share({ title:'Fap Fap', text: myName+' te défie au Fap Fap ! 🃏 (code : '+code+')', url: inviteUrl(code) }).catch(()=>{});
   });
+  // the game opens on the home page
+  Nav.stack = ['menuOverlay'];
+  renderMenuRank();
+  playHomeIntro();
   (function handleInviteLink(){
     const m = location.search.match(/[?&]partie=([A-Za-z0-9]{4})\b/);
     if(!m) return;
     const code = m[1].toUpperCase();
     // forget the code in the address bar, so a later reload doesn't try to rejoin an old room
     try{ history.replaceState(null, '', location.pathname + location.search.replace(/[?&]partie=[A-Za-z0-9]{4}/,'').replace(/^&/,'?')); }catch(e){}
-    document.getElementById('menuOverlay').classList.add('hidden');
     document.getElementById('inviteText').textContent = 'Une partie de Fap Fap t’attend (code '+code+'). Entre ton prénom et c’est parti !';
     document.getElementById('inviteNameInput').value = prefs.name || '';
-    document.getElementById('inviteOverlay').classList.remove('hidden');
+    Nav.go('inviteOverlay'); // on top of the home page, so "no thanks" lands there
     preloadNet();
     document.getElementById('btnInviteJoin').onclick = ()=>{
       ensureAudio();
       takeName('inviteNameInput');
-      document.getElementById('inviteOverlay').classList.add('hidden');
       document.getElementById('mpCodeInput').value = code;
       document.getElementById('mpJoinStatus').textContent = '';
-      document.getElementById('mpJoinOverlay').classList.remove('hidden');
+      Nav.go('mpJoinOverlay');
       joinGame(code);
     };
-    document.getElementById('btnInviteNo').onclick = ()=>{
-      document.getElementById('inviteOverlay').classList.add('hidden');
-      document.getElementById('menuOverlay').classList.remove('hidden');
-    };
+    document.getElementById('btnInviteNo').onclick = ()=> Nav.back();
   })();
-  document.getElementById('btnCancelHost').addEventListener('click', ()=>{
-    mpTeardown();
-    document.getElementById('mpHostOverlay').classList.add('hidden');
-    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
-  });
-  document.getElementById('btnCancelJoin').addEventListener('click', ()=>{
-    mpTeardown();
-    document.getElementById('mpJoinOverlay').classList.add('hidden');
-    document.getElementById('mpLobbyOverlay').classList.remove('hidden');
-  });
+  document.getElementById('btnCancelHost').addEventListener('click', ()=> Nav.back());
+  document.getElementById('btnCancelJoin').addEventListener('click', ()=> Nav.back());
   document.getElementById('btnMpConnect').addEventListener('click', ()=>{
     const code = (document.getElementById('mpCodeInput').value||'').trim();
     if(code.length<4) return;
@@ -3899,7 +4803,16 @@
     setWinShare(won ? {title:'VICTOIRE', line: myDisplayName()+' a battu '+oppName()+' '+mine+' à '+theirs+' au Fap Fap !'} : null);
     matchMaxDeficit = 0; // this match is settled; never let it leak into the next one
     refreshRematchUI();
-    document.getElementById('matchOverOverlay').classList.remove('hidden');
+    const mo = document.getElementById('matchOverOverlay');
+    mo.dataset.result = won ? 'win' : 'lose';
+    // the opponent's face on the certificate: sulking when you win, gloating when you lose
+    const face = document.getElementById('matchOverFace');
+    if(face){
+      face.innerHTML = '<span class="avatar" style="--s:64px"></span>';
+      fillAvatar(face.firstChild, mode==='ai' ? duelOpp : null, oppName());
+      face.firstChild.classList.add(won ? 'shake' : 'hop');
+    }
+    mo.classList.remove('hidden');
     if(who==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
   }
 
@@ -3941,6 +4854,7 @@
     if(!bubble) return;
     bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
     bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
+    avatarFx(id, category==='win'||category==='cora'||category==='glacee' ? 'hop' : 'speaking');
     clearTimeout(bubble._t);
     bubble._t = setTimeout(()=> bubble.classList.remove('show'), 3000);
   }
@@ -3960,7 +4874,7 @@
     mode = 'square';
     startMatchTracking();
     sq = {
-      gen: 0,
+      gen: sq ? sq.gen+1000 : 0, // keeps counting, so a timer left by a restarted game can't match the new one
       players: {
         you:{eliminated:false, hand:[], originalHand:[]},
         penalty:{eliminated:false, hand:[], originalHand:[]},
@@ -3975,7 +4889,7 @@
       knownVoid:{you:new Set(),penalty:new Set(),aristide:new Set(),gervais:new Set()},
       fastForward:false
     };
-    document.getElementById('menuOverlay').classList.add('hidden');
+    enterGame();
     document.getElementById('duoScreen').classList.add('hidden');
     document.getElementById('squareScreen').classList.remove('hidden');
     document.querySelector('header .sub').textContent = 'Carré la Pute · 4 joueurs, un seul survivant';
@@ -4107,7 +5021,7 @@
     sqSay(winnerId, 'win');
     renderSquare();
     const myGen = sq.gen;
-    setTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winnerId, 'Victoire automatique — '+label); }, sqDelay(1400));
+    gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winnerId, 'Victoire automatique — '+label); }, sqDelay(1400));
   }
 
   function sqLeadPhase(){
@@ -4117,7 +5031,7 @@
     if(leaderId==='you'){ sq.locked=false; renderSquare(); return; }
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
-    setTimeout(()=>{
+    gameTimeout(()=>{
       if(sq.gen!==myGen || sq.handOver) return;
       if(sq.players[leaderId].hand.length===0) return; // stale — this player emptied out since scheduling
       const card = sqHeuristicLead(leaderId, sq.players[leaderId].hand);
@@ -4151,7 +5065,7 @@
     if(nextId==='you'){ sq.locked=false; renderSquare(); return; }
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
-    setTimeout(()=>{
+    gameTimeout(()=>{
       if(sq.gen!==myGen || sq.handOver) return;
       const hand = sq.players[nextId].hand;
       if(hand.length===0) return; // stale
@@ -4196,7 +5110,7 @@
     }
     renderSquare();
     checkSquareAutoWins();
-    if(!sq.handOver){ const myGen = sq.gen; setTimeout(()=>{ if(sq.gen===myGen) sqAdvanceTrick(); }, sqDelay(500)); }
+    if(!sq.handOver){ const myGen = sq.gen; gameTimeout(()=>{ if(sq.gen===myGen) sqAdvanceTrick(); }, sqDelay(500)); }
   }
 
   function sqPlayerPlays(card){
@@ -4232,7 +5146,7 @@
     sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null;
     renderSquare();
     const myGen = sq.gen;
-    setTimeout(()=>{
+    gameTimeout(()=>{
       if(sq.gen!==myGen) return;
       const el = document.querySelector('#sqCur'+winner.charAt(0).toUpperCase()+winner.slice(1)+' .card[data-key="'+winCard.suit+'-'+winCard.rank+'"]');
       if(el) el.classList.add('trickwin', 'holding');
@@ -4240,8 +5154,8 @@
     if(winner!=='you'){ sfxTrickWinAI(); sqSay(winner, 'control'); } else { sfxTrickWinYou(); vibrate(20); }
     const active = sqActivePlayers();
     const allEmpty = active.every(id=>sq.players[id].hand.length===0);
-    if(allEmpty){ setTimeout(()=>{ if(sq.gen===myGen) sqFinishHand(); }, sqDelay(1000)); return; }
-    setTimeout(()=>{
+    if(allEmpty){ gameTimeout(()=>{ if(sq.gen===myGen) sqFinishHand(); }, sqDelay(1000)); return; }
+    gameTimeout(()=>{
       if(sq.gen!==myGen || sq.handOver) return;
       if(sq.players[sq.leader].hand.length===0){
         let nid = sqNextActive(sq.leader), guard=0;
@@ -4274,7 +5188,7 @@
     sqSay(winner, glacee?'glacee':(cora?'cora':'win'));
     const myGen = sq.gen;
     // a CORA or a 33 Glacée lets the winner knock out TWO players instead of one
-    setTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 3500 : 1400));
+    gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 3500 : 1400));
   }
 
   function sqShowEliminationChoice(winnerId, label, count){
@@ -4315,7 +5229,7 @@
       const left = sqActivePlayers().length - targets.length;
       showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que '+sqName(winnerId)+'.', {ms:2600});
       const myGen = sq.gen;
-      setTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(1600));
+      gameTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(1600));
     }
   }
 
@@ -4329,15 +5243,15 @@
     const remaining = sqActivePlayers();
     const myGen = sq.gen;
     if(remaining.length<=1){
-      setTimeout(()=>{ if(sq.gen===myGen) sqShowChampion(remaining[0]); }, sqDelay(900));
+      gameTimeout(()=>{ if(sq.gen===myGen) sqShowChampion(remaining[0]); }, sqDelay(900));
       return;
     }
     if(sq.dealerIdx>=remaining.length) sq.dealerIdx = 0;
     if(sq.players.you.eliminated && sq.fastForward){
-      setTimeout(()=>{ if(sq.gen===myGen) sqBeginHand(); }, sqDelay(600));
+      gameTimeout(()=>{ if(sq.gen===myGen) sqBeginHand(); }, sqDelay(600));
       return;
     }
-    setTimeout(()=>{ if(sq.gen===myGen) document.getElementById('sqBtnNext').classList.remove('hidden'); }, sqDelay(600));
+    gameTimeout(()=>{ if(sq.gen===myGen) document.getElementById('sqBtnNext').classList.remove('hidden'); }, sqDelay(600));
   }
   document.getElementById('sqBtnNext').addEventListener('click', ()=>{
     document.getElementById('sqBtnNext').classList.add('hidden');
@@ -4436,6 +5350,7 @@
         : (turnId ? sqName(turnId)+' réfléchit…' : 'Ta main');
       const sorted = sortHand(sq.players.you.hand);
       const mustFollow = sq.leadSuit && hasSuit(sq.players.you.hand, sq.leadSuit);
+      if(isDeal) sfxDeal(sorted.length);
       sorted.forEach(card=>{
         const legal = myTurn && (dumping || !sq.leadSuit || !mustFollow || card.suit===sq.leadSuit);
         const cls = legal ? 'playable' : (myTurn ? 'blocked' : 'idle');
@@ -4471,6 +5386,24 @@
     const p = profile;
     const passeRate = p.passeOpportunities>0 ? Math.round(100*p.passeTaken/p.passeOpportunities) : 0;
     const sqWinRate = p.squareGamesPlayed>0 ? Math.round(100*p.squareWins/p.squareGamesPlayed) : 0;
+    const ri = rankIndex(p.rep);
+    const next = RANKS[ri+1];
+    const won = (p.gamesLost||0) + (p.onlineWins||0) + (p.squareWins||0);
+    const played = (p.gamesPlayed||0) + (p.onlineGames||0) + (p.squareGamesPlayed||0);
+    const card = document.getElementById('profileCard');
+    card.innerHTML =
+      '<div class="pc-top"><div class="avatar pc-avatar" data-who="you"></div>'+
+      '<div class="pc-id"><div class="pc-name"></div><div class="pc-rank">'+RANKS[ri].name+'</div></div></div>'+
+      '<div class="pc-bar"><i style="width:'+Math.round(rankProgress(p.rep)*100)+'%"></i></div>'+
+      '<div class="pc-next">'+(next ? p.rep+' / '+next.at+' rép. pour « '+next.name+' »' : p.rep+' rép. · rang maximum')+'</div>'+
+      '<div class="pc-nums">'+
+        '<div><b>'+played+'</b><span>parties</span></div>'+
+        '<div><b>'+won+'</b><span>victoires</span></div>'+
+        '<div><b>'+Object.keys(p.trophies).length+'</b><span>trophées</span></div>'+
+        '<div><b>'+(liveDayStreak()||0)+'</b><span>jours 🔥</span></div>'+
+      '</div>';
+    card.querySelector('.pc-name').textContent = prefs.name || 'Toi';
+    fillAvatar(card.querySelector('.pc-avatar'), null, prefs.name || 'Toi');
     const box = document.getElementById('statsContent');
     box.innerHTML =
       '<div class="stats-group"><h3>Ta réputation</h3>'+
@@ -4498,15 +5431,7 @@
         '<div class="stats-row"><span class="label">Taux de bluff des adversaires (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
       '</div>';
   }
-  document.getElementById('btnShowStats').addEventListener('click', ()=>{
-    renderStats();
-    document.getElementById('menuOverlay').classList.add('hidden');
-    document.getElementById('statsOverlay').classList.remove('hidden');
-  });
-  document.getElementById('btnCloseStats').addEventListener('click', ()=>{
-    document.getElementById('statsOverlay').classList.add('hidden');
-    document.getElementById('menuOverlay').classList.remove('hidden');
-  });
+  document.getElementById('btnShowStats').addEventListener('click', ()=> Nav.go('statsOverlay'));
 
   document.getElementById('modeSquare').addEventListener('click', ()=>{
     ensureAudio();
@@ -4583,6 +5508,7 @@
     window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
+      Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
   }
 
