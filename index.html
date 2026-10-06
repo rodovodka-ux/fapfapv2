@@ -968,6 +968,46 @@
   .cert-overlay.ice .cx-rays{ background: repeating-conic-gradient(from 0deg, rgba(180,230,255,0.16) 0 6deg, transparent 6deg 18deg); }
   body.calm .cert-overlay .cx-card, body.calm .cert-overlay .cx-seal, body.calm .cert-overlay .cert-share{ opacity:1; transform:none; }
 
+  /* =====================================================================================
+     PHONES: the whole game fits in one screen (no scrolling), and the ☰ bar always stays at the top
+     ===================================================================================== */
+  .app-shell{ height:100vh; height:100dvh; }
+  header{ position:sticky; top:0; z-index:30; }
+  #duoScreen .table{ flex:1 1 auto; min-height:0; }
+  #duoScreen .centerstage{ min-height:0; }
+  .hand-zone .actions:empty{ display:none; }
+  @media (max-height: 860px){
+    header{ padding-top: max(6px, env(safe-area-inset-top)); padding-bottom:2px; }
+    header h1{ font-size:21px; }
+    header .sub{ font-size:10px; margin-top:0; }
+    #btnMenu, #btnMute{ top:4px !important; }
+    .scorebar, .sq-scoreboard{ margin-top:4px; padding:4px 10px; }
+    .scorebar .val{ font-size:17px; }
+    .opp-table-art{ max-height:100px; margin:-6px auto -12px; width:150px; }
+    .ai-zone{ gap:2px; }
+    #duoScreen .table{ padding:14px 0 2px; gap:4px; }
+    .slot .card, .slot .passe-chip{ width:54px; height:76px; }
+    .slot .card .c-rank{ font-size:14px; }
+    .hand .card{ width:58px; height:82px; }
+    .hand-zone{ padding-top:3px; }
+    .hand-label{ margin-bottom:2px; }
+    .actions{ margin-top:4px; min-height:0; }
+    .sq-table{ min-height:240px; }
+  }
+  @media (max-height: 720px){
+    header .sub{ display:none; }
+    header h1{ font-size:19px; }
+    .opp-table-art{ max-height:78px; width:120px; }
+    .ai-label{ font-size:11px; }
+    .ai-label .avatar{ --s:28px !important; }
+    .slot .card, .slot .passe-chip{ width:48px; height:68px; }
+    .slot-hist .mini-card{ transform:scale(0.85); }
+    .hand .card{ width:54px; height:76px; }
+    .hand .card .c-rank{ font-size:15px; }
+    .sq-table{ min-height:210px; }
+    .card.sq-size{ width:42px; height:60px; }
+  }
+
   /* ---- automatic win: the announced hand, turned over for everyone to check ---- */
   #revealOverlay{ z-index:64; }
   .reveal-sheet{ max-width:380px; gap:10px; }
