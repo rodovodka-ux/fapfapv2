@@ -968,6 +968,30 @@
   .cert-overlay.ice .cx-rays{ background: repeating-conic-gradient(from 0deg, rgba(180,230,255,0.16) 0 6deg, transparent 6deg 18deg); }
   body.calm .cert-overlay .cx-card, body.calm .cert-overlay .cx-seal, body.calm .cert-overlay .cert-share{ opacity:1; transform:none; }
 
+  /* ---- automatic win: the announced hand, turned over for everyone to check ---- */
+  #revealOverlay{ z-index:64; }
+  .reveal-sheet{ max-width:380px; gap:10px; }
+  .rv-kicker{ font-size:10.5px; font-weight:800; letter-spacing:0.22em; text-transform:uppercase; color:var(--bulb); }
+  .reveal-sheet h2{ font-size:26px !important; }
+  .rv-combo{ font-family:var(--font-display); font-weight:800; font-size:17px !important; color:var(--bulb-hot) !important; max-width:none !important; }
+  .rv-cards{ display:flex; gap:6px; justify-content:center; margin:6px 0 2px; }
+  .rv-card{ position:relative; width:56px; height:80px; flex-shrink:0;
+    animation: rvIn 0.45s cubic-bezier(.3,1.5,.5,1) backwards; animation-delay: calc(var(--i) * 70ms); }
+  @keyframes rvIn{ from{ opacity:0; transform: translateY(-30px) rotate(-10deg) scale(0.7); } }
+  .rv-back, .rv-front{ position:absolute !important; inset:0; width:100% !important; height:100% !important; margin:0 !important; border-radius:7px; }
+  .rv-back::after{ display:flex !important; font-size:12px; }
+  .rv-front{ visibility:hidden; padding:4px 5px !important; transition: box-shadow 0.4s, filter 0.4s; }
+  .rv-front .c-rank{ font-size:15px; }
+  /* a flat flip that works everywhere: the card narrows to nothing, turns face up, and opens again */
+  .rv-card.turn{ animation: rvTurn 0.5s ease-in-out; }
+  @keyframes rvTurn{ 0%{ transform: scaleX(1); } 50%{ transform: scaleX(0.02) scaleY(1.06); } 100%{ transform: scaleX(1); } }
+  .rv-card.face .rv-back{ visibility:hidden; }
+  .rv-card.face .rv-front{ visibility:visible; }
+  .rv-cards.flipped .rv-front.rv-key{ box-shadow: 0 0 0 2px var(--bulb), 0 0 18px rgba(244,184,96,0.85) !important; transition-delay: 0.9s; }
+  .rv-cards.flipped .rv-front:not(.rv-key){ filter: brightness(0.62) saturate(0.6); transition-delay: 0.9s; }
+  .rv-explain{ min-height:20px; font-size:14px !important; font-weight:700; color:var(--cream) !important; opacity:0; transform: translateY(6px); transition: opacity 0.4s, transform 0.4s; max-width:none !important; }
+  .rv-explain.show{ opacity:1; transform:none; }
+
   /* =====================================================================================
      THE CORA METEOR — a burning meteor strikes the winning 3: impact, quake, embers, the card on fire
      ===================================================================================== */
@@ -1905,6 +1929,19 @@
       <button id="btnOpenSettings"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span>Paramètres</button>
       <button class="danger" id="btnQuitGame"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Quitter vers l'accueil</button>
     </div>
+  </div>
+</div>
+
+<!-- Automatic win: the announced hand is shown to everyone, then confirmed -->
+<div class="overlay modal hidden" id="revealOverlay">
+  <div class="sheet reveal-sheet">
+    <div class="rv-kicker">Victoire automatique</div>
+    <h2 id="rvWho">Annonce !</h2>
+    <p class="rv-combo" id="rvCombo"></p>
+    <div class="rv-cards" id="rvCards"></div>
+    <p class="rv-explain" id="rvExplain"></p>
+    <button class="primary big" id="rvConsult"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Consulter les cartes</button>
+    <button class="primary big hidden" id="rvConfirm"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg> Confirmer la victoire</button>
   </div>
 </div>
 
@@ -2868,6 +2905,7 @@
     }
     if(msg.t==='dealt'){
       // the host dealt: whatever screen the guest was still on (end of the previous hand), move on
+      if(revealDone) revealDone(); // an automatic win still being checked counts before the new hand
       document.getElementById('choiceOverlay').classList.add('hidden');
       document.getElementById('btnNext').classList.add('hidden');
       clearSlots();
@@ -2916,8 +2954,14 @@
       if(state && !state.handOver){
         state.handOver = true;
         if(/automatique/i.test(msg.label||'')){
-          showToast(msg.winner==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', msg.label.replace(/^Victoire automatique — /,''), {big:true, celebrate:true, ms:3000});
+          const label = msg.label.replace(/^Victoire automatique — /,'');
+          showToast(msg.winner==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
           sfxBigWin(); bigImpact();
+          document.getElementById('btnAnnounce').classList.add('hidden');
+          // the announced cards, checked before the point counts
+          showAutoWinReveal({mine: msg.winner==='you', name: msg.winner==='you' ? 'Toi' : oppName(), hand: msg.cards || (msg.winner==='you' ? state.playerOriginalHand : []),
+            label, autoMs: 25000, onConfirm: ()=> awardPoints(msg.winner, msg.pts, msg.label)});
+          return;
         }
         awardPoints(msg.winner, msg.pts, msg.label);
       }
@@ -4819,15 +4863,78 @@
     state.handOver = true;
     document.getElementById('btnAnnounce').classList.add('hidden');
     document.getElementById('btnPasse').classList.add('hidden');
-    showToast(who==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
+    showToast(who==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
     sfxBigWin();
     bigImpact();
-    if(who==='you') burstConfetti(28);
     penaltySay(who==='you' ? L('surprise') : L('win'));
+    const hand = who==='you' ? state.playerOriginalHand : state.aiOriginalHand;
     if(mode==='mp' && mpIsHost){
-      mpSend({t:'handOver', winner: who==='you'?'ai':'you', pts:1, label:'Victoire automatique — '+label});
+      // the announced hand travels with the result, so the friend can check it too
+      mpSend({t:'handOver', winner: who==='you'?'ai':'you', pts:1, label:'Victoire automatique — '+label, cards: hand});
     }
-    awardPoints(who, 1, 'Victoire automatique — '+label);
+    // nobody scores before the cards have been shown and the win confirmed
+    showAutoWinReveal({mine: who==='you', name: who==='you' ? 'Toi' : oppName(), hand, label,
+      autoMs: mode==='mp' ? 25000 : 0,
+      onConfirm: ()=>{ if(who==='you') burstConfetti(28); awardPoints(who, 1, 'Victoire automatique — '+label); }});
+  }
+
+  // ---- The automatic-win check: the 5 announced cards, face down, then turned over for everyone to see ----
+  let revealDone = null;
+  function autoWinExplain(hand){
+    const win = checkAutoWin(hand);
+    if(!win) return {keys: new Set(), text:''};
+    const key = c=> c.suit+'-'+c.rank;
+    if(win.type==='total21') return {keys: new Set(hand.map(key)), text: hand.map(c=>c.rank).join(' + ')+' = '+hand.reduce((s,c)=>s+c.rank,0)+' : pas plus de 21'};
+    if(win.type==='quad'){ const r = Number(win.label.match(/\d+/)[0]); return {keys: new Set(hand.filter(c=>c.rank===r).map(key)), text:'Le '+r+' dans les 4 couleurs'}; }
+    if(win.type==='triple'){ const r = Number(win.label.match(/\d+/)[0]); return {keys: new Set(hand.filter(c=>c.rank===r).slice(0,3).map(key)), text:'Trois '+r+' dans la même main'}; }
+    if(win.type==='flush5') return {keys: new Set(hand.map(key)), text:'Les 5 cartes en '+hand[0].suit};
+    return {keys: new Set(), text:''};
+  }
+  // o: {mine, name, hand, label, onConfirm, autoMs, watchOnly}
+  function showAutoWinReveal(o){
+    if(revealDone) revealDone(); // never two at once
+    const ov = document.getElementById('revealOverlay');
+    document.getElementById('rvWho').textContent = o.mine ? 'Tu annonces !' : o.name+' annonce !';
+    document.getElementById('rvCombo').textContent = o.label;
+    const box = document.getElementById('rvCards');
+    box.innerHTML = '';
+    const ex = autoWinExplain(o.hand||[]);
+    sortHand(o.hand||[]).forEach((c,i)=>{
+      const w = document.createElement('div');
+      w.className = 'rv-card'; w.style.setProperty('--i', i);
+      const back = document.createElement('div'); back.className = 'facedown rv-back';
+      const front = cardEl(c, {extraClass:'rv-front'+(ex.keys.has(c.suit+'-'+c.rank) ? ' rv-key' : '')});
+      w.append(back, front);
+      box.appendChild(w);
+    });
+    const exEl = document.getElementById('rvExplain');
+    exEl.textContent = ''; exEl.classList.remove('show');
+    const consult = document.getElementById('rvConsult'), confirm = document.getElementById('rvConfirm');
+    consult.classList.remove('hidden'); confirm.classList.add('hidden');
+    confirm.innerHTML = ico('check')+(o.watchOnly ? ' Fermer' : o.mine ? ' Confirmer ma victoire' : ' Valider');
+    let flipped = false, finished = false, timer = null;
+    const flip = ()=>{
+      if(flipped) return; flipped = true;
+      box.classList.add('flipped');
+      [...box.children].forEach((w,i)=>{
+        if(calmOn()){ w.classList.add('face'); return; }
+        setTimeout(()=>{ w.classList.add('turn'); setTimeout(()=> w.classList.add('face'), 250); }, i*130);
+      });
+      sfxDeal(5, 0.13);
+      setTimeout(()=>{ exEl.textContent = ex.text; exEl.classList.add('show'); consult.classList.add('hidden'); confirm.classList.remove('hidden'); sfxToggle(true); }, calmOn() ? 0 : 900);
+    };
+    const finish = ()=>{
+      if(finished) return; finished = true;
+      clearTimeout(timer); revealDone = null;
+      hide('revealOverlay');
+      if(o.onConfirm) o.onConfirm();
+    };
+    consult.onclick = flip;
+    confirm.onclick = finish;
+    revealDone = ()=>{ flip(); finish(); };
+    // online, the game can't wait forever for someone who left their phone: it opens and confirms on its own
+    if(o.autoMs) timer = setTimeout(()=>{ flip(); setTimeout(finish, 2500); }, o.autoMs);
+    show('revealOverlay');
   }
 
   // ---- playing cards ----
@@ -6558,14 +6665,17 @@
     }
     document.getElementById('sqBtnAnnounce').classList.add('hidden');
     document.getElementById('sqBtnPasse').classList.add('hidden');
-    showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
+    showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
     sfxBigWin(); bigImpact(); vibrate([30,60,30,60,80]);
-    if(winnerId==='you') burstConfetti(28);
-    sqEvent('auto', {seat:winnerId, label});
+    const hand = sq.players[winnerId].originalHand;
+    sqEvent('auto', {seat:winnerId, label, cards:hand});
     sqSay(winnerId, 'win');
     renderSquare();
     const myGen = sq.gen;
-    gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winnerId, 'Victoire automatique — '+label); }, sqDelay(1400));
+    // the announced hand is shown to the table first; the eliminations follow once it's confirmed
+    showAutoWinReveal({mine: winnerId==='you', name: sqName(winnerId), hand, label,
+      autoMs: sq.online ? 25000 : (sq.fastForward ? 1500 : 0),
+      onConfirm: ()=>{ if(winnerId==='you') burstConfetti(28); if(sq.gen===myGen) sqShowEliminationChoice(winnerId, 'Victoire automatique — '+label); }});
   }
 
   function sqLeadPhase(){
@@ -7248,8 +7358,10 @@
   function roomPlayEvent(ev, V){
     const me = V(ev.seat)==='you';
     if(ev.kind==='auto'){
-      showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:3000});
+      showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:2200});
       sfxBigWin(); bigImpact(); if(me){ burstConfetti(28); repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); }
+      // everyone at the table gets to look at the announced cards
+      if(ev.cards) showAutoWinReveal({mine: me, name: sqName(V(ev.seat)), hand: ev.cards, label: ev.label, watchOnly: true, autoMs: 20000});
     } else if(ev.kind==='handwin'){
       if(me) sqHandWonRewards(ev.cora, ev.glacee, (sq.history.you||[]).some(e=>e.type==='passe'));
       sqHandWonShow(V(ev.seat), ev.cora, ev.glacee);
@@ -7481,7 +7593,7 @@
     window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
-      openChoiceForPlayer, showOppRitual, meteorStrike, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
+      openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
   }
 
