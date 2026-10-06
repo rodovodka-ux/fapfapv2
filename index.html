@@ -828,6 +828,73 @@
   body.table-verre .sq-eliminated-box p{ color:#5a4a38; }
   body.table-verre .mini-card{ box-shadow:0 1px 3px rgba(0,0,0,0.25); }
 
+  /* =====================================================================================
+     JETONS — balance on the home screen, stake picker, the neighbourhood's fortunes, the result
+     ===================================================================================== */
+  .chips-bar{ width:100%; max-width:360px; display:flex; align-items:center; gap:8px; }
+  .chips-bal{ flex:1; display:flex; align-items:center; gap:8px; padding:7px 12px 7px 7px; border-radius:30px;
+    background:rgba(0,0,0,0.45); border:1px solid rgba(244,184,96,0.3); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .coin-big{ width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#6b3d08;
+    background: radial-gradient(circle at 35% 30%, #fff1c4, #f4b860 45%, #b8741d); box-shadow: 0 2px 0 #7a4a0c, 0 0 12px rgba(244,184,96,0.5); }
+  .coin-big svg.i{ width:20px; height:20px; margin:0; }
+  .chips-bal b{ font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--bulb-hot); letter-spacing:-0.01em; }
+  .chips-bal small{ font-size:11.5px; color:var(--dust); font-weight:600; }
+  .chips-claim{ padding:9px 12px; border-radius:20px; border:none; font-size:12px; font-weight:800; color:#20160a; white-space:nowrap;
+    background: linear-gradient(170deg, #ffe39a, #f4b860 50%, #d98f2e); box-shadow:0 3px 0 #8a4e0c; animation: claimPulse 1.8s ease-in-out infinite; }
+  .chips-claim svg.i{ width:14px; height:14px; }
+  .chips-claim.claimed{ animation: claimGo 0.45s ease-in forwards; }
+  @keyframes claimPulse{ 0%,100%{ transform:scale(1); box-shadow:0 3px 0 #8a4e0c, 0 0 0 0 rgba(244,184,96,0.5); } 50%{ transform:scale(1.04); box-shadow:0 3px 0 #8a4e0c, 0 0 0 7px rgba(244,184,96,0); } }
+  @keyframes claimGo{ to{ transform:scale(0.6); opacity:0; } }
+  .chips-rich{ width:42px; height:42px; padding:0; border-radius:50%; flex-shrink:0; color:var(--bulb); display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.45); border:1px solid rgba(244,184,96,0.35); }
+  .chips-rich svg.i{ width:20px; height:20px; margin:0; }
+  .intro .chips-bar{ animation: fadeUp 0.5s ease 0.75s backwards; }
+  .intro.quick .chips-bar{ animation-delay:0.15s; }
+  .fly-coin{ position:fixed; width:22px; height:22px; border-radius:50%; z-index:95; pointer-events:none;
+    background: radial-gradient(circle at 35% 30%, #fff1c4, #f4b860 45%, #b8741d); box-shadow: inset 0 0 0 2px rgba(122,74,12,0.5), 0 2px 6px rgba(0,0,0,0.4); }
+  /* stake picker */
+  .stake-pick{ width:100%; max-width:360px; display:flex; flex-direction:column; gap:6px; }
+  .sp-head{ display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--bulb); padding:0 2px; }
+  .sp-have{ display:inline-flex; align-items:center; gap:4px; color:var(--cream); letter-spacing:0; text-transform:none; font-weight:700; }
+  .sp-have svg.i{ width:15px; height:15px; color:var(--bulb); }
+  .sp-row{ display:flex; gap:6px; overflow-x:auto; padding:2px 2px 6px; scrollbar-width:none; }
+  .sp-row::-webkit-scrollbar{ display:none; }
+  .sp-chip{ flex-shrink:0; display:inline-flex; align-items:center; gap:4px; padding:8px 12px; border-radius:20px; font-size:13px; font-weight:800;
+    background:rgba(255,240,215,0.06); border:1px solid rgba(244,184,96,0.25); color:var(--cream); }
+  .sp-chip svg.i{ width:14px; height:14px; color:var(--bulb); margin:0; }
+  .sp-chip.on{ background: linear-gradient(170deg, #ffe39a, #f4b860 50%, #d98f2e); color:#20160a; border-color:transparent; box-shadow:0 3px 0 #8a4e0c; }
+  .sp-chip.on svg.i{ color:#6b3d08; }
+  .sp-chip.cant{ opacity:0.38; }
+  .opp-gain{ display:flex; align-items:center; gap:4px; font-size:11.5px; font-weight:700; color:var(--bulb); }
+  .opp-gain svg.i{ width:13px; height:13px; }
+  .mid-stake{ display:inline-flex; align-items:center; gap:3px; margin-left:4px; padding:1px 7px; border-radius:10px; background:rgba(244,184,96,0.15); color:var(--bulb); font-weight:800; }
+  .mid-stake svg.i{ width:12px; height:12px; }
+  /* the neighbourhood's fortunes */
+  .rich-list{ display:flex; flex-direction:column; gap:8px; }
+  .rich-row{ display:grid; grid-template-columns:30px auto 1fr auto; align-items:center; gap:10px; padding:10px 12px; border-radius:16px;
+    background:rgba(255,240,215,0.05); border:1px solid rgba(244,184,96,0.14); }
+  .pg-in-fwd .rich-row{ animation: heroIn 0.5s cubic-bezier(.25,1.5,.45,1) backwards; animation-delay: calc(var(--d) * 80ms + 80ms); }
+  .rich-row.me{ border-color:var(--bulb); background:rgba(244,184,96,0.12); box-shadow:0 0 18px rgba(244,184,96,0.2); }
+  .rich-pos{ font-family:var(--font-display); font-weight:800; font-size:18px; color:var(--dust); text-align:center; }
+  .rich-row:first-child .rich-pos{ color:var(--bulb); }
+  .rich-pos svg.i{ width:22px; height:22px; color:var(--bulb); }
+  .rich-name{ font-weight:700; font-size:15px; color:var(--cream); }
+  .rich-chips{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--bulb-hot); }
+  .rich-chips svg.i{ width:16px; height:16px; color:var(--bulb); }
+  /* end of match: what the stake brought */
+  .chips-result{ width:100%; max-width:300px; display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:16px;
+    background: linear-gradient(160deg, rgba(244,184,96,0.22), rgba(244,184,96,0.06)); border:1px solid rgba(244,184,96,0.5);
+    animation: fadeUp 0.5s ease 0.6s backwards; text-align:left; }
+  .chips-result.loss{ background:rgba(143,47,29,0.18); border-color:rgba(217,84,46,0.5); }
+  .cr-coin{ width:40px; height:40px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#6b3d08;
+    background: radial-gradient(circle at 35% 30%, #fff1c4, #f4b860 45%, #b8741d); box-shadow:0 3px 0 #7a4a0c; }
+  .chips-result.loss .cr-coin{ filter: grayscale(0.7) brightness(0.8); }
+  .cr-coin svg.i{ width:26px; height:26px; margin:0; }
+  .cr-body{ display:flex; flex-direction:column; }
+  .cr-body b{ font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--bulb-hot); }
+  .chips-result.loss .cr-body b{ color:#ff9c80; }
+  .cr-body small{ font-size:11.5px; color:var(--dust); font-weight:600; }
+
   /* ---- match format: full match / quick game ---- */
   .format-pick{ display:grid; grid-template-columns:1fr 1fr; gap:6px; width:100%; max-width:360px; padding:5px; border-radius:16px;
     background:rgba(0,0,0,0.35); border:1px solid rgba(244,184,96,0.18); }
@@ -1395,6 +1462,7 @@
   <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8m-6 0h6v6"/></symbol>
   <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></symbol>
   <symbol id="i-hush" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 15h7M9 9.5h.01M15 9.5h.01"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none" opacity="0.28"/><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 2.5v3m0 13v3M2.5 12h3m13 0h3M5.3 5.3l2.1 2.1m9.2 9.2 2.1 2.1m0-13.4-2.1 2.1m-9.2 9.2-2.1 2.1"/></symbol>
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m11 3 1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3zm7.5 11 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z"/></symbol>
 </svg>
 <div class="bulb-glow"></div>
@@ -1621,6 +1689,10 @@
     <div class="cert-sign">Fait à Yaoundé — Éditions du Quartier</div>
     <div class="cert-stamp" style="font-size:10px;">PENALTY</div>
   </div>
+  <div class="chips-result hidden" id="chipsResult">
+    <span class="cr-coin"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span>
+    <span class="cr-body"><b id="crAmount">+0</b><small id="crDetail"></small></span>
+  </div>
   <div class="rep-panel hidden" id="repPanel">
     <div class="rep-head"><span id="repRankName"></span><span id="repGain"></span></div>
     <div class="rep-bar"><div id="repBarFill"></div></div>
@@ -1661,6 +1733,11 @@
       <p class="home-tag">Le jeu de cartes du quartier</p>
     </div>
     <div class="menu-rank" id="menuRank"></div>
+    <div class="chips-bar" id="chipsBar">
+      <span class="chips-bal"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
+      <button class="chips-claim hidden" id="btnChipsClaim"></button>
+      <button class="chips-rich" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
+    </div>
 
     <button class="hero-btn hero-tuto" id="modeTuto" style="--d:0">
       <span class="hero-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
@@ -1719,6 +1796,10 @@
       <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
       <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
     </div>
+    <div class="stake-pick">
+      <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
+      <div class="sp-row"></div>
+    </div>
     <p class="page-intro">Choisis ton adversaire.</p>
     <div class="opp-list" id="oppList"></div>
   </div>
@@ -1745,6 +1826,16 @@
       <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg> Décors</button>
     </div>
     <div class="stats-block" id="statsContent"></div>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="richPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Les plus riches</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <p class="page-intro">Bats quelqu'un avec une mise et il te paie. Perds, et il empoche ta mise. Qui sera le caïd du quartier ?</p>
+    <div class="rich-list" id="richList"></div>
+    <p class="small-note" id="richBest"></p>
+    <p class="small-note">Les jetons se gagnent en jouant : bonus chaque jour, victoires, trophées, défi du jour. Ils ne s'achètent pas et ne s'échangent pas contre de l'argent.</p>
   </div>
 </div>
 
@@ -1837,7 +1928,11 @@
       <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
       <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
     </div>
-    <p class="small-note">Le format est choisi par celui qui crée la partie.</p>
+    <div class="stake-pick">
+      <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
+      <div class="sp-row"></div>
+    </div>
+    <p class="small-note">Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
   </div>
@@ -2399,8 +2494,9 @@
   function startMpMatch(){
     if(mpMatchStarted) return;
     mpMatchStarted = true;
-    if(mpIsHost) setMatchLength(!!prefs.quick); // the host's format choice applies to both
+    if(mpIsHost){ setMatchLength(!!prefs.quick); mpStake = Math.min(prefs.stake||0, profile.chips); } // the host's choices apply to both
     startMatchTracking();
+    if(mpIsHost) takeMpStake();
     mode = 'mp';
     enterGame();
     applyOppNameToUI();
@@ -2412,7 +2508,7 @@
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
       mpSend({t:'hello', name: myName}); // so the guest knows who they're facing
-      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE}); // flip perspective for the other side
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake}); // flip perspective for the other side
       beginHand();
     }
     // guest waits for the 'start' message to know who deals first
@@ -2429,7 +2525,9 @@
       if(mpMatchStarted) return;
       mpMatchStarted = true;
       TARGET_SCORE = msg.target===1 ? 1 : 5; // the host chose the format
+      mpStake = Math.max(0, msg.stake|0);   // …and the stake
       startMatchTracking();
+      takeMpStake();
       mode = 'mp';
       enterGame();
       applyOppNameToUI();
@@ -2705,6 +2803,8 @@
 
   function sfxTap(){ sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:1400, f1:950, dur:0.035, vol:0.03}); noiseHit(c, sfxBus, t, {dur:0.018, vol:0.01, type:'highpass', f0:5000}); }); }
   function sfxSwipe(back){ sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.2, vol:0.028, type:'bandpass', f0:back?2600:900, f1:back?900:2600, q:0.8, att:0.06, pan:back?-0.3:0.3})); }
+  // coins landing: a quick shower of bright metallic clinks
+  function sfxCoins(n){ sfx((c,t)=>{ for(let i=0;i<Math.min(n||8,12);i++) fmNote(c, sfxBus, t+i*0.055+Math.random()*0.02, mtof(88+Math.floor(Math.random()*7)), {vol:0.035, dur:0.18, ratio:3.5, index:1.4, decayIdx:0.08, pan:Math.random()*0.6-0.3, verbNode:sfxVerb, verb:0.25, lp:9000}); }); }
   function sfxToggle(on){ sfx((c,t)=> pluck(c, t, on ? 79 : 72, 0.05, 0, 1)); }
   // a card sliding then landing on the table: swish + soft thud + tiny tap
   function sfxCardPlay(){ sfx((c,t)=>{
@@ -3446,7 +3546,8 @@
     const t = TROPHY_BY_ID[id];
     repAdd(TROPHY_REP, 'Trophées');
     if(matchRep) matchRep.trophies.push(t);
-    trophyPop(t);
+    chipsAdd(200); // every trophy also pays 200 jetons
+    trophyPop(Object.assign({}, t, {kind:'Trophée débloqué · +200 jetons'}));
   }
   // ---- Days-in-a-row streak: the first finished game of each day extends it and pays a bonus ----
   function dayKey(d){
@@ -3841,13 +3942,14 @@
   }
   function pageShown(id){
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
-    if(id==='menuOverlay'){ renderMenuRank(); playHomeIntro(); }
+    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); }
+    else if(id==='richPage') renderRich();
     else if(id==='oppSelectOverlay') renderOppSelect();
     else if(id==='trophiesOverlay') renderTrophies();
     else if(id==='skinsOverlay') renderSkins();
     else if(id==='statsOverlay') renderStats();
     else if(id==='settingsPage') refreshSettings();
-    else if(id==='mpLobbyOverlay'){ document.getElementById('mpNameInput').value = prefs.name || ''; preloadNet(); }
+    else if(id==='mpLobbyOverlay'){ document.getElementById('mpNameInput').value = prefs.name || ''; preloadNet(); renderStakePicks(); }
   }
   function pageLeft(id){
     // backing out of the "your code" / "join" pages before a match starts closes the connection
@@ -3923,12 +4025,14 @@
       : mode==='square' ? 'La partie de Carré la Pute en cours sera perdue.'
       : tuto ? 'Tu pourras reprendre la partie guidée quand tu veux.'
       : 'Le match en cours contre '+oppName()+' sera perdu.';
+    const lostStake = matchStake>0 ? ' Ta mise de '+fmtChips(matchStake)+' jetons est perdue.' : '';
     hide('pauseOverlay');
-    askConfirm('Quitter la partie ?', text, 'Oui, quitter', goToMainMenu);
+    askConfirm('Quitter la partie ?', text+lostStake, 'Oui, quitter', goToMainMenu);
   }
   function askRestart(){
     hide('pauseOverlay');
-    askConfirm('Recommencer la partie ?', 'Le score repart à zéro.', 'Oui, recommencer', ()=>{
+    const st = matchStake>0 ? ' Ta mise de '+fmtChips(matchStake)+' jetons est perdue, une nouvelle mise est prise.' : '';
+    askConfirm('Recommencer la partie ?', 'Le score repart à zéro.'+st, 'Oui, recommencer', ()=>{
       gameGen++; resumeQueue.length = 0; setPaused(false);
       if(tuto){ startTuto(); return; }
       if(mode==='square'){ if(sq) sq.gen++; sqNewGame(); return; }
@@ -3980,6 +4084,7 @@
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
     document.getElementById('matchOverOverlay').classList.add('hidden');
+    if(mode==='ai' && !tuto && !daily) takeStake(); else matchStake = 0;
     dealer = Math.random()<0.5 ? 'you' : 'ai';
     beginHand();
   }
@@ -5013,8 +5118,8 @@
     // (not during the guided game: its CORA is handed to you, it shouldn't count)
     if(who==='you' && !tuto){
       repAdd(5, 'Manches gagnées');
-      if(isGlacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); }
-      else if(isCora){ repAdd(15, 'CORA'); unlockTrophy('cora'); }
+      if(isGlacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; }
+      else if(isCora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; }
       if(isAutoWin){ repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); if(/4 symboles/.test(label)) unlockTrophy('quad'); }
       if(state && state.history.some(e=>e.type==='passe' && e.actor==='you')) unlockTrophy('passe');
       if(state && state.youSlept) unlockTrophy('sommeil');
@@ -5053,7 +5158,7 @@
     if(daily && mode==='ai'){
       // daily challenge: a fixed number of hands, scored hand by hand, instead of "first to 5"
       daily.marks.push(who==='you' ? (isGlacee?'🧊':isCora?'🟨':isAutoWin?'⚡':'🟩') : '🟥');
-      if(who==='you') daily.points += pts;
+      if(who==='you'){ daily.points += pts; chipsAdd(100); } // each hand won in the daily challenge pays 100 jetons
       saveProfile();
       const delay = (isGlacee||isCora) ? 3700 : 1400;
       if(daily.marks.length>=DAILY_HANDS) gameTimeout(finishDaily, delay);
@@ -5275,6 +5380,7 @@
           '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+ico('star').repeat(p.stars)+'<span class="dim">'+ico('star').repeat(4-p.stars)+'</span></span></span>'+
           '<span class="opp-tag">'+(open ? p.tagline : p.lockedHint)+'</span>'+
           '<span class="opp-rec">'+(rec.w+rec.l>0 ? (beaten?ico('check')+' ':'')+'Ton bilan : '+rec.w+'V – '+rec.l+'D' : 'Jamais affronté')+' · +'+p.repWin+' rép. si tu gagnes</span>'+
+          (open ? '<span class="opp-gain" data-opp="'+id+'"></span>' : '')+
         '</span>';
       if(open) b.addEventListener('click', ()=>{
         duelOpp = id;
@@ -5288,7 +5394,177 @@
       list.appendChild(b);
     });
     fillAllAvatars(list);
+    renderStakePicks();
   }
+
+  // ===================== Jetons: virtual chips — earned by playing, never bought, never cashed out =====================
+  const CHIP_START = 1000;
+  const STAKES = [0, 100, 500, 1000, 5000, 10000];
+  // what a win pays back for each opponent, stake included (the stronger the opponent, the bigger the odds)
+  const ODDS = {gervais:1.5, aristide:2, penalty:3, mbarga:5};
+  // the neighbourhood's fortunes: beat someone with a stake and they pay you; lose and they pocket it
+  const RICH_START = {gervais:2500, aristide:6000, penalty:25000, mbarga:80000};
+  let matchStake = 0, matchCoras = 0, matchGlacees = 0;
+  function chipsInit(){
+    if(profile.chips==null){ profile.chips = CHIP_START; profile.chipsBest = CHIP_START; profile.chipsWon = 0; }
+    if(!profile.rich) profile.rich = Object.assign({}, RICH_START);
+    saveProfile();
+  }
+  const fmtChips = n=> Math.round(n).toLocaleString('fr-FR');
+  function chipsAdd(n){
+    if(profile.chips==null) chipsInit();
+    profile.chips = Math.max(0, Math.round(profile.chips + n));
+    if(n>0) profile.chipsWon = (profile.chipsWon||0) + Math.round(n);
+    profile.chipsBest = Math.max(profile.chipsBest||0, profile.chips);
+    saveProfile();
+  }
+  function dailyChips(){ return 300 + Math.min(300, 50*Math.max(0, (liveDayStreak()||0) - 1)); }
+  function dailyChipsReady(){ return profile.chipsDaily!==dayKey(); }
+  // never stuck: when you're broke, Penalty lends you a little (once an hour)
+  function rescueReady(){ return profile.chips<100 && !dailyChipsReady() && Date.now()-(profile.chipsRescueAt||0) > 3600e3; }
+  // a number that rolls up or down to its new value
+  function rollNumber(el, from, to, ms){
+    if(!el) return;
+    if(calmOn() || from===to){ el.textContent = fmtChips(to); return; }
+    const t0 = performance.now();
+    const step = (now)=>{
+      const k = Math.min(1, (now-t0)/ms), e = 1-Math.pow(1-k, 3);
+      el.textContent = fmtChips(from + (to-from)*e);
+      if(k<1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  // little gold coins flying from one element to another
+  function coinBurst(fromEl, toEl, n){
+    if(calmOn() || !fromEl || !toEl) return;
+    const a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+    for(let i=0; i<(n||10); i++){
+      const c = document.createElement('span');
+      c.className = 'fly-coin';
+      c.style.left = (a.left + a.width/2 - 11 + (Math.random()*30-15))+'px';
+      c.style.top = (a.top + a.height/2 - 11 + (Math.random()*16-8))+'px';
+      document.body.appendChild(c);
+      const dx = b.left + 18 - (a.left + a.width/2), dy = b.top + b.height/2 - (a.top + a.height/2);
+      c.animate([
+        {transform:'translate(0,0) scale(0.6)', opacity:0},
+        {transform:'translate('+(Math.random()*40-20)+'px,-30px) scale(1.1)', opacity:1, offset:0.3},
+        {transform:'translate('+dx+'px,'+dy+'px) scale(0.7)', opacity:1, offset:0.92},
+        {transform:'translate('+dx+'px,'+dy+'px) scale(0.4)', opacity:0}
+      ], {duration:850, delay:i*55, easing:'cubic-bezier(.3,.6,.3,1)', fill:'both'}).onfinish = ()=> c.remove();
+      setTimeout(()=> c.remove(), 2000);
+    }
+    sfxCoins(n||10);
+  }
+  function renderChips(animateFrom){
+    const val = document.getElementById('chipsVal');
+    if(!val) return;
+    if(animateFrom!=null) rollNumber(val, animateFrom, profile.chips, 1100); else val.textContent = fmtChips(profile.chips);
+    const claim = document.getElementById('btnChipsClaim');
+    if(dailyChipsReady()){ claim.innerHTML = ico('sparkle')+' Bonus du jour +'+fmtChips(dailyChips()); claim.classList.remove('hidden'); claim.dataset.kind = 'daily'; }
+    else if(rescueReady()){ claim.innerHTML = 'Penalty te dépanne +300'; claim.classList.remove('hidden'); claim.dataset.kind = 'rescue'; }
+    else claim.classList.add('hidden');
+  }
+  document.getElementById('btnChipsClaim').addEventListener('click', (e)=>{
+    const btn = e.currentTarget, before = profile.chips;
+    if(btn.dataset.kind==='daily' && dailyChipsReady()){ chipsAdd(dailyChips()); profile.chipsDaily = dayKey(); }
+    else if(btn.dataset.kind==='rescue' && rescueReady()){ chipsAdd(300); profile.chipsRescueAt = Date.now(); }
+    else return;
+    saveProfile();
+    coinBurst(btn, document.getElementById('chipsVal'), 12);
+    btn.classList.add('claimed');
+    setTimeout(()=>{ btn.classList.remove('claimed'); renderChips(before); }, 450);
+  });
+  document.getElementById('btnRich').addEventListener('click', ()=> Nav.go('richPage'));
+  // the stake picker (on the opponents page and in the online lobby)
+  function renderStakePicks(){
+    const cur = Math.min(prefs.stake||0, profile.chips);
+    document.querySelectorAll('.stake-pick').forEach(box=>{
+      box.querySelector('.sp-bal').textContent = fmtChips(profile.chips);
+      const row = box.querySelector('.sp-row');
+      row.innerHTML = '';
+      STAKES.forEach(s=>{
+        const b = document.createElement('button');
+        const can = s<=profile.chips;
+        b.className = 'sp-chip'+(s===cur ? ' on' : '')+(can ? '' : ' cant');
+        b.innerHTML = s===0 ? 'Amical' : ico('coin')+fmtChips(s);
+        b.addEventListener('click', ()=>{
+          if(!can){ showToast('Pas assez de jetons', 'Il te faut '+fmtChips(s)+' jetons pour cette mise.', {ms:1600}); return; }
+          prefs.stake = s; savePrefs(); renderStakePicks();
+        });
+        row.appendChild(b);
+      });
+    });
+    document.querySelectorAll('.opp-gain').forEach(el=>{
+      const odds = ODDS[el.dataset.opp] || 2;
+      el.innerHTML = cur>0 ? ico('coin')+' Mise '+fmtChips(cur)+' → tu gagnes '+fmtChips(Math.round(cur*odds))+' (×'+String(odds).replace('.',',')+')'
+                           : ico('coin')+' Partie amicale · cote ×'+String(odds).replace('.',',');
+    });
+  }
+  // a match against the computer takes its stake at the start (quitting or restarting forfeits it)
+  function takeStake(){
+    matchCoras = 0; matchGlacees = 0;
+    matchStake = Math.min(prefs.stake||0, profile.chips);
+    if(matchStake>0){
+      chipsAdd(-matchStake);
+      const mid = document.querySelector('.scorebar .mid');
+      mid.innerHTML = mid.textContent+' <span class="mid-stake">'+ico('coin')+fmtChips(matchStake)+'</span>';
+    }
+  }
+  // online: the agreed stake (chosen by the host); each player puts in what they can, up to it
+  var mpStake = 0;
+  function takeMpStake(){
+    matchCoras = 0; matchGlacees = 0;
+    matchStake = Math.min(mpStake||0, profile.chips);
+    if(matchStake>0){
+      chipsAdd(-matchStake);
+      const mid = document.querySelector('.scorebar .mid');
+      mid.innerHTML = mid.textContent+' <span class="mid-stake">'+ico('coin')+fmtChips(matchStake)+'</span>';
+    }
+  }
+  // settles the stake at the end of a match; returns what to show on the result screen
+  function settleStake(won){
+    const res = {stake:matchStake, delta:0, mult:0, bonus:0};
+    if(mode==='ai'){
+      if(won) chipsAdd(50), res.delta += 50; // every win against the computer pays a little, even friendly ones
+      if(matchStake>0){
+        if(won){
+          const odds = ODDS[duelOpp] || 2;
+          res.bonus = 0.25*matchCoras + 0.5*matchGlacees; // your CORAs and Glacées push the payout up
+          const pay = Math.round(matchStake*odds*(1+res.bonus));
+          chipsAdd(pay); res.delta += pay - matchStake; res.mult = odds;
+          profile.rich[duelOpp] = Math.max(0, (profile.rich[duelOpp]||0) - (pay - matchStake));
+        } else {
+          res.delta -= matchStake;
+          profile.rich[duelOpp] = (profile.rich[duelOpp]||0) + matchStake;
+        }
+      }
+    } else if(mode==='mp' && matchStake>0){
+      // online: both players put the same stake in the pot, the winner takes it all
+      if(won){ chipsAdd(matchStake*2); res.delta = matchStake; } else res.delta = -matchStake;
+    }
+    saveProfile();
+    matchStake = 0;
+    return res;
+  }
+  function renderRich(){
+    const rows = Object.keys(RICH_START).map(id=>({id, name:DUEL_PERSONAS[id].name, chips:profile.rich[id]||0}));
+    rows.push({id:'you', name:(prefs.name||'Toi')+' (toi)', chips:profile.chips});
+    rows.sort((a,b)=> b.chips-a.chips);
+    const list = document.getElementById('richList');
+    list.innerHTML = rows.map((r,i)=>
+      '<div class="rich-row'+(r.id==='you' ? ' me' : '')+'" style="--d:'+i+'">'+
+        '<span class="rich-pos">'+(i===0 ? ico('crown') : (i+1))+'</span>'+
+        (r.id==='you' ? '<span class="avatar rich-av" style="--s:42px"></span>' : '<span class="avatar rich-av" data-char="'+r.id+'" style="--s:42px"></span>')+
+        '<span class="rich-name"></span>'+
+        '<span class="rich-chips">'+ico('coin')+fmtChips(r.chips)+'</span>'+
+      '</div>').join('');
+    [...list.querySelectorAll('.rich-row')].forEach((row,i)=>{ row.querySelector('.rich-name').textContent = rows[i].name; });
+    fillAllAvatars(list);
+    const me = list.querySelector('.rich-row.me .rich-av'); if(me) fillAvatar(me, null, prefs.name||'Toi');
+    document.getElementById('richBest').textContent = 'Ton record : '+fmtChips(profile.chipsBest||profile.chips)+' jetons · gagnés en tout : '+fmtChips(profile.chipsWon||0);
+  }
+  chipsInit();
+  renderChips();
   // match format: a full match (first to 5) or a quick game (one hand) — remembered for next time
   function refreshFormatPick(){
     document.querySelectorAll('.format-pick .fmt').forEach(b=>{
@@ -5469,6 +5745,7 @@
   }
   function mpStartRematchLocal(d){
     startMatchTracking();
+    takeMpStake(); // a rematch is played for the same stake
     mpRematch = {me:false, opp:false};
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
@@ -5546,6 +5823,27 @@
     refreshRematchUI();
     const mo = document.getElementById('matchOverOverlay');
     mo.dataset.result = won ? 'win' : 'lose';
+    // the chips: what the stake brought (or cost), with the coins flying to you on a win
+    const chips = settleStake(won);
+    const cr = document.getElementById('chipsResult');
+    if(chips.delta!==0 || chips.stake>0){
+      cr.classList.remove('hidden');
+      cr.classList.toggle('loss', chips.delta<0);
+      const amt = document.getElementById('crAmount');
+      amt.textContent = (chips.delta>0 ? '+' : '−')+'0 jetons';
+      const target = Math.abs(chips.delta);
+      setTimeout(()=>{
+        if(calmOn()){ amt.textContent = (chips.delta>0?'+':'−')+fmtChips(target)+' jetons'; return; }
+        const t0 = performance.now();
+        const step = now=>{ const k = Math.min(1,(now-t0)/1200), e = 1-Math.pow(1-k,3); amt.textContent = (chips.delta>0?'+':'−')+fmtChips(target*e)+' jetons'; if(k<1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+        if(chips.delta>0) coinBurst(document.getElementById('matchOverFace'), cr, 12);
+      }, 700);
+      document.getElementById('crDetail').textContent =
+        chips.stake===0 ? 'Bonus de victoire · solde '+fmtChips(profile.chips)
+        : chips.delta>0 ? (mode==='mp' ? 'Tu rafles le pot' : 'Mise '+fmtChips(chips.stake)+' × '+String(chips.mult).replace('.',',')+(chips.bonus ? ' + bonus CORA' : ''))+' · solde '+fmtChips(profile.chips)
+        : 'Mise perdue · solde '+fmtChips(profile.chips);
+    } else cr.classList.add('hidden');
     // the opponent's face on the certificate: sulking when you win, gloating when you lose
     const face = document.getElementById('matchOverFace');
     if(face){
@@ -6178,6 +6476,11 @@
       '<div class="stats-group"><h3>La route du quartier</h3>'+
         DUEL_ORDER.map(id=>{ const r=p.ladder[id]; return '<div class="stats-row"><span class="label">Contre '+DUEL_PERSONAS[id].name+'</span><span class="value">'+r.w+'V – '+r.l+'D</span></div>'; }).join('')+
         '<div class="stats-row"><span class="label">Taux de victoire (tous)</span><span class="value">'+(p.gamesPlayed>0 ? Math.round(100*p.gamesLost/p.gamesPlayed) : 0)+'%</span></div>'+
+      '</div>'+
+      '<div class="stats-group"><h3>Jetons</h3>'+
+        '<div class="stats-row"><span class="label">Solde</span><span class="value">'+fmtChips(p.chips||0)+'</span></div>'+
+        '<div class="stats-row"><span class="label">Record</span><span class="value">'+fmtChips(p.chipsBest||0)+'</span></div>'+
+        '<div class="stats-row"><span class="label">Gagnés en tout</span><span class="value">'+fmtChips(p.chipsWon||0)+'</span></div>'+
       '</div>'+
       '<div class="stats-group"><h3>En ligne</h3>'+
         '<div class="stats-row"><span class="label">Matchs joués</span><span class="value">'+(p.onlineGames||0)+'</span></div>'+
