@@ -7996,7 +7996,7 @@
   $id('btnAcctSendCode').addEventListener('click', acctSendCode);
   $id('acctEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') acctSendCode(); });
   $id('btnAcctVerify').addEventListener('click', acctVerify);
-  $id('acctCode').addEventListener('input', e=>{ const v = e.target.value.replace(/\D/g,''); e.target.value = v; if(v.length===8) acctVerify(); // Supabase sends 8-digit codes on this project });
+  $id('acctCode').addEventListener('input', e=>{ const v = e.target.value.replace(/\D/g,''); e.target.value = v; if(v.length===8) acctVerify(); }); // Supabase sends 8-digit codes on this project
   $id('btnAcctMailBack').addEventListener('click', ()=>{ Cloud.mail = null; acctErr(null); renderAccount(); });
   $id('btnAcctLogout').addEventListener('click', acctLogout);
   $id('acctNameInput').addEventListener('input', e=>{
