@@ -741,6 +741,53 @@
      ===================================================================================== */
   input, textarea{ -webkit-user-select:text; user-select:text; }
 
+  /* ---- line icons (replace every emoji of the interface) ---- */
+  svg.i{ width:1.2em; height:1.2em; flex-shrink:0; vertical-align:-0.24em; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+  button svg.i{ margin-right:2px; }
+  .icon-btn svg.i, #btnMute svg.i{ width:22px; height:22px; margin:0; vertical-align:middle; }
+  #btnMute{ color:var(--cream); }
+  .hero-ico{ color:var(--bulb); }
+  .hero-ico svg.i{ width:26px; height:26px; margin:0; }
+  .hero-tuto .hero-ico{ color:#9ee6c0; }
+  .tile-ico{ display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; color:var(--bulb);
+    background: radial-gradient(circle at 35% 30%, rgba(244,184,96,0.22), rgba(244,184,96,0.06)); border:1px solid rgba(244,184,96,0.22); }
+  .tile-ico svg.i{ width:21px; height:21px; margin:0; }
+  .mode-ico{ display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:14px; color:#9ee6c0; background:rgba(76,180,130,0.14); border:1px solid rgba(76,180,130,0.35); }
+  .mode-ico svg.i{ width:28px; height:28px; margin:0; }
+  .mi{ display:inline-flex; align-items:center; justify-content:center; }
+  .mi svg.i{ width:19px; height:19px; margin:0; }
+  .set-row > span:first-child{ display:inline-flex; align-items:center; gap:10px; }
+  .set-row > span:first-child svg.i{ width:20px; height:20px; color:var(--bulb); margin:0; }
+  .t-icon{ display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:12px; color:var(--dust); background:rgba(255,255,255,0.04); }
+  .trophy.got .t-icon{ color:var(--bulb); background: radial-gradient(circle at 35% 30%, rgba(244,184,96,0.3), rgba(244,184,96,0.08)); box-shadow: inset 0 0 0 1px rgba(244,184,96,0.4); }
+  .t-icon svg.i{ width:22px; height:22px; margin:0; }
+  .tp-icon{ display:flex; color:var(--bulb); }
+  .tp-icon svg.i{ width:30px; height:30px; margin:0; }
+  .rep-trophy svg.i{ width:14px; height:14px; color:var(--bulb); }
+  .mr-rep svg.i{ width:13px; height:13px; color:var(--bulb); vertical-align:-0.18em; }
+  .opp-stars svg.i{ width:13px; height:13px; margin:0; }
+  .avatar .av-ini svg.i{ width:45%; height:45%; color:var(--dust); }
+  .opp-rec svg.i{ width:13px; height:13px; color:#7fd6a6; }
+  .chat-fab svg.i{ width:24px; height:24px; margin:0; vertical-align:middle; }
+  .chat-form button svg.i{ width:20px; height:20px; margin:0; }
+  .skin-music svg.i{ width:11px; height:11px; }
+  .now-playing svg.i{ width:14px; height:14px; }
+  /* the daily challenge results as coloured chips */
+  .marks{ display:inline-flex; gap:8px; vertical-align:middle; }
+  .mark{ width:46px; height:46px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; color:#fff;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.35); }
+  .mark svg.i{ width:24px; height:24px; margin:0; stroke-width:2.4; }
+  .mark-win{ background:linear-gradient(160deg,#5fb98a,#2f7a55); }
+  .mark-cora{ background:linear-gradient(160deg,#f6cf6a,#c98d1f); color:#3a2508; }
+  .mark-glacee{ background:linear-gradient(160deg,#9fdcf3,#3e8fb8); }
+  .mark-auto{ background:linear-gradient(160deg,#c9a6ff,#7a4fd0); }
+  .mark-lose{ background:linear-gradient(160deg,#d9654a,#8f2f1d); }
+  .mark-todo{ background:rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.15); }
+  .marks.small{ gap:3px; }
+  .marks.small .mark{ width:17px; height:17px; border-radius:5px; box-shadow:none; }
+  .marks.small .mark svg.i{ width:11px; height:11px; stroke-width:3; }
+  .daily-marks{ font-size:inherit; letter-spacing:0; }
+
   /* ---- full-screen pages with a header and a back button ---- */
   .overlay.page{
     justify-content:flex-start; align-items:stretch; padding:0; gap:0; text-align:left; animation:none;
@@ -1042,6 +1089,59 @@
 </style>
 </head>
 <body>
+<!-- One icon set for the whole interface: line icons drawn in the current text colour (no emoji anywhere in the UI) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+  <symbol id="i-volx" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9.5 5 5m0-5-5 5"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M7.5 12V6.5a1.5 1.5 0 0 1 3 0V11m0-6a1.5 1.5 0 0 1 3 0v6m0-5a1.5 1.5 0 0 1 3 0v6m0-3.5a1.5 1.5 0 0 1 3 0V15a7 7 0 0 1-7 7h-1a6.5 6.5 0 0 1-5.4-2.9l-2.2-3.4a1.6 1.6 0 0 1 2.6-1.8l1.5 1.6"/></symbol>
+  <symbol id="i-ffwd" viewBox="0 0 24 24"><path d="M4 6.5v11l7-5.5-7-5.5zm9 0v11l7-5.5-7-5.5z" fill="currentColor"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3m-4.5 4.5L12 3l4.5 4.5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4.5-4.5L12 15l4.5-4.5M5 20h14"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.8"/><circle cx="6" cy="18" r="2.8"/><path d="M8.2 7.8 20 19M8.2 16.2 20 5"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M16 4h4v4M4 20 20 4M20 16v4h-4M14.5 14.5 20 20M4 4l5 5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5L7 4.5z" fill="currentColor"/></symbol>
+  <symbol id="i-restart" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4v5h5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2zm0 0v14"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h9m4 0h3M4 12h3m4 0h9M4 18h11m4 0h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3.5 11 8.5-7 8.5 7M5.5 9.5V20h13V9.5M10 20v-5.5h4V20"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 3 3.5 3.5L17 10M4 11.5V10a3.5 3.5 0 0 1 3.5-3.5h13M7 21l-3.5-3.5L7 14m13-1.5V14a3.5 3.5 0 0 1-3.5 3.5h-13"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9.5 12 5l10 4.5-10 4.5L2 9.5z"/><path d="M6.5 11.5V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.5M22 9.5V15"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4m8-4v4"/></symbol>
+  <symbol id="i-calcheck" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4m8-4v4m-6.5 8 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.8"/><path d="M16.5 14a5 5 0 0 1 5.5 5"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5.5a4 4 0 0 1-8 0V4zm0 2H5a3 3 0 0 0 3 4.5M16 6h3a3 3 0 0 1-3 4.5M12 13.5V17m-3.5 4h7l-.8-4H9.3l-.8 4z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2a1.7 1.7 0 0 1 1.3-2.9H17a3.5 3.5 0 0 0 3.5-3.5c0-4.3-3.8-7.7-8.5-7.7z"/><circle cx="7.6" cy="11.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="10" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.6" cy="7.8" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5z"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5.5l11-2V16"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></symbol>
+  <symbol id="i-vibrate" viewBox="0 0 24 24"><rect x="8" y="3.5" width="8" height="17" rx="2"/><path d="M4.5 8v8m15-8v8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="8" y="3.5" width="12" height="16" rx="2"/><path d="M5.5 6.5 4 7.2a1.5 1.5 0 0 0-.7 2l4.5 10.2a1.5 1.5 0 0 0 2 .8l1.2-.5"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.1-4.3A8.5 8.5 0 1 1 20.5 12z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11m6 9V5m6 15v-7m-13 7h18"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5.5 15H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 5 3.5h8.5A1.5 1.5 0 0 1 15 5v.5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 0 1 12 0c0 5.5 2.5 7 2.5 7h-17S6 15 6 9.5zM10 20a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-belloff" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 0 1 12 0c0 5.5 2.5 7 2.5 7h-17S6 15 6 9.5zM10 20a2 2 0 0 0 4 0M3 3l18 18"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11-11 11"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5.5 16-3-6.5L4 12zm7.5 1.5L20 4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M7 3.5h10M7 20.5h10M8 3.5v2.5a4 4 0 0 0 8 0V3.5M8 20.5V18a4 4 0 0 1 8 0v2.5"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 21a6 6 0 0 0 6-6c0-4.2-3.2-6.2-4.2-10.5C11.5 6.5 10.5 8.6 10.5 11c-1-.8-1.5-2-1.6-3C7.2 9.8 6 12 6 15a6 6 0 0 0 6 6z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3.5 8l4.5 4 4-7 4 7 4.5-4-1.8 11H5.3L3.5 8z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8L12 3.5z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="15" r="5.5"/><path d="M8.5 3.5l2.2 6.6M15.5 3.5l-2.2 6.6M8 3.5h8M12 13v4"/></symbol>
+  <symbol id="i-three" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 8.5h4.5l-2.5 3c1.8 0 3 .9 3 2.4 0 1.5-1.3 2.6-3 2.6-1 0-1.8-.3-2.4-.9"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M3.8 16.8l16.4-9.6M9.5 4l2.5 2 2.5-2M9.5 20l2.5-2 2.5 2"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8z"/></symbol>
+  <symbol id="i-sleep" viewBox="0 0 24 24"><path d="M4 5h6l-6 7h6m4-1h6l-6 7.5h6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8m-6 0h6v6"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></symbol>
+  <symbol id="i-hush" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 15h7M9 9.5h.01M15 9.5h.01"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m11 3 1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3zm7.5 11 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z"/></symbol>
+</svg>
 <div class="bulb-glow"></div>
 <div class="rain-layer"></div>
 <div class="amb-layer">
@@ -1060,8 +1160,8 @@
 
 <div class="app-shell">
 <header>
-  <button id="btnMenu" class="ghost icon-btn" style="position:absolute; top:8px; left:10px;" aria-label="Menu">☰</button>
-  <button id="btnMute" class="ghost" style="position:absolute; top:8px; right:10px; font-size:16px; text-decoration:none; padding:4px 8px;">🔊</button>
+  <button id="btnMenu" class="ghost icon-btn" style="position:absolute; top:8px; left:10px;" aria-label="Menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
+  <button id="btnMute" class="ghost" style="position:absolute; top:8px; right:10px; font-size:16px; text-decoration:none; padding:4px 8px;" aria-label="Son"><svg class="i" aria-hidden="true"><use href="#i-vol"/></svg></button>
   <h1>Fap Fap</h1>
   <div class="sub">Duel de quartier · Toi contre Penalty</div>
 </header>
@@ -1101,7 +1201,7 @@
       </div>
       <div class="actions">
         <button id="btnAnnounce" class="danger hidden">Annoncer victoire !</button>
-        <button id="btnPasse" class="passe-option hidden">🤚 Je suis en passe</button>
+        <button id="btnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
         <button id="btnDump" class="primary hidden">Poser mes 2 cartes</button>
         <button id="btnNext" class="primary hidden">Manche suivante</button>
       </div>
@@ -1149,11 +1249,11 @@
     <div class="hand" id="sqPlayerHand"></div>
     <div class="sq-eliminated-box hidden" id="sqEliminatedBox">
       <p>Tu as été éliminé. La partie continue sans toi.</p>
-      <button id="sqFastForward" class="primary">⏩ Avance rapide</button>
+      <button id="sqFastForward" class="primary"><svg class="i" aria-hidden="true"><use href="#i-ffwd"/></svg> Avance rapide</button>
     </div>
     <div class="actions">
       <button id="sqBtnAnnounce" class="danger hidden">Annoncer victoire !</button>
-      <button id="sqBtnPasse" class="passe-option hidden">🤚 Je suis en passe</button>
+      <button id="sqBtnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
       <button id="sqBtnDump" class="primary hidden">Poser mes 2 cartes</button>
       <button id="sqBtnNext" class="primary hidden">Manche suivante</button>
     </div>
@@ -1172,7 +1272,7 @@
     <div class="cert-sign">Authentifié par <b>Penalty</b> — Éditions du Quartier</div>
     <div class="cert-stamp">CERTIFIÉ</div>
   </div>
-  <button class="primary whatsapp hidden cert-share" id="btnCertShare">📲 Partager mon exploit</button>
+  <button class="primary whatsapp hidden cert-share" id="btnCertShare"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager mon exploit</button>
 </div>
 <div class="toast" id="toast"><span id="toastMain"></span><span class="sub" id="toastSub"></span></div>
 <div class="trophy-pop" id="trophyPop"></div>
@@ -1187,7 +1287,7 @@
   <p id="choiceText"></p>
   <div class="btnrow">
     <button class="primary big" id="btnPartage">Je partage</button>
-    <button class="big" id="btnDepose">Je dépose ✂️</button>
+    <button class="big" id="btnDepose"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg> Je dépose</button>
   </div>
   <div class="cut-panel hidden" id="cutPanel">
     <p>Où coupes-tu le paquet ?</p>
@@ -1201,7 +1301,7 @@
     </div>
   </div>
   <label class="pref-check"><input type="checkbox" id="prefAlwaysShare"> Toujours partager (ne plus me demander)</label>
-  <button class="ghost" id="btnRemix">🔀 Exiger un nouveau mélange</button>
+  <button class="ghost" id="btnRemix"><svg class="i" aria-hidden="true"><use href="#i-shuffle"/></svg> Exiger un nouveau mélange</button>
 </div>
 
 <!-- ===================== In-game modals ===================== -->
@@ -1211,11 +1311,11 @@
     <p class="small-note" id="pauseNote"></p>
     <p class="small-note now-playing" id="pauseMusic"></p>
     <div class="menu-list">
-      <button class="primary" id="btnResume"><span class="mi">▶</span>Reprendre</button>
-      <button id="btnRestartMatch"><span class="mi">↻</span>Recommencer la partie</button>
-      <button id="btnOpenRules"><span class="mi">📖</span>Les règles du jeu</button>
-      <button id="btnOpenSettings"><span class="mi">⚙️</span>Paramètres</button>
-      <button class="danger" id="btnQuitGame"><span class="mi">⌂</span>Quitter vers l'accueil</button>
+      <button class="primary" id="btnResume"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>Reprendre</button>
+      <button id="btnRestartMatch"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-restart"/></svg></span>Recommencer la partie</button>
+      <button id="btnOpenRules"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>Les règles du jeu</button>
+      <button id="btnOpenSettings"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span>Paramètres</button>
+      <button class="danger" id="btnQuitGame"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Quitter vers l'accueil</button>
     </div>
   </div>
 </div>
@@ -1255,8 +1355,8 @@
     <div class="rep-trophies" id="repTrophies"></div>
   </div>
   <p id="rematchInfo" class="rematch-info"></p>
-  <button class="primary big" id="btnRematch" style="margin-top:6px;">🔁 Revanche</button>
-  <button class="whatsapp hidden" id="btnShareWin">📲 Partager ma victoire</button>
+  <button class="primary big" id="btnRematch" style="margin-top:6px;"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg> Revanche</button>
+  <button class="whatsapp hidden" id="btnShareWin"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager ma victoire</button>
   <button class="ghost" id="btnToMenu">Retour à l'accueil</button>
 </div>
 
@@ -1270,12 +1370,12 @@
 </div>
 
 <div class="overlay hidden" id="tutoDoneOverlay">
-  <h2>Bravo, tu sais jouer ! 🎉</h2>
+  <h2>Bravo, tu sais jouer !</h2>
   <p>Tu viens de réussir un CORA contre Penalty. Tu connais l'essentiel : commander, suivre la couleur, prendre le contrôle, et gagner sur la dernière carte.</p>
   <p class="small-note">Il reste deux armes à découvrir : la Passe et les victoires automatiques. Tout est dans les règles.</p>
   <p id="tutoRep" class="rematch-info"></p>
-  <button class="primary big" id="btnTutoPlay">Affronter Joëlle (★)</button>
-  <button id="btnTutoRules">📖 Lire les règles</button>
+  <button class="primary big" id="btnTutoPlay">Affronter Joëlle</button>
+  <button id="btnTutoRules"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg> Lire les règles</button>
   <button class="ghost" id="btnTutoMenu">Retour à l'accueil</button>
 </div>
 
@@ -1289,7 +1389,7 @@
     <div class="menu-rank" id="menuRank"></div>
 
     <button class="hero-btn hero-tuto" id="modeTuto" style="--d:0">
-      <span class="hero-ico">🎓</span>
+      <span class="hero-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
       <span class="hero-text"><b>Nouveau ? Apprends à jouer</b><small>2 minutes avec Penalty, qui t'explique tout en jouant</small></span>
       <span class="hero-go">›</span>
     </button>
@@ -1299,20 +1399,20 @@
       <span class="hero-go">›</span>
     </button>
     <button class="hero-btn hero-daily" id="modeDaily" style="--d:2">
-      <span class="hero-ico">📅</span>
+      <span class="hero-ico"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
       <span class="hero-text"><b>Le défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small></span>
       <span class="hero-go">›</span>
     </button>
 
     <div class="tile-grid">
-      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ico">👤</span><span class="tile-lbl">Profil</span></button>
-      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ico">🏆</span><span class="tile-lbl">Trophées</span></button>
-      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ico">🎨</span><span class="tile-lbl">Décors</span></button>
-      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico">📖</span><span class="tile-lbl">Règles</span></button>
-      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico">⚙️</span><span class="tile-lbl">Paramètres</span></button>
-      <button class="tile hidden" id="btnTutoAgain" style="--k:5"><span class="tile-ico">🎓</span><span class="tile-lbl">Partie guidée</span></button>
+      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg></span><span class="tile-lbl">Profil</span></button>
+      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="tile-lbl">Trophées</span></button>
+      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></span><span class="tile-lbl">Décors</span></button>
+      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span><span class="tile-lbl">Règles</span></button>
+      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span><span class="tile-lbl">Paramètres</span></button>
+      <button class="tile hidden" id="btnTutoAgain" style="--k:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
     </div>
-    <button class="primary hidden" id="btnInstall">📲 Installer le jeu sur ce téléphone</button>
+    <button class="primary hidden" id="btnInstall"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg> Installer le jeu sur ce téléphone</button>
     <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
   </div>
 </div>
@@ -1326,7 +1426,7 @@
       <small>Affronte Joëlle, RALL, Penalty… puis Mr Kamga, le Vétéran. Aucun ne voit tes cartes.</small>
     </button>
     <button class="mode-card mode-online" id="modeMP" style="--d:1">
-      <span class="mode-ico">🌍</span>
+      <span class="mode-ico"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg></span>
       <b>Avec un ami</b>
       <small>En ligne, chacun sur son téléphone. Invite-le par WhatsApp, et discutez dans le chat.</small>
     </button>
@@ -1352,7 +1452,7 @@
     <div class="daily-marks" id="dailyMarks"></div>
     <p id="dailyScore"></p>
     <p id="dailyRep" class="rematch-info"></p>
-    <button class="primary big whatsapp" id="btnDailyShare">📲 Partager mon résultat</button>
+    <button class="primary big whatsapp" id="btnDailyShare"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager mon résultat</button>
     <p id="dailyNext" class="small-note"></p>
     <button class="ghost" id="btnDailyMenu">Retour à l'accueil</button>
   </div>
@@ -1363,8 +1463,8 @@
   <div class="page-body">
     <div class="profile-card" id="profileCard"></div>
     <div class="btnrow profile-links">
-      <button id="btnProfTrophies">🏆 Trophées</button>
-      <button id="btnProfSkins">🎨 Décors</button>
+      <button id="btnProfTrophies"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg> Trophées</button>
+      <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg> Décors</button>
     </div>
     <div class="stats-block" id="statsContent"></div>
   </div>
@@ -1412,8 +1512,8 @@
   <div class="page-body">
     <div class="set-group">
       <h3>Son &amp; musique</h3>
-      <button class="set-row" id="btnToggleSound"><span>🔊 Son</span><span class="switch"></span></button>
-      <button class="set-row" id="btnToggleMusic"><span>🎵 Musique de fond</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleSound"><span><svg class="i" aria-hidden="true"><use href="#i-vol"/></svg> Son</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleMusic"><span><svg class="i" aria-hidden="true"><use href="#i-music"/></svg> Musique de fond</span><span class="switch"></span></button>
       <label class="set-row set-slider"><span>Volume de la musique</span><input type="range" id="musicVol" min="0" max="100" step="5"></label>
       <label class="set-row set-slider"><span>Volume des effets</span><input type="range" id="sfxVol" min="0" max="100" step="5"></label>
       <p class="small-note now-playing" id="nowPlaying"></p>
@@ -1421,18 +1521,18 @@
     </div>
     <div class="set-group">
       <h3>Jeu</h3>
-      <button class="set-row" id="btnToggleVibrate"><span>📳 Vibrations</span><span class="switch"></span></button>
-      <button class="set-row" id="btnToggleCalm"><span>🌙 Réduire les animations</span><span class="switch"></span></button>
-      <button class="set-row" id="btnToggleShare"><span>🃏 Toujours partager (sans couper)</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
     </div>
     <div class="set-group">
       <h3>En ligne</h3>
       <label class="set-row set-input"><span>Ton prénom</span><input id="setNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom"></label>
-      <button class="set-row" id="btnToggleChat"><span>💬 Chat avec les autres joueurs</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleChat"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Chat avec les autres joueurs</span><span class="switch"></span></button>
     </div>
     <div class="set-group">
       <h3>Confidentialité</h3>
-      <button class="set-row" id="btnToggleStats"><span>📈 Statistiques anonymes</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleStats"><span><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Statistiques anonymes</span><span class="switch"></span></button>
       <p class="small-note">Aucun nom ni message n'est envoyé : seulement des chiffres de jeu, pour améliorer Fap Fap.</p>
     </div>
     <p class="small-note app-version">Fap Fap · version du 5 octobre 2026</p>
@@ -1465,10 +1565,10 @@
   <div class="page-body center">
     <p id="mpHostStatus">Partage ce code avec ton ami :</p>
     <div class="mp-code" id="mpCodeDisplay">----</div>
-    <button class="primary big whatsapp" id="btnInviteWhatsApp">📲 Inviter sur WhatsApp</button>
+    <button class="primary big whatsapp" id="btnInviteWhatsApp"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Inviter sur WhatsApp</button>
     <div class="btnrow">
-      <button id="btnShareLink" class="hidden">📤 Partager le lien</button>
-      <button id="btnCopyCode">📋 Copier le lien</button>
+      <button id="btnShareLink" class="hidden"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager le lien</button>
+      <button id="btnCopyCode"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg> Copier le lien</button>
     </div>
     <p class="small-note">Ton ami clique sur le lien et arrive directement dans la partie.</p>
     <button class="ghost" id="btnCancelHost">Annuler</button>
@@ -1487,26 +1587,28 @@
 </div>
 
 <!-- ===================== Online chat ===================== -->
-<button class="chat-fab hidden" id="chatFab" aria-label="Ouvrir le chat">💬<span class="chat-badge hidden" id="chatBadge">0</span></button>
+<button class="chat-fab hidden" id="chatFab" aria-label="Ouvrir le chat"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><span class="chat-badge hidden" id="chatBadge">0</span></button>
 <div class="emote-layer" id="emoteLayer"></div>
 <div class="chat-sheet hidden" id="chatSheet">
   <div class="chat-head">
     <span>Chat</span>
     <span class="chat-head-actions">
-      <button class="ghost" id="chatMute">🔕 Couper</button>
-      <button class="icon-btn" id="chatClose" aria-label="Fermer le chat">✕</button>
+      <button class="ghost" id="chatMute"><svg class="i" aria-hidden="true"><use href="#i-belloff"/></svg> Couper</button>
+      <button class="icon-btn" id="chatClose" aria-label="Fermer le chat"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
     </span>
   </div>
   <div class="chat-list" id="chatList"></div>
   <div class="chat-quick" id="chatQuick"></div>
   <form class="chat-form" id="chatForm" autocomplete="off">
     <input id="chatInput" maxlength="200" placeholder="Écris un message…" enterkeyhint="send">
-    <button class="primary" id="chatSend" type="submit" aria-label="Envoyer">➤</button>
+    <button class="primary" id="chatSend" type="submit" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button>
   </form>
 </div>
 
 <script>
 (function(){
+  // an icon from the SVG set at the top of the page
+  const ico = name=> '<svg class="i" aria-hidden="true"><use href="#i-'+name+'"/></svg>';
   const SUITS = ['Black','Tchaka','Coubie','Zing'];
   const PIP = {Black:'♠',Tchaka:'♣',Coubie:'♥',Zing:'♦'};
   const SUIT_PATH = {
@@ -2569,8 +2671,8 @@
   };
   function refreshNowPlaying(){
     const tr = TRACKS[Music.want] || TRACKS.home;
-    const txt = prefs.noMusic ? 'Musique coupée' : '♪ '+tr.name+' — '+tr.mood;
-    ['nowPlaying','pauseMusic'].forEach(id=>{ const el = document.getElementById(id); if(el) el.textContent = txt; });
+    const txt = prefs.noMusic ? ico('volx')+' Musique coupée' : ico('music')+' '+tr.name+' — '+tr.mood;
+    ['nowPlaying','pauseMusic'].forEach(id=>{ const el = document.getElementById(id); if(el) el.innerHTML = txt; });
   }
 
 
@@ -2763,7 +2865,7 @@
   function resetChat(){
     chat.unread = 0; chat.sent = [];
     chatEl('chatList').innerHTML = '';
-    chatLine('sys', 'Le chat est ouvert : dis bonjour à '+oppName()+' 👋');
+    chatLine('sys', 'Le chat est ouvert : dis bonjour à '+oppName()+'.');
     refreshChatUI();
   }
   function emoteRise(emoji, mine){
@@ -2800,7 +2902,7 @@
     const now = Date.now();
     chat.sent = chat.sent.filter(t=> now-t < 10000);
     if(chat.sent.length>=6 || (chat.sent.length && now-chat.sent[chat.sent.length-1] < 600)){
-      showToast('Doucement…', 'Laisse '+oppName()+' te répondre 😉', {ms:1600});
+      showToast('Doucement…', 'Laisse '+oppName()+' te répondre.', {ms:1600});
       return false;
     }
     chat.sent.push(now);
@@ -2843,7 +2945,7 @@
     });
     chatEl('chatMute').addEventListener('click', ()=>{
       chat.muted = !chat.muted;
-      chatEl('chatMute').textContent = chat.muted ? '🔔 Réactiver' : '🔕 Couper';
+      chatEl('chatMute').innerHTML = chat.muted ? ico('bell')+' Réactiver' : ico('belloff')+' Couper';
       chatLine('sys', chat.muted ? 'Messages en silencieux : ils arrivent ici sans bulle ni son.' : 'Notifications du chat réactivées.');
     });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && chatIsOpen()) closeChat(); });
@@ -2935,29 +3037,29 @@
   }
 
   const TROPHIES = [
-    {id:'premiere',     icon:'🥇', name:'Première victoire',         desc:'Gagner ton premier match.'},
-    {id:'cora',         icon:'3️⃣', name:'Chapitre 5',                desc:'Réussir un CORA.'},
-    {id:'glacee',       icon:'🧊', name:'La Nuit de la 33 Glacée',   desc:'Réussir une 33 Glacée.'},
-    {id:'auto',         icon:'⚡', name:'Victoire sur table',        desc:'Annoncer une victoire automatique.'},
-    {id:'quad',         icon:'🃏', name:'Les 4 symboles',            desc:'Gagner avec la même valeur dans les 4 couleurs.'},
-    {id:'passe',        icon:'✋', name:'L’art de différer',      desc:'Gagner une manche après avoir passé.'},
-    {id:'sommeil',      icon:'😴', name:'Tu dors ?',                 desc:'Jouer faible alors que tu avais plus fort, et gagner la manche.'},
-    {id:'sans_appel',   icon:'💯', name:'Sans appel',                desc:'Gagner un match 5 à 0.'},
-    {id:'remontada',    icon:'🔥', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
-    {id:'serie3',       icon:'📈', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
-    {id:'revanche',     icon:'🔁', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
-    {id:'beat_gervais', icon:'🙂', name:'Joëlle calmée',             desc:'Battre Joëlle.'},
-    {id:'beat_aristide',icon:'😏', name:'RALL se tait',              desc:'Battre RALL.'},
-    {id:'beat_penalty', icon:'📕', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
-    {id:'beat_mbarga',  icon:'👑', name:'Le Vétéran est tombé',      desc:'Battre Mr Kamga.'},
-    {id:'survivant',    icon:'🏚️', name:'Dernier survivant',         desc:'Gagner une partie de Carré la Pute.'},
-    {id:'double',       icon:'✌️', name:'Coup double',               desc:'Éliminer deux joueurs d’un coup en Carré.'},
-    {id:'en_ligne',     icon:'🌍', name:'Roi du quartier en ligne',  desc:'Gagner un match contre un ami en ligne.'},
-    {id:'apprenti',     icon:'🎓', name:'Apprenti du quartier',      desc:'Terminer la partie guidée avec Penalty.'},
-    {id:'defi',         icon:'📅', name:'Rendez-vous quotidien',     desc:'Terminer un défi du jour.'},
-    {id:'defi_parfait', icon:'🌟', name:'Défi parfait',              desc:'Gagner les 3 manches d’un défi du jour.'},
-    {id:'streak3',      icon:'🔥', name:'Fidèle au quartier',        desc:'Jouer 3 jours d’affilée.'},
-    {id:'streak7',      icon:'🗓️', name:'Une semaine au tripot',     desc:'Jouer 7 jours d’affilée.'}
+    {id:'premiere',     icon:'medal', name:'Première victoire',         desc:'Gagner ton premier match.'},
+    {id:'cora',         icon:'three', name:'Chapitre 5',                desc:'Réussir un CORA.'},
+    {id:'glacee',       icon:'snow', name:'La Nuit de la 33 Glacée',   desc:'Réussir une 33 Glacée.'},
+    {id:'auto',         icon:'zap', name:'Victoire sur table',        desc:'Annoncer une victoire automatique.'},
+    {id:'quad',         icon:'cards', name:'Les 4 symboles',            desc:'Gagner avec la même valeur dans les 4 couleurs.'},
+    {id:'passe',        icon:'hand', name:'L’art de différer',      desc:'Gagner une manche après avoir passé.'},
+    {id:'sommeil',      icon:'sleep', name:'Tu dors ?',                 desc:'Jouer faible alors que tu avais plus fort, et gagner la manche.'},
+    {id:'sans_appel',   icon:'target', name:'Sans appel',                desc:'Gagner un match 5 à 0.'},
+    {id:'remontada',    icon:'flame', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
+    {id:'serie3',       icon:'trend', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
+    {id:'revanche',     icon:'repeat', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
+    {id:'beat_gervais', icon:'smile', name:'Joëlle calmée',             desc:'Battre Joëlle.'},
+    {id:'beat_aristide',icon:'hush', name:'RALL se tait',              desc:'Battre RALL.'},
+    {id:'beat_penalty', icon:'book', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
+    {id:'beat_mbarga',  icon:'crown', name:'Le Vétéran est tombé',      desc:'Battre Mr Kamga.'},
+    {id:'survivant',    icon:'home', name:'Dernier survivant',         desc:'Gagner une partie de Carré la Pute.'},
+    {id:'double',       icon:'users', name:'Coup double',               desc:'Éliminer deux joueurs d’un coup en Carré.'},
+    {id:'en_ligne',     icon:'globe', name:'Roi du quartier en ligne',  desc:'Gagner un match contre un ami en ligne.'},
+    {id:'apprenti',     icon:'cap', name:'Apprenti du quartier',      desc:'Terminer la partie guidée avec Penalty.'},
+    {id:'defi',         icon:'calendar', name:'Rendez-vous quotidien',     desc:'Terminer un défi du jour.'},
+    {id:'defi_parfait', icon:'sparkle', name:'Défi parfait',              desc:'Gagner les 3 manches d’un défi du jour.'},
+    {id:'streak3',      icon:'flame', name:'Fidèle au quartier',        desc:'Jouer 3 jours d’affilée.'},
+    {id:'streak7',      icon:'calcheck', name:'Une semaine au tripot',     desc:'Jouer 7 jours d’affilée.'}
   ];
   const TROPHY_BY_ID = Object.fromEntries(TROPHIES.map(t=>[t.id, t]));
   const TROPHY_REP = 50;
@@ -2992,7 +3094,7 @@
     profile.dayStreak = (profile.lastPlayDay===yesterdayKey()) ? (profile.dayStreak||0)+1 : 1;
     profile.lastPlayDay = today;
     saveProfile();
-    if(profile.dayStreak>=2) repAdd(Math.min(10*profile.dayStreak, 70), 'Bonus de série 🔥 '+profile.dayStreak+' jours');
+    if(profile.dayStreak>=2) repAdd(Math.min(10*profile.dayStreak, 70), 'Bonus de série '+profile.dayStreak+' jours');
     if(profile.dayStreak>=3) unlockTrophy('streak3');
     if(profile.dayStreak>=7) unlockTrophy('streak7');
   }
@@ -3050,7 +3152,7 @@
       const key = kind+':'+s.id;
       if(s.req(profile) && !known.includes(key)){
         known.push(key); changed = true;
-        if(s.hint) trophyPop({icon:'🎨', name:SKIN_LABEL[kind]+' : '+s.name, kind:'Nouveau décor débloqué'});
+        if(s.hint) trophyPop({icon:'palette', name:SKIN_LABEL[kind]+' : '+s.name, kind:'Nouveau décor débloqué'});
       }
     }));
     if(changed){ prefs.knownSkins = known; savePrefs(); }
@@ -3077,7 +3179,7 @@
     const el = document.getElementById('trophyPop');
     if(!t){ trophyShowing = false; return; }
     trophyShowing = true;
-    el.innerHTML = '<span class="tp-icon">'+t.icon+'</span><span><b>'+(t.kind||'Trophée débloqué')+'</b><br>'+t.name+'</span>';
+    el.innerHTML = '<span class="tp-icon">'+ico(t.icon)+'</span><span><b>'+(t.kind||'Trophée débloqué')+'</b><br>'+t.name+'</span>';
     el.classList.add('show');
     vibrate([20,40,20]);
     try{ chime(988,0.18,0.08,0,0); chime(1319,0.28,0.08,0.09,0); }catch(e){}
@@ -3093,7 +3195,7 @@
     document.getElementById('repGain').textContent = '+'+res.gained+' réputation';
     document.getElementById('repLines').innerHTML = res.lines.map(l=>
       '<div class="rep-line"><span>'+l.label+(l.count>1?' ×'+l.count:'')+'</span><span>+'+l.amount+'</span></div>').join('');
-    document.getElementById('repTrophies').innerHTML = res.trophies.map(t=>'<span class="rep-trophy" title="'+t.desc+'">'+t.icon+' '+t.name+'</span>').join('');
+    document.getElementById('repTrophies').innerHTML = res.trophies.map(t=>'<span class="rep-trophy" title="'+t.desc+'">'+ico(t.icon)+' '+t.name+'</span>').join('');
     const fill = document.getElementById('repBarFill');
     const nameEl = document.getElementById('repRankName');
     const nextEl = document.getElementById('repNext');
@@ -3115,7 +3217,7 @@
           fill.style.transition = 'width 0.9s cubic-bezier(.2,.8,.3,1)';
           fill.style.width = (rankProgress(res.after)*100)+'%';
           setFor(res.after);
-          showToast('⬆️ Nouveau rang !', RANKS[rAfter].name, {big:true, celebrate:true, ms:2600});
+          showToast('Nouveau rang !', RANKS[rAfter].name, {big:true, celebrate:true, ms:2600});
           sfxBigWin(); burstConfetti(30);
         }, 1150);
       } else {
@@ -3138,11 +3240,11 @@
     const dd = document.getElementById('dailyDesc');
     if(dd){
       const p = profile.daily;
-      dd.textContent = (p && p.date===dayKey())
-        ? 'Fait aujourd’hui : '+dailyMarksLine(p)+' — touche pour revoir et partager ton résultat.'
+      dd.innerHTML = (p && p.date===dayKey())
+        ? 'Fait aujourd’hui '+dailyMarksHtml(p, true)+' — touche pour revoir et partager ton résultat.'
         : 'La même donne pour tout le monde aujourd’hui. 3 manches contre Penalty.';
     }
-    el.innerHTML = '<div class="mr-top"><span class="mr-name">'+RANKS[i].name+'</span><span class="mr-rep">'+(streak>0?'🔥 '+streak+' j · ':'')+profile.rep+' rép. · 🏆 '+nTroph+'/'+TROPHIES.length+'</span></div>'+
+    el.innerHTML = '<div class="mr-top"><span class="mr-name">'+RANKS[i].name+'</span><span class="mr-rep">'+(streak>0?ico('flame')+' '+streak+' j · ':'')+profile.rep+' rép. · '+ico('trophy')+' '+nTroph+'/'+TROPHIES.length+'</span></div>'+
       '<div class="rep-bar small"><div style="width:'+(rankProgress(profile.rep)*100)+'%"></div></div>';
   }
 
@@ -3245,7 +3347,7 @@
   function setSound(on){
     soundOn = on;
     prefs.mute = !on; savePrefs();
-    document.getElementById('btnMute').textContent = soundOn ? '🔊' : '🔇';
+    document.getElementById('btnMute').innerHTML = ico(soundOn ? 'vol' : 'volx');
     setAmbientMuted(!soundOn);
     if(soundOn) ensureAudio();
     refreshSettings();
@@ -3290,7 +3392,7 @@
     if(v) myName = v;
   });
   applyCalm();
-  if(prefs.mute){ soundOn = false; document.getElementById('btnMute').textContent = '🔇'; }
+  if(prefs.mute){ soundOn = false; document.getElementById('btnMute').innerHTML = ico('volx'); }
 
   // ===================== Navigation between pages =====================
   // Pages are full-screen layers kept in a stack: opening one pushes it (and a browser-history entry, so the
@@ -4451,6 +4553,17 @@
     const [y,m,d] = date.split('-').map(Number);
     return Math.round((new Date(y,m-1,d) - new Date(2026,9,1))/86400000) + 1; // n°1 = 1er octobre 2026
   }
+  // in the app the day's results are drawn as small coloured chips (the emoji squares are only for the shared message)
+  const MARK_LOOK = {'🟩':['win','check','Manche gagnée'], '🟨':['cora','three','CORA'], '🧊':['glacee','snow','33 Glacée'],
+                     '⚡':['auto','zap','Victoire automatique'], '🟥':['lose','x','Manche perdue'], '⬜':['todo','','À jouer']};
+  function dailyMarksHtml(d, small){
+    const marks = d.marks.slice();
+    while(marks.length<DAILY_HANDS) marks.push('⬜');
+    return '<span class="marks'+(small?' small':'')+'">'+marks.map(m=>{
+      const [cls, icon, label] = MARK_LOOK[m] || MARK_LOOK['⬜'];
+      return '<span class="mark mark-'+cls+'" title="'+label+'">'+(icon ? ico(icon) : '')+'</span>';
+    }).join('')+'</span>';
+  }
   function dailyMarksLine(d){
     const marks = d.marks.slice();
     while(marks.length<DAILY_HANDS) marks.push('⬜');
@@ -4508,11 +4621,11 @@
     const d = profile.daily;
     const wins = d.marks.filter(m=>m!=='🟥').length;
     document.getElementById('dailyTitle').textContent = 'Défi du jour n°'+dailyNumber(d.date);
-    document.getElementById('dailyMarks').textContent = dailyMarksLine(d);
+    document.getElementById('dailyMarks').innerHTML = dailyMarksHtml(d);
     document.getElementById('dailyScore').textContent = d.abandoned && d.marks.length<DAILY_HANDS
       ? 'Défi abandonné : '+wins+' manche'+(wins>1?'s':'')+' gagnée'+(wins>1?'s':'')+'.'
       : wins+' manche'+(wins>1?'s':'')+' gagnée'+(wins>1?'s':'')+' sur '+DAILY_HANDS+' · '+d.points+' point'+(d.points>1?'s':'');
-    document.getElementById('dailyRep').textContent = res ? '+'+res.gained+' réputation'+(res.trophies.length ? ' · 🏆 '+res.trophies.map(t=>t.name).join(', ') : '') : '';
+    document.getElementById('dailyRep').textContent = res ? '+'+res.gained+' réputation'+(res.trophies.length ? ' · Trophée : '+res.trophies.map(t=>t.name).join(', ') : '') : '';
     document.getElementById('dailyNext').textContent = 'Prochain défi dans '+untilTomorrow()+' (un nouveau défi chaque jour à minuit).';
     // just finished at the table: leave the game first, so "back" from the result lands on the home screen
     if(res) goToMainMenu();
@@ -4542,11 +4655,11 @@
       b.className = 'opp-card'+(open?'':' locked')+(beaten?' beaten':'');
       b.innerHTML =
         (open ? '<span class="avatar" data-char="'+id+'" style="--s:52px"></span>'
-              : '<span class="avatar locked" style="--s:52px"><span class="av-ini">🔒</span></span>')+
+              : '<span class="avatar locked" style="--s:52px"><span class="av-ini">'+ico('lock')+'</span></span>')+
         '<span class="opp-body">'+
-          '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+'★'.repeat(p.stars)+'<span class="dim">'+'★'.repeat(4-p.stars)+'</span></span></span>'+
+          '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+ico('star').repeat(p.stars)+'<span class="dim">'+ico('star').repeat(4-p.stars)+'</span></span></span>'+
           '<span class="opp-tag">'+(open ? p.tagline : p.lockedHint)+'</span>'+
-          '<span class="opp-rec">'+(rec.w+rec.l>0 ? (beaten?'✅ ':'')+'Ton bilan : '+rec.w+'V – '+rec.l+'D' : 'Jamais affronté')+' · +'+p.repWin+' rép. si tu gagnes</span>'+
+          '<span class="opp-rec">'+(rec.w+rec.l>0 ? (beaten?ico('check')+' ':'')+'Ton bilan : '+rec.w+'V – '+rec.l+'D' : 'Jamais affronté')+' · +'+p.repWin+' rép. si tu gagnes</span>'+
         '</span>';
       if(open) b.addEventListener('click', ()=>{
         duelOpp = id;
@@ -4573,7 +4686,7 @@
     document.getElementById('trophiesCount').textContent = n+' sur '+TROPHIES.length+' · chaque trophée rapporte '+TROPHY_REP+' de réputation';
     document.getElementById('trophyGrid').innerHTML = TROPHIES.map(t=>{
       const got = !!profile.trophies[t.id];
-      return '<div class="trophy'+(got?' got':'')+'"><span class="t-icon">'+(got?t.icon:'🔒')+'</span>'+
+      return '<div class="trophy'+(got?' got':'')+'"><span class="t-icon">'+ico(got?t.icon:'lock')+'</span>'+
         '<span class="t-body"><b>'+t.name+'</b><span>'+t.desc+'</span></span></div>';
     }).join('');
   }
@@ -4591,8 +4704,8 @@
         const open = s.req(profile);
         const b = document.createElement('button');
         b.className = 'skin-opt'+(sk[kind]===s.id?' on':'')+(open?'':' locked');
-        const tune = kind==='table' && TRACKS[s.id] ? '<small class="skin-music">♪ '+TRACKS[s.id].name+'</small>' : '';
-        b.innerHTML = '<span class="skin-swatch" style="background:'+s.swatch+'"></span><span>'+(open?'':'🔒 ')+s.name+'</span>'+tune+(open?'':'<small>'+s.hint+'</small>');
+        const tune = kind==='table' && TRACKS[s.id] ? '<small class="skin-music">'+ico('music')+' '+TRACKS[s.id].name+'</small>' : '';
+        b.innerHTML = '<span class="skin-swatch" style="background:'+s.swatch+'"></span><span>'+(open?'':ico('lock')+' ')+s.name+'</span>'+tune+(open?'':'<small>'+s.hint+'</small>');
         if(open) b.addEventListener('click', ()=>{
           prefs.skin = Object.assign({}, sk, {[kind]: s.id});
           savePrefs(); applySkins(); renderSkins();
@@ -4681,17 +4794,17 @@
     const code = currentCode(); if(!/^[A-Z0-9]{4}$/.test(code)) return;
     const text = inviteMessage(code);
     const btn = document.getElementById('btnCopyCode');
-    const flash = (msg)=>{ btn.textContent = msg; setTimeout(()=> btn.textContent='📋 Copier le lien', 1600); };
+    const flash = (msg)=>{ btn.innerHTML = msg; setTimeout(()=> btn.innerHTML=ico('copy')+' Copier le lien', 1600); };
     const fallback = ()=>{
       // older phones: copy through a hidden text field
       try{
         const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
         document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); ta.remove();
-        flash(ok ? '✅ Lien copié !' : 'Copie impossible');
+        flash(ok ? ico('check')+' Lien copié !' : 'Copie impossible');
       }catch(e){ flash('Copie impossible'); }
     };
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(()=> flash('✅ Lien copié !')).catch(fallback);
+      navigator.clipboard.writeText(text).then(()=> flash(ico('check')+' Lien copié !')).catch(fallback);
     } else fallback();
   });
 
@@ -4741,10 +4854,10 @@
     const info = document.getElementById('rematchInfo');
     const btn = document.getElementById('btnRematch');
     btn.disabled = false;
-    if(mode!=='mp'){ info.textContent = ''; btn.textContent = '🔁 Revanche'; return; }
-    if(mpRematch.me && !mpRematch.opp){ info.textContent = 'En attente de '+oppName()+'…'; btn.textContent = '⏳ Revanche demandée'; btn.disabled = true; }
-    else if(mpRematch.opp && !mpRematch.me){ info.textContent = oppName()+' veut sa revanche !'; btn.textContent = '🔥 Accepter la revanche'; }
-    else { info.textContent = ''; btn.textContent = '🔁 Revanche'; }
+    if(mode!=='mp'){ info.textContent = ''; btn.innerHTML = ico('repeat')+' Revanche'; return; }
+    if(mpRematch.me && !mpRematch.opp){ info.textContent = 'En attente de '+oppName()+'…'; btn.innerHTML = ico('hourglass')+' Revanche demandée'; btn.disabled = true; }
+    else if(mpRematch.opp && !mpRematch.me){ info.textContent = oppName()+' veut sa revanche !'; btn.innerHTML = ico('flame')+' Accepter la revanche'; }
+    else { info.textContent = ''; btn.innerHTML = ico('repeat')+' Revanche'; }
   }
 
   function showMatchOver(who){
@@ -4795,7 +4908,7 @@
       const rec = profile.ladder[duelOpp];
       text += ' (Ton bilan contre '+oppName()+' : '+rec.w+' victoire'+(rec.w>1?'s':'')+', '+rec.l+' défaite'+(rec.l>1?'s':'')+'.)';
     }
-    if(unlockedMbarga) text += ' 👑 Mr Kamga, le Vétéran, a entendu parler de toi… Il t’attend.';
+    if(unlockedMbarga) text += ' Mr Kamga, le Vétéran, a entendu parler de toi… Il t’attend.';
     document.getElementById('matchOverText').textContent = text;
     track('match_end', {mode, opp: mode==='ai' ? duelOpp : null, won, score: mine+'-'+theirs});
     touchDayStreak();
@@ -5374,7 +5487,7 @@
     if(!sq) return;
     sq.fastForward = !sq.fastForward;
     document.getElementById('sqFastForward').classList.toggle('active', sq.fastForward);
-    document.getElementById('sqFastForward').textContent = sq.fastForward ? '⏩ Avance rapide (activée)' : '⏩ Avance rapide';
+    document.getElementById('sqFastForward').innerHTML = ico('ffwd')+(sq.fastForward ? ' Avance rapide (activée)' : ' Avance rapide');
     const nextBtn = document.getElementById('sqBtnNext');
     if(sq.fastForward && !nextBtn.classList.contains('hidden')){
       nextBtn.classList.add('hidden');
@@ -5400,7 +5513,7 @@
         '<div><b>'+played+'</b><span>parties</span></div>'+
         '<div><b>'+won+'</b><span>victoires</span></div>'+
         '<div><b>'+Object.keys(p.trophies).length+'</b><span>trophées</span></div>'+
-        '<div><b>'+(liveDayStreak()||0)+'</b><span>jours 🔥</span></div>'+
+        '<div><b>'+(liveDayStreak()||0)+'</b><span>jours de suite</span></div>'+
       '</div>';
     card.querySelector('.pc-name').textContent = prefs.name || 'Toi';
     fillAvatar(card.querySelector('.pc-avatar'), null, prefs.name || 'Toi');
