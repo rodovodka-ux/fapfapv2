@@ -895,6 +895,148 @@
   .chips-result.loss .cr-body b{ color:#ff9c80; }
   .cr-body small{ font-size:11.5px; color:var(--dust); font-weight:600; }
 
+  /* =====================================================================================
+     THE CERTIFICATE (CORA / 33 Glacée) — parchment, gold-leaf frame, foil title, ribbon, wax seal
+     ===================================================================================== */
+  .cert-overlay.show{ background: radial-gradient(ellipse at 50% 45%, rgba(40,24,8,0.75), rgba(4,2,1,0.92) 70%); }
+  .cx-rays{ position:absolute; left:50%; top:45%; width:900px; height:900px; margin:-450px 0 0 -450px; pointer-events:none; opacity:0;
+    background: repeating-conic-gradient(from 0deg, rgba(255,214,130,0.16) 0 6deg, transparent 6deg 18deg);
+    -webkit-mask-image: radial-gradient(circle, #000 0, rgba(0,0,0,0.6) 30%, transparent 62%); mask-image: radial-gradient(circle, #000 0, rgba(0,0,0,0.6) 30%, transparent 62%); }
+  .cx-glow{ position:absolute; left:50%; top:45%; width:420px; height:420px; margin:-210px 0 0 -210px; border-radius:50%; pointer-events:none; opacity:0;
+    background: radial-gradient(circle, rgba(255,214,130,0.55), rgba(255,170,60,0.18) 40%, transparent 70%); }
+  .cert-overlay.show .cx-rays{ animation: cxRaysIn 0.8s ease 0.15s forwards, cxSpin 30s linear infinite; }
+  .cert-overlay.show .cx-glow{ animation: cxGlow 2.4s ease-in-out 0.2s infinite alternate; }
+  @keyframes cxRaysIn{ to{ opacity:1; } }
+  @keyframes cxSpin{ to{ transform: rotate(360deg); } }
+  @keyframes cxGlow{ from{ opacity:0.55; transform:scale(0.9); } to{ opacity:1; transform:scale(1.08); } }
+  .cert-overlay .cx-card{
+    position:relative; width:min(300px, 84vw); aspect-ratio: 300 / 380; padding:38px 26px 34px; border:none; border-radius:16px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#3a2510;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.7), transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(170,120,50,0.22), transparent 60%),
+      repeating-linear-gradient(8deg, rgba(120,80,30,0.035) 0 2px, transparent 2px 5px),
+      linear-gradient(165deg, #fbf3df, #efdfbb 55%, #e3cc98);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.7), 0 0 0 1px rgba(120,70,20,0.5), inset 0 0 40px rgba(150,100,40,0.25);
+    transform: perspective(900px) rotateX(70deg) translateY(-140px) scale(0.4); opacity:0; transition:none;
+  }
+  .cert-overlay.show .cx-card{ animation: cxCardIn 0.95s cubic-bezier(.2,1.15,.3,1) 0.05s forwards, cxFloat 4s ease-in-out 1.1s infinite; }
+  @keyframes cxCardIn{
+    0%{ opacity:0; transform: perspective(900px) rotateX(70deg) translateY(-140px) scale(0.4); }
+    55%{ opacity:1; transform: perspective(900px) rotateX(-8deg) translateY(10px) scale(1.04); }
+    78%{ transform: perspective(900px) rotateX(3deg) translateY(-3px) scale(0.99); }
+    100%{ opacity:1; transform: perspective(900px) rotateX(0) translateY(0) scale(1); }
+  }
+  @keyframes cxFloat{ 0%,100%{ transform: perspective(900px) translateY(0) rotate(0); } 50%{ transform: perspective(900px) translateY(-5px) rotate(-0.6deg); } }
+  .cx-frame{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .cx-kicker{ font-size:9.5px; font-weight:800; letter-spacing:0.28em; text-transform:uppercase; color:#8a5a1c; opacity:0.85; }
+  .cert-overlay .cx-suits{ display:flex; gap:12px; font-size:16px; letter-spacing:0; color:#3a2510; opacity:0.75; margin:10px 0 2px; }
+  .cx-suits .r{ color:#a3221a; }
+  .cert-overlay .cx-title{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(44px, 14vw, 60px); line-height:1; letter-spacing:0.01em; margin:10px 0 14px;
+    background: linear-gradient(180deg, #ffe7a0 0%, #e0a033 32%, #8a4c0c 54%, #c4831f 74%, #f2c968 100%), linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.95) 50%, transparent 60%);
+    background-size: 100% 100%, 260% 100%; background-position: 0 0, 160% 0; background-blend-mode: screen;
+    -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent;
+    filter: drop-shadow(0 1.5px 0 #4a2606) drop-shadow(0 -1px 0 rgba(255,255,255,0.7)) drop-shadow(0 5px 7px rgba(80,40,0,0.5));
+  }
+  .cert-overlay.show .cx-title{ animation: cxShine 1.4s ease 0.9s, cxTitleIn 0.5s cubic-bezier(.3,1.6,.5,1) 0.45s backwards; }
+  @keyframes cxShine{ from{ background-position: 0 0, 160% 0; } to{ background-position: 0 0, -60% 0; } }
+  @keyframes cxTitleIn{ from{ opacity:0; transform: scale(1.8); letter-spacing:0.3em; } to{ opacity:1; transform:none; } }
+  .cx-ribbon{ position:relative; padding:7px 22px; color:#fff6e6; font-weight:800; font-size:13px; letter-spacing:0.02em;
+    background: linear-gradient(180deg, #c23a2c, #8f1f16); box-shadow: 0 3px 8px rgba(80,10,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 50%, 100% 100%, 0 100%, 10px 50%); transform-origin:center; }
+  .cert-overlay .cx-ribbon .cert-sub{ color:#fff6e6; font-size:13px; margin:0; font-weight:800; }
+  .cert-overlay.show .cx-ribbon{ animation: cxRibbon 0.55s cubic-bezier(.3,1.4,.5,1) 0.7s backwards; }
+  @keyframes cxRibbon{ from{ transform: scaleX(0); } to{ transform: scaleX(1); } }
+  .cx-line{ width:70%; height:1px; margin:16px 0 10px; background: linear-gradient(90deg, transparent, #b0741f, transparent); }
+  .cert-overlay .cx-sign{ font-size:10px; line-height:1.5; color:#6b4a1f; font-weight:600; }
+  .cx-seal{ position:absolute; right:-16px; bottom:-16px; width:78px; height:78px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background: radial-gradient(circle at 35% 30%, #ef6a5c, #b51e24 50%, #6e0a12 100%);
+    box-shadow: 0 6px 14px rgba(60,0,0,0.55), inset 0 -4px 8px rgba(0,0,0,0.35), inset 0 3px 6px rgba(255,255,255,0.3), 0 0 0 4px rgba(150,20,28,0.45), 0 0 0 7px rgba(110,10,18,0.25);
+    transform: rotate(-14deg); opacity:0; }
+  .cx-seal::before{ content:""; position:absolute; inset:9px; border-radius:50%; border:2px dashed rgba(255,210,190,0.55); }
+  .cx-seal span{ font-family:var(--font-display); font-weight:800; font-size:24px; color:#ffd9cc; text-shadow: 0 -1px 0 rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.3); letter-spacing:-0.04em; }
+  .cert-overlay.show .cx-seal{ animation: cxSeal 0.5s cubic-bezier(.2,1.8,.4,1) 1.15s forwards; }
+  @keyframes cxSeal{ 0%{ opacity:0; transform: rotate(-14deg) scale(2.6); } 60%{ opacity:1; transform: rotate(-14deg) scale(0.9); } 100%{ opacity:1; transform: rotate(-14deg) scale(1); } }
+  .cert-overlay .cert-share{ opacity:0; }
+  .cert-overlay.show .cert-share{ animation: fadeUp 0.4s ease 1.5s forwards; }
+  .cert-overlay .cert-stamp{ display:none; }
+  /* the 33 Glacée version: frosty blue ribbon and seal */
+  .cert-overlay.ice .cx-ribbon{ background: linear-gradient(180deg, #4aa6d6, #1f5f8f); }
+  .cert-overlay.ice .cx-seal{ background: radial-gradient(circle at 35% 30%, #bfeaff, #3a8fc4 50%, #164a72 100%); box-shadow: 0 6px 14px rgba(0,30,60,0.55), inset 0 -4px 8px rgba(0,0,0,0.3), 0 0 0 4px rgba(60,140,200,0.45); }
+  .cert-overlay.ice .cx-seal span{ color:#eaf8ff; }
+  .cert-overlay.ice .cx-rays{ background: repeating-conic-gradient(from 0deg, rgba(180,230,255,0.16) 0 6deg, transparent 6deg 18deg); }
+  body.calm .cert-overlay .cx-card, body.calm .cert-overlay .cx-seal, body.calm .cert-overlay .cert-share{ opacity:1; transform:none; }
+
+  /* =====================================================================================
+     THE CORA METEOR — a burning meteor strikes the winning 3: impact, quake, embers, the card on fire
+     ===================================================================================== */
+  .meteor{ position:fixed; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; z-index:85; pointer-events:none;
+    background: radial-gradient(circle at 40% 40%, #fffbe6, #ffd36b 30%, #ff7b1a 60%, #b3260a 85%);
+    box-shadow: 0 0 22px 8px rgba(255,140,40,0.85), 0 0 60px 20px rgba(255,90,20,0.45); }
+  .meteor::before{ content:""; position:absolute; right:50%; top:50%; width:170px; height:22px; margin-top:-11px; transform-origin: right center; transform: rotate(var(--ang));
+    background: linear-gradient(90deg, rgba(255,80,20,0), rgba(255,120,30,0.55) 50%, rgba(255,230,160,0.95)); border-radius: 50% 0 0 50%; filter: blur(2px); }
+  .meteor.big{ width:48px; height:48px; margin:-24px 0 0 -24px; }
+  .impact-flash{ position:fixed; left:0; top:0; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; z-index:84; pointer-events:none;
+    background: radial-gradient(circle, #fffbe6, rgba(255,180,60,0.85) 30%, rgba(255,80,20,0.4) 55%, transparent 70%);
+    animation: impactFlash 0.7s ease-out forwards; }
+  @keyframes impactFlash{ from{ transform: scale(0.4); opacity:1; } to{ transform: scale(14); opacity:0; } }
+  .ember{ position:fixed; left:0; top:0; width:7px; height:7px; margin:-3px 0 0 -3px; border-radius:50%; z-index:84; pointer-events:none;
+    background: radial-gradient(circle, #fff3c4, #ff9a2a 50%, #d4330b); box-shadow: 0 0 8px rgba(255,140,40,0.9); }
+  .flames{ position:absolute; left:-10%; right:-10%; bottom:30%; height:130%; pointer-events:none; z-index:3; display:flex; justify-content:center; align-items:flex-end; gap:0; mix-blend-mode: screen; }
+  .flames i{ display:block; width:34%; margin:0 -7%; height:70%; border-radius:50% 50% 35% 35% / 65% 65% 35% 35%; transform-origin: 50% 100%;
+    background: radial-gradient(ellipse at 50% 85%, #fff6c8 0%, #ffd04a 25%, #ff7a1a 55%, rgba(220,40,10,0.7) 75%, transparent 82%);
+    filter: blur(1.5px); animation: flame 0.42s ease-in-out infinite alternate; opacity:0.95; }
+  .flames i:nth-child(2){ height:95%; width:42%; animation-duration:0.36s; animation-delay:-0.1s; }
+  .flames i:nth-child(3){ height:78%; animation-duration:0.48s; animation-delay:-0.2s; }
+  .flames i:nth-child(4){ height:55%; width:26%; animation-duration:0.3s; }
+  @keyframes flame{ from{ transform: scaleY(0.82) scaleX(1.05) skewX(-3deg); } to{ transform: scaleY(1.12) scaleX(0.92) skewX(4deg); } }
+  .flames.out{ animation: flamesOut 0.8s ease forwards; }
+  @keyframes flamesOut{ to{ opacity:0; transform: translateY(-14px) scale(0.6); } }
+  .card.scorched{ box-shadow: 0 0 0 2px #ffb347, 0 0 26px rgba(255,120,30,0.9), inset 0 0 18px rgba(160,60,0,0.35) !important; }
+  .app-shell.quake{ animation: quake 0.75s cubic-bezier(.36,.07,.19,.97); }
+  .app-shell.quake2{ animation: quake2 1.05s cubic-bezier(.36,.07,.19,.97); }
+  @keyframes quake{ 0%,100%{ transform:none; } 10%{ transform: translate(-10px,6px) rotate(-1deg); } 20%{ transform: translate(11px,-7px) rotate(1deg); } 32%{ transform: translate(-9px,5px); } 45%{ transform: translate(7px,-4px) rotate(0.6deg); } 60%{ transform: translate(-5px,3px); } 75%{ transform: translate(3px,-2px); } 88%{ transform: translate(-1px,1px); } }
+  @keyframes quake2{ 0%,100%{ transform:none; } 7%{ transform: translate(-18px,10px) rotate(-2deg); } 14%{ transform: translate(20px,-12px) rotate(2deg); } 22%{ transform: translate(-16px,9px) rotate(-1.5deg); } 32%{ transform: translate(14px,-8px) rotate(1deg); } 44%{ transform: translate(-10px,6px); } 56%{ transform: translate(8px,-5px); } 70%{ transform: translate(-5px,3px); } 84%{ transform: translate(3px,-2px); } }
+
+  /* =====================================================================================
+     AGE CHECK and the scrolling quotes on the home screen
+     ===================================================================================== */
+  .age-gate{ position:fixed; inset:0; z-index:300; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 18px 70px;
+    background: radial-gradient(ellipse at 50% 30%, rgba(74,46,20,0.97), #050302 75%); }
+  .ag-card{ width:100%; max-width:360px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; animation: sheetPop 0.5s cubic-bezier(.25,1.5,.45,1); }
+  .ag-logo{ width:min(270px, 72vw); height:auto; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6)); animation: logoDrop 0.9s cubic-bezier(.3,1.2,.45,1) backwards; }
+  .ag-q{ font-family:var(--font-display); font-size:28px; font-weight:800; color:var(--cream); margin:4px 0 0; letter-spacing:-0.01em; }
+  .ag-p{ color:var(--dust); font-size:14px; margin:0; max-width:300px; }
+  .ag-btns{ width:100%; display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .ag-yes{ padding:16px; border-radius:18px; border:none; font-family:var(--font-display); font-size:18px; font-weight:800; color:#20160a;
+    background: linear-gradient(170deg, #ffd88c, #f4b860 45%, #d98f2e); box-shadow: 0 6px 0 #8a4e0c, 0 14px 30px rgba(244,140,40,0.3); }
+  .ag-yes:active{ transform: translateY(6px); box-shadow: 0 0 0 #8a4e0c; }
+  .ag-no{ padding:13px; border-radius:16px; font-size:15px; font-weight:700; background:rgba(255,240,215,0.06); border:1px solid rgba(244,184,96,0.3); color:var(--cream); }
+  .ag-closed{ display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; animation: sheetPop 0.5s ease; }
+  .ag-closed svg.i{ width:48px; height:48px; color:var(--dust); }
+  .ag-closed h2{ font-family:var(--font-display); color:var(--cream); font-size:26px; margin:6px 0 0; }
+  .ag-closed p{ color:var(--dust); margin:0; }
+  .age-gate.closed .ag-card{ display:none; }
+  .age-gate.closed .ag-closed{ display:flex !important; }
+  .age-gate.leaving{ animation: agOut 0.45s ease forwards; }
+  @keyframes agOut{ to{ opacity:0; transform: scale(1.04); } }
+  .ag-foot{ position:absolute; left:0; right:0; bottom:max(18px, env(safe-area-inset-bottom)); text-align:center; margin:0;
+    font-family:var(--font-display); font-weight:800; font-size:13px; letter-spacing:0.06em; color:var(--bulb); opacity:0.85; text-shadow:0 0 14px rgba(244,184,96,0.4); }
+  .quote-bar{ width:100%; max-width:360px; display:flex; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border-radius:14px; overflow:hidden;
+    background:rgba(0,0,0,0.42); border:1px solid rgba(244,184,96,0.2); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .qb-ico{ flex-shrink:0; width:30px; height:30px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--ict,#4a2a06);
+    background: linear-gradient(160deg, var(--ic1,#ffe7a6), var(--ic2,#d98f2e)); }
+  .qb-ico svg.i{ width:17px; height:17px; margin:0; }
+  .qb-track{ flex:1; overflow:hidden; position:relative; height:20px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .qb-text{ position:absolute; left:0; top:0; white-space:nowrap; margin:0 !important; max-width:none !important; font-size:13.5px !important; line-height:20px; color:var(--cream) !important; font-weight:600; will-change:transform; }
+  .qb-text b{ color:var(--bulb); font-weight:800; }
+  .intro .quote-bar{ animation: fadeUp 0.5s ease 1.4s backwards; }
+  .intro.quick .quote-bar{ animation-delay:0.3s; }
+  body.table-verre .page-home .quote-bar{ background: rgba(255,255,255,0.62); border-color: rgba(255,255,255,0.95); }
+  body.table-verre .page-home .qb-text{ color:#2d2218 !important; }
+  body.table-verre .page-home .qb-text b{ color:#b5681a; }
+
   /* ---- Carré la Pute: 2, 3 or 4 players, and the online table ---- */
   .sq-seat.absent{ visibility:hidden; }
   .cp-pick{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
@@ -1532,6 +1674,24 @@
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none" opacity="0.28"/><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 2.5v3m0 13v3M2.5 12h3m13 0h3M5.3 5.3l2.1 2.1m9.2 9.2 2.1 2.1m0-13.4-2.1 2.1m-9.2 9.2-2.1 2.1"/></symbol>
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m11 3 1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3zm7.5 11 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z"/></symbol>
 </svg>
+<!-- Age check: the very first screen. "No" closes the game. -->
+<div class="age-gate hidden" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="agQ">
+  <div class="ag-card" id="agCard">
+    <img class="ag-logo" src="art/logo.png" alt="Fap Fap" width="600" height="312">
+    <h2 class="ag-q" id="agQ">As-tu 18 ans ou plus ?</h2>
+    <p class="ag-p">Fap Fap se joue avec des mises en jetons. Le jeu est réservé aux adultes.</p>
+    <div class="ag-btns">
+      <button class="ag-yes" id="agYes">Oui, j’ai 18 ans ou plus</button>
+      <button class="ag-no" id="agNo">Non</button>
+    </div>
+  </div>
+  <div class="ag-closed hidden" id="agClosed">
+    <svg class="i" aria-hidden="true"><use href="#i-lock"/></svg>
+    <h2>Le jeu est fermé</h2>
+    <p>Reviens quand tu auras 18 ans.</p>
+  </div>
+  <p class="ag-foot">Nul n’entre ici s’il est babylone.</p>
+</div>
 <div class="bulb-glow"></div>
 <div class="rain-layer"></div>
 <div class="amb-layer">
@@ -1658,13 +1818,32 @@
 <div class="light-burst" id="lightBurst"></div>
 
 <div class="cert-overlay" id="certOverlay">
-  <div class="cert-card">
-    <div class="cert-crest">♠ ♥ ♦ ♣</div>
-    <div class="cert-title" id="certTitle">CORA</div>
-    <div class="cert-sub" id="certSub">Gain multiplié par 2</div>
-    <div class="cert-line"></div>
-    <div class="cert-sign">Authentifié par <b>Penalty</b> — Éditions du Quartier</div>
-    <div class="cert-stamp">CERTIFIÉ</div>
+  <div class="cx-rays" aria-hidden="true"></div>
+  <div class="cx-glow" aria-hidden="true"></div>
+  <div class="cert-card cx-card">
+    <svg class="cx-frame" viewBox="0 0 300 380" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="cxGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff1bf"/><stop offset="0.35" stop-color="#e2a940"/><stop offset="0.55" stop-color="#9c5f15"/><stop offset="0.8" stop-color="#f3cd73"/><stop offset="1" stop-color="#b0741f"/>
+        </linearGradient>
+      </defs>
+      <rect x="6" y="6" width="288" height="368" rx="14" fill="none" stroke="url(#cxGold)" stroke-width="5"/>
+      <rect x="15" y="15" width="270" height="350" rx="9" fill="none" stroke="url(#cxGold)" stroke-width="1.4" opacity="0.85"/>
+      <g fill="none" stroke="url(#cxGold)" stroke-width="2" stroke-linecap="round">
+        <path d="M15 52 C15 30 30 15 52 15 M24 44 C26 33 33 26 44 24 M15 70 q12 -8 0 -18 M70 15 q-8 12 -18 0"/>
+        <path d="M285 52 C285 30 270 15 248 15 M276 44 C274 33 267 26 256 24 M285 70 q-12 -8 0 -18 M230 15 q8 12 18 0"/>
+        <path d="M15 328 C15 350 30 365 52 365 M24 336 C26 347 33 354 44 356 M15 310 q12 8 0 18 M70 365 q-8 -12 -18 0"/>
+        <path d="M285 328 C285 350 270 365 248 365 M276 336 C274 347 267 354 256 356 M285 310 q-12 8 0 18 M230 365 q8 -12 18 0"/>
+      </g>
+      <g fill="url(#cxGold)"><circle cx="150" cy="15" r="3"/><circle cx="150" cy="365" r="3"/><circle cx="15" cy="190" r="3"/><circle cx="285" cy="190" r="3"/></g>
+    </svg>
+    <div class="cx-kicker">Certificat officiel du quartier</div>
+    <div class="cert-crest cx-suits"><span>♠</span><span class="r">♥</span><span class="r">♦</span><span>♣</span></div>
+    <div class="cert-title cx-title" id="certTitle">CORA</div>
+    <div class="cx-ribbon"><span class="cert-sub" id="certSub">Gain multiplié par 2</span></div>
+    <div class="cx-line"></div>
+    <div class="cert-sign cx-sign">Authentifié par <b>Penalty</b><br>Éditions du Quartier · Yaoundé</div>
+    <div class="cx-seal" aria-hidden="true"><span>FF</span></div>
   </div>
   <button class="primary whatsapp hidden cert-share" id="btnCertShare"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager mon exploit</button>
 </div>
@@ -1829,6 +2008,10 @@
       <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span><span class="tile-lbl">Règles</span></button>
       <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span><span class="tile-lbl">Paramètres</span></button>
       <button class="tile hidden" id="btnTutoAgain" style="--k:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
+    </div>
+    <div class="quote-bar" id="quoteBar" aria-live="polite">
+      <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
+      <div class="qb-track"><p class="qb-text" id="quoteText"></p></div>
     </div>
     <button class="primary hidden" id="btnInstall"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg> Installer le jeu sur ce téléphone</button>
     <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
@@ -2933,6 +3116,17 @@
   function sfxDeal(n, step){ sfx((c,t)=>{ for(let i=0;i<(n||5);i++) noiseHit(c, sfxBus, t+i*(step||0.07), {dur:0.07, vol:0.035, type:'bandpass', f0:3600, f1:1400, q:0.9, att:0.008, pan:i%2 ? 0.25 : -0.25}); }); }
   // control changes hands: a soft rising (you) or falling (opponent) glide
   function sfxCtrl(mine){ sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:mine?520:780, f1:mine?780:520, dur:0.22, vol:0.04, type:'triangle', lp:2500, verb:0.3}); }); }
+  // the meteor: a falling, roaring whoosh…
+  function sfxMeteor(big){ sfx((c,t)=>{
+    noiseHit(c, sfxBus, t, {dur: big ? 0.6 : 0.5, vol: big ? 0.09 : 0.07, type:'bandpass', f0:900, f1:3200, q:0.6, att:0.35});
+    sweep(c, sfxBus, t, {f0:1400, f1:180, dur: big ? 0.6 : 0.5, vol:0.03, type:'sawtooth', lp:1800});
+  }); }
+  // …and the impact: a deep boom, a crash, then the crackle of fire
+  function sfxImpact(big){ sfx((c,t)=>{
+    sweep(c, sfxBus, t, {f0: big ? 85 : 95, f1:28, dur: big ? 1.1 : 0.85, vol: big ? 0.34 : 0.28});
+    noiseHit(c, sfxBus, t, {dur: big ? 0.9 : 0.7, vol: big ? 0.16 : 0.12, type:'lowpass', f0:2600, f1:120, att:0.004, verb:0.4});
+    for(let i=0; i<(big ? 14 : 9); i++) noiseHit(c, sfxBus, t+0.15+Math.random()*1.4, {dur:0.03, vol:0.02+Math.random()*0.02, type:'highpass', f0:2500+Math.random()*3000});
+  }); }
   // the last trick: a slow heartbeat under the table
   function sfxHeartbeat(){ sfx((c,t)=>{ [0,0.26,1.05,1.31,2.1,2.36].forEach((d,i)=> sweep(c, sfxBus, t+d, {f0:72, f1:40, dur:0.2, vol:i%2 ? 0.13 : 0.2, lp:260})); }); }
   // the music steps back during the decisive moment, then comes back
@@ -4714,9 +4908,7 @@
     if(!state.leadSuit){
       state.leadSuit = card.suit; state._leadCard = card; state._leadActor = actor; state._passeOppLogged = false;
       // the leader just played their very last card: this trick decides the hand
-      const leaderLeft = actor==='you' ? state.playerHand.length : state.aiHand.length;
-      const otherLeft = actor==='you' ? state.aiHand.length : state.playerHand.length;
-      if(leaderLeft===0 && otherLeft>0) setFinale(true);
+      // (the slow-motion last trick was removed at the player's request; the CORA meteor carries the drama now)
       logMsg((actor==='you'?'Toi':'Penalty')+' commande '+card.suit+' avec le '+card.rank+'.');
       renderAll();
       afterTurn();
@@ -4894,24 +5086,74 @@
     if(on && !calmOn()) sfxHeartbeat();
     duckMusic(on);
   }
-  // CORA / 33 Glacée: the winning 3 turns to gold with a shockwave across the table
-  function coraMoment(winner, glacee){
-    if(calmOn()) return;
-    const slot = document.getElementById(winner==='you' ? 'youSlot' : 'aiSlot');
-    const card = slot && slot.querySelector('.card[data-key$="-3"]');
-    if(!card) return;
-    card.classList.add(glacee ? 'glacee-gold' : 'cora-gold');
-    const table = document.querySelector('#duoScreen .table');
-    const tr = table.getBoundingClientRect(), cr = card.getBoundingClientRect();
-    [0, 180].forEach(delay=>{
-      const s = document.createElement('span');
-      s.className = 'shockwave'+(glacee ? ' ice' : '');
-      s.style.left = (cr.left - tr.left + cr.width/2)+'px';
-      s.style.top = (cr.top - tr.top + cr.height/2)+'px';
-      s.style.animationDelay = delay+'ms';
-      table.appendChild(s);
-      setTimeout(()=> s.remove(), 1400+delay);
-    });
+  // CORA: a burning meteor falls from the sky onto the winning 3 — impact flash, shockwaves, flying embers,
+  // the whole table shakes and the card catches fire. A 33 Glacée (double CORA) gets two meteors, twice the quake.
+  function meteorStrike(cardOrFn, count, done){
+    count = count || 1;
+    // the card may be redrawn while the meteor falls (Carré re-renders the table): look it up again at impact
+    const getCard = typeof cardOrFn==='function' ? cardOrFn : ()=> cardOrFn;
+    let card = getCard();
+    if(calmOn() || !card || !card.isConnected){ bigImpact(); if(done) done(); return; }
+    const r = card.getBoundingClientRect();
+    const tx = r.left + r.width/2, ty = r.top + r.height/2;
+    const shell = document.querySelector('.app-shell');
+    let landed = 0;
+    const impact = (big)=>{
+      // the flash and the rings
+      const f = document.createElement('div'); f.className = 'impact-flash';
+      f.style.transform = ''; f.style.left = tx+'px'; f.style.top = ty+'px';
+      document.body.appendChild(f); setTimeout(()=> f.remove(), 800);
+      [0, 160, big ? 320 : -1, big ? 480 : -1].filter(d=> d>=0).forEach(d=>{
+        const s = document.createElement('span');
+        s.className = 'shockwave';
+        s.style.position = 'fixed'; s.style.left = tx+'px'; s.style.top = ty+'px'; s.style.zIndex = 84; s.style.animationDelay = d+'ms';
+        document.body.appendChild(s); setTimeout(()=> s.remove(), 1300+d);
+      });
+      // embers thrown in every direction, then falling
+      for(let i=0; i<(big ? 26 : 16); i++){
+        const e = document.createElement('span'); e.className = 'ember';
+        document.body.appendChild(e);
+        const a = Math.random()*Math.PI*2, v = (big ? 110 : 80) + Math.random()*90;
+        const dx = Math.cos(a)*v, dy = Math.sin(a)*v - 40;
+        e.animate([
+          {transform:'translate('+tx+'px,'+ty+'px) scale(1)', opacity:1},
+          {transform:'translate('+(tx+dx*0.7)+'px,'+(ty+dy*0.7)+'px) scale(0.9)', opacity:1, offset:0.5},
+          {transform:'translate('+(tx+dx)+'px,'+(ty+dy+90)+'px) scale(0.3)', opacity:0}
+        ], {duration:800+Math.random()*500, easing:'cubic-bezier(.2,.7,.4,1)', fill:'forwards'}).onfinish = ()=> e.remove();
+        setTimeout(()=> e.remove(), 1600);
+      }
+      // the quake
+      if(shell){ shell.classList.remove('quake','quake2'); void shell.offsetWidth; shell.classList.add(big ? 'quake2' : 'quake'); setTimeout(()=> shell.classList.remove('quake','quake2'), 1100); }
+      const lb = document.getElementById('lightBurst'); lb.classList.remove('fire'); void lb.offsetWidth; lb.classList.add('fire');
+      vibrate(big ? [60,40,90,40,140] : [50,40,90]);
+      sfxImpact(big);
+      // the card turns gold and burns
+      card = (getCard() && getCard().isConnected) ? getCard() : card;
+      card.classList.add('cora-gold', 'scorched');
+      if(!card.querySelector('.flames')){
+        const fl = document.createElement('span'); fl.className = 'flames';
+        fl.innerHTML = '<i></i><i></i><i></i><i></i>';
+        card.appendChild(fl);
+        setTimeout(()=> fl.classList.add('out'), big ? 3200 : 2400);
+        setTimeout(()=> fl.remove(), big ? 4100 : 3300);
+      }
+      if(++landed===count && done) setTimeout(done, big ? 900 : 700);
+    };
+    for(let i=0; i<count; i++){
+      setTimeout(()=>{
+        const big = count>1 && i===count-1;
+        const m = document.createElement('div'); m.className = 'meteor'+(big ? ' big' : '');
+        const sx = tx + (i%2 ? -1 : 1)*(170 + Math.random()*90), sy = -90;
+        m.style.setProperty('--ang', (Math.atan2(ty-sy, tx-sx)*180/Math.PI)+'deg');
+        document.body.appendChild(m);
+        sfxMeteor(big);
+        m.animate([
+          {transform:'translate('+sx+'px,'+sy+'px) scale(0.55)'},
+          {transform:'translate('+tx+'px,'+ty+'px) scale(1)'}
+        ], {duration: big ? 560 : 500, easing:'cubic-bezier(.55,0,.9,.45)', fill:'forwards'}).onfinish = ()=>{ m.remove(); impact(big); };
+        setTimeout(()=> m.remove(), 1500);
+      }, i*650);
+    }
   }
 
   // a soft ring where a played card lands
@@ -5088,8 +5330,6 @@
     const winner = last.winner;
     const pts = glacee?3:(cora?2:1);
     const label = glacee?'LA 33 GLACÉE !':(cora?'CORA — gain x2 !':'Manche remportée');
-    if(cora) coraMoment(winner, glacee);
-    setTimeout(()=> setFinale(false), cora ? 1800 : 900);
     if(mode==='mp' && mpIsHost){
       mpSend({t:'handOver', winner: winner==='you'?'ai':'you', pts, label});
     }
@@ -5107,7 +5347,11 @@
     document.getElementById('certSub').textContent = sub;
     const shareBtn = document.getElementById('btnCertShare');
     shareBtn.classList.toggle('hidden', !shareable);
+    ov.classList.toggle('ice', /GLAC/i.test(title));
+    ov.classList.remove('show'); void ov.offsetWidth; // replays the whole entrance every time
     ov.classList.add('show');
+    // the wax seal lands with a thud
+    setTimeout(()=> sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:140, f1:60, dur:0.18, vol:0.16}); noiseHit(c, sfxBus, t, {dur:0.06, vol:0.05, type:'lowpass', f0:900}); }), calmOn() ? 0 : 1200);
     clearTimeout(certTimer);
     const dismiss = ()=>{ ov.classList.remove('show'); ov.onclick = null; };
     ov.onclick = dismiss;
@@ -5117,7 +5361,7 @@
       const opp = mode==='square' ? 'la table de Carré la Pute' : oppName();
       shareFeat(title, myDisplayName()+' a réussi '+(title==='CORA' ? 'un CORA' : 'la 33 Glacée')+' contre '+opp+' !').finally(dismiss);
     };
-    certTimer = setTimeout(dismiss, holdMs || (shareable ? 5200 : 3400));
+    certTimer = setTimeout(dismiss, holdMs || (shareable ? 6200 : 4300));
   }
 
   // ---- Sharing a feat as an image (a certificate drawn on a canvas), for WhatsApp ----
@@ -5249,12 +5493,14 @@
     }
     matchMaxDeficit = Math.max(matchMaxDeficit, scores.ai - scores.you);
 
-    if(isGlacee){
-      showCertificate('33 GLACÉE', (who==='you'?'Tu':oppName())+' remporte le gain maximum', 0, who==='you');
-      sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(40);
-    } else if(isCora){
-      showCertificate('CORA', 'Gain multiplié par 2', 0, who==='you');
-      sfxBigWin(); bigImpact(); if(who==='you') burstConfetti(24);
+    if(isGlacee || isCora){
+      // the meteor strikes the winning 3 first; the certificate comes once the dust settles
+      const slot = document.getElementById(who==='you' ? 'youSlot' : 'aiSlot');
+      const card = slot && slot.querySelector('.card[data-key$="-3"]');
+      meteorStrike(card, isGlacee ? 2 : 1, ()=>{
+        showCertificate(isGlacee ? '33 GLACÉE' : 'CORA', isGlacee ? (who==='you'?'Tu':oppName())+' remporte le gain maximum' : 'Gain multiplié par 2', 0, who==='you');
+        sfxBigWin(); if(who==='you') burstConfetti(isGlacee ? 40 : 24);
+      });
     } else if(!isAutoWin){
       showToast(label, (who==='you'?'Tu remportes la manche':oppName()+' remporte la manche')+' (+'+pts+')', {ms:2200});
     }
@@ -5790,6 +6036,75 @@
   Nav.stack = ['menuOverlay'];
   renderMenuRank();
   playHomeIntro();
+
+  // ---- Age check, asked until it's answered "yes" once on this phone; "no" closes the game ----
+  (function ageGate(){
+    const AGE_KEY = 'fapfap_age_ok';
+    let ok = false; try{ ok = localStorage.getItem(AGE_KEY)==='1'; }catch(e){}
+    if(ok || /[?&]debug\b/.test(location.search)) return;
+    const gate = document.getElementById('ageGate');
+    gate.classList.remove('hidden');
+    document.getElementById('agYes').addEventListener('click', ()=>{
+      try{ localStorage.setItem(AGE_KEY, '1'); }catch(e){}
+      ensureAudio();
+      gate.classList.add('leaving');
+      setTimeout(()=>{ gate.classList.add('hidden'); gate.classList.remove('leaving'); playHomeIntro(); }, 430);
+    });
+    document.getElementById('agNo').addEventListener('click', ()=>{
+      gate.classList.add('closed');
+      try{ Music.stop(); if(audioCtx) audioCtx.suspend(); }catch(e){}
+      // a game opened as an app (or by a script) can really close; in a browser tab we leave a closed screen
+      setTimeout(()=>{ try{ window.close(); }catch(e){} }, 1200);
+    });
+  })();
+
+  // ---- Quotes from the neighbourhood, scrolling at the bottom of the home screen ----
+  const QUOTES = [
+    ['Le 3 ne prévient pas. Il frappe.', 'Penalty'],
+    ['Ici on ne joue pas aux cartes, on règle les comptes du quartier.', 'RALL'],
+    ['Mieux vaut un 3 en main que deux 10 en rêve.', 'Mr Kamga'],
+    ['Même le délestage attend la fin de la manche.', 'RALL'],
+    ['Commander Black sans Black, c’est le ndem assuré.', 'Penalty'],
+    ['Le kongossa, c’est après la partie. Jamais pendant.', 'Mr Kamga'],
+    ['Tu as mangé quoi ce matin pour jouer comme ça ?', 'RALL'],
+    ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Joëlle'],
+    ['On dit quoi ? On dit CORA !', 'Penalty'],
+    ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Joëlle'],
+    ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Mr Kamga'],
+    ['Au quartier, le contrôle se prend. Il ne se demande pas.', 'Penalty'],
+    ['Tchaka sur la table, silence dans la salle.', 'RALL'],
+    ['Ce n’est pas la chance, c’est le manuel. Chapitre 5.', 'Penalty'],
+    ['La 33 Glacée, ça ne se raconte pas : ça se montre.', 'RALL'],
+    ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Joëlle'],
+    ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Mr Kamga'],
+    ['Mola, range ton 10. On a déjà compris.', 'RALL'],
+    ['Le Fap Fap, c’est comme le benskin : il faut savoir quand freiner.', 'Penalty'],
+    ['Tu mènes ? Le score aime les menteurs.', 'Mr Kamga'],
+    ['Ça va aller… mais pas pour toi cette manche.', 'Penalty'],
+    ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Joëlle'],
+    ['Tu partages ou tu coupes ? Décide, le taxi attend.', 'RALL'],
+    ['Un CORA le matin, la journée est bénie.', 'Joëlle'],
+    ['On ne joue pas contre Penalty. On joue après lui.', 'Mr Kamga']
+  ];
+  (function quoteTicker(){
+    const el = document.getElementById('quoteText');
+    if(!el) return;
+    let order = [], anim = null;
+    const next = ()=>{
+      if(!order.length) order = shuffle(QUOTES.map((_,i)=>i));
+      const [text, who] = QUOTES[order.pop()];
+      el.innerHTML = '« '+text+' » <b>— '+who+'</b>';
+      const box = el.parentElement;
+      const w = box.clientWidth || 280, tw = el.scrollWidth || 400;
+      if(anim) anim.cancel();
+      if(calmOn()){ el.style.transform = 'translateX(0)'; setTimeout(next, 7000); return; }
+      // scrolls across at a calm reading speed, then the next one comes
+      anim = el.animate([{transform:'translateX('+w+'px)'}, {transform:'translateX('+(-tw)+'px)'}], {duration: Math.max(6000, (w+tw)/55*1000), easing:'linear'});
+      anim.onfinish = ()=> setTimeout(next, 300);
+    };
+    // starts when the home screen is actually visible (fonts and layout ready)
+    setTimeout(next, 1600);
+  })();
   (function handleInviteLink(){
     const m = location.search.match(/[?&]partie=([A-Za-z0-9]{4})\b/);
     if(!m) return;
@@ -6453,8 +6768,12 @@
   }
   function sqHandWonShow(winner, cora, glacee){
     const me = winner==='you';
-    if(glacee){ showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif', 0, me); sfxBigWin(); bigImpact(); if(me) burstConfetti(40); }
-    else if(cora){ showCertificate('CORA', sqName(winner)+' double la mise', 0, me); sfxBigWin(); bigImpact(); if(me) burstConfetti(24); }
+    if(glacee || cora){
+      meteorStrike(()=> document.querySelector('#sqCur'+sqCap(winner)+' .card[data-key$="-3"]'), glacee ? 2 : 1, ()=>{
+        showCertificate(glacee ? '33 GLACÉE' : 'CORA', sqName(winner)+(glacee ? ' rafle le pli décisif' : ' double la mise'), 0, me);
+        sfxBigWin(); if(me) burstConfetti(glacee ? 40 : 24);
+      });
+    }
     else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); if(me) sfxHandWin(); else sfxHandLose(); }
   }
 
@@ -7162,7 +7481,7 @@
     window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
-      openChoiceForPlayer, showOppRitual, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
+      openChoiceForPlayer, showOppRitual, meteorStrike, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
   }
 
