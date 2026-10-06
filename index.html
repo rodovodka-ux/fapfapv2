@@ -881,6 +881,44 @@
   .rich-name{ font-weight:700; font-size:15px; color:var(--cream); }
   .rich-chips{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-display); font-weight:800; font-size:16px; color:var(--bulb-hot); }
   .rich-chips svg.i{ width:16px; height:16px; color:var(--bulb); }
+  .rich-tabs{ margin:0 auto 4px; }
+  .rich-sub{ display:block; font-size:11px; font-weight:600; color:var(--dust); }
+  .rich-sub svg.i{ width:11px; height:11px; color:#7fd6a6; vertical-align:-0.1em; }
+  .rich-gap{ text-align:center; color:var(--dust); letter-spacing:0.3em; line-height:0.6; }
+  .rich-empty{ text-align:center; padding:18px 8px; color:var(--dust); font-size:14px; }
+  .rich-empty button{ margin-top:10px; }
+
+  /* ---- account ---- */
+  .tile-ico{ position:relative; }
+  .tile-dot{ position:absolute; top:-3px; right:-3px; width:11px; height:11px; border-radius:50%; background:#ff7a4f; box-shadow:0 0 0 2px #1a1009, 0 0 8px #ff7a4f; animation: netBlink 1.6s ease-in-out infinite; }
+  .acct-card{ display:flex; align-items:center; gap:14px; padding:16px; border-radius:20px; border:1px solid rgba(244,184,96,0.35);
+    background: radial-gradient(120% 90% at 0% 0%, rgba(244,184,96,0.22), transparent 60%), linear-gradient(160deg, #2b1c0e, #140c06);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45); }
+  .acct-who{ min-width:0; }
+  .acct-name{ font-family:var(--font-display); font-size:23px; font-weight:800; color:var(--cream); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .acct-state{ display:inline-flex; align-items:center; gap:7px; margin-top:4px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;
+    background:rgba(255,255,255,0.07); color:var(--dust); max-width:100%; }
+  .acct-state span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .acct-state i{ width:8px; height:8px; border-radius:50%; background:var(--dust); flex-shrink:0; }
+  .acct-state.guest{ background:rgba(255,122,79,0.14); color:#ffb199; }
+  .acct-state.guest i{ background:#ff7a4f; box-shadow:0 0 8px #ff7a4f; }
+  .acct-state.saved{ background:rgba(76,180,130,0.16); color:#9ee6c0; }
+  .acct-state.saved i{ background:#4cb482; box-shadow:0 0 8px #4cb482; }
+  .acct-note{ font-size:13.5px; line-height:1.45; color:var(--cream); opacity:0.85; margin:2px 2px 0; }
+  .acct-btn{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:13px 14px; border-radius:14px; font-size:15px; font-weight:700; }
+  #accountPage .acct-google{ background:#fff; color:#1f1f1f; border:1px solid #dadce0; box-shadow:0 3px 0 rgba(0,0,0,0.45); }
+  .acct-google:active{ transform:translateY(3px); box-shadow:none; }
+  .g-logo{ width:20px; height:20px; flex-shrink:0; }
+  .acct-or{ display:flex; align-items:center; gap:10px; font-size:12px; color:var(--dust); margin:4px 0; }
+  .acct-or::before, .acct-or::after{ content:""; flex:1; height:1px; background:rgba(244,184,96,0.2); }
+  .acct-mail{ display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+  #accountPage .acct-mail .mp-input{ max-width:none; text-align:left; }
+  #accountPage .acct-mail .acct-code{ text-align:center; font-size:26px; letter-spacing:0.35em; font-family:var(--font-display); font-weight:800; }
+  .acct-info{ font-size:13px; line-height:1.4; color:var(--cream); margin:0; }
+  .acct-info b{ color:var(--bulb); }
+  .acct-err{ font-size:13px; line-height:1.4; color:#ffb199; background:rgba(217,84,46,0.14); border:1px solid rgba(217,84,46,0.35); border-radius:12px; padding:9px 12px; margin:0; }
+  #accountPage button.busy{ opacity:0.6; pointer-events:none; }
+  #btnAcctLogout{ align-self:center; }
   /* end of match: what the stake brought */
   .chips-result{ width:100%; max-width:300px; display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:16px;
     background: linear-gradient(160deg, rgba(244,184,96,0.22), rgba(244,184,96,0.06)); border:1px solid rgba(244,184,96,0.5);
@@ -1704,6 +1742,9 @@
   <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2 9.5 12 5l10 4.5-10 4.5L2 9.5z"/><path d="M6.5 11.5V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.5M22 9.5V15"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4m8-4v4"/></symbol>
   <symbol id="i-calcheck" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4m8-4v4m-6.5 8 2 2 4-4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5h10.5a4 4 0 0 0 .6-8 6 6 0 0 0-11.6 1.6A3.3 3.3 0 0 0 7 18.5z"/><path d="m9.5 13.5 2.5-2.5 2.5 2.5M12 11v5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 4.5h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-4M10 16.5 5.5 12 10 7.5M5.5 12H15"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.8"/><path d="M16.5 14a5 5 0 0 1 5.5 5"/></symbol>
   <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5.5a4 4 0 0 1-8 0V4zm0 2H5a3 3 0 0 0 3 4.5M16 6h3a3 3 0 0 1-3 4.5M12 13.5V17m-3.5 4h7l-.8-4H9.3l-.8 4z"/></symbol>
@@ -2084,7 +2125,8 @@
       <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></span><span class="tile-lbl">Décors</span></button>
       <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span><span class="tile-lbl">Règles</span></button>
       <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span><span class="tile-lbl">Paramètres</span></button>
-      <button class="tile hidden" id="btnTutoAgain" style="--k:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
+      <button class="tile tile-acct" id="btnShowAccount" style="--k:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></span><span class="tile-lbl">Mon compte</span></button>
+      <button class="tile hidden" id="btnTutoAgain" style="--k:6"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
     </div>
     <div class="quote-bar" id="quoteBar" aria-live="polite">
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
@@ -2202,10 +2244,63 @@
 <div class="overlay page hidden" id="richPage">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Les plus riches</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
-    <p class="page-intro">Bats quelqu'un avec une mise et il te paie. Perds, et il empoche ta mise. Qui sera le caïd du quartier ?</p>
-    <div class="rich-list" id="richList"></div>
+    <div class="format-pick rich-tabs" role="tablist" aria-label="Classement">
+      <button class="fmt" data-rt="world" role="tab"><b>Tout le quartier</b><small>Les vrais joueurs</small></button>
+      <button class="fmt" data-rt="local" role="tab"><b>Mes adversaires</b><small>Joëlle, RALL, Penalty…</small></button>
+    </div>
+    <div id="richWorldBox">
+      <p class="page-intro" id="richWorldIntro">Les joueurs de Fap Fap, partout. Gagne des jetons pour monter.</p>
+      <div class="rich-list" id="richWorld"></div>
+    </div>
+    <div id="richLocalBox" class="hidden">
+      <p class="page-intro">Bats quelqu'un avec une mise et il te paie. Perds, et il empoche ta mise. Qui sera le caïd du quartier ?</p>
+      <div class="rich-list" id="richList"></div>
+    </div>
     <p class="small-note" id="richBest"></p>
     <p class="small-note">Les jetons se gagnent en jouant : bonus chaque jour, victoires, trophées, défi du jour. Ils ne s'achètent pas et ne s'échangent pas contre de l'argent.</p>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="accountPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Mon compte</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <div class="acct-card" id="acctCard">
+      <span class="avatar acct-av" id="acctAvatar" style="--s:62px"></span>
+      <div class="acct-who">
+        <div class="acct-name" id="acctName">Toi</div>
+        <div class="acct-state" id="acctState"><i></i><span>Connexion…</span></div>
+      </div>
+    </div>
+    <p class="acct-note" id="acctNote"></p>
+
+    <div class="set-group" id="acctSaveBox">
+      <h3>Sauvegarder ma progression</h3>
+      <button class="acct-btn acct-google hidden" id="btnAcctGoogle">
+        <svg class="g-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>
+        <span>Continuer avec Google</span>
+      </button>
+      <div class="acct-or hidden" id="acctOr"><span>ou avec ton e-mail</span></div>
+      <div class="acct-mail" id="acctMailStep1">
+        <input id="acctEmail" class="mp-input" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="ton.adresse@exemple.com">
+        <button class="primary" id="btnAcctSendCode"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg> Recevoir un code</button>
+      </div>
+      <div class="acct-mail hidden" id="acctMailStep2">
+        <p class="acct-info" id="acctCodeInfo"></p>
+        <input id="acctCode" class="mp-input acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="------">
+        <button class="primary" id="btnAcctVerify"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg> Valider le code</button>
+        <button class="ghost" id="btnAcctMailBack">Changer d'adresse</button>
+      </div>
+      <p class="acct-err hidden" id="acctErr" role="alert"></p>
+    </div>
+
+    <div class="set-group">
+      <h3>Ton nom au quartier</h3>
+      <label class="set-row set-input"><span>Pseudo</span><input id="acctNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom"></label>
+      <p class="small-note">C'est ce nom que voient les autres joueurs et le classement.</p>
+    </div>
+
+    <button class="ghost hidden" id="btnAcctLogout"><svg class="i" aria-hidden="true"><use href="#i-logout"/></svg> Se déconnecter de ce téléphone</button>
+    <p class="small-note">Ton e-mail sert seulement à te reconnecter. Il n'est jamais montré aux autres joueurs.</p>
   </div>
 </div>
 
@@ -2752,14 +2847,19 @@
     return supabaseLoadPromise;
   }
   function preloadNet(){ if(!MP_LOCAL && SUPABASE_URL) loadSupabase(); }
+  // one client for everything: online play and the player's account (its session is kept on the phone)
+  function supaMake(){
+    if(!supaClient) supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'fapfap_auth' },
+      realtime: { params: { eventsPerSecond: 30 } }
+    });
+    return supaClient;
+  }
 
   async function openSupabaseNet(code, meta){
     if(!SUPABASE_URL || !SUPABASE_ANON_KEY) throw new Error('not-configured');
     if(!(await loadSupabase())) throw new Error('lib');
-    if(!supaClient) supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession:false, autoRefreshToken:false },
-      realtime: { params: { eventsPerSecond: 30 } }
-    });
+    supaMake();
     const ch = supaClient.channel('fapfap-'+code, { config: { broadcast:{ self:false }, presence:{ key: meta.id } } });
     ch.on('broadcast', {event:'p'}, ({payload})=> mpOnPacket(payload));
     ch.on('presence', {event:'sync'}, ()=>{
@@ -3873,7 +3973,8 @@
     }catch(e){}
     return defaultProfile();
   }
-  function saveProfile(){ try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }catch(e){} }
+  // every save is stamped, so the phone and the cloud copy can tell which one is newer; then it goes up (see cloudSchedule)
+  function saveProfile(){ profile.rev = Date.now(); try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }catch(e){} cloudSchedule(); }
   let profile = loadProfile();
 
   // player preferences, remembered on this device: first name (online play) and "always share"
@@ -3882,7 +3983,7 @@
     const base = {alwaysShare:false, name:''};
     try{ return Object.assign(base, JSON.parse(localStorage.getItem(PREFS_KEY)||'{}')); }catch(e){ return base; }
   }
-  function savePrefs(){ try{ localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }catch(e){} }
+  function savePrefs(){ try{ localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }catch(e){} cloudSchedule(); }
   let prefs = loadPrefs();
 
   // ===================== Progression: réputation, neighbourhood ranks, trophies =====================
@@ -4338,8 +4439,9 @@
   }
   function pageShown(id){
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
-    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); }
-    else if(id==='richPage') renderRich();
+    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); }
+    else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
+    else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='carrePage'){ refreshCarrePick(); renderStakePicks(); fillAllAvatars(document.getElementById('carrePage')); }
     else if(id==='carreHostPage') renderRoomLobby();
     else if(id==='oppSelectOverlay') renderOppSelect();
@@ -6084,12 +6186,12 @@
   renderChips();
   // match format: a full match (first to 5) or a quick game (one hand) — remembered for next time
   function refreshFormatPick(){
-    document.querySelectorAll('.format-pick:not(.kind-pick) .fmt').forEach(b=>{
+    document.querySelectorAll('.format-pick .fmt[data-q]').forEach(b=>{
       const on = (b.dataset.q==='1')===!!prefs.quick;
       b.classList.toggle('on', on); b.setAttribute('aria-checked', on);
     });
   }
-  document.querySelectorAll('.format-pick:not(.kind-pick) .fmt').forEach(b=> b.addEventListener('click', ()=>{
+  document.querySelectorAll('.format-pick .fmt[data-q]').forEach(b=> b.addEventListener('click', ()=>{
     prefs.quick = b.dataset.q==='1'; savePrefs(); refreshFormatPick();
   }));
   refreshFormatPick();
@@ -7627,6 +7729,347 @@
     }
   });
   document.getElementById('btnCloseIosInstall').addEventListener('click', ()=> document.getElementById('iosInstallOverlay').classList.add('hidden'));
+
+  // ===================== Accounts & cloud save (Supabase Auth) =====================
+  // Everyone starts as an invisible guest account (anonymous sign-in), so the progression is in the cloud from
+  // the first game. "Mon compte" then attaches a Google account or an e-mail (6-digit code) to it, and the same
+  // progression comes back on any phone. Table "players": one row per account, readable and writable only by
+  // its owner (RLS). The worldwide leaderboard comes from the function fapfap_top(), which only exposes
+  // pseudo, chips and réputation. Chips stay virtual: the phone computes them, so they are not cheat-proof.
+  var Cloud = { user:null, initP:null, pullP:null, pushT:null, hold:false, error:null, providers:{}, mail:null, pending:null, forceGoogle:false };
+  const CLOUD_ON = !!SUPABASE_URL && !MP_LOCAL;
+  const SYNC_PREFS = ['name','skin','quick','stake','alwaysShare','mpKind'];
+  const $id = id=> document.getElementById(id);
+
+  function cloudInit(){
+    if(!CLOUD_ON) return Promise.resolve(false);
+    if(Cloud.initP) return Cloud.initP;
+    Cloud.initP = (async ()=>{
+      if(!(await loadSupabase())){ Cloud.initP = null; Cloud.error = 'offline'; renderAccount(); return false; }
+      const sb = supaMake();
+      fetchAuthSettings();
+      sb.auth.onAuthStateChange((ev, session)=>{ setTimeout(()=> cloudOnSession(session ? session.user : null), 0); });
+      try{
+        const { data } = await sb.auth.getSession();
+        if(data && data.session) cloudOnSession(data.session.user);
+        else await cloudGuest();
+      }catch(e){ Cloud.error = 'offline'; }
+      checkOAuthReturn();
+      renderAccount();
+      return true;
+    })();
+    return Cloud.initP;
+  }
+  async function cloudGuest(){
+    const r = await supaClient.auth.signInAnonymously();
+    if(r.error){ Cloud.error = r.error.message; renderAccount(); return; }
+    cloudOnSession(r.data.user);
+  }
+  async function fetchAuthSettings(){
+    try{
+      const r = await fetch(SUPABASE_URL+'/auth/v1/settings', { headers:{ apikey: SUPABASE_ANON_KEY } });
+      const j = await r.json();
+      Cloud.providers = (j && j.external) || {};
+    }catch(e){}
+    renderAccount();
+  }
+  function cloudOnSession(user){
+    const prev = Cloud.user ? Cloud.user.id : null;
+    Cloud.user = user || null;
+    if(user && user.id!==prev){ Cloud.hold = false; Cloud.error = null; Cloud.pullP = cloudPull(); }
+    renderAccount(); renderAccountDot();
+  }
+  const isGuest = ()=> !Cloud.user || !!Cloud.user.is_anonymous;
+
+  // newest copy wins: the cloud's when this phone has never been linked to the account, or when it is more recent
+  async function cloudPull(){
+    const uid = Cloud.user.id;
+    const { data, error } = await supaClient.from('players').select('data').eq('id', uid).maybeSingle();
+    if(!Cloud.user || Cloud.user.id!==uid) return;
+    if(error){ Cloud.error = error.message; renderAccount(); return; }
+    const cloud = data && data.data && data.data.profile ? data.data : null;
+    const bound = profile.acct===uid;
+    if(cloud && (!bound || (cloud.rev||0) > (profile.rev||0))){
+      if(inGame()){ Cloud.pending = cloud; return; } // never swap the progression in the middle of a game
+      applyCloud(cloud);
+      if(!bound) showToast('Progression récupérée', fmtChips(profile.chips)+' jetons · '+RANKS[rankIndex(profile.rep)].name, {ms:2800});
+    } else {
+      profile.acct = uid; saveProfile();
+      await cloudPush();
+    }
+  }
+  function applyCloud(cloud){
+    const p = Object.assign(defaultProfile(), cloud.profile);
+    DUEL_ORDER.forEach(id=>{ if(!p.ladder[id]) p.ladder[id] = {w:0,l:0}; });
+    if(!p.trophies) p.trophies = {};
+    p.acct = Cloud.user.id; p.rev = cloud.rev || Date.now();
+    profile = p;
+    SYNC_PREFS.forEach(k=>{ if(cloud.prefs && k in cloud.prefs) prefs[k] = cloud.prefs[k]; });
+    try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }catch(e){}
+    Cloud.pending = null;
+    chipsInit(); applySkins(); renderChips(); renderMenuRank(); renderAccount();
+  }
+  function cloudSchedule(){
+    if(!Cloud || !Cloud.user || Cloud.hold) return;
+    clearTimeout(Cloud.pushT);
+    Cloud.pushT = setTimeout(cloudPush, 3000);
+  }
+  async function cloudPush(){
+    clearTimeout(Cloud.pushT); Cloud.pushT = null;
+    if(!Cloud.user || Cloud.hold || !supaClient || profile.acct!==Cloud.user.id) return;
+    const sp = {}; SYNC_PREFS.forEach(k=>{ if(prefs[k]!==undefined) sp[k] = prefs[k]; });
+    const { error } = await supaClient.from('players').upsert({
+      id: Cloud.user.id,
+      name: (prefs.name||'').trim().slice(0,16) || null,
+      chips: Math.max(0, Math.round(profile.chips||0)),
+      rep: Math.max(0, Math.round(profile.rep||0)),
+      data: { v:1, rev: profile.rev||Date.now(), profile, prefs: sp },
+      updated_at: new Date().toISOString()
+    });
+    Cloud.error = error ? error.message : null;
+  }
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden' && Cloud.pushT) cloudPush(); });
+  // before switching to an account that already exists, the guest row of this phone is removed (no ghost in the ranking)
+  async function cloudDropGuestRow(){
+    if(!Cloud.user || !Cloud.user.is_anonymous) return;
+    Cloud.hold = true; clearTimeout(Cloud.pushT);
+    try{ await supaClient.from('players').delete().eq('id', Cloud.user.id); }catch(e){}
+  }
+  function cloudRestoreGuestRow(){ Cloud.hold = false; cloudPush(); }
+
+  // ---- the "Mon compte" page ----
+  function maskEmail(e){
+    const m = /^(.)(.*)(@.*)$/.exec(e||''); if(!m) return e||'';
+    return m[1] + (m[2].length>2 ? '•••'+m[2].slice(-1) : '•••') + m[3];
+  }
+  function acctLabel(u){
+    const ids = (u.identities||[]).map(i=> i.provider);
+    const g = ids.includes('google');
+    return (g ? 'Google' : 'e-mail') + (u.email ? ' · '+maskEmail(u.email) : '');
+  }
+  function renderAccount(){
+    if(!$id('accountPage')) return;
+    const u = Cloud.user, guest = isGuest();
+    const name = (prefs.name||'').trim() || 'Toi';
+    $id('acctName').textContent = name;
+    fillAvatar($id('acctAvatar'), null, name);
+    const st = $id('acctState');
+    st.className = 'acct-state' + (u ? (guest ? ' guest' : ' saved') : '');
+    const offline = !CLOUD_ON || (!u && Cloud.error);
+    st.querySelector('span').textContent = offline ? 'Hors ligne' : !u ? 'Connexion…' : guest ? 'Invité · pas encore sauvegardé' : 'Sauvegardé · '+acctLabel(u);
+    $id('acctNote').textContent = offline
+      ? 'Pas de connexion au serveur pour le moment. Ta progression reste gardée sur ce téléphone.'
+      : guest
+        ? 'Ta progression est liée à ce téléphone seulement : si tu le perds ou en changes, tu repars de zéro. Sauvegarde-la en 10 secondes.'
+        : 'Ta progression est sauvegardée. Sur un autre téléphone, ouvre « Mon compte » et connecte-toi de la même façon : tu retrouves tout.';
+    const showGoogle = guest && !!Cloud.providers.google;
+    $id('btnAcctGoogle').classList.toggle('hidden', !showGoogle);
+    $id('acctOr').classList.toggle('hidden', !showGoogle);
+    $id('acctSaveBox').classList.toggle('hidden', !guest || (!u && !!offline));
+    $id('btnAcctLogout').classList.toggle('hidden', !u || guest);
+    const step2 = !!Cloud.mail;
+    $id('acctMailStep1').classList.toggle('hidden', step2);
+    $id('acctMailStep2').classList.toggle('hidden', !step2);
+    const ni = $id('acctNameInput'); if(document.activeElement!==ni) ni.value = prefs.name || '';
+  }
+  // the little red dot on "Mon compte": a guest who has started to play has something to lose
+  function renderAccountDot(){
+    if(Cloud && Cloud.pending && !inGame()) applyCloud(Cloud.pending);
+    const dot = document.getElementById('acctDot'); if(!dot) return;
+    const played = (profile.gamesPlayed||0) + (profile.squareGamesPlayed||0) + (profile.onlineGames||0);
+    dot.classList.toggle('hidden', !(Cloud && Cloud.user && Cloud.user.is_anonymous && played>=2));
+  }
+  function acctErr(msg){ const e = $id('acctErr'); e.textContent = msg||''; e.classList.toggle('hidden', !msg); }
+  function acctBusy(btn, on){ btn.classList.toggle('busy', !!on); }
+  function errFr(e, verifying){
+    const m = (e && (e.message || String(e))) || '';
+    if((e && e.status===429) || /rate limit|too many|security purposes/i.test(m)) return 'Trop de demandes d’affilée. Attends une minute, puis réessaie.';
+    if(verifying && /expired|invalid|otp|token/i.test(m)) return 'Code incorrect ou expiré. Prends le code du dernier e-mail reçu, ou demande-en un nouveau.';
+    if(/not authorized|cannot be used/i.test(m)) return 'L’envoi d’e-mails n’est pas encore ouvert à toutes les adresses. Utilise Google, ou réessaie plus tard.';
+    if(/already|registered|exists/i.test(m)) return 'Cette adresse est déjà utilisée par un autre compte.';
+    if(/fetch|network|failed to/i.test(m)) return 'Pas de connexion internet. Réessaie quand tu as du réseau.';
+    return 'Ça n’a pas marché ('+m.slice(0,90)+').';
+  }
+  const isUnknownUser = e=> e && e.status!==429 && (/signups? not allowed|not found|otp_disabled|user_not_found/i.test((e.message||'')+' '+(e.code||'')) || e.status===422);
+
+  async function acctSendCode(){
+    const btn = $id('btnAcctSendCode');
+    const email = $id('acctEmail').value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ acctErr('Cette adresse e-mail ne semble pas correcte.'); return; }
+    acctErr(null); acctBusy(btn, true);
+    try{
+      if(!(await cloudInit())){ acctErr('Pas de connexion internet. Réessaie quand tu as du réseau.'); return; }
+      const guest = !!(Cloud.user && Cloud.user.is_anonymous);
+      // an address that already has an account → a sign-in code; a new address → it is attached to this guest
+      let r = await supaClient.auth.signInWithOtp({ email, options:{ shouldCreateUser: !guest } });
+      let mode = 'signin';
+      if(r.error && guest && isUnknownUser(r.error)){ r = await supaClient.auth.updateUser({ email }); mode = 'link'; }
+      if(r.error){ acctErr(errFr(r.error)); return; }
+      Cloud.mail = { email, mode };
+      const info = $id('acctCodeInfo');
+      info.textContent = '';
+      info.append(mode==='link' ? 'Un code vient d’être envoyé à ' : 'Cette adresse a déjà un compte. Entre le code envoyé à ');
+      const b = document.createElement('b'); b.textContent = email; info.append(b);
+      info.append(mode==='link' ? '. Entre-le ici pour sauvegarder ta progression.' : ' pour retrouver ta progression (celle de ce téléphone sera remplacée).');
+      $id('acctCode').value = '';
+      renderAccount();
+      setTimeout(()=> $id('acctCode').focus(), 50);
+    }catch(e){ acctErr(errFr(e)); }
+    finally{ acctBusy(btn, false); }
+  }
+  async function acctVerify(){
+    const btn = $id('btnAcctVerify');
+    const m = Cloud.mail; if(!m) return;
+    const token = $id('acctCode').value.replace(/\D/g,'');
+    if(token.length<6){ acctErr('Entre le code à 6 chiffres reçu par e-mail.'); return; }
+    acctErr(null); acctBusy(btn, true);
+    try{
+      if(m.mode==='signin') await cloudDropGuestRow();
+      const r = await supaClient.auth.verifyOtp({ email: m.email, token, type: m.mode==='link' ? 'email_change' : 'email' });
+      if(r.error){ if(m.mode==='signin') cloudRestoreGuestRow(); acctErr(errFr(r.error, true)); return; }
+      Cloud.mail = null;
+      if(r.data && r.data.user) cloudOnSession(r.data.user);
+      if(m.mode==='link'){ showToast('Progression sauvegardée !', 'Tu la retrouves sur n’importe quel téléphone.', {ms:2600}); }
+      renderAccount();
+    }catch(e){ if(m.mode==='signin') cloudRestoreGuestRow(); acctErr(errFr(e, true)); }
+    finally{ acctBusy(btn, false); }
+  }
+  async function acctGoogle(){
+    const btn = $id('btnAcctGoogle');
+    acctErr(null); acctBusy(btn, true);
+    try{
+      if(!(await cloudInit())){ acctErr('Pas de connexion internet. Réessaie quand tu as du réseau.'); return; }
+      const redirectTo = location.origin + location.pathname;
+      const link = !!(Cloud.user && Cloud.user.is_anonymous) && !Cloud.forceGoogle;
+      try{ sessionStorage.setItem('fapfap_oauth', link ? 'link' : 'signin'); }catch(e){}
+      if(!link) await cloudDropGuestRow();
+      const r = link
+        ? await supaClient.auth.linkIdentity({ provider:'google', options:{ redirectTo } })
+        : await supaClient.auth.signInWithOAuth({ provider:'google', options:{ redirectTo } });
+      if(r.error){ if(!link) cloudRestoreGuestRow(); acctErr(errFr(r.error)); acctBusy(btn, false); }
+      // otherwise the phone is on its way to Google
+    }catch(e){ acctErr(errFr(e)); acctBusy(btn, false); }
+  }
+  // back from Google: success, or "this Google account already has its own progression"
+  function checkOAuthReturn(){
+    const q = new URLSearchParams(location.search.slice(1) + '&' + location.hash.replace(/^#/, ''));
+    let kind = null; try{ kind = sessionStorage.getItem('fapfap_oauth'); sessionStorage.removeItem('fapfap_oauth'); }catch(e){}
+    const code = q.get('error_code') || q.get('error');
+    if(code){
+      try{ history.replaceState(history.state, '', location.pathname); }catch(e){}
+      Nav.go('accountPage');
+      if(/identity_already_exists|already/i.test(code + ' ' + (q.get('error_description')||''))){
+        Cloud.forceGoogle = true;
+        acctErr('Ce compte Google a déjà sa propre progression. Appuie encore sur « Continuer avec Google » pour la récupérer (celle de ce téléphone sera remplacée).');
+      } else acctErr('La connexion Google n’a pas abouti. Réessaie.');
+      return;
+    }
+    if(kind && Cloud.user && !Cloud.user.is_anonymous && kind==='link'){
+      showToast('Progression sauvegardée !', 'Ton compte Google est relié.', {ms:2600});
+    }
+  }
+  async function acctLogout(){
+    const btn = $id('btnAcctLogout');
+    if(!btn.dataset.armed){
+      btn.dataset.armed = '1'; btn.lastChild.textContent = ' Appuie encore pour confirmer';
+      setTimeout(()=>{ delete btn.dataset.armed; btn.lastChild.textContent = ' Se déconnecter de ce téléphone'; }, 3500);
+      return;
+    }
+    delete btn.dataset.armed; btn.lastChild.textContent = ' Se déconnecter de ce téléphone';
+    acctBusy(btn, true);
+    try{
+      await cloudPush();
+      Cloud.hold = true;
+      await supaClient.auth.signOut();
+      // this phone starts again as a fresh guest; the progression stays safe in the account
+      profile = defaultProfile(); prefs.name = ''; prefs.skin = {}; prefs.stake = 0;
+      try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); }catch(e){}
+      chipsInit(); applySkins(); renderChips(); renderMenuRank();
+      Cloud.user = null; Cloud.hold = false;
+      await cloudGuest();
+      showToast('Déconnecté', 'Ta progression t’attend dans ton compte.', {ms:2200});
+    }catch(e){ acctErr(errFr(e)); }
+    finally{ acctBusy(btn, false); renderAccount(); }
+  }
+  $id('btnShowAccount').addEventListener('click', ()=> Nav.go('accountPage'));
+  $id('btnAcctGoogle').addEventListener('click', acctGoogle);
+  $id('btnAcctSendCode').addEventListener('click', acctSendCode);
+  $id('acctEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') acctSendCode(); });
+  $id('btnAcctVerify').addEventListener('click', acctVerify);
+  $id('acctCode').addEventListener('input', e=>{ const v = e.target.value.replace(/\D/g,''); e.target.value = v; if(v.length===6 || v.length===8) acctVerify(); });
+  $id('btnAcctMailBack').addEventListener('click', ()=>{ Cloud.mail = null; acctErr(null); renderAccount(); });
+  $id('btnAcctLogout').addEventListener('click', acctLogout);
+  $id('acctNameInput').addEventListener('input', e=>{
+    prefs.name = e.target.value.replace(/\s+/g,' ').slice(0,16); savePrefs();
+    $id('acctName').textContent = prefs.name.trim() || 'Toi';
+    fillAvatar($id('acctAvatar'), null, prefs.name.trim() || 'Toi');
+  });
+
+  // ---- worldwide leaderboard ----
+  function showRichTab(t){
+    if(prefs.richTab!==t){ prefs.richTab = t; savePrefs(); }
+    document.querySelectorAll('.rich-tabs .fmt').forEach(b=>{ const on = b.dataset.rt===t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    $id('richWorldBox').classList.toggle('hidden', t!=='world');
+    $id('richLocalBox').classList.toggle('hidden', t==='world');
+    $id('richBest').classList.toggle('hidden', t==='world');
+    if(t==='world') renderRichWorld();
+  }
+  document.querySelectorAll('.rich-tabs .fmt').forEach(b=> b.addEventListener('click', ()=> showRichTab(b.dataset.rt)));
+  function richEmpty(list, msg, withAccount){
+    list.innerHTML = '<div class="rich-empty"></div>';
+    const box = list.firstChild; box.textContent = msg;
+    if(withAccount){
+      const b = document.createElement('button'); b.className = 'primary';
+      b.innerHTML = ico('user')+' Choisir mon pseudo';
+      b.addEventListener('click', ()=> Nav.go('accountPage'));
+      box.appendChild(document.createElement('br')); box.appendChild(b);
+    }
+  }
+  let richWorldGen = 0;
+  async function renderRichWorld(){
+    const list = $id('richWorld'), gen = ++richWorldGen;
+    if(!CLOUD_ON){ richEmpty(list, 'Le classement en ligne n’est pas disponible ici.'); return; }
+    if(!list.children.length || list.querySelector('.rich-empty')) richEmpty(list, 'Le quartier arrive…');
+    const ok = await cloudInit();
+    if(Cloud.pullP) await Cloud.pullP;
+    if(gen!==richWorldGen) return;
+    if(!ok || !Cloud.user){ richEmpty(list, 'Pas de connexion au serveur. Réessaie quand tu as du réseau.'); return; }
+    await cloudPush(); // so your own line shows today's chips
+    const { data, error } = await supaClient.rpc('fapfap_top', { lim: 50 });
+    if(gen!==richWorldGen) return;
+    if(error){ richEmpty(list, 'Impossible de charger le classement pour le moment.'); return; }
+    const rows = data || [];
+    const meIn = rows.some(r=> r.me);
+    $id('richWorldIntro').textContent = (prefs.name||'').trim()
+      ? 'Les joueurs de Fap Fap, partout. Gagne des jetons pour monter.'
+      : 'Choisis ton pseudo dans « Mon compte » pour apparaître dans ce classement.';
+    if(!rows.length){ richEmpty(list, 'Personne encore. Sois le premier caïd du quartier !', !meIn && !(prefs.name||'').trim()); return; }
+    let html = '', prev = 0;
+    rows.forEach((r,i)=>{
+      if(r.pos - prev > 1 && i>0) html += '<div class="rich-gap">···</div>';
+      prev = r.pos;
+      html += '<div class="rich-row'+(r.me ? ' me' : '')+'" style="--d:'+Math.min(i,12)+'">'+
+        '<span class="rich-pos">'+(r.pos===1 ? ico('crown') : r.pos)+'</span>'+
+        '<span class="avatar rich-av" style="--s:42px"></span>'+
+        '<span class="rich-name"><span class="rn"></span><span class="rich-sub"></span></span>'+
+        '<span class="rich-chips">'+ico('coin')+fmtChips(r.chips)+'</span></div>';
+    });
+    list.innerHTML = html;
+    [...list.querySelectorAll('.rich-row')].forEach((row,i)=>{
+      const r = rows[i];
+      row.querySelector('.rn').textContent = r.name + (r.me ? ' (toi)' : '');
+      const sub = row.querySelector('.rich-sub');
+      sub.textContent = RANKS[rankIndex(r.rep||0)].name;
+      if(r.saved) sub.insertAdjacentHTML('beforeend', ' '+ico('check'));
+      fillAvatar(row.querySelector('.rich-av'), null, r.name);
+    });
+  }
+
+  // the session comes back by itself; right away when returning from Google, otherwise once the home screen has settled
+  if(CLOUD_ON){
+    if(/access_token|error_code|error_description/.test(location.hash + location.search)) cloudInit();
+    else setTimeout(cloudInit, 2500);
+  }
 
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
   if(/[?&]debug\b/.test(location.search)){
