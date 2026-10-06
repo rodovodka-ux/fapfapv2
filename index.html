@@ -1090,10 +1090,12 @@
   button.passe-option:not(.hidden){ animation: btnPop 0.42s cubic-bezier(.3,1.7,.5,1) backwards, passePulse 1.8s ease-in-out 0.42s infinite; }
 
   /* ---- home ---- */
+  /* the home screen: a warm neighbourhood bar at night, blurred, the bulb right above the logo */
   .page-home{
     background:
-      linear-gradient(180deg, rgba(8,5,3,0.35) 0%, rgba(8,5,3,0.82) 34%, #080503 62%),
-      url('art/scene.jpg') center top / cover no-repeat, #080503 !important;
+      radial-gradient(ellipse 90% 45% at 50% 52%, rgba(8,5,3,0.55), rgba(8,5,3,0) 75%),
+      linear-gradient(180deg, rgba(8,5,3,0.10) 0%, rgba(8,5,3,0.30) 30%, rgba(8,5,3,0.45) 60%, rgba(8,5,3,0.80) 100%),
+      url('art/home-bar.jpg') center top / cover no-repeat, #0d0804 !important;
   }
   .home-body{ align-items:center; text-align:center; padding-top: max(34px, calc(env(safe-area-inset-top) + 22px)); gap:13px; position:relative; }
   .home-top{ margin-bottom:2px; }
@@ -1102,6 +1104,28 @@
     text-shadow: 0 0 28px rgba(244,184,96,0.45), 0 4px 0 #6b3b0a, 0 8px 20px rgba(0,0,0,0.6);
   }
   .logo span{ display:inline-block; }
+  /* the illustrated logo (the text logo stays as a fallback if the picture can't load) */
+  .logo.has-img{ position:relative; display:inline-block; line-height:0; margin-bottom:-6px; }
+  .logo.has-img .logo-txt{ display:none; }
+  .home-top:has(.logo.has-img) .home-tag{ margin-top:-10px !important; }
+  .logo-img{ width:min(330px, 84vw); height:auto; display:block; filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6)) drop-shadow(0 0 28px rgba(244,184,96,0.25)); }
+  /* a light sweeps across the gold every few seconds (masked to the logo's own shape) */
+  .logo.has-img::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.6) 48%, rgba(255,250,220,0.15) 54%, transparent 62%) no-repeat;
+    background-size: 260% 100%; background-position: 160% 0;
+    -webkit-mask: url('art/logo.png') center / contain no-repeat; mask: url('art/logo.png') center / contain no-repeat;
+    mix-blend-mode: overlay; animation: logoShine 5.5s ease-in-out 2.2s infinite;
+  }
+  @keyframes logoShine{ 0%{ background-position:160% 0; } 28%,100%{ background-position:-60% 0; } }
+  @keyframes logoDrop{
+    0%{ opacity:0; transform: translateY(-90px) scale(0.55) rotate(-8deg); }
+    60%{ opacity:1; transform: translateY(8px) scale(1.06) rotate(2deg); }
+    80%{ transform: translateY(-3px) scale(0.98) rotate(-1deg); }
+    100%{ transform:none; }
+  }
+  .intro .logo-img{ animation: logoDrop 0.95s cubic-bezier(.3,1.2,.45,1) 0.1s backwards; }
+  .intro.quick .logo-img{ animation-duration:0.5s; animation-delay:0s; }
   .logo .sp{ width:0.22em; }
   .home-tag{ font-size:13px !important; letter-spacing:0.18em; text-transform:uppercase; color:var(--cream) !important; opacity:0.75; margin-top:8px !important; }
   .page-home .menu-rank{ max-width:360px; padding:10px 12px; border-radius:14px; background:rgba(0,0,0,0.35); border:1px solid rgba(244,184,96,0.16); }
@@ -1633,7 +1657,7 @@
 <div class="overlay page page-home" id="menuOverlay">
   <div class="page-body home-body">
     <div class="home-top">
-      <h2 class="logo" aria-label="Fap Fap"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></h2>
+      <h2 class="logo has-img" aria-label="Fap Fap"><img class="logo-img" src="art/logo.png" alt="Fap Fap" width="600" height="312" onerror="this.parentNode.classList.remove('has-img'); this.remove();"><span class="logo-txt"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></span></h2>
       <p class="home-tag">Le jeu de cartes du quartier</p>
     </div>
     <div class="menu-rank" id="menuRank"></div>
