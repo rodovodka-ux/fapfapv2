@@ -741,6 +741,180 @@
      ===================================================================================== */
   input, textarea{ -webkit-user-select:text; user-select:text; }
 
+  /* =====================================================================================
+     THE GLASS TABLE IN DAYLIGHT — the only bright table: a sunny room, a thick glass top,
+     the wooden floor seen through it, window-frame shadows, moving light ripples, real card shadows
+     ===================================================================================== */
+  body.table-verre{
+    background:
+      radial-gradient(ellipse 70% 55% at 12% 0%, rgba(255,250,230,0.95), rgba(255,250,230,0) 70%),
+      radial-gradient(ellipse 60% 50% at 100% 100%, rgba(170,140,105,0.35), transparent 70%),
+      linear-gradient(180deg, #f4efe6 0%, #ebe2d4 52%, #d9c9b2 100%);
+  }
+  body.table-verre::before{ background: radial-gradient(ellipse 120% 90% at 40% 35%, transparent 55%, rgba(110,85,60,0.22) 100%); }
+  /* sunlight through a window: soft slanted bars of light across the whole room */
+  body.table-verre .bulb-glow{
+    animation: none; transform:none; opacity:1;
+    background: repeating-linear-gradient(-32deg, rgba(255,252,238,0) 0 70px, rgba(255,252,238,0.38) 70px 150px, rgba(255,252,238,0) 150px 168px);
+    -webkit-mask-image: linear-gradient(160deg, #000 0%, rgba(0,0,0,0.4) 55%, transparent 85%);
+            mask-image: linear-gradient(160deg, #000 0%, rgba(0,0,0,0.4) 55%, transparent 85%);
+  }
+  body.table-verre .amb-layer, body.table-verre .rain-layer{ display:none; }
+  body.table-verre:not(.x){ --pool: rgba(255,255,255,0.10); --pool2: rgba(255,255,255,0); }
+  body.table-verre{ --felt:
+      /* glare streaks on the glass */
+      linear-gradient(118deg, transparent 22%, rgba(255,255,255,0.6) 25%, rgba(255,255,255,0.12) 30%, transparent 34%, transparent 61%, rgba(255,255,255,0.38) 63%, transparent 66%),
+      /* the thick glass edge: a cool green rim catching the light */
+      radial-gradient(circle closest-side, transparent 0 89%, rgba(140,200,190,0.35) 92%, rgba(245,255,252,0.95) 95.5%, rgba(70,130,120,0.6) 98%, rgba(255,255,255,0) 100%),
+      /* window bars of light landing on the glass */
+      repeating-linear-gradient(-32deg, rgba(255,255,255,0) 0 52px, rgba(255,253,240,0.30) 52px 112px, rgba(255,255,255,0) 112px 126px),
+      /* a faint green tint of the glass itself */
+      radial-gradient(circle closest-side, rgba(200,240,232,0.20) 0 88%, transparent 89%),
+      /* the light oak floor seen through the glass */
+      repeating-linear-gradient(90deg, rgba(110,72,36,0.16) 0 1.5px, transparent 1.5px 44px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 3px, transparent 3px 8px),
+      linear-gradient(160deg, #ead6b4, #c7a476); }
+  /* a crisp glass disc must fit entirely inside the play area (the dark tables simply fade out at the edge) */
+  body.table-verre .table::before, body.table-verre .table::after{
+    height:min(420px, calc(100% - 14px)); width:auto; aspect-ratio:1/1; max-width:97%;
+    left:50%; top:50%; margin:0; transform: translate(-50%,-50%);
+  }
+  body.table-verre .sq-felt{ width:min(390px, 96%); height:auto; aspect-ratio:1/1; left:50%; top:50%; margin:0; transform:translate(-50%,-50%); }
+  body.table-verre .table.finale::before{ transform: translate(-50%,-50%) scale(0.92); }
+  body.table-verre .table::before, body.table-verre .sq-felt{
+    -webkit-mask-image:none; mask-image:none; border-radius:50%;
+    box-shadow: 18px 26px 40px rgba(90,60,30,0.28), 0 0 0 1px rgba(255,255,255,0.6);
+  }
+  /* light ripples (caustics) dancing slowly on the floor under the glass */
+  body.table-verre .table::after{
+    content:""; position:absolute; border-radius:50%;
+    pointer-events:none; z-index:0; mix-blend-mode:soft-light; opacity:0.85;
+    background:
+      radial-gradient(ellipse 18% 8% at 30% 40%, rgba(255,255,255,0.9), transparent 70%),
+      radial-gradient(ellipse 12% 6% at 62% 30%, rgba(255,255,255,0.8), transparent 70%),
+      radial-gradient(ellipse 16% 7% at 55% 66%, rgba(255,255,255,0.75), transparent 70%),
+      radial-gradient(ellipse 10% 5% at 25% 70%, rgba(255,255,255,0.7), transparent 70%),
+      radial-gradient(ellipse 14% 6% at 75% 55%, rgba(255,255,255,0.7), transparent 70%);
+    animation: causticDrift 26s ease-in-out infinite alternate;
+  }
+  @keyframes causticDrift{ from{ transform: translate(-50%,-50%) rotate(0deg) scale(0.92); } to{ transform: translate(-50%,-50%) rotate(40deg) scale(0.98); } }
+  /* cards lying on glass: a contact shadow, plus a softer shadow thrown away from the window */
+  body.table-verre .slot .card, body.table-verre .sq-cur .card{
+    box-shadow: 0 1px 2px rgba(0,0,0,0.25), 12px 18px 16px -6px rgba(70,45,20,0.28), inset 0 0 0 1px rgba(180,130,60,0.35);
+  }
+  body.table-verre .hand .card{ box-shadow: 0 2px 4px rgba(0,0,0,0.18), 8px 14px 18px -6px rgba(70,45,20,0.3); }
+  /* the photo of the opponent's hands is a night shot: in daylight the cards are shown instead */
+  body.table-verre .opp-table-art{ display:none !important; }
+  body.table-verre .ai-zone.has-art .ai-hands{ display:flex; }
+  /* everything around the table switches to dark ink on light glass panels */
+  body.table-verre header h1{ color:#9a5a12; text-shadow: 0 1px 0 rgba(255,255,255,0.7), 0 6px 18px rgba(200,130,40,0.25); }
+  body.table-verre header .sub{ color:#7a6650; }
+  body.table-verre #btnMenu, body.table-verre #btnMute{ color:#4a3a28; }
+  body.table-verre .scorebar, body.table-verre .sq-scoreboard{
+    background:rgba(255,255,255,0.55); border-color:rgba(255,255,255,0.85); box-shadow:0 8px 24px rgba(120,90,60,0.15);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  body.table-verre .scorebar .who, body.table-verre .scorebar .mid, body.table-verre .sq-score-item .v{ color:#7a6650; }
+  body.table-verre .scorebar .val, body.table-verre .sq-score-item .n{ color:#2d2218; }
+  body.table-verre .scorebar .val.me, body.table-verre .sq-score-item.turn .n{ color:#b5681a; }
+  body.table-verre .ai-label, body.table-verre .sq-name, body.table-verre .slot-label{ color:#5a4a38; text-shadow:none; }
+  body.table-verre .demand-badge, body.table-verre .sq-demand{ background:rgba(255,255,255,0.75); color:#5a4a38; border-color:rgba(0,0,0,0.08); box-shadow:0 4px 12px rgba(120,90,60,0.15); }
+  body.table-verre .demand-badge b, body.table-verre .sq-demand b{ color:#b5681a; }
+  body.table-verre .demand-badge.your-turn, body.table-verre .sq-demand.your-turn{ color:#2d2218; border-color:#e0a050; }
+  body.table-verre .hand-zone{ background:rgba(255,255,255,0.45); border-color:rgba(255,255,255,0.8); box-shadow:0 10px 30px rgba(120,90,60,0.15);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  body.table-verre .hand-label{ color:#5a4a38; }
+  body.table-verre .hand-label.your-turn{ color:#b5681a; }
+  body.table-verre .sq-eliminated-box p{ color:#5a4a38; }
+  body.table-verre .mini-card{ box-shadow:0 1px 3px rgba(0,0,0,0.25); }
+
+  /* ---- match format: full match / quick game ---- */
+  .format-pick{ display:grid; grid-template-columns:1fr 1fr; gap:6px; width:100%; max-width:360px; padding:5px; border-radius:16px;
+    background:rgba(0,0,0,0.35); border:1px solid rgba(244,184,96,0.18); }
+  .fmt{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:10px 6px; border-radius:12px; border:none; background:transparent; color:var(--dust); }
+  .fmt b{ font-family:var(--font-display); font-size:16px; color:var(--cream); }
+  .fmt small{ font-size:11px; }
+  .fmt.on{ background: linear-gradient(170deg, #ffd88c, #f4b860 45%, #d98f2e); color:#5a3a12; box-shadow:0 3px 0 #8a4e0c; }
+  .fmt.on b{ color:#20160a; }
+
+  /* =====================================================================================
+     THE CUT RITUAL — step 1: "tu coupes ou tu partages ?", step 2: the cut, then the pile
+     ===================================================================================== */
+  .overlay.ritual{ background: radial-gradient(ellipse 90% 60% at 50% 28%, rgba(74,46,20,0.95), #070402 78%); padding:20px 16px; gap:0; }
+  .ritual-step{ width:100%; max-width:400px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .ritual-step.step-in{ animation: stepIn 0.45s cubic-bezier(.2,.9,.3,1.1); }
+  @keyframes stepIn{ from{ opacity:0; transform: translateX(46px) scale(0.97); } to{ opacity:1; transform:none; } }
+  .ritual-who{ display:flex; align-items:center; gap:12px; align-self:flex-start; margin-left:6px; }
+  .ritual-say{ background:var(--cream); color:var(--ink); font-weight:800; font-style:italic; font-size:15px; padding:10px 14px;
+    border-radius:16px 16px 16px 4px; box-shadow:0 6px 18px rgba(0,0,0,0.5), 0 0 0 2px rgba(244,184,96,0.5); max-width:250px; text-align:left; }
+  .ritual-say.pop{ animation: sayPop 0.45s cubic-bezier(.3,1.8,.5,1); }
+  @keyframes sayPop{ from{ opacity:0; transform: translateX(-10px) scale(0.7); } to{ opacity:1; transform:none; } }
+  .overlay h2.ritual-q{ font-size:32px; line-height:1.04; text-align:center; color:var(--cream); letter-spacing:-0.02em; text-shadow:0 4px 18px rgba(0,0,0,0.6); }
+  .ritual-hint{ color:var(--dust) !important; font-size:13.5px !important; min-height:18px; margin-top:-6px !important; }
+  /* the riffle shuffle: two halves of the pack interleaving, over and over */
+  .riffle{ position:relative; width:170px; height:100px; }
+  .riffle .facedown{ position:absolute; left:50%; top:50%; width:50px; height:72px; margin:-36px 0 0 -25px; border-radius:6px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.5); animation: riffle 1.7s cubic-bezier(.45,0,.3,1) infinite; animation-delay: calc(var(--k) * 70ms); }
+  .riffle .facedown::after{ display:none; }
+  .riffle .facedown:nth-child(odd){ --dir:-1; } .riffle .facedown:nth-child(even){ --dir:1; }
+  .riffle .facedown:nth-child(1){--k:0} .riffle .facedown:nth-child(2){--k:1} .riffle .facedown:nth-child(3){--k:2} .riffle .facedown:nth-child(4){--k:3}
+  .riffle .facedown:nth-child(5){--k:4} .riffle .facedown:nth-child(6){--k:5} .riffle .facedown:nth-child(7){--k:6} .riffle .facedown:nth-child(8){--k:7}
+  @keyframes riffle{
+    0%,100%{ transform: translate(0, calc(var(--k) * -1.5px)); }
+    30%{ transform: translate(calc(var(--dir) * 44px), 6px) rotate(calc(var(--dir) * 15deg)); }
+    62%{ transform: translate(calc(var(--dir) * 8px), -12px) rotate(calc(var(--dir) * -5deg)); }
+  }
+  .riffle.again .facedown{ animation-duration: 0.8s; }
+  .ritual-choices{ display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
+  .ritual-card{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:18px 10px 16px; border-radius:20px; border:none;
+    background: linear-gradient(170deg, #ffd88c, #f4b860 45%, #d98f2e); color:#20160a;
+    box-shadow: 0 6px 0 #8a4e0c, 0 14px 30px rgba(244,140,40,0.3), inset 0 1px 0 rgba(255,255,255,0.6); }
+  .ritual-card:active{ transform: translateY(6px); box-shadow: 0 0 0 #8a4e0c, 0 4px 12px rgba(244,140,40,0.3); filter:none; }
+  .ritual-card.rc-cut{ background: linear-gradient(170deg, #3d2815, #1e1309); color:var(--cream); border:1px solid rgba(244,184,96,0.45);
+    box-shadow: 0 6px 0 #0c0703, 0 14px 30px rgba(0,0,0,0.45); }
+  .ritual-card.rc-cut:active{ box-shadow: 0 0 0 #0c0703; }
+  .ritual-card b{ font-family:var(--font-display); font-size:21px; font-weight:800; }
+  .ritual-card small{ font-size:11.5px; line-height:1.3; opacity:0.8; font-weight:600; }
+  .rc-ico{ width:54px; height:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.35); }
+  .rc-cut .rc-ico{ background:rgba(244,184,96,0.14); color:var(--bulb); }
+  .rc-ico svg.i{ width:30px; height:30px; margin:0; }
+  .step-in .ritual-card{ animation: heroIn 0.55s cubic-bezier(.25,1.5,.45,1) backwards; }
+  .step-in .ritual-card:nth-child(1){ animation-delay:0.15s; } .step-in .ritual-card:nth-child(2){ animation-delay:0.27s; }
+  .ritual-extra{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .spectate .ritual-choices, .spectate .ritual-extra, .spectate #btnCutBack, .spectate .cut-mark{ display:none !important; }
+  /* the pack, seen from the side, then split into two piles */
+  .cut-stage{ width:100%; height:270px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:34px; }
+  .cut-deck{ position:relative; width:84px; height:200px; --f:0.5; }
+  .cd-part{ position:absolute; left:0; width:84px; border-radius:5px; cursor:pointer;
+    background: repeating-linear-gradient(180deg, #f6eedc 0 3px, #c4ad86 3px 4.3px);
+    box-shadow: inset 0 0 0 1px rgba(90,60,20,0.45), 8px 10px 16px rgba(0,0,0,0.5);
+    transition: transform 0.65s cubic-bezier(.3,1.25,.5,1), box-shadow 0.3s, opacity 0.3s; }
+  .cd-part::before{ content:""; position:absolute; left:-3px; right:-3px; top:-13px; height:15px; border-radius:6px 6px 2px 2px;
+    background: repeating-linear-gradient(45deg, rgba(244,184,96,0.14) 0 2px, transparent 2px 7px), linear-gradient(160deg, #5a1a22, #2a0c10);
+    border:1px solid rgba(244,184,96,0.5); transition: opacity 0.3s; }
+  .cd-top{ top:0; height: calc(var(--f) * 200px); }
+  .cd-bot{ bottom:0; height: calc((1 - var(--f)) * 200px); }
+  .cut-deck:not(.split) .cd-bot::before{ opacity:0; }
+  .cut-deck.split .cd-top{ transform: translate(-64px, calc((1 - var(--f)) * 200px)); }
+  .cut-deck.split .cd-bot{ transform: translateX(64px); }
+  .cd-n{ position:absolute; left:50%; bottom:-26px; transform:translateX(-50%); white-space:nowrap; font-size:12px; font-weight:700; color:var(--dust); opacity:0; transition: opacity 0.3s 0.4s; }
+  .cut-deck.split .cd-n{ opacity:1; }
+  .cut-deck.ready:not(.picked-top):not(.picked-bot) .cd-part{ animation: pileCall 1.5s ease-in-out infinite; }
+  @keyframes pileCall{ 0%,100%{ box-shadow: inset 0 0 0 1px rgba(90,60,20,0.45), 8px 10px 16px rgba(0,0,0,0.5); } 50%{ box-shadow: inset 0 0 0 1px rgba(90,60,20,0.45), 0 0 0 3px rgba(244,184,96,0.7), 0 0 26px rgba(244,184,96,0.5); } }
+  .cut-deck.split.picked-top .cd-top{ transform: translate(-64px, calc((1 - var(--f)) * 200px - 36px)) scale(1.06); box-shadow: 0 0 0 3px var(--bulb), 0 0 34px rgba(244,184,96,0.75); }
+  .cut-deck.split.picked-bot .cd-bot{ transform: translate(64px, -36px) scale(1.06); box-shadow: 0 0 0 3px var(--bulb), 0 0 34px rgba(244,184,96,0.75); }
+  .cut-deck.picked-top .cd-bot, .cut-deck.picked-bot .cd-top{ opacity:0.3; }
+  /* the three places to cut: dashed lines across the pack */
+  .cut-mark{ position:absolute; left:-30px; width:144px; top:var(--y); height:36px; margin-top:-18px; padding:0; border:none; background:transparent; z-index:2;
+    transition: opacity 0.25s; animation: markIn 0.5s cubic-bezier(.3,1.5,.5,1) backwards; }
+  .cut-mark:nth-of-type(1){ animation-delay:0.2s; } .cut-mark:nth-of-type(2){ animation-delay:0.3s; } .cut-mark:nth-of-type(3){ animation-delay:0.4s; }
+  @keyframes markIn{ from{ opacity:0; transform: translateX(-20px); } to{ opacity:1; transform:none; } }
+  .cut-mark::before{ content:""; position:absolute; left:18px; right:18px; top:50%; border-top:2.5px dashed rgba(255,214,140,0.95); filter: drop-shadow(0 0 4px rgba(244,184,96,0.8)); }
+  .cut-mark span{ position:absolute; right:-50px; top:50%; transform:translateY(-50%); font-size:12px; font-weight:800; color:#20160a;
+    background:var(--bulb); padding:4px 10px; border-radius:12px; box-shadow:0 3px 0 #8a4e0c; }
+  .cut-mark:active::before{ border-top-color:#fff; }
+  .cut-deck.split .cut-mark{ opacity:0; pointer-events:none; }
+
   /* ---- control token: a glowing coin that slides to whoever holds control ---- */
   .ctrl-token{
     position:absolute; left:0; top:0; z-index:4; display:flex; align-items:center; gap:6px; padding:4px 10px 4px 4px; border-radius:20px;
@@ -1342,27 +1516,42 @@
   <button class="ghost" id="btnNetQuit">Quitter</button>
 </div>
 
-<!-- The whole "je partage ou je dépose" ritual on one screen: share in one tap, or cut + pick a pile -->
-<div class="overlay hidden" id="choiceOverlay">
-  <h2>Je partage ou je dépose ?</h2>
-  <p id="choiceText"></p>
-  <div class="btnrow">
-    <button class="primary big" id="btnPartage">Je partage</button>
-    <button class="big" id="btnDepose"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg> Je dépose</button>
-  </div>
-  <div class="cut-panel hidden" id="cutPanel">
-    <p>Où coupes-tu le paquet ?</p>
-    <div class="seg" id="cutSeg">
-      <button data-f="0.3333">Bas</button><button data-f="0.5" class="on">Milieu</button><button data-f="0.6667">Haut</button>
+<!-- The cut ritual, in two steps: 1) "tu coupes ou tu partages ?"  2) the cut itself: where to cut, then which pile.
+     The same screens play out on their own when the opponent is the one choosing. -->
+<div class="overlay ritual hidden" id="choiceOverlay">
+  <div class="ritual-step" id="ritualAsk">
+    <div class="ritual-who">
+      <span class="avatar" id="ritualAvatar" style="--s:58px"></span>
+      <div class="ritual-say" id="choiceText"></div>
     </div>
-    <p>Puis prends le tas :</p>
-    <div class="btnrow">
-      <button class="primary" id="pileTop">Du haut</button>
-      <button class="primary" id="pileBottom">Du bas</button>
+    <div class="riffle" aria-hidden="true">
+      <span class="facedown"></span><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span>
+      <span class="facedown"></span><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span>
+    </div>
+    <h2 class="ritual-q" id="ritualQ">Tu coupes ou<br>tu partages ?</h2>
+    <div class="ritual-choices">
+      <button class="ritual-card" id="btnPartage"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg></span><b>Je partage</b><small>On distribue tout de suite</small></button>
+      <button class="ritual-card rc-cut" id="btnDepose"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg></span><b>Je coupe</b><small>Tu coupes le paquet et tu prends ton tas</small></button>
+    </div>
+    <div class="ritual-extra">
+      <label class="pref-check"><input type="checkbox" id="prefAlwaysShare"> Toujours partager (ne plus me demander)</label>
+      <button class="ghost" id="btnRemix"><svg class="i" aria-hidden="true"><use href="#i-shuffle"/></svg> Exiger un nouveau mélange</button>
     </div>
   </div>
-  <label class="pref-check"><input type="checkbox" id="prefAlwaysShare"> Toujours partager (ne plus me demander)</label>
-  <button class="ghost" id="btnRemix"><svg class="i" aria-hidden="true"><use href="#i-shuffle"/></svg> Exiger un nouveau mélange</button>
+  <div class="ritual-step hidden" id="ritualCut">
+    <h2 class="ritual-q" id="cutTitle">Où coupes-tu ?</h2>
+    <p class="ritual-hint" id="cutHint">Touche le paquet à l’endroit où tu veux couper.</p>
+    <div class="cut-stage">
+      <div class="cut-deck" id="cutDeck">
+        <div class="cd-part cd-top" id="cdTop"><span class="cd-n" id="cdTopN"></span></div>
+        <div class="cd-part cd-bot" id="cdBot"><span class="cd-n" id="cdBotN"></span></div>
+        <button class="cut-mark" data-f="0.3333" style="--y:33.3%"><span>Haut</span></button>
+        <button class="cut-mark" data-f="0.5" style="--y:50%"><span>Milieu</span></button>
+        <button class="cut-mark" data-f="0.6667" style="--y:66.7%"><span>Bas</span></button>
+      </div>
+    </div>
+    <button class="ghost" id="btnCutBack">‹ Finalement, je partage</button>
+  </div>
 </div>
 
 <!-- ===================== In-game modals ===================== -->
@@ -1502,6 +1691,10 @@
 <div class="overlay page hidden" id="oppSelectOverlay">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La route du quartier</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
+    <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
+      <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
+      <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
+    </div>
     <p class="page-intro">Choisis ton adversaire.</p>
     <div class="opp-list" id="oppList"></div>
   </div>
@@ -1616,6 +1809,11 @@
   <div class="page-body center">
     <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
     <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
+    <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
+      <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
+      <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
+    </div>
+    <p class="small-note">Le format est choisi par celui qui crée la partie.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
   </div>
@@ -1682,8 +1880,11 @@
   function suitSvg(suit, cls){
     return '<svg class="'+(cls||'')+'" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="'+SUIT_PATH[suit]+'"/></svg>';
   }
-  const TARGET_SCORE = 5;
+  // 5 points for a full match, 1 for a quick game (the first hand decides)
+  let TARGET_SCORE = 5;
+  function setMatchLength(quick){ TARGET_SCORE = quick ? 1 : 5; }
   function isMatchPoint(){
+    if(TARGET_SCORE===1) return false; // a quick game is one decisive hand: no extra crowd swell on every trick
     return scores.you>=TARGET_SCORE-1 || scores.ai>=TARGET_SCORE-1;
   }
 
@@ -2174,6 +2375,7 @@
   function startMpMatch(){
     if(mpMatchStarted) return;
     mpMatchStarted = true;
+    if(mpIsHost) setMatchLength(!!prefs.quick); // the host's format choice applies to both
     startMatchTracking();
     mode = 'mp';
     enterGame();
@@ -2186,7 +2388,7 @@
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
       mpSend({t:'hello', name: myName}); // so the guest knows who they're facing
-      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you'}); // flip perspective for the other side
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE}); // flip perspective for the other side
       beginHand();
     }
     // guest waits for the 'start' message to know who deals first
@@ -2202,6 +2404,7 @@
     if(msg.t==='start'){
       if(mpMatchStarted) return;
       mpMatchStarted = true;
+      TARGET_SCORE = msg.target===1 ? 1 : 5; // the host chose the format
       startMatchTracking();
       mode = 'mp';
       enterGame();
@@ -2549,9 +2752,14 @@
     soft:   {types:['sine','triangle'],     mix:0.6,  det:5,  lp:1400, att:2.6, rel:3.0, vol:0.13},
     glass:  {types:['sine','sine'],         mix:0.45, det:9,  lp:3200, att:2.8, rel:3.2, vol:0.10, oct:true},
     strings:{types:['sawtooth','sawtooth'], mix:1,    det:10, lp:1500, att:3.0, rel:3.0, vol:0.07},
-    synth:  {types:['sawtooth','square'],   mix:0.4,  det:12, lp:1200, att:1.6, rel:2.4, vol:0.06}
+    synth:  {types:['sawtooth','square'],   mix:0.4,  det:12, lp:1200, att:1.6, rel:2.4, vol:0.06},
+    lofi:   {types:['triangle','sine'],     mix:0.7,  det:14, lp:850,  att:0.25, rel:1.2, vol:0.12}
   };
   const TRACKS = {
+    // lofi hip-hop: 2 bars per chord at 80 bpm, a muffled e-piano, a boom-bap beat with a little swing, vinyl crackle
+    verre:   {name:'Sieste en terrasse', mood:'lofi hip-hop, détendu', dur:6, pad:'lofi', lead:'epiano', density:0.28, bass:true, amb:'vinyl',
+      beat:{bpm:80, swing:0.6},
+      parts:[['Fmaj9','Em7','Dm9','Cmaj7','Fmaj9','Em7','Am9','G7sus4'], ['Dm9','G9','Cmaj9','Am9','Fmaj7','E7sus4','Am9','Am9']]},
     home:    {name:'Le quartier s’éveille', mood:'doux, apaisant', dur:6.5, pad:'warm', lead:'felt', density:0.3, bass:true,
       parts:[['Fmaj9','C/E','Dm9','Cmaj7','Bbmaj7','Am7','Gsus4','G6'], ['Am9','Fmaj7','Cmaj7','G6','Dm9','Am7','Bbmaj7','E7sus4']]},
     tripot:  {name:'Soir au tripot', mood:'jazzy, chaleureux', dur:5.2, pad:'warm', lead:'epiano', density:0.4, bass:true, walk:true, amb:'murmur',
@@ -2639,7 +2847,8 @@
     const part = tr.parts[inst.pi % tr.parts.length];
     const ch = parseChord(part[inst.ci]);
     const lastOfPart = inst.ci===part.length-1;
-    const d = tr.dur * (lastOfPart ? 1.5 : 1); // the end of each section breathes a little longer
+    const d = tr.dur * (lastOfPart && !tr.beat ? 1.5 : 1); // the end of each section breathes a little longer (never with a beat: bars must stay whole)
+    if(tr.beat && inst.drums) scheduleDrums(inst, tr, t, d);
     // pad: chord in the middle register, sometimes inverted so the colour keeps moving
     let base = 48 + ch.root; if(base>57) base -= 12;
     let notes = ch.iv.map(i=> base+i);
@@ -2677,6 +2886,51 @@
     if(inst.ci>=part.length){ inst.ci = 0; inst.pi++; }
     return d;
   }
+  // ---- the lofi hip-hop beat: boom-bap kick, snare on 2 and 4, swung hi-hats ----
+  function musNoise(ctx, dest, t, type, freq, q, vol, dec){
+    const src = ctx.createBufferSource(); src.buffer = getNoise(ctx); src.loop = true;
+    const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+    const g = ctx.createGain(); src.connect(f); f.connect(g); g.connect(dest);
+    perc(g, t, vol, 0.002, dec);
+    src.start(t, Math.random()*1.5); src.stop(t+dec+0.05);
+  }
+  function drumKick(ctx, dest, t, vel){
+    const o = ctx.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(115, t); o.frequency.exponentialRampToValueAtTime(42, t+0.22);
+    const g = ctx.createGain(); o.connect(g); g.connect(dest);
+    perc(g, t, 0.36*vel, 0.004, 0.34);
+    o.start(t); o.stop(t+0.4);
+    musNoise(ctx, dest, t, 'highpass', 2500, 0.7, 0.04*vel, 0.012);
+  }
+  function drumSnare(ctx, dest, t, vel){
+    musNoise(ctx, dest, t, 'bandpass', 1900, 0.8, 0.17*vel, 0.17);
+    const o = ctx.createOscillator(); o.type = 'triangle';
+    o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(150, t+0.1);
+    const g = ctx.createGain(); o.connect(g); g.connect(dest);
+    perc(g, t, 0.08*vel, 0.002, 0.11);
+    o.start(t); o.stop(t+0.16);
+  }
+  function drumHat(ctx, dest, t, vel, open){ musNoise(ctx, dest, t, 'highpass', 7500, 0.6, (open ? 0.045 : 0.055)*vel, open ? 0.2 : 0.035); }
+  function scheduleDrums(inst, tr, t, d){
+    const ctx = audioCtx, dest = inst.drums;
+    const six = 60/tr.beat.bpm/4;                       // one 16th note
+    const swingShift = (tr.beat.swing-0.5)*2*six;       // late off-beat 8ths = the lazy lofi groove
+    const bars = Math.round(d/(six*16));
+    for(let b=0; b<bars; b++){
+      const bar = t + b*16*six;
+      const fill = (b===bars-1) && Math.random()<0.35;  // a small variation at the end of the phrase
+      [0, 6, 10].forEach(s=>{ if(s!==6 || Math.random()<0.8) drumKick(ctx, dest, bar+s*six, s===0 ? 1 : 0.8); });
+      if(fill) drumKick(ctx, dest, bar+14*six, 0.6);
+      [4, 12].forEach(s=> drumSnare(ctx, dest, bar+s*six, 1));
+      if(Math.random()<0.3) drumSnare(ctx, dest, bar+15*six, 0.3); // ghost note
+      for(let s=0; s<16; s+=2){
+        const off = (s%4===2);
+        const open = s===14 && Math.random()<0.4;
+        drumHat(ctx, dest, bar+s*six+(off ? swingShift : 0), off ? 0.6 : 0.9, open);
+      }
+    }
+  }
+
   // a quiet sound bed under some pieces: waves at Kribi, crickets under the stars, a bar's murmur, rain on the roof
   function startAmbience(inst, kind){
     const ctx = audioCtx;
@@ -2690,6 +2944,14 @@
       } else if(kind==='rain'){ f.type = 'bandpass'; f.frequency.value = 2500; f.Q.value = 0.4; g.gain.value = 0.03; }
       else { f.type = 'bandpass'; f.frequency.value = 420; f.Q.value = 0.8; g.gain.value = 0.02; }
       src.connect(f); f.connect(g); g.connect(inst.out); src.start(); inst.nodes.push(src);
+    } else if(kind==='vinyl'){
+      // an old record: a soft hiss and random little crackles
+      const rate = ctx.sampleRate, len = rate*4, buf = ctx.createBuffer(1, len, rate), d = buf.getChannelData(0);
+      for(let i=0;i<len;i++) d[i] = Math.random()<0.00035 ? (Math.random()*2-1)*0.8 : (Math.random()*2-1)*0.015;
+      const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2800; f.Q.value = 0.4;
+      const g = ctx.createGain(); g.gain.value = 0.5;
+      src.connect(f); f.connect(g); g.connect(inst.drums || inst.out); src.start(); inst.nodes.push(src);
     } else if(kind==='crickets'){
       const chirp = ()=>{
         if(inst.stopped) return;
@@ -2707,6 +2969,14 @@
     o.connect(musicBus);
     if(musicVerb){ const s = ctx.createGain(); s.gain.value = 0.6; o.connect(s); s.connect(musicVerb); }
     const inst = {id, out:o, stopped:false, pi:0, ci:0, last:76, next:ctx.currentTime+0.15, timer:null, ambT:[], nodes:[]};
+    if(tr.beat){
+      // drums stay dry (no big reverb) and a little muffled, like a sampled loop
+      const dg = ctx.createGain();
+      dg.gain.setValueAtTime(0.0001, ctx.currentTime); dg.gain.linearRampToValueAtTime(1, ctx.currentTime+2);
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5200; lp.Q.value = 0.4;
+      dg.connect(lp); lp.connect(musicBus);
+      inst.drums = dg;
+    }
     const loop = ()=>{
       if(inst.stopped) return;
       try{ while(inst.next < ctx.currentTime+1.5) inst.next += scheduleChord(inst, tr, inst.next); }catch(e){ console.error(e); }
@@ -2734,9 +3004,9 @@
       clearTimeout(i.timer); i.ambT.forEach(clearTimeout);
       try{
         const t = audioCtx.currentTime;
-        i.out.gain.cancelScheduledValues(t); i.out.gain.setValueAtTime(i.out.gain.value, t); i.out.gain.linearRampToValueAtTime(0.0001, t+2.5);
+        [i.out, i.drums].forEach(g=>{ if(!g) return; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0.0001, t+2.5); });
       }catch(e){}
-      setTimeout(()=>{ try{ i.out.disconnect(); }catch(e){} i.nodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); }, 9000);
+      setTimeout(()=>{ try{ i.out.disconnect(); if(i.drums) i.drums.disconnect(); }catch(e){} i.nodes.forEach(n=>{ try{ n.stop(); }catch(e){} }); }, 9000);
     }
   };
   function refreshNowPlaying(){
@@ -2746,32 +3016,24 @@
   }
 
 
+  // Penalty: the author of the manual — a teacher who enjoys your mistakes a little too much. Few words, well placed.
   const PENALTY_CONTROL_LINES = [
-    "Eh la, c'est fini pour toi.","Facile. Trop facile.","Range tes cartes, sérieux.",
-    "Penalty ne rate jamais, tu le savais pas ?","C'est moi le patron ici.","Tu appelles ça une carte ?",
-    "Merci pour le cadeau.","On se calme, on respire.","T'as vu comment j'ai fait ça ?",
-    "Tu voulais jouer contre qui exactement ?","Aïe. Ça, ça fait mal.","Je peux continuer comme ça toute la nuit.",
-    "T'as vraiment cru que ça allait passer ?","Reste concentré, ça devient triste.",
-    "Je vais commencer à m'ennuyer si tu continues comme ça.","Encore. Toujours moi.",
-    "Tu comptais sur quoi, exactement ?","Ho ho ho. Regarde-moi ça."
+    "Merci, je prends.","Tu joues ou tu décores ?","Chapitre 3 : comment perdre le contrôle. Bien appris.",
+    "Doucement, tu vas te faire mal.","Ça, c'est ma table. Assieds-toi bien.","Tes cartes ont peur de moi, on dirait.",
+    "Tu m'offres ça ? Il ne fallait pas.","Je ne dis rien. Je regarde."
   ];
   const PENALTY_WIN_LINES = [
-    "Encore une manche pour Penalty. Normal.","Je t'avais prévenu dans le livre.",
-    "Chapitre 9, mon gars. Relis-le.","C'est écrit dans le manuel : je gagne.",
-    "Une de plus. Compte les points.","Tu veux ma photo dédicacée ?",
-    "On dirait que le quartier a un nouveau chapitre à écrire sur toi.",
-    "Tu vas rentrer raconter quoi à tes amis, là ?","Sérieux, tu voulais vraiment jouer contre moi ?"
+    "Encore. Je commence à avoir pitié.","C'était écrit dans le manuel. Page 12.","Tu veux un autographe pour te consoler ?",
+    "Ce n'est pas une défaite, c'est une leçon. Gratuite.","Le quartier parle déjà de toi. Pas en bien.","Va boire de l'eau, ça va passer."
   ];
-  const PENALTY_CORA_LINES = ["LE CORA ! Tu as vu ça ?!","Note ça dans tes cahiers, petit.","Ça, c'est pour le manuel, chapitre 5."];
-  const PENALTY_GLACEE_LINES = ["33 GLACÉE ! Je suis une légende !","Ça, ça rentre dans le manuel direct.","Personne ne va me croire. Tant pis pour eux."];
-  const PENALTY_SURPRISE_LINES = ["Quel bail ?!","Eh mais... quel bail !","Non mais quel bail celui-là !","Attends... quel bail !","Ah bon ?! Depuis quand ?!"];
-  const PENALTY_LOSE_LINES = ["Bon. Ça arrive.","Une fois n'est pas coutume.","Je te laisse gagner celle-là.","Mouais. La prochaine est pour moi."];
-  // fired when Penalty is BEHIND on the scoreboard — he talks trash anyway, trying to rattle you
+  const PENALTY_CORA_LINES = ["LE CORA. Mets ça en statut WhatsApp.","Un 3 qui tue. Mon préféré.","CORA. Applaudis, c'est poli."];
+  const PENALTY_GLACEE_LINES = ["33 GLACÉE. Tu peux filmer, je ne bouge pas.","Deux 3. Le froid te monte au dos ?","Glacée. Comme ton visage, là."];
+  const PENALTY_SURPRISE_LINES = ["Quel bail ?!","Eh ! Qui t'a appris ça ?","Ah bon. Le petit a des dents.","Attends… rembobine ça."];
+  const PENALTY_LOSE_LINES = ["Je t'ai laissé respirer. Profite.","Une manche. Note-la, tu n'en verras pas beaucoup.","Même le manuel a des fautes de frappe."];
+  // when Penalty is BEHIND on the scoreboard he talks anyway, trying to rattle you
   const PENALTY_BEHIND_TAUNT_LINES = [
-    "Ça veut rien dire pour la suite.","Profite bien, ça va pas durer.","Tu trembles déjà ? Bien.",
-    "Tu joues bien pour un débutant.","Continue comme ça, ça m'arrange.","Je te laisse le score, pas la partie.",
-    "T'inquiète, je m'échauffe.","On va voir qui rigole à la fin.","Petite victoire. Petit joueur.",
-    "C'est là que ça devient intéressant pour moi."
+    "Tu mènes. Savoure, ça ne dure jamais.","C'est bien, tu t'échauffes pour rien.","Le score ment. Moi non.",
+    "Je te laisse y croire. C'est ma technique.","Petite victoire, petit joueur."
   ];
 
   // ---- La route du quartier: four duel opponents, from the nervous beginner to the boss ----
@@ -2785,13 +3047,13 @@
       name:'Joëlle', stars:1, brain:'easy', announce:[0.5, 0.8], repWin:50,
       tagline:'Nerveuse et superstitieuse. Elle joue vite… et se trompe souvent.',
       lines:{
-        control:["Hmm... je le sentais.","Chut, chut… laisse-moi jouer.","Ah… exactement ça.","Je savais que cette carte allait sortir.","Touche pas la table, ça porte malheur."],
-        win:["Je savais que ça allait arriver.","C'est écrit d'avance, je te dis.","Les cartes m'aiment ce soir…","Ouf. J'ai cru que j'allais perdre."],
-        cora:["Le CORA… je le sentais dans l'air.","Un 3 ! Mon chiffre porte-bonheur !"],
-        glacee:["33 Glacée… je n'y crois pas moi-même.","Wow. Vraiment wow. Personne ne bouge."],
-        surprise:["Hein ?! Comment t'as fait ?","Non non non… pas ça.","Ça, je l'avais pas vu venir…","Aïe aïe aïe."],
-        lose:["Bon… ça arrive.","La chance tourne, c'est tout.","C'est la faute de la chaise, elle grince."],
-        behind:["Doucement… je vais me refaire.","Attends, je change de place.","Ça va tourner, je le sens.","Me regarde pas comme ça, ça me déconcentre."],
+        control:["Je l'ai ! Je l'ai ! … je l'ai, non ?","Ne souffle pas sur mes cartes.","Ma grand-mère m'a dit de jouer celle-là.","Pardon, pardon, c'est la chance."],
+        win:["J'ai gagné ?! Attends, je vérifie.","Je vais le raconter à toute la famille.","Ma prière a marché !","Ne fais pas cette tête, c'est la chance."],
+        cora:["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
+        glacee:["Deux 3… je vais m'évanouir.","33 Glacée ! Quelqu'un filme ?!"],
+        surprise:["Hein ?! C'était autorisé, ça ?","Tu as un marabout ou quoi ?","Non non non, je n'ai rien vu.","Aïe, mon cœur."],
+        lose:["C'est la chaise. Elle me porte la poisse.","Je change de place la prochaine fois.","Pas grave, je n'ai pas dormi."],
+        behind:["Ne regarde pas mes mains, ça me stresse.","Attends, je me concentre… voilà, c'est perdu.","Je vais me refaire. Peut-être.","Arrête de sourire comme ça."],
         missed:["Attends… j'avais une victoire automatique ! Trop tard…","J'ai encore oublié d'annoncer…"]
       }
     },
@@ -2799,13 +3061,13 @@
       name:'RALL', stars:2, brain:'heuristic', announce:[0.7, 0.9], repWin:100,
       tagline:'Moqueur et solide. Il joue proprement, sans grande finesse.',
       lines:{
-        control:["Ha, je savais.","Toujours aussi prévisible.","Facile, facile.","Regarde et apprends.","Tu vois ce que je viens de faire ?"],
-        win:["Comme d'habitude.","Une routine, franchement.","Je te l'avais bien dit.","Note la date… ah non, ça t'arrive tout le temps."],
-        cora:["LE CORA ! Évidemment que c'est moi.","Un CORA, et sans transpirer."],
-        glacee:["33 GLACÉE ! Je vous avais dit de faire attention.","Personne ne va me croire, et tant pis."],
-        surprise:["Tiens donc… tu sais jouer, en fait ?","Pas mal. Pour une fois.","Quel bail ! T'as triché ou quoi ?"],
-        lose:["Bon. Une fois n'est pas coutume.","Ça arrive même aux meilleurs, apparemment.","Profite, ça se reproduira pas."],
-        behind:["Je te laisse croire que tu gagnes.","Continue, ça me fait rire.","Tu vas redescendre, t'inquiète.","C'est mignon, ce petit score."],
+        control:["Tu es né hier ou bien ?","Merci pour le cadeau, mola.","Prévisible comme le délestage.","Range-toi, je passe.","Regarde bien, c'est gratuit."],
+        win:["Comme d'habitude. Au suivant.","Tu veux que je te prête mes cartes ?","Rentre dormir, il est tard pour toi.","Ça fait combien, là ? J'ai arrêté de compter."],
+        cora:["CORA ! Dis bonjour au 3.","Un CORA, sans transpirer, mola."],
+        glacee:["33 Glacée. Le quartier va en parler une semaine.","Deux 3. Respire, respire."],
+        surprise:["Tiens… tu sais jouer, en fait ?","Pas mal. Qui t'a soufflé ça ?","Quel bail ! Tu as triché ou quoi ?"],
+        lose:["Profite, ça arrive une fois par an.","Je t'ai laissé gagner. Tu vas en parler partout.","OK. Ça, c'était un accident."],
+        behind:["Continue, ça me fait rire.","C'est mignon, ce petit score.","Tu crois que tu mènes ? Moi, je m'échauffe."],
         missed:["J'avais une victoire automatique… je voulais te laisser une chance.","Bah, j'ai pas besoin d'annoncer pour te battre."]
       }
     },
@@ -2823,8 +3085,8 @@
       tagline:'Le Vétéran : 14 ans de Fap Fap. Il calcule tout et ne laisse rien passer.',
       lockedHint:'Bats Penalty pour défier Mr Kamga.',
       lines:{
-        control:["Hm.","Je l'ai vu venir.","Tu planifies. Le jeu décide.","Patience, petit.","Quatorze ans que je vois ce coup-là."],
-        win:["C'est ça le Fap Fap.","Tu cherchais quelque chose. Je l'ai vu.","Reviens quand tu auras relu le manuel.","Il va apprendre."],
+        control:["Hm.","Je l'ai vu venir.","Tu joues vite. Moi, je joue bien.","Patience, petit.","Quatorze ans que je vois ce coup-là."],
+        win:["C'est ça, le Fap Fap.","Tu as perdu à la troisième carte. Tu ne l'as pas vu.","Reviens quand tu auras relu le manuel.","Le jeu ne pardonne pas. Moi non plus."],
         cora:["CORA. Sans un bruit.","Le 3, petit. Toujours le 3."],
         glacee:["La 33 Glacée. Retiens bien ce soir.","Deux 3. Silence sur la terrasse."],
         surprise:["Hm. Pas mal.","Tu as lu le chapitre 8, toi.","Intéressant…"],
@@ -2875,11 +3137,22 @@
   function isOppUnlocked(id){ return id!=='mbarga' || (profile.ladder.penalty.w>0); }
 
   let bubbleTimer = null;
+  // the opponent speaks at the moments that matter; remarks during play are rare (at most one per hand,
+  // never twice within 14 s) so each one lands — and the same line never comes twice in a row
+  let lastTalkAt = 0, lastLine = '', trickTalks = 0;
+  function oppChatter(lines){
+    if(trickTalks>=1 || Date.now()-lastTalkAt < 14000 || Math.random()>0.3) return;
+    trickTalks++;
+    penaltySay(lines);
+  }
   function penaltySay(lines){
     if(mode==='mp') return;
     const bubble = document.getElementById('penaltyBubble');
     if(!bubble || !lines || lines.length===0) return;
-    bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
+    let line = lines[Math.floor(Math.random()*lines.length)];
+    if(line===lastLine && lines.length>1) line = lines[(lines.indexOf(line)+1) % lines.length];
+    lastLine = line; lastTalkAt = Date.now();
+    bubble.textContent = line;
     bubble.classList.remove('show');
     void bubble.offsetWidth; // restart animation if already showing
     bubble.classList.add('show');
@@ -3035,9 +3308,8 @@
 
   // when Penalty is behind, mix in a defiant taunt instead of the "normal" line — he's trying to destabilize you
   function penaltySayMaybeTaunting(normalLines){
-    if(mode!=='ai'){ penaltySay(normalLines); return; }
-    if(scores.ai < scores.you && Math.random()<0.55){ penaltySay(L('behind')); }
-    else { penaltySay(normalLines); }
+    if(mode!=='ai' || tuto) return; // during play: only the occasional remark
+    oppChatter(scores.ai < scores.you && Math.random()<0.55 ? L('behind') : normalLines);
   }
 
   function lastTwoWinners(){
@@ -3186,6 +3458,7 @@
     // each table comes with its own background music (see TRACKS)
     table: [
       {id:'tripot',   name:'Bois du tripot',        swatch:'linear-gradient(180deg,#4a2f14,#2a1809)', req:()=>true},
+      {id:'verre',    name:'Verre au soleil',       swatch:'linear-gradient(118deg,transparent 30%,rgba(255,255,255,.8) 36%,transparent 44%),radial-gradient(circle closest-side,transparent 82%,#f5fffc 90%,#6a9a90 97%),linear-gradient(160deg,#ead6b4,#c7a476)', req:()=>true},
       {id:'kribi',    name:'Plage de Kribi',        swatch:'radial-gradient(ellipse 130% 40% at 50% 0%,#1880a0 0 50%,#d6f6f4 56%,transparent 64%),linear-gradient(180deg,#e6c891,#c49d5f)', req:()=>true},
       {id:'laterite', name:'Terre rouge de l’Est',  swatch:'linear-gradient(180deg,#a8472a,#6b2915)', req:()=>true},
       {id:'wax',      name:'Pagne wax',             swatch:'radial-gradient(circle,#f2a516 0 18%,#1b5fa8 19% 30%,transparent 31%) 0 0/16px 16px,#2e7d4f', req:()=>true},
@@ -3675,7 +3948,7 @@
   let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
   function startMatchTracking(){
     repStart(); matchMaxDeficit = 0;
-    document.querySelector('.scorebar .mid').textContent = 'Premier à '+TARGET_SCORE;
+    document.querySelector('.scorebar .mid').textContent = TARGET_SCORE===1 ? 'Partie rapide · 1 manche' : 'Premier à '+TARGET_SCORE;
   }
   function newMatch(){
     startMatchTracking();
@@ -3740,44 +4013,137 @@
     }
   }
 
-  // one screen for the whole ritual: share in one tap, or cut (bas / milieu / haut) and take a pile
+  // ===================== The cut ritual, in two animated steps =====================
+  // Step 1: the dealer has shuffled — "tu coupes ou tu partages ?". Step 2 (if cut): touch the pack where you cut,
+  // the pack splits into two piles, touch the pile you take. The same screens play by themselves when the opponent chooses.
+  const DECK_SIZE = 31;
+  function ritualStep(id){
+    ['ritualAsk','ritualCut'].forEach(s=> document.getElementById(s).classList.toggle('hidden', s!==id));
+    const el = document.getElementById(id);
+    el.classList.remove('step-in'); void el.offsetWidth; el.classList.add('step-in');
+  }
+  function ritualOpen(sayText, spectate){
+    const ov = document.getElementById('choiceOverlay');
+    ov.classList.toggle('spectate', !!spectate);
+    fillAvatar(document.getElementById('ritualAvatar'), mode==='ai' ? duelOpp : null, oppName());
+    const say = document.getElementById('choiceText');
+    say.textContent = sayText;
+    say.classList.remove('pop'); void say.offsetWidth; say.classList.add('pop');
+    document.getElementById('ritualQ').innerHTML = spectate ? 'Tu as mélangé.<br>'+oppName()+' choisit…' : 'Tu coupes ou<br>tu partages ?';
+    ritualStep('ritualAsk');
+    ov.classList.remove('hidden');
+    sfxDeal(8, 0.06); // the riffle
+  }
+  function ritualClose(){ const ov = document.getElementById('choiceOverlay'); ov.classList.add('hidden'); ov.classList.remove('spectate'); }
+  // step 2: the pack, whole, waiting for the cut
+  function cutDeckReset(title, hint){
+    const deck = document.getElementById('cutDeck');
+    deck.classList.remove('split','picked-top','picked-bot','ready');
+    deck.style.setProperty('--f', 0.5);
+    document.getElementById('cutTitle').textContent = title;
+    document.getElementById('cutHint').textContent = hint;
+    ritualStep('ritualCut');
+  }
+  // the pack splits at frac: the upper part slides left, the lower part right — two piles side by side
+  function cutDeckSplit(frac){
+    const deck = document.getElementById('cutDeck');
+    deck.style.setProperty('--f', frac);
+    const top = Math.round(DECK_SIZE*frac);
+    document.getElementById('cdTopN').textContent = top+' cartes';
+    document.getElementById('cdBotN').textContent = (DECK_SIZE-top)+' cartes';
+    void deck.offsetWidth;
+    deck.classList.add('split');
+    sfxSwipe(false);
+  }
+  // which = 'A' (the upper part, left pile) or 'B' (the lower part, right pile)
+  function cutDeckPick(which){
+    document.getElementById('cutDeck').classList.add(which==='A' ? 'picked-top' : 'picked-bot');
+    sfxToggle(true);
+  }
+  // the cards actually taken, for a cut at frac and a pile — same rule as before: the pile you take is dealt from
+  function cutDeckOrder(frac, which){
+    const idx = Math.round(workingDeck.length*frac);
+    const partA = workingDeck.slice(0, idx), partB = workingDeck.slice(idx);
+    const chosen = which==='A' ? partA : partB, rest = which==='A' ? partB : partA;
+    return chosen.length>=10 ? chosen : chosen.concat(rest);
+  }
+
   function openChoiceForPlayer(isRemote){
-    const send = (choice, frac, pile)=>{
-      document.getElementById('choiceOverlay').classList.add('hidden');
-      if(isRemote){ mpSend(choice==='partage' ? {t:'cutChoice', choice} : {t:'cutChoice', choice, frac, pile}); return; }
-      if(choice==='partage'){ dealFinalize(workingDeck); return; }
-      const idx = Math.round(workingDeck.length*frac);
-      const partA = workingDeck.slice(0, idx); // originally on top
-      const partB = workingDeck.slice(idx);    // originally on bottom — "reposées en ordre inverse": it goes on top
-      const chosen = pile==='top' ? partB : partA, rest = pile==='top' ? partA : partB;
-      playCut('deckPile', ()=> dealFinalize(chosen.length>=10 ? chosen : chosen.concat(rest)));
+    // the network message keeps its old vocabulary: pile 'top' = the lower part put back on top (B), 'bottom' = A
+    const finish = (choice, frac, which)=>{
+      ritualClose();
+      if(isRemote){ mpSend(choice==='partage' ? {t:'cutChoice', choice} : {t:'cutChoice', choice, frac, pile: which==='B' ? 'top' : 'bottom'}); return; }
+      dealFinalize(choice==='partage' ? workingDeck : cutDeckOrder(frac, which));
     };
     if(prefs.alwaysShare){
       showToast('Nouvelle manche', oppName()+' mélange · tu partages', {ms:1300});
-      gameTimeout(()=> send('partage'), 450);
+      gameTimeout(()=> finish('partage'), 450);
       return;
     }
-    const ov = document.getElementById('choiceOverlay');
-    document.getElementById('choiceText').textContent = oppName()+' a mélangé les cartes. À toi de choisir.';
-    document.getElementById('cutPanel').classList.add('hidden');
+    ritualOpen('« J’ai mélangé. À toi de voir. »', false);
     document.getElementById('btnRemix').classList.toggle('hidden', !!isRemote);
     const pref = document.getElementById('prefAlwaysShare');
     pref.checked = !!prefs.alwaysShare;
     pref.onchange = ()=>{ prefs.alwaysShare = pref.checked; savePrefs(); };
-    let frac = 0.5;
-    document.querySelectorAll('#cutSeg button').forEach(b=>{
-      b.classList.toggle('on', b.dataset.f==='0.5');
-      b.onclick = ()=>{ frac = Number(b.dataset.f); document.querySelectorAll('#cutSeg button').forEach(x=>x.classList.toggle('on', x===b)); };
+    document.getElementById('btnPartage').onclick = ()=>{
+      document.getElementById('choiceText').textContent = '« Je partage. »';
+      gameTimeout(()=> finish('partage'), 250);
+    };
+    let frac = null, picked = false;
+    document.getElementById('btnDepose').onclick = ()=>{
+      frac = null; picked = false;
+      cutDeckReset('Où coupes-tu ?', 'Touche le paquet à l’endroit où tu veux couper.');
+    };
+    document.querySelectorAll('#cutDeck .cut-mark').forEach(b=>{
+      b.onclick = (e)=>{
+        e.stopPropagation();
+        if(frac!=null) return;
+        frac = Number(b.dataset.f);
+        cutDeckSplit(frac);
+        document.getElementById('cutTitle').textContent = 'Prends ton tas';
+        document.getElementById('cutHint').textContent = 'Touche le tas que tu veux garder.';
+        setTimeout(()=> document.getElementById('cutDeck').classList.add('ready'), 450);
+      };
     });
-    document.getElementById('btnPartage').onclick = ()=> send('partage');
-    document.getElementById('btnDepose').onclick = ()=> document.getElementById('cutPanel').classList.toggle('hidden');
-    document.getElementById('pileTop').onclick = ()=> send('depose', frac, 'top');
-    document.getElementById('pileBottom').onclick = ()=> send('depose', frac, 'bottom');
+    const pick = (which)=>{
+      if(frac==null || picked) return;
+      picked = true;
+      cutDeckPick(which);
+      gameTimeout(()=> finish('depose', frac, which), 750);
+    };
+    document.getElementById('cdTop').onclick = ()=> pick('A');
+    document.getElementById('cdBot').onclick = ()=> pick('B');
+    document.getElementById('btnCutBack').onclick = ()=>{ if(!picked){ frac = null; ritualStep('ritualAsk'); } };
     document.getElementById('btnRemix').onclick = ()=>{
       workingDeck = shuffle(buildDeck());
-      showToast('Nouveau mélange', oppName()+' remélange les cartes.', {ms:1300});
+      document.getElementById('choiceText').textContent = '« Bon… je remélange. »';
+      const r = document.querySelector('#choiceOverlay .riffle');
+      r.classList.remove('again'); void r.offsetWidth; r.classList.add('again');
+      sfxDeal(8, 0.06);
     };
-    ov.classList.remove('hidden');
+  }
+
+  // the opponent chooses: the same two screens, played out on their own
+  function showOppRitual(wantsCut, frac, which, then){
+    if(prefs.alwaysShare && !wantsCut){ showToast('Nouvelle manche', 'Tu mélanges · '+oppName()+' : « Je partage. »', {ms:1400}); gameTimeout(then, 500); return; }
+    ritualOpen('…', true);
+    gameTimeout(()=>{
+      const say = document.getElementById('choiceText');
+      say.textContent = wantsCut ? '« Je coupe. »' : '« Je partage. »';
+      say.classList.remove('pop'); void say.offsetWidth; say.classList.add('pop');
+      if(!wantsCut){ gameTimeout(()=>{ ritualClose(); then(); }, 1000); return; }
+      gameTimeout(()=>{
+        cutDeckReset(oppName()+' coupe…', '');
+        gameTimeout(()=>{
+          cutDeckSplit(frac);
+          gameTimeout(()=>{
+            cutDeckPick(which);
+            document.getElementById('cutTitle').textContent = oppName()+' prend ce tas';
+            gameTimeout(()=>{ ritualClose(); then(); }, 900);
+          }, 850);
+        }, 500);
+      }, 700);
+    }, 900);
   }
 
   function mpApplyRemoteCutChoice(msg){
@@ -3793,7 +4159,8 @@
       const rest = msg.pile==='top' ? partA : partB;
       logMsg(oppNameVal+' : "Je dépose, prends le tas du '+(msg.pile==='top'?'haut':'bas')+'."', true);
       deckOrder = chosen.length>=10 ? chosen : chosen.concat(rest);
-      playCut('deckPile', ()=> finalizeDealFromDeckHost(deckOrder));
+      // the host watches their friend's cut on the same animated screen
+      showOppRitual(true, msg.frac, msg.pile==='top' ? 'B' : 'A', ()=> finalizeDealFromDeckHost(deckOrder));
       return;
     }
     finalizeDealFromDeckHost(deckOrder);
@@ -3803,17 +4170,11 @@
     // player is dealer; AI (as adversaire) makes the choice — resolved automatically, briefly narrated
     const wantsDepose = Math.random()<0.5;
     if(!wantsDepose){
-      showToast('Nouvelle manche', 'Tu mélanges · '+oppName()+' : « Je partage. »', {ms:1500});
-      gameTimeout(()=> finalizeDealFromDeck(workingDeck), 500);
+      showOppRitual(false, 0, null, ()=> finalizeDealFromDeck(workingDeck));
     } else {
       const frac = [1/3,1/2,2/3][Math.floor(Math.random()*3)];
-      const idx = Math.round(workingDeck.length*frac);
-      const partA = workingDeck.slice(0, idx);
-      const partB = workingDeck.slice(idx);
-      const takeTop = Math.random()<0.5;
-      showToast('Nouvelle manche', oppName()+' coupe et prend le tas du '+(takeTop?'haut':'bas')+'.', {ms:1500});
-      const chosen = takeTop ? partB : partA;
-      gameTimeout(()=> playCut('deckPile', ()=> finalizeDealFromDeck(chosen.length>=10 ? chosen : chosen.concat(takeTop?partA:partB))), 350);
+      const which = Math.random()<0.5 ? 'A' : 'B';
+      showOppRitual(true, frac, which, ()=> finalizeDealFromDeck(cutDeckOrder(frac, which)));
     }
   }
 
@@ -4440,7 +4801,7 @@
       const brain = oppPersona().brain;
       const card = brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand);
       removeCard(state.aiHand, card);
-      if(mode==='ai' && scores.ai<scores.you && Math.random()<0.18) penaltySay(L('behind'));
+      if(mode==='ai' && scores.ai<scores.you) oppChatter(L('behind'));
       resolvePlay('ai', card, false);
     } else if(isDumpTurn('ai')){
       const cards = [...state.aiHand];
@@ -4655,12 +5016,13 @@
       if(!isGlacee && !isCora) sfxHandWin(); // big wins already got sfxBigWin() just above
       if(isGlacee) penaltySay(L('glacee'));
       else if(isCora) penaltySay(L('cora'));
-      else if(!isAutoWin) penaltySay(L('win')); // auto-win already spoke at its own call site
+      else if(!isAutoWin && Math.random()<0.6) penaltySay(L('win')); // auto-win already spoke at its own call site
     } else {
       if(!isGlacee && !isCora) sfxHandLose();
       if(isGlacee || isCora) penaltySay(L('surprise'));
-      else if(!isAutoWin) penaltySay(L('lose'));
+      else if(!isAutoWin && Math.random()<0.6) penaltySay(L('lose'));
     }
+    trickTalks = 0; // a fresh remark allowance for the next hand
 
     if(tuto){ gameTimeout(finishTuto, (isGlacee||isCora) ? 3800 : 1600); return; }
 
@@ -4706,6 +5068,7 @@
     "Dernier tour ! Celui qui contrôle la DERNIÈRE carte gagne la manche. Et si cette carte gagnante est un 3… c’est un CORA, gain doublé. Pose ton 3 Tchaka !"
   ];
   function startTuto(){
+    setMatchLength(false);
     tuto = {youQueue: TUTO_YOU.map(c=>c.suit+'-'+c.rank), aiQueue: TUTO_AI.slice()};
     daily = null;
     mode = 'ai';
@@ -4749,6 +5112,7 @@
   document.getElementById('btnTutoPlay').addEventListener('click', ()=>{
     document.getElementById('tutoDoneOverlay').classList.add('hidden');
     enterGame();
+    setMatchLength(!!prefs.quick);
     duelOpp = 'gervais';
     mode = 'ai';
     applyOppNameToUI();
@@ -4798,6 +5162,7 @@
   function dailyDoneToday(){ return !!(profile.daily && profile.daily.date===dayKey() && profile.daily.done); }
 
   function startDaily(){
+    setMatchLength(false);
     const today = dayKey();
     if(profile.daily && profile.daily.date===today){
       if(!profile.daily.done){ profile.daily.done = true; profile.daily.abandoned = true; saveProfile(); }
@@ -4891,6 +5256,7 @@
         duelOpp = id;
         prefs.lastOpp = id; savePrefs();
         mode = 'ai';
+        setMatchLength(!!prefs.quick);
         enterGame();
         applyOppNameToUI();
         newMatch();
@@ -4899,6 +5265,17 @@
     });
     fillAllAvatars(list);
   }
+  // match format: a full match (first to 5) or a quick game (one hand) — remembered for next time
+  function refreshFormatPick(){
+    document.querySelectorAll('.format-pick .fmt').forEach(b=>{
+      const on = (b.dataset.q==='1')===!!prefs.quick;
+      b.classList.toggle('on', on); b.setAttribute('aria-checked', on);
+    });
+  }
+  document.querySelectorAll('.format-pick .fmt').forEach(b=> b.addEventListener('click', ()=>{
+    prefs.quick = b.dataset.q==='1'; savePrefs(); refreshFormatPick();
+  }));
+  refreshFormatPick();
   document.getElementById('btnGoPlay').addEventListener('click', ()=>{ ensureAudio(); Nav.go('playPage'); });
   document.getElementById('modeAI').addEventListener('click', ()=>{ ensureAudio(); Nav.go('oppSelectOverlay'); });
   document.getElementById('btnShowRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
@@ -5098,10 +5475,11 @@
       if(won) rec.w++; else rec.l++;
       // progression for a duel against the AI
       if(won){
-        repAdd(oppPersona().repWin, 'Victoire contre '+oppName());
+        const quick = TARGET_SCORE===1; // a quick game is worth a third of a full match, and can't earn "5 à 0"
+        repAdd(quick ? Math.round(oppPersona().repWin/3) : oppPersona().repWin, (quick ? 'Partie rapide gagnée contre ' : 'Victoire contre ')+oppName());
         unlockTrophy('premiere');
         unlockTrophy('beat_'+duelOpp);
-        if(theirs===0) unlockTrophy('sans_appel');
+        if(theirs===0 && !quick) unlockTrophy('sans_appel');
         if(matchMaxDeficit>=3) unlockTrophy('remontada');
         if(profile.lastDuel && profile.lastDuel.opp===duelOpp && !profile.lastDuel.won) unlockTrophy('revanche');
         profile.winStreak = (profile.winStreak||0)+1;
@@ -5169,19 +5547,19 @@
     },
     aristide: {
       name:'RALL',
-      control: ["Ha, je savais.","Toujours aussi prévisible.","Facile, facile.","Regarde et apprends.","Tu vois ce que je viens de faire ?"],
-      win: ["Comme d'habitude.","Une routine, franchement.","Je devrais arrêter de vous prévenir.","Notez la date, ça compte pas souvent contre moi."],
-      cora: ["LE CORA ! Évidemment que c'est moi.","Notez la date."],
-      glacee: ["33 GLACÉE ! Je vous avais dit de faire attention.","Personne ne va me croire, et tant pis."],
-      lose: ["Bon. Une fois n'est pas coutume.","Ça arrive même aux meilleurs, apparemment."]
+      control: ["Vous êtes nés hier ou bien ?","Merci pour le cadeau, mola.","Prévisible comme le délestage.","Range-toi, je passe."],
+      win: ["Comme d'habitude. Au suivant.","Qui veut des cours ? Je fais des prix.","Rentrez dormir, il est tard pour vous."],
+      cora: ["CORA ! Dites bonjour au 3.","Un CORA, sans transpirer, mola."],
+      glacee: ["33 Glacée. Le quartier va en parler une semaine.","Deux 3. Respirez, respirez."],
+      lose: ["OK. Ça, c'était un accident.","Profitez, ça arrive une fois par an."]
     },
     gervais: {
       name:'Joëlle',
-      control: ["Hmm... intéressant.","Je le sentais venir.","Voilà, je te l'avais dit.","Chut, laisse-moi jouer.","Ah... exactement ça."],
-      win: ["Je savais que ça allait arriver.","Toujours la même histoire.","C'est écrit d'avance, je te dis.","Bon, à qui le tour ?"],
-      cora: ["Le CORA... je le sentais dans l'air.","Comme prévu, non ?"],
-      glacee: ["33 Glacée... je n'y crois pas moi-même.","Wow. Vraiment wow."],
-      lose: ["Bon... ça arrive.","La chance tourne, c'est tout."]
+      control: ["Je l'ai ! … je l'ai, non ?","Ne soufflez pas sur mes cartes.","Ma grand-mère m'a dit de jouer celle-là."],
+      win: ["J'ai gagné ?! Attendez, je vérifie.","Ma prière a marché !","Je vais le raconter à toute la famille."],
+      cora: ["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
+      glacee: ["Deux 3… je vais m'évanouir.","33 Glacée ! Quelqu'un filme ?!"],
+      lose: ["C'est la chaise. Elle me porte la poisse.","Pas grave, je n'ai pas dormi."]
     }
   };
   function sqName(id){ return id==='you' ? 'Toi' : SQ_PERSONAS[id].name; }
@@ -5191,6 +5569,11 @@
     if(!lines || lines.length===0) return;
     const bubble = document.getElementById('sqBubble'+id.charAt(0).toUpperCase()+id.slice(1));
     if(!bubble) return;
+    // at a 4-player table, remarks during play are rare too: one in five, and never within 10 s of another
+    if(category==='control'){
+      if(Math.random()>0.2 || Date.now()-(sqSay.last||0) < 10000) return;
+    }
+    sqSay.last = Date.now();
     bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
     bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
     avatarFx(id, category==='win'||category==='cora'||category==='glacee' ? 'hop' : 'speaking');
@@ -5864,7 +6247,7 @@
     window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
-      Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
+      openChoiceForPlayer, showOppRitual, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
   }
 
