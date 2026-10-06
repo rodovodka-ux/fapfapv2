@@ -895,6 +895,28 @@
   .chips-result.loss .cr-body b{ color:#ff9c80; }
   .cr-body small{ font-size:11.5px; color:var(--dust); font-weight:600; }
 
+  /* ---- Carré la Pute: 2, 3 or 4 players, and the online table ---- */
+  .sq-seat.absent{ visibility:hidden; }
+  .cp-pick{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .cp-n{ display:flex; flex-direction:column; align-items:center; gap:5px; padding:14px 6px 12px; border-radius:18px;
+    background:rgba(255,240,215,0.05); border:1px solid rgba(244,184,96,0.2); box-shadow:0 4px 0 rgba(0,0,0,0.5); }
+  .cp-n:active{ transform:translateY(4px); box-shadow:none; }
+  .cp-n b{ font-family:var(--font-display); font-size:17px; color:var(--cream); }
+  .cp-n small{ font-size:10.5px; color:var(--dust); line-height:1.25; text-align:center; }
+  .cp-n.on{ border-color:var(--bulb); background:linear-gradient(170deg, rgba(244,184,96,0.28), rgba(244,184,96,0.08)); box-shadow:0 4px 0 #8a4e0c, 0 0 18px rgba(244,184,96,0.25); }
+  .cp-n.on b{ color:var(--bulb-hot); }
+  .cp-faces{ display:flex; min-height:34px; }
+  .cp-faces .avatar + .avatar{ margin-left:-10px; }
+  .cp-gain{ display:flex; align-items:center; justify-content:center; gap:5px; font-size:12.5px !important; font-weight:700; color:var(--bulb) !important; max-width:none !important; }
+  .cp-gain svg.i{ width:14px; height:14px; }
+  .rm-title{ font-family:var(--font-display); color:var(--bulb); font-size:15px; margin:8px 0 0; letter-spacing:0.04em; }
+  .rm-list{ width:100%; max-width:320px; display:flex; flex-direction:column; gap:6px; }
+  .rm-player{ display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:14px; background:rgba(255,240,215,0.05); border:1px solid rgba(244,184,96,0.16);
+    animation: heroIn 0.45s cubic-bezier(.25,1.5,.45,1) backwards; text-align:left; }
+  .rm-n{ font-weight:700; color:var(--cream); }
+  #btnRmStart.waiting{ opacity:0.55; }
+  .wait-riffle{ margin-top:12px; transform:scale(0.8); }
+
   /* ---- match format: full match / quick game ---- */
   .format-pick{ display:grid; grid-template-columns:1fr 1fr; gap:6px; width:100%; max-width:360px; padding:5px; border-radius:16px;
     background:rgba(0,0,0,0.35); border:1px solid rgba(244,184,96,0.18); }
@@ -1159,11 +1181,56 @@
   /* ---- home ---- */
   /* the home screen: a warm neighbourhood bar at night, blurred, the bulb right above the logo */
   .page-home{
+    /* the home screen takes the mood of the table chosen in Décors (colour of the light, the Jouer button, the icons) */
+    --h-tint: rgba(0,0,0,0);
+    --p1:#ffd88c; --p2:#f4b860; --p3:#d98f2e; --pd:#8a4e0c; --pt:#20160a; --ps:#5a3a12;
+    --ic1:#ffe7a6; --ic2:#d98f2e; --ict:#4a2a06;
     background:
       radial-gradient(ellipse 90% 45% at 50% 52%, rgba(8,5,3,0.55), rgba(8,5,3,0) 75%),
       linear-gradient(180deg, rgba(8,5,3,0.10) 0%, rgba(8,5,3,0.30) 30%, rgba(8,5,3,0.45) 60%, rgba(8,5,3,0.80) 100%),
+      linear-gradient(var(--h-tint), var(--h-tint)),
       url('art/home-bar.jpg') center top / cover no-repeat, #0d0804 !important;
+    background-blend-mode: normal, normal, color, normal !important;
   }
+  body.table-velours .page-home{ --h-tint: rgba(190,18,34,0.62); --p1:#ff9484; --p2:#e0343f; --p3:#a3121f; --pd:#5c0a12; --pt:#fff4f0; --ps:#ffd9d2; --ic1:#ff9e8e; --ic2:#b81f2c; --ict:#fff4f0; }
+  body.table-arcade .page-home{ --h-tint: rgba(128,46,230,0.62); --p1:#dcb0ff; --p2:#9b4dff; --p3:#6a1fd6; --pd:#3c0f80; --pt:#fbf6ff; --ps:#ead8ff; --ic1:#e3c2ff; --ic2:#7c3aed; --ict:#ffffff; }
+  body.table-vert .page-home{ --h-tint: rgba(30,150,72,0.58); --p1:#a6e886; --p2:#45ab5c; --p3:#1f7a3c; --pd:#0f4a22; --pt:#f4fff4; --ps:#d6f5d6; --ic1:#b9f19e; --ic2:#2e8b47; --ict:#ffffff; }
+  body.table-nuit .page-home{ --h-tint: rgba(40,80,200,0.58); --p1:#a9c6ff; --p2:#4f7cf0; --p3:#2a4fc4; --pd:#162c78; --pt:#f4f8ff; --ps:#d6e2ff; --ic1:#b8d0ff; --ic2:#3a63d8; --ict:#ffffff; }
+  body.table-kribi .page-home{ --h-tint: rgba(20,150,170,0.55); --p1:#9be8ec; --p2:#25a9b8; --p3:#127c8c; --pd:#0a4b55; --pt:#f2feff; --ps:#d2f6f8; --ic1:#a8eef2; --ic2:#1a92a2; --ict:#ffffff; }
+  /* the Jouer button and the round icon tiles follow the theme */
+  .page-home .hero-play{ background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3));
+    box-shadow: 0 6px 0 var(--pd), 0 14px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.55); }
+  .page-home .hero-play:active{ box-shadow: 0 0 0 var(--pd), 0 4px 12px rgba(0,0,0,0.3); }
+  .page-home .hero-play .hero-text b, .page-home .hero-play .hero-go{ color: var(--pt); }
+  .page-home .hero-play .hero-text small{ color: var(--ps); }
+  .page-home .hero-play .hero-faces .avatar{ box-shadow: 0 0 0 2px var(--p2), 0 3px 8px rgba(0,0,0,0.35); }
+  .page-home .tile-ico, .page-home .hero-daily .hero-ico{
+    background: linear-gradient(160deg, var(--ic1), var(--ic2)); color: var(--ict); border:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -2px 0 rgba(0,0,0,0.18), 0 4px 10px rgba(0,0,0,0.35);
+  }
+  .page-home .tile-ico svg.i, .page-home .hero-daily .hero-ico svg.i{ stroke-width:2.2; }
+  .page-home .rep-bar > div{ background: linear-gradient(90deg, var(--p3), var(--p1)); }
+  .page-home .hero-daily .hero-text b{ color: var(--p1); }
+  /* the glass table: a bright home screen in daylight, light glass panels and dark ink */
+  body.table-verre .page-home{
+    background:
+      repeating-linear-gradient(-32deg, rgba(255,252,238,0) 0 70px, rgba(255,252,238,0.42) 70px 150px, rgba(255,252,238,0) 150px 168px),
+      radial-gradient(ellipse 70% 55% at 12% 0%, rgba(255,250,230,0.95), rgba(255,250,230,0) 70%),
+      linear-gradient(180deg, #f4efe6 0%, #ebe2d4 52%, #d9c9b2 100%) !important;
+    background-blend-mode: normal !important;
+    --ic1:#ffe7a6; --ic2:#e0a040; --ict:#4a2a06;
+  }
+  body.table-verre .page-home .menu-rank, body.table-verre .page-home .chips-bal, body.table-verre .page-home .hero-btn:not(.hero-play),
+  body.table-verre .page-home .tile, body.table-verre .page-home .chips-rich{
+    background: rgba(255,255,255,0.62); border-color: rgba(255,255,255,0.95); box-shadow: 0 6px 18px rgba(120,90,60,0.16);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+  body.table-verre .page-home .mr-name, body.table-verre .page-home .tile-lbl, body.table-verre .page-home .hero-text b, body.table-verre .page-home .chips-bal b{ color:#2d2218; }
+  body.table-verre .page-home .mr-rep, body.table-verre .page-home .hero-text small, body.table-verre .page-home .chips-bal small{ color:#7a6650; }
+  body.table-verre .page-home .home-tag{ color:#6b5640 !important; opacity:1; }
+  body.table-verre .page-home .hero-daily .hero-text b{ color:#b5681a; }
+  body.table-verre .page-home .hero-play .hero-text b{ color:#20160a; }
+  body.table-verre .page-home .stamp{ display:none; }
   .home-body{ align-items:center; text-align:center; padding-top: max(34px, calc(env(safe-area-inset-top) + 22px)); gap:13px; position:relative; }
   .home-top{ margin-bottom:2px; }
   .overlay h2.logo{
@@ -1829,6 +1896,49 @@
   </div>
 </div>
 
+<div class="overlay page hidden" id="carrePage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Carré la Pute</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Le dernier debout gagne tout.</p>
+    <div class="cp-pick">
+      <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et Penalty</small></button>
+      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Avec Joëlle et RALL</small></button>
+      <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>La table complète</small></button>
+    </div>
+    <div class="stake-pick">
+      <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
+      <div class="sp-row"></div>
+    </div>
+    <p class="cp-gain" id="cpGain"></p>
+    <button class="primary big" id="btnCpPlay"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg> Jouer contre l’ordinateur</button>
+    <button class="big" id="btnCpOnline"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Jouer en ligne avec des amis</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="carreHostPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Ta table</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <p id="rmStatus">Connexion au serveur...</p>
+    <div class="mp-code" id="rmCode">----</div>
+    <button class="primary big whatsapp" id="btnRmWhatsApp"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Inviter sur WhatsApp</button>
+    <button id="btnRmCopy"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg> Copier le lien</button>
+    <h3 class="rm-title">À la table</h3>
+    <div class="rm-list" id="rmPlayers"></div>
+    <label class="pref-check"><input type="checkbox" id="rmFillAI"> Compléter avec l’ordinateur jusqu’à 4 joueurs</label>
+    <button class="primary big" id="btnRmStart">En attente d’un ami…</button>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="carreWaitPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Carré la Pute</h2><span class="ph-spacer"></span></header>
+  <div class="page-body center">
+    <h3 class="page-big" id="rmWaitHost">Partie</h3>
+    <p id="rmWaitStatus">Connexion à la table…</p>
+    <div class="rm-list" id="rmWaitList"></div>
+    <div class="riffle wait-riffle" aria-hidden="true"><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span></div>
+  </div>
+</div>
+
 <div class="overlay page hidden" id="richPage">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Les plus riches</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
@@ -1922,6 +2032,10 @@
 <div class="overlay page hidden" id="mpLobbyOverlay">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Avec un ami</h2><span class="ph-spacer"></span></header>
   <div class="page-body center">
+    <div class="format-pick kind-pick" role="radiogroup" aria-label="Type de partie">
+      <button class="fmt" data-kind="duel" role="radio"><b>Duel</b><small>Toi contre un ami</small></button>
+      <button class="fmt" data-kind="carre" role="radio"><b>Carré la Pute</b><small>De 2 à 4 joueurs</small></button>
+    </div>
     <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
     <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
     <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
@@ -1932,7 +2046,7 @@
       <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
       <div class="sp-row"></div>
     </div>
-    <p class="small-note">Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.</p>
+    <p class="small-note" id="lobbyNote">Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
   </div>
@@ -2303,6 +2417,7 @@
     mpOutbox.forEach(pkt=> mpNet.send(pkt));
   }
   function mpOnPacket(p){
+    if(p && p.room){ roomOnPacket(p); return; } // Carré la Pute online has its own protocol
     if(!p || p.from===myNetId) return;
     if(mpPeerId && p.from!==mpPeerId) return; // a third phone typing the same code — ignored
     if(p.k==='a'){ mpOutbox.delete(p.s); return; }
@@ -2320,6 +2435,7 @@
   }
   function mpOnPresence(list){
     mpLastPresence = list;
+    roomOnPresence(list);
     if(!mpMatchStarted) return;
     const here = list.some(m=>m && m.id===mpPeerId);
     showNetBanner(here ? null : oppNameVal+' s’est déconnecté — en attente de son retour…');
@@ -2345,6 +2461,7 @@
     mpOutbox.clear(); mpInBuffer.clear();
     mpRematch = {me:false, opp:false};
     showNetBanner(null);
+    roomReset();
   }
 
   // ---- Transports: Supabase Realtime (real play) and BroadcastChannel (?mplocal, testing two tabs) ----
@@ -2436,8 +2553,8 @@
     };
   }
 
-  async function mpOpen(code, role){
-    const meta = {id: myNetId, role, name: myName};
+  async function mpOpen(code, role, kind){
+    const meta = {id: myNetId, role, name: myName, kind: kind||'duel'};
     mpNet = MP_LOCAL ? await openLocalNet(code, meta) : await openSupabaseNet(code, meta);
     clearInterval(mpResendTimer);
     mpResendTimer = setInterval(mpResendPending, 1200);
@@ -2485,6 +2602,7 @@
     }
     if(!mpNet) return; // cancelled meanwhile
     if(!host){ status.textContent = "Aucune partie avec ce code. Vérifie le code, et que ton ami a toujours l'écran « Ton code » ouvert."; mpTeardown(); return; }
+    if(host.kind==='carre'){ roomJoinFlow(host); return; } // a Carré la Pute table (2 to 4 players)
     if(presentOthers().some(m=>m.role==='guest')){ status.textContent = 'Cette partie a déjà deux joueurs.'; mpTeardown(); return; }
     mpPeerId = host.id;
     status.textContent = 'Partie trouvée ! Lancement...';
@@ -3422,7 +3540,7 @@
   // who: 'ai' = the duel opponent (label portrait + hands on the table), or a Carré seat id
   function avatarFx(who, kind){
     if(document.body.classList.contains('calm')) return;
-    const sel = who==='ai' ? '#oppAvatar, #oppTableArt' : '.sq-name .avatar[data-char="'+who+'"]';
+    const sel = who==='ai' ? '#oppAvatar, #oppTableArt' : '.sq-name .avatar[data-seat="'+who+'"]';
     document.querySelectorAll(sel).forEach(el=>{
       el.classList.remove('speaking','hop','shake'); void el.offsetWidth; el.classList.add(kind);
       clearTimeout(el._fxT);
@@ -3944,6 +4062,8 @@
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
     if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); }
     else if(id==='richPage') renderRich();
+    else if(id==='carrePage'){ refreshCarrePick(); renderStakePicks(); fillAllAvatars(document.getElementById('carrePage')); }
+    else if(id==='carreHostPage') renderRoomLobby();
     else if(id==='oppSelectOverlay') renderOppSelect();
     else if(id==='trophiesOverlay') renderTrophies();
     else if(id==='skinsOverlay') renderSkins();
@@ -3953,7 +4073,8 @@
   }
   function pageLeft(id){
     // backing out of the "your code" / "join" pages before a match starts closes the connection
-    if((id==='mpHostOverlay' || id==='mpJoinOverlay' || id==='inviteOverlay') && !mpMatchStarted) mpTeardown();
+    const roomPlaying = room.active && room.started;
+    if((id==='mpHostOverlay' || id==='mpJoinOverlay' || id==='inviteOverlay' || id==='carreHostPage' || id==='carreWaitPage') && !mpMatchStarted && !roomPlaying) mpTeardown();
   }
   // the home intro (logo letters, buttons…) plays fully once per visit, then in a quicker version
   let homeIntroCount = 0;
@@ -3980,7 +4101,7 @@
     if(!p){ const q = resumeQueue.splice(0); q.forEach(fn=>{ try{ fn(); }catch(e){ console.error(e); } }); }
   }
   function openPause(){
-    const online = mode==='mp';
+    const online = mode==='mp' || (mode==='square' && sq && (sq.online || sq.remote));
     document.getElementById('pauseNote').textContent =
       online ? 'En ligne, la partie continue pendant la pause : ton ami peut encore jouer.'
       : daily ? 'Défi du jour : l’adversaire attend que tu reviennes.'
@@ -4022,6 +4143,8 @@
     const text =
       daily ? 'Le défi du jour comptera comme joué : tu ne pourras pas le recommencer aujourd’hui.'
       : mode==='mp' ? 'Tu quitteras la partie en ligne : '+oppName()+' sera prévenu.'
+      : mode==='square' && sq && sq.remote ? 'Tu quitteras la table : l’ordinateur prendra ta place.'
+      : mode==='square' && sq && sq.online ? 'C’est ton téléphone qui fait tourner la partie : la quitter l’arrête pour tout le monde.'
       : mode==='square' ? 'La partie de Carré la Pute en cours sera perdue.'
       : tuto ? 'Tu pourras reprendre la partie guidée quand tu veux.'
       : 'Le match en cours contre '+oppName()+' sera perdu.';
@@ -4047,7 +4170,7 @@
 
   // back to the home screen from any mode, leaving nothing running behind
   function goToMainMenu(){
-    if(mode==='mp' || mpNet) mpTeardown();
+    if(mode==='mp' || mpNet || room.active) mpTeardown();
     daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
     tuto = null;
     gameGen++; resumeQueue.length = 0; setPaused(false);
@@ -5494,6 +5617,7 @@
         row.appendChild(b);
       });
     });
+    if(document.getElementById('cpGain')) refreshCarrePick();
     document.querySelectorAll('.opp-gain').forEach(el=>{
       const odds = ODDS[el.dataset.opp] || 2;
       el.innerHTML = cur>0 ? ico('coin')+' Mise '+fmtChips(cur)+' → tu gagnes '+fmtChips(Math.round(cur*odds))+' (×'+String(odds).replace('.',',')+')'
@@ -5567,12 +5691,12 @@
   renderChips();
   // match format: a full match (first to 5) or a quick game (one hand) — remembered for next time
   function refreshFormatPick(){
-    document.querySelectorAll('.format-pick .fmt').forEach(b=>{
+    document.querySelectorAll('.format-pick:not(.kind-pick) .fmt').forEach(b=>{
       const on = (b.dataset.q==='1')===!!prefs.quick;
       b.classList.toggle('on', on); b.setAttribute('aria-checked', on);
     });
   }
-  document.querySelectorAll('.format-pick .fmt').forEach(b=> b.addEventListener('click', ()=>{
+  document.querySelectorAll('.format-pick:not(.kind-pick) .fmt').forEach(b=> b.addEventListener('click', ()=>{
     prefs.quick = b.dataset.q==='1'; savePrefs(); refreshFormatPick();
   }));
   refreshFormatPick();
@@ -5636,6 +5760,7 @@
   document.getElementById('btnMpHost').addEventListener('click', ()=>{
     ensureAudio();
     takeName('mpNameInput');
+    if(prefs.mpKind==='carre'){ Nav.go('carreHostPage'); roomHost(); return; }
     Nav.go('mpHostOverlay');
     document.getElementById('btnShareLink').classList.toggle('hidden', !navigator.share);
     hostGame();
@@ -5724,7 +5849,7 @@
   document.getElementById('btnRematch').addEventListener('click', ()=>{
     if(mode==='mp'){ mpRequestRematch(); return; }
     hide('matchOverOverlay');
-    if(mode==='square'){ sqNewGame(); return; }
+    if(mode==='square'){ if(sq && sq.remote) return; sqNewGame(); return; } // online, only the creator restarts
     newMatch();
   });
 
@@ -5851,6 +5976,7 @@
       fillAvatar(face.firstChild, mode==='ai' ? duelOpp : null, oppName());
       face.firstChild.classList.add(won ? 'shake' : 'hop');
     }
+    document.getElementById('btnRematch').classList.remove('hidden');
     mo.classList.remove('hidden');
     if(who==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
   }
@@ -5884,28 +6010,51 @@
       lose: ["C'est la chaise. Elle me porte la poisse.","Pas grave, je n'ai pas dormi."]
     }
   };
-  function sqName(id){ return id==='you' ? 'Toi' : SQ_PERSONAS[id].name; }
+  // ===================== Seats =====================
+  // Four places around the table, in playing order: you (bottom) → right → top → left. Each seat belongs to
+  // someone: 'local' (you), 'ai' (Joëlle / Penalty / RALL), 'remote' (a friend online) or 'absent' (a 2- or
+  // 3-player game). Online, the creator's phone runs the game and every other phone just shows it.
+  function sqSeatsFor(n){ return n===2 ? ['you','penalty'] : n===3 ? ['you','gervais','aristide'] : ['you','gervais','penalty','aristide']; }
+  const sqCap = id=> id.charAt(0).toUpperCase()+id.slice(1);
+  function sqName(id){
+    if(id==='you') return 'Toi';
+    if(sq && sq.names && sq.names[id]) return sq.names[id];
+    return SQ_PERSONAS[id] ? SQ_PERSONAS[id].name : id;
+  }
+  function sqIsAI(id){ return !sq || !sq.ctrl || sq.ctrl[id]==='ai'; }
   function sqSay(id, category){
-    if(id==='you') return;
-    const lines = SQ_PERSONAS[id][category];
+    if(id==='you' || !sqIsAI(id)) return;
+    const lines = SQ_PERSONAS[id] && SQ_PERSONAS[id][category];
     if(!lines || lines.length===0) return;
-    const bubble = document.getElementById('sqBubble'+id.charAt(0).toUpperCase()+id.slice(1));
-    if(!bubble) return;
-    // at a 4-player table, remarks during play are rare too: one in five, and never within 10 s of another
+    // at a full table, remarks during play are rare too: one in five, and never within 10 s of another
     if(category==='control'){
       if(Math.random()>0.2 || Date.now()-(sqSay.last||0) < 10000) return;
     }
     sqSay.last = Date.now();
-    bubble.textContent = lines[Math.floor(Math.random()*lines.length)];
-    bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
+    const text = lines[Math.floor(Math.random()*lines.length)];
+    sqBubble(id, text);
     avatarFx(id, category==='win'||category==='cora'||category==='glacee' ? 'hop' : 'speaking');
+    sqEvent('say', {seat:id, text});
+  }
+  function sqBubble(id, text){
+    const bubble = document.getElementById('sqBubble'+sqCap(id));
+    if(!bubble) return;
+    bubble.textContent = text;
+    bubble.classList.remove('show'); void bubble.offsetWidth; bubble.classList.add('show');
     clearTimeout(bubble._t);
     bubble._t = setTimeout(()=> bubble.classList.remove('show'), 3000);
   }
 
   let sq = null;
+  // a small log of what happened, so phones watching an online game can replay the big moments
+  function sqEvent(kind, data){
+    if(!sq || !sq.online || sq.remote) return;
+    sq.events.push(Object.assign({id: ++sq.evSeq, kind}, data||{}));
+    if(sq.events.length>16) sq.events.shift();
+  }
 
-  function sqActivePlayers(){ return SQ_SEAT_ORDER.filter(id=> sq.players[id] && !sq.players[id].eliminated); }
+  function sqActivePlayers(){ return SQ_SEAT_ORDER.filter(id=> sq.players[id] && sq.ctrl[id]!=='absent' && !sq.players[id].eliminated); }
+  function sqSeated(){ return SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent'); }
   function sqDelay(ms){ return sq.fastForward ? Math.max(20, Math.round(ms/10)) : ms; }
   function sqNextActive(fromId){
     const active = sqActivePlayers();
@@ -5914,34 +6063,51 @@
     return active[(idx+1)%active.length];
   }
 
-  function sqNewGame(){
+  // cfg: {n: players (offline)} or {ctrl, net, names, online:true, stake} (online, built by the room)
+  function sqNewGame(cfg){
+    cfg = cfg || (sq && sq.config) || {n:4};
     mode = 'square';
     startMatchTracking();
+    let ctrl = cfg.ctrl;
+    if(!ctrl){
+      const seats = sqSeatsFor(cfg.n||4);
+      ctrl = {};
+      SQ_SEAT_ORDER.forEach(id=> ctrl[id] = id==='you' ? 'local' : (seats.includes(id) ? 'ai' : 'absent'));
+    }
+    const seated = SQ_SEAT_ORDER.filter(id=> ctrl[id]!=='absent');
     sq = {
       gen: sq ? sq.gen+1000 : 0, // keeps counting, so a timer left by a restarted game can't match the new one
-      players: {
-        you:{eliminated:false, hand:[], originalHand:[]},
-        penalty:{eliminated:false, hand:[], originalHand:[]},
-        aristide:{eliminated:false, hand:[], originalHand:[]},
-        gervais:{eliminated:false, hand:[], originalHand:[]}
-      },
-      dealerIdx: Math.floor(Math.random()*4),
+      config: cfg, ctrl, net: cfg.net || {}, names: cfg.names || {}, online: !!cfg.online,
+      gameId: Math.random().toString(36).slice(2,8), handNo: 0, events: [], evSeq: 0, pendingElim: null, championSeat: null,
+      players: {}, history: {}, knownVoid: {},
+      dealerIdx: Math.floor(Math.random()*seated.length),
       leader:null, leadSuit:null, leadCard:null, leadActor:null,
       trickWinners:[], trickQueue:[], trickBest:null, trickHadPasse:false,
-      cardsPlayedThisHand:0, handOver:false, locked:false,
-      history:{you:[],penalty:[],aristide:[],gervais:[]},
-      knownVoid:{you:new Set(),penalty:new Set(),aristide:new Set(),gervais:new Set()},
+      cardsPlayedThisHand:0, handOver:false, locked:false, passers:new Set(), trickNo:0,
       fastForward:false
     };
+    SQ_SEAT_ORDER.forEach(id=>{ sq.players[id] = {eliminated:false, hand:[], originalHand:[]}; sq.history[id] = []; sq.knownVoid[id] = new Set(); });
+    // the stake: the survivor takes one stake per player at the table
+    matchCoras = 0; matchGlacees = 0;
+    matchStake = Math.min(cfg.online ? (cfg.stake||0) : (prefs.stake||0), profile.chips);
+    if(matchStake>0) chipsAdd(-matchStake);
+    sq.stake = cfg.online ? (cfg.stake||0) : matchStake;
     enterGame();
+    sqShowScreen();
+    sqBeginHand();
+  }
+  function sqShowScreen(){
     document.getElementById('duoScreen').classList.add('hidden');
     document.getElementById('squareScreen').classList.remove('hidden');
-    document.querySelector('header .sub').textContent = 'Carré la Pute · 4 joueurs, un seul survivant';
-    sqBeginHand();
+    const n = sqSeated().length;
+    document.querySelector('header .sub').textContent = 'Carré la Pute · '+n+' joueurs'+(sq.online ? ' en ligne' : '')+', un seul survivant';
+    const mid = document.querySelector('.scorebar .mid');
+    if(mid) mid.textContent = 'Carré la Pute';
   }
 
   function sqBeginHand(){
     sq.gen++;
+    sq.handNo++;
     const active = sqActivePlayers();
     const deck = shuffle(buildDeck());
     let i=0;
@@ -5949,38 +6115,40 @@
       const hand = deck.slice(i, i+5); i+=5;
       sq.players[id].hand = hand;
       sq.players[id].originalHand = [...hand];
-      sq.history[id] = [];
-      sq.knownVoid[id] = new Set();
     });
-    sq.leader=null; sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null;
-    sq.trickWinners=[]; sq.cardsPlayedThisHand=0; sq.handOver=false;
+    SQ_SEAT_ORDER.forEach(id=>{ sq.history[id] = []; sq.knownVoid[id] = new Set(); });
+    sq.leader=null; sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null; sq.trickBest=null;
+    sq.trickWinners=[]; sq.cardsPlayedThisHand=0; sq.handOver=false; sq.pendingElim=null;
     sq.passers = new Set();   // players who passed: they answer the final lead with both reserved cards
     sq.trickNo = 0;           // lets the table show the trick in progress apart from the older ones
     sq.announcePlan = {};     // per-AI: announce an automatic win now / a beat late / miss it
     sq.trickQueue = [];
     sq.dealerIdx = sq.dealerIdx % active.length;
-    const nonDealerIdx = (sq.dealerIdx+1) % active.length;
-    sq.leader = active[nonDealerIdx];
+    sq.leader = active[(sq.dealerIdx+1) % active.length];
     document.getElementById('sqBtnNext').classList.add('hidden');
+    hide('eliminateOverlay');
     renderSquare(true);
-    // the pack in the middle deals round the table, starting with the player after the dealer
-    let dealMs = 0;
-    if(!calmOn()){
-      const seatEl = id=> id==='you' ? document.getElementById('sqPlayerHand') : document.getElementById('sqCards'+id.charAt(0).toUpperCase()+id.slice(1));
-      const order = [];
-      for(let k=1; k<=active.length; k++) order.push(seatEl(active[(sq.dealerIdx+k) % active.length]));
-      const screen = document.getElementById('squareScreen');
-      screen.classList.add('sq-dealing');
-      dealMs = flyDeal('sqDeckPile', order, 5);
-      placeCtrlToken('sqCtrlToken');
-      setTimeout(()=>{ screen.classList.remove('sq-dealing'); if(sq) updateSqCtrlToken(); }, dealMs);
-    }
+    const dealMs = sqDealAnim(active, sq.leader);
     checkSquareAutoWins();
     const myGen = sq.gen;
     if(!sq.handOver){
       if(dealMs) gameTimeout(()=>{ if(sq.gen===myGen && !sq.handOver) sqLeadPhase(); }, dealMs+200);
       else sqLeadPhase();
     }
+  }
+  // the pack in the middle deals round the table, starting with the player after the dealer
+  function sqDealAnim(active, first){
+    if(calmOn()) return 0;
+    const seatEl = id=> id==='you' ? document.getElementById('sqPlayerHand') : document.getElementById('sqCards'+sqCap(id));
+    const start = Math.max(0, active.indexOf(first));
+    const order = [];
+    for(let k=0; k<active.length; k++) order.push(seatEl(active[(start+k) % active.length]));
+    const screen = document.getElementById('squareScreen');
+    screen.classList.add('sq-dealing');
+    const ms = flyDeal('sqDeckPile', order, 5);
+    placeCtrlToken('sqCtrlToken');
+    setTimeout(()=>{ screen.classList.remove('sq-dealing'); if(sq) updateSqCtrlToken(); }, ms);
+    return ms;
   }
 
   function markSquareVoid(id, suit){ if(suit) sq.knownVoid[id].add(suit); }
@@ -6048,14 +6216,16 @@
 
   function sqPushHistory(id, entry){ entry.trick = sq.trickNo; sq.history[id].push(entry); }
 
+  // the automatic-win window: your button, and the computer players deciding when (or whether) to announce
   function checkSquareAutoWins(){
-    if(sq.cardsPlayedThisHand>=2 || sq.handOver) return;
-    const yourWin = checkAutoWin(sq.players.you.originalHand);
     const btn = document.getElementById('sqBtnAnnounce');
+    if(!sq || sq.cardsPlayedThisHand>=2 || sq.handOver || sq.players.you.eliminated){ btn.classList.add('hidden'); return; }
+    const yourWin = checkAutoWin(sq.players.you.originalHand);
     btn.classList.toggle('hidden', !yourWin);
     if(yourWin) btn.dataset.label = yourWin.label;
+    if(sq.remote) return; // a watching phone never decides for the computer players
     for(const id of sqActivePlayers()){
-      if(id==='you') continue;
+      if(!sqIsAI(id)) continue;
       const win = checkAutoWin(sq.players[id].originalHand);
       if(!win) continue;
       if(!sq.announcePlan[id]) sq.announcePlan[id] = pickAnnouncePlan();
@@ -6063,9 +6233,7 @@
       if(plan==='now' || (plan==='late' && sq.cardsPlayedThisHand>=1)){ sqEndHandAutoWin(id, win.label); return; }
     }
   }
-  document.getElementById('sqBtnAnnounce').addEventListener('click', ()=>{
-    sqEndHandAutoWin('you', document.getElementById('sqBtnAnnounce').dataset.label);
-  });
+  document.getElementById('sqBtnAnnounce').addEventListener('click', ()=> sqLocalAct({type:'announce'}));
   function sqEndHandAutoWin(winnerId, label){
     if(sq.handOver) return;
     sq.handOver = true;
@@ -6078,6 +6246,7 @@
     showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3000});
     sfxBigWin(); bigImpact(); vibrate([30,60,30,60,80]);
     if(winnerId==='you') burstConfetti(28);
+    sqEvent('auto', {seat:winnerId, label});
     sqSay(winnerId, 'win');
     renderSquare();
     const myGen = sq.gen;
@@ -6088,11 +6257,11 @@
     renderSquare();
     if(sq.handOver) return;
     const leaderId = sq.leader;
-    if(leaderId==='you'){ sq.locked=false; renderSquare(); return; }
+    if(!sqIsAI(leaderId)){ sq.locked = leaderId!=='you'; renderSquare(); return; } // a human leads: wait for them
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
     gameTimeout(()=>{
-      if(sq.gen!==myGen || sq.handOver) return;
+      if(sq.gen!==myGen || sq.handOver || sq.leadSuit) return;
       if(sq.players[leaderId].hand.length===0) return; // stale — this player emptied out since scheduling
       const card = sqHeuristicLead(leaderId, sq.players[leaderId].hand);
       sqLeaderPlays(leaderId, card);
@@ -6122,18 +6291,23 @@
     while(sq.trickQueue.length>0 && sq.players[sq.trickQueue[0]].hand.length===0) sq.trickQueue.shift();
     if(sq.trickQueue.length===0){ sqFinishTrick(); return; }
     const nextId = sq.trickQueue[0];
-    if(nextId==='you'){ sq.locked=false; renderSquare(); return; }
+    if(!sqIsAI(nextId)){ sq.locked = nextId!=='you'; renderSquare(); return; } // a human answers: wait for them
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
     gameTimeout(()=>{
-      if(sq.gen!==myGen || sq.handOver) return;
+      if(sq.gen!==myGen || sq.handOver || sq.trickQueue[0]!==nextId) return;
       const hand = sq.players[nextId].hand;
       if(hand.length===0) return; // stale
       if(sq.passers.has(nextId)){ sqApplyResponse(nextId, {type:'dump'}); return; }
       const leadInfo = {suit:sq.leadSuit, rank:sq.leadCard.rank, actor:sq.leadActor};
-      const opt = sqHeuristicDefend(nextId, hand, leadInfo);
-      sqApplyResponse(nextId, opt);
+      sqApplyResponse(nextId, sqHeuristicDefend(nextId, hand, leadInfo));
     }, sqDelay(650+Math.random()*450));
+  }
+  // when a seat changes owner mid-hand (a friend dropped out), pick the game up where it stands
+  function sqResumeTurn(){
+    if(!sq || sq.handOver) return;
+    if(sq.pendingElim){ const p = sq.pendingElim; if(sqIsAI(p.seat)){ sq.pendingElim = null; sqShowEliminationChoice(p.seat, p.label, p.count); } return; }
+    if(!sq.leadSuit) sqLeadPhase(); else sqAdvanceTrick();
   }
 
   function sqApplyResponse(actorId, opt){
@@ -6144,7 +6318,7 @@
       sq.trickHadPasse = true;
       sq.passers.add(actorId);
       sfxPasse();
-      if(actorId!=='you') sqSay(actorId, 'control');
+      sqSay(actorId, 'control');
     } else if(opt.type==='dump'){
       // end of a Passe: both reserved cards land at once; only the best one in the commanded suit counts
       const cards = [...sq.players[actorId].hand];
@@ -6173,30 +6347,54 @@
     if(!sq.handOver){ const myGen = sq.gen; gameTimeout(()=>{ if(sq.gen===myGen) sqAdvanceTrick(); }, sqDelay(500)); }
   }
 
-  function sqPlayerPlays(card){
-    if(sq.handOver || sq.locked) return;
-    if(!sq.leadSuit){
-      if(sq.leader!=='you') return;
-      sqLeaderPlays('you', card);
-    } else {
-      if(!sq.trickQueue.length || sq.trickQueue[0]!=='you') return;
-      if(sq.passers.has('you')){ sqApplyResponse('you', {type:'dump'}); return; }
-      const mustFollow = hasSuit(sq.players.you.hand, sq.leadSuit);
-      if(mustFollow && card.suit!==sq.leadSuit) return;
-      sqApplyResponse('you', {type:'card', card});
+  // one entry point for every human move, from this phone ('you') or from a friend online (their seat)
+  function sqFindCard(seat, c){ return c && sq.players[seat].hand.find(x=> x.suit===c.suit && x.rank===c.rank); }
+  function sqHumanAct(seat, a){
+    if(!sq || !a) return false;
+    if(a.type==='elim'){
+      const p = sq.pendingElim;
+      if(!p || p.seat!==seat || !Array.isArray(a.targets)) return false;
+      const t = a.targets.filter(x=> p.options.includes(x)).slice(0, p.count);
+      if(t.length!==Math.min(p.count, p.options.length)) return false;
+      sq.pendingElim = null;
+      sqEliminateAnnounced(seat, t);
+      return true;
     }
+    if(sq.handOver || sq.players[seat].eliminated) return false;
+    if(a.type==='announce'){
+      const win = checkAutoWin(sq.players[seat].originalHand);
+      if(!win || sq.cardsPlayedThisHand>=2) return false;
+      sqEndHandAutoWin(seat, win.label);
+      return true;
+    }
+    if(!sq.leadSuit){
+      if(sq.leader!==seat || a.type!=='card') return false;
+      const c = sqFindCard(seat, a.card); if(!c) return false;
+      sqLeaderPlays(seat, c);
+      return true;
+    }
+    if(!sq.trickQueue.length || sq.trickQueue[0]!==seat) return false;
+    if(sq.passers.has(seat)){ sqApplyResponse(seat, {type:'dump'}); return true; }
+    if(a.type==='passe'){
+      if(!canPasse(sq.players[seat].hand, sq.leadSuit)) return false;
+      sqApplyResponse(seat, {type:'passe'}); return true;
+    }
+    if(a.type!=='card') return false;
+    const c = sqFindCard(seat, a.card); if(!c) return false;
+    if(hasSuit(sq.players[seat].hand, sq.leadSuit) && c.suit!==sq.leadSuit) return false;
+    sqApplyResponse(seat, {type:'card', card:c});
+    return true;
   }
-  document.getElementById('sqBtnPasse').addEventListener('click', ()=>{
-    if(sq.handOver || sq.locked) return;
-    if(!sq.trickQueue.length || sq.trickQueue[0]!=='you') return;
-    if(sq.passers.has('you') || !canPasse(sq.players.you.hand, sq.leadSuit)) return;
-    sqApplyResponse('you', {type:'passe'});
-  });
-  document.getElementById('sqBtnDump').addEventListener('click', ()=>{
-    if(sq.handOver || sq.locked) return;
-    if(!sq.trickQueue.length || sq.trickQueue[0]!=='you' || !sq.passers.has('you')) return;
-    sqApplyResponse('you', {type:'dump'});
-  });
+  // this phone's moves: played directly, or sent to the phone running the game
+  function sqLocalAct(a){
+    if(!sq) return;
+    if(sq.remote){ roomSendAct(a); return; }
+    if(sq.locked && a.type!=='announce' && a.type!=='elim') return;
+    sqHumanAct('you', a);
+  }
+  function sqPlayerPlays(card){ sqLocalAct({type:'card', card:{suit:card.suit, rank:card.rank}}); }
+  document.getElementById('sqBtnPasse').addEventListener('click', ()=> sqLocalAct({type:'passe'}));
+  document.getElementById('sqBtnDump').addEventListener('click', ()=> sqLocalAct({type:'dump'}));
 
   function sqFinishTrick(){
     const winner = sq.trickBest.actorId;
@@ -6208,7 +6406,7 @@
     const myGen = sq.gen;
     gameTimeout(()=>{
       if(sq.gen!==myGen) return;
-      const el = document.querySelector('#sqCur'+winner.charAt(0).toUpperCase()+winner.slice(1)+' .card[data-key="'+winCard.suit+'-'+winCard.rank+'"]');
+      const el = document.querySelector('#sqCur'+sqCap(winner)+' .card[data-key="'+winCard.suit+'-'+winCard.rank+'"]');
       if(el) el.classList.add('trickwin', 'holding');
     }, sqDelay(30));
     if(winner!=='you'){ sfxTrickWinAI(); sqSay(winner, 'control'); } else { sfxTrickWinYou(); vibrate(20); }
@@ -6236,19 +6434,28 @@
     const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
     const winner = last.winner;
     let label = 'Manche remportée';
-    if(winner==='you'){
-      repAdd(5, 'Manches gagnées');
-      if(glacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); }
-      else if(cora){ repAdd(15, 'CORA'); unlockTrophy('cora'); }
-      if(sq.history.you.some(e=>e.type==='passe')) unlockTrophy('passe');
-    }
-    if(glacee){ label='LA 33 GLACÉE !'; showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif', 0, winner==='you'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(40); }
-    else if(cora){ label='CORA — gain x2 !'; showCertificate('CORA', sqName(winner)+' double la mise', 0, winner==='you'); sfxBigWin(); bigImpact(); if(winner==='you') burstConfetti(24); }
-    else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); }
+    if(winner==='you') sqHandWonRewards(cora, glacee, sq.history.you.some(e=>e.type==='passe'));
+    if(glacee) label = 'LA 33 GLACÉE !';
+    else if(cora) label = 'CORA — gain x2 !';
+    sqHandWonShow(winner, cora, glacee);
+    sqEvent('handwin', {seat:winner, cora, glacee});
     sqSay(winner, glacee?'glacee':(cora?'cora':'win'));
+    renderSquare();
     const myGen = sq.gen;
     // a CORA or a 33 Glacée lets the winner knock out TWO players instead of one
     gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 3500 : 1400));
+  }
+  function sqHandWonRewards(cora, glacee, passed){
+    repAdd(5, 'Manches gagnées');
+    if(glacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; }
+    else if(cora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; }
+    if(passed) unlockTrophy('passe');
+  }
+  function sqHandWonShow(winner, cora, glacee){
+    const me = winner==='you';
+    if(glacee){ showCertificate('33 GLACÉE', sqName(winner)+' rafle le pli décisif', 0, me); sfxBigWin(); bigImpact(); if(me) burstConfetti(40); }
+    else if(cora){ showCertificate('CORA', sqName(winner)+' double la mise', 0, me); sfxBigWin(); bigImpact(); if(me) burstConfetti(24); }
+    else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); if(me) sfxHandWin(); else sfxHandLose(); }
   }
 
   function sqShowEliminationChoice(winnerId, label, count){
@@ -6256,50 +6463,66 @@
     if(others.length===0){ return sqShowChampion(winnerId); }
     const n = Math.min(count||1, others.length);
     if(winnerId==='you'){
-      const ov = document.getElementById('eliminateOverlay');
-      const picked = [];
-      const box = document.getElementById('eliminateChoices');
-      const hint = document.getElementById('eliminateHint');
-      const draw = ()=>{
-        document.getElementById('eliminateTitle').textContent = n>1 ? (label.replace(/ —.*| !$/,'')+' ! Double élimination') : 'Tu as gagné la manche !';
-        hint.textContent = n>1
-          ? (picked.length===0 ? 'Choisis le premier joueur à éliminer (sur 2).' : 'Choisis le deuxième joueur à éliminer.')
-          : 'Choisis qui tu élimines de la table.';
-        box.innerHTML = '';
-        others.filter(id=>!picked.includes(id)).forEach(id=>{
-          const b = document.createElement('button');
-          b.className='primary'; b.style.width='100%';
-          b.textContent = 'Éliminer '+sqName(id);
-          b.onclick = ()=>{
-            picked.push(id);
-            if(picked.length<n){ draw(); return; }
-            ov.classList.add('hidden');
-            repAdd(15*picked.length, 'Éliminations');
-            if(picked.length>=2) unlockTrophy('double');
-            sqEliminate(picked);
-          };
-          box.appendChild(b);
-        });
-      };
-      draw();
-      ov.classList.remove('hidden');
+      sqPickTargets(others, n, label, (picked)=>{
+        repAdd(15*picked.length, 'Éliminations');
+        if(picked.length>=2) unlockTrophy('double');
+        sqEliminateAnnounced('you', picked);
+      });
+    } else if(!sqIsAI(winnerId)){
+      // a friend online won the hand: they choose, on their own phone
+      sq.pendingElim = {seat:winnerId, count:n, options:others, label};
+      showToast(sqName(winnerId)+' a gagné la manche', 'Il choisit qui éliminer…', {ms:2600});
+      renderSquare();
     } else {
-      const targets = shuffle(others).slice(0, n);
-      const names = targets.map(sqName).join(' et ');
-      const left = sqActivePlayers().length - targets.length;
-      showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que '+sqName(winnerId)+'.', {ms:2600});
-      const myGen = sq.gen;
-      gameTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(1600));
+      sqEliminateAnnounced(winnerId, shuffle(others).slice(0, n));
     }
+  }
+  // the "who do you knock out?" sheet; ids are this phone's seats, names as this phone sees them
+  function sqPickTargets(options, n, label, done){
+    const ov = document.getElementById('eliminateOverlay');
+    const picked = [];
+    const box = document.getElementById('eliminateChoices');
+    const hint = document.getElementById('eliminateHint');
+    const draw = ()=>{
+      document.getElementById('eliminateTitle').textContent = n>1 ? ((label||'CORA').replace(/ —.*| !$/,'')+' ! Double élimination') : 'Tu as gagné la manche !';
+      hint.textContent = n>1
+        ? (picked.length===0 ? 'Choisis le premier joueur à éliminer (sur 2).' : 'Choisis le deuxième joueur à éliminer.')
+        : 'Choisis qui tu élimines de la table.';
+      box.innerHTML = '';
+      options.filter(id=>!picked.includes(id)).forEach(id=>{
+        const b = document.createElement('button');
+        b.className='primary'; b.style.width='100%';
+        b.textContent = 'Éliminer '+sqName(id);
+        b.onclick = ()=>{
+          picked.push(id);
+          if(picked.length<n){ draw(); return; }
+          ov.classList.add('hidden');
+          done(picked);
+        };
+        box.appendChild(b);
+      });
+    };
+    draw();
+    ov.classList.remove('hidden');
+  }
+  function sqEliminateAnnounced(winnerId, targets){
+    const names = targets.map(sqName).join(' et ');
+    const left = sqActivePlayers().length - targets.length;
+    if(winnerId!=='you') showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que '+sqName(winnerId)+'.', {ms:2600});
+    sqEvent('elim', {winner:winnerId, targets});
+    renderSquare();
+    const myGen = sq.gen;
+    gameTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(winnerId==='you' ? 300 : 1600));
   }
 
   function sqEliminate(ids){
     ids = Array.isArray(ids) ? ids : [ids];
     ids.forEach(id=>{
       sq.players[id].eliminated = true;
-      const seatEl = document.getElementById('sqSeat'+id.charAt(0).toUpperCase()+id.slice(1));
+      const seatEl = document.getElementById('sqSeat'+sqCap(id));
       if(seatEl) seatEl.classList.add('eliminated');
     });
+    renderSquare();
     const remaining = sqActivePlayers();
     const myGen = sq.gen;
     if(remaining.length<=1){
@@ -6307,34 +6530,79 @@
       return;
     }
     if(sq.dealerIdx>=remaining.length) sq.dealerIdx = 0;
-    if(sq.players.you.eliminated && sq.fastForward){
-      gameTimeout(()=>{ if(sq.gen===myGen) sqBeginHand(); }, sqDelay(600));
+    // online, or when you're out and watching: the next hand starts on its own
+    if(sq.online || (sq.players.you.eliminated && sq.fastForward)){
+      gameTimeout(()=>{ if(sq.gen===myGen) sqBeginHand(); }, sqDelay(sq.online ? 3000 : 600));
       return;
     }
     gameTimeout(()=>{ if(sq.gen===myGen) document.getElementById('sqBtnNext').classList.remove('hidden'); }, sqDelay(600));
   }
   document.getElementById('sqBtnNext').addEventListener('click', ()=>{
     document.getElementById('sqBtnNext').classList.add('hidden');
-    sqBeginHand();
+    if(sq && !sq.remote) sqBeginHand();
   });
 
   function sqShowChampion(id){
+    sq.championSeat = id;
+    sq.handOver = true;
+    sqEvent('champion', {seat:id});
+    renderSquare();
+    sqChampionScreen(id==='you', sqName(id), sqSeated().length);
+  }
+  // the end of a Carré game, as this phone sees it
+  function sqChampionScreen(won, champName, nPlayers){
     profile.squareGamesPlayed += 1;
-    if(id==='you') profile.squareWins += 1;
+    if(won) profile.squareWins += 1;
     saveProfile();
-    if(id==='you'){ repAdd(150, 'Dernier survivant'); unlockTrophy('survivant'); unlockTrophy('premiere'); }
+    if(won){ repAdd(150, 'Dernier survivant'); unlockTrophy('survivant'); unlockTrophy('premiere'); }
     else repAdd(25, 'Partie de Carré');
-    track('square_end', {won: id==='you'});
+    track('square_end', {won, players:nPlayers, online: !!(sq && (sq.online||sq.remote))});
     touchDayStreak();
     renderRepPanel(repCommit());
-    setWinShare(id==='you' ? {title:'SURVIVANT', line: myDisplayName()+' est le dernier survivant de Carré la Pute face à Penalty, RALL et Joëlle !'} : null);
-    document.getElementById('matchOverTitle').textContent = id==='you' ? 'Tu es le dernier survivant !' : sqName(id)+' rafle tout.';
-    document.getElementById('matchOverText').textContent = id==='you'
-      ? "Trois éliminés, un seul debout. Carré la Pute t'appartient ce soir."
-      : sqName(id)+" a éliminé tout le monde — y compris toi. La prochaine est pour toi.";
+    setWinShare(won ? {title:'SURVIVANT', line: myDisplayName()+' est le dernier survivant de Carré la Pute ('+nPlayers+' joueurs) !'} : null);
+    document.getElementById('matchOverTitle').textContent = won ? 'Tu es le dernier survivant !' : champName+' rafle tout.';
+    document.getElementById('matchOverText').textContent = won
+      ? (nPlayers>2 ? 'Tout le monde est tombé, sauf toi. Carré la Pute t’appartient ce soir.' : 'Un contre un, et c’est toi qui restes debout.')
+      : champName+' a éliminé tout le monde, toi compris. La prochaine est pour toi.';
+    const mo = document.getElementById('matchOverOverlay');
+    mo.dataset.result = won ? 'win' : 'lose';
+    const face = document.getElementById('matchOverFace'); if(face) face.innerHTML = '';
+    // the stake: the survivor takes one stake per player at the table
+    const res = {stake:matchStake, delta:0, mult:nPlayers, bonus:0};
+    if(won){ chipsAdd(50); res.delta += 50; }
+    if(matchStake>0){
+      if(won){ chipsAdd(matchStake*nPlayers); res.delta += matchStake*(nPlayers-1); }
+      else res.delta -= matchStake;
+    }
+    matchStake = 0;
+    showChipsResult(res, won && res.stake ? 'Mise '+fmtChips(res.stake)+' × '+nPlayers+' joueurs' : null);
     refreshRematchUI();
-    document.getElementById('matchOverOverlay').classList.remove('hidden');
-    if(id==='you'){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
+    const remoteWatcher = sq && sq.remote;
+    document.getElementById('btnRematch').classList.toggle('hidden', !!remoteWatcher);
+    document.getElementById('rematchInfo').textContent = remoteWatcher ? 'Celui qui a créé la partie peut lancer la revanche.' : '';
+    mo.classList.remove('hidden');
+    if(won){ sfxMatchWin(); bigImpact(); burstConfetti(48); } else sfxMatchLose();
+  }
+  // the "+X jetons" block at the end of a game
+  function showChipsResult(chips, detailWin){
+    const cr = document.getElementById('chipsResult');
+    if(!(chips.delta!==0 || chips.stake>0)){ cr.classList.add('hidden'); return; }
+    cr.classList.remove('hidden');
+    cr.classList.toggle('loss', chips.delta<0);
+    const amt = document.getElementById('crAmount');
+    const sign = chips.delta>0 ? '+' : '−', target = Math.abs(chips.delta);
+    amt.textContent = sign+'0 jetons';
+    setTimeout(()=>{
+      if(calmOn()){ amt.textContent = sign+fmtChips(target)+' jetons'; return; }
+      const t0 = performance.now();
+      const step = now=>{ const k = Math.min(1,(now-t0)/1200), e = 1-Math.pow(1-k,3); amt.textContent = sign+fmtChips(target*e)+' jetons'; if(k<1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+      if(chips.delta>0) coinBurst(document.querySelector('#matchOverOverlay .cert-card'), cr, 12);
+    }, 700);
+    document.getElementById('crDetail').textContent =
+      chips.stake===0 ? 'Bonus de victoire · solde '+fmtChips(profile.chips)
+      : chips.delta>0 ? (detailWin||'Gain')+' · solde '+fmtChips(profile.chips)
+      : 'Mise perdue · solde '+fmtChips(profile.chips);
   }
 
   function sqTurnId(){
@@ -6343,31 +6611,49 @@
     return (sq.trickQueue && sq.trickQueue[0]) || null;
   }
 
+  // seat labels: a computer player shows its portrait, a friend online their initial, an empty seat disappears
+  function sqSeatLabels(){
+    ['penalty','aristide','gervais','you'].forEach(id=>{
+      const seatEl = document.getElementById('sqSeat'+sqCap(id));
+      if(!seatEl) return;
+      seatEl.classList.toggle('absent', sq.ctrl[id]==='absent');
+      if(id==='you') return;
+      const nameEl = seatEl.querySelector('.sq-name');
+      const key = (sq.ctrl[id])+'|'+sqName(id);
+      if(nameEl.dataset.k===key) return;
+      nameEl.dataset.k = key;
+      nameEl.innerHTML = '<span class="avatar" data-seat="'+id+'" style="--s:26px"></span><span class="sqn-t"></span>';
+      nameEl.querySelector('.sqn-t').textContent = sqName(id);
+      const av = nameEl.querySelector('.avatar');
+      if(sqIsAI(id) || sq.ctrl[id]==='absent') fillAvatar(av, id); else fillAvatar(av, null, sqName(id));
+    });
+  }
+
   function renderSquare(isDeal){
-    const active = sqActivePlayers();
     const turnId = sqTurnId();
+    sqSeatLabels();
     const sb = document.getElementById('sqScoreboard');
-    sb.innerHTML = SQ_SEAT_ORDER.map(id=>{
+    sb.innerHTML = SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent').map(id=>{
       const out = sq.players[id].eliminated;
       const n = sq.players[id].hand.length;
-      return '<div class="sq-score-item'+(out?' out':'')+(id===turnId?' turn':'')+'"><span class="n">'+sqName(id)+'</span>'+
+      return '<div class="sq-score-item'+(out?' out':'')+(id===turnId?' turn':'')+'"><span class="n"></span>'+
         '<span class="v">'+(out?'éliminé':(n+(n>1?' cartes':' carte')))+'</span></div>';
     }).join('');
+    [...sb.querySelectorAll('.n')].forEach((el,i)=>{ el.textContent = sqName(SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent')[i]); });
 
     ['penalty','aristide','gervais'].forEach(id=>{
-      const cardsEl = document.getElementById('sqCards'+id.charAt(0).toUpperCase()+id.slice(1));
+      const cardsEl = document.getElementById('sqCards'+sqCap(id));
       cardsEl.innerHTML='';
-      const n = sq.players[id].eliminated ? 0 : sq.players[id].hand.length;
+      const n = sq.players[id].eliminated || sq.ctrl[id]==='absent' ? 0 : sq.players[id].hand.length;
       for(let i=0;i<n;i++){ const fd=document.createElement('div'); fd.className='facedown'; fd.style.width='20px'; fd.style.height='29px'; cardsEl.appendChild(fd); }
     });
 
     // the trick in progress is drawn as real cards in front of each seat; earlier tricks shrink to a history row
-    ['you','penalty','aristide','gervais'].forEach(id=>{
-      const cap = id.charAt(0).toUpperCase()+id.slice(1);
-      const histEl = document.getElementById('sqHist'+cap);
-      const curEl = document.getElementById('sqCur'+cap);
+    SQ_SEAT_ORDER.forEach(id=>{
+      const histEl = document.getElementById('sqHist'+sqCap(id));
+      const curEl = document.getElementById('sqCur'+sqCap(id));
       histEl.innerHTML=''; curEl.innerHTML='';
-      sq.history[id].forEach(entry=>{
+      (sq.history[id]||[]).forEach(entry=>{
         const isCurrent = entry.trick===sq.trickNo;
         if(!isCurrent){ histEl.appendChild(miniCardEl(entry.type==='card' ? entry.card : null)); return; }
         if(entry.type==='passe'){ const p=document.createElement('div'); p.className='passe-chip sq-size'; p.textContent='Passe'; curEl.appendChild(p); }
@@ -6378,27 +6664,28 @@
     // glow the card currently holding control of the trick
     if(sq.leadSuit && sq.trickBest){
       const w = sq.trickBest.actorId;
-      const el = document.querySelector('#sqCur'+w.charAt(0).toUpperCase()+w.slice(1)+' .card[data-key="'+sq.trickBest.card.suit+'-'+sq.trickBest.card.rank+'"]');
+      const el = document.querySelector('#sqCur'+sqCap(w)+' .card[data-key="'+sq.trickBest.card.suit+'-'+sq.trickBest.card.rank+'"]');
       if(el) el.classList.add('holding');
     }
 
-    ['sqSeatPenalty','sqSeatAristide','sqSeatGervais','sqSeatYou'].forEach((elId, i)=>{
-      const id = ['penalty','aristide','gervais','you'][i];
-      const seatEl = document.getElementById(elId);
+    SQ_SEAT_ORDER.forEach(id=>{
+      const seatEl = document.getElementById('sqSeat'+sqCap(id));
       seatEl.classList.toggle('eliminated', sq.players[id].eliminated);
       seatEl.classList.toggle('active-turn', turnId===id);
     });
 
     const demandEl = document.getElementById('sqDemand');
-    demandEl.classList.toggle('your-turn', turnId==='you' && !sq.locked);
-    if(sq.handOver){ demandEl.textContent = 'manche terminée'; }
+    const myTurn = turnId==='you' && (!sq.locked || sq.remote);
+    demandEl.classList.toggle('your-turn', myTurn);
+    if(sq.championSeat) demandEl.textContent = 'partie terminée';
+    else if(sq.pendingElim) demandEl.textContent = sqName(sq.pendingElim.seat)+' choisit qui éliminer…';
+    else if(sq.handOver){ demandEl.textContent = 'manche terminée'; }
     else if(sq.leadSuit){ demandEl.innerHTML = 'commande : <b>'+sq.leadSuit+'</b> <span class="pip">'+PIP[sq.leadSuit]+'</span>'; }
     else { demandEl.textContent = sq.leader==='you' ? 'à toi de commander' : (sqName(sq.leader)+' commande'); }
 
     const handEl = document.getElementById('sqPlayerHand');
     handEl.innerHTML='';
     const eliminatedBox = document.getElementById('sqEliminatedBox');
-    const myTurn = turnId==='you' && !sq.locked;
     const dumping = myTurn && !!sq.leadSuit && sq.passers.has('you');
     const handLabel = document.getElementById('sqHandLabel');
     if(!sq.players.you.eliminated){
@@ -6410,7 +6697,7 @@
         : (turnId ? sqName(turnId)+' réfléchit…' : 'Ta main');
       const sorted = sortHand(sq.players.you.hand);
       const mustFollow = sq.leadSuit && hasSuit(sq.players.you.hand, sq.leadSuit);
-      if(isDeal) sfxDeal(sorted.length);
+      if(isDeal && calmOn()) sfxDeal(sorted.length);
       sorted.forEach(card=>{
         const legal = myTurn && (dumping || !sq.leadSuit || !mustFollow || card.suit===sq.leadSuit);
         const cls = legal ? 'playable' : (myTurn ? 'blocked' : 'idle');
@@ -6422,6 +6709,7 @@
       handLabel.classList.remove('your-turn');
       handLabel.textContent = 'Éliminé';
       eliminatedBox.classList.remove('hidden');
+      document.getElementById('sqFastForward').classList.toggle('hidden', !!(sq.online||sq.remote)); // online, the game sets the pace
       document.getElementById('sqFastForward').classList.toggle('active', sq.fastForward);
     }
     const passeBtn = document.getElementById('sqBtnPasse');
@@ -6429,10 +6717,11 @@
     passeBtn.classList.toggle('hidden', !passeEligible);
     document.getElementById('sqBtnDump').classList.toggle('hidden', !dumping);
     if(!document.getElementById('squareScreen').classList.contains('sq-dealing')) updateSqCtrlToken();
+    if(sq.online && !sq.remote) roomBroadcastSoon(); // every change on the table goes out to the friends' phones
   }
 
   document.getElementById('sqFastForward').addEventListener('click', ()=>{
-    if(!sq) return;
+    if(!sq || sq.online || sq.remote) return;
     sq.fastForward = !sq.fastForward;
     document.getElementById('sqFastForward').classList.toggle('active', sq.fastForward);
     document.getElementById('sqFastForward').innerHTML = ico('ffwd')+(sq.fastForward ? ' Avance rapide (activée)' : ' Avance rapide');
@@ -6442,6 +6731,273 @@
       sqBeginHand();
     }
   });
+
+  // ===================== Carré la Pute online: a room of 2 to 4 phones =====================
+  // The creator's phone ("host") runs the game. After every change it sends each friend a snapshot of the
+  // table seen from their own seat (their cards, everyone's card counts, the trick, the history…). Friends send
+  // their moves; each move is numbered and resent until the host's snapshot confirms it. Snapshots are resent
+  // every 1.5 s too, so a lost message just arrives a moment later.
+  const room = {active:false, host:false, code:null, hostId:null, players:[], started:false,
+    seq:0, pending:null, lastV:0, seenEv:0, gid:null, myName:'', ver:0, acks:{}, seen:{},
+    timers:[], snapT:null, hostName:''};
+  function roomReset(){
+    room.timers.forEach(t=> clearInterval(t)); clearTimeout(room.snapT);
+    Object.assign(room, {active:false, host:false, code:null, hostId:null, players:[], started:false,
+      seq:0, pending:null, lastV:0, seenEv:0, gid:null, ver:0, acks:{}, seen:{}, timers:[], snapT:null});
+  }
+  function roomSend(pkt){ if(mpNet){ pkt.room = 1; pkt.from = myNetId; mpNet.send(pkt); } }
+  function roomEvery(ms, fn){ const t = setInterval(fn, ms); room.timers.push(t); }
+
+  // ---- host side ----
+  async function roomHost(){
+    const status = document.getElementById('rmStatus');
+    mpTeardown(); roomReset();
+    mpIsHost = true;
+    Object.assign(room, {active:true, host:true});
+    room.code = randomRoomCode();
+    document.getElementById('rmCode').textContent = room.code;
+    status.textContent = 'Connexion au serveur...';
+    renderRoomLobby();
+    try{ await mpOpen(room.code, 'host', 'carre'); }
+    catch(e){ status.textContent = netErrorText(e); mpTeardown(); return; }
+    await mpSleep(600);
+    if(!mpNet) return;
+    if(presentOthers().some(m=>m.role==='host')){ mpTeardown(); return roomHost(); }
+    status.textContent = 'Partage ce code avec tes amis (jusqu’à 3) :';
+    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'lobby', host:myName, players:room.players.map(p=>({id:p.id, name:p.name}))}); });
+  }
+  function renderRoomLobby(){
+    const list = document.getElementById('rmPlayers');
+    if(!list) return;
+    const all = [{name:(myName||'Toi')+' (toi)'}].concat(room.players);
+    list.innerHTML = all.map((p,i)=> '<div class="rm-player" style="--d:'+i+'"><span class="avatar" style="--s:34px"></span><span class="rm-n"></span></div>').join('');
+    [...list.children].forEach((row,i)=>{ row.querySelector('.rm-n').textContent = all[i].name; fillAvatar(row.querySelector('.avatar'), null, all[i].name); });
+    const fill = document.getElementById('rmFillAI').checked;
+    const n = fill ? 4 : all.length;
+    const btn = document.getElementById('btnRmStart');
+    btn.textContent = n<2 ? 'En attente d’un ami…' : 'Lancer la partie à '+n+' joueurs';
+    btn.classList.toggle('waiting', n<2);
+  }
+  document.getElementById('rmFillAI').addEventListener('change', renderRoomLobby);
+  document.getElementById('btnRmStart').addEventListener('click', ()=>{
+    if(!room.host || room.started) return;
+    const fill = document.getElementById('rmFillAI').checked;
+    const humans = room.players.slice(0,3);
+    const total = fill ? 4 : humans.length+1;
+    if(total<2){ showToast('Il faut au moins un ami', 'Partage le code, ou coche « Compléter avec l’ordinateur ».', {ms:2200}); return; }
+    const seats = sqSeatsFor(total);
+    const ctrl = {}, net = {}, names = {you: myName||'Toi'};
+    SQ_SEAT_ORDER.forEach(id=> ctrl[id] = id==='you' ? 'local' : (seats.includes(id) ? 'ai' : 'absent'));
+    seats.filter(id=> id!=='you').forEach((id,i)=>{ const h = humans[i]; if(h){ ctrl[id] = 'remote'; net[id] = h.id; names[id] = h.name; } });
+    room.started = true;
+    room.stake = Math.min(prefs.stake||0, profile.chips);
+    roomEvery(1500, ()=> roomBroadcast(true));
+    roomEvery(5000, roomCheckDropouts);
+    sqNewGame({ctrl, net, names, online:true, stake: room.stake});
+  });
+  function roomSeatOf(netId){ return sq && Object.keys(sq.net).find(s=> sq.net[s]===netId && sq.ctrl[s]==='remote'); }
+  function roomBroadcastSoon(){ clearTimeout(room.snapT); room.snapT = setTimeout(()=> roomBroadcast(false), 25); }
+  function roomBroadcast(repeat){
+    if(!room.host || !room.started || !sq || !mpNet) return;
+    if(!repeat) room.ver++;
+    Object.keys(sq.net).forEach(seat=>{
+      const id = sq.net[seat];
+      roomSend({k:'snap', to:id, v:room.ver, d: roomSnapFor(seat, id)});
+    });
+  }
+  function roomSnapFor(seat, netId){
+    const p = {}, hist = {}, names = {};
+    SQ_SEAT_ORDER.forEach(id=>{
+      const pl = sq.players[id];
+      p[id] = {el:!!pl.eliminated, ab: sq.ctrl[id]==='absent', n: pl.hand.length, h: sq.ctrl[id]!=='ai'};
+      hist[id] = sq.history[id];
+      names[id] = id==='you' ? (sq.names.you||'Hôte') : sqName(id);
+    });
+    return {
+      gid: sq.gameId, seat, hand: sq.players[seat].hand, orig: sq.players[seat].originalHand,
+      p, hist, names, trickNo: sq.trickNo, leadSuit: sq.leadSuit, leadCard: sq.leadCard,
+      best: sq.trickBest, leader: sq.leader, queue: sq.trickQueue, passers: [...sq.passers],
+      handOver: sq.handOver, cardsPlayed: sq.cardsPlayedThisHand, handNo: sq.handNo,
+      ev: sq.events.slice(-12), elim: sq.pendingElim, champion: sq.championSeat, stake: sq.stake,
+      tricksWon: sq.trickWinners.length, ack: room.acks[netId]||0
+    };
+  }
+  // a friend who's been gone for 20 s is replaced by the computer, so the game never gets stuck
+  function roomCheckDropouts(){
+    if(!sq || !room.host) return;
+    const here = new Set(mpLastPresence.map(m=> m && m.id));
+    const now = Date.now();
+    Object.keys(sq.net).forEach(seat=>{
+      if(sq.ctrl[seat]!=='remote') return;
+      const id = sq.net[seat];
+      if(here.has(id)){ room.seen[id] = now; return; }
+      if(!room.seen[id]) room.seen[id] = now;
+      if(now - room.seen[id] > 20000){
+        sq.ctrl[seat] = 'ai';
+        sq.names[seat] = sqName(seat)+' (ordi)';
+        showToast(sqName(seat), 'est parti : l’ordinateur prend sa place.', {ms:2400});
+        renderSquare();
+        sqResumeTurn();
+      }
+    });
+  }
+
+  // ---- friend side ----
+  function roomJoinFlow(hostMeta){
+    roomReset();
+    Object.assign(room, {active:true, host:false, hostId:hostMeta.id, hostName:hostMeta.name||'L’hôte'});
+    document.getElementById('rmWaitHost').textContent = 'Partie de '+room.hostName;
+    document.getElementById('rmWaitList').innerHTML = '';
+    document.getElementById('rmWaitStatus').textContent = 'Connexion à la table…';
+    Nav.go('carreWaitPage');
+    roomSend({k:'join', name: myName});
+    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'join', name: myName}); });
+    roomEvery(1000, ()=>{ if(room.pending) roomSend({k:'act', seq: room.pending.seq, a: room.pending.a}); });
+  }
+  function roomSendAct(a){
+    if(!room.active || room.host) return;
+    if(room.pending) return; // one move at a time: wait until the last one is confirmed
+    room.seq++;
+    room.pending = {seq: room.seq, a};
+    roomSend({k:'act', seq: room.seq, a});
+  }
+  // the seat as this phone sees it: your own seat is always at the bottom
+  function roomViewFn(mySeat){
+    const off = SQ_SEAT_ORDER.indexOf(mySeat);
+    return {
+      V: s=> s==null ? null : SQ_SEAT_ORDER[(SQ_SEAT_ORDER.indexOf(s) - off + 4) % 4],
+      H: v=> v==null ? null : SQ_SEAT_ORDER[(SQ_SEAT_ORDER.indexOf(v) + off) % 4]
+    };
+  }
+  function roomApplySnap(d){
+    if(room.pending && d.ack>=room.pending.seq) room.pending = null;
+    const {V, H} = roomViewFn(d.seat);
+    room.H = H;
+    const newGame = d.gid!==room.gid;
+    const newHand = newGame || !sq || d.handNo!==sq.handNo;
+    if(newGame){
+      room.gid = d.gid; room.seenEv = 0; room.started = true;
+      // a new game: this phone puts in its own stake, up to the agreed amount
+      matchCoras = 0; matchGlacees = 0;
+      matchStake = Math.min(d.stake||0, profile.chips);
+      if(matchStake>0) chipsAdd(-matchStake);
+      hide('matchOverOverlay');
+      mode = 'square';
+      startMatchTracking();
+      enterGame();
+    }
+    const players = {}, history = {}, names = {}, ctrl = {};
+    SQ_SEAT_ORDER.forEach(h=>{
+      const v = V(h), pp = d.p[h];
+      players[v] = {eliminated: pp.el, hand: v==='you' ? d.hand : new Array(pp.n).fill({suit:'?', rank:0}), originalHand: v==='you' ? d.orig : []};
+      ctrl[v] = pp.ab ? 'absent' : (v==='you' ? 'local' : (pp.h ? 'remote' : 'ai'));
+      history[v] = d.hist[h] || [];
+      names[v] = d.names[h];
+    });
+    const prevPlayed = sq && !newHand ? sq.cardsPlayedThisHand : 0, prevTricks = sq && !newHand ? (sq.tricksWon||0) : 0;
+    sq = {
+      gen: sq ? sq.gen : 0, remote:true, online:true, ctrl, names, players, history, knownVoid:{},
+      trickNo: d.trickNo, leadSuit: d.leadSuit, leadCard: d.leadCard,
+      trickBest: d.best ? {card: d.best.card, actorId: V(d.best.actorId)} : null,
+      leader: V(d.leader), trickQueue: (d.queue||[]).map(V), passers: new Set((d.passers||[]).map(V)),
+      handOver: d.handOver, locked:false, fastForward:false, cardsPlayedThisHand: d.cardsPlayed, handNo: d.handNo,
+      pendingElim: d.elim ? {seat: V(d.elim.seat), count: d.elim.count, options: d.elim.options.map(V), label: d.elim.label} : null,
+      championSeat: d.champion ? V(d.champion) : null, tricksWon: d.tricksWon, stake: d.stake
+    };
+    if(newGame || document.getElementById('squareScreen').classList.contains('hidden')) sqShowScreen();
+    renderSquare(newHand);
+    if(newHand){ const act = sqActivePlayers(); sqDealAnim(act, sq.leader); }
+    else {
+      if(d.cardsPlayed>prevPlayed){ sfxCardPlay(); vibrate(12); }
+      if(d.tricksWon>prevTricks){ const w = (d.best && V(d.best.actorId)); if(w==='you') sfxTrickWinYou(); else sfxTrickWinAI(); }
+    }
+    checkSquareAutoWins();
+    // the big moments, replayed once each
+    (d.ev||[]).forEach(ev=>{ if(ev.id>room.seenEv){ room.seenEv = ev.id; roomPlayEvent(ev, V); } });
+    // it's this phone's turn to knock someone out
+    if(sq.pendingElim && sq.pendingElim.seat==='you' && document.getElementById('eliminateOverlay').classList.contains('hidden') && !room.elimSent){
+      const p = sq.pendingElim;
+      sqPickTargets(p.options, p.count, p.label, (picked)=>{
+        room.elimSent = true;
+        repAdd(15*picked.length, 'Éliminations');
+        if(picked.length>=2) unlockTrophy('double');
+        roomSendAct({type:'elim', targets: picked.map(H)});
+      });
+    }
+    if(!sq.pendingElim) room.elimSent = false;
+  }
+  function roomPlayEvent(ev, V){
+    const me = V(ev.seat)==='you';
+    if(ev.kind==='auto'){
+      showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:3000});
+      sfxBigWin(); bigImpact(); if(me){ burstConfetti(28); repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); }
+    } else if(ev.kind==='handwin'){
+      if(me) sqHandWonRewards(ev.cora, ev.glacee, (sq.history.you||[]).some(e=>e.type==='passe'));
+      sqHandWonShow(V(ev.seat), ev.cora, ev.glacee);
+    } else if(ev.kind==='elim'){
+      const w = V(ev.winner), t = ev.targets.map(V);
+      if(w!=='you') showToast(sqName(w)+' élimine '+t.map(x=> x==='you' ? 'toi' : sqName(x)).join(' et ')+' !', t.includes('you') ? 'Tu regardes la suite depuis le banc.' : '', {ms:2600});
+    } else if(ev.kind==='say'){
+      sqBubble(V(ev.seat), ev.text); avatarFx(V(ev.seat), 'speaking');
+    } else if(ev.kind==='champion'){
+      sqChampionScreen(me, sqName(V(ev.seat)), sqSeated().length);
+    }
+  }
+
+  // ---- both sides: every room packet arrives here ----
+  function roomOnPacket(p){
+    if(!p || p.from===myNetId || !room.active) return;
+    if(room.host){
+      if(p.k==='join' && !room.started){
+        if(!room.players.some(x=>x.id===p.from)){
+          if(room.players.length>=3) return;
+          room.players.push({id:p.from, name:(p.name||'Ami').slice(0,16)});
+          sfxToggle(true);
+          renderRoomLobby();
+        }
+        roomSend({k:'lobby', host:myName, players:room.players.map(x=>({id:x.id, name:x.name}))});
+      } else if(p.k==='act' && room.started){
+        const seat = roomSeatOf(p.from);
+        if(!seat) return;
+        if(p.seq<=(room.acks[p.from]||0)){ roomBroadcastSoon(); return; } // already applied: just confirm again
+        room.acks[p.from] = p.seq;
+        sqHumanAct(seat, p.a);
+        roomBroadcastSoon();
+      }
+    } else {
+      if(p.from!==room.hostId) return;
+      if(p.k==='lobby' && !room.started){
+        const list = document.getElementById('rmWaitList');
+        const all = [{name:p.host+' (crée la partie)'}].concat(p.players.map(x=>({name: x.id===myNetId ? x.name+' (toi)' : x.name})));
+        list.innerHTML = all.map(()=> '<div class="rm-player"><span class="avatar" style="--s:34px"></span><span class="rm-n"></span></div>').join('');
+        [...list.children].forEach((row,i)=>{ row.querySelector('.rm-n').textContent = all[i].name; fillAvatar(row.querySelector('.avatar'), null, all[i].name); });
+        const inside = p.players.some(x=>x.id===myNetId);
+        document.getElementById('rmWaitStatus').textContent = inside ? 'Tu es à la table. En attente que '+p.host+' lance la partie…'
+          : (p.players.length>=3 ? 'Cette table est complète (4 joueurs).' : 'Connexion à la table…');
+      } else if(p.k==='snap' && p.to===myNetId){
+        if(p.v<room.lastV) return;
+        const same = p.v===room.lastV;
+        room.lastV = p.v;
+        if(same && !(room.pending && p.d.ack>=room.pending.seq)) return; // a resent copy of what we already show
+        try{ roomApplySnap(p.d); }catch(e){ console.error('snap failed', e); }
+      }
+    }
+  }
+  // the host disappearing ends the game for everyone; a friend leaving is handled by roomCheckDropouts
+  function roomOnPresence(list){
+    if(!room.active) return;
+    if(room.host){
+      if(!room.started){
+        const ids = new Set(list.map(m=> m && m.id));
+        const before = room.players.length;
+        room.players = room.players.filter(p=> ids.has(p.id));
+        if(room.players.length!==before) renderRoomLobby();
+      }
+    } else if(room.started){
+      const here = list.some(m=> m && m.id===room.hostId);
+      showNetBanner(here ? null : room.hostName+' (qui fait tourner la partie) s’est déconnecté — en attente…');
+    }
+  }
 
   function renderStats(){
     const p = profile;
@@ -6499,9 +7055,41 @@
   }
   document.getElementById('btnShowStats').addEventListener('click', ()=> Nav.go('statsOverlay'));
 
-  document.getElementById('modeSquare').addEventListener('click', ()=>{
-    ensureAudio();
-    sqNewGame();
+  // Carré la Pute: choose 2, 3 or 4 players (and the stake), or open a table online with friends
+  document.getElementById('modeSquare').addEventListener('click', ()=>{ ensureAudio(); Nav.go('carrePage'); });
+  function refreshCarrePick(){
+    const n = prefs.sqPlayers || 4;
+    document.querySelectorAll('#carrePage .cp-n').forEach(b=> b.classList.toggle('on', Number(b.dataset.n)===n));
+    const st = Math.min(prefs.stake||0, profile.chips);
+    document.getElementById('cpGain').innerHTML = st>0 ? ico('coin')+' Mise '+fmtChips(st)+' → le survivant gagne '+fmtChips(st*n)+' (×'+n+')' : ico('coin')+' Partie amicale · le survivant gagne une mise par joueur';
+  }
+  document.querySelectorAll('#carrePage .cp-n').forEach(b=> b.addEventListener('click', ()=>{ prefs.sqPlayers = Number(b.dataset.n); savePrefs(); refreshCarrePick(); }));
+  document.getElementById('btnCpPlay').addEventListener('click', ()=>{ ensureAudio(); sqNewGame({n: prefs.sqPlayers||4}); });
+  document.getElementById('btnCpOnline').addEventListener('click', ()=>{ prefs.mpKind = 'carre'; savePrefs(); Nav.go('mpLobbyOverlay'); });
+  // the online lobby: a duel, or a Carré table for 2 to 4
+  function refreshKindPick(){
+    const k = prefs.mpKind==='carre' ? 'carre' : 'duel';
+    document.querySelectorAll('.kind-pick .fmt').forEach(b=> b.classList.toggle('on', b.dataset.kind===k));
+    document.querySelector('#mpLobbyOverlay .format-pick:not(.kind-pick)').classList.toggle('hidden', k==='carre');
+    document.getElementById('lobbyNote').textContent = k==='carre'
+      ? 'Crée une table et partage le code : jusqu’à 3 amis peuvent s’asseoir. Places vides : l’ordinateur, si tu veux. Le survivant rafle toutes les mises.'
+      : 'Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.';
+    document.getElementById('btnMpHost').textContent = k==='carre' ? 'Créer une table de Carré' : 'Créer une partie';
+  }
+  document.querySelectorAll('.kind-pick .fmt').forEach(b=> b.addEventListener('click', ()=>{ prefs.mpKind = b.dataset.kind; savePrefs(); refreshKindPick(); }));
+  refreshKindPick();
+  // inviting friends to a Carré table: the same link as a duel — the game finds out it's a table when they join
+  document.getElementById('btnRmWhatsApp').addEventListener('click', ()=>{
+    if(!/^[A-Z0-9]{4}$/.test(room.code||'')) return;
+    window.open('https://wa.me/?text='+encodeURIComponent(myName+' t’invite à sa table de Carré la Pute au Fap Fap ! Clique pour t’asseoir : '+inviteUrl(room.code)+'  (code : '+room.code+')'), '_blank');
+  });
+  document.getElementById('btnRmCopy').addEventListener('click', ()=>{
+    if(!/^[A-Z0-9]{4}$/.test(room.code||'')) return;
+    const btn = document.getElementById('btnRmCopy');
+    const done = ok=>{ btn.innerHTML = ok ? ico('check')+' Lien copié !' : 'Copie impossible'; setTimeout(()=> btn.innerHTML = ico('copy')+' Copier le lien', 1600); };
+    const text = inviteUrl(room.code);
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(()=>done(true)).catch(()=>done(false));
+    else done(false);
   });
 
   // ---- Anonymous usage measures, so the game improves on facts rather than guesses ----
