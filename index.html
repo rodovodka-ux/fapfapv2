@@ -2286,7 +2286,7 @@
       </div>
       <div class="acct-mail hidden" id="acctMailStep2">
         <p class="acct-info" id="acctCodeInfo"></p>
-        <input id="acctCode" class="mp-input acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="------">
+        <input id="acctCode" class="mp-input acct-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="--------">
         <button class="primary" id="btnAcctVerify"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg> Valider le code</button>
         <button class="ghost" id="btnAcctMailBack">Changer d'adresse</button>
       </div>
@@ -7921,7 +7921,7 @@
     const btn = $id('btnAcctVerify');
     const m = Cloud.mail; if(!m) return;
     const token = $id('acctCode').value.replace(/\D/g,'');
-    if(token.length<6){ acctErr('Entre le code à 6 chiffres reçu par e-mail.'); return; }
+    if(token.length<6){ acctErr('Entre le code reçu par e-mail (8 chiffres).'); return; }
     acctErr(null); acctBusy(btn, true);
     try{
       if(m.mode==='signin') await cloudDropGuestRow();
@@ -7996,7 +7996,7 @@
   $id('btnAcctSendCode').addEventListener('click', acctSendCode);
   $id('acctEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') acctSendCode(); });
   $id('btnAcctVerify').addEventListener('click', acctVerify);
-  $id('acctCode').addEventListener('input', e=>{ const v = e.target.value.replace(/\D/g,''); e.target.value = v; if(v.length===6 || v.length===8) acctVerify(); });
+  $id('acctCode').addEventListener('input', e=>{ const v = e.target.value.replace(/\D/g,''); e.target.value = v; if(v.length===8) acctVerify(); // Supabase sends 8-digit codes on this project });
   $id('btnAcctMailBack').addEventListener('click', ()=>{ Cloud.mail = null; acctErr(null); renderAccount(); });
   $id('btnAcctLogout').addEventListener('click', acctLogout);
   $id('acctNameInput').addEventListener('input', e=>{
