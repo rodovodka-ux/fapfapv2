@@ -41,6 +41,8 @@
                 linear-gradient(180deg, rgba(10,6,3,0.05), rgba(10,6,3,0.15) 45%, rgba(10,6,3,0.65)); }
   .scene .bokeh{ position:absolute; border-radius:50%; filter: blur(18px); opacity:.55; mix-blend-mode: screen;
     background: radial-gradient(circle, rgba(var(--tint),0.9), rgba(var(--tint),0) 70%); animation: float 14s ease-in-out infinite alternate; }
+  /* iPhone mode: the scene stays still so the copies inside the glass line up exactly with it */
+  .lg-mirror-mode .scene .photo{ animation:none; transform: scale(1.06); }
   @keyframes drift{ from{ transform: scale(1.04) translate(-1%, 0); } to{ transform: scale(1.1) translate(1.5%, -1%); } }
   @keyframes float{ from{ transform: translate(0,0); } to{ transform: translate(30px,-40px); } }
 
@@ -278,7 +280,7 @@
   <button class="tab"><svg class="i"><use href="#gear"/></svg>Réglages</button>
 </nav>
 
-<script src="liquidglass.js"></script>
+<script src="liquidglass.js?v=2"></script>
 <script>
 (function(){
   // every piece of glass goes through the engine (lens, dispersion, frost)
@@ -299,7 +301,7 @@
   LiquidGlass.scan(); sync();
   document.getElementById('engineNote').textContent = LiquidGlass.state.refract
     ? 'Verre réel : les bords courbent le décor et séparent légèrement les couleurs. Incline le téléphone pour faire bouger la lumière.'
-    : 'Sur ce navigateur (Safari / iPhone), le verre ne peut pas encore courber le décor : flou, reflets et épaisseur seulement.';
+    : 'Mode iPhone : les bords du verre grossissent le décor comme une lentille. Incline le téléphone pour faire bouger la lumière.';
 
   // pressing: the glass swells like a drop, then settles
   document.querySelectorAll('.press').forEach(g=> g.addEventListener('pointerup', ()=>{ g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop'); }));

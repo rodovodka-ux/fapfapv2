@@ -13,7 +13,21 @@
   const SVGNS = 'http://www.w3.org/2000/svg';
   const chromium = !!(navigator.userAgentData && navigator.userAgentData.brands &&
     navigator.userAgentData.brands.some(b=> /Chromium/.test(b.brand)));
-  const state = { depth: 60, frost: 30, refract: chromium };
+  // Safari (iPhone) cannot bend what is behind an element. There, each piece of glass carries its own copy of the
+  // scene, magnified like through a lens and only visible on its rim ("mirror" mode). ?mirror forces it for testing.
+  const forceMirror = /[?&]mirror\b/.test(location.search);
+  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, scene: '.scene' };
+
+  const css = document.createElement('style');
+  css.textContent =
+    '.lg>.lg-mirror{position:absolute!important;inset:0;z-index:0!important;border-radius:inherit;overflow:hidden;pointer-events:none;'+
+      '-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}'+
+    '.lg-mirror-in{position:absolute;left:0;top:0;will-change:transform;filter:saturate(1.35) brightness(1.1) contrast(1.05)}'+
+    '.lg-mirror-in .lg-scene-copy{position:absolute!important;inset:0!important}'+
+    '.lg-mirror-in .lg-scene-copy *{animation:none!important}'+
+    '.lg-mirror .lg-fringe{position:absolute;inset:0;border-radius:inherit;mix-blend-mode:screen;opacity:var(--lg-depth,.6);'+
+      'box-shadow:inset 1.5px 1.5px 1px rgba(255,70,90,.35),inset -1.5px -1.5px 1px rgba(70,140,255,.35)}';
+  document.head.appendChild(css);
   const items = new Map(); // element -> {id, w, h, r}
   let uid = 0;
 
@@ -84,6 +98,68 @@
 
   function frostPx(){ return (state.frost/100)*18; }
 
+  // ---- mirror mode (iPhone): the rim of the glass shows the scene magnified, with a soft lens profile ----
+  function ringMask(w, h, r, bezel){
+    // small canvas, stretched: the alpha is 1 on the very edge and fades to 0 where the flat part of the glass starts
+    const s = Math.min(1, 160/Math.max(w, h));
+    const W = Math.max(8, Math.round(w*s)), H = Math.max(8, Math.round(h*s));
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const ctx = c.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
+    const hw = w/2, hh = h/2, rr = Math.min(r, hw, hh);
+    for(let y = 0; y < H; y++) for(let x = 0; x < W; x++){
+      const px = (x + 0.5)/s - hw, py = (y + 0.5)/s - hh;
+      const qx = Math.abs(px) - (hw - rr), qy = Math.abs(py) - (hh - rr);
+      const sd = Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - rr;
+      const t = Math.max(0, Math.min(1, 1 + sd/bezel)); // 1 at the edge, 0 inside
+      const i = (y*W + x)*4;
+      d[i] = d[i+1] = d[i+2] = 255; d[i+3] = Math.round(255 * t*t*(3 - 2*t));
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+  function mirrorSetup(node, it){
+    if(it.mirror) return;
+    const m = document.createElement('span'); m.className = 'lg-mirror'; m.setAttribute('aria-hidden', 'true');
+    const inner = document.createElement('span'); inner.className = 'lg-mirror-in';
+    const src = document.querySelector(state.scene);
+    if(src){
+      const copy = src.cloneNode(true);
+      copy.classList.add('lg-scene-copy'); copy.removeAttribute('id');
+      copy.querySelectorAll('[id]').forEach(n=> n.removeAttribute('id'));
+      inner.appendChild(copy);
+    }
+    const fringe = document.createElement('span'); fringe.className = 'lg-fringe';
+    m.appendChild(inner); m.appendChild(fringe);
+    node.insertBefore(m, node.firstChild);
+    it.mirror = m; it.inner = inner;
+  }
+  function mirrorPlace(node, it){
+    if(!it.inner) return;
+    const r = node.getBoundingClientRect();
+    const k = 1 + 0.3*state.depth/100; // magnification of the lens
+    it.inner.style.width = innerWidth + 'px'; it.inner.style.height = innerHeight + 'px';
+    // the copy sits exactly where the real scene is, magnified around the centre of the glass
+    it.inner.style.transformOrigin = (r.left + r.width/2) + 'px ' + (r.top + r.height/2) + 'px';
+    it.inner.style.transform = 'translate(' + (-r.left) + 'px,' + (-r.top) + 'px) scale(' + k.toFixed(3) + ')';
+  }
+  function mirrorShape(node, it, w, h, r){
+    const depth = state.depth/100;
+    const bezel = Math.min(Math.max(6, 6 + depth*26), Math.min(w, h)/2);
+    const url = 'url(' + ringMask(w, h, r, bezel) + ')';
+    it.mirror.style.webkitMaskImage = url; it.mirror.style.maskImage = url;
+    it.mirror.style.display = state.depth > 0 ? '' : 'none';
+  }
+  let placing = 0;
+  function placeAll(){
+    if(placing) return;
+    placing = requestAnimationFrame(()=>{ placing = 0; items.forEach((it, node)=> mirrorPlace(node, it)); });
+  }
+  if(!state.refract){
+    window.addEventListener('scroll', placeAll, {passive: true, capture: true});
+    document.addEventListener('scroll', placeAll, {passive: true, capture: true});
+    window.addEventListener('resize', placeAll);
+  }
+
   function apply(node){
     let it = items.get(node);
     if(!it){ it = {id: 'lgf' + (++uid)}; items.set(node, it); ro.observe(node); }
@@ -99,9 +175,15 @@
       }
       node.style.backdropFilter = 'url(#'+it.id+') blur('+blur+'px) saturate(175%) brightness(1.06)';
     } else {
-      node.style.backdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(175%) brightness(1.06)';
+      node.style.backdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(180%) brightness(1.08)';
+      mirrorSetup(node, it);
+      if(it.w !== w || it.h !== h || it.r !== r || it.depth !== state.depth){
+        mirrorShape(node, it, w, h, r);
+        it.w = w; it.h = h; it.r = r; it.depth = state.depth;
+      }
+      mirrorPlace(node, it);
     }
-    node.style.webkitBackdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(175%) brightness(1.06)';
+    node.style.webkitBackdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(180%) brightness(1.08)';
   }
 
   const ro = new ResizeObserver(entries=>{ entries.forEach(e=> apply(e.target)); });
@@ -151,5 +233,6 @@
   }, {passive: true});
 
   setTilt(0, 0);
+  document.documentElement.classList.add(state.refract ? 'lg-refract' : 'lg-mirror-mode');
   window.LiquidGlass = { scan, set, apply, get state(){ return Object.assign({}, state); } };
 })();
