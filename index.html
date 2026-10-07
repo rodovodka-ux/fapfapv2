@@ -1384,88 +1384,9 @@
   .page-body .mp-input{ max-width:280px; }
   .page-body.center button.big{ min-width:240px; }
 
-  /* ---- secondary pages: the same bar as the home screen, deep in the shadow, tinted by the chosen table ---- */
-  .overlay.page:not(.page-home){
-    background:
-      radial-gradient(120% 55% at 50% -12%, color-mix(in srgb, var(--p2) 30%, transparent), transparent 62%),
-      radial-gradient(90% 60% at 110% 105%, color-mix(in srgb, var(--p3) 24%, transparent), transparent 70%),
-      linear-gradient(180deg, rgba(10,6,3,0.80), rgba(6,4,2,0.93) 50%, rgba(4,2,1,0.97)),
-      linear-gradient(var(--h-tint), var(--h-tint)),
-      url('art/home-bar.jpg') center top / cover no-repeat, #0b0704;
-    background-blend-mode: normal, normal, normal, color, normal;
-  }
-  /* slow drifting lights, like out-of-focus bulbs behind the page */
-  .overlay.page:not(.page-home)::before{
-    content:""; position:fixed; inset:-10%; pointer-events:none; z-index:0; opacity:0.55;
-    background:
-      radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--p1) 40%, transparent) 0, transparent 46px),
-      radial-gradient(circle at 86% 30%, color-mix(in srgb, var(--p2) 34%, transparent) 0, transparent 64px),
-      radial-gradient(circle at 72% 78%, color-mix(in srgb, var(--p1) 28%, transparent) 0, transparent 54px),
-      radial-gradient(circle at 24% 68%, color-mix(in srgb, var(--p3) 30%, transparent) 0, transparent 70px),
-      radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--p2) 16%, transparent) 0, transparent 90px);
-    filter: blur(6px);
-    animation: bokehDrift 22s ease-in-out infinite alternate;
-  }
-  @keyframes bokehDrift{ from{ transform: translate3d(-2%, -1%, 0) scale(1); } to{ transform: translate3d(3%, 2%, 0) scale(1.06); } }
-  body.calm .overlay.page::before{ animation:none; }
-  .overlay.page:not(.page-home) .page-body{ position:relative; z-index:1; }
-  /* the brand, faint, at the bottom of every page */
-  .overlay.page:not(.page-home) .page-body::after{
-    content:""; display:block; width:150px; height:78px; margin:22px auto 0; flex-shrink:0;
-    background: url('art/logo.png') center / contain no-repeat; opacity:0.12; filter: grayscale(0.3);
-  }
-  .overlay.page:not(.page-home) .page-head{
-    background: linear-gradient(180deg, rgba(12,8,4,0.94), rgba(12,8,4,0.66));
-    border-bottom-color: color-mix(in srgb, var(--p2) 32%, transparent);
-    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-  }
-  .overlay.page:not(.page-home) .page-head::after{
-    content:""; position:absolute; left:18%; right:18%; bottom:-1px; height:2px; border-radius:2px;
-    background: linear-gradient(90deg, transparent, var(--p1), transparent); opacity:0.75;
-  }
-  .overlay.page:not(.page-home) .page-head h2{
-    font-size:22px; color:var(--p1);
-    background: linear-gradient(180deg, #fff6e2 10%, var(--p1) 55%, var(--p2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
-  }
-  .overlay.page:not(.page-home) .back-btn{
-    background: linear-gradient(160deg, var(--ic1), var(--ic2)); color: var(--ict); border:none;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.18), 0 3px 0 rgba(0,0,0,0.5), 0 0 16px color-mix(in srgb, var(--p2) 35%, transparent);
-  }
-  /* section titles get a small coloured stroke */
-  .overlay.page:not(.page-home) :is(.set-group h3, .rm-title, .sp-head > span:first-child){ color: var(--p1); }
-  .overlay.page:not(.page-home) .set-group h3::before{
-    content:""; display:inline-block; width:16px; height:3px; margin-right:8px; border-radius:2px; vertical-align:0.22em;
-    background: linear-gradient(90deg, var(--p3), var(--p1)); box-shadow: 0 0 8px var(--p2);
-  }
-  /* buttons, choices and switches in the colours of the table */
-  .overlay.page:not(.page-home) button.primary{
-    background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3)); border-color: transparent; color: var(--pt); --btn-depth: var(--pd);
-  }
-  .overlay.page:not(.page-home) :is(.fmt.on, .sp-chip.on){
-    background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3)); color: var(--ps); box-shadow: 0 3px 0 var(--pd);
-  }
-  .overlay.page:not(.page-home) :is(.fmt.on b, .sp-chip.on){ color: var(--pt); }
-  .overlay.page:not(.page-home) .on > .switch{ background: linear-gradient(90deg, var(--p3), var(--p2)); box-shadow: 0 0 10px color-mix(in srgb, var(--p2) 55%, transparent); }
-  .overlay.page:not(.page-home) input[type=range]{ accent-color: var(--p2); }
-  .overlay.page:not(.page-home) .cp-n.on{ border-color: var(--p2); box-shadow: 0 4px 0 var(--pd), 0 0 18px color-mix(in srgb, var(--p2) 35%, transparent); }
-  /* cards: a soft glass edge and a reflection that sweeps across when pressed */
-  .overlay.page:not(.page-home) :is(.opp-card, .set-row, .trophy.got, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .mode-card){
-    border-color: color-mix(in srgb, var(--p2) 26%, transparent);
-    position:relative; overflow:hidden; isolation:isolate;
-  }
-  .overlay.page:not(.page-home) :is(.opp-card, .rich-row, .profile-card, .acct-card, .mode-card, .cp-n)::after{
-    content:""; position:absolute; top:0; bottom:0; left:-60%; width:45%; pointer-events:none; z-index:2;
-    background: linear-gradient(105deg, transparent, rgba(255,255,255,0.13), transparent);
-    transform: skewX(-18deg); opacity:0;
-  }
-  .overlay.page:not(.page-home) :is(.opp-card, .rich-row, .mode-card, .cp-n):active::after,
-  .pg-in-fwd :is(.profile-card, .acct-card, .rich-row.me)::after{ animation: cardSheen 0.9s ease-out 0.25s; }
-  @keyframes cardSheen{ 0%{ left:-60%; opacity:0; } 15%{ opacity:1; } 100%{ left:120%; opacity:0; } }
-  .overlay.page:not(.page-home) .mode-card{ min-height:150px; justify-content:flex-end; }
-  .overlay.page:not(.page-home) .mode-card b{ font-size:24px; }
-  body.calm .overlay.page *::after{ animation:none !important; }
   #lightTrail{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+
+
 
   /* page slides: forward = from the right, back = from the left */
   .pg-in-fwd{ animation: pgInFwd 0.3s cubic-bezier(.2,.8,.25,1) both; }
@@ -1830,6 +1751,323 @@
     animation-duration:0.01ms !important; animation-delay:0s !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;
   }
   body.calm .amb-layer, body.calm .rain-layer{ display:none; }
+  /* =====================================================================================
+     LIQUID GLASS — the whole interface is thick glass floating over one scene:
+     the bar on the menus, the table during a game. The lens and the frost are added by the
+     glass engine (class "lg"); here: the material, the light, the layout.
+     ===================================================================================== */
+  :root{ --lg-depth:.6; --lg-frost:.3; --tx:0; --ty:0; --spring: cubic-bezier(.3,1.55,.5,1); --gl-ink:#fffaf2; --gl-soft:rgba(255,250,242,0.74); }
+
+  /* ---- the scene ---- */
+  body{ background:#0b0704; }
+  .lg-scene{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .lg-scene > div{ position:absolute; inset:0; transition: opacity .6s ease; }
+  .lg-scene .sc-photo{ position:absolute; inset:-3%; background:url('art/home-bar.jpg') center 22% / cover no-repeat; transform: scale(1.04); }
+  .lg-scene .sc-tint{ position:absolute; inset:0; background: var(--h-tint); mix-blend-mode: color; }
+  .lg-scene .sc-shade{ position:absolute; inset:0; background:
+      radial-gradient(120% 70% at 50% 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.35) 78%),
+      linear-gradient(180deg, rgba(10,6,3,0.10), rgba(10,6,3,0.22) 45%, rgba(10,6,3,0.72)); }
+  .lg-scene .sc-table{ opacity:0; }
+  body.in-game .lg-scene .sc-table{ opacity:1; }
+  body.in-game .lg-scene .sc-bar{ opacity:0; }
+  /* the table fills the whole screen now: its material, one warm pool of light, and the room falling into shadow */
+  .lg-scene .sc-felt{ position:absolute; inset:0; background: var(--felt); }
+  .lg-scene .sc-light{ position:absolute; inset:0; background:
+      radial-gradient(ellipse 80% 55% at 50% 40%, var(--pool) 0%, var(--pool2) 45%, transparent 75%),
+      radial-gradient(ellipse 150% 105% at 50% 44%, transparent 42%, rgba(0,0,0,0.6) 100%),
+      linear-gradient(180deg, rgba(255,240,210,0.06), transparent 30%); }
+  body.table-verre .lg-scene .sc-bar{ background:
+      repeating-linear-gradient(-32deg, rgba(255,252,238,0) 0 70px, rgba(255,252,238,0.42) 70px 150px, rgba(255,252,238,0) 150px 168px),
+      radial-gradient(ellipse 70% 55% at 12% 0%, rgba(255,250,230,0.95), rgba(255,250,230,0) 70%),
+      linear-gradient(180deg, #e9e0d0 0%, #d8c9b2 52%, #b9a283 100%); }
+  body.table-verre .lg-scene .sc-bar > div{ display:none; }
+  body.table-verre .lg-scene .sc-light{ background: radial-gradient(ellipse 150% 105% at 50% 44%, transparent 55%, rgba(80,60,40,0.3) 100%); }
+  /* the old dark room is gone: the circle of felt, the black vignette */
+  .table::before, .table::after, .sq-felt{ display:none !important; }
+  body::before{ background: radial-gradient(ellipse 130% 95% at 50% 46%, transparent 58%, rgba(0,0,0,0.32) 100%); }
+  body.table-verre::before{ background:none; }
+  .table-carving{ display:none; }
+
+  /* ---- the glass material ---- */
+  .gl{
+    position:relative; isolation:isolate; color:var(--gl-ink); border:none;
+    background: linear-gradient(180deg, rgba(255,255,255, calc(.06 + .08*var(--lg-depth))), rgba(255,255,255, calc(.02 + .04*var(--lg-depth))));
+    -webkit-backdrop-filter: blur(10px) saturate(175%); backdrop-filter: blur(10px) saturate(175%);
+    box-shadow:
+      inset 0 1px 0.5px rgba(255,255,255, calc(.35 + .5*var(--lg-depth))),
+      inset 0 calc(-2px - 5px*var(--lg-depth)) calc(4px + 12px*var(--lg-depth)) rgba(0,0,0, calc(.04 + .14*var(--lg-depth))),
+      inset 0 0 calc(10px + 28px*var(--lg-depth)) rgba(255,255,255, calc(.03 + .08*var(--lg-depth))),
+      0 calc(4px + 16px*var(--lg-depth)) calc(14px + 30px*var(--lg-depth)) rgba(0,0,0, calc(.16 + .22*var(--lg-depth))),
+      0 1px 3px rgba(0,0,0,0.18);
+    transition: transform .45s var(--spring), box-shadow .3s;
+  }
+  .gl::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding: calc(1px + .6px*var(--lg-depth)); pointer-events:none; z-index:2;
+    background: linear-gradient(calc(140deg + var(--tx)*50deg),
+      rgba(255,255,255, calc(.45 + .5*var(--lg-depth))), rgba(255,255,255,.06) 30%, rgba(255,255,255,.03) 62%, rgba(255,255,255, calc(.2 + .35*var(--lg-depth))));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  .gl::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
+    background:
+      radial-gradient(140px 90px at var(--mx, calc(28% + var(--tx)*40%)) var(--my, calc(4% + var(--ty)*25%)), rgba(255,255,255, calc(.12 + .28*var(--lg-depth))), rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, rgba(255,255,255, calc(.06 + .14*var(--lg-depth))), rgba(255,255,255,0) 40%);
+  }
+  .gl > *{ position:relative; z-index:3; }
+  /* tinted glass: the main actions carry the colour of the table */
+  .gl.tinted{
+    background: linear-gradient(180deg, color-mix(in srgb, var(--p2) 72%, transparent), color-mix(in srgb, var(--p3) 66%, transparent));
+    color:#fff; text-shadow: 0 1px 3px rgba(0,0,0,0.28);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), inset 0 -2px 6px rgba(0,0,0,0.14), inset 0 0 26px rgba(255,255,255,0.12),
+      0 14px 34px color-mix(in srgb, var(--p3) 40%, transparent), 0 2px 8px rgba(0,0,0,0.25);
+  }
+  /* pressing: the glass swells like a drop, then settles */
+  .press:active, .gl.press:active{ transform: scale(1.035, 0.975); filter:none; }
+  .press.pop{ animation: glPop .6s var(--spring); }
+  @keyframes glPop{ 0%{ transform: scale(1.04,.96); } 45%{ transform: scale(.985,1.02); } 100%{ transform:none; } }
+  .gl-pill{ height:44px; border-radius:999px; display:inline-flex; align-items:center; gap:8px; padding:0 16px; font-weight:700; }
+  .gl-round{ width:44px; height:44px; border-radius:50%; display:inline-grid; place-items:center; padding:0; color:#fff; flex-shrink:0; }
+  .gl-round svg.i{ width:21px; height:21px; margin:0; }
+  .gl-card{ border-radius:22px; padding:12px 16px 14px; }
+  .gl-sym{ width:40px; height:40px; border-radius:14px; display:inline-grid; place-items:center; flex-shrink:0; color:#fff;
+    background: rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55); }
+  .gl-sym svg.i{ width:22px; height:22px; margin:0; }
+  .gl-chev{ width:36px; height:36px; border-radius:50%; display:inline-grid; place-items:center; flex-shrink:0;
+    background: rgba(255,255,255,0.22); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+  .gl-chev svg.i{ width:18px; height:18px; margin:0; }
+  .gl-tag{ font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 9px; border-radius:999px;
+    background: color-mix(in srgb, var(--p2) 50%, transparent); color:#fff; flex-shrink:0; }
+
+  /* ---- buttons everywhere: pills of glass ---- */
+  button.primary, button.danger, button.whatsapp, button.passe-option{
+    border:none; border-radius:999px; color:#fff; font-weight:800; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 74%, transparent), color-mix(in srgb, var(--p3) 64%, transparent));
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), inset 0 -2px 6px rgba(0,0,0,0.14), 0 10px 26px color-mix(in srgb, var(--p3) 38%, transparent), 0 2px 6px rgba(0,0,0,0.25);
+    transition: transform .45s var(--spring), box-shadow .3s;
+  }
+  button.danger{ background: linear-gradient(180deg, rgba(255,120,100,0.8), rgba(196,38,28,0.72)); box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 10px 26px rgba(196,38,28,0.35), 0 2px 6px rgba(0,0,0,0.25); }
+  button.whatsapp{ background: linear-gradient(180deg, rgba(90,230,140,0.85), rgba(18,150,80,0.78)); box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 10px 26px rgba(18,150,80,0.35), 0 2px 6px rgba(0,0,0,0.25); }
+  button.passe-option{ background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08)); color:#fff; }
+  button.primary:active, button.danger:active, button.whatsapp:active, button.passe-option:active{ transform: scale(1.04, .96); filter:none;
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.25); }
+  .overlay.page button.primary, .overlay.page button.primary:active{ --btn-depth: transparent; }
+  /* plain buttons become clear glass too */
+  .overlay.page button:not(.primary):not(.danger):not(.whatsapp):not(.ghost):not(.back-btn):not(.tab):not(.gl):not(.fmt):not(.sp-chip):not(.swatch):not(.set-row):not(.opp-card):not(.mode-card):not(.cp-n):not(.skin-opt):not(.trophy):not(.level-btn),
+  .sheet button:not(.primary):not(.danger):not(.whatsapp):not(.ghost){
+    border:none; border-radius:999px; color:#fff;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    -webkit-backdrop-filter: blur(10px) saturate(170%); backdrop-filter: blur(10px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  /* ---- home ---- */
+  html body .overlay.page{ background: transparent !important; }
+  .page-home .home-body{ max-width:460px; align-items:stretch; text-align:left; gap:14px;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(112px + env(safe-area-inset-bottom, 0px)); }
+  .home-topbar{ display:flex; align-items:center; gap:10px; }
+  .hb-space{ flex:1; }
+  .chips-pill{ padding-left:6px; }
+  .chips-pill .coin-big{ width:32px; height:32px; border-radius:50%; display:grid; place-items:center; color:#5a3508;
+    background: radial-gradient(circle at 35% 30%, #fff3c4, #f2b544 60%, #b8740f); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 6px rgba(0,0,0,0.3); }
+  .chips-pill .coin-big svg.i{ width:18px; height:18px; margin:0; }
+  .chips-pill b{ font-size:17px; color:#fff; letter-spacing:-0.01em; font-family:var(--font-ui); }
+  .chips-pill small{ font-size:12px; color:var(--gl-soft); font-weight:600; }
+  .home-topbar .chips-claim{ font-size:13.5px; font-weight:800; padding:0 14px; animation:none; }
+  .home-topbar .chips-claim svg.i{ width:16px; height:16px; margin:0; }
+  #btnShowAccount .tile-dot{ position:absolute; top:3px; right:3px; z-index:4; }
+  .page-home .home-top{ text-align:center; margin:2px 0 0; }
+  .page-home h2.logo.has-img .logo-img{ width:min(260px, 68vw); height:auto; filter: drop-shadow(0 12px 26px rgba(0,0,0,0.5)); }
+  .page-home .home-tag{ margin:2px 0 0 !important; font-size:11.5px !important; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color:var(--gl-soft) !important; max-width:none !important; }
+  .page-home .menu-rank{ max-width:none; width:100%; }
+  .page-home .menu-rank .mr-name{ color:#fff; font-family:var(--font-ui); font-weight:800; font-size:16px; letter-spacing:0; }
+  .page-home .menu-rank .mr-rep{ color:var(--gl-soft); font-weight:600; font-size:12.5px; }
+  .page-home .menu-rank .rep-bar{ height:7px; border-radius:7px; background: rgba(255,255,255,0.14); box-shadow: inset 0 1px 2px rgba(0,0,0,0.25); border:none; margin-top:8px; }
+  .page-home .menu-rank .rep-bar > div{ border-radius:7px; background: linear-gradient(90deg, var(--p3), var(--p1)); box-shadow: 0 0 10px var(--p2); }
+  .page-home .hero-play{ width:100%; border-radius:32px; padding:20px; display:flex; align-items:center; gap:14px; min-height:112px; text-align:left; }
+  .page-home .hero-play .hero-faces{ display:flex; }
+  .page-home .hero-play .hero-faces .avatar{ margin-left:-12px; box-shadow: 0 0 0 2px rgba(255,255,255,0.8), 0 4px 10px rgba(0,0,0,0.35); }
+  .page-home .hero-play .hero-faces .avatar:first-child{ margin-left:0; }
+  .page-home .hero-play .hero-text{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .page-home .hero-play .hero-text b{ font-family:var(--font-display); font-size:31px; font-weight:800; letter-spacing:-0.03em; line-height:1; color:#fff; }
+  .page-home .hero-play .hero-text small{ margin-top:6px; font-size:13px; font-weight:600; color:rgba(255,255,255,0.9); }
+  .home-row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .hcard{ border-radius:26px; padding:16px 14px 14px; text-align:left; display:flex; flex-direction:column; gap:8px; min-height:122px; align-items:flex-start; font-family:var(--font-ui); }
+  .hcard b{ font-size:16px; font-weight:800; color:#fff; letter-spacing:-0.01em; }
+  .hcard small{ font-size:12px; color:var(--gl-soft); line-height:1.35; font-weight:500; }
+  .hcard small .marks{ vertical-align:middle; }
+  .hcard.wide{ width:100%; flex-direction:row; align-items:center; min-height:0; gap:12px; padding:14px; }
+  .hc-txt{ flex:1; display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .page-home .quote-bar{ width:100%; max-width:none; height:auto; min-height:46px; padding:0 16px; gap:10px; }
+  .page-home .quote-bar .qb-ico{ color:var(--gl-soft); background:none; box-shadow:none; }
+  .page-home .quote-bar .qb-text{ color:var(--gl-soft) !important; }
+  .page-home .quote-bar .qb-text b{ color: var(--p1); }
+  .page-home .stamp{ display:none; }
+  /* the floating tab bar */
+  .tabbar{ position:fixed; left:50%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index:5;
+    width:min(420px, calc(100% - 24px)); height:68px; border-radius:999px; display:flex; align-items:center; padding:6px; }
+  .tabbar > .tb-lens{ position:absolute; top:6px; bottom:6px; left:6px; width:calc((100% - 12px)/5); border-radius:999px; z-index:2;
+    background: rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 12px rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.2);
+    transition: transform .55s var(--spring); }
+  .tabbar .tab{ flex:1; min-width:0; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:0;
+    border:none; background:none; box-shadow:none; color:var(--gl-soft); font-size:10.5px; font-weight:700; border-radius:999px; }
+  .tabbar .tab svg.i{ width:23px; height:23px; margin:0; transition: transform .45s var(--spring); }
+  .tabbar .tab.on{ color:#fff; }
+  .tabbar .tab.on svg.i{ transform: scale(1.12); color: var(--p1); filter: drop-shadow(0 0 6px var(--p2)); }
+  .tabbar .tab:active{ transform:none; }
+  /* entrance */
+  .page-home.intro .home-body > *, .page-home.intro .tabbar{ animation: glRise .7s var(--spring) backwards; }
+  .page-home.intro .home-body > :nth-child(2){ animation-delay:.06s; } .page-home.intro .home-body > :nth-child(3){ animation-delay:.12s; }
+  .page-home.intro .home-body > :nth-child(4){ animation-delay:.18s; } .page-home.intro .home-body > :nth-child(5){ animation-delay:.24s; }
+  .page-home.intro .home-body > :nth-child(6){ animation-delay:.3s; } .page-home.intro .home-body > :nth-child(n+7){ animation-delay:.36s; }
+  .page-home.intro .tabbar{ animation-name: glRiseBar; animation-delay:.3s; }
+  @keyframes glRise{ from{ opacity:0; transform: translateY(18px) scale(.97); } }
+  @keyframes glRiseBar{ from{ opacity:0; transform: translate(-50%, 30px) scale(.94); } }
+
+  /* ---- secondary pages ---- */
+  .overlay.page:not(.page-home)::before{ display:none; }
+  .overlay.page .page-head{ background:transparent; border:none; box-shadow:none; -webkit-backdrop-filter:none; backdrop-filter:none;
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 12px 10px; }
+  .overlay.page .page-head::before{ content:""; position:absolute; inset:0 0 -22px 0; z-index:-1; pointer-events:none;
+    -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%);
+    background: linear-gradient(180deg, rgba(8,5,3,0.55), rgba(8,5,3,0));
+    -webkit-mask-image: linear-gradient(#000 55%, transparent); mask-image: linear-gradient(#000 55%, transparent); }
+  .overlay.page .page-head::after{ display:none; }
+  .overlay.page .page-head h2{ color:#fff; -webkit-text-fill-color:#fff; background:none; filter:none; font-family:var(--font-ui); font-weight:800; font-size:19px; text-shadow: 0 2px 10px rgba(0,0,0,0.45); }
+  .overlay.page .back-btn{ width:44px; height:44px; font-size:30px; padding:0 0 4px; color:#fff; border:none; }
+  .overlay.page .page-body{ position:relative; z-index:1; }
+  .overlay.page .page-intro, .overlay.page .small-note, .overlay.page p{ text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+  .overlay.page .set-group h3, .overlay.page .rm-title, .overlay.page .sp-head > span:first-child, .overlay.page .skin-group h3, .overlay.page .stats-group h3{ color: var(--p1); }
+  /* list items: clear glass, without the lens (too many of them) */
+  .overlay.page :is(.set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .format-pick, .rules-box){
+    border:none; color:var(--gl-ink);
+    background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255, calc(.3 + .4*var(--lg-depth))), inset 0 0 18px rgba(255,255,255,0.05),
+      0 calc(4px + 10px*var(--lg-depth)) calc(12px + 18px*var(--lg-depth)) rgba(0,0,0, calc(.14 + .16*var(--lg-depth)));
+  }
+  .overlay.page :is(.set-row, .opp-card, .rich-row, .cp-n, .skin-opt, .level-btn):active{ transform: scale(1.02, .98); }
+  .overlay.page .set-row{ border-radius:20px; }
+  .overlay.page .opp-card, .overlay.page .rich-row, .overlay.page .acct-card, .overlay.page .profile-card{ border-radius:24px; }
+  .overlay.page .trophy{ border-radius:18px; }
+  .overlay.page .trophy.got{ background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 26%, transparent), rgba(255,255,255,0.05)); }
+  .overlay.page .rules-box{ border-radius:24px; padding:14px 16px; }
+  .overlay.page .format-pick{ border-radius:999px; padding:5px; }
+  .overlay.page .format-pick .fmt{ border-radius:999px; }
+  .overlay.page .fmt.on, .overlay.page .sp-chip.on, .overlay.page .cp-n.on, .overlay.page .skin-opt.on, .overlay.page .rich-row.me{
+    background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 60%, transparent), color-mix(in srgb, var(--p3) 50%, transparent)) !important;
+    color:#fff; box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 6px 18px color-mix(in srgb, var(--p3) 35%, transparent) !important; border:none; }
+  .overlay.page .fmt.on b, .overlay.page .fmt.on small, .overlay.page .sp-chip.on{ color:#fff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .overlay.page .sp-chip{ border:none; border-radius:999px; background: rgba(255,255,255,0.12); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); color:#fff; }
+  .overlay.page .on > .switch{ background: linear-gradient(90deg, var(--p3), var(--p2)); box-shadow: 0 0 10px color-mix(in srgb, var(--p2) 55%, transparent); }
+  .overlay.page .switch{ background: rgba(255,255,255,0.18); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+  .overlay.page input[type=range]{ accent-color: var(--p2); }
+  .overlay.page .mp-input{ border:none; border-radius:16px; background: rgba(255,255,255,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.14); color:#fff; }
+  .overlay.page .mode-card{ border:none; border-radius:30px; min-height:150px; justify-content:flex-end; }
+  .overlay.page .mode-card.mode-online{ background: linear-gradient(180deg, rgba(90,220,150,0.36), rgba(20,110,70,0.3)); }
+  .overlay.page .mode-card.mode-carre{ background: linear-gradient(180deg, rgba(255,120,100,0.36), rgba(150,30,20,0.3)); }
+  .overlay.page .mode-card b{ color:#fff; font-size:25px; }
+  .overlay.page .mode-card small{ color:var(--gl-soft); opacity:1; }
+  .overlay.page .mode-ico{ background: rgba(255,255,255,0.16); border:none; box-shadow: inset 0 1px 0 rgba(255,255,255,0.55); color:#fff; }
+
+  /* ---- sheets, full-screen overlays, toasts ---- */
+  .overlay.modal{ background: rgba(5,3,1,0.35); -webkit-backdrop-filter: blur(8px) saturate(140%); backdrop-filter: blur(8px) saturate(140%); }
+  .sheet.gl{ border-radius:32px; max-width:350px; background: linear-gradient(180deg, rgba(48,36,26,0.5), rgba(22,15,10,0.58)); }
+  .sheet .menu-list button{ border-radius:999px; box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 6px 18px rgba(0,0,0,0.25); }
+  .sheet .menu-list button.primary{ box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), inset 0 -2px 6px rgba(0,0,0,0.14), 0 10px 26px color-mix(in srgb, var(--p3) 38%, transparent); }
+  .sheet .menu-list button.danger{ box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 10px 26px rgba(196,38,28,0.35); }
+  .sheet .menu-list button:active{ transform: scale(1.03, .97); box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.7), 0 3px 10px rgba(0,0,0,0.25); }
+  .sheet h2{ color:#fff; text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+  body .overlay:not(.page):not(.modal){ background: rgba(6,4,2,0.5); -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%); }
+  .toast{ border:none; border-radius:26px; color:#fff; background: linear-gradient(180deg, rgba(60,44,30,0.55), rgba(24,16,10,0.62));
+    -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.7), 0 18px 40px rgba(0,0,0,0.45); }
+  .net-banner{ border:none; background: rgba(40,20,14,0.6); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 8px 22px rgba(0,0,0,0.4); }
+
+  /* ---- the game screen: controls float as glass over the table ---- */
+  .app-shell{ position:relative; z-index:10; }
+  body:not(.in-game) .app-shell{ visibility:hidden; }
+  header{ height: calc(env(safe-area-inset-top, 0px) + 58px); padding:0; }
+  header h1, header .sub{ display:none; }
+  /* menu and sound: big round glass buttons, below the iPhone notch and status bar, within reach of the thumb */
+  #btnMenu, #btnMute{ position:absolute !important; top: calc(env(safe-area-inset-top, 0px) + 7px) !important; width:44px; height:44px; padding:0 !important;
+    border-radius:50%; display:grid; place-items:center; text-decoration:none; color:#fff; z-index:12; }
+  #btnMenu{ left:12px !important; } #btnMute{ right:12px !important; }
+  #btnMenu svg.i, #btnMute svg.i{ width:22px; height:22px; margin:0; }
+  #duoScreen .scorebar, #squareScreen .sq-scoreboard{ margin: -51px 64px 0; min-height:44px; padding:4px 16px; border-radius:999px; border:none; position:relative; z-index:11; }
+  #duoScreen .scorebar .who{ color:var(--gl-soft); font-size:10.5px; }
+  #duoScreen .scorebar .val{ font-size:19px; color:#fff; font-weight:800; }
+  #duoScreen .scorebar .val.me{ color: var(--p1); }
+  #duoScreen .scorebar .mid{ color:var(--gl-soft); font-size:11px; font-weight:600; }
+  #squareScreen .sq-scoreboard{ padding:4px 8px; border-radius:22px; }
+  .sq-score-item.turn{ background: color-mix(in srgb, var(--p2) 35%, transparent); border-radius:999px; }
+  .ai-label{ padding:4px 12px 4px 4px; border-radius:999px; color:#fff; font-weight:700;
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.55), 0 6px 16px rgba(0,0,0,0.25); }
+  .demand-badge, .sq-demand{ border:none; border-radius:999px; color:#fff; padding:6px 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 6px 16px rgba(0,0,0,0.25); }
+  .demand-badge b, .sq-demand b{ color: var(--p1); }
+  .demand-badge, .sq-demand{ white-space:nowrap; }
+  .demand-badge.your-turn, .sq-demand.your-turn{ background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 60%, transparent), color-mix(in srgb, var(--p3) 48%, transparent)); }
+  .slot-label{ color: rgba(255,255,255,0.75); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .slot:empty::before{ border:1.5px dashed rgba(255,255,255,0.28); border-radius:9px; background: rgba(255,255,255,0.04); }
+  .hand-label{ color: var(--gl-soft); text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .sq-name{ color:#fff; background: rgba(255,255,255,0.1); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); border-radius:999px; padding:2px 10px 2px 2px; }
+  .sq-seat.active-turn .sq-name{ background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 70%, transparent), color-mix(in srgb, var(--p3) 58%, transparent)); color:#fff; box-shadow: 0 0 16px var(--p2); }
+  /* speech bubbles and the coach: milky glass */
+  .penalty-bubble, .sq-bubble, .my-bubble, .coach{ background: rgba(255,250,242,0.86); -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: inset 0 1px 0 #fff, 0 10px 26px rgba(0,0,0,0.35); border-radius:20px 20px 20px 6px; }
+  .penalty-bubble::after{ background: rgba(255,250,242,0.86); }
+  /* the hand rests on a floating tray of glass, above the iPhone home bar */
+  .hand-zone{ margin: 0 8px calc(8px + env(safe-area-inset-bottom, 0px)); padding: 8px 0 10px; border:none; border-radius:30px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255, calc(.35 + .4*var(--lg-depth))), inset 0 0 22px rgba(255,255,255,0.05),
+      0 calc(6px + 12px*var(--lg-depth)) calc(18px + 20px*var(--lg-depth)) rgba(0,0,0, calc(.2 + .2*var(--lg-depth))); }
+  .hand-zone.active-turn{ animation:none; box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), inset 0 0 26px color-mix(in srgb, var(--p1) 25%, transparent),
+      0 0 0 1.5px color-mix(in srgb, var(--p1) 70%, transparent), 0 0 28px color-mix(in srgb, var(--p2) 45%, transparent); }
+  .hand-label.your-turn{ color: var(--p1); text-shadow: 0 0 12px var(--p2); }
+  .ctrl-token{ border:none; color:#fff; background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.7), 0 0 18px color-mix(in srgb, var(--p2) 40%, transparent), 0 6px 14px rgba(0,0,0,0.3); }
+  .chat-fab{ color:#fff; background: linear-gradient(180deg, color-mix(in srgb, var(--p2) 72%, transparent), color-mix(in srgb, var(--p3) 66%, transparent));
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 10px 24px rgba(0,0,0,0.35); }
+  .chat-fab:active{ transform: scale(1.06, .94); box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.3); }
+  /* the age check: the bar behind frosted glass */
+  .age-gate{ background: rgba(6,4,2,0.4) !important; -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%); }
+  .age-gate .ag-yes, .age-gate .ag-no{ border:none !important; border-radius:999px !important; color:#fff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    -webkit-backdrop-filter: blur(12px) saturate(170%); backdrop-filter: blur(12px) saturate(170%); }
+  .age-gate .ag-yes{ background: linear-gradient(180deg, color-mix(in srgb, var(--p2) 78%, transparent), color-mix(in srgb, var(--p3) 72%, transparent)) !important;
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.85), 0 14px 30px color-mix(in srgb, var(--p3) 40%, transparent) !important; }
+  .age-gate .ag-no{ background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05)) !important;
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 8px 20px rgba(0,0,0,0.3) !important; }
+  .age-gate .ag-yes:active, .age-gate .ag-no:active{ transform: scale(1.04, .96); }
+  /* the cut ritual: two cards of glass, "share" tinted with the colour of the table */
+  .ritual-card{ border-radius:30px !important; color:#fff !important; border:none !important; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--p2) 72%, transparent), color-mix(in srgb, var(--p3) 66%, transparent)) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+    box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), inset 0 0 26px rgba(255,255,255,0.12), 0 14px 34px rgba(0,0,0,0.35) !important; }
+  .ritual-card.rc-cut{ background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05)) !important; }
+  .ritual-card:active{ transform: scale(1.04, .96) !important; }
+  .ritual-card .rc-ico{ background: rgba(255,255,255,0.2) !important; color:#fff !important; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6) !important; }
+  /* every table: the material, its fine grain, a soft sheen of light across it */
+  .lg-scene .sc-felt::after{ content:""; position:absolute; inset:0; opacity:.32; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .lg-scene .sc-light::after{ content:""; position:absolute; inset:0;
+    background: linear-gradient(112deg, transparent 30%, rgba(255,250,235,0.07) 42%, rgba(255,250,235,0.02) 50%, transparent 58%); }
+  /* the bright glass table in daylight: dark ink on the glass */
+  body.table-verre .gl, body.table-verre .overlay.page :is(.set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .format-pick, .rules-box),
+  body.table-verre .ai-label, body.table-verre .demand-badge, body.table-verre .sq-demand{ background: linear-gradient(180deg, rgba(60,44,30,0.34), rgba(40,28,18,0.26)); }
+  body.table-verre .gl.tinted{ background: linear-gradient(180deg, color-mix(in srgb, var(--p1) 70%, transparent), color-mix(in srgb, var(--p3) 62%, transparent)); }
+  .gl-slider{ flex-direction:column; align-items:stretch; gap:6px; }
+  .gl-slider > span{ display:flex !important; justify-content:space-between; }
+  .gl-slider b{ color: var(--p1); font-variant-numeric: tabular-nums; }
+  .overlay.page .gl-slider input[type=range]{ width:100%; max-width:none; }
 </style>
 </head>
 <body>
@@ -1888,147 +2126,16 @@
   <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></symbol>
   <symbol id="i-hush" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 15h7M9 9.5h.01M15 9.5h.01"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none" opacity="0.28"/><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 2.5v3m0 13v3M2.5 12h3m13 0h3M5.3 5.3l2.1 2.1m9.2 9.2 2.1 2.1m0-13.4-2.1 2.1m-9.2 9.2-2.1 2.1"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m11 3 1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3zm7.5 11 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z"/></symbol>
 </svg>
-<!-- Illustrated icons for the home tiles: small coloured objects with depth. The "theme" gradients follow the table (--p1..--pd). -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <defs>
-    <linearGradient id="ilTheme" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--p1)"/><stop offset=".55" style="stop-color:var(--p2)"/><stop offset="1" style="stop-color:var(--p3)"/></linearGradient>
-    <linearGradient id="ilThemeDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--p2)"/><stop offset="1" style="stop-color:var(--pd)"/></linearGradient>
-    <linearGradient id="ilGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#f7c948"/><stop offset="1" stop-color="#c47a12"/></linearGradient>
-    <linearGradient id="ilGoldSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c47a12"/><stop offset=".38" stop-color="#ffe680"/><stop offset=".62" stop-color="#f7c948"/><stop offset="1" stop-color="#a8620b"/></linearGradient>
-    <linearGradient id="ilCream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eedfc2"/></linearGradient>
-    <linearGradient id="ilCloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfdff3"/></linearGradient>
-    <linearGradient id="ilInk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55443a"/><stop offset="1" stop-color="#1c140d"/></linearGradient>
-    <linearGradient id="ilSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0925f"/><stop offset="1" stop-color="#874b27"/></linearGradient>
-    <linearGradient id="ilGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ef0b4"/><stop offset="1" stop-color="#23955a"/></linearGradient>
-    <linearGradient id="ilRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a86"/><stop offset="1" stop-color="#cf2f26"/></linearGradient>
-    <linearGradient id="ilBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6d4ff"/><stop offset="1" stop-color="#3a74db"/></linearGradient>
-    <linearGradient id="ilShine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
-    <linearGradient id="ilSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fa"/><stop offset=".5" stop-color="#b9c1cd"/><stop offset="1" stop-color="#6f7a8a"/></linearGradient>
-    <radialGradient id="ilShadow"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
-  </defs>
 
-  <!-- Profil: a player with his crown and a star medal -->
-  <symbol id="il-profil" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="58.5" rx="21" ry="3.6" fill="url(#ilShadow)"/>
-    <path d="M11 57C11 43 20 36 32 36s21 7 21 21z" fill="url(#ilTheme)"/>
-    <path d="M15.5 53c1-7 5-11.5 11-13" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M26 36.6 32 46l6-9.4c-2-.4-4-.6-6-.6s-4 .2-6 .6z" fill="url(#ilCream)"/>
-    <rect x="28" y="29" width="8" height="9" rx="3" fill="#7d4524"/>
-    <circle cx="32" cy="24" r="11" fill="url(#ilSkin)"/>
-    <path d="M21.4 23c-.4-8 4.4-12 10.6-12s11 4 10.6 12c-2.6-4-6.4-5.4-10.6-5.4S24 19 21.4 23z" fill="#24160d"/>
-    <ellipse cx="27.5" cy="21" rx="3.2" ry="2" fill="url(#ilShine)" opacity=".55"/>
-    <g transform="rotate(-12 32 10)">
-      <path d="M22 13.5 24 3l5.2 5.4L32 1l2.8 7.4L40 3l2 10.5z" fill="url(#ilGold)" stroke="#a3620c" stroke-width=".8" stroke-linejoin="round"/>
-      <rect x="22" y="11.6" width="20" height="3" rx="1.2" fill="url(#ilGoldSide)"/>
-      <circle cx="32" cy="9" r="1.7" fill="url(#ilRed)"/><circle cx="25.6" cy="10" r="1.2" fill="url(#ilBlue)"/><circle cx="38.4" cy="10" r="1.2" fill="url(#ilGreen)"/>
-    </g>
-    <circle cx="48" cy="47" r="8.6" fill="url(#ilInk)" stroke="url(#ilGold)" stroke-width="2"/>
-    <polygon points="48,42 49.29,45.22 52.76,45.45 50.09,47.68 50.94,51.05 48,49.2 45.06,51.05 45.91,47.68 43.24,45.45 46.71,45.22" fill="url(#ilGold)"/>
-  </symbol>
-
-  <!-- Trophées: a golden cup with a star, on its pedestal -->
-  <symbol id="il-trophees" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="59" rx="19" ry="3.4" fill="url(#ilShadow)"/>
-    <path d="M15.5 14C6 14 6 31 21 31.5" fill="none" stroke="url(#ilGold)" stroke-width="4" stroke-linecap="round"/>
-    <path d="M48.5 14C58 14 58 31 43 31.5" fill="none" stroke="url(#ilGold)" stroke-width="4" stroke-linecap="round"/>
-    <rect x="18" y="50" width="28" height="8.5" rx="2.2" fill="url(#ilInk)"/>
-    <rect x="24" y="52.6" width="16" height="3.2" rx="1" fill="url(#ilGold)"/>
-    <rect x="21.5" y="45.5" width="21" height="5.5" rx="1.6" fill="url(#ilThemeDeep)"/>
-    <path d="M28.6 36h6.8l-1.2 10h-4.4z" fill="url(#ilGoldSide)"/>
-    <path d="M14 10h36v6.5C50 28.5 42 37.5 32 37.5S14 28.5 14 16.5z" fill="url(#ilGoldSide)"/>
-    <rect x="12.8" y="7.6" width="38.4" height="5" rx="2.5" fill="url(#ilGold)"/>
-    <path d="M19.5 15c.2 9.5 2.8 15.2 7 18.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>
-    <polygon points="32,15.5 33.53,19.4 37.71,19.65 34.47,22.3 35.53,26.35 32,24.1 28.47,26.35 29.53,22.3 26.29,19.65 30.47,19.4" fill="#fffbea" stroke="#d99a1c" stroke-width=".6"/>
-    <path d="M55 2.5l1.2 3.8L60 7.5l-3.8 1.2L55 12.5l-1.2-3.8L50 7.5l3.8-1.2z" fill="#fff6c8"/>
-    <path d="M9 37l.9 3.1L13 41l-3.1.9L9 45l-.9-3.1L5 41l3.1-.9z" fill="#fff6c8" opacity=".9"/>
-  </symbol>
-
-  <!-- Décors: two playing cards and a painter's palette -->
-  <symbol id="il-decors" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="59" rx="22" ry="3.4" fill="url(#ilShadow)"/>
-    <g transform="rotate(-16 24 24)">
-      <rect x="13" y="7" width="22" height="30" rx="3.2" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
-      <path d="M24 28c-6-4.5-5-9.5-2-9.5 1.2 0 2 .9 2 .9s.8-.9 2-.9c3 0 4 5-2 9.5z" fill="url(#ilRed)"/>
-    </g>
-    <g transform="rotate(13 40 22)">
-      <rect x="29" y="6" width="22" height="30" rx="3.2" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
-      <path d="M40 14c-6 5.5-5.5 10-2 10 .8 0 1.4-.4 1.6-.8L38.6 27h2.8l-1-3.8c.2.4.8.8 1.6.8 3.5 0 4-4.5-2-10z" fill="url(#ilInk)"/>
-    </g>
-    <path d="M32 30c13 0 23 6 23 14 0 6-5 7-9 5.5-3-1.1-5 .5-4 3.5 1 3.5-4 5-10 5-14 0-23-6-23-14 0-8.5 10-14 23-14z" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1"/>
-    <path d="M14 40c3-4.5 9.5-7 17-7" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="25.5" cy="51.5" r="3.3" fill="#1c140d" opacity=".5"/>
-    <circle cx="18.5" cy="43" r="3.8" fill="url(#ilRed)"/><circle cx="28.5" cy="38.6" r="3.8" fill="url(#ilGreen)"/><circle cx="39.6" cy="40" r="3.8" fill="url(#ilBlue)"/><circle cx="37" cy="50" r="3.4" fill="#fff6dc"/>
-    <circle cx="17.4" cy="41.8" r="1.1" fill="#fff" opacity=".8"/><circle cx="27.4" cy="37.4" r="1.1" fill="#fff" opacity=".8"/><circle cx="38.5" cy="38.8" r="1.1" fill="#fff" opacity=".8"/>
-    <g transform="rotate(32 50 30)">
-      <rect x="47.6" y="20" width="5" height="26" rx="2.5" fill="url(#ilInk)"/>
-      <rect x="47.1" y="15.5" width="6" height="6" rx="1.2" fill="#cfd3da"/>
-      <path d="M47.3 16c0-5 2.8-9.5 2.8-9.5s2.8 4.5 2.8 9.5z" fill="url(#ilRed)"/>
-    </g>
-  </symbol>
-
-  <!-- Règles: an open book with two cards (a 3, of course) slipped inside -->
-  <symbol id="il-regles" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="60" rx="24" ry="3.2" fill="url(#ilShadow)"/>
-    <g transform="rotate(-11 24 16)">
-      <rect x="16" y="3" width="16" height="23" rx="2.6" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".7"/>
-      <path d="M24 9l3.2 4.4L24 17.8l-3.2-4.4z" fill="url(#ilRed)"/>
-    </g>
-    <g transform="rotate(10 40 16)">
-      <rect x="32" y="2" width="16" height="23" rx="2.6" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".7"/>
-      <text x="40" y="17.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="900" fill="#c8302a">3</text>
-    </g>
-    <path d="M5 25h3v27c8-2 17-2 24 2 7-4 16-4 24-2V25h3v32c-10-2-19-2-27 2-8-4-17-4-27-2z" fill="url(#ilThemeDeep)"/>
-    <path d="M32 24c-7-4-16-4-24-2v30c8-2 17-2 24 2z" fill="url(#ilCream)"/>
-    <path d="M32 24c7-4 16-4 24-2v30c-8-2-17-2-24 2z" fill="url(#ilCream)"/>
-    <path d="M32 24c7-4 16-4 24-2v30c-8-2-17-2-24 2z" fill="#8a6a3a" opacity=".07"/>
-    <path d="M32 24v30" stroke="#d3be98" stroke-width="1.2"/>
-    <g fill="none" stroke="#cdb48a" stroke-width="1.7" stroke-linecap="round">
-      <path d="M12 30c5-1 11-1 16 1"/><path d="M12 36c5-1 11-1 16 1"/><path d="M12 42c5-1 9-1 13 .6"/>
-      <path d="M36 31c5-2 11-2 16-1"/><path d="M36 37c5-2 11-2 16-1"/><path d="M36 43c4-1.6 8-1.6 12-1"/>
-    </g>
-    <path d="M45 21.2v14.5l2.6-2.6 2.6 2.6V21.6z" fill="url(#ilRed)"/>
-  </symbol>
-
-  <!-- Paramètres: a gear and a small panel of sliders -->
-  <symbol id="il-reglages" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="59" rx="22" ry="3.4" fill="url(#ilShadow)"/>
-    <circle cx="25" cy="27" r="17.5" fill="none" stroke="url(#ilSteel)" stroke-width="7.5" stroke-dasharray="6.9 6.85"/>
-    <circle cx="25" cy="27" r="14.2" fill="url(#ilSteel)" stroke="#8a94a3" stroke-width="1.2"/><circle cx="25" cy="27" r="9.6" fill="none" stroke="#7d8796" stroke-opacity=".5" stroke-width="1.4"/>
-    <circle cx="25" cy="27" r="6.4" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1"/>
-    <circle cx="25" cy="27" r="2.4" fill="#1c140d"/>
-    <path d="M14.5 21.5c2-4 5.6-6.4 9.6-6.8" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="2" stroke-linecap="round"/>
-    <rect x="29" y="35" width="30" height="21" rx="5.5" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
-    <rect x="34.5" y="40.5" width="19" height="3.2" rx="1.6" fill="#dccaa6"/>
-    <rect x="34.5" y="40.5" width="12" height="3.2" rx="1.6" fill="url(#ilThemeDeep)"/>
-    <circle cx="46.5" cy="42.1" r="3.9" fill="#fff" stroke="url(#ilThemeDeep)" stroke-width="1.6"/>
-    <rect x="34.5" y="48" width="19" height="3.2" rx="1.6" fill="#dccaa6"/>
-    <rect x="34.5" y="48" width="6" height="3.2" rx="1.6" fill="url(#ilGreen)"/>
-    <circle cx="40.5" cy="49.6" r="3.9" fill="#fff" stroke="#23955a" stroke-width="1.6"/>
-  </symbol>
-
-  <!-- Mon compte: a cloud, guarded by a shield with a tick -->
-  <symbol id="il-compte" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="60" rx="21" ry="3.2" fill="url(#ilShadow)"/>
-    <path d="M16 45c-7 0-10.5-5-10.5-9.5 0-5 4.2-9.2 9.4-8.8C16.4 19 22.6 14 30 14s13.4 5 15 11.6c6.4 0 11.5 4.6 11.5 10.4S52 45 47 45z" fill="url(#ilCloud)"/>
-    <path d="M13 30.5c1.4-1.6 3.2-2.4 5.4-2.2M24 19.5c2-1.6 4.4-2.4 7-2.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
-    <path d="M41 30l12.5 4.6v8.6c0 7.6-5.2 12.8-12.5 15.4-7.3-2.6-12.5-7.8-12.5-15.4v-8.6z" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1.6" stroke-linejoin="round"/>
-    <path d="M41 33.2l9.6 3.5v6.4c0 2.4-.6 4.5-1.7 6.3-3.2-5.4-8-9.4-14.3-11.6l-3.2-.9v-.2z" fill="url(#ilShine)" opacity=".45"/>
-    <path d="M35 44.5l4.4 4.4 8-8.8" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
-  </symbol>
-
-  <!-- Partie guidée: a graduation cap -->
-  <symbol id="il-tuto" viewBox="0 0 64 64">
-    <ellipse cx="32" cy="58" rx="20" ry="3.4" fill="url(#ilShadow)"/>
-    <path d="M16 28v11c0 5 8 8.5 16 8.5s16-3.5 16-8.5V28l-16 7.5z" fill="url(#ilInk)"/>
-    <polygon points="32,10 59,22.5 32,35 5,22.5" fill="url(#ilInk)" stroke="#6b5646" stroke-width="1"/>
-    <polygon points="32,12.5 52,22.2 32,31.8" fill="#fff" opacity=".07"/>
-    <path d="M32 22.5L52 27v13" fill="none" stroke="#f7c948" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="32" cy="22.5" r="2.8" fill="url(#ilGold)"/>
-    <rect x="49" y="38.5" width="6" height="10" rx="2.6" fill="url(#ilTheme)"/>
-  </symbol>
-</svg>
+<!-- The scene behind all the glass: the bar on the menus, the table during a game (body.in-game).
+     On iPhone the glass engine copies it into each piece of glass to draw the lens, so it is styled by classes only. -->
+<div class="lg-scene" id="lgScene" aria-hidden="true">
+  <div class="sc-bar"><div class="sc-photo"></div><div class="sc-tint"></div><div class="sc-shade"></div></div>
+  <div class="sc-table"><div class="sc-felt"></div><div class="sc-light"></div></div>
+</div>
 <!-- Age check: the very first screen. "No" closes the game. -->
 <div class="age-gate hidden" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="agQ">
   <div class="ag-card" id="agCard">
@@ -2342,49 +2449,62 @@
 <!-- ===================== Pages (each one has a back button; the phone's back button works too) ===================== -->
 <div class="overlay page page-home" id="menuOverlay">
   <div class="page-body home-body">
+    <div class="home-topbar">
+      <span class="lg gl gl-pill chips-pill press" id="chipsBar"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
+      <span class="hb-space"></span>
+      <button class="lg gl gl-pill tinted chips-claim hidden press" id="btnChipsClaim"></button>
+      <button class="lg gl gl-round press" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
+      <button class="lg gl gl-round press" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
+    </div>
+
     <div class="home-top">
-      <h2 class="logo has-img" aria-label="Fap Fap"><img class="logo-img" src="art/logo.png" alt="Fap Fap" width="600" height="312" onerror="this.parentNode.classList.remove('has-img'); this.remove();"><span class="logo-txt"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></span></h2>
+      <h2 class="logo has-img" aria-label="Fap Fap"><img class="logo-img" src="art/logo.png" alt="Fap Fap" width="857" height="446" onerror="this.parentNode.classList.remove('has-img'); this.remove();"><span class="logo-txt"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></span></h2>
       <p class="home-tag">Le jeu de cartes du quartier</p>
     </div>
-    <div class="menu-rank" id="menuRank"></div>
-    <div class="chips-bar" id="chipsBar">
-      <span class="chips-bal"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
-      <button class="chips-claim hidden" id="btnChipsClaim"></button>
-      <button class="chips-rich" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
-    </div>
 
-    <button class="hero-btn hero-tuto" id="modeTuto" style="--d:0">
-      <span class="hero-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
-      <span class="hero-text"><b>Nouveau ? Apprends à jouer</b><small>2 minutes avec Penalty, qui t'explique tout en jouant</small></span>
-      <span class="hero-go">›</span>
-    </button>
-    <button class="hero-btn hero-play" id="btnGoPlay" style="--d:1">
-      <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span></span>
+    <div class="lg gl gl-card menu-rank" id="menuRank"></div>
+
+    <button class="lg gl tinted hero-play press" id="btnGoPlay" style="--d:1">
+      <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:44px"></span><span class="avatar" data-char="aristide" style="--s:44px"></span><span class="avatar" data-char="penalty" style="--s:44px"></span></span>
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
-      <span class="hero-go">›</span>
-    </button>
-    <button class="hero-btn hero-daily" id="modeDaily" style="--d:2">
-      <span class="hero-ico"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
-      <span class="hero-text"><b>Le défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small></span>
-      <span class="hero-go">›</span>
+      <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
 
-    <div class="tile-grid">
-      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-profil"/></svg></span><span class="tile-lbl">Profil</span></button>
-      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-trophees"/></svg></span><span class="tile-lbl">Trophées</span></button>
-      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-decors"/></svg></span><span class="tile-lbl">Décors</span></button>
-      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-regles"/></svg></span><span class="tile-lbl">Règles</span></button>
-      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-reglages"/></svg></span><span class="tile-lbl">Paramètres</span></button>
-      <button class="tile tile-acct" id="btnShowAccount" style="--k:5"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-compte"/></svg><i class="tile-dot hidden" id="acctDot"></i></span><span class="tile-lbl">Mon compte</span></button>
-      <button class="tile hidden" id="btnTutoAgain" style="--k:6"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-tuto"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
+    <div class="home-row2">
+      <button class="lg gl hcard press" id="modeDaily" style="--d:2">
+        <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+        <b>Défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small>
+      </button>
+      <button class="lg gl hcard press" id="btnShowRules" style="--d:3">
+        <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>
+        <b>Les règles</b><small>CORA, Passe, victoires automatiques</small>
+      </button>
     </div>
-    <div class="quote-bar" id="quoteBar" aria-live="polite">
+
+    <button class="lg gl hcard wide press" id="modeTuto" style="--d:4">
+      <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
+      <span class="hc-txt"><b>Apprendre à jouer</b><small>2 minutes avec Penalty, qui t'explique tout</small></span>
+      <span class="gl-tag">Nouveau</span>
+    </button>
+    <button class="lg gl hcard wide press hidden" id="btnTutoAgain" style="--d:4">
+      <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
+      <span class="hc-txt"><b>Partie guidée</b><small>Rejoue la leçon avec Penalty</small></span>
+    </button>
+
+    <div class="lg gl gl-pill quote-bar" id="quoteBar" aria-live="polite">
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
       <div class="qb-track"><p class="qb-text" id="quoteText"></p></div>
     </div>
-    <button class="primary hidden" id="btnInstall"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg> Installer le jeu sur ce téléphone</button>
-    <div class="stamp">CERTIFIÉ<br>PAR PENALTY</div>
+    <button class="lg gl tinted hcard wide press hidden" id="btnInstall"><span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hc-txt"><b>Installer le jeu</b><small>Sur l'écran d'accueil de ce téléphone</small></span></button>
   </div>
+  <nav class="lg gl tabbar" id="homeTabbar" aria-label="Menu principal">
+    <span class="tb-lens" id="tabLens"></span>
+    <button class="tab on" id="tabHome"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Accueil</button>
+    <button class="tab" id="btnShowStats"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Profil</button>
+    <button class="tab" id="btnShowTrophies"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg>Trophées</button>
+    <button class="tab" id="btnShowSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg>Décors</button>
+    <button class="tab" id="btnShowSettings"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg>Réglages</button>
+  </nav>
 </div>
 
 <div class="overlay page hidden" id="playPage">
@@ -2616,6 +2736,12 @@
       <button class="set-row" id="btnToggleChat"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Chat avec les autres joueurs</span><span class="switch"></span></button>
     </div>
     <div class="set-group">
+      <h3>Verre liquide</h3>
+      <label class="set-row set-slider gl-slider"><span>Profondeur du verre <b id="glassDepthVal">60</b></span><input type="range" id="glassDepth" min="0" max="100" step="1"></label>
+      <label class="set-row set-slider gl-slider"><span>Givre <b id="glassFrostVal">30</b></span><input type="range" id="glassFrost" min="0" max="100" step="1"></label>
+      <p class="small-note" id="glassNote"></p>
+    </div>
+    <div class="set-group">
       <h3>Confidentialité</h3>
       <button class="set-row" id="btnToggleStats"><span><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Statistiques anonymes</span><span class="switch"></span></button>
       <p class="small-note">Aucun nom ni message n'est envoyé : seulement des chiffres de jeu, pour améliorer Fap Fap.</p>
@@ -2703,6 +2829,246 @@
   </form>
 </div>
 
+<script>
+/* Liquid Glass engine for Fap Fap.
+ * Each element with class "lg" becomes a piece of thick glass:
+ *  - a real lens on its edges: a displacement map (computed for the exact size and corner radius of the element)
+ *    bends the scene behind it, strongly near the border and not at all in the centre;
+ *  - chromatic dispersion: red, green and blue are bent by slightly different amounts, so the curved edges
+ *    split the light a little, like real glass;
+ *  - frost (blur), and light that moves when the phone is tilted.
+ * Refraction needs backdrop-filter with an SVG filter, which only Chromium supports (Chrome, Android, Edge);
+ * elsewhere (Safari / iPhone) the glass keeps its blur, rim light and depth, without the bending.
+ * Settings: LiquidGlass.set({depth: 0..100, frost: 0..100}).
+ */
+(function(){
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const chromium = !!(navigator.userAgentData && navigator.userAgentData.brands &&
+    navigator.userAgentData.brands.some(b=> /Chromium/.test(b.brand)));
+  // Safari (iPhone) cannot bend what is behind an element. There, each piece of glass carries its own copy of the
+  // scene, magnified like through a lens and only visible on its rim ("mirror" mode). ?mirror forces it for testing.
+  const forceMirror = /[?&]mirror\b/.test(location.search);
+  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, scene: '.lg-scene, .scene' };
+
+  const css = document.createElement('style');
+  css.textContent =
+    '.lg>.lg-mirror{position:absolute!important;inset:0;z-index:0!important;border-radius:inherit;overflow:hidden;pointer-events:none;'+
+      '-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}'+
+    '.lg-mirror-in{position:absolute;left:0;top:0;will-change:transform;filter:saturate(1.35) brightness(1.1) contrast(1.05)}'+
+    '.lg-mirror-in .lg-scene-copy{position:absolute!important;inset:0!important}'+
+    '.lg-mirror-in .lg-scene-copy *{animation:none!important}'+
+    '.lg-mirror .lg-fringe{position:absolute;inset:0;border-radius:inherit;mix-blend-mode:screen;opacity:var(--lg-depth,.6);'+
+      'box-shadow:inset 1.5px 1.5px 1px rgba(255,70,90,.35),inset -1.5px -1.5px 1px rgba(70,140,255,.35)}';
+  document.head.appendChild(css);
+  const items = new Map(); // element -> {id, w, h, r}
+  let uid = 0;
+
+  // one hidden <svg> holds a filter per piece of glass
+  const host = document.createElementNS(SVGNS, 'svg');
+  host.setAttribute('width', '0'); host.setAttribute('height', '0');
+  host.setAttribute('aria-hidden', 'true');
+  host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  const defs = document.createElementNS(SVGNS, 'defs');
+  host.appendChild(defs);
+  (document.body || document.documentElement).appendChild(host);
+
+  // Displacement map of a rounded rectangle seen through a convex glass edge.
+  // R/G = 128 means "no shift"; near the border the vector points inward, with a smooth convex profile.
+  function makeMap(w, h, r, bezel){
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const ctx = c.getContext('2d');
+    const img = ctx.createImageData(w, h), d = img.data;
+    const hw = w/2, hh = h/2, rr = Math.min(r, hw, hh);
+    for(let y = 0; y < h; y++){
+      for(let x = 0; x < w; x++){
+        const px = x + 0.5 - hw, py = y + 0.5 - hh;
+        const qx = Math.abs(px) - (hw - rr), qy = Math.abs(py) - (hh - rr);
+        const ox = Math.max(qx, 0), oy = Math.max(qy, 0);
+        const sd = Math.min(Math.max(qx, qy), 0) + Math.hypot(ox, oy) - rr; // signed distance, <0 inside
+        const inside = -sd;
+        let dx = 0, dy = 0;
+        if(inside >= 0 && inside < bezel){
+          let nx, ny;
+          if(qx > 0 && qy > 0){ const l = Math.hypot(ox, oy) || 1; nx = ox/l; ny = oy/l; }
+          else if(qx > qy){ nx = 1; ny = 0; } else { nx = 0; ny = 1; }
+          nx *= Math.sign(px) || 1; ny *= Math.sign(py) || 1;
+          const t = 1 - inside/bezel;               // 1 on the edge, 0 where the flat part starts
+          const mag = t*t*(3 - 2*t) * (0.35 + 0.65*t); // smooth, steepest at the very edge
+          dx = -nx*mag; dy = -ny*mag;
+        }
+        const i = (y*w + x)*4;
+        d[i] = 128 + dx*127; d[i+1] = 128 + dy*127; d[i+2] = 128; d[i+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+
+  function el(tag, attrs){ const n = document.createElementNS(SVGNS, tag); for(const k in attrs) n.setAttribute(k, attrs[k]); return n; }
+
+  function buildFilter(it, w, h, r){
+    const depth = state.depth/100;
+    const bezel = Math.min(Math.max(6, 8 + depth*30), Math.min(w, h)/2);
+    const scale = Math.round(depth*95);
+    let f = document.getElementById(it.id);
+    if(f) f.remove();
+    f = el('filter', {id: it.id, x: 0, y: 0, width: w, height: h, filterUnits: 'userSpaceOnUse', 'color-interpolation-filters': 'sRGB'});
+    f.appendChild(el('feImage', {href: makeMap(w, h, r, bezel), x: 0, y: 0, width: w, height: h, preserveAspectRatio: 'none', result: 'map'}));
+    // the three colours bend by slightly different amounts (dispersion), then are added back together
+    const chans = [['r', 1, '1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'],
+                   ['g', 0.93, '0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0'],
+                   ['b', 0.86, '0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0']];
+    chans.forEach(([c, k, m])=>{
+      f.appendChild(el('feDisplacementMap', {in: 'SourceGraphic', in2: 'map', scale: Math.round(scale*k), xChannelSelector: 'R', yChannelSelector: 'G', result: c+'0'}));
+      f.appendChild(el('feColorMatrix', {in: c+'0', type: 'matrix', values: m, result: c}));
+    });
+    f.appendChild(el('feComposite', {in: 'r', in2: 'g', operator: 'arithmetic', k1: 0, k2: 1, k3: 1, k4: 0, result: 'rg'}));
+    f.appendChild(el('feComposite', {in: 'rg', in2: 'b', operator: 'arithmetic', k1: 0, k2: 1, k3: 1, k4: 0}));
+    defs.appendChild(f);
+  }
+
+  function frostPx(){ return (state.frost/100)*18; }
+
+  // ---- mirror mode (iPhone): the rim of the glass shows the scene magnified, with a soft lens profile ----
+  function ringMask(w, h, r, bezel){
+    // small canvas, stretched: the alpha is 1 on the very edge and fades to 0 where the flat part of the glass starts
+    const s = Math.min(1, 160/Math.max(w, h));
+    const W = Math.max(8, Math.round(w*s)), H = Math.max(8, Math.round(h*s));
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const ctx = c.getContext('2d'), img = ctx.createImageData(W, H), d = img.data;
+    const hw = w/2, hh = h/2, rr = Math.min(r, hw, hh);
+    for(let y = 0; y < H; y++) for(let x = 0; x < W; x++){
+      const px = (x + 0.5)/s - hw, py = (y + 0.5)/s - hh;
+      const qx = Math.abs(px) - (hw - rr), qy = Math.abs(py) - (hh - rr);
+      const sd = Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - rr;
+      const t = Math.max(0, Math.min(1, 1 + sd/bezel)); // 1 at the edge, 0 inside
+      const i = (y*W + x)*4;
+      d[i] = d[i+1] = d[i+2] = 255; d[i+3] = Math.round(255 * t*t*(3 - 2*t));
+    }
+    ctx.putImageData(img, 0, 0);
+    return c.toDataURL();
+  }
+  function mirrorSetup(node, it){
+    if(it.mirror) return;
+    const m = document.createElement('span'); m.className = 'lg-mirror'; m.setAttribute('aria-hidden', 'true');
+    const inner = document.createElement('span'); inner.className = 'lg-mirror-in';
+    const src = document.querySelector(state.scene);
+    if(src){
+      const copy = src.cloneNode(true);
+      copy.classList.add('lg-scene-copy'); copy.removeAttribute('id');
+      copy.querySelectorAll('[id]').forEach(n=> n.removeAttribute('id'));
+      inner.appendChild(copy);
+    }
+    const fringe = document.createElement('span'); fringe.className = 'lg-fringe';
+    m.appendChild(inner); m.appendChild(fringe);
+    node.insertBefore(m, node.firstChild);
+    it.mirror = m; it.inner = inner;
+  }
+  function mirrorPlace(node, it){
+    if(!it.inner) return;
+    const r = node.getBoundingClientRect();
+    const k = 1 + 0.3*state.depth/100; // magnification of the lens
+    it.inner.style.width = innerWidth + 'px'; it.inner.style.height = innerHeight + 'px';
+    // the copy sits exactly where the real scene is, magnified around the centre of the glass
+    it.inner.style.transformOrigin = (r.left + r.width/2) + 'px ' + (r.top + r.height/2) + 'px';
+    it.inner.style.transform = 'translate(' + (-r.left) + 'px,' + (-r.top) + 'px) scale(' + k.toFixed(3) + ')';
+  }
+  function mirrorShape(node, it, w, h, r){
+    const depth = state.depth/100;
+    const bezel = Math.min(Math.max(6, 6 + depth*26), Math.min(w, h)/2);
+    const url = 'url(' + ringMask(w, h, r, bezel) + ')';
+    it.mirror.style.webkitMaskImage = url; it.mirror.style.maskImage = url;
+    it.mirror.style.display = state.depth > 0 ? '' : 'none';
+  }
+  let placing = 0;
+  function placeAll(){
+    if(placing) return;
+    placing = requestAnimationFrame(()=>{ placing = 0; items.forEach((it, node)=> mirrorPlace(node, it)); });
+  }
+  if(!state.refract){
+    window.addEventListener('scroll', placeAll, {passive: true, capture: true});
+    document.addEventListener('scroll', placeAll, {passive: true, capture: true});
+    window.addEventListener('resize', placeAll);
+  }
+
+  function apply(node){
+    let it = items.get(node);
+    if(!it){ it = {id: 'lgf' + (++uid)}; items.set(node, it); ro.observe(node); }
+    const rect = node.getBoundingClientRect();
+    const w = Math.round(rect.width), h = Math.round(rect.height);
+    if(w < 4 || h < 4) return;
+    const r = parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0;
+    const blur = frostPx().toFixed(1);
+    if(state.refract && state.depth > 0){
+      if(it.w !== w || it.h !== h || it.r !== r || it.depth !== state.depth){
+        buildFilter(it, w, h, r);
+        it.w = w; it.h = h; it.r = r; it.depth = state.depth;
+      }
+      node.style.backdropFilter = 'url(#'+it.id+') blur('+blur+'px) saturate(175%) brightness(1.06)';
+    } else {
+      node.style.backdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(180%) brightness(1.08)';
+      mirrorSetup(node, it);
+      if(it.w !== w || it.h !== h || it.r !== r || it.depth !== state.depth){
+        mirrorShape(node, it, w, h, r);
+        it.w = w; it.h = h; it.r = r; it.depth = state.depth;
+      }
+      mirrorPlace(node, it);
+    }
+    node.style.webkitBackdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(180%) brightness(1.08)';
+  }
+
+  const ro = new ResizeObserver(entries=>{ entries.forEach(e=> apply(e.target)); });
+
+  function scan(root){ (root || document).querySelectorAll('.lg').forEach(apply); }
+
+  function set(opts){
+    Object.assign(state, opts || {});
+    const d = state.depth/100;
+    const s = document.documentElement.style;
+    s.setProperty('--lg-depth', d.toFixed(3));        // rim light, inner glow and shadow follow the depth
+    s.setProperty('--lg-frost', (state.frost/100).toFixed(3));
+    items.forEach((it, node)=> apply(node));
+  }
+
+  // light follows the tilt of the phone (or the mouse on a computer)
+  let tiltOn = false;
+  function setTilt(x, y){
+    const s = document.documentElement.style;
+    s.setProperty('--tx', Math.max(-1, Math.min(1, x)).toFixed(3));
+    s.setProperty('--ty', Math.max(-1, Math.min(1, y)).toFixed(3));
+  }
+  function onOrient(e){
+    if(e.gamma == null) return;
+    tiltOn = true;
+    setTilt(e.gamma/35, (e.beta - 40)/35);
+  }
+  function enableTilt(){
+    if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+      // iPhone: the browser asks once, after a tap
+      DeviceOrientationEvent.requestPermission().then(p=>{ if(p === 'granted') window.addEventListener('deviceorientation', onOrient); }).catch(()=>{});
+    } else window.addEventListener('deviceorientation', onOrient);
+  }
+  window.addEventListener('pointerdown', function once(){ enableTilt(); window.removeEventListener('pointerdown', once); });
+  window.addEventListener('pointermove', e=>{ if(!tiltOn && e.pointerType === 'mouse') setTilt((e.clientX/innerWidth)*2 - 1, (e.clientY/innerHeight)*2 - 1); });
+
+  // the specular glint follows the finger on each piece of glass
+  document.addEventListener('pointermove', e=>{
+    const g = e.target.closest && e.target.closest('.lg'); if(!g) return;
+    const r = g.getBoundingClientRect();
+    g.style.setProperty('--mx', (e.clientX - r.left)+'px'); g.style.setProperty('--my', (e.clientY - r.top)+'px');
+  }, {passive: true});
+  document.addEventListener('pointerdown', e=>{
+    const g = e.target.closest && e.target.closest('.lg'); if(!g) return;
+    const r = g.getBoundingClientRect();
+    g.style.setProperty('--mx', (e.clientX - r.left)+'px'); g.style.setProperty('--my', (e.clientY - r.top)+'px');
+  }, {passive: true});
+
+  setTilt(0, 0);
+  document.documentElement.classList.add(state.refract ? 'lg-refract' : 'lg-mirror-mode');
+  window.LiquidGlass = { scan, set, apply, get state(){ return Object.assign({}, state); } };
+})();
+</script>
 <script>
 (function(){
   // an icon from the SVG set at the top of the page
@@ -4645,6 +5011,7 @@
       this._in(id, 'fwd');
       sfxSwipe(false);
       try{ history.pushState({fapfap: this.stack.length}, ''); }catch(e){}
+      syncScene();
     },
     // back button on the page → let the browser history drive it, so both back buttons behave the same
     back(){ if(this.stack.length>1 || !inHome()) history.back(); },
@@ -4657,15 +5024,19 @@
       const prev = this.cur();
       if(prev) this._in(prev, 'back');
       else if(this.fromPause){ this.fromPause = false; refreshNowPlaying(); show('pauseOverlay'); }
+      syncScene();
     },
     home(){
       this.stack.slice().forEach(id=>{ if(id!=='menuOverlay'){ pageLeft(id); hide(id); } });
       this.stack = ['menuOverlay'];
       this._in('menuOverlay', 'back');
+      syncScene();
     },
-    clear(){ this.stack.slice().forEach(id=>{ pageLeft(id); hide(id); }); this.stack = []; this.fromPause = false; }
+    clear(){ this.stack.slice().forEach(id=>{ pageLeft(id); hide(id); }); this.stack = []; this.fromPause = false; syncScene(); }
   };
   function inHome(){ return Nav.stack.length===1 && Nav.stack[0]==='menuOverlay'; }
+  // the scene behind the glass: the table while a game is on screen, the bar everywhere else
+  function syncScene(){ document.body.classList.toggle('in-game', Nav.stack.length===0); }
   function inGame(){ return Nav.stack.length===0; }
   try{ history.replaceState({fapfap: 0}, ''); }catch(e){}
   window.addEventListener('popstate', ()=>{
@@ -4692,7 +5063,7 @@
   }
   function pageShown(id){
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
-    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); }
+    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); if(window.homeTabsReset) window.homeTabsReset(); }
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='carrePage'){ refreshCarrePick(); renderStakePicks(); fillAllAvatars(document.getElementById('carrePage')); }
@@ -6331,8 +6702,8 @@
     if(!val) return;
     if(animateFrom!=null) rollNumber(val, animateFrom, profile.chips, 1100); else val.textContent = fmtChips(profile.chips);
     const claim = document.getElementById('btnChipsClaim');
-    if(dailyChipsReady()){ claim.innerHTML = ico('sparkle')+' Bonus du jour +'+fmtChips(dailyChips()); claim.classList.remove('hidden'); claim.dataset.kind = 'daily'; }
-    else if(rescueReady()){ claim.innerHTML = 'Penalty te dépanne +300'; claim.classList.remove('hidden'); claim.dataset.kind = 'rescue'; }
+    if(dailyChipsReady()){ claim.innerHTML = ico('sparkle')+' +'+fmtChips(dailyChips()); claim.title = 'Bonus du jour'; claim.classList.remove('hidden'); claim.dataset.kind = 'daily'; }
+    else if(rescueReady()){ claim.innerHTML = ico('sparkle')+' Dépannage +300'; claim.title = 'Penalty te dépanne'; claim.classList.remove('hidden'); claim.dataset.kind = 'rescue'; }
     else claim.classList.add('hidden');
   }
   document.getElementById('btnChipsClaim').addEventListener('click', (e)=>{
@@ -7982,6 +8353,53 @@
     }
   });
   document.getElementById('btnCloseIosInstall').addEventListener('click', ()=> document.getElementById('iosInstallOverlay').classList.add('hidden'));
+
+  // ===================== Liquid Glass: which parts of the interface are real glass =====================
+  // The big, important surfaces go through the glass engine (lens on the edges, dispersion, frost);
+  // long lists use the same look in plain CSS, so the game stays fluid.
+  (function setupGlass(){
+    const add = (sel, cls)=> document.querySelectorAll(sel).forEach(el=> el.classList.add(...cls.split(' ')));
+    add('#btnMenu, #btnMute', 'lg gl gl-round press');
+    add('#duoScreen .scorebar, #sqScoreboard', 'lg gl');
+    add('.overlay.page .back-btn', 'lg gl gl-round press');
+    add('.sheet', 'lg gl');
+    add('.overlay.page .mode-card', 'lg gl press');
+    document.querySelectorAll('#btnMenu, #btnMute').forEach(b=>{ b.classList.remove('ghost', 'icon-btn'); b.removeAttribute('style'); });
+    // the glass settings, remembered on this phone
+    const depthIn = document.getElementById('glassDepth'), frostIn = document.getElementById('glassFrost');
+    const depth0 = prefs.glassDepth != null ? prefs.glassDepth : 60, frost0 = prefs.glassFrost != null ? prefs.glassFrost : 30;
+    depthIn.value = depth0; frostIn.value = frost0;
+    function syncGlass(save){
+      const depth = +depthIn.value, frost = +frostIn.value;
+      document.getElementById('glassDepthVal').textContent = depth;
+      document.getElementById('glassFrostVal').textContent = frost;
+      LiquidGlass.set({depth, frost});
+      if(save){ prefs.glassDepth = depth; prefs.glassFrost = frost; savePrefs(); }
+    }
+    depthIn.addEventListener('input', ()=> syncGlass(true));
+    frostIn.addEventListener('input', ()=> syncGlass(true));
+    document.getElementById('glassNote').textContent = LiquidGlass.state.refract
+      ? 'Les bords du verre courbent le décor et séparent légèrement les couleurs. Incline le téléphone : la lumière bouge.'
+      : 'Sur iPhone, les bords du verre grossissent le décor comme une lentille. Incline le téléphone : la lumière bouge.';
+    LiquidGlass.scan();
+    syncGlass(false);
+    syncScene();
+    // the drop of glass swells, then settles, when released
+    document.addEventListener('pointerup', e=>{
+      const g = e.target.closest && e.target.closest('.press');
+      if(!g) return;
+      g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop');
+    }, {passive:true});
+    // home tab bar: the glass lens slides to the tab that was touched
+    const tabs = [...document.querySelectorAll('#homeTabbar .tab')], lens = document.getElementById('tabLens');
+    function lensTo(i){
+      tabs.forEach((t, k)=> t.classList.toggle('on', k===i));
+      lens.style.transform = 'translateX('+(i*100)+'%) scaleX(1.12)';
+      setTimeout(()=>{ lens.style.transform = 'translateX('+(i*100)+'%)'; }, 170);
+    }
+    tabs.forEach((t, i)=> t.addEventListener('pointerdown', ()=> lensTo(i)));
+    window.homeTabsReset = ()=>{ if(lens.style.transform && lens.style.transform !== 'translateX(0%)') lensTo(0); };
+  })();
 
   // ===================== Light trail: the finger (or the mouse) leaves a streak of light =====================
   // One canvas over everything, drawn only while the light fades out: nothing runs when the screen is still.
