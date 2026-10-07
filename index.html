@@ -678,8 +678,9 @@
   body.light-neon{ --pool: rgba(170,140,255,0.24); --pool2: rgba(220,70,200,0.10); --glow1: rgba(190,160,255,0.16); --glow2: rgba(230,60,200,0.08); }
   body.light-pluie{ --pool: rgba(200,220,255,0.17); --pool2: rgba(120,150,200,0.07); --glow1: rgba(210,225,255,0.12); --glow2: rgba(120,150,200,0.05); }
   .rain-layer{ position:fixed; inset:0; pointer-events:none; z-index:7; display:none;
-    background-image: linear-gradient(170deg, transparent 0 46%, rgba(200,220,255,0.18) 47% 48%, transparent 49%);
-    background-size: 22px 46px; animation: rainFall 0.55s linear infinite; opacity:0.55; }
+    background-image: radial-gradient(0.8px 12px at 50% 50%, rgba(205,222,255,0.5), transparent), radial-gradient(0.7px 8px at 50% 50%, rgba(205,222,255,0.35), transparent);
+    background-size: 37px 89px, 23px 61px; background-position: 0 0, 11px 30px; transform: rotate(7deg) scale(1.2); animation: rainDrop 0.55s linear infinite; opacity:0.55; }
+  @keyframes rainDrop{ to{ background-position: 0 89px, 11px 91px; } }
   body.light-pluie .rain-layer{ display:block; }
   @keyframes rainFall{ from{ background-position: 0 0; } to{ background-position: -8px 46px; } }
   .overlay h2.brand-title{ font-size:40px; letter-spacing:-0.025em; line-height:1; text-shadow: 0 0 24px rgba(244,184,96,0.35); }
@@ -2066,6 +2067,125 @@
     box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 10px 26px rgba(0,0,0,0.3); }
   #matchOverOverlay #btnRematch{ min-width:240px; padding:15px 26px; font-size:16px; }
   #matchOverOverlay .ghost{ color:rgba(255,255,255,0.8); }
+  /* =====================================================================================
+     MODE HISTOIRE — « La Nuit des 33 »: a dark visual novel around the card table
+     ===================================================================================== */
+  .hx-home{ width:100%; display:flex; align-items:center; gap:12px; padding:12px 14px 12px 12px; border-radius:26px; text-align:left; color:#fff; position:relative; overflow:hidden;
+    background: linear-gradient(120deg, rgba(20,8,10,0.72), rgba(60,18,22,0.55) 55%, rgba(16,10,24,0.6)) !important; }
+  .hx-home::before{ content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+    background: radial-gradient(120% 90% at 0% 50%, rgba(200,30,40,0.28), transparent 60%); }
+  .hx-home-art{ position:relative; display:flex; flex:none; }
+  .hx-home-art img{ width:42px; height:58px; object-fit:cover; object-position:50% 18%; border-radius:12px; border:1.5px solid rgba(255,255,255,0.55);
+    box-shadow:0 6px 14px rgba(0,0,0,0.5); margin-left:-14px; transform: rotate(-6deg); }
+  .hx-home-art img:first-child{ margin-left:0; }
+  .hx-home-art img:nth-child(2){ transform: translateY(-3px) rotate(0deg); z-index:2; width:46px; height:64px; }
+  .hx-home-art img:nth-child(3){ transform: rotate(6deg); }
+  .hx-home-txt{ position:relative; display:flex; flex-direction:column; min-width:0; flex:1; }
+  .hx-home-txt small{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#ff9aa0; font-weight:800; }
+  .hx-home-txt b{ font-family:var(--font-display); font-size:22px; line-height:1.05; letter-spacing:-0.01em; }
+  .hx-home-txt span{ font-size:12px; color:rgba(255,255,255,0.75); margin-top:2px; }
+  .hx-home-tag{ position:relative; background: linear-gradient(180deg,#e0424d,#9b1622) !important; color:#fff !important; }
+
+  #storyPage .hx-hero{ position:relative; border-radius:24px; overflow:hidden; margin:4px 0 12px; display:flex; flex-direction:column;
+    background: linear-gradient(180deg, rgba(20,6,8,0.3), rgba(8,4,4,0.95) 45%), url(art/home-bar.jpg) center/cover; box-shadow: 0 14px 40px rgba(0,0,0,0.5); }
+  .hx-cast{ position:relative; height:170px; margin-bottom:-44px; display:flex; justify-content:center; }
+  .hx-cast img{ height:170px; width:20%; object-fit:cover; object-position:50% 15%; filter: saturate(0.85) contrast(1.05);
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent); mask-image: linear-gradient(180deg, #000 55%, transparent); }
+  .hx-hero-txt{ position:relative; padding:14px 16px 16px; color:#fff; }
+  .hx-hero-txt small{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#ff9aa0; font-weight:800; }
+  .hx-hero-txt b{ display:block; font-family:var(--font-display); font-size:28px; line-height:1.05; margin:2px 0 6px; }
+  .hx-hero-txt p{ margin:0; font-size:13px; line-height:1.45; color:rgba(255,255,255,0.82); }
+  .hx-go{ width:100%; border-radius:22px; padding:14px 16px; display:flex; flex-direction:column; align-items:center; gap:2px; color:#fff;
+    background: linear-gradient(180deg, #d63a47, #8e1420) !important; margin-bottom:14px; }
+  .hx-go b{ font-family:var(--font-display); font-size:19px; } .hx-go small{ font-size:12px; opacity:.85; }
+  .hx-go:disabled{ filter: grayscale(0.7) brightness(0.8); }
+  .hx-list{ display:flex; flex-direction:column; gap:8px; }
+  .hx-ch{ display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:18px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; text-align:left; width:100%; }
+  .hx-ch .n{ flex:none; width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-size:14px; background: rgba(255,255,255,0.1); }
+  .hx-ch.done .n{ background: linear-gradient(180deg,#4fbf7b,#1f7a46); }
+  .hx-ch.now .n{ background: linear-gradient(180deg,#e0424d,#9b1622); box-shadow: 0 0 0 4px rgba(224,66,77,0.25); }
+  .hx-ch .t{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .hx-ch .t b{ font-size:14.5px; } .hx-ch .t small{ font-size:11.5px; color:rgba(255,255,255,0.6); }
+  .hx-ch.locked{ opacity:.5; }
+  .hx-ch .unl{ flex:none; font-size:11px; font-weight:800; padding:7px 10px; border-radius:14px; background: linear-gradient(180deg,#f6d27a,#c99232); color:#3a2408; border:0; }
+  .hx-ends{ display:flex; flex-wrap:wrap; gap:6px; margin:14px 0 4px; }
+  .hx-ends span{ font-size:11.5px; font-weight:700; padding:6px 10px; border-radius:14px; background: rgba(255,255,255,0.07); color:rgba(255,255,255,0.45); }
+  .hx-ends span.got{ background: rgba(224,66,77,0.22); color:#fff; }
+
+  .avatar img[src*="story/"]{ object-fit:cover; object-position:50% 16%; transform: scale(1.35); transform-origin:50% 22%; }
+  .hx-scene{ position:fixed; inset:0; z-index:61; overflow:hidden; color:#fff; -webkit-user-select:none; user-select:none; background:#050304; }
+  .hx-bg{ position:absolute; inset:-4%; background-size:cover; background-position:center; animation: hxDrift 26s ease-in-out infinite alternate; }
+  @keyframes hxDrift{ from{ transform: scale(1.02) translate(0,0); } to{ transform: scale(1.08) translate(-1.5%, 1%); } }
+  .hx-scene[data-place="rue"] .hx-bg{ background-image: linear-gradient(180deg, rgba(4,8,20,0.55), rgba(2,2,6,0.92) 75%), radial-gradient(ellipse 40% 26% at 72% 26%, rgba(255,40,60,0.45), transparent 70%), url(art/home-bar.jpg); filter: hue-rotate(185deg) saturate(0.7) brightness(0.72); }
+  .hx-scene[data-place="bar"] .hx-bg{ background-image: linear-gradient(180deg, rgba(10,4,2,0.35), rgba(4,2,1,0.92) 76%), url(art/home-bar.jpg); filter: brightness(0.75) saturate(1.1); }
+  .hx-scene[data-place="marche"] .hx-bg{ background-image: linear-gradient(180deg, rgba(40,18,4,0.4), rgba(6,3,1,0.92) 76%), url(art/home-bar.jpg); filter: sepia(0.55) saturate(1.4) brightness(0.7) hue-rotate(-12deg); }
+  .hx-scene[data-place="soussol"] .hx-bg{ background-image: radial-gradient(ellipse 50% 30% at 50% 4%, rgba(255,230,170,0.55), transparent 70%), radial-gradient(ellipse 80% 40% at 50% 70%, rgba(30,110,64,0.5), transparent 70%), linear-gradient(180deg, #0c0a08, #010101 80%); }
+  .hx-scene[data-place="prison"] .hx-bg{ background-image: repeating-linear-gradient(90deg, rgba(0,0,0,0.85) 0 9px, transparent 9px 64px), radial-gradient(ellipse 40% 30% at 70% 18%, rgba(200,220,255,0.35), transparent 70%), linear-gradient(180deg, #2a2e33, #08090b 80%); }
+  .hx-scene[data-place="planque"] .hx-bg{ background-image: radial-gradient(ellipse 30% 22% at 30% 30%, rgba(255,170,80,0.35), transparent 70%), linear-gradient(180deg, #24201c, #070605 80%); }
+  .hx-scene[data-place="port"] .hx-bg{ background-image: linear-gradient(90deg, rgba(150,40,30,0.5) 0 22%, rgba(30,70,120,0.45) 22% 48%, rgba(40,90,60,0.4) 48% 70%, rgba(120,90,30,0.45) 70%), repeating-linear-gradient(90deg, rgba(0,0,0,0.35) 0 3px, transparent 3px 14px), linear-gradient(180deg, #1a2230, #040507 85%); filter: brightness(0.55); }
+  .hx-scene[data-place="fin"] .hx-bg{ background-image: radial-gradient(ellipse 60% 40% at 50% 30%, rgba(255,210,120,0.4), transparent 70%), linear-gradient(180deg, #1a0e06, #020101 85%); }
+  .hx-rain{ position:absolute; inset:-10% 0 0; pointer-events:none; opacity:.55; transform: rotate(8deg) scale(1.15);
+    background-image: radial-gradient(0.8px 13px at 50% 50%, rgba(215,228,255,0.55), transparent), radial-gradient(0.7px 9px at 50% 50%, rgba(215,228,255,0.4), transparent);
+    background-size: 37px 89px, 23px 61px; background-position: 0 0, 11px 30px; animation: hxRain 0.55s linear infinite; }
+  @keyframes hxRain{ to{ background-position: 0 89px, 11px 91px; } }
+  .hx-scene[data-place="prison"] .hx-rain, .hx-scene[data-place="fin"] .hx-rain, .hx-scene[data-place="marche"] .hx-rain{ display:none; }
+  .hx-flash{ position:absolute; inset:0; pointer-events:none; opacity:0; background: radial-gradient(ellipse 120% 80% at 50% 10%, rgba(230,238,255,0.95), rgba(160,185,255,0.25) 60%, transparent); mix-blend-mode:screen; }
+  .hx-flash.on{ animation: lightning 0.9s ease-out; }
+  .hx-scene.shake{ animation: hxShake 0.45s; }
+  @keyframes hxShake{ 0%,100%{ transform:none; } 20%{ transform: translate(-6px,3px); } 40%{ transform: translate(5px,-4px); } 60%{ transform: translate(-3px,2px); } 80%{ transform: translate(2px,-1px); } }
+  .hx-top{ position:absolute; z-index:5; left:0; right:0; top:calc(env(safe-area-inset-top) + 10px); display:flex; align-items:center; gap:10px; padding:0 14px; }
+  .hx-top .gl-round{ width:42px; height:42px; font-size:22px; color:#fff; flex:none; }
+  .hx-chap{ flex:1; text-align:center; font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; color:rgba(255,255,255,0.6); }
+  .hx-stage{ position:absolute; left:0; right:0; top:calc(env(safe-area-inset-top) + 40px); bottom:150px; display:flex; justify-content:center; align-items:flex-end; pointer-events:none; }
+  .hx-portrait{ height:100%; max-width:100%; aspect-ratio: 331/458; object-fit:cover; opacity:0; transform: translateY(14px) scale(0.98);
+    transition: opacity .45s ease, transform .6s cubic-bezier(.2,.8,.2,1), filter .4s;
+    -webkit-mask-image: radial-gradient(ellipse 72% 78% at 50% 38%, #000 52%, transparent 100%); mask-image: radial-gradient(ellipse 72% 78% at 50% 38%, #000 52%, transparent 100%); }
+  .hx-portrait.on{ opacity:1; transform:none; filter: saturate(0.88) brightness(0.93) contrast(1.04); }
+  .hx-portrait.dim{ opacity:.28; filter: blur(2px) grayscale(0.4); }
+  .hx-box{ position:absolute; z-index:4; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 14px); min-height:118px; border-radius:26px; padding:18px 18px 22px;
+    background: linear-gradient(180deg, rgba(30,18,16,0.62), rgba(10,6,6,0.78)) !important; transition: opacity .25s, transform .25s; }
+  .hx-box.narr .hx-text{ font-style:italic; color:rgba(255,240,225,0.92); }
+  .hx-box.me{ background: linear-gradient(180deg, rgba(20,40,70,0.6), rgba(6,10,20,0.8)) !important; }
+  .hx-box.hide{ opacity:0; transform: translateY(16px); pointer-events:none; }
+  .hx-box, .hx-panel, .hx-choices button{ -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); }
+  html[data-q="eco"] :is(.hx-bg, .hx-rain){ animation:none !important; }
+  .hx-name{ position:absolute; top:-13px; left:18px; font-size:12.5px; font-weight:800; letter-spacing:.04em; padding:5px 12px; border-radius:14px;
+    background: var(--hx-c, #c92e3b); color:#fff; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .hx-name:empty{ display:none; }
+  .hx-text{ margin:0; font-size:16.5px; line-height:1.5; min-height:3em; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+  .hx-tap{ position:absolute; right:16px; bottom:8px; font-size:10px; opacity:.6; animation: hxBlink 1.2s ease-in-out infinite; }
+  @keyframes hxBlink{ 50%{ opacity:.15; } }
+  .hx-choices{ position:absolute; z-index:6; left:14px; right:14px; bottom:calc(env(safe-area-inset-bottom) + 150px); display:flex; flex-direction:column; gap:9px; }
+  .hx-choices button{ width:100%; padding:14px 16px; border-radius:20px; color:#fff; font-size:15px; font-weight:700; text-align:left; line-height:1.3;
+    background: linear-gradient(180deg, rgba(60,30,30,0.6), rgba(20,10,10,0.75)) !important; animation: hxIn .35s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 80ms); }
+  .hx-choices button small{ display:block; font-size:11.5px; font-weight:600; color:#ffb3a8; margin-top:3px; }
+  .hx-choices button:disabled{ opacity:.45; }
+  @keyframes hxIn{ from{ opacity:0; transform: translateY(12px); } to{ opacity:1; transform:none; } }
+  .hx-title{ position:absolute; z-index:6; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; background: rgba(0,0,0,0.55);
+    animation: hxIn .6s ease both; }
+  .hx-title small{ font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:#ff9aa0; font-weight:800; }
+  .hx-title b{ font-family:var(--font-display); font-size:38px; line-height:1.05; margin:8px 0 10px; text-shadow: 0 4px 30px rgba(255,60,70,0.4); }
+  .hx-title span{ font-size:14px; color:rgba(255,255,255,0.7); max-width:300px; line-height:1.5; }
+  .hx-panel{ position:absolute; z-index:7; left:14px; right:14px; bottom:calc(env(safe-area-inset-bottom) + 14px); border-radius:28px; padding:18px;
+    background: linear-gradient(180deg, rgba(34,20,18,0.72), rgba(10,6,6,0.86)) !important; animation: hxIn .4s cubic-bezier(.2,.8,.2,1) both; max-height:78vh; overflow-y:auto; }
+  .hx-panel .hp-k{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:800; color:#ff9aa0; }
+  .hx-panel h3{ margin:4px 0 6px; font-family:var(--font-display); font-size:24px; line-height:1.1; }
+  .hx-panel p{ margin:0 0 10px; font-size:14px; line-height:1.5; color:rgba(255,255,255,0.82); }
+  .hx-panel .hp-vs{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .hx-panel .hp-vs img{ width:58px; height:74px; object-fit:cover; object-position:50% 15%; border-radius:14px; border:1.5px solid rgba(255,255,255,0.5); }
+  .hx-panel .hp-faces{ display:flex; gap:6px; }
+  .hx-panel .hp-rule{ font-size:12.5px; padding:8px 12px; border-radius:14px; background: rgba(224,66,77,0.16); border:1px solid rgba(224,66,77,0.35); margin-bottom:12px; }
+  .hx-panel .hp-bets{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 12px; }
+  .hx-panel .hp-bets button{ padding:8px 12px; border-radius:14px; font-weight:800; font-size:13px; color:#fff; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); }
+  .hx-panel .hp-bets button.on{ background: linear-gradient(180deg,#f6d27a,#c99232); color:#3a2408; border-color:transparent; }
+  .hx-panel .hp-bets button:disabled{ opacity:.35; }
+  .hx-panel .hp-row{ display:flex; gap:8px; }
+  .hx-panel .hp-row button{ flex:1; padding:13px; border-radius:18px; font-weight:800; font-size:15px; color:#fff; background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.16); }
+  .hx-panel .hp-row button.go{ background: linear-gradient(180deg, #d63a47, #8e1420); border-color:transparent; }
+  .hx-panel .hp-gain{ font-family:var(--font-display); font-size:30px; margin:4px 0 10px; color:#f6d27a; }
+  .hx-panel .hp-gain.loss{ color:#ff8a8a; }
+  .hx-panel .hp-small{ font-size:12px; color:rgba(255,255,255,0.55); }
+
   /* ---- performance: nothing animated may sit BEHIND the glass (it would be recomputed every frame) ---- */
   .bulb-glow{ animation:none !important; }
   .amb-layer{ z-index:58; }              /* the dust and smoke now float in front, in the air */
@@ -2307,10 +2427,34 @@
     --h-tint: rgba(60,90,160,0.55); --p1:#cdd9ff; --p2:#7b95d6; --p3:#34477c; --pd:#1c2748; --pt:#ffffff; --ps:#e7edff; --ic1:#d6e0ff; --ic2:#4a63a8; --ict:#ffffff; }
   body.table-orage .rain-layer{ display:block; z-index:57; opacity:.55; }
   body.table-orage .rain-layer::after{ content:""; position:absolute; inset:0; opacity:.6;
-    background-image: linear-gradient(172deg, transparent 0 47%, rgba(210,225,255,0.22) 48% 49%, transparent 50%); background-size: 31px 70px; animation: rainFall 0.42s linear infinite; }
+    background-image: radial-gradient(1px 15px at 50% 50%, rgba(215,228,255,0.45), transparent); background-size: 29px 71px; animation: rainDrop2 0.42s linear infinite; }
+  @keyframes rainDrop2{ to{ background-position: 0 71px; } }
   body.table-orage .lg-scene .sc-fx .ripple{ position:absolute; width:26px; height:12px; margin:-6px 0 0 -13px; border-radius:50%;
     border:1.5px solid rgba(210,225,255,0.5); animation: ripple 1.1s ease-out forwards; }
   @keyframes ripple{ from{ transform: scale(0.1); opacity:.9; } to{ transform: scale(1.6); opacity:0; } }
+
+  /* Le Sous-sol du Royal (story reward): the basement of « La Nuit des 33 » — a worn green baize under one
+     swinging lamp, the storm flooding in: water on the concrete, drops rippling on the table, lightning through the vent */
+  body.table-soussol{ --felt:
+      radial-gradient(circle, rgba(210,225,255,0.22) 0 1px, transparent 1.8px) 0 0/41px 47px,
+      repeating-radial-gradient(circle at 50% 52%, rgba(0,0,0,0.07) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse 66% 44% at 50% 53%, #2a7a4c 0%, #174d2f 42%, #0a1f14 70%, #020504 100%);
+    --pool: rgba(255,232,180,0.2); --pool2: rgba(255,214,140,0.07);
+    --h-tint: rgba(36,96,64,0.5); --p1:#c9f0d4; --p2:#4fae78; --p3:#1f6b43; --pd:#0f3a24; --pt:#f2fff6; --ps:#d8f5e2; --ic1:#d2f2dc; --ic2:#2f8a58; --ict:#ffffff; }
+  body.table-soussol .lg-scene .sc-light{ background:
+      linear-gradient(180deg, transparent 78%, rgba(120,150,190,0.16) 86%, rgba(150,180,220,0.22) 100%),
+      radial-gradient(ellipse 60% 40% at 50% 54%, rgba(255,236,190,0.22) 0%, rgba(255,236,190,0.06) 40%, rgba(0,0,0,0) 52%, rgba(0,0,0,0.88) 82%, #000 100%); }
+  body.table-soussol .lg-scene .sc-fx::before{
+    left:50%; top:-2%; width:150%; height:80%; transform: translateX(-50%);
+    clip-path: polygon(46% 0, 54% 0, 82% 100%, 18% 100%);
+    background: linear-gradient(180deg, rgba(255,238,200,0.28), rgba(255,238,200,0.07) 60%, rgba(255,238,200,0)); filter: blur(14px); }
+  body.table-soussol .lg-scene .sc-fx::after{
+    left:50%; top:-6px; width:110px; height:42px; margin-left:-55px; border-radius: 0 0 55px 55px / 0 0 42px 42px;
+    background: radial-gradient(ellipse 30% 40% at 50% 100%, #fff8e6 0 30%, rgba(255,230,170,0.9) 45%, transparent 70%), linear-gradient(180deg, #151515, #2e2a26);
+    box-shadow: 0 18px 60px 18px rgba(255,226,160,0.4); }
+  body.table-soussol .rain-layer{ display:block; z-index:57; opacity:.4; }
+  body.table-soussol .lg-scene .sc-fx .ripple{ position:absolute; width:26px; height:12px; margin:-6px 0 0 -13px; border-radius:50%;
+    border:1.5px solid rgba(210,225,255,0.45); animation: ripple 1.1s ease-out forwards; }
 
   /* =====================================================================================
      THE TEN EXCEPTIONAL TABLES (sold in the shop) — a round play area framed by its own rim,
@@ -2900,6 +3044,12 @@
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
 
+    <button class="lg gl hx-home press" id="btnStory" style="--d:2">
+      <span class="hx-home-art" aria-hidden="true"><img src="art/story/mireille.jpg" alt=""><img src="art/story/ekwalla.jpg" alt=""><img src="art/story/bobo.jpg" alt=""></span>
+      <span class="hx-home-txt"><small>Mode histoire</small><b>La Nuit des 33</b><span id="hxHomeSub">32 joueurs entrent. Un seul ressort.</span></span>
+      <span class="gl-tag hx-home-tag" id="hxHomeTag">Nouveau</span>
+    </button>
+
     <div class="home-row2">
       <button class="lg gl hcard press" id="modeDaily" style="--d:2">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
@@ -2935,6 +3085,40 @@
     <button class="tab" id="btnShowSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg>Décors</button>
     <button class="tab" id="btnShowSettings"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg>Réglages</button>
   </nav>
+</div>
+
+<div class="overlay page hidden" id="storyPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La Nuit des 33</h2><span class="ph-spacer"></span></header>
+  <div class="page-body">
+    <div class="hx-hero">
+      <div class="hx-cast" id="hxCast"></div>
+      <div class="hx-hero-txt">
+        <small>Yaoundé · saison des pluies</small>
+        <b>Le Cercle</b>
+        <p>Chaque année, dans le sous-sol du Royal, à Melen, 32 joueurs s’assoient pour un tournoi clandestin de Fap Fap. Un seul ressort avec la Couronne. Bobo, ton frère de cœur, est descendu il y a trois jours. Il n’est pas remonté.</p>
+      </div>
+    </div>
+    <button class="lg gl tinted hx-go press" id="hxGo"><b id="hxGoT">Commencer</b><small id="hxGoS"></small></button>
+    <div class="hx-list" id="hxList"></div>
+    <div class="hx-ends" id="hxEnds"></div>
+    <p class="small-note">Un nouveau chapitre chaque jour. Tes choix comptent : certains ne se rattrapent pas. Les mises en jetons sont réelles.</p>
+  </div>
+</div>
+
+<div class="hx-scene hidden" id="storyScene" data-place="rue">
+  <div class="hx-bg" aria-hidden="true"></div>
+  <div class="hx-rain" aria-hidden="true"></div>
+  <div class="hx-flash" id="hxFlash" aria-hidden="true"></div>
+  <div class="hx-top">
+    <button class="lg gl gl-round press" id="hxClose" aria-label="Quitter la scène">‹</button>
+    <span class="hx-chap" id="hxChap"></span>
+    <button class="lg gl gl-round press" id="hxSkip" aria-label="Avance rapide">»</button>
+  </div>
+  <div class="hx-stage" id="hxStage"><img class="hx-portrait" id="hxPortrait" alt=""></div>
+  <div class="hx-title hidden" id="hxTitle"><small id="hxTitleK"></small><b id="hxTitleB"></b><span id="hxTitleS"></span></div>
+  <div class="hx-box gl" id="hxBox"><span class="hx-name" id="hxName"></span><p class="hx-text" id="hxText"></p><span class="hx-tap">▼</span></div>
+  <div class="hx-choices" id="hxChoices"></div>
+  <div class="hx-panel gl hidden" id="hxPanel"></div>
 </div>
 
 <div class="overlay page hidden" id="playPage">
@@ -3568,6 +3752,7 @@
   function hasSuit(hand,suit){ return hand.some(c=>c.suit===suit); }
   function canPasse(hand, leadSuit){
     if(!leadSuit) return false;
+    if(storyRun && storyRun.rule==='nopasse') return false; // story: « en prison, on ne diffère pas »
     if(hand.length!==2) return false;
     if(hasSuit(hand, leadSuit)) return false;
     if(hand[0].suit===hand[1].suit) return true; // the classic reserve-pair case
@@ -4512,7 +4697,8 @@
     oasis:     Object.assign({}, TRACKS.laterite,{name:'Mirage', mood:'chaud, lumineux'}),
     banquise:  Object.assign({}, TRACKS.nuit,    {name:'Aurore', mood:'froid, magique'}),
     temple:    Object.assign({}, TRACKS.marbre,  {name:'Les dieux jouent aux cartes', mood:'majestueux'}),
-    metropole: Object.assign({}, TRACKS.arcade,  {name:'Ville verticale', mood:'futuriste, nocturne'})
+    metropole: Object.assign({}, TRACKS.arcade,  {name:'Ville verticale', mood:'futuriste, nocturne'}),
+    soussol:   Object.assign({}, TRACKS.plafonnier, {name:'La Nuit des 33', mood:'noir, tendu', amb:'rain'})
   });
 
   function musicPad(ctx, dest, t, dur, midis, p){
@@ -4849,7 +5035,7 @@
     if(!img || !zone) return;
     const off = ()=>{ img.hidden = true; zone.classList.remove('has-art'); };
     off();
-    if(!ART_FILE[charId]) return;
+    if(!ART_FILE[charId] || ART_FILE[charId].indexOf('story/')===0) return; // story portraits have no "at the table" picture
     const base = 'art/'+ART_FILE[charId]+'-table';
     let triedPng = false;
     img.onload = ()=>{ img.hidden = false; zone.classList.add('has-art'); };
@@ -4857,6 +5043,7 @@
     img.src = base+'.jpg';
   }
   let duelOpp = 'penalty';
+  let storyRun = null; // the story-mode match being played, if any (see « La Nuit des 33 »)
   function oppPersona(){ return DUEL_PERSONAS[duelOpp] || DUEL_PERSONAS.penalty; }
   function L(kind){ const l = oppPersona().lines[kind]; return (l && l.length) ? l : DUEL_PERSONAS.penalty.lines[kind]; }
   function isOppUnlocked(id){ return id!=='mbarga' || (profile.ladder.penalty.w>0); }
@@ -5222,6 +5409,8 @@
       {id:'marbre',   name:'Marbre du palace',      swatch:'linear-gradient(115deg,transparent 40%,rgba(212,170,90,.7) 42%,transparent 45%),radial-gradient(ellipse at 35% 30%,#3a353b,#121014)', req:p=>rankIndex(p.rep)>=2, hint:'Rang « Joueur sérieux »'},
       {id:'velours',  name:'Velours du casino',     swatch:'radial-gradient(ellipse at 50% 40%,#911c2c,#440913 72%)', req:p=>rankIndex(p.rep)>=3, hint:'Rang « Redouté »'},
       {id:'or',       name:'Table d’or',            swatch:'radial-gradient(ellipse at 40% 35%,#f3d27a,#a06c18 72%)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'},
+      // the story's reward: the room where « La Nuit des 33 » ends
+      {id:'soussol',  name:'Le Sous-sol du Royal',  swatch:'radial-gradient(ellipse 60% 45% at 50% 55%,#2a6b45 0,#123a24 45%,#000 80%),repeating-linear-gradient(100deg,rgba(200,220,255,.3) 0 1px,transparent 1px 7px)', req:p=> !!(p.story && p.story.finished), hint:'Termine le mode histoire « La Nuit des 33 »'},
       // the exceptional tables: only in the shop
       ...SHOP_TABLES.map(t=> ({id:t.id, name:t.name, swatch:t.swatch, req:p=> shopOwns(p, 'table', t.id), hint:'Boutique · '+t.price.toLocaleString('fr-FR')+' jetons'}))
     ],
@@ -5576,8 +5765,9 @@
     return skinUnlocked('table', sk.table) ? sk.table : 'tripot';
   }
   function pageShown(id){
-    if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : 'home');
-    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); if(window.homeTabsReset) window.homeTabsReset(); }
+    if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
+    if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); }
+    else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='shopPage') renderShop();
@@ -5690,6 +5880,7 @@
 
   // back to the home screen from any mode, leaving nothing running behind
   function goToMainMenu(){
+    if(storyRun) storyRestore();
     if(mode==='mp' || mpNet || room.active) mpTeardown();
     daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
     tuto = null;
@@ -5727,7 +5918,7 @@
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
     document.getElementById('matchOverOverlay').classList.add('hidden');
-    if(mode==='ai' && !tuto && !daily) takeStake(); else matchStake = 0;
+    if(mode==='ai' && !tuto && !daily && !storyRun) takeStake(); else matchStake = 0; // the story takes its own bets
     dealer = Math.random()<0.5 ? 'you' : 'ai';
     beginHand();
   }
@@ -5951,6 +6142,7 @@
   }
 
   function finalizeDealFromDeck(deckOrder){
+    if(storyRun && storyRun.rule==='blindage') deckOrder = storyBlindage(deckOrder);
     const playerHand = deckOrder.slice(0,5);
     const aiHand = deckOrder.slice(5,10);
     const nonDealer = dealer==='you' ? 'ai' : 'you'; // dealer never starts
@@ -5971,6 +6163,7 @@
     locked = !state.handOver && state.leader==='ai';
     renderAll(true);
     checkAutoWinWindow();
+    if(storyRun && storyRun.rule==='spy') storySpy();
     if(!state.handOver && state.leader==='ai'){
       gameTimeout(aiTakeTurn, 900 + lastDealMs); // the opponent waits until every card has landed
     }
@@ -7772,6 +7965,7 @@
 
   function showMatchOver(who){
     const won = who==='you';
+    if(storyRun && mode==='ai'){ storyMatchEnd(won); return; }
     const mine = scores.you, theirs = scores.ai;
     let unlockedMbarga = false;
     if(mode==='ai'){
@@ -7971,7 +8165,7 @@
     SQ_SEAT_ORDER.forEach(id=>{ sq.players[id] = {eliminated:false, hand:[], originalHand:[]}; sq.history[id] = []; sq.knownVoid[id] = new Set(); });
     // the stake: the survivor takes one stake per player at the table
     matchCoras = 0; matchGlacees = 0;
-    matchStake = Math.min(cfg.online ? (cfg.stake||0) : (prefs.stake||0), profile.chips);
+    matchStake = storyRun ? 0 : Math.min(cfg.online ? (cfg.stake||0) : (prefs.stake||0), profile.chips);
     if(matchStake>0) chipsAdd(-matchStake);
     sq.stake = cfg.online ? (cfg.stake||0) : matchStake;
     enterGame();
@@ -8491,6 +8685,7 @@
   }
   // the end of a Carré game, as this phone sees it
   function sqChampionScreen(won, champName, nPlayers){
+    if(storyRun && sq && !sq.online && !sq.remote){ storyMatchEnd(won); return; }
     profile.squareGamesPlayed += 1;
     if(won) profile.squareWins += 1;
     saveProfile();
@@ -9147,6 +9342,7 @@
     {kind:'title', id:'sorcier',     name:'Sorcier de Mokolo',  price:10000, desc:'On dit qu’il lit les cartes à l’envers.'},
     {kind:'title', id:'intouchable', name:'Intouchable',        price:15000, desc:'Personne ne le bat. Personne.'},
     {kind:'title', id:'boss',        name:'Le Boss de Melen',   price:20000, desc:'Le titre suprême du quartier.'},
+    {kind:'title', id:'roi-cercle',  name:'Roi du Cercle',      price:0, story:true, desc:'Ne s’achète pas : gagne la finale de « La Nuit des 33 ».'},
     {kind:'react', id:'yekiii', name:'« Yékiii ! »',        text:'Yékiii ! 😱',       price:500, desc:'Quand l’adversaire sort un coup de fou.'},
     {kind:'react', id:'tchip',  name:'« Tchip ! »',         text:'Tchip 😒',           price:500, desc:'Le mépris, en un son.'},
     {kind:'react', id:'ondit',  name:'« On dit quoi ? »',   text:'On dit quoi ? 😏',   price:500, desc:'Pour le chambrer gentiment.'},
@@ -9155,7 +9351,7 @@
     {kind:'react', id:'ashia',  name:'« Ashia ! »',         text:'Ashia ! 🤲',         price:500, desc:'Courage, ça ira.'}
   ];
   function shopEnsure(){ if(!profile.owned) profile.owned = {}; if(!profile.equip) profile.equip = {}; }
-  function shopHas(item){ return item.price===0 || shopOwns(profile, item.kind, item.id); }
+  function shopHas(item){ return item.story ? shopOwns(profile, item.kind, item.id) : (item.price===0 || shopOwns(profile, item.kind, item.id)); }
   function shopEquipped(item){
     if(item.kind==='table') return currentTableId()===item.id;
     if(item.kind==='back') return (prefs.skin||{}).back===item.id;
@@ -9170,6 +9366,7 @@
   }
   function shopBuy(item){
     if(shopHas(item)) return;
+    if(item.story){ showToast('Ça ne s’achète pas', 'Gagne la finale du mode histoire « La Nuit des 33 ».', {ms:2200}); return; }
     if(profile.chips < item.price){ showToast('Pas assez de jetons', 'Il te manque '+fmtChips(item.price - profile.chips)+' jetons.', {ms:1800}); return; }
     askConfirm('Acheter « '+item.name.replace(/[«»]/g,'').trim()+' » ?', 'Pour '+fmtChips(item.price)+' jetons. Ton solde passera à '+fmtChips(profile.chips - item.price)+'.', 'Acheter', ()=>{
       shopEnsure();
@@ -9211,7 +9408,7 @@
         : item.kind==='react' ? '<span class="si-vis si-react"></span>'
         : '<span class="si-vis si-ico">'+ico(item.icon || 'sparkle')+'</span>';
       el.innerHTML = vis + '<b class="si-name"></b><small class="si-desc"></small>'+
-        '<button class="si-btn'+(has ? '' : ' primary')+'">'+(on ? ico('check')+' Équipé' : has ? (item.kind==='react' ? ico('check')+' À toi' : 'Équiper') : ico('coin')+' '+fmtChips(item.price))+'</button>';
+        '<button class="si-btn'+(has || item.story ? '' : ' primary')+'">'+(on ? ico('check')+' Équipé' : has ? (item.kind==='react' ? ico('check')+' À toi' : 'Équiper') : item.story ? ico('lock')+' Histoire' : ico('coin')+' '+fmtChips(item.price))+'</button>';
       el.querySelector('.si-name').textContent = item.name;
       el.querySelector('.si-desc').textContent = item.desc || '';
       const t = el.querySelector('.si-title .my-title'); if(t) t.textContent = item.name;
@@ -9250,7 +9447,7 @@
     const f = profile.equip && profile.equip.frame; if(f) el.classList.add('frame-'+f);
   }
   // (a plain list here: the home screen may ask for the title before the catalogue above exists)
-  function myTitle(){ const t = profile.equip && profile.equip.title; return ({'main-de-fer':'La Main de fer', glacial:'Le Glacial', 'roi-cora':'Roi du CORA', sorcier:'Sorcier de Mokolo', intouchable:'Intouchable', boss:'Le Boss de Melen'})[t] || ''; }
+  function myTitle(){ const t = profile.equip && profile.equip.title; return ({'main-de-fer':'La Main de fer', glacial:'Le Glacial', 'roi-cora':'Roi du CORA', sorcier:'Sorcier de Mokolo', intouchable:'Intouchable', boss:'Le Boss de Melen', 'roi-cercle':'Roi du Cercle'})[t] || ''; }
   // the reactions you own join the quick chips of the online chat
   function renderOwnedReactions(){
     const quick = document.getElementById('chatQuick'); if(!quick) return;
@@ -9262,6 +9459,814 @@
     });
   }
   renderOwnedReactions();
+
+  // ===================== MODE HISTOIRE — « La Nuit des 33 » =====================
+  // A dark story told in scenes (portraits, dialogue, choices), with real games in between: duels and Carrés
+  // against the story's characters, bets in real jetons. One chapter a day. Four hidden gauges follow the
+  // player's choices (vice, confiance, cœur pour Nadège / pour Mireille, dette) and decide the ending.
+  // Steps of a chapter:
+  //   {n:text}  narration · {s:who, t:text}  a line · {title:[kicker, title, sub]} · {place:id} · {fx:'flash'|'shake'}
+  //   {c:[{t, sub, d:{stat:+n}, f:flag, pay, need, if, go}]}  a choice · {m:{…}}  a game · {set:{flag:true}}
+  //   {l:label} · {go:label, if} · {ending:id}.  Any text or field can be a function of the state S.
+  var STORY_DEBUG = /[?&](debug|story)\b/.test(location.search);
+  var CAST = {
+    bobo:     {name:'Bobo',           role:'Ton frère de cœur',         c:'#c9772e'},
+    nadege:   {name:'Nadège',         role:'La sœur de Bobo, peintre',  c:'#d9548f'},
+    mireille: {name:'Mireille',       role:'La Dame de Mokolo',         c:'#b0303f'},
+    ekwalla:  {name:'Ekwalla',        role:'Le maître du Cercle',       c:'#8f815f'},
+    essomba:  {name:'Papa Essomba',   role:'Propriétaire du Royal',     c:'#a06a2a'},
+    junior:   {name:'Junior',         role:'« le Fantôme »',            c:'#3a7bd5'},
+    ngono:    {name:'Mama Ngono',     role:'Guérisseuse de Melen',      c:'#4c8a3c'},
+    nkwenti:  {name:'Ta’ Nkwenti',    role:'Ancien champion',           c:'#8c7b5a'},
+    biloa:    {name:'Biloa',          role:'Garde du corps d’Ekwalla',  c:'#5f6b3a'},
+    moussa:   {name:'Alhadji Moussa', role:'Prêteur de Garoua',         c:'#b08a3a'}
+  };
+  // what they say at the table
+  var CAST_LINES = {
+    bobo:     {control:['Doucement, mon frère.','Je connais tes mains par cœur.'], win:['Pardon, mon frère. Vraiment.','Je n’avais pas le choix.'], lose:['Tu as toujours été meilleur que moi.','Bien joué… frère.'], cora:['CORA. Comme au quartier, tu te souviens ?'], glacee:['33 Glacée… celle-là, c’est pour toi.'], surprise:['Eh ! Qui t’a appris ça ?'], behind:['Ne me regarde pas comme ça.'], missed:['J’avais une victoire… j’ai oublié de l’annoncer.']},
+    junior:   {control:['Ping. Je t’ai vu venir.','Données reçues.'], win:['Game over, mon frère.','Mise à jour terminée.'], lose:['Bug. Gros bug.','OK… respect.'], cora:['CORA. Code source : le 3.'], glacee:['Double 3. Le système plante !'], surprise:['Hein ? Ça, c’était pas dans l’algo.'], behind:['Je laisse charger. Patience.'], missed:['Erreur 404 : annonce introuvable.']},
+    moussa:   {control:['Tout se paie, mon ami.','Je prends.'], win:['Les affaires sont les affaires.','Tu me dois une partie de plus.'], lose:['Hmm. Tu vaux plus que je pensais.','Bien. Très bien.'], cora:['CORA. Ça, c’est un bon investissement.'], glacee:['33 Glacée ! Les intérêts sont élevés.'], surprise:['Inch’Allah… quel coup.'], behind:['Le marché remonte toujours.'], missed:['J’ai oublié d’encaisser…']},
+    ngono:    {control:['Les ancêtres ont parlé.','Je l’avais vu en rêve.'], win:['Les cartes ne mentent pas, mon enfant.','Va te laver les mains.'], lose:['Tu as quelqu’un derrière toi… je le sens.','Les esprits sont avec toi ce soir.'], cora:['CORA. Le 3 m’obéit.'], glacee:['Deux 3 ! Le blindage marche toujours.'], surprise:['Qui t’a blindé, toi ?'], behind:['La nuit est longue.'], missed:['Les esprits m’ont distraite.']},
+    biloa:    {control:['Cible acquise.','Reste à ta place.'], win:['Mission accomplie.','Rompez.'], lose:['…Pas mal.','Je retiens.'], cora:['CORA. Tir de précision.'], glacee:['33 Glacée. À terre.'], surprise:['Hm. Tactique.'], behind:['On ne panique pas.'], missed:['Négatif. Trop tard.']},
+    mireille: {control:['Regarde mes mains.','Trop facile, chéri.'], win:['La Dame de Mokolo ne perd pas.','Tu apprendras.'], lose:['Tu me surprends. J’aime ça.','Pas mal. Pas mal du tout.'], cora:['CORA. Avec le sourire.'], glacee:['33 Glacée. Tu as vu mes boucles d’oreille ?'], surprise:['Tiens donc…'], behind:['Je te laisse y croire.'], missed:['Je te l’ai laissée. Tu me remercieras.']},
+    nkwenti:  {control:['Patience.','Le vieux voit tout.'], win:['Quinze ans de pratique, petit.','Retourne t’asseoir.'], lose:['Bien. Tu gardes ton 3, toi.','Enfin un joueur.'], cora:['CORA. Comme en 98.'], glacee:['La 33 Glacée… je l’ai faite à Ekwalla, une fois.'], surprise:['Ha ! Tu m’as eu.'], behind:['Un vieux, ça ne court pas. Ça attend.'], missed:['Les yeux ne sont plus ce qu’ils étaient.']},
+    ekwalla:  {control:['Prévisible.','Je l’avais compté.','Tu respires trop fort.'], win:['Personne ne me bat.','Merci pour la soirée.','Rentre chez toi. Si tu peux.'], lose:['Hm.','Une manche. Rien de plus.'], cora:['CORA. Évidemment.'], glacee:['La 33 Glacée. Ma signature.'], surprise:['…Intéressant.'], behind:['Le score est une illusion.'], missed:['Je n’annonce pas. Je n’en ai pas besoin.']}
+  };
+  var RULE_TXT = {
+    nopasse:'Règle spéciale : personne ne peut passer.',
+    spy:'Triche : Junior te souffle une carte de l’adversaire à chaque manche.',
+    blindage:'Blindage de Mama Ngono : un 3 tombe toujours dans ta main.'
+  };
+  var ENDINGS = {
+    legende: {group:'legende', title:'La Légende de Melen', win:true,
+      text:['Ekwalla tombe à l’aube, menotté devant le Royal, la pluie sur son costume beige. Le carnet fait tomber trois ministres, deux commissaires et un pasteur.',
+            'Bobo rentre chez lui, sa dette effacée. Nadège pleure en le serrant si fort qu’il en rit. Papa Essomba rouvre le Royal… sans sous-sol.',
+            'Et sur la terrasse, chaque soir, on raconte ta partie. On dit que tu as gardé ton 3 jusqu’à la fin.']},
+    maitre:  {group:'maitre', title:'Le Nouveau Maître', win:true,
+      text:['Tu enfiles la veste beige. Elle te va bien. Trop bien.',
+            'Le Cercle reprendra à la prochaine saison des pluies, et c’est toi qui choisiras qui descend. Riche. Craint. Seul.',
+            'Quelque part dans la ville, Mireille rouvre un dossier. Il porte ton nom.']},
+    loinN:   {group:'loin', title:'Loin de Melen', win:true,
+      text:['Tu laisses la Couronne sur la table, au milieu de l’eau.',
+            'À l’aube, un car pour Kribi. Nadège dort sur ton épaule, de la peinture encore sur les doigts.',
+            'Pour la première fois de ta vie, tu regardes la mer sans compter les cartes.']},
+    loinM:   {group:'loin', title:'Loin de Melen', win:true,
+      text:['Mireille pose son insigne sur la table, à côté de la Couronne. « Quelqu’un d’autre finira le travail. »',
+            'Une voiture sans plaque, la route de Douala, la radio trop fort. Elle conduit. Tu la regardes.',
+            'Personne ne sait où vous êtes. C’est exactement ce que vous vouliez.']},
+    loinS:   {group:'loin', title:'Loin de Melen', win:true,
+      text:['Le carnet brûle dans l’eau du sous-sol, page après page. Les noms, les sommes, les secrets : tout part en fumée.',
+            'Tu remontes l’escalier sans te retourner. Dehors, la pluie s’est arrêtée.',
+            'On ne t’a plus jamais revu à Melen. Mais certains soirs, au Royal, quelqu’un pose un 3 de Coubie sur le comptoir, en ton honneur.']},
+    barreaux:{group:'barreaux', title:'Derrière les barreaux', win:false,
+      text:['Kondengui, encore. La même odeur, le même bruit, les mêmes murs.',
+            'Ta’ Nkwenti te garde ta place, près de la fenêtre. « Je t’avais dit, petit : on ne triche pas avec le Fap Fap. Il se venge toujours. »',
+            'Il paraît que la Couronne est rangée dans une armoire de la brigade. Avec ton nom sur l’étiquette.']},
+    traitre: {group:'traitre', title:'Le traître trahi', win:false,
+      text:['Biloa, Moussa, Junior… et Bobo. Ceux que tu as utilisés se partagent la Couronne sous tes yeux.',
+            'Personne ne lève la main sur toi. C’est pire : on t’ignore.',
+            'Tu ressors du Royal les poches vides, sous la pluie. Le Cercle t’a appris sa seule leçon : ici, personne ne te doit rien.']}
+  };
+  var ENDING_GROUPS = [['legende','La Légende de Melen'],['maitre','Le Nouveau Maître'],['loin','Loin de Melen'],['barreaux','Derrière les barreaux'],['traitre','Le traître trahi']];
+
+  var CHAPTERS = [
+    {t:'Le quartier', sub:'Bobo a disparu.', steps:[
+      {place:'rue'},
+      {title:['Chapitre 1','Le quartier','Melen, saison des pluies.']},
+      {n:'Minuit passé. La pluie tape sur les tôles comme des doigts impatients.'},
+      {n:'Trois jours que personne n’a vu Bobo. Ton frère de cœur. Celui qui t’a appris à tenir tes cinq cartes sans trembler.'},
+      {s:'nadege', t:'Ils ont retrouvé sa moto devant Le Royal. Les clés encore dessus. Bobo ne laisse jamais sa moto.'},
+      {s:'nadege', t:'Il jouait encore. Il devait de l’argent à des gens… des gens qui ne sourient pas.'},
+      {s:'nadege', t:'Toi, tu connais ce monde-là. Je t’en supplie. Ramène-moi mon frère.'},
+      {c:[
+        {t:'« Je te le ramène. Je te le jure. »', d:{n:2, conf:1}, f:'promis'},
+        {t:'« Bobo s’est mis tout seul dans ce trou. »', d:{n:-1}, f:'froid', go:'c1froid'}
+      ]},
+      {s:'nadege', t:'Merci… Je savais que tu dirais ça. Tu as toujours été là pour lui.'},
+      {go:'c1suite'},
+      {l:'c1froid'},
+      {s:'nadege', t:'Alors j’irai seule. Comme toujours.'},
+      {n:'Elle part sous la pluie, sans se retourner. Tu sais déjà que tu vas la suivre.'},
+      {l:'c1suite'},
+      {n:'À Melen, une seule personne sait tout ce qui se passe la nuit : Junior, « le Fantôme ». Il ne parle jamais gratuitement.'},
+      {place:'bar'},
+      {s:'junior', t:'Bobo ? Hmm… Une info, ça se gagne, mon frère. On fait une partie. Tu gagnes, je parle.'},
+      {m:{opp:'junior', brain:'heuristic', target:3, bets:[0,200,500], odds:2, intro:'Junior ne parle qu’aux gagnants.'}},
+      {s:'junior', t:'Propre. Tu joues comme lui, tu sais. Bon. Écoute bien.'},
+      {s:'junior', t:'Bobo n’a pas disparu. Il est descendu. Au sous-sol du Royal. Là où se joue le Cercle.'},
+      {s:'junior', t:'Trente-deux joueurs entrent. Un seul ressort avec la Couronne. Et ceux qui perdent… on ne les revoit pas toujours.'},
+      {n:'Le Cercle. Tu croyais que c’était une légende de quartier, une histoire pour faire peur aux petits.'},
+      {place:'rue'},
+      {fx:'flash'},
+      {n:'Sous le néon rouge du Royal, une silhouette en costume beige te regarde à travers la pluie. Un visage blanc comme la craie. Puis plus rien.'}
+    ]},
+    {t:'La dette', sub:'Tout se paie, à Melen.', steps:[
+      {place:'marche'},
+      {title:['Chapitre 2','La dette','Tout se paie, à Melen. Surtout l’espoir.']},
+      {n:'Le lendemain. Une arrière-boutique de Mokolo qui sent le café et l’argent liquide.'},
+      {s:'moussa', t:'Assieds-toi. Tu cherches Bobo ? Alors tu me cherches aussi.'},
+      {s:'moussa', t:'Ton ami me doit deux millions. Il a joué avec mon argent. Il a perdu avec mon argent.'},
+      {s:'moussa', t:'Le Cercle commence dans trois nuits. L’entrée coûte cher. Si tu veux revoir ton ami, il faut t’asseoir à cette table.'},
+      {s:'moussa', t:'Je peux te prêter l’entrée. Ou tu peux la gagner à ma table… avec ton propre argent.'},
+      {c:[
+        {t:'Emprunter l’entrée à Moussa', sub:'Il prendra 30 % de ce que tu gagneras à la fin', d:{dette:2}, f:'emprunt', go:'c2emprunt'},
+        {t:'Gagner ta place à sa table', sub:'Un vrai pari en jetons', d:{conf:1}, f:'merite'}
+      ]},
+      {s:'moussa', t:'Un homme qui paie avec ses mains. J’aime ça. Montre-moi.'},
+      {m:{opp:'moussa', brain:'heuristic', target:3, bets:[500,1000,2500], odds:2, intro:'L’entrée du Cercle se gagne. Mise minimum : 500 jetons.'}},
+      {s:'moussa', t:'Tu as ta place. Et retiens bien : là-bas, personne ne te doit rien. Personne.'},
+      {go:'c2fin'},
+      {l:'c2emprunt'},
+      {s:'moussa', t:'Sage décision. Je prendrai trente pour cent de tout ce que tu gagneras là-bas.'},
+      {s:'moussa', t:'Mais d’abord, montre-moi que je ne prête pas à un aveugle.'},
+      {m:{opp:'moussa', brain:'heuristic', target:3, bets:[0,200,500], odds:2, intro:'Moussa veut voir à qui il prête son argent.'}},
+      {s:'moussa', t:'Bien. Et si tu perds là-bas… on en reparlera. Chez moi, les dettes ne meurent jamais. Elles changent juste de propriétaire.'},
+      {l:'c2fin'},
+      {place:'rue'},
+      {n:'En sortant, tu trouves une enveloppe glissée sous ton essuie-glace. Dedans, une seule carte : le 3 de Coubie.'},
+      {fx:'flash'},
+      {n:'Au dos, écrit au rouge à lèvres : « Ne viens pas. — M. »'}
+    ]},
+    {t:'Le blindage', sub:'On ne descend pas les mains nues.', steps:[
+      {place:'marche'},
+      {title:['Chapitre 3','Le blindage','On ne descend pas au Cercle les mains nues.']},
+      {n:'Marché Mokolo, à l’aube. Entre les poissons fumés et les pagnes, une boutique sans enseigne. L’odeur de l’encens et de la terre mouillée.'},
+      {s:'ngono', t:'Je t’attendais. Les cartes m’ont parlé de toi bien avant que tu naisses.'},
+      {s:'ngono', t:'Là-bas, ils sont tous blindés. Tous. Ekwalla le premier. Et toi, tu vas y aller tout nu ?'},
+      {s:'ngono', t:'Ce blindage fait tomber les 3 dans ta main. Il ne coûte presque rien… aujourd’hui.'},
+      {c:[
+        {t:'Accepter le blindage', sub:'1 500 jetons · un 3 dans ta main à chaque duel', need:1500, pay:-1500, d:{vice:1}, f:'blindage'},
+        {t:'Refuser', sub:'« Je gagnerai avec mes mains. »', d:{conf:1}, go:'c3refus'}
+      ]},
+      {s:'ngono', t:'Bien. Mais souviens-toi : ce qu’on te donne la nuit, on te le reprend le jour.'},
+      {go:'c3jeu'},
+      {l:'c3refus'},
+      {s:'ngono', t:'L’orgueil… C’est le blindage le plus cher de tous, mon enfant.'},
+      {l:'c3jeu'},
+      {s:'ngono', t:'Montre-moi tes mains. Joue avec la vieille.'},
+      {m:{opp:'ngono', brain:'heuristic', target:3, bets:[0,300,800], odds:2, intro:'Mama Ngono veut voir comment tu joues.'}},
+      {s:'ngono', t:'Hmm. Tu as la main de quelqu’un que j’ai connu. Il est mort riche… et seul.'},
+      {s:'ngono', t:'Une dernière chose. Celui que tu cherches distribue les cartes pour l’homme qui ne perd jamais.'},
+      {fx:'shake'},
+      {s:'ngono', t:'Ouvre les yeux. Et ferme ton cœur.'}
+    ]},
+    {t:'L’entrée du Cercle', sub:'Trente-deux chaises. Une couronne.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 4','L’entrée du Cercle','Trente-deux chaises. Une seule couronne.']},
+      {n:'Le sous-sol du Royal. L’air est épais : fumée, sueur, parfum cher. Une ampoule nue se balance au-dessus de la table d’honneur.'},
+      {s:'essomba', t:'Bienvenue chez moi, petit. J’ai coulé ce béton de mes propres mains. Aujourd’hui… il ne m’appartient plus vraiment.'},
+      {s:'biloa', t:'Fouille. Bras écartés. Ne fais pas le malin.'},
+      {s:'biloa', if:S=> S.f.blindage, t:'Un gri-gri ? Garde-le. Ici, ça ne choque plus personne.'},
+      {s:'ekwalla', t:'Un nouveau. Les nouveaux ont toujours les mains qui tremblent. C’est joli à regarder.'},
+      {s:'ekwalla', t:'Une seule règle au Cercle : celui qui gagne une manche élimine qui il veut. Pas de pitié. Pas de remboursement.'},
+      {s:'mireille', t:'Tu n’as pas lu mon message, toi.'},
+      {c:[
+        {t:'« Je ne repars pas sans Bobo. »', d:{m:1}},
+        {t:'« Qui es-tu ? »', go:'c4qui'}
+      ]},
+      {s:'mireille', t:'Têtu. Comme lui. Alors survis. Au moins ce soir.'},
+      {go:'c4jeu'},
+      {l:'c4qui'},
+      {s:'mireille', t:'La Dame de Mokolo. Celle qui te sortira d’ici… ou pas. Ça dépendra de toi.'},
+      {l:'c4jeu'},
+      {n:'Premier tour. Quatre joueurs par table. Le dernier debout passe au tour suivant.'},
+      {m:{carre:['moussa','mireille','biloa'], bets:[0,500,1000,2500], odds:4, intro:'Ton premier Carré du Cercle. Le gagnant de chaque manche élimine qui il veut. Survis jusqu’au bout.'}},
+      {n:'Tu survis. On applaudit à peine : ici, survivre est la moindre des choses.'},
+      {s:'ekwalla', t:'Donne.'},
+      {n:'Le donneur de la maison s’avance vers la table d’honneur. Dreadlocks, bandana, ce sourire que tu connais par cœur.'},
+      {fx:'flash'},
+      {s:'bobo', t:'…'},
+      {n:'Bobo. Vivant. Il distribue les cartes pour Ekwalla. Il te voit. Et il détourne les yeux.'}
+    ]},
+    {t:'Les alliances', sub:'Seul, on ne passe pas.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 5','Les alliances','Seul, on ne passe pas les seizièmes.']},
+      {n:'Pause entre deux tours. Tu coinces Bobo sous l’escalier de service.'},
+      {s:'bobo', t:'Pas ici. Ne me parle pas ici. Ils écoutent tout, ils voient tout.'},
+      {s:'bobo', t:'Je dois huit millions à Ekwalla. Je travaille pour lui jusqu’à ce que je rembourse. C’est-à-dire jamais.'},
+      {s:'bobo', t:'Dis à Nadège que je vais bien. Mens-lui. Tu sais si bien le faire.'},
+      {s:'mireille', t:'Il a raison sur un point : seul, tu ne passes pas les seizièmes.'},
+      {s:'mireille', t:'Avec moi, si. Je te fais des signes : quand je touche ma boucle d’oreille, tu joues fort.'},
+      {s:'junior', t:'Moi, j’ai mieux. Une micro-caméra dans l’ampoule, une oreillette. Tu vois leurs cartes avant eux. Vingt pour cent de tes gains.'},
+      {c:[
+        {t:'Faire alliance avec Mireille', sub:'Ses signes rendront l’adversaire plus lisible', d:{m:2, conf:1}, f:'allyM'},
+        {t:'Accepter la triche de Junior', sub:'Tu verras une carte adverse à chaque manche', d:{vice:2}, f:'triche'},
+        {t:'Rester seul', sub:'Personne ne te devra rien', d:{conf:1}, f:'seul'}
+      ]},
+      {s:'mireille', if:S=> S.f.allyM, t:'Bien. Ne me regarde pas trop. Regarde mes mains.'},
+      {s:'junior', if:S=> S.f.triche, t:'Bienvenue dans le futur, mon frère. Et ne souris pas quand tu vois leurs cartes.'},
+      {s:'biloa', t:'Toi. Table trois. Contre moi. Le perdant rentre chez lui… s’il peut encore marcher.'},
+      {m:{opp:'biloa', brain:S=> S.f.allyM ? 'heuristic' : 'pimc', ms:350, samples:90, target:3, bets:[0,500,1000,2500], odds:2.5,
+          intro:S=> 'Seizièmes de finale. Biloa a servi dans l’armée : elle ne bluffe jamais.'+(S.f.allyM ? ' Mireille, au bar, touche sa boucle d’oreille.' : '')}},
+      {s:'biloa', t:'Pas mal. Ekwalla va vouloir te regarder jouer de plus près.'},
+      {place:'rue'},
+      {n:'Cette nuit-là, en rentrant, tu trouves la porte de ta chambre ouverte. Rien n’a été volé.'},
+      {fx:'shake'},
+      {n:'Sur ton oreiller : une photo de Nadège, prise de loin, dans son atelier. Elle peint. Elle ne sait pas qu’on la regarde.'}
+    ]},
+    {t:'La trahison', sub:'Ton frère distribue. Ton frère ment.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 6','La trahison','Ton frère distribue. Ton frère ment.']},
+      {n:'Huitièmes de finale. La salle est plus silencieuse. Les perdants d’hier ne sont pas revenus.'},
+      {n:'Bobo te sert les cartes. Ses doigts tremblent. Il évite ton regard.'},
+      {n:'Tu soulèves ta main : cinq cartes marquées. Une minuscule encoche au coin de chacune. La triche, servie sur un plateau.'},
+      {fx:'flash'},
+      {s:'biloa', t:'STOP. Personne ne bouge. Mains sur la table.'},
+      {s:'bobo', t:'C’est lui ! Patron, c’est lui ! Il m’a forcé à marquer les cartes, je vous jure !'},
+      {s:'ekwalla', t:'Hm. Deux menteurs. Une seule vérité. Et je déteste perdre mon temps.'},
+      {s:'ekwalla', t:'Vous allez jouer. L’un contre l’autre. Le perdant portera la faute… et ce qui va avec.'},
+      {c:[
+        {t:'Dénoncer Bobo à ton tour', sub:'« C’est lui qui distribue. Fouillez ses poches. »', d:{vice:1, conf:-1, n:-1}, f:'trahiBobo'},
+        {t:'Le couvrir : « C’est moi. »', sub:'Tu paies l’amende : 1 000 jetons', pay:-1000, d:{conf:2, n:1, dette:1}, f:'couvert'}
+      ]},
+      {s:'ekwalla', if:S=> S.f.couvert, t:'Loyal. Comme un chien. J’aime les chiens : ils meurent pour rien. Tu paieras l’amende… et tu joueras quand même.'},
+      {s:'ekwalla', if:S=> S.f.trahiBobo, t:'Voilà. Le sang du quartier, ça ne vaut pas plus cher que ça.'},
+      {m:{opp:'bobo', brain:'heuristic', target:3, bets:[0,500,1000,2000], odds:2, intro:'Toi contre Bobo. Ton frère. Celui qui t’a appris ce jeu.'}},
+      {s:'bobo', if:S=> S.f.trahiBobo, t:'Tu m’as vendu… Je m’en souviendrai, mon frère. Je m’en souviendrai.'},
+      {n:S=> S.f.trahiBobo ? 'Biloa traîne Bobo vers l’escalier de service. La porte claque. Tu ne sais pas où elle l’emmène.' : 'Bobo baisse la tête. Puis, pour la première fois depuis des jours, il te regarde dans les yeux.'},
+      {s:'bobo', if:S=> S.f.couvert, t:'Pourquoi tu fais ça… Pourquoi tu es toujours là pour moi ?'},
+      {place:'rue'},
+      {n:'Trois heures du matin. Ton téléphone vibre. Numéro masqué.'},
+      {fx:'flash'},
+      {n:'« Demain, ils descendent. Ne sois pas là. — M. »'}
+    ]},
+    {t:'La descente', sub:'Quelqu’un a parlé.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 7','La descente','Quelqu’un a parlé.']},
+      {n:'Quarts de finale. Huit joueurs. Dehors, l’orage gronde. Dedans, on n’entend que les cartes.'},
+      {n:'Tu as reçu le message. Tu es venu quand même.'},
+      {m:{carre:['junior','mireille','biloa'], bets:[0,1000,2500,5000], odds:4, intro:'Quart de finale en Carré. Un seul passe.'}},
+      {n:'Tu poses ta dernière carte quand les sirènes déchirent la nuit.'},
+      {fx:'flash'},
+      {s:'biloa', t:'POLICE ! Par l’escalier de service ! Vite !'},
+      {go:'c7prison', if:S=> S.f.triche || S.vice>=3},
+      {n:'Tu cours. Le canal, l’eau jusqu’aux genoux, la pluie dans les yeux. Derrière toi, les torches. Et des pas qui te suivent.'},
+      {set:{fuite:true}},
+      {n:'Quelqu’un a parlé. Et ce quelqu’un était assis à ta table.'},
+      {go:'c7fin'},
+      {l:'c7prison'},
+      {fx:'shake'},
+      {n:'Une main sur ton épaule. Puis le froid du métal sur tes poignets.'},
+      {n:S=> 'Dans ta poche, ils trouvent '+(S.f.triche ? 'l’oreillette de Junior.' : 'le gri-gri de Mama Ngono et des cartes marquées.')+' Tu es le seul joueur menotté ce soir.'},
+      {set:{prison:true}},
+      {n:'Dans le fourgon, tu cherches Mireille des yeux. Elle n’est nulle part. Quelqu’un a parlé… et ce quelqu’un savait exactement quoi chercher.'},
+      {l:'c7fin'}
+    ]},
+    {t:S=> S.f.prison ? 'Kondengui' : 'La planque', sub:S=> S.f.prison ? 'Pour des cigarettes et le respect.' : 'Une nuit pour souffler.', steps:[
+      {go:'c8planque', if:S=> !S.f.prison},
+      {place:'prison'},
+      {title:['Chapitre 8','Kondengui','Ici, on joue pour des cigarettes et le respect.']},
+      {n:'Prison centrale de Kondengui. Quarante hommes dans une cellule prévue pour dix. L’odeur, d’abord. Puis le bruit.'},
+      {s:'nkwenti', t:'Assieds-toi, petit. Pas là, c’est la place du chef. Ici, à côté de moi.'},
+      {s:'nkwenti', t:'Je suis Ta’ Nkwenti. Quinze ans que je dors ici. Pour une partie de cartes. Contre Ekwalla.'},
+      {s:'nkwenti', t:'Il ne m’a pas battu. Il m’a fait tomber. Une descente… comme la tienne. Tu vois le dessin ?'},
+      {s:'nkwenti', t:'Ici, pas de Passe. Un homme ne diffère pas : il assume. Montre-moi ce que tu vaux.'},
+      {m:{opp:'nkwenti', brain:'pimc', ms:500, samples:110, target:3, rule:'nopasse', bets:[0], odds:1, intro:'En prison, on joue pour le respect. Pas de jetons ici.'}},
+      {s:'nkwenti', t:'Le coup du vieux : garde ton 3 pour la fin, même quand il te brûle les doigts. Ekwalla compte sur ta peur.'},
+      {set:{vieux:true}},
+      {n:'Une semaine plus tard. Parloir. Une femme en treillis, des lunettes noires.'},
+      {s:'biloa', t:'Personne ne m’a vue entrer. Mon patron veut que tu reviennes pour la finale. Il aime les histoires.'},
+      {s:'biloa', t:'Le camion de linge sort à cinq heures. Je peux te mettre dedans. Ou tu fais tes six mois et tu sors propre.'},
+      {c:[
+        {t:'T’évader avec Biloa', sub:'Tu lui devras quelque chose', d:{vice:1}, f:'evade'},
+        {t:'Purger ta peine', sub:'Six mois. Tu sortiras propre.', d:{conf:2}, f:'purge'}
+      ]},
+      {n:S=> S.f.evade ? 'Cinq heures. Des draps sales, l’odeur de javel, le camion qui démarre. Tu es dehors avant l’appel.' : 'Six mois. Tu sors amaigri, le regard plus froid. Le Cercle t’a attendu : Ekwalla a gelé ta place. « Les légendes ont besoin d’ennemis », a-t-il dit.'},
+      {s:'nkwenti', t:'Quand tu le verras, dis-lui que le vieux n’a pas oublié.'},
+      {n:'Sur le mur de la cellule, quelqu’un a gravé trois mots au clou. Tu restes longtemps à les fixer.'},
+      {fx:'flash'},
+      {n:'« LA DAME = POLICE »'},
+      {go:'c8fin'},
+      {l:'c8planque'},
+      {place:'planque'},
+      {title:['Chapitre 8','La planque','Une nuit pour souffler. Une seule.']},
+      {n:'Une maison inachevée à Nkolbisson. Pas d’électricité. La pluie qui coule le long des fers à béton.'},
+      {n:'Tu as un téléphone, une seule barre de réseau. Et quelqu’un frappe déjà doucement à la porte.'},
+      {c:[
+        {t:'Appeler Nadège', sub:'Elle viendra. Elle vient toujours.', d:{n:2}, f:'nuitN'},
+        {t:'Ouvrir à Mireille, qui t’a suivi', sub:'La Dame de Mokolo, trempée jusqu’aux os', d:{m:2}, f:'nuitM', go:'c8m'}
+      ]},
+      {s:'nadege', t:'Tu es trempé… Viens là. Je suis venue dès que tu as appelé.'},
+      {s:'nadege', t:'Quand on était petits, tu disais que tu m’emmènerais voir la mer, à Kribi. Tu t’en souviens ?'},
+      {s:'nadege', t:'Promets-moi que tu reviendras de cette finale. Avec ou sans Bobo.'},
+      {go:'c8matin'},
+      {l:'c8m'},
+      {s:'mireille', t:'Je t’ai dit de ne pas venir. Tu ne m’écoutes jamais.'},
+      {s:'mireille', t:'Je ne suis pas celle que tu crois. Pas encore. Laisse-moi juste cette nuit.'},
+      {n:'Elle s’endort contre toi. Sur la table, son téléphone s’allume : « Opération Couronne — rapport demain 8 h. »'},
+      {l:'c8matin'},
+      {n:'À l’aube, on frappe. Trois coups lents.'},
+      {s:'nkwenti', t:'Sorti hier. Quinze ans à Kondengui pour une partie contre Ekwalla. Il m’a fait tomber avec une descente… comme celle de cette nuit.'},
+      {s:'nkwenti', t:'Joue avec moi, petit. Je veux voir si tu mérites ce que je sais. À l’ancienne : pas de Passe.'},
+      {m:{opp:'nkwenti', brain:'pimc', ms:500, samples:110, target:3, rule:'nopasse', bets:[0,500,1000], odds:2, intro:'Ta’ Nkwenti joue à l’ancienne : personne ne peut passer.'}},
+      {s:'nkwenti', t:'Le coup du vieux : garde ton 3 pour la fin, même quand il te brûle les doigts. Ekwalla compte sur ta peur.'},
+      {set:{vieux:true}},
+      {s:'nkwenti', t:'Et méfie-toi de la Dame de Mokolo. Elle n’a jamais perdu une partie… contre la police.'},
+      {l:'c8fin'}
+    ]},
+    {t:'Le secret de Mireille', sub:'Tout le monde ment.', steps:[
+      {place:'port'},
+      {title:['Chapitre 9','Le secret de Mireille','Tout le monde ment dans ce sous-sol.']},
+      {n:'Demi-finales dans deux jours. Mireille te donne rendez-vous au port sec, au milieu des conteneurs rouillés.'},
+      {s:'mireille', t:'Lieutenant Mireille Ateba. Brigade des jeux.'},
+      {fx:'shake'},
+      {s:'mireille', t:'Deux ans d’infiltration. Ekwalla blanchit l’argent de la moitié de la ville à travers le Cercle. La descente, c’était nous.'},
+      {s:'mireille', if:S=> S.f.prison, t:'Ils t’ont arrêté… et je n’ai rien pu faire sans griller ma couverture. Je suis désolée. Vraiment.'},
+      {s:'mireille', t:'Il ne garde rien sur papier, sauf un carnet. Les noms, les sommes, les juges, les ministres. Dans la poche intérieure de sa veste.'},
+      {s:'mireille', t:'Il ne l’enlève jamais. Sauf pour jouer une finale.'},
+      {s:'mireille', t:'Va en finale. Gagne. Et apporte-moi ce carnet. Je fais tomber tout le monde… sauf toi.'},
+      {c:[
+        {t:'Lui faire confiance', sub:'« D’accord. Mais Bobo sort de là avec moi. »', d:{conf:2, m:1}, f:'trustM'},
+        {t:'Refuser', sub:'« Tu m’as menti depuis le premier jour. »', d:{m:-1}, f:'noTrustM'}
+      ]},
+      {s:'mireille', if:S=> S.f.noTrustM, t:'Comme tout le monde dans ce sous-sol. La différence, c’est que moi, je mens pour les bonnes raisons.'},
+      {s:'mireille', if:S=> S.f.trustM, t:'Bobo sortira. Je te le promets. Et moi, je tiens mes promesses.'},
+      {s:'mireille', t:'Avant de te laisser y aller, je veux voir si tu es prêt. Joue contre moi. Sans pitié.'},
+      {m:{opp:'mireille', brain:'pimc', ms:450, samples:120, target:3, bets:[0,500,1500,3000], odds:2.5, intro:'La Dame de Mokolo, sans masque. La meilleure stratège du Cercle.'}},
+      {s:'mireille', t:'Tu es prêt. Presque. Ne regarde jamais ses yeux. Regarde ses mains.'},
+      {place:'bar'},
+      {n:'Le soir même, Papa Essomba t’attend sur la terrasse du Royal. Il a pleuré. Ses mains tremblent autour d’un verre de whisky.'}
+    ]},
+    {t:'Le marché de Papa Essomba', sub:'Combien vaut ton honneur ?', steps:[
+      {place:'bar'},
+      {title:['Chapitre 10','Le marché','Combien vaut ton honneur ?']},
+      {s:'essomba', t:'Ekwalla va me prendre le Royal. Trente ans de ma vie. Le bar de mon père, et du père de mon père.'},
+      {s:'essomba', t:'Il m’a fait une offre. Tu perds la demi-finale contre Biloa. Exprès. Et il efface ma dette.'},
+      {s:'essomba', t:'Toi, tu repars avec vingt mille. Personne n’en saura rien. Fais-le pour un vieil homme… fais-le pour le quartier.'},
+      {c:[
+        {t:'Accepter le marché', sub:'+20 000 jetons · tu perds exprès', d:{vice:2, conf:-1}, f:'vendu', pay:20000},
+        {t:'Refuser : « L’honneur, Papa. »', d:{conf:1}, f:'honneur', go:'c10honneur'}
+      ]},
+      {place:'soussol'},
+      {n:'Demi-finale. Tu joues mal, exprès. Chaque carte te brûle les doigts. Biloa gagne. Elle te regarde comme on regarde quelque chose de sale.'},
+      {s:'ekwalla', t:'Tu croyais vraiment que je laisse partir un joueur qui sait perdre sur commande ?'},
+      {s:'ekwalla', t:'Repêché. Tu joueras la finale, finalement. Pour moi. Tu m’appartiens, maintenant.'},
+      {set:{ekwallaOwns:true}},
+      {go:'c10fin'},
+      {l:'c10honneur'},
+      {s:'essomba', t:'…Tu es un homme meilleur que moi. Va. Et ne te retourne pas.'},
+      {place:'soussol'},
+      {m:{opp:'biloa', brain:'pimc', ms:600, samples:150, target:5, bets:[0,1000,2500,5000], odds:3, intro:'Demi-finale contre Biloa. Le premier à 5 points va en finale.'}},
+      {s:'biloa', t:'Tu as refusé l’argent d’Essomba. Je le sais. Personne ne refuse jamais.'},
+      {s:'biloa', t:'Si un jour tu as besoin de moi… je ne te dirai pas non.'},
+      {set:{biloaAllie:true}},
+      {s:'essomba', t:'Il va me prendre le Royal. Mais je dormirai mieux que lui.'},
+      {l:'c10fin'},
+      {n:'Il reste quatre joueurs. La finale se joue demain, à minuit.'},
+      {fx:'flash'},
+      {n:'Et l’orage a commencé à inonder le sous-sol.'}
+    ]},
+    {t:'Les quatre derniers', sub:'Un seul survivant.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 11','Les quatre derniers','Un seul survivant affrontera Ekwalla.']},
+      {n:'Minuit. L’eau monte jusqu’aux chevilles. On a posé la table sur des parpaings. Le Royal grince comme un bateau dans la tempête.'},
+      {s:'ekwalla', t:'Quatre. Le seul nombre honnête au monde. Jouez. J’attendrai le survivant.'},
+      {s:'bobo', if:S=> S.f.couvert, t:'Il m’a mis à la table pour que je rembourse en jouant. Écoute-moi : cette fois, je joue pour toi, mon frère.'},
+      {s:'junior', if:S=> !S.f.couvert, t:'Surprise. Ekwalla a racheté ma dette. Je joue pour lui, ce soir. Rien de personnel.'},
+      {s:'mireille', if:S=> S.f.trustM, t:'Je suis à côté de toi. Jusqu’au bout.'},
+      {s:'biloa', if:S=> !S.f.trustM, t:'La Dame a disparu. On dit qu’elle a pris peur. Moi, je prends sa chaise.'},
+      {s:'moussa', t:S=> S.f.emprunt ? 'Je suis au premier rang, mon ami. N’oublie pas mes trente pour cent.' : 'J’ai acheté la dernière chaise. Les affaires sont les affaires.'},
+      {m:{carre:S=> [S.f.couvert ? 'bobo' : 'junior', S.f.trustM ? 'mireille' : 'biloa', 'moussa'], bets:[0,1000,5000,10000], odds:4, intro:'La finale à quatre. Le dernier debout affrontera Ekwalla en tête-à-tête.'}},
+      {n:'Les autres tombent un à un. Il ne reste que toi.'},
+      {s:'bobo', if:S=> S.f.couvert, t:'Vas-y. Finis-le. Pour nous deux.'},
+      {s:'ekwalla', t:'Enfin. Laisse-moi enlever ma veste. Je joue toujours la finale en chemise.'},
+      {n:'Il pose sa veste sur le dossier de la chaise. Le carnet dépasse de la poche intérieure. À vingt centimètres de ta main.'},
+      {fx:'flash'},
+      {n:'Il est 3 h 33. La dernière partie va se jouer en tête-à-tête.'}
+    ]},
+    {t:'La 33 Glacée', sub:'Celui qui gagne prend tout.', steps:[
+      {place:'soussol'},
+      {title:['Chapitre 12','La 33 Glacée','Celui qui gagne prend tout.']},
+      {s:'ekwalla', t:'Tu sais pourquoi je ne perds jamais ? Parce que je n’ai jamais rien eu à perdre.'},
+      {s:'you', if:S=> S.f.vieux, t:'Ta’ Nkwenti te salue. Il n’a pas oublié.'},
+      {s:'ekwalla', if:S=> S.f.vieux, t:'…Le vieux. Encore vivant ? Intéressant. Il t’a appris à garder ton 3, je suppose.'},
+      {s:'ekwalla', if:S=> S.f.ekwallaOwns, t:'Et n’oublie pas : tu m’appartiens. Si tu gagnes, c’est que je t’ai laissé gagner.'},
+      {m:{opp:'ekwalla', brain:'pimc', ms:900, samples:260, target:5, bets:[0,2500,5000,10000,25000], odds:4, intro:'La finale du Cercle. Ekwalla n’a jamais perdu. Le premier à 5 points prend la Couronne.'}},
+      {s:'ekwalla', t:'Personne… Personne ne m’a jamais…'},
+      {n:'La salle explose. Puis le silence. Tout le monde regarde la Couronne. Et la veste, sur la chaise.'},
+      {go:'c12barreaux', if:S=> S.vice>=4 || (S.f.triche && S.f.vendu)},
+      {go:'c12traitre', if:S=> S.f.trahiBobo && (S.f.noTrustM || S.f.vendu)},
+      {n:'Tu prends le carnet. Il pèse plus lourd que la Couronne.'},
+      {c:[
+        {t:'Prendre la Couronne et la place d’Ekwalla', sub:'Le Cercle t’appartient', go:'e_maitre'},
+        {t:'Livrer le carnet à Mireille et libérer Bobo', sub:'Brûler le Cercle pour toujours', if:S=> S.f.trustM && !S.f.trahiBobo, go:'e_legende'},
+        {t:'Tout laisser et partir avec Nadège', sub:'La mer, à Kribi', if:S=> S.n>=2, go:'e_loinN'},
+        {t:'Tout laisser et partir avec Mireille', sub:'Loin de tout, et d’abord d’ici', if:S=> S.m>=3 && S.f.trustM, go:'e_loinM'},
+        {t:'Brûler le carnet et disparaître', sub:'Seul, sous la pluie', if:S=> !(S.f.trustM && !S.f.trahiBobo), go:'e_loinS'}
+      ]},
+      {l:'e_maitre'}, {ending:'maitre'},
+      {l:'e_legende'}, {ending:'legende'},
+      {l:'e_loinN'}, {ending:'loinN'},
+      {l:'e_loinM'}, {ending:'loinM'},
+      {l:'e_loinS'}, {ending:'loinS'},
+      {l:'c12barreaux'},
+      {fx:'flash'},
+      {n:'Des sirènes. Des pas dans l’escalier. Mireille descend, l’insigne à la main.'},
+      {s:'mireille', t:'Ekwalla, vous êtes en état d’arrestation. Et toi aussi.'},
+      {s:'mireille', t:S=> (S.f.triche ? 'La caméra de Junior. ' : 'Le gri-gri, les cartes marquées. ')+(S.f.vendu ? 'Le match vendu. ' : '')+'Tout est enregistré. Je t’avais dit de jouer propre.'},
+      {ending:'barreaux'},
+      {l:'c12traitre'},
+      {n:'Tu tends la main vers l’argent. Une autre main se pose sur la tienne.'},
+      {s:'biloa', t:'Tu as vendu ton frère. Ici, personne ne te doit rien. Tu te souviens ?'},
+      {s:'bobo', t:'Je t’avais dit que je m’en souviendrais, mon frère.'},
+      {ending:'traitre'}
+    ]}
+  ];
+
+  // ---- the saved progress (inside the profile, so it follows the account to the cloud) ----
+  function stFresh(){ return {vice:0, conf:0, n:0, m:0, dette:0, f:{}}; }
+  function stGet(){
+    if(!profile.story) profile.story = {ch:1, i:0, S:stFresh(), done:{}, paid:{}, endings:[], replay:false, finished:false, crown:false};
+    return profile.story;
+  }
+  const stVal = (v, S)=> typeof v==='function' ? v(S) : v;
+  function stUnlocked(ch){
+    const P = stGet();
+    if(ch<=1) return true;
+    const prev = P.done[ch-1];
+    if(!prev) return false;
+    return !!(P.replay || P.paid[ch] || STORY_DEBUG || prev < dayKey());
+  }
+  function stChapterTitle(k){ const c = CHAPTERS[k-1]; return c ? stVal(c.t, stGet().S) : ''; }
+
+  // ---- the home card and the chapters page ----
+  function renderStoryHome(){
+    if(!CHAPTERS) return;
+    const P = stGet(), sub = document.getElementById('hxHomeSub'), tag = document.getElementById('hxHomeTag');
+    if(!sub) return;
+    if(P.finished && P.ch>CHAPTERS.length){ sub.textContent = 'Histoire terminée · '+stEndCount()+'/5 fins découvertes'; tag.textContent = 'Rejouer'; }
+    else if(P.ch===1 && P.i===0){ sub.textContent = '32 joueurs entrent. Un seul ressort.'; tag.textContent = 'Nouveau'; }
+    else { sub.textContent = 'Chapitre '+P.ch+' · '+stChapterTitle(P.ch)+(stUnlocked(P.ch) ? '' : ' · demain'); tag.textContent = stUnlocked(P.ch) ? 'Suite' : 'Demain'; }
+  }
+  function stEndCount(){ const P = stGet(); return ENDING_GROUPS.filter(g=> P.endings.some(e=> ENDINGS[e] && ENDINGS[e].group===g[0])).length; }
+  function renderStory(){
+    const P = stGet();
+    document.getElementById('hxCast').innerHTML = ['mireille','ekwalla','bobo','nadege','biloa'].map(id=> '<img src="art/story/'+id+'.jpg" alt="">').join('');
+    const go = document.getElementById('hxGo'), gt = document.getElementById('hxGoT'), gs = document.getElementById('hxGoS');
+    const over = P.ch>CHAPTERS.length;
+    go.disabled = false;
+    if(over){ gt.textContent = 'Recommencer l’histoire'; gs.textContent = 'Tes fins découvertes restent gravées'; }
+    else if(!stUnlocked(P.ch)){ gt.textContent = 'Chapitre '+P.ch+' : demain'; gs.textContent = 'Un nouveau chapitre se débloque chaque jour'; go.disabled = true; }
+    else { gt.textContent = (P.ch===1 && P.i===0) ? 'Commencer' : (P.i>0 ? 'Reprendre' : 'Jouer')+' le chapitre '+P.ch; gs.textContent = stChapterTitle(P.ch); }
+    const list = document.getElementById('hxList');
+    list.innerHTML = '';
+    CHAPTERS.forEach((c, k)=>{
+      const n = k+1, done = n<P.ch, now = n===P.ch, open = now && stUnlocked(n);
+      const row = document.createElement('div');
+      row.className = 'hx-ch'+(done ? ' done' : now ? ' now' : ' locked');
+      row.innerHTML = '<span class="n">'+(done ? ico('check') : n)+'</span><span class="t"><b></b><small></small></span>';
+      row.querySelector('b').textContent = (done || now) ? stVal(c.t, P.S) : 'Chapitre '+n;
+      row.querySelector('small').textContent = done ? 'Terminé' : open ? stVal(c.sub, P.S) : now ? 'Disponible demain' : 'Verrouillé';
+      if(now && !open){
+        const b = document.createElement('button'); b.className = 'unl'; b.innerHTML = ico('coin')+' 2 000';
+        b.title = 'Débloquer maintenant';
+        b.addEventListener('click', ()=>{
+          if(profile.chips<2000){ showToast('Pas assez de jetons', 'Il faut 2 000 jetons pour débloquer ce chapitre.', {ms:1800}); return; }
+          askConfirm('Débloquer le chapitre '+n+' ?', 'Pour 2 000 jetons, sans attendre demain.', 'Débloquer', ()=>{ chipsAdd(-2000); P.paid[n] = true; saveProfile(); renderChips(); renderStory(); });
+        });
+        row.appendChild(b);
+      }
+      list.appendChild(row);
+    });
+    document.getElementById('hxEnds').innerHTML = ENDING_GROUPS.map(g=>{
+      const got = P.endings.some(e=> ENDINGS[e] && ENDINGS[e].group===g[0]);
+      return '<span class="'+(got ? 'got' : '')+'">'+(got ? g[1] : '? ? ?')+'</span>';
+    }).join('');
+  }
+  document.getElementById('btnStory').addEventListener('click', ()=> Nav.go('storyPage'));
+  document.getElementById('hxGo').addEventListener('click', ()=>{
+    const P = stGet();
+    if(P.ch>CHAPTERS.length){
+      askConfirm('Recommencer l’histoire ?', 'Tu repars du chapitre 1, sans attendre entre les chapitres. Tes fins découvertes restent.', 'Recommencer', ()=>{
+        Object.assign(P, {ch:1, i:0, S:stFresh(), done:{}, paid:{}, replay:true}); saveProfile(); renderStory(); hxOpen();
+      });
+      return;
+    }
+    if(stUnlocked(P.ch)) hxOpen();
+  });
+
+  // ---- the scene: portraits, dialogue, choices ----
+  const hx = {typing:null, full:'', mode:null, who:null, skip:false};
+  const $hx = id=> document.getElementById(id);
+  function hxOpen(){ hx.skip = false; Nav.go('storyScene'); hxRun(); }
+  function hxPlace(p){ $hx('storyScene').dataset.place = p; }
+  function hxFx(kind){
+    const sc = $hx('storyScene');
+    if(kind==='flash'){ const f = $hx('hxFlash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); vibrate([30,40,60]); }
+    if(kind==='shake'){ sc.classList.remove('shake'); void sc.offsetWidth; sc.classList.add('shake'); vibrate(80); }
+  }
+  function hxPortrait(who){
+    const img = $hx('hxPortrait');
+    if(!who || who==='you'){ img.classList.add('dim'); return; }
+    img.classList.remove('dim');
+    if(hx.who===who && img.classList.contains('on')) return;
+    hx.who = who;
+    img.classList.remove('on');
+    setTimeout(()=>{
+      img.onload = ()=> img.classList.add('on');
+      img.src = 'art/story/'+who+'.jpg';
+      if(img.complete && img.naturalWidth) img.classList.add('on');
+    }, img.getAttribute('src') ? 160 : 0);
+  }
+  function hxClearUi(){
+    $hx('hxChoices').innerHTML = ''; $hx('hxPanel').classList.add('hidden'); $hx('hxTitle').classList.add('hidden');
+    $hx('hxBox').classList.add('hide');
+  }
+  function hxSay(who, text){
+    hxClearUi();
+    const box = $hx('hxBox'), name = $hx('hxName'), el = $hx('hxText');
+    box.classList.remove('hide');
+    box.classList.toggle('narr', !who);
+    box.classList.toggle('me', who==='you');
+    hxPortrait(who);
+    name.textContent = !who ? '' : who==='you' ? ((prefs.name||'').trim() || 'Toi') : CAST[who].name;
+    name.style.setProperty('--hx-c', who && CAST[who] ? CAST[who].c : '#2f5ea8');
+    hx.mode = 'text'; hx.full = text;
+    clearInterval(hx.typing);
+    if(calmOn()){ el.textContent = text; return; }
+    let k = 0; el.textContent = '';
+    hx.typing = setInterval(()=>{ k += 2; el.textContent = text.slice(0, k); if(k>=text.length){ clearInterval(hx.typing); hx.typing = null; } }, 18);
+  }
+  function hxTitle(t){
+    hxClearUi(); hxPortrait(null);
+    $hx('hxTitleK').textContent = t[0]; $hx('hxTitleB').textContent = t[1]; $hx('hxTitleS').textContent = t[2] || '';
+    $hx('hxTitle').classList.remove('hidden');
+    hx.mode = 'title';
+    sfx((c,tt)=>{ sweep(c, sfxBus, tt, {f0:110, f1:55, dur:1.2, vol:0.12, lp:400}); });
+  }
+  // a tap anywhere on the scene moves the story on (choices and panels have their own buttons)
+  $hx('storyScene').addEventListener('click', e=>{
+    if(e.target.closest('button') || hx.mode==='choice' || hx.mode==='panel') return;
+    if(hx.mode==='text'){
+      if(hx.typing){ clearInterval(hx.typing); hx.typing = null; $hx('hxText').textContent = hx.full; return; }
+      hxNext();
+    } else if(hx.mode==='title') hxNext();
+  });
+  $hx('hxClose').addEventListener('click', ()=>{ clearInterval(hx.typing); Nav.back(); });
+  $hx('hxSkip').addEventListener('click', ()=>{ if(hx.mode==='text' || hx.mode==='title'){ hx.skip = true; hxNext(); } });
+  function hxNext(){ const P = stGet(); P.i++; saveProfile(); hxRun(); }
+  function hxLabel(steps, l){ const k = steps.findIndex(s=> s.l===l); return k<0 ? steps.length : k; }
+
+  // runs the chapter from the saved step until something needs the player
+  function hxRun(){
+    const P = stGet(), S = P.S;
+    const chap = CHAPTERS[P.ch-1];
+    if(!chap){ Nav.back(); return; }
+    $hx('hxChap').textContent = 'Chapitre '+P.ch+' · '+stVal(chap.t, S);
+    const steps = chap.steps;
+    for(let guard = 0; guard<500; guard++){
+      if(P.i>=steps.length){ hxChapterEnd(); return; }
+      const st = steps[P.i];
+      if(st.if && !st.if(S)){ P.i++; continue; }
+      if(st.l){ P.i++; continue; }
+      if(st.go){ P.i = hxLabel(steps, st.go); continue; }
+      if(st.place){ hxPlace(st.place); P.i++; continue; }
+      if(st.fx){ if(!hx.skip) hxFx(st.fx); P.i++; continue; }
+      if(st.set){ Object.assign(S.f, st.set); P.i++; continue; }
+      if(st.n!=null || st.s){
+        if(hx.skip){ P.i++; continue; }
+        saveProfile();
+        hxSay(st.s || null, stVal(st.n!=null ? st.n : st.t, S)); return;
+      }
+      hx.skip = false; // fast-forward stops at anything that needs a decision
+      saveProfile();
+      if(st.title){ hxTitle(st.title); return; }
+      if(st.c){ hxChoices(st, steps); return; }
+      if(st.m){ hxMatchPanel(st.m); return; }
+      if(st.ending){ hxEnding(st.ending); return; }
+      P.i++;
+    }
+  }
+  function hxApply(o){
+    const P = stGet(), S = P.S;
+    if(o.d) Object.keys(o.d).forEach(k=> S[k] = (S[k]||0) + o.d[k]);
+    if(o.f) [].concat(o.f).forEach(f=> S.f[f] = true);
+    if(o.pay){ const before = profile.chips; chipsAdd(o.pay); renderChips(before); if(o.pay>0) sfxCoins(10); }
+  }
+  function hxChoices(st, steps){
+    const P = stGet(), S = P.S;
+    $hx('hxBox').classList.remove('hide');
+    hx.mode = 'choice';
+    const box = $hx('hxChoices');
+    box.innerHTML = '';
+    st.c.filter(o=> !o.if || o.if(S)).forEach((o, k)=>{
+      const b = document.createElement('button');
+      b.style.setProperty('--i', k);
+      const can = !o.need || profile.chips>=o.need;
+      b.disabled = !can;
+      b.innerHTML = '<span></span>'+(o.sub || !can ? '<small></small>' : '');
+      b.querySelector('span').textContent = stVal(o.t, S);
+      if(b.querySelector('small')) b.querySelector('small').textContent = can ? stVal(o.sub, S) : 'Il te faut '+fmtChips(o.need)+' jetons';
+      b.addEventListener('click', ()=>{
+        if(hx.mode!=='choice') return;
+        hx.mode = null; box.innerHTML = '';
+        hxApply(o);
+        P.i = o.go ? hxLabel(steps, o.go) : P.i+1;
+        saveProfile(); vibrate(15);
+        hxRun();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  // ---- the games of the story ----
+  function hxMatchPanel(m0){
+    const P = stGet(), S = P.S;
+    const m = {
+      opp: m0.opp, carre: stVal(m0.carre, S), brain: stVal(m0.brain, S) || 'heuristic', ms: m0.ms, samples: m0.samples,
+      target: m0.target || 3, odds: m0.odds || 2, intro: stVal(m0.intro, S) || '',
+      // the blindage and Junior's camera follow you into every duel once accepted (unless the game has its own rule)
+      rule: m0.carre ? null : (stVal(m0.rule, S) || (S.f.triche ? 'spy' : S.f.blindage ? 'blindage' : null))
+    };
+    let bets = (m0.bets || [0]).filter(b=> b<=profile.chips);
+    if(!bets.length) bets = [Math.min(profile.chips, m0.bets[0])]; // broke: you play with what you have left
+    let bet = bets[0];
+    hxClearUi(); hxPortrait(m.carre ? null : m.opp);
+    hx.mode = 'panel';
+    const p = $hx('hxPanel');
+    const faces = (m.carre || [m.opp]).map(id=> '<img src="art/story/'+id+'.jpg" alt="">').join('');
+    const who = m.carre ? 'Carré à '+(m.carre.length+1)+' : '+m.carre.map(id=> CAST[id].name).join(', ') : 'Duel contre '+CAST[m.opp].name;
+    p.innerHTML = '<div class="hp-k">'+(m.carre ? 'Carré la Pute' : 'Duel · premier à '+m.target+(m.target>1 ? ' points' : ' point'))+'</div>'+
+      '<div class="hp-vs"><span class="hp-faces">'+faces+'</span></div><h3 class="hp-who"></h3><p class="hp-intro"></p>'+
+      (m.rule ? '<div class="hp-rule"></div>' : '')+
+      (m0.bets && m0.bets.some(b=> b>0) ? '<div class="hp-k">Ta mise</div><div class="hp-bets"></div><p class="hp-small hp-pay"></p>' : '<p class="hp-small">Pas de jetons en jeu.</p>')+
+      '<div class="hp-row"><button class="hp-later">Plus tard</button><button class="go hp-play">Jouer</button></div>';
+    p.querySelector('.hp-who').textContent = who;
+    p.querySelector('.hp-intro').textContent = m.intro;
+    if(m.rule) p.querySelector('.hp-rule').textContent = RULE_TXT[m.rule];
+    const row = p.querySelector('.hp-bets');
+    const drawBets = ()=>{
+      if(!row) return;
+      row.innerHTML = '';
+      m0.bets.forEach(b=>{
+        const x = document.createElement('button');
+        x.className = b===bet ? 'on' : ''; x.disabled = b>profile.chips;
+        x.innerHTML = b===0 ? 'Amical' : ico('coin')+' '+fmtChips(b);
+        x.addEventListener('click', ()=>{ bet = b; drawBets(); });
+        row.appendChild(x);
+      });
+      p.querySelector('.hp-pay').textContent = bet>0 ? 'Si tu gagnes : '+fmtChips(Math.round(bet*m.odds))+' jetons (×'+String(m.odds).replace('.',',')+'). Si tu perds, la mise est perdue. Solde : '+fmtChips(profile.chips)
+                                                   : 'Partie sans mise. Solde : '+fmtChips(profile.chips);
+    };
+    drawBets();
+    p.querySelector('.hp-later').addEventListener('click', ()=> Nav.back());
+    p.querySelector('.hp-play').addEventListener('click', ()=> storyStartMatch(m, bet));
+    p.classList.remove('hidden');
+  }
+  function storyStartMatch(m, bet){
+    const P = stGet();
+    if(bet>0){ if(profile.chips<bet) return; chipsAdd(-bet); }
+    storyRun = {ch:P.ch, i:P.i, bet, odds:m.odds, rule:m.rule, m, target0:TARGET_SCORE, art:{}, sqp:{}};
+    if(m.carre){
+      const n = m.carre.length + 1, names = {};
+      sqSeatsFor(n).filter(s=> s!=='you').forEach((seat, k)=>{
+        const id = m.carre[k];
+        names[seat] = CAST[id].name;
+        storyRun.art[seat] = ART_FILE[seat]; ART_FILE[seat] = 'story/'+id;
+        storyRun.sqp[seat] = SQ_PERSONAS[seat];
+        const l = CAST_LINES[id] || {};
+        SQ_PERSONAS[seat] = {name:CAST[id].name, control:l.control||[], win:l.win||[], cora:l.cora||[], glacee:l.glacee||[], lose:l.lose||[]};
+      });
+      sqNewGame({n, names});
+      document.querySelector('header .sub').textContent = 'La Nuit des 33 · Chapitre '+P.ch+' · Carré, un seul survivant';
+    } else {
+      const pid = 'st_'+m.opp;
+      DUEL_PERSONAS[pid] = {name:CAST[m.opp].name, stars:3, brain:m.brain, pimcMs:m.ms, pimcSamples:m.samples, announce:[0.8, 0.95], repWin:0,
+        tagline:CAST[m.opp].role, lines:CAST_LINES[m.opp] || {}};
+      ART_FILE[pid] = 'story/'+m.opp;
+      storyRun.art[pid] = undefined;
+      duelOpp = pid; mode = 'ai';
+      TARGET_SCORE = m.target;
+      enterGame();
+      applyOppNameToUI();
+      newMatch();
+      document.querySelector('header .sub').textContent = 'La Nuit des 33 · Chapitre '+P.ch+' · Toi contre '+CAST[m.opp].name;
+      if(m.rule) setTimeout(()=> showToast(m.rule==='spy' ? 'Oreillette branchée' : m.rule==='nopasse' ? 'Pas de Passe' : 'Blindage actif', RULE_TXT[m.rule], {ms:2600}), 900);
+    }
+  }
+  // leaving a story game, whichever way: everything borrowed goes back
+  function storyRestore(){
+    const r = storyRun;
+    if(!r) return;
+    storyRun = null;
+    Object.keys(r.art).forEach(k=>{ if(r.art[k]===undefined) delete ART_FILE[k]; else ART_FILE[k] = r.art[k]; });
+    Object.keys(r.sqp).forEach(k=> SQ_PERSONAS[k] = r.sqp[k]);
+    TARGET_SCORE = r.target0;
+    if(duelOpp.indexOf('st_')===0) duelOpp = prefs.lastOpp && DUEL_PERSONAS[prefs.lastOpp] ? prefs.lastOpp : 'penalty';
+  }
+  function storyMatchEnd(won){
+    const run = storyRun;
+    if(won){ sfxMatchWin(); bigImpact(); burstConfetti(40); } else sfxMatchLose();
+    touchDayStreak();
+    showToast(won ? 'Victoire !' : 'Défaite…', won ? 'L’histoire continue.' : 'Le Cercle ne pardonne pas.', {big:true, celebrate:won, ms:1700});
+    setTimeout(()=>{
+      goToMainMenu();
+      Nav.go('storyPage');
+      Nav.go('storyScene');
+      hxAfterMatch(run, won);
+    }, 1900);
+  }
+  function hxAfterMatch(run, won){
+    const P = stGet();
+    hxClearUi(); hx.mode = 'panel';
+    const p = $hx('hxPanel');
+    let gain = 0;
+    if(won){
+      gain = run.bet>0 ? Math.round(run.bet*run.odds) : 100;
+      const before = profile.chips; chipsAdd(gain); renderChips(before);
+      if(P.ch===run.ch && P.i===run.i) P.i = run.i + 1;
+      saveProfile();
+    }
+    p.innerHTML = '<div class="hp-k">'+(won ? 'Victoire' : 'Défaite')+'</div><h3></h3>'+
+      '<div class="hp-gain'+(won ? '' : ' loss')+'">'+(won ? '+'+fmtChips(gain) : run.bet>0 ? '−'+fmtChips(run.bet) : '0')+' jetons</div>'+
+      '<p></p><div class="hp-row">'+(won ? '<button class="go hp-a">Continuer</button>' : '<button class="hp-b">Plus tard</button><button class="go hp-a">Rejouer</button>')+'</div>';
+    const name = run.m.carre ? 'le Carré' : CAST[run.m.opp].name;
+    p.querySelector('h3').textContent = won ? (run.m.carre ? 'Dernier survivant.' : 'Tu as battu '+name+'.') : (run.m.carre ? 'Éliminé.' : name+' t’a battu.');
+    p.querySelector('p').textContent = won ? 'Solde : '+fmtChips(profile.chips)+' jetons.' : 'L’histoire ne peut pas continuer sans cette victoire. Respire, et retourne t’asseoir.';
+    p.querySelector('.hp-a').addEventListener('click', ()=>{ if(won) hxRun(); else hxRun(); });
+    const b = p.querySelector('.hp-b'); if(b) b.addEventListener('click', ()=> Nav.back());
+    p.classList.remove('hidden');
+    hxPortrait(run.m.carre ? null : run.m.opp);
+  }
+  // story rules inside the card game
+  function storyBlindage(deck){
+    const d = deck.slice();
+    if(d.slice(0,5).some(c=> c.rank===3)) return d;
+    let j = d.findIndex((c, k)=> k>=10 && c.rank===3);
+    if(j<0) j = d.findIndex((c, k)=> k>=5 && c.rank===3);
+    if(j<0) return d;
+    const i = Math.floor(Math.random()*5);
+    const t = d[i]; d[i] = d[j]; d[j] = t;
+    return d;
+  }
+  function storySpy(){
+    if(!state || !state.aiHand || !state.aiHand.length) return;
+    const c = state.aiHand[Math.floor(Math.random()*state.aiHand.length)];
+    gameTimeout(()=> showToast('Junior te souffle…', oppName()+' a le '+c.rank+' de '+c.suit+'.', {ms:2800}), 1200 + (lastDealMs||0));
+  }
+
+  // ---- end of a chapter, end of the story ----
+  function hxChapterEnd(){
+    const P = stGet();
+    const n = P.ch;
+    const first = !P.done[n];
+    P.done[n] = dayKey();
+    P.ch = n + 1; P.i = 0;
+    let gain = 0;
+    if(first && !P.replay){ gain = 300; chipsAdd(gain); }
+    saveProfile();
+    hxClearUi(); hxPortrait(null); hx.mode = 'panel';
+    const p = $hx('hxPanel');
+    const next = P.ch<=CHAPTERS.length, open = next && stUnlocked(P.ch);
+    p.innerHTML = '<div class="hp-k">Fin du chapitre '+n+'</div><h3>À suivre…</h3>'+
+      (gain ? '<div class="hp-gain">+'+fmtChips(gain)+' jetons</div>' : '')+
+      '<p></p><div class="hp-row"><button class="hp-b">Retour</button>'+(open ? '<button class="go hp-a">Chapitre '+P.ch+'</button>' : '')+'</div>';
+    p.querySelector('p').textContent = !next ? '' : open ? 'Le chapitre '+P.ch+' t’attend : « '+stChapterTitle(P.ch)+' ».'
+      : 'Le chapitre '+P.ch+' se débloque demain. Reviens… ou paie pour ne pas attendre.';
+    p.querySelector('.hp-b').addEventListener('click', ()=> Nav.back());
+    const a = p.querySelector('.hp-a'); if(a) a.addEventListener('click', ()=> hxRun());
+    p.classList.remove('hidden');
+  }
+  function hxEnding(id){
+    const P = stGet(), E = ENDINGS[id], S = P.S;
+    hxPlace(E.win ? 'fin' : 'prison');
+    hxClearUi(); $hx('hxPortrait').classList.remove('on'); hx.who = null; hx.mode = 'panel';
+    const firstEnding = !P.endings.includes(id);
+    if(firstEnding) P.endings.push(id);
+    let gain = 0, note = '';
+    if(E.win && !P.crown){
+      gain = 50000;
+      if(S.f.emprunt){ gain = 35000; note = 'Alhadji Moussa a pris ses 30 %.'; }
+      P.crown = true;
+      shopEnsure();
+      const t = profile.owned.title = profile.owned.title || [];
+      if(!t.includes('roi-cercle')) t.push('roi-cercle');
+      profile.equip.title = 'roi-cercle';
+    } else gain = firstEnding ? 5000 : 1000;
+    const wasFinished = P.finished;
+    P.finished = true;
+    P.ch = CHAPTERS.length + 1; P.i = 0;
+    P.done[CHAPTERS.length] = dayKey();
+    const before = profile.chips; chipsAdd(gain); renderChips(before);
+    saveProfile();
+    if(E.win){ sfxBigWin(); burstConfetti(60); } else sfxMatchLose();
+    const p = $hx('hxPanel');
+    p.innerHTML = '<div class="hp-k">Fin · '+stEndCount()+'/5 fins découvertes</div><h3></h3><div class="hp-txt"></div>'+
+      '<div class="hp-gain">+'+fmtChips(gain)+' jetons</div><p class="hp-small hp-rew"></p>'+
+      '<div class="hp-row"><button class="hp-b">Terminer</button></div>';
+    p.querySelector('h3').textContent = E.title;
+    p.querySelector('.hp-txt').innerHTML = E.text.map(()=> '<p></p>').join('');
+    [...p.querySelectorAll('.hp-txt p')].forEach((el, k)=> el.textContent = E.text[k]);
+    const rew = [];
+    if(note) rew.push(note);
+    if(gain>=35000) rew.push('Titre « Roi du Cercle » débloqué et équipé.');
+    if(!wasFinished) rew.push('Table exclusive « Le Sous-sol du Royal » débloquée dans Décors.');
+    if(E.win===false) rew.push('Il existe d’autres fins. Tes choix comptent.');
+    p.querySelector('.hp-rew').textContent = rew.join(' ');
+    p.querySelector('.hp-b').addEventListener('click', ()=> Nav.back());
+    p.classList.remove('hidden');
+    renderMenuRank();
+  }
 
   // ===================== Liquid Glass: which parts of the interface are real glass =====================
   // The big, important surfaces go through the glass engine (lens on the edges, dispersion, frost);
@@ -9356,7 +10361,7 @@
   // ===================== The storm table: raindrops rippling on the table, lightning, then the thunder =====================
   (function storm(){
     const fx = document.querySelector('#lgScene .sc-fx'), flash = document.getElementById('stormFlash');
-    const active = ()=> document.body.classList.contains('table-orage') && document.body.classList.contains('in-game')
+    const active = ()=> (document.body.classList.contains('table-orage') || document.body.classList.contains('table-soussol')) && document.body.classList.contains('in-game')
       && !document.body.classList.contains('calm') && document.visibilityState === 'visible';
     // drops hitting the table
     setInterval(()=>{
@@ -9848,7 +10853,8 @@
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
-      getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}) };
+      getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
+      storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen };
   }
 
 })();
