@@ -1384,6 +1384,89 @@
   .page-body .mp-input{ max-width:280px; }
   .page-body.center button.big{ min-width:240px; }
 
+  /* ---- secondary pages: the same bar as the home screen, deep in the shadow, tinted by the chosen table ---- */
+  .overlay.page:not(.page-home){
+    background:
+      radial-gradient(120% 55% at 50% -12%, color-mix(in srgb, var(--p2) 30%, transparent), transparent 62%),
+      radial-gradient(90% 60% at 110% 105%, color-mix(in srgb, var(--p3) 24%, transparent), transparent 70%),
+      linear-gradient(180deg, rgba(10,6,3,0.80), rgba(6,4,2,0.93) 50%, rgba(4,2,1,0.97)),
+      linear-gradient(var(--h-tint), var(--h-tint)),
+      url('art/home-bar.jpg') center top / cover no-repeat, #0b0704;
+    background-blend-mode: normal, normal, normal, color, normal;
+  }
+  /* slow drifting lights, like out-of-focus bulbs behind the page */
+  .overlay.page:not(.page-home)::before{
+    content:""; position:fixed; inset:-10%; pointer-events:none; z-index:0; opacity:0.55;
+    background:
+      radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--p1) 40%, transparent) 0, transparent 46px),
+      radial-gradient(circle at 86% 30%, color-mix(in srgb, var(--p2) 34%, transparent) 0, transparent 64px),
+      radial-gradient(circle at 72% 78%, color-mix(in srgb, var(--p1) 28%, transparent) 0, transparent 54px),
+      radial-gradient(circle at 24% 68%, color-mix(in srgb, var(--p3) 30%, transparent) 0, transparent 70px),
+      radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--p2) 16%, transparent) 0, transparent 90px);
+    filter: blur(6px);
+    animation: bokehDrift 22s ease-in-out infinite alternate;
+  }
+  @keyframes bokehDrift{ from{ transform: translate3d(-2%, -1%, 0) scale(1); } to{ transform: translate3d(3%, 2%, 0) scale(1.06); } }
+  body.calm .overlay.page::before{ animation:none; }
+  .overlay.page:not(.page-home) .page-body{ position:relative; z-index:1; }
+  /* the brand, faint, at the bottom of every page */
+  .overlay.page:not(.page-home) .page-body::after{
+    content:""; display:block; width:150px; height:78px; margin:22px auto 0; flex-shrink:0;
+    background: url('art/logo.png') center / contain no-repeat; opacity:0.12; filter: grayscale(0.3);
+  }
+  .overlay.page:not(.page-home) .page-head{
+    background: linear-gradient(180deg, rgba(12,8,4,0.94), rgba(12,8,4,0.66));
+    border-bottom-color: color-mix(in srgb, var(--p2) 32%, transparent);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+  }
+  .overlay.page:not(.page-home) .page-head::after{
+    content:""; position:absolute; left:18%; right:18%; bottom:-1px; height:2px; border-radius:2px;
+    background: linear-gradient(90deg, transparent, var(--p1), transparent); opacity:0.75;
+  }
+  .overlay.page:not(.page-home) .page-head h2{
+    font-size:22px; color:var(--p1);
+    background: linear-gradient(180deg, #fff6e2 10%, var(--p1) 55%, var(--p2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.55));
+  }
+  .overlay.page:not(.page-home) .back-btn{
+    background: linear-gradient(160deg, var(--ic1), var(--ic2)); color: var(--ict); border:none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.18), 0 3px 0 rgba(0,0,0,0.5), 0 0 16px color-mix(in srgb, var(--p2) 35%, transparent);
+  }
+  /* section titles get a small coloured stroke */
+  .overlay.page:not(.page-home) :is(.set-group h3, .rm-title, .sp-head > span:first-child){ color: var(--p1); }
+  .overlay.page:not(.page-home) .set-group h3::before{
+    content:""; display:inline-block; width:16px; height:3px; margin-right:8px; border-radius:2px; vertical-align:0.22em;
+    background: linear-gradient(90deg, var(--p3), var(--p1)); box-shadow: 0 0 8px var(--p2);
+  }
+  /* buttons, choices and switches in the colours of the table */
+  .overlay.page:not(.page-home) button.primary{
+    background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3)); border-color: transparent; color: var(--pt); --btn-depth: var(--pd);
+  }
+  .overlay.page:not(.page-home) :is(.fmt.on, .sp-chip.on){
+    background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3)); color: var(--ps); box-shadow: 0 3px 0 var(--pd);
+  }
+  .overlay.page:not(.page-home) :is(.fmt.on b, .sp-chip.on){ color: var(--pt); }
+  .overlay.page:not(.page-home) .on > .switch{ background: linear-gradient(90deg, var(--p3), var(--p2)); box-shadow: 0 0 10px color-mix(in srgb, var(--p2) 55%, transparent); }
+  .overlay.page:not(.page-home) input[type=range]{ accent-color: var(--p2); }
+  .overlay.page:not(.page-home) .cp-n.on{ border-color: var(--p2); box-shadow: 0 4px 0 var(--pd), 0 0 18px color-mix(in srgb, var(--p2) 35%, transparent); }
+  /* cards: a soft glass edge and a reflection that sweeps across when pressed */
+  .overlay.page:not(.page-home) :is(.opp-card, .set-row, .trophy.got, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .mode-card){
+    border-color: color-mix(in srgb, var(--p2) 26%, transparent);
+    position:relative; overflow:hidden; isolation:isolate;
+  }
+  .overlay.page:not(.page-home) :is(.opp-card, .rich-row, .profile-card, .acct-card, .mode-card, .cp-n)::after{
+    content:""; position:absolute; top:0; bottom:0; left:-60%; width:45%; pointer-events:none; z-index:2;
+    background: linear-gradient(105deg, transparent, rgba(255,255,255,0.13), transparent);
+    transform: skewX(-18deg); opacity:0;
+  }
+  .overlay.page:not(.page-home) :is(.opp-card, .rich-row, .mode-card, .cp-n):active::after,
+  .pg-in-fwd :is(.profile-card, .acct-card, .rich-row.me)::after{ animation: cardSheen 0.9s ease-out 0.25s; }
+  @keyframes cardSheen{ 0%{ left:-60%; opacity:0; } 15%{ opacity:1; } 100%{ left:120%; opacity:0; } }
+  .overlay.page:not(.page-home) .mode-card{ min-height:150px; justify-content:flex-end; }
+  .overlay.page:not(.page-home) .mode-card b{ font-size:24px; }
+  body.calm .overlay.page *::after{ animation:none !important; }
+  #lightTrail{ position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+
   /* page slides: forward = from the right, back = from the left */
   .pg-in-fwd{ animation: pgInFwd 0.3s cubic-bezier(.2,.8,.25,1) both; }
   .pg-in-back{ animation: pgInBack 0.3s cubic-bezier(.2,.8,.25,1) both; }
@@ -1424,11 +1507,13 @@
 
   /* ---- home ---- */
   /* the home screen: a warm neighbourhood bar at night, blurred, the bulb right above the logo */
-  .page-home{
-    /* the home screen takes the mood of the table chosen in Décors (colour of the light, the Jouer button, the icons) */
+  /* every page takes the mood of the table chosen in Décors (colour of the light, the buttons, the icons) */
+  body{
     --h-tint: rgba(0,0,0,0);
     --p1:#ffd88c; --p2:#f4b860; --p3:#d98f2e; --pd:#8a4e0c; --pt:#20160a; --ps:#5a3a12;
     --ic1:#ffe7a6; --ic2:#d98f2e; --ict:#4a2a06;
+  }
+  .page-home{
     background:
       radial-gradient(ellipse 90% 45% at 50% 52%, rgba(8,5,3,0.55), rgba(8,5,3,0) 75%),
       linear-gradient(180deg, rgba(8,5,3,0.10) 0%, rgba(8,5,3,0.30) 30%, rgba(8,5,3,0.45) 60%, rgba(8,5,3,0.80) 100%),
@@ -1436,11 +1521,11 @@
       url('art/home-bar.jpg') center top / cover no-repeat, #0d0804 !important;
     background-blend-mode: normal, normal, color, normal !important;
   }
-  body.table-velours .page-home{ --h-tint: rgba(190,18,34,0.62); --p1:#ff9484; --p2:#e0343f; --p3:#a3121f; --pd:#5c0a12; --pt:#fff4f0; --ps:#ffd9d2; --ic1:#ff9e8e; --ic2:#b81f2c; --ict:#fff4f0; }
-  body.table-arcade .page-home{ --h-tint: rgba(128,46,230,0.62); --p1:#dcb0ff; --p2:#9b4dff; --p3:#6a1fd6; --pd:#3c0f80; --pt:#fbf6ff; --ps:#ead8ff; --ic1:#e3c2ff; --ic2:#7c3aed; --ict:#ffffff; }
-  body.table-vert .page-home{ --h-tint: rgba(30,150,72,0.58); --p1:#a6e886; --p2:#45ab5c; --p3:#1f7a3c; --pd:#0f4a22; --pt:#f4fff4; --ps:#d6f5d6; --ic1:#b9f19e; --ic2:#2e8b47; --ict:#ffffff; }
-  body.table-nuit .page-home{ --h-tint: rgba(40,80,200,0.58); --p1:#a9c6ff; --p2:#4f7cf0; --p3:#2a4fc4; --pd:#162c78; --pt:#f4f8ff; --ps:#d6e2ff; --ic1:#b8d0ff; --ic2:#3a63d8; --ict:#ffffff; }
-  body.table-kribi .page-home{ --h-tint: rgba(20,150,170,0.55); --p1:#9be8ec; --p2:#25a9b8; --p3:#127c8c; --pd:#0a4b55; --pt:#f2feff; --ps:#d2f6f8; --ic1:#a8eef2; --ic2:#1a92a2; --ict:#ffffff; }
+  body.table-velours{ --h-tint: rgba(190,18,34,0.62); --p1:#ff9484; --p2:#e0343f; --p3:#a3121f; --pd:#5c0a12; --pt:#fff4f0; --ps:#ffd9d2; --ic1:#ff9e8e; --ic2:#b81f2c; --ict:#fff4f0; }
+  body.table-arcade{ --h-tint: rgba(128,46,230,0.62); --p1:#dcb0ff; --p2:#9b4dff; --p3:#6a1fd6; --pd:#3c0f80; --pt:#fbf6ff; --ps:#ead8ff; --ic1:#e3c2ff; --ic2:#7c3aed; --ict:#ffffff; }
+  body.table-vert{ --h-tint: rgba(30,150,72,0.58); --p1:#a6e886; --p2:#45ab5c; --p3:#1f7a3c; --pd:#0f4a22; --pt:#f4fff4; --ps:#d6f5d6; --ic1:#b9f19e; --ic2:#2e8b47; --ict:#ffffff; }
+  body.table-nuit{ --h-tint: rgba(40,80,200,0.58); --p1:#a9c6ff; --p2:#4f7cf0; --p3:#2a4fc4; --pd:#162c78; --pt:#f4f8ff; --ps:#d6e2ff; --ic1:#b8d0ff; --ic2:#3a63d8; --ict:#ffffff; }
+  body.table-kribi{ --h-tint: rgba(20,150,170,0.55); --p1:#9be8ec; --p2:#25a9b8; --p3:#127c8c; --pd:#0a4b55; --pt:#f2feff; --ps:#d2f6f8; --ic1:#a8eef2; --ic2:#1a92a2; --ict:#ffffff; }
   /* the Jouer button and the round icon tiles follow the theme */
   .page-home .hero-play{ background: linear-gradient(170deg, var(--p1), var(--p2) 45%, var(--p3));
     box-shadow: 0 6px 0 var(--pd), 0 14px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.55); }
@@ -2357,6 +2442,7 @@
       <h3>Jeu</h3>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleTrail"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Traînée lumineuse du doigt</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
     </div>
     <div class="set-group">
@@ -4328,6 +4414,7 @@
     refreshNowPlaying();
     sw('btnToggleVibrate', !prefs.noVibrate);
     sw('btnToggleCalm', !!prefs.calm);
+    sw('btnToggleTrail', !prefs.noTrail);
     sw('btnToggleShare', !!prefs.alwaysShare);
     sw('btnToggleChat', !prefs.noChat);
     sw('btnToggleStats', !prefs.noStats);
@@ -4348,6 +4435,7 @@
   });
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
+  toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
   toggle('btnToggleShare',   ()=>{ prefs.alwaysShare = !prefs.alwaysShare; });
   toggle('btnToggleChat',    ()=>{ prefs.noChat = !prefs.noChat; refreshChatUI(); });
   toggle('btnToggleStats',   ()=>{ prefs.noStats = !prefs.noStats; });
@@ -7729,6 +7817,73 @@
     }
   });
   document.getElementById('btnCloseIosInstall').addEventListener('click', ()=> document.getElementById('iosInstallOverlay').classList.add('hidden'));
+
+  // ===================== Light trail: the finger (or the mouse) leaves a streak of light =====================
+  // One canvas over everything, drawn only while the light fades out: nothing runs when the screen is still.
+  // Colours follow the table (--p1 / --p2); switched off with "Réduire les animations" or in the settings.
+  const Trail = (()=>{
+    const cv = document.createElement('canvas');
+    cv.id = 'lightTrail'; cv.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(cv);
+    const ctx = cv.getContext('2d');
+    const LIFE = 420, SPARK_LIFE = 700;
+    let W = 0, H = 0, pts = [], sparks = [], raf = 0, col = ['255,216,140', '244,184,96'], light = false;
+    function resize(){
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = innerWidth; H = innerHeight; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function rgb(v, fallback){
+      const m = /^#?([0-9a-f]{6})$/i.exec((v||'').trim()); if(!m) return fallback;
+      const n = parseInt(m[1], 16); return ((n>>16)&255)+','+((n>>8)&255)+','+(n&255);
+    }
+    function readColors(){
+      const cs = getComputedStyle(document.body);
+      col = [rgb(cs.getPropertyValue('--p1'), col[0]), rgb(cs.getPropertyValue('--p2'), col[1])];
+      light = document.body.classList.contains('table-verre'); // on the bright glass table, ink instead of light
+    }
+    const off = ()=> !!prefs.noTrail || document.body.classList.contains('calm');
+    function add(x, y){
+      if(off()) return;
+      const now = performance.now(), last = pts[pts.length-1];
+      if(last && Math.hypot(x-last.x, y-last.y) < 2) return;
+      if(last && Math.hypot(x-last.x, y-last.y) > 10 && Math.random() < 0.5)
+        sparks.push({x, y, vx:(Math.random()-0.5)*0.7, vy:(Math.random()-0.5)*0.7 - 0.2, t:now, r:1 + Math.random()*1.8});
+      pts.push({x, y, t:now});
+      if(pts.length > 90) pts.shift();
+      if(!raf) raf = requestAnimationFrame(draw);
+    }
+    function draw(now){
+      ctx.clearRect(0, 0, W, H);
+      while(pts.length && now - pts[0].t > LIFE) pts.shift();
+      sparks = sparks.filter(s=> now - s.t < SPARK_LIFE);
+      ctx.globalCompositeOperation = light ? 'source-over' : 'lighter';
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      for(let i = 1; i < pts.length; i++){
+        const a = pts[i-1], b = pts[i], k = 1 - (now - b.t)/LIFE;
+        if(k <= 0) continue;
+        // a wide coloured halo, then a thin bright core
+        ctx.strokeStyle = 'rgba('+col[1]+','+(0.22*k)+')'; ctx.lineWidth = 16*k + 2;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.strokeStyle = 'rgba('+(light ? col[1] : '255,250,235')+','+(0.85*k)+')'; ctx.lineWidth = 3.2*k + 0.6;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+      sparks.forEach(s=>{
+        const age = (now - s.t)/SPARK_LIFE;
+        s.x += s.vx; s.y += s.vy;
+        ctx.fillStyle = 'rgba('+col[0]+','+(1-age)+')';
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r*(1 - age*0.5), 0, Math.PI*2); ctx.fill();
+      });
+      raf = (pts.length > 1 || sparks.length) ? requestAnimationFrame(draw) : 0;
+      if(!raf) ctx.clearRect(0, 0, W, H);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    window.addEventListener('pointerdown', e=>{ readColors(); pts.length = 0; add(e.clientX, e.clientY); }, {passive:true});
+    window.addEventListener('pointermove', e=>{ if(!pts.length) readColors(); add(e.clientX, e.clientY); }, {passive:true});
+    // once the page starts scrolling the browser stops sending pointer moves: the touch events keep the trail going
+    window.addEventListener('touchmove', e=>{ const t = e.touches[0]; if(t) add(t.clientX, t.clientY); }, {passive:true});
+    return { readColors };
+  })();
 
   // ===================== Accounts & cloud save (Supabase Auth) =====================
   // Everyone starts as an invisible guest account (anonymous sign-in), so the progression is in the cloud from
