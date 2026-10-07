@@ -2066,6 +2066,23 @@
     box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 10px 26px rgba(0,0,0,0.3); }
   #matchOverOverlay #btnRematch{ min-width:240px; padding:15px 26px; font-size:16px; }
   #matchOverOverlay .ghost{ color:rgba(255,255,255,0.8); }
+  /* ---- performance: nothing animated may sit BEHIND the glass (it would be recomputed every frame) ---- */
+  .bulb-glow{ animation:none !important; }
+  .amb-layer{ z-index:58; }              /* the dust and smoke now float in front, in the air */
+  .q-pick{ grid-template-columns: repeat(4, 1fr); max-width:none; margin-top:6px; }
+  .q-pick .fmt{ padding:8px 2px; } .q-pick .fmt b{ font-size:12px; }
+  /* Moyenne: real frosted glass, without the lens (no refraction, no mirror copies) */
+  html[data-q="moyenne"] .lg-mirror, html[data-q="eco"] .lg-mirror{ display:none !important; }
+  /* Économie: no live blur at all, opaque tinted glass, the scenery stops moving */
+  html[data-q="eco"] *{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  html[data-q="eco"] :is(.gl:not(.tinted), .hand-zone, .ai-label, .demand-badge, .sq-demand, .ctrl-token, .toast, .sheet,
+    .overlay.page :is(.set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .format-pick, .rules-box), .shop-item){
+    background: linear-gradient(180deg, rgba(58,44,32,0.86), rgba(30,22,15,0.9)) !important; }
+  html[data-q="eco"] .gl.tinted, html[data-q="eco"] button.primary{ background: linear-gradient(180deg, var(--p2), var(--p3)) !important; }
+  html[data-q="eco"] body .overlay:not(.page):not(.modal){ background: rgba(6,4,2,0.88); }
+  html[data-q="eco"] :is(.lg-scene *, .amb-layer *, .rain-layer, .rain-layer::after, .storm-flash){ animation:none !important; }
+  html[data-q="eco"] .amb-layer, html[data-q="eco"] .lg-scene .sc-fx::after{ display:none; }
+
   /* ---- shop effects ---- */
   .fx-bolt{ position:fixed; inset:0; z-index:86; pointer-events:none; animation: boltFade .65s ease-out forwards; }
   .fx-bolt polyline{ fill:none; stroke-linejoin:round; stroke-linecap:round; }
@@ -3168,6 +3185,11 @@
       <h3>Verre liquide</h3>
       <label class="set-row set-slider gl-slider"><span>Profondeur du verre <b id="glassDepthVal">60</b></span><input type="range" id="glassDepth" min="0" max="100" step="1"></label>
       <label class="set-row set-slider gl-slider"><span>Givre <b id="glassFrostVal">30</b></span><input type="range" id="glassFrost" min="0" max="100" step="1"></label>
+      <div class="set-row gl-slider"><span>Qualité graphique <b id="qualityVal"></b></span>
+        <div class="format-pick q-pick" id="qualityPick">
+          <button class="fmt" data-ql="auto"><b>Auto</b></button><button class="fmt" data-ql="haute"><b>Haute</b></button>
+          <button class="fmt" data-ql="moyenne"><b>Moyenne</b></button><button class="fmt" data-ql="eco"><b>Économie</b></button>
+        </div></div>
       <p class="small-note" id="glassNote"></p>
     </div>
     <div class="set-group">
@@ -3277,7 +3299,7 @@
   // Safari (iPhone) cannot bend what is behind an element. There, each piece of glass carries its own copy of the
   // scene, magnified like through a lens and only visible on its rim ("mirror" mode). ?mirror forces it for testing.
   const forceMirror = /[?&]mirror\b/.test(location.search);
-  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, scene: '.lg-scene, .scene' };
+  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, lite: false, scene: '.lg-scene, .scene' };
 
   const css = document.createElement('style');
   css.textContent =
@@ -3413,6 +3435,7 @@
   let placing = 0;
   function placeAll(){
     if(placing) return;
+    if(state.lite) return;
     placing = requestAnimationFrame(()=>{ placing = 0; items.forEach((it, node)=> mirrorPlace(node, it)); });
   }
   if(!state.refract){
@@ -3429,6 +3452,13 @@
     if(w < 4 || h < 4) return;
     const r = parseFloat(getComputedStyle(node).borderTopLeftRadius) || 0;
     const blur = frostPx().toFixed(1);
+    if(state.lite){
+      // lighter graphics: frosted glass only, no lens (no SVG filter, no copy of the scene)
+      node.style.backdropFilter = node.style.webkitBackdropFilter = 'blur('+Math.max(2, blur)+'px) saturate(170%) brightness(1.06)';
+      if(it.mirror) it.mirror.style.display = 'none';
+      it.w = 0;
+      return;
+    }
     if(state.refract && state.depth > 0){
       if(it.w !== w || it.h !== h || it.r !== r || it.depth !== state.depth){
         buildFilter(it, w, h, r);
@@ -9033,12 +9063,13 @@
   function flushEvents(){
     if(!evQueue.length) return;
     const rows = evQueue.splice(0);
+    if(prefs.noEvents === SUPABASE_URL) return;   // the table is not there on this server: stop knocking
     try{
       fetch(SUPABASE_URL+'/rest/v1/events', {
         method:'POST', keepalive:true,
         headers:{'apikey': SUPABASE_ANON_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'},
         body: JSON.stringify(rows)
-      }).catch(()=>{});
+      }).then(r=>{ if(r.status === 404){ prefs.noEvents = SUPABASE_URL; savePrefs(); } }).catch(()=>{});
     }catch(e){}
   }
   window.addEventListener('pagehide', flushEvents);
@@ -9263,6 +9294,48 @@
     LiquidGlass.scan();
     syncGlass(false);
     syncScene();
+    // graphics quality: Auto measures the phone and steps down (haute -> moyenne -> eco) when it struggles
+    const QL = ['haute', 'moyenne', 'eco'], QL_NAME = {haute:'Haute', moyenne:'Moyenne', eco:'Économie'};
+    function applyQuality(){
+      const pick = prefs.quality || 'auto';
+      const lvl = pick === 'auto' ? (prefs.qAuto || 'haute') : pick;
+      document.documentElement.setAttribute('data-q', lvl);
+      LiquidGlass.set({lite: lvl !== 'haute'});
+      document.querySelectorAll('#qualityPick .fmt').forEach(b=> b.classList.toggle('on', b.dataset.ql === pick));
+      document.getElementById('qualityVal').textContent = pick === 'auto' ? '(auto : ' + QL_NAME[lvl] + ')' : '';
+    }
+    document.querySelectorAll('#qualityPick .fmt').forEach(b=> b.addEventListener('click', ()=>{
+      prefs.quality = b.dataset.ql;
+      if(b.dataset.ql === 'auto') prefs.qAuto = 'haute';   // start over and measure again
+      savePrefs(); applyQuality(); if(b.dataset.ql === 'auto') setTimeout(measure, 1500);
+    }));
+    let measuring = false, badRuns = 0, tries = 0;
+    function measure(){
+      if(measuring || (prefs.quality || 'auto') !== 'auto' || document.visibilityState !== 'visible') return;
+      measuring = true;
+      let frames = 0, t0 = performance.now(), last = t0, slow = 0, gap = 0;
+      requestAnimationFrame(function tick(now){
+        if(frames) { const d = now - last; if(d > 50) slow++; if(d > gap) gap = d; }
+        frames++; last = now;
+        if(now - t0 < 3000) return requestAnimationFrame(tick);
+        measuring = false;
+        // a long pause means the page was hidden or the browser paused it: that says nothing about the phone
+        if(document.visibilityState !== 'visible' || gap > 400){ if(++tries < 6) setTimeout(measure, 4000); return; }
+        const fps = (frames - 1)*1000/(now - t0), cur = QL.indexOf(prefs.qAuto || 'haute');
+        if(fps < 42 || slow > 10){
+          if(++badRuns < 2) return void setTimeout(measure, 1500);   // confirm before stepping down
+          badRuns = 0;
+          if(cur < QL.length - 1){ prefs.qAuto = QL[cur + 1]; savePrefs(); applyQuality(); setTimeout(measure, 2500); }
+        } else badRuns = 0;
+      });
+    }
+    applyQuality();
+    setTimeout(measure, 3000);
+    // measure again at the first deal of a game, where the table is the heaviest
+    let gameMeasured = false;
+    new MutationObserver(()=>{
+      if(!gameMeasured && document.body.classList.contains('in-game')){ gameMeasured = true; setTimeout(measure, 2500); }
+    }).observe(document.body, {attributes: true, attributeFilter: ['class']});
     // the drop of glass swells, then settles, when released
     document.addEventListener('pointerup', e=>{
       const g = e.target.closest && e.target.closest('.press');
