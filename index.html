@@ -1538,6 +1538,32 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -2px 0 rgba(0,0,0,0.18), 0 4px 10px rgba(0,0,0,0.35);
   }
   .page-home .tile-ico svg.i, .page-home .hero-daily .hero-ico svg.i{ stroke-width:2.2; }
+  /* home tiles: big illustrated objects on dark rounded cards, a glow of the table colour behind each one */
+  .page-home .tile-grid{ gap:12px; }
+  .page-home .tile{
+    padding:13px 4px 11px; gap:6px; border-radius:22px;
+    background: linear-gradient(165deg, rgba(64,52,42,0.88), rgba(26,20,14,0.94));
+    border:1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.5), 0 12px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.09);
+  }
+  .page-home .tile:active{ box-shadow: 0 0 0 rgba(0,0,0,0.5), 0 6px 14px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.09); }
+  .tile-ill-wrap{ position:relative; display:block; width:68px; height:68px; }
+  .tile-ill-wrap::before{
+    content:""; position:absolute; inset:10px 8px 6px; border-radius:50%; z-index:0;
+    background: radial-gradient(circle, color-mix(in srgb, var(--p2) 55%, transparent), transparent 70%);
+    filter: blur(7px); opacity:0.5;
+  }
+  .tile-ill{ position:relative; z-index:1; display:block; width:100%; height:100%; overflow:visible;
+    filter: drop-shadow(0 4px 5px rgba(0,0,0,0.35));
+    transition: transform 0.35s cubic-bezier(.3,1.6,.5,1);
+    animation: illFloat 4.5s ease-in-out infinite; animation-delay: calc(var(--k, 0) * -0.75s);
+  }
+  @keyframes illFloat{ 0%,100%{ translate: 0 0; } 50%{ translate: 0 -2.5px; } }
+  .tile:hover .tile-ill{ transform: rotate(-4deg) scale(1.07); }
+  .tile:active .tile-ill{ transform: scale(0.88); transition-duration:0.12s; }
+  .tile-ill-wrap .tile-dot{ top:4px; right:2px; z-index:2; }
+  .page-home .tile-lbl{ font-size:13px; letter-spacing:0.01em; }
+  body.calm .tile-ill{ animation:none; }
   .page-home .rep-bar > div{ background: linear-gradient(90deg, var(--p3), var(--p1)); }
   .page-home .hero-daily .hero-text b{ color: var(--p1); }
   /* the glass table: a bright home screen in daylight, light glass panels and dark ink */
@@ -1863,6 +1889,145 @@
   <symbol id="i-hush" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 15h7M9 9.5h.01M15 9.5h.01"/></symbol>
   <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="currentColor" stroke="none" opacity="0.28"/><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="5.5"/><path d="M12 2.5v3m0 13v3M2.5 12h3m13 0h3M5.3 5.3l2.1 2.1m9.2 9.2 2.1 2.1m0-13.4-2.1 2.1m-9.2 9.2-2.1 2.1"/></symbol>
   <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m11 3 1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8L11 3zm7.5 11 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6z"/></symbol>
+</svg>
+<!-- Illustrated icons for the home tiles: small coloured objects with depth. The "theme" gradients follow the table (--p1..--pd). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ilTheme" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--p1)"/><stop offset=".55" style="stop-color:var(--p2)"/><stop offset="1" style="stop-color:var(--p3)"/></linearGradient>
+    <linearGradient id="ilThemeDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--p2)"/><stop offset="1" style="stop-color:var(--pd)"/></linearGradient>
+    <linearGradient id="ilGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".45" stop-color="#f7c948"/><stop offset="1" stop-color="#c47a12"/></linearGradient>
+    <linearGradient id="ilGoldSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c47a12"/><stop offset=".38" stop-color="#ffe680"/><stop offset=".62" stop-color="#f7c948"/><stop offset="1" stop-color="#a8620b"/></linearGradient>
+    <linearGradient id="ilCream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eedfc2"/></linearGradient>
+    <linearGradient id="ilCloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfdff3"/></linearGradient>
+    <linearGradient id="ilInk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55443a"/><stop offset="1" stop-color="#1c140d"/></linearGradient>
+    <linearGradient id="ilSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0925f"/><stop offset="1" stop-color="#874b27"/></linearGradient>
+    <linearGradient id="ilGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ef0b4"/><stop offset="1" stop-color="#23955a"/></linearGradient>
+    <linearGradient id="ilRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a86"/><stop offset="1" stop-color="#cf2f26"/></linearGradient>
+    <linearGradient id="ilBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6d4ff"/><stop offset="1" stop-color="#3a74db"/></linearGradient>
+    <linearGradient id="ilShine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="ilSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f6fa"/><stop offset=".5" stop-color="#b9c1cd"/><stop offset="1" stop-color="#6f7a8a"/></linearGradient>
+    <radialGradient id="ilShadow"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  </defs>
+
+  <!-- Profil: a player with his crown and a star medal -->
+  <symbol id="il-profil" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="58.5" rx="21" ry="3.6" fill="url(#ilShadow)"/>
+    <path d="M11 57C11 43 20 36 32 36s21 7 21 21z" fill="url(#ilTheme)"/>
+    <path d="M15.5 53c1-7 5-11.5 11-13" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M26 36.6 32 46l6-9.4c-2-.4-4-.6-6-.6s-4 .2-6 .6z" fill="url(#ilCream)"/>
+    <rect x="28" y="29" width="8" height="9" rx="3" fill="#7d4524"/>
+    <circle cx="32" cy="24" r="11" fill="url(#ilSkin)"/>
+    <path d="M21.4 23c-.4-8 4.4-12 10.6-12s11 4 10.6 12c-2.6-4-6.4-5.4-10.6-5.4S24 19 21.4 23z" fill="#24160d"/>
+    <ellipse cx="27.5" cy="21" rx="3.2" ry="2" fill="url(#ilShine)" opacity=".55"/>
+    <g transform="rotate(-12 32 10)">
+      <path d="M22 13.5 24 3l5.2 5.4L32 1l2.8 7.4L40 3l2 10.5z" fill="url(#ilGold)" stroke="#a3620c" stroke-width=".8" stroke-linejoin="round"/>
+      <rect x="22" y="11.6" width="20" height="3" rx="1.2" fill="url(#ilGoldSide)"/>
+      <circle cx="32" cy="9" r="1.7" fill="url(#ilRed)"/><circle cx="25.6" cy="10" r="1.2" fill="url(#ilBlue)"/><circle cx="38.4" cy="10" r="1.2" fill="url(#ilGreen)"/>
+    </g>
+    <circle cx="48" cy="47" r="8.6" fill="url(#ilInk)" stroke="url(#ilGold)" stroke-width="2"/>
+    <polygon points="48,42 49.29,45.22 52.76,45.45 50.09,47.68 50.94,51.05 48,49.2 45.06,51.05 45.91,47.68 43.24,45.45 46.71,45.22" fill="url(#ilGold)"/>
+  </symbol>
+
+  <!-- Trophées: a golden cup with a star, on its pedestal -->
+  <symbol id="il-trophees" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="59" rx="19" ry="3.4" fill="url(#ilShadow)"/>
+    <path d="M15.5 14C6 14 6 31 21 31.5" fill="none" stroke="url(#ilGold)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M48.5 14C58 14 58 31 43 31.5" fill="none" stroke="url(#ilGold)" stroke-width="4" stroke-linecap="round"/>
+    <rect x="18" y="50" width="28" height="8.5" rx="2.2" fill="url(#ilInk)"/>
+    <rect x="24" y="52.6" width="16" height="3.2" rx="1" fill="url(#ilGold)"/>
+    <rect x="21.5" y="45.5" width="21" height="5.5" rx="1.6" fill="url(#ilThemeDeep)"/>
+    <path d="M28.6 36h6.8l-1.2 10h-4.4z" fill="url(#ilGoldSide)"/>
+    <path d="M14 10h36v6.5C50 28.5 42 37.5 32 37.5S14 28.5 14 16.5z" fill="url(#ilGoldSide)"/>
+    <rect x="12.8" y="7.6" width="38.4" height="5" rx="2.5" fill="url(#ilGold)"/>
+    <path d="M19.5 15c.2 9.5 2.8 15.2 7 18.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round"/>
+    <polygon points="32,15.5 33.53,19.4 37.71,19.65 34.47,22.3 35.53,26.35 32,24.1 28.47,26.35 29.53,22.3 26.29,19.65 30.47,19.4" fill="#fffbea" stroke="#d99a1c" stroke-width=".6"/>
+    <path d="M55 2.5l1.2 3.8L60 7.5l-3.8 1.2L55 12.5l-1.2-3.8L50 7.5l3.8-1.2z" fill="#fff6c8"/>
+    <path d="M9 37l.9 3.1L13 41l-3.1.9L9 45l-.9-3.1L5 41l3.1-.9z" fill="#fff6c8" opacity=".9"/>
+  </symbol>
+
+  <!-- Décors: two playing cards and a painter's palette -->
+  <symbol id="il-decors" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="59" rx="22" ry="3.4" fill="url(#ilShadow)"/>
+    <g transform="rotate(-16 24 24)">
+      <rect x="13" y="7" width="22" height="30" rx="3.2" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
+      <path d="M24 28c-6-4.5-5-9.5-2-9.5 1.2 0 2 .9 2 .9s.8-.9 2-.9c3 0 4 5-2 9.5z" fill="url(#ilRed)"/>
+    </g>
+    <g transform="rotate(13 40 22)">
+      <rect x="29" y="6" width="22" height="30" rx="3.2" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
+      <path d="M40 14c-6 5.5-5.5 10-2 10 .8 0 1.4-.4 1.6-.8L38.6 27h2.8l-1-3.8c.2.4.8.8 1.6.8 3.5 0 4-4.5-2-10z" fill="url(#ilInk)"/>
+    </g>
+    <path d="M32 30c13 0 23 6 23 14 0 6-5 7-9 5.5-3-1.1-5 .5-4 3.5 1 3.5-4 5-10 5-14 0-23-6-23-14 0-8.5 10-14 23-14z" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1"/>
+    <path d="M14 40c3-4.5 9.5-7 17-7" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="25.5" cy="51.5" r="3.3" fill="#1c140d" opacity=".5"/>
+    <circle cx="18.5" cy="43" r="3.8" fill="url(#ilRed)"/><circle cx="28.5" cy="38.6" r="3.8" fill="url(#ilGreen)"/><circle cx="39.6" cy="40" r="3.8" fill="url(#ilBlue)"/><circle cx="37" cy="50" r="3.4" fill="#fff6dc"/>
+    <circle cx="17.4" cy="41.8" r="1.1" fill="#fff" opacity=".8"/><circle cx="27.4" cy="37.4" r="1.1" fill="#fff" opacity=".8"/><circle cx="38.5" cy="38.8" r="1.1" fill="#fff" opacity=".8"/>
+    <g transform="rotate(32 50 30)">
+      <rect x="47.6" y="20" width="5" height="26" rx="2.5" fill="url(#ilInk)"/>
+      <rect x="47.1" y="15.5" width="6" height="6" rx="1.2" fill="#cfd3da"/>
+      <path d="M47.3 16c0-5 2.8-9.5 2.8-9.5s2.8 4.5 2.8 9.5z" fill="url(#ilRed)"/>
+    </g>
+  </symbol>
+
+  <!-- Règles: an open book with two cards (a 3, of course) slipped inside -->
+  <symbol id="il-regles" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="60" rx="24" ry="3.2" fill="url(#ilShadow)"/>
+    <g transform="rotate(-11 24 16)">
+      <rect x="16" y="3" width="16" height="23" rx="2.6" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".7"/>
+      <path d="M24 9l3.2 4.4L24 17.8l-3.2-4.4z" fill="url(#ilRed)"/>
+    </g>
+    <g transform="rotate(10 40 16)">
+      <rect x="32" y="2" width="16" height="23" rx="2.6" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".7"/>
+      <text x="40" y="17.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="900" fill="#c8302a">3</text>
+    </g>
+    <path d="M5 25h3v27c8-2 17-2 24 2 7-4 16-4 24-2V25h3v32c-10-2-19-2-27 2-8-4-17-4-27-2z" fill="url(#ilThemeDeep)"/>
+    <path d="M32 24c-7-4-16-4-24-2v30c8-2 17-2 24 2z" fill="url(#ilCream)"/>
+    <path d="M32 24c7-4 16-4 24-2v30c-8-2-17-2-24 2z" fill="url(#ilCream)"/>
+    <path d="M32 24c7-4 16-4 24-2v30c-8-2-17-2-24 2z" fill="#8a6a3a" opacity=".07"/>
+    <path d="M32 24v30" stroke="#d3be98" stroke-width="1.2"/>
+    <g fill="none" stroke="#cdb48a" stroke-width="1.7" stroke-linecap="round">
+      <path d="M12 30c5-1 11-1 16 1"/><path d="M12 36c5-1 11-1 16 1"/><path d="M12 42c5-1 9-1 13 .6"/>
+      <path d="M36 31c5-2 11-2 16-1"/><path d="M36 37c5-2 11-2 16-1"/><path d="M36 43c4-1.6 8-1.6 12-1"/>
+    </g>
+    <path d="M45 21.2v14.5l2.6-2.6 2.6 2.6V21.6z" fill="url(#ilRed)"/>
+  </symbol>
+
+  <!-- Paramètres: a gear and a small panel of sliders -->
+  <symbol id="il-reglages" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="59" rx="22" ry="3.4" fill="url(#ilShadow)"/>
+    <circle cx="25" cy="27" r="17.5" fill="none" stroke="url(#ilSteel)" stroke-width="7.5" stroke-dasharray="6.9 6.85"/>
+    <circle cx="25" cy="27" r="14.2" fill="url(#ilSteel)" stroke="#8a94a3" stroke-width="1.2"/><circle cx="25" cy="27" r="9.6" fill="none" stroke="#7d8796" stroke-opacity=".5" stroke-width="1.4"/>
+    <circle cx="25" cy="27" r="6.4" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1"/>
+    <circle cx="25" cy="27" r="2.4" fill="#1c140d"/>
+    <path d="M14.5 21.5c2-4 5.6-6.4 9.6-6.8" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="2" stroke-linecap="round"/>
+    <rect x="29" y="35" width="30" height="21" rx="5.5" fill="url(#ilCream)" stroke="#d6c39f" stroke-width=".8"/>
+    <rect x="34.5" y="40.5" width="19" height="3.2" rx="1.6" fill="#dccaa6"/>
+    <rect x="34.5" y="40.5" width="12" height="3.2" rx="1.6" fill="url(#ilThemeDeep)"/>
+    <circle cx="46.5" cy="42.1" r="3.9" fill="#fff" stroke="url(#ilThemeDeep)" stroke-width="1.6"/>
+    <rect x="34.5" y="48" width="19" height="3.2" rx="1.6" fill="#dccaa6"/>
+    <rect x="34.5" y="48" width="6" height="3.2" rx="1.6" fill="url(#ilGreen)"/>
+    <circle cx="40.5" cy="49.6" r="3.9" fill="#fff" stroke="#23955a" stroke-width="1.6"/>
+  </symbol>
+
+  <!-- Mon compte: a cloud, guarded by a shield with a tick -->
+  <symbol id="il-compte" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="60" rx="21" ry="3.2" fill="url(#ilShadow)"/>
+    <path d="M16 45c-7 0-10.5-5-10.5-9.5 0-5 4.2-9.2 9.4-8.8C16.4 19 22.6 14 30 14s13.4 5 15 11.6c6.4 0 11.5 4.6 11.5 10.4S52 45 47 45z" fill="url(#ilCloud)"/>
+    <path d="M13 30.5c1.4-1.6 3.2-2.4 5.4-2.2M24 19.5c2-1.6 4.4-2.4 7-2.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M41 30l12.5 4.6v8.6c0 7.6-5.2 12.8-12.5 15.4-7.3-2.6-12.5-7.8-12.5-15.4v-8.6z" fill="url(#ilTheme)" stroke="url(#ilThemeDeep)" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M41 33.2l9.6 3.5v6.4c0 2.4-.6 4.5-1.7 6.3-3.2-5.4-8-9.4-14.3-11.6l-3.2-.9v-.2z" fill="url(#ilShine)" opacity=".45"/>
+    <path d="M35 44.5l4.4 4.4 8-8.8" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <!-- Partie guidée: a graduation cap -->
+  <symbol id="il-tuto" viewBox="0 0 64 64">
+    <ellipse cx="32" cy="58" rx="20" ry="3.4" fill="url(#ilShadow)"/>
+    <path d="M16 28v11c0 5 8 8.5 16 8.5s16-3.5 16-8.5V28l-16 7.5z" fill="url(#ilInk)"/>
+    <polygon points="32,10 59,22.5 32,35 5,22.5" fill="url(#ilInk)" stroke="#6b5646" stroke-width="1"/>
+    <polygon points="32,12.5 52,22.2 32,31.8" fill="#fff" opacity=".07"/>
+    <path d="M32 22.5L52 27v13" fill="none" stroke="#f7c948" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="32" cy="22.5" r="2.8" fill="url(#ilGold)"/>
+    <rect x="49" y="38.5" width="6" height="10" rx="2.6" fill="url(#ilTheme)"/>
+  </symbol>
 </svg>
 <!-- Age check: the very first screen. "No" closes the game. -->
 <div class="age-gate hidden" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="agQ">
@@ -2205,13 +2370,13 @@
     </button>
 
     <div class="tile-grid">
-      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg></span><span class="tile-lbl">Profil</span></button>
-      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="tile-lbl">Trophées</span></button>
-      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg></span><span class="tile-lbl">Décors</span></button>
-      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span><span class="tile-lbl">Règles</span></button>
-      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span><span class="tile-lbl">Paramètres</span></button>
-      <button class="tile tile-acct" id="btnShowAccount" style="--k:5"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></span><span class="tile-lbl">Mon compte</span></button>
-      <button class="tile hidden" id="btnTutoAgain" style="--k:6"><span class="tile-ico"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
+      <button class="tile" id="btnShowStats" style="--k:0"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-profil"/></svg></span><span class="tile-lbl">Profil</span></button>
+      <button class="tile" id="btnShowTrophies" style="--k:1"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-trophees"/></svg></span><span class="tile-lbl">Trophées</span></button>
+      <button class="tile" id="btnShowSkins" style="--k:2"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-decors"/></svg></span><span class="tile-lbl">Décors</span></button>
+      <button class="tile" id="btnShowRules" style="--k:3"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-regles"/></svg></span><span class="tile-lbl">Règles</span></button>
+      <button class="tile" id="btnShowSettings" style="--k:4"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-reglages"/></svg></span><span class="tile-lbl">Paramètres</span></button>
+      <button class="tile tile-acct" id="btnShowAccount" style="--k:5"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-compte"/></svg><i class="tile-dot hidden" id="acctDot"></i></span><span class="tile-lbl">Mon compte</span></button>
+      <button class="tile hidden" id="btnTutoAgain" style="--k:6"><span class="tile-ill-wrap"><svg class="tile-ill" aria-hidden="true"><use href="#il-tuto"/></svg></span><span class="tile-lbl">Partie guidée</span></button>
     </div>
     <div class="quote-bar" id="quoteBar" aria-live="polite">
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
