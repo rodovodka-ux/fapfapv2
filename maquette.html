@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#120b06">
+<title>Fap Fap · Maquette Liquid Glass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* table colour: tints the glass and the main button */
+    --tint: 244,184,96;      /* gold, the default bar */
+    --tint2: 217,143,46;
+    --ink: #fffaf2;
+    --ink-soft: rgba(255,250,242,0.72);
+    --ink-faint: rgba(255,250,242,0.5);
+    --r-xl: 32px; --r-lg: 26px; --r-pill: 999px;
+    --spring: cubic-bezier(.3,1.55,.5,1);
+  }
+  body[data-table="velours"]{ --tint: 255,96,96;  --tint2: 200,30,48; }
+  body[data-table="nuit"]{    --tint: 120,160,255; --tint2: 60,90,220; }
+  body[data-table="vert"]{    --tint: 110,220,140; --tint2: 40,150,80; }
+  body[data-table="arcade"]{  --tint: 190,130,255; --tint2: 120,50,230; }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; }
+  body{
+    font-family: Inter, -apple-system, "SF Pro Display", system-ui, sans-serif; color:var(--ink);
+    background:#120b06; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+  button{ font:inherit; color:inherit; border:0; background:none; padding:0; cursor:pointer; }
+
+  /* ---------- the living background: the bar, sharp and warm (glass needs something to bend) ---------- */
+  .scene{ position:fixed; inset:0; z-index:0; overflow:hidden; }
+  .scene .photo{ position:absolute; inset:-4%; background:url('art/home-bar.jpg') center 20% / cover no-repeat;
+    animation: drift 30s ease-in-out infinite alternate; }
+  .scene .tint{ position:absolute; inset:0; background: rgba(var(--tint2),0.30); mix-blend-mode: color; transition: background .6s; }
+  .scene .shade{ position:absolute; inset:0;
+    background: radial-gradient(120% 70% at 50% 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.35) 75%),
+                linear-gradient(180deg, rgba(10,6,3,0.05), rgba(10,6,3,0.15) 45%, rgba(10,6,3,0.65)); }
+  .scene .bokeh{ position:absolute; border-radius:50%; filter: blur(18px); opacity:.55; mix-blend-mode: screen;
+    background: radial-gradient(circle, rgba(var(--tint),0.9), rgba(var(--tint),0) 70%); animation: float 14s ease-in-out infinite alternate; }
+  @keyframes drift{ from{ transform: scale(1.04) translate(-1%, 0); } to{ transform: scale(1.1) translate(1.5%, -1%); } }
+  @keyframes float{ from{ transform: translate(0,0); } to{ transform: translate(30px,-40px); } }
+
+  /* ---------- Liquid Glass material ---------- */
+  .glass{
+    position:relative; isolation:isolate; border-radius: var(--r-lg);
+    background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0.5px rgba(255,255,255,0.65),
+      inset 0 -1px 1px rgba(255,255,255,0.12),
+      inset 0 0 22px rgba(255,255,255,0.06),
+      0 12px 32px rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.18);
+    transition: transform .45s var(--spring), box-shadow .3s;
+  }
+  /* real refraction (bending of the bar behind the glass) where the browser allows it */
+  .refract .glass{ backdrop-filter: url(#lgRefract) blur(10px) saturate(185%); }
+  /* the rim: a thin light edge, brighter where the light hits */
+  .glass::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; z-index:2;
+    background: linear-gradient(140deg, rgba(255,255,255,0.85), rgba(255,255,255,0.08) 32%, rgba(255,255,255,0.04) 60%, rgba(255,255,255,0.45));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  /* the specular glint, which follows the finger */
+  .glass::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
+    background:
+      radial-gradient(120px 80px at var(--mx, 25%) var(--my, 0%), rgba(255,255,255,0.32), rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 38%);
+    opacity:.9; transition: opacity .3s;
+  }
+  .glass > *{ position:relative; z-index:3; }
+  /* pressing: the glass swells slightly, like a drop */
+  .press:active{ transform: scale(1.035, 0.975); }
+  .press.pop{ animation: pop .6s var(--spring); }
+  @keyframes pop{ 0%{ transform: scale(1.04,.96); } 45%{ transform: scale(.985,1.02); } 100%{ transform:none; } }
+  /* tinted glass: the main action carries the colour of the table */
+  .glass.tinted{
+    background: linear-gradient(180deg, rgba(var(--tint),0.72), rgba(var(--tint2),0.52));
+    box-shadow:
+      inset 0 1px 0.5px rgba(255,255,255,0.75), inset 0 -2px 6px rgba(0,0,0,0.12), inset 0 0 26px rgba(255,255,255,0.10),
+      0 14px 36px rgba(var(--tint2),0.35), 0 2px 8px rgba(0,0,0,0.25);
+  }
+
+  /* ---------- layout ---------- */
+  .app{ position:relative; z-index:1; max-width:440px; margin:0 auto; min-height:100%;
+    padding: max(14px, env(safe-area-inset-top)) 16px calc(150px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:14px; }
+
+  .top{ display:flex; align-items:center; gap:10px; }
+  .pill{ height:44px; border-radius:var(--r-pill); display:flex; align-items:center; gap:8px; padding:0 16px 0 6px; font-weight:700; }
+  .pill .ic{ width:32px; height:32px; border-radius:50%; display:grid; place-items:center;
+    background: radial-gradient(circle at 35% 30%, #fff3c4, #f2b544 60%, #b8740f); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 2px 6px rgba(0,0,0,.3); }
+  .pill .ic svg{ width:18px; height:18px; stroke:#5a3508; }
+  .pill b{ font-size:17px; letter-spacing:-0.01em; }
+  .pill small{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .top .space{ flex:1; }
+  .round{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; }
+  .round svg{ width:21px; height:21px; }
+  .bonus{ height:44px; padding:0 14px; border-radius:var(--r-pill); display:flex; align-items:center; gap:6px; font-size:13.5px; font-weight:800; }
+  .bonus svg{ width:16px; height:16px; }
+
+  .brand{ text-align:center; margin:4px 0 2px; }
+  .brand img{ width:min(230px, 62vw); height:auto; filter: drop-shadow(0 10px 22px rgba(0,0,0,.5)); }
+  .brand p{ margin:2px 0 0; font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color:var(--ink-soft); }
+
+  .rank{ border-radius:22px; padding:12px 16px 14px; }
+  .rank .row{ display:flex; justify-content:space-between; align-items:baseline; }
+  .rank b{ font-size:16px; }
+  .rank span{ font-size:12.5px; color:var(--ink-soft); font-weight:600; }
+  .bar{ margin-top:9px; height:7px; border-radius:7px; background: rgba(255,255,255,0.14); overflow:hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+  .bar i{ display:block; height:100%; width:38%; border-radius:7px; background: linear-gradient(90deg, rgba(var(--tint2),1), rgba(var(--tint),1)); box-shadow: 0 0 10px rgba(var(--tint),.8); }
+
+  .play{ border-radius: var(--r-xl); padding:20px 20px 20px; display:flex; align-items:center; gap:14px; min-height:112px; text-align:left; width:100%; }
+  .faces{ display:flex; }
+  .faces img{ width:46px; height:46px; border-radius:50%; object-fit:cover; margin-left:-12px; border:2px solid rgba(255,255,255,.75); box-shadow: 0 4px 10px rgba(0,0,0,.35); }
+  .faces img:first-child{ margin-left:0; }
+  .play .txt{ flex:1; min-width:0; }
+  .play b{ display:block; font-size:30px; font-weight:800; letter-spacing:-0.03em; line-height:1; text-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  .play small{ display:block; margin-top:6px; font-size:13px; font-weight:600; color: rgba(255,255,255,.85); }
+  .chev{ width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background: rgba(255,255,255,.22); box-shadow: inset 0 1px 0 rgba(255,255,255,.6); flex-shrink:0; }
+  .chev svg{ width:18px; height:18px; }
+
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .card{ border-radius: var(--r-lg); padding:16px 14px 14px; text-align:left; display:flex; flex-direction:column; gap:10px; min-height:118px; }
+  .card .sym{ width:40px; height:40px; border-radius:14px; display:grid; place-items:center; background: rgba(255,255,255,.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
+  .card .sym svg{ width:22px; height:22px; }
+  .card b{ font-size:16px; font-weight:800; letter-spacing:-0.01em; }
+  .card small{ font-size:12px; color:var(--ink-soft); font-weight:500; line-height:1.35; }
+  .tag{ align-self:flex-start; font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 8px; border-radius:var(--r-pill); background: rgba(var(--tint),.35); }
+
+  .quote{ border-radius: var(--r-pill); padding:10px 16px; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600; color:var(--ink-soft); }
+  .quote svg{ width:16px; height:16px; flex-shrink:0; opacity:.8; }
+  .quote em{ font-style:normal; color: rgba(var(--tint),1); font-weight:700; }
+
+  .swatches{ display:flex; justify-content:center; gap:10px; margin-top:4px; }
+  .swatch{ width:30px; height:30px; border-radius:50%; box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 3px 8px rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.35); transition: transform .3s var(--spring); }
+  .swatch.on{ transform: scale(1.18); border-color:#fff; }
+  .hint{ text-align:center; font-size:11.5px; color:var(--ink-faint); margin:2px 0 0; }
+
+  /* ---------- floating tab bar (iOS 26 style) ---------- */
+  .tabbar{ position:fixed; left:50%; bottom: calc(14px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index:5;
+    width:min(408px, calc(100% - 28px)); height:68px; border-radius: var(--r-pill); display:flex; align-items:center; padding:6px; }
+  .tabbar .lens{ position:absolute; top:6px; bottom:6px; left:6px; width:calc((100% - 12px)/5); border-radius:var(--r-pill); z-index:2;
+    background: rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 12px rgba(255,255,255,.12), 0 4px 14px rgba(0,0,0,.2);
+    transition: transform .55s var(--spring), width .3s; }
+  .tab{ flex:1; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; z-index:3; color: var(--ink-soft); font-size:10.5px; font-weight:700; transition: color .3s; }
+  .tab svg{ width:23px; height:23px; transition: transform .45s var(--spring); }
+  .tab.on{ color: var(--ink); }
+  .tab.on svg{ transform: scale(1.12); color: rgba(var(--tint),1); filter: drop-shadow(0 0 6px rgba(var(--tint),.6)); }
+
+  svg.i{ fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* entrance */
+  .in{ animation: rise .7s var(--spring) backwards; animation-delay: calc(var(--d,0) * 70ms); }
+  @keyframes rise{ from{ opacity:0; transform: translateY(18px) scale(.97); } }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body data-table="or">
+
+<!-- refraction: a slow liquid ripple that bends what is behind the glass (Chrome / Android) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="lgRefract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
+    <feGaussianBlur in="noise" stdDeviation="2" result="soft"/>
+    <feDisplacementMap in="SourceGraphic" in2="soft" scale="38" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/></symbol>
+  <symbol id="crown" viewBox="0 0 24 24"><path d="M3.5 8l4.5 4 4-7 4 7 4.5-4-2 11h-13z"/><path d="M5.5 19h13"/></symbol>
+  <symbol id="spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4m8-4v4"/></symbol>
+  <symbol id="cap" viewBox="0 0 24 24"><path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.5M21.5 9.5v5"/></symbol>
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/></symbol>
+  <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 2.5 4M17 6h2.5a2.5 2.5 0 0 1-2.5 4M12 14v3.5M8.5 20h7"/></symbol>
+  <symbol id="palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 1.8-1 1.3-2.1-.6-1.2.2-2.4 1.6-2.4H17a3.5 3.5 0 0 0 3.5-3.5c0-5-3.8-9-8.5-9z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15" cy="8" r="1.2"/></symbol>
+  <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M21.2 12h-2.4M5.2 12H2.8M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7M18.5 18.5l-1.7-1.7M7.2 7.2 5.5 5.5"/><circle cx="12" cy="12" r="6.6"/></symbol>
+  <symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.4 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.4-3.6-8.5S9.5 6.1 12 3.5z"/></symbol>
+  <symbol id="chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"/></symbol>
+</svg>
+
+<div class="scene" aria-hidden="true">
+  <div class="photo"></div>
+  <div class="tint"></div>
+  <div class="bokeh" style="width:180px;height:180px;left:-40px;top:22%"></div>
+  <div class="bokeh" style="width:140px;height:140px;right:-30px;top:48%;animation-delay:-5s"></div>
+  <div class="bokeh" style="width:110px;height:110px;left:30%;bottom:6%;animation-delay:-9s"></div>
+  <div class="shade"></div>
+</div>
+
+<main class="app">
+  <div class="top in" style="--d:0">
+    <div class="glass pill press"><span class="ic"><svg class="i"><use href="#coin"/></svg></span><b>3 950</b><small>jetons</small></div>
+    <span class="space"></span>
+    <button class="glass tinted bonus press"><svg class="i"><use href="#spark"/></svg>+300</button>
+    <button class="glass round press" aria-label="Les plus riches"><svg class="i"><use href="#crown"/></svg></button>
+  </div>
+
+  <div class="brand in" style="--d:1">
+    <img src="art/logo.png" alt="Fap Fap">
+    <p>Le jeu de cartes du quartier</p>
+  </div>
+
+  <div class="glass rank in press" style="--d:2">
+    <div class="row"><b>Redouté</b><span>2 422 rép. · 7/23 trophées</span></div>
+    <div class="bar"><i></i></div>
+  </div>
+
+  <button class="glass tinted play in press" style="--d:3">
+    <span class="faces"><img src="art/joelle.jpg" alt=""><img src="art/rall.jpg" alt=""><img src="art/penalty.jpg" alt=""></span>
+    <span class="txt"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
+    <span class="chev"><svg class="i"><use href="#chev"/></svg></span>
+  </button>
+
+  <div class="row2">
+    <button class="glass card in press" style="--d:4">
+      <span class="sym"><svg class="i"><use href="#cal"/></svg></span>
+      <b>Défi du jour</b><small>La même donne pour tout le monde</small>
+    </button>
+    <button class="glass card in press" style="--d:5">
+      <span class="sym"><svg class="i"><use href="#globe"/></svg></span>
+      <b>Avec un ami</b><small>En ligne, invite-le sur WhatsApp</small>
+    </button>
+  </div>
+
+  <button class="glass card in press" style="--d:6; min-height:0; flex-direction:row; align-items:center; gap:12px">
+    <span class="sym"><svg class="i"><use href="#cap"/></svg></span>
+    <span style="flex:1"><b>Apprendre à jouer</b><br><small>2 minutes avec Penalty</small></span>
+    <span class="tag">Nouveau</span>
+  </button>
+
+  <div class="glass quote in" style="--d:7"><svg class="i"><use href="#chat"/></svg><span>« Ici, même les moustiques connaissent le CORA. » <em>— Penalty</em></span></div>
+
+  <div class="in" style="--d:8">
+    <div class="swatches" id="swatches">
+      <button class="swatch on" data-t="or" style="background:linear-gradient(160deg,#ffe39a,#d98f2e)" aria-label="Bar doré"></button>
+      <button class="swatch" data-t="velours" style="background:linear-gradient(160deg,#ff9484,#a3121f)" aria-label="Velours rouge"></button>
+      <button class="swatch" data-t="nuit" style="background:linear-gradient(160deg,#a9c6ff,#2a4fc4)" aria-label="Nuit"></button>
+      <button class="swatch" data-t="vert" style="background:linear-gradient(160deg,#a6e886,#1f7a3c)" aria-label="Tapis vert"></button>
+      <button class="swatch" data-t="arcade" style="background:linear-gradient(160deg,#dcb0ff,#6a1fd6)" aria-label="Arcade"></button>
+    </div>
+    <p class="hint">Maquette · touche une couleur pour voir le verre changer avec la table</p>
+  </div>
+</main>
+
+<nav class="glass tabbar" id="tabbar">
+  <span class="lens" id="lens"></span>
+  <button class="tab on"><svg class="i"><use href="#home"/></svg>Accueil</button>
+  <button class="tab"><svg class="i"><use href="#user"/></svg>Profil</button>
+  <button class="tab"><svg class="i"><use href="#trophy"/></svg>Trophées</button>
+  <button class="tab"><svg class="i"><use href="#palette"/></svg>Décors</button>
+  <button class="tab"><svg class="i"><use href="#gear"/></svg>Réglages</button>
+</nav>
+
+<script>
+(function(){
+  // real refraction only where backdrop-filter accepts an SVG filter (Chromium: Chrome, Android, Edge)
+  const chromium = !!(navigator.userAgentData && navigator.userAgentData.brands && navigator.userAgentData.brands.some(b=>/Chromium/.test(b.brand)));
+  if(chromium) document.documentElement.classList.add('refract');
+
+  // the glint follows the finger on every piece of glass, and the glass "pops" when released
+  document.querySelectorAll('.glass').forEach(g=>{
+    const move = e=>{ const r = g.getBoundingClientRect(); g.style.setProperty('--mx', (e.clientX - r.left)+'px'); g.style.setProperty('--my', (e.clientY - r.top)+'px'); };
+    g.addEventListener('pointermove', move);
+    g.addEventListener('pointerdown', move);
+    if(g.classList.contains('press')) g.addEventListener('pointerup', ()=>{ g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop'); });
+  });
+
+  // tab bar: the glass lens slides to the chosen tab with a springy stretch
+  const tabs = [...document.querySelectorAll('.tab')], lens = document.getElementById('lens');
+  tabs.forEach((t,i)=> t.addEventListener('click', ()=>{
+    tabs.forEach(x=> x.classList.toggle('on', x===t));
+    lens.style.transform = 'translateX('+(i*100)+'%) scaleX(1.12)';
+    setTimeout(()=>{ lens.style.transform = 'translateX('+(i*100)+'%)'; }, 180);
+  }));
+
+  // table colours
+  document.querySelectorAll('.swatch').forEach(s=> s.addEventListener('click', ()=>{
+    document.body.dataset.table = s.dataset.t;
+    document.querySelectorAll('.swatch').forEach(x=> x.classList.toggle('on', x===s));
+  }));
+})();
+</script>
+</body>
+</html>
