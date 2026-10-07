@@ -8,6 +8,9 @@
 <title>FAP FAP — le jeu du quartier</title>
 <meta name="description" content="Le jeu de cartes camerounais : affronte Penalty, relève le défi du jour et défie tes amis en ligne.">
 <meta name="theme-color" content="#080503">
+<!-- security: the page may only run its own code, and only talk to its own server (Supabase) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://cydmvgwdnxawlhblkkpc.supabase.co wss://cydmvgwdnxawlhblkkpc.supabase.co; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -3806,6 +3809,8 @@
 </script>
 <script>
 (function(){
+  // test shortcuts (?debug, ?story) only work on the developer's own computer, never on the published game
+  const DEV_HOST = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   // an icon from the SVG set at the top of the page
   const ico = name=> '<svg class="i" aria-hidden="true"><use href="#i-'+name+'"/></svg>';
   const SUITS = ['Black','Tchaka','Coubie','Zing'];
@@ -4174,8 +4179,8 @@
 
   // ---- Transports: Supabase Realtime (real play) and BroadcastChannel (?mplocal, testing two tabs) ----
   const SUPABASE_CDN_URLS = [
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
-    'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+    'vendor/supabase-2.117.3.js', // our own copy, fixed version: nobody else's server can change the code that holds the login
+    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js'
   ];
   let supabaseLoadPromise = null, supaClient = null;
   function loadSupabase(){
@@ -5118,7 +5123,8 @@
     if(!el) return;
     const p = DUEL_PERSONAS[charId];
     const initial = ((label || (p && p.name) || '?').trim().charAt(0) || '?').toUpperCase();
-    el.innerHTML = '<span class="av-ini">'+initial+'</span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : '');
+    el.innerHTML = '<span class="av-ini"></span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : '');
+    el.firstChild.textContent = initial; // names come from other players: always written as plain text
   }
   function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
   // the opponent's hands holding their cards replace the row of face-down cards when the picture exists
@@ -7963,7 +7969,7 @@
   (function ageGate(){
     const AGE_KEY = 'fapfap_age_ok';
     let ok = false; try{ ok = localStorage.getItem(AGE_KEY)==='1'; }catch(e){}
-    if(ok || /[?&]debug\b/.test(location.search)) return;
+    if(ok || (DEV_HOST && /[?&]debug\b/.test(location.search))) return;
     const gate = document.getElementById('ageGate');
     gate.classList.remove('hidden');
     document.getElementById('agYes').addEventListener('click', ()=>{
@@ -9631,7 +9637,7 @@
   //   {n:text}  narration · {s:who, t:text}  a line · {title:[kicker, title, sub]} · {place:id} · {fx:'flash'|'shake'}
   //   {c:[{t, sub, d:{stat:+n}, f:flag, pay, need, if, go}]}  a choice · {m:{…}}  a game · {set:{flag:true}}
   //   {l:label} · {go:label, if} · {ending:id}.  Any text or field can be a function of the state S.
-  var STORY_DEBUG = /[?&](debug|story)\b/.test(location.search);
+  var STORY_DEBUG = DEV_HOST && /[?&](debug|story)\b/.test(location.search); // test shortcut, only on the developer's computer
   var CAST = {
     bobo:     {name:'Bobo',           role:'Ton frère de cœur',         c:'#c9772e'},
     nadege:   {name:'Nadège',         role:'La sœur de Bobo, peintre',  c:'#d9548f'},
@@ -11194,7 +11200,7 @@
   }
 
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
-  if(/[?&]debug\b/.test(location.search)){
+  if(DEV_HOST && /[?&]debug\b/.test(location.search)){
     window.__ff = { checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,

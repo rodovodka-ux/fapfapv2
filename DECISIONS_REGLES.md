@@ -302,3 +302,12 @@ Version corrigée : [fapfap.html](fapfap.html). Les points marqués *(changement
 - Base : script supabase-amis.sql (le classement renvoie l'identifiant du joueur ; fonction fapfap_players pour rafraîchir les amis). Jamais d'e-mail exposé.
 - Réglage « Ampoule au-dessus de la table » (activé par défaut) : une ampoule nue au bout de son fil, qui se balance, avec un faisceau, un cercle de lumière chaude qui décroît avec la distance et le reste de la pièce dans le noir ; de temps en temps le courant baisse (délestage). Seulement sur les tables qui n'ont pas déjà leur propre lumière (Sous la lampe, Sous-sol du Royal, Verre au soleil).
 - Navigation : le bouton Retour du téléphone est géré entièrement par le jeu (fermer la fenêtre ouverte, page précédente, pause en partie ; à l'accueil, appuyer deux fois pour quitter) ; l'historique ne peut plus se désynchroniser. Double appui sur un bouton ignoré (400 ms). Après chaque changement de page, le jeu vérifie qu'une seule page est affichée.
+
+## Sécurité (v25)
+- Audit : la base refuse toute lecture/écriture sans compte ; un joueur ne peut ni lire ni modifier la ligne d'un autre, ni se créer une ligne au nom d'un autre. Le classement et la fonction des amis ne donnent que pseudo, jetons, réputation et identifiant (jamais l'e-mail).
+- Faille corrigée : n'importe qui pouvait se donner 999 millions de jetons et passer n°1. Garde-fou côté serveur (supabase-securite.sql) : un nouveau compte démarre au maximum à 60 000 jetons, puis +200 000 jetons et +30 000 de réputation au maximum par 24 h ; la fenêtre de 24 h est tenue par le serveur ; perdre n'est jamais limité.
+- Les pseudos, messages du chat et invitations venant des autres joueurs sont toujours affichés comme du texte (pas d'injection de code possible) ; l'initiale des médaillons aussi.
+- Les raccourcis de test (?debug, ?story) ne marchent plus que sur l'ordinateur de développement.
+- La bibliothèque Supabase (qui gère la connexion) est maintenant une copie fixe dans le jeu (vendor/supabase-2.117.3.js), plus chargée depuis un site extérieur à version variable.
+- Politique de sécurité du contenu : la page ne peut exécuter que son propre code et ne parler qu'à son serveur Supabase.
+- Limites connues : les parties se calculent sur les téléphones, donc un tricheur très motivé peut encore gagner 200 000 jetons par jour ou voir les cartes en ligne avec un jeu modifié ; seule une version où le serveur arbitre chaque partie l'empêcherait complètement.
