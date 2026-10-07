@@ -2066,6 +2066,15 @@
     box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 10px 26px rgba(0,0,0,0.3); }
   #matchOverOverlay #btnRematch{ min-width:240px; padding:15px 26px; font-size:16px; }
   #matchOverOverlay .ghost{ color:rgba(255,255,255,0.8); }
+  /* ---- Claquer ---- */
+  .claque-btn{ padding:12px 22px; font-size:15px; letter-spacing:.02em; animation: claquePulse 1.4s ease-in-out infinite !important; }
+  .claque-btn svg.i{ width:18px; height:18px; }
+  @keyframes claquePulse{ 0%,100%{ box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 0 0 0 color-mix(in srgb, var(--p1) 60%, transparent), 0 10px 26px rgba(0,0,0,0.3); }
+    50%{ box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.8), 0 0 0 10px color-mix(in srgb, var(--p1) 0%, transparent), 0 10px 26px rgba(0,0,0,0.3); } }
+  /* a slammed card falls hard on the table */
+  .card.played.slam{ animation: slamDown .42s cubic-bezier(.2,.9,.3,1.25) both; }
+  @keyframes slamDown{ 0%{ transform: translateY(-60px) scale(1.45) rotate(-8deg); opacity:0; filter: blur(1px); }
+    55%{ transform: translateY(4px) scale(0.96) rotate(1deg); opacity:1; filter:none; } 75%{ transform: translateY(-2px) scale(1.02); } 100%{ transform:none; } }
   /* the age check: the bar behind frosted glass */
   .age-gate{ background: rgba(6,4,2,0.4) !important; -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%); }
   .age-gate .ag-yes, .age-gate .ag-no{ border:none !important; border-radius:999px !important; color:#fff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -2365,6 +2374,7 @@
         <button id="btnAnnounce" class="danger hidden">Annoncer victoire !</button>
         <button id="btnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
         <button id="btnDump" class="primary hidden">Poser mes 2 cartes</button>
+        <button id="btnClaque" class="primary claque-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg> Claquer !</button>
         <button id="btnNext" class="primary hidden">Manche suivante</button>
       </div>
     </div>
@@ -2419,6 +2429,7 @@
       <button id="sqBtnAnnounce" class="danger hidden">Annoncer victoire !</button>
       <button id="sqBtnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
       <button id="sqBtnDump" class="primary hidden">Poser mes 2 cartes</button>
+      <button id="sqBtnClaque" class="primary claque-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg> Claquer !</button>
       <button id="sqBtnNext" class="primary hidden">Manche suivante</button>
     </div>
   </div>
@@ -3788,6 +3799,11 @@
       return;
     }
     if(msg.t==='chat'){ chatReceive(msg); return; }
+    if(msg.t==='claque'){
+      // the friend slams his cards down: our answers to his last leads are played automatically
+      if(state && !state.handOver){ state.claque = 'ai'; claqueFx('ai'); renderAll(); if(!locked) gameTimeout(claqueTick, 400); }
+      return;
+    }
     if(msg.t==='rematch'){
       mpRematch.opp = true;
       refreshRematchUI();
@@ -5731,6 +5747,7 @@
       profile.passeOpportunities += 1;
     }
     document.getElementById('btnDump').classList.toggle('hidden', !dumping);
+    document.getElementById('btnClaque').classList.toggle('hidden', !(yourTurn && !locked && !state.claque && claqueOrder('you')));
 
     document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
     document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
@@ -5911,6 +5928,64 @@
     if(idx>-1) hand.splice(idx,1);
   }
 
+  // ===================== Claquer: slam the rest of the hand down when nothing can stop you =====================
+  // Offered only when the win is CERTAIN from what everyone at the table has seen (never from the hidden cards):
+  // you hold control, and each card left in your hand is either in a suit the opponent has shown he no longer has,
+  // or the strongest card still out in its suit. The rest of the hand is then played out at speed, by both sides;
+  // the game keeps the 3s for the end (CORA, 33 Glacée).
+  function claqueOrder(actor){
+    if(!state || tuto || state.handOver || state.leadSuit || state.leader!==actor || state.passer===actor) return null;
+    const hand = actor==='you' ? state.playerHand : state.aiHand;
+    if(hand.length<2) return null;
+    const opp = actor==='you' ? 'ai' : 'you';
+    const key = c=> c.suit+'-'+c.rank;
+    const known = new Set(hand.map(key));
+    state.history.forEach(e=>{ if(e.type==='card') known.add(key(e.card)); });
+    const unseen = buildDeck().filter(c=> !known.has(key(c)));
+    const voids = state.knownVoid ? state.knownVoid[opp] : new Set();
+    const sure = c=> voids.has(c.suit) || !unseen.some(u=> u.suit===c.suit && u.rank>c.rank);
+    if(!hand.every(sure)) return null;
+    const threes = hand.filter(c=> c.rank===3);
+    const others = hand.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank); // the big cards first, the 3s last
+    return others.concat(threes);
+  }
+  function pace(ms){ return state && state.claque ? Math.round(ms*0.24) : ms; }
+  const CLAQUE_LINES = ['Clac ! Ramasse tes cartes.', 'Je claque. C’est plié.', 'Pose tout, c’est fini pour toi.', 'Plus rien ne m’arrête. Clac !'];
+  function claqueFx(actor){
+    showToast(actor==='you' ? 'CLAC !' : oppName()+' claque !', actor==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1300});
+    sfxImpact(false); vibrate([30, 40, 60]);
+    const shell = document.querySelector('.app-shell');
+    if(shell && !calmOn()){ shell.classList.remove('quake'); void shell.offsetWidth; shell.classList.add('quake'); setTimeout(()=> shell.classList.remove('quake'), 700); }
+    if(actor==='ai' && mode==='ai') penaltySay(CLAQUE_LINES);
+  }
+  function startClaque(actor, order){
+    state.claque = actor; state.claqueOrder = order;
+    claqueFx(actor);
+    if(actor==='you' && mode==='mp') mpSend({t:'claque'});
+  }
+  document.getElementById('btnClaque').addEventListener('click', ()=>{
+    if(locked || state.claque) return;
+    const order = claqueOrder('you');
+    if(!order) return;
+    startClaque('you', order);
+    renderAll();
+    gameTimeout(claqueTick, 520);
+  });
+  // during a claque, every move of the player is made automatically: the claquer's next card, or the answer to it
+  function claqueTick(){
+    if(!state || state.handOver || !state.claque || locked) return;
+    if(isDumpTurn('you')) return playerDump();
+    if(state.claque==='you' && !state.leadSuit && state.leader==='you' && state.playerHand.length){
+      const next = state.claqueOrder.find(c=> state.playerHand.some(h=> h.suit===c.suit && h.rank===c.rank)) || state.playerHand[0];
+      return playerPlays(next);
+    }
+    if(state.claque==='ai' && state.leadSuit && state._leadActor==='ai' && state.playerHand.length){
+      const follow = state.playerHand.filter(c=> c.suit===state.leadSuit).sort((a,b)=> a.rank-b.rank);
+      const any = [...state.playerHand].sort((a,b)=> a.rank-b.rank);
+      return playerPlays(follow[0] || any[0]);
+    }
+  }
+
   function resolvePlay(actor, card, isPasse){
     if(isPasse){
       markVoid(actor, state.leadSuit);
@@ -5981,7 +6056,7 @@
     // on the decisive trick the reveal is slower, so the moment can be felt
     const finale = document.body.classList.contains('finale-on');
     gameTimeout(()=> highlightTrickWin(winner, winningCard), finale ? 700 : 60);
-    gameTimeout(()=>{ afterTurn(); }, finale ? 2100 : 1450);
+    gameTimeout(()=>{ afterTurn(); }, pace(finale ? 2100 : 1450));
   }
 
   // the passer answers the final lead with both reserved cards at once (see dumpBestFollow)
@@ -6009,7 +6084,7 @@
     sfxCrowd(isMatchPoint() ? 'gasp' : 'murmur');
     const finale = document.body.classList.contains('finale-on');
     gameTimeout(()=> highlightTrickWin(winner, winningCard), finale ? 700 : 60);
-    gameTimeout(()=>{ afterTurn(); }, finale ? 2100 : 1450);
+    gameTimeout(()=>{ afterTurn(); }, pace(finale ? 2100 : 1450));
   }
 
   function highlightTrickWin(actor, card){
@@ -6208,7 +6283,7 @@
     wrap.className = 'stack-item';
     if(card){
       wrap.dataset.key = card.suit+'-'+card.rank;
-      wrap.appendChild(cardEl(card, {extraClass: animate?'played':''}));
+      wrap.appendChild(cardEl(card, {extraClass: animate ? (state && state.claque ? 'played slam' : 'played') : ''}));
     } else {
       wrap.dataset.passe = '1';
       const p = document.createElement('div'); p.className='passe-chip'; p.textContent='Passe'; wrap.appendChild(p);
@@ -6303,11 +6378,12 @@
     if(aiShouldAct){
       locked = true;
       renderAll();
-      if(mode!=='mp') gameTimeout(aiTakeTurn, 1000);
+      if(mode!=='mp') gameTimeout(aiTakeTurn, pace(1000));
       // in MP mode: just wait — the opponent's 'play'/'passe' network message will call resolvePlay('ai', ...) directly
     } else {
       locked = false;
       renderAll();
+      if(state.claque) gameTimeout(claqueTick, 340);
     }
   }
 
@@ -6327,7 +6403,10 @@
     const [w1,w2] = lastTwoWinners();
     if(!state.leadSuit){
       const brain = oppPersona().brain;
-      const card = brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand);
+      // nothing can stop it any more: the AI slams its cards down
+      if(!state.claque && mode==='ai'){ const ord = claqueOrder('ai'); if(ord) startClaque('ai', ord); }
+      const claqued = state.claque==='ai' && state.claqueOrder && state.claqueOrder.find(c=> state.aiHand.some(h=> h.suit===c.suit && h.rank===c.rank));
+      const card = claqued || (brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand));
       removeCard(state.aiHand, card);
       if(mode==='ai' && scores.ai<scores.you) oppChatter(L('behind'));
       resolvePlay('ai', card, false);
@@ -7405,7 +7484,7 @@
 
   function sqActivePlayers(){ return SQ_SEAT_ORDER.filter(id=> sq.players[id] && sq.ctrl[id]!=='absent' && !sq.players[id].eliminated); }
   function sqSeated(){ return SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent'); }
-  function sqDelay(ms){ return sq.fastForward ? Math.max(20, Math.round(ms/10)) : ms; }
+  function sqDelay(ms){ return sq.fastForward ? Math.max(20, Math.round(ms/10)) : sq.claque ? Math.round(ms*0.25) : ms; }
   function sqNextActive(fromId){
     const active = sqActivePlayers();
     const idx = active.indexOf(fromId);
@@ -7473,6 +7552,7 @@
     sq.trickNo = 0;           // lets the table show the trick in progress apart from the older ones
     sq.announcePlan = {};     // per-AI: announce an automatic win now / a beat late / miss it
     sq.trickQueue = [];
+    sq.claque = null; sq.claqueOrder = null; // nobody is slamming their cards down yet
     sq.dealerIdx = sq.dealerIdx % active.length;
     sq.leader = active[(sq.dealerIdx+1) % active.length];
     document.getElementById('sqBtnNext').classList.add('hidden');
@@ -7564,6 +7644,41 @@
     return {type:'card', card:[...pool].sort((a,b)=>a.rank-b.rank)[0]};
   }
 
+  // Claquer in Carré la Pute: same rule as the duel, against every player still in the game
+  function sqClaqueOrder(seat){
+    if(!sq || sq.remote || sq.handOver || sq.leadSuit || sq.leader!==seat || sq.passers.has(seat)) return null;
+    const hand = sq.players[seat].hand;
+    if(hand.length<2) return null;
+    const seen = sqAllSeenCards(seat);
+    if(!hand.every(c=> sqIsSureWinner(seat, c, seen))) return null;
+    const threes = hand.filter(c=> c.rank===3), others = hand.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank);
+    return others.concat(threes);
+  }
+  function sqClaqueFx(seat){
+    showToast(seat==='you' ? 'CLAC !' : sqName(seat)+' claque !', seat==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1300});
+    sfxImpact(false); vibrate([30, 40, 60]);
+    const shell = document.querySelector('.app-shell');
+    if(shell && !calmOn()){ shell.classList.remove('quake'); void shell.offsetWidth; shell.classList.add('quake'); setTimeout(()=> shell.classList.remove('quake'), 700); }
+  }
+  function sqStartClaque(seat, order){
+    sq.claque = seat; sq.claqueOrder = order;
+    sqEvent('claque', {seat});
+    sqClaqueFx(seat);
+    if(sqIsAI(seat)) sqBubble(seat, CLAQUE_LINES[Math.floor(Math.random()*CLAQUE_LINES.length)]);
+    sqClaqueLead(seat);
+  }
+  function sqClaqueLead(seat){
+    sq.locked = true; renderSquare();
+    const myGen = sq.gen;
+    gameTimeout(()=>{
+      if(sq.gen!==myGen || sq.handOver || sq.leadSuit || sq.leader!==seat) return;
+      const hand = sq.players[seat].hand;
+      if(!hand.length) return;
+      const next = sq.claqueOrder.find(c=> hand.some(h=> h.suit===c.suit && h.rank===c.rank));
+      sqLeaderPlays(seat, next ? hand.find(h=> h.suit===next.suit && h.rank===next.rank) : hand[0]);
+    }, sqDelay(520));
+  }
+
   function sqPushHistory(id, entry){ entry.trick = sq.trickNo; sq.history[id].push(entry); }
 
   // the automatic-win window: your button, and the computer players deciding when (or whether) to announce
@@ -7610,12 +7725,14 @@
     renderSquare();
     if(sq.handOver) return;
     const leaderId = sq.leader;
+    if(sq.claque===leaderId){ sqClaqueLead(leaderId); return; }
     if(!sqIsAI(leaderId)){ sq.locked = leaderId!=='you'; renderSquare(); return; } // a human leads: wait for them
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
     gameTimeout(()=>{
       if(sq.gen!==myGen || sq.handOver || sq.leadSuit) return;
       if(sq.players[leaderId].hand.length===0) return; // stale — this player emptied out since scheduling
+      if(!sq.claque){ const ord = sqClaqueOrder(leaderId); if(ord){ sqStartClaque(leaderId, ord); return; } }
       const card = sqHeuristicLead(leaderId, sq.players[leaderId].hand);
       sqLeaderPlays(leaderId, card);
     }, sqDelay(700+Math.random()*500));
@@ -7644,7 +7761,7 @@
     while(sq.trickQueue.length>0 && sq.players[sq.trickQueue[0]].hand.length===0) sq.trickQueue.shift();
     if(sq.trickQueue.length===0){ sqFinishTrick(); return; }
     const nextId = sq.trickQueue[0];
-    if(!sqIsAI(nextId)){ sq.locked = nextId!=='you'; renderSquare(); return; } // a human answers: wait for them
+    if(!sqIsAI(nextId) && !sq.claque){ sq.locked = nextId!=='you'; renderSquare(); return; } // a human answers: wait for them
     sq.locked = true; renderSquare();
     const myGen = sq.gen;
     gameTimeout(()=>{
@@ -7653,6 +7770,11 @@
       if(hand.length===0) return; // stale
       if(sq.passers.has(nextId)){ sqApplyResponse(nextId, {type:'dump'}); return; }
       const leadInfo = {suit:sq.leadSuit, rank:sq.leadCard.rank, actor:sq.leadActor};
+      if(sq.claque && !sqIsAI(nextId)){ // a human's answer to a claque is played for them: the lowest card allowed
+        const follow = hand.filter(c=> c.suit===sq.leadSuit).sort((a,b)=> a.rank-b.rank);
+        sqApplyResponse(nextId, {type:'card', card: follow[0] || [...hand].sort((a,b)=> a.rank-b.rank)[0]});
+        return;
+      }
       sqApplyResponse(nextId, sqHeuristicDefend(nextId, hand, leadInfo));
     }, sqDelay(650+Math.random()*450));
   }
@@ -7720,6 +7842,12 @@
       sqEndHandAutoWin(seat, win.label);
       return true;
     }
+    if(a.type==='claque'){
+      if(sq.leadSuit || sq.leader!==seat || sq.claque) return false;
+      const ord = sqClaqueOrder(seat); if(!ord) return false;
+      sqStartClaque(seat, ord);
+      return true;
+    }
     if(!sq.leadSuit){
       if(sq.leader!==seat || a.type!=='card') return false;
       const c = sqFindCard(seat, a.card); if(!c) return false;
@@ -7748,6 +7876,7 @@
   function sqPlayerPlays(card){ sqLocalAct({type:'card', card:{suit:card.suit, rank:card.rank}}); }
   document.getElementById('sqBtnPasse').addEventListener('click', ()=> sqLocalAct({type:'passe'}));
   document.getElementById('sqBtnDump').addEventListener('click', ()=> sqLocalAct({type:'dump'}));
+  document.getElementById('sqBtnClaque').addEventListener('click', ()=> sqLocalAct({type:'claque'}));
 
   function sqFinishTrick(){
     const winner = sq.trickBest.actorId;
@@ -8074,6 +8203,9 @@
     const passeEligible = myTurn && !sq.handOver && sq.leadSuit && !sq.passers.has('you') && canPasse(sq.players.you.hand, sq.leadSuit);
     passeBtn.classList.toggle('hidden', !passeEligible);
     document.getElementById('sqBtnDump').classList.toggle('hidden', !dumping);
+    const canClaque = !sq.handOver && !sq.claque && !sq.leadSuit && sq.leader==='you' && !sq.players.you.eliminated
+      && (sq.remote ? !!sq.canClaque : (!sq.locked && !!sqClaqueOrder('you')));
+    document.getElementById('sqBtnClaque').classList.toggle('hidden', !canClaque);
     if(!document.getElementById('squareScreen').classList.contains('sq-dealing')) updateSqCtrlToken();
     if(sq.online && !sq.remote) roomBroadcastSoon(); // every change on the table goes out to the friends' phones
   }
@@ -8177,7 +8309,8 @@
       best: sq.trickBest, leader: sq.leader, queue: sq.trickQueue, passers: [...sq.passers],
       handOver: sq.handOver, cardsPlayed: sq.cardsPlayedThisHand, handNo: sq.handNo,
       ev: sq.events.slice(-12), elim: sq.pendingElim, champion: sq.championSeat, stake: sq.stake,
-      tricksWon: sq.trickWinners.length, ack: room.acks[netId]||0
+      tricksWon: sq.trickWinners.length, ack: room.acks[netId]||0,
+      cq: (!sq.handOver && !sq.leadSuit && !sq.claque && sq.leader===seat) ? !!sqClaqueOrder(seat) : false, claque: sq.claque || null
     };
   }
   // a friend who's been gone for 20 s is replaced by the computer, so the game never gets stuck
@@ -8260,7 +8393,8 @@
       leader: V(d.leader), trickQueue: (d.queue||[]).map(V), passers: new Set((d.passers||[]).map(V)),
       handOver: d.handOver, locked:false, fastForward:false, cardsPlayedThisHand: d.cardsPlayed, handNo: d.handNo,
       pendingElim: d.elim ? {seat: V(d.elim.seat), count: d.elim.count, options: d.elim.options.map(V), label: d.elim.label} : null,
-      championSeat: d.champion ? V(d.champion) : null, tricksWon: d.tricksWon, stake: d.stake
+      championSeat: d.champion ? V(d.champion) : null, tricksWon: d.tricksWon, stake: d.stake,
+      canClaque: !!d.cq, claque: d.claque ? V(d.claque) : null
     };
     if(newGame || document.getElementById('squareScreen').classList.contains('hidden')) sqShowScreen();
     renderSquare(newHand);
@@ -8299,6 +8433,8 @@
       if(w!=='you') showToast(sqName(w)+' élimine '+t.map(x=> x==='you' ? 'toi' : sqName(x)).join(' et ')+' !', t.includes('you') ? 'Tu regardes la suite depuis le banc.' : '', {ms:2600});
     } else if(ev.kind==='say'){
       sqBubble(V(ev.seat), ev.text); avatarFx(V(ev.seat), 'speaking');
+    } else if(ev.kind==='claque'){
+      sqClaqueFx(V(ev.seat));
     } else if(ev.kind==='champion'){
       sqChampionScreen(me, sqName(V(ev.seat)), sqSeated().length);
     }
@@ -9039,7 +9175,7 @@
 
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
   if(/[?&]debug\b/.test(location.search)){
-    window.__ff = { checkAutoWin, canPasse, dumpBestFollow, search, evalTerminal,
+    window.__ff = { checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
