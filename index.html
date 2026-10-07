@@ -2067,6 +2067,64 @@
     box-shadow: inset 0 1px 0.5px rgba(255,255,255,0.6), 0 10px 26px rgba(0,0,0,0.3); }
   #matchOverOverlay #btnRematch{ min-width:240px; padding:15px 26px; font-size:16px; }
   #matchOverOverlay .ghost{ color:rgba(255,255,255,0.8); }
+  /* ---- Sous l'ampoule: a bare bulb on its cord above the table, swinging a little; its light falls off with distance
+     (bright warm pool where the cards are, the rest of the room sinking into the dark) and dips when the current does ---- */
+  .sc-lamp{ display:none; position:absolute; inset:0; pointer-events:none; z-index:3; overflow:hidden; }
+  body.lamp-on:not(.table-plafonnier):not(.table-soussol):not(.table-verre) .sc-lamp{ display:block; }
+  body.lamp-on:not(.table-plafonnier):not(.table-soussol):not(.table-verre) .bulb-glow{ opacity:.35; }
+  /* everything hangs from a pivot 36vh above the screen, so the swing moves the bulb, the beam and the pool together */
+  .lamp-swing{ position:absolute; left:50%; top:-36vh; width:0; height:0; transform-origin:0 0; animation: lampPend 9s ease-in-out infinite; will-change:transform; }
+  @keyframes lampPend{ 0%,100%{ transform: rotate(-1.3deg); } 50%{ transform: rotate(1.3deg); } }
+  .lamp-dark{ position:absolute; left:-110vmax; width:220vmax; height:220vmax; top:calc(36vh + 54vh - 110vmax);
+    background: radial-gradient(ellipse 34vmax 30vmax at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.04) 30%, rgba(0,0,0,0.24) 52%, rgba(0,0,0,0.56) 72%, rgba(0,0,0,0.82) 90%, rgba(0,0,0,0.92) 100%); }
+  .lamp-pool{ position:absolute; left:-78vmin; width:156vmin; height:132vmin; top:calc(36vh + 54vh - 66vmin); mix-blend-mode:screen;
+    background: radial-gradient(ellipse 50% 50% at 50% 46%, rgba(255,224,168,0.5) 0%, rgba(255,208,140,0.34) 14%, rgba(255,188,112,0.19) 32%, rgba(255,164,84,0.08) 54%, rgba(255,150,60,0.02) 76%, rgba(0,0,0,0) 100%);
+    transition: opacity .08s; }
+  .lamp-cone{ position:absolute; left:-60vmin; width:120vmin; top:calc(36vh + 4vh); height:62vh; mix-blend-mode:screen; filter: blur(10px);
+    clip-path: polygon(47% 0, 53% 0, 88% 100%, 12% 100%);
+    background: linear-gradient(180deg, rgba(255,232,190,0.20), rgba(255,220,170,0.07) 55%, rgba(255,210,150,0)); transition: opacity .08s; }
+  .lamp-bulb{ position:absolute; left:0; top:0; }
+  .lamp-bulb i{ position:absolute; display:block; }
+  .lamp-bulb .cord{ left:-1px; top:0; width:2px; height:calc(36vh + 1.5vh); background: linear-gradient(90deg, #0c0c0c, #3d3a37 50%, #0c0c0c); }
+  .lamp-bulb .socket{ left:-8px; top:calc(36vh + 1.5vh); width:16px; height:15px; border-radius:3px 3px 6px 6px;
+    background: linear-gradient(90deg, #121212, #5e554c 42%, #2a2724 70%, #121212); box-shadow: 0 2px 3px rgba(0,0,0,0.6); }
+  .lamp-bulb .glass{ left:-16px; top:calc(36vh + 1.5vh + 13px); width:32px; height:42px; border-radius: 50% 50% 48% 48% / 40% 40% 60% 60%;
+    background: radial-gradient(circle at 50% 60%, #fffef4 0 16%, #fff1c4 28%, rgba(255,216,145,0.9) 50%, rgba(255,192,112,0.62) 74%, rgba(255,168,88,0.42) 100%);
+    box-shadow: 0 0 14px 5px rgba(255,222,160,0.9), 0 0 46px 18px rgba(255,196,118,0.5), inset -4px -6px 9px rgba(190,110,30,0.35), inset 5px 4px 6px rgba(255,255,255,0.85);
+    transition: filter .08s; }
+  .lamp-bulb .filament{ left:50%; top:44%; width:13px; height:8px; margin-left:-6.5px; border:1.6px solid #fffbe8; border-top:none; border-radius:0 0 8px 8px;
+    box-shadow: 0 0 6px 2px #fff4cc, 0 0 12px 5px rgba(255,205,125,0.85); }
+  .lamp-bulb .halo{ left:-170px; top:calc(36vh + 1.5vh + 34px - 170px); width:340px; height:340px; border-radius:50%; mix-blend-mode:screen;
+    background: radial-gradient(circle, rgba(255,242,205,0.8) 0, rgba(255,210,135,0.34) 20%, rgba(255,176,90,0.1) 46%, rgba(0,0,0,0) 68%);
+    animation: lampHum 3.7s ease-in-out infinite; transition: opacity .08s; }
+  @keyframes lampHum{ 0%,100%{ opacity:.93; } 50%{ opacity:1; } }
+  .sc-lamp.dip :is(.halo, .lamp-pool, .lamp-cone){ opacity:.45 !important; }
+  .sc-lamp.dip .glass{ filter: brightness(0.55) saturate(1.4); }
+  .sc-lamp.dip .lamp-dark{ filter: brightness(0.85); }
+
+  /* ---- amis ---- */
+  .rich-tabs{ grid-template-columns: repeat(3, 1fr) !important; }
+  .rich-tabs .fmt{ padding-left:4px; padding-right:4px; } .rich-tabs .fmt b{ font-size:13px; } .rich-tabs .fmt small{ font-size:10.5px; }
+  .rich-row.tappable{ cursor:pointer; }
+  #richFriends .rich-row{ grid-template-columns: auto 1fr auto; }
+  #richFriends .rich-name{ display:flex; flex-direction:column; min-width:0; }
+  .rich-row.tappable:active{ transform: scale(0.98); }
+  .rich-friend{ display:inline-flex; margin-left:6px; color:#7ee0a0; vertical-align:middle; } .rich-friend .i{ width:14px; height:14px; }
+  .avatar.is-online{ position:relative; overflow:visible; }
+  .avatar.is-online::after{ content:""; position:absolute; right:-1px; bottom:-1px; width:30%; height:30%; min-width:10px; min-height:10px; border-radius:50%;
+    background:#35d07f; border:2px solid #120b06; box-shadow:0 0 8px rgba(53,208,127,0.8); }
+  .rich-go{ flex:none; padding:8px 12px; border-radius:14px; font-size:12.5px; font-weight:800; color:#fff; background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); display:inline-flex; align-items:center; gap:5px; }
+  .rich-go.on{ background: linear-gradient(180deg, #4fc27f, #1f7a46); border-color:transparent; }
+  .rich-go .i{ width:15px; height:15px; }
+  .ps-sheet{ text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .ps-sheet h2{ margin:8px 0 0; }
+  .ps-sub{ margin:0; font-size:13px; opacity:.75; }
+  .ps-status{ margin:6px 0 10px; font-size:13px; display:flex; align-items:center; gap:6px; justify-content:center; }
+  .dot-on{ width:9px; height:9px; border-radius:50%; background:#35d07f; box-shadow:0 0 8px rgba(53,208,127,0.8); display:inline-block; }
+  .ps-btns{ width:100%; display:flex; gap:8px; } .ps-btns button{ flex:1; }
+  #friendInviteOverlay .ps-sheet{ animation: hxIn .35s cubic-bezier(.2,.8,.2,1) both; }
+  #friendInviteOverlay{ z-index:70; }
+
   /* =====================================================================================
      MODE HISTOIRE — « La Nuit des 33 »: a dark visual novel around the card table
      ===================================================================================== */
@@ -2706,7 +2764,7 @@
      On iPhone the glass engine copies it into each piece of glass to draw the lens, so it is styled by classes only. -->
 <div class="lg-scene" id="lgScene" aria-hidden="true">
   <div class="sc-bar"><div class="sc-photo"></div><div class="sc-tint"></div><div class="sc-shade"></div></div>
-  <div class="sc-table"><div class="sc-felt"></div><div class="sc-light"></div><div class="sc-fx"></div></div>
+  <div class="sc-table"><div class="sc-felt"></div><div class="sc-light"></div><div class="sc-fx"></div><div class="sc-lamp"><div class="lamp-swing"><div class="lamp-dark"></div><div class="lamp-pool"></div><div class="lamp-cone"></div><div class="lamp-bulb"><i class="cord"></i><i class="socket"></i><i class="glass"><i class="filament"></i></i><i class="halo"></i></div></div></div></div>
 </div>
 <div class="storm-flash" id="stormFlash" aria-hidden="true"></div>
 <!-- Age check: the very first screen. "No" closes the game. -->
@@ -2958,6 +3016,32 @@
   </div>
 </div>
 
+<div class="overlay modal hidden" id="playerSheet">
+  <div class="sheet ps-sheet">
+    <span class="avatar ps-av" id="psAvatar" style="--s:72px"></span>
+    <h2 id="psName">Joueur</h2>
+    <p class="ps-sub" id="psSub"></p>
+    <p class="ps-status" id="psStatus"></p>
+    <div class="btnrow ps-btns">
+      <button class="primary" id="psChallenge"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Défier</button>
+      <button id="psFriend"></button>
+    </div>
+    <button class="ghost" id="psClose">Fermer</button>
+  </div>
+</div>
+
+<div class="overlay modal hidden" id="friendInviteOverlay">
+  <div class="sheet ps-sheet">
+    <span class="avatar ps-av" id="fiAvatar" style="--s:72px"></span>
+    <h2 id="fiTitle">Un défi !</h2>
+    <p id="fiText"></p>
+    <div class="btnrow ps-btns">
+      <button class="primary" id="fiYes">Accepter</button>
+      <button id="fiNo">Pas maintenant</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay modal hidden" id="confirmRestartOverlay">
   <div class="sheet">
     <h2 id="confirmTitle">Quitter la partie ?</h2>
@@ -2997,6 +3081,7 @@
   </div>
   <p id="rematchInfo" class="rematch-info"></p>
   <button class="primary big" id="btnRematch" style="margin-top:6px;"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg> Revanche</button>
+  <button class="hidden" id="btnAddFriendMo"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> <span>Ajouter en ami</span></button>
   <button class="whatsapp hidden" id="btnShareWin"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager ma victoire</button>
   <button class="ghost" id="btnToMenu">Retour à l'accueil</button>
 </div>
@@ -3230,7 +3315,12 @@
   <div class="page-body">
     <div class="format-pick rich-tabs" role="tablist" aria-label="Classement">
       <button class="fmt" data-rt="world" role="tab"><b>Tout le quartier</b><small>Les vrais joueurs</small></button>
-      <button class="fmt" data-rt="local" role="tab"><b>Mes adversaires</b><small>Joëlle, RALL, Penalty…</small></button>
+      <button class="fmt" data-rt="friends" role="tab"><b>Mes amis</b><small id="richFriendsTabSub">Défie-les en un geste</small></button>
+      <button class="fmt" data-rt="local" role="tab"><b>L’ordinateur</b><small>Joëlle, RALL, Penalty…</small></button>
+    </div>
+    <div id="richFriendsBox" class="hidden">
+      <p class="page-intro" id="richFriendsIntro">Tes amis, et qui est en ligne en ce moment. Touche un ami pour le défier.</p>
+      <div class="rich-list" id="richFriends"></div>
     </div>
     <div id="richWorldBox">
       <p class="page-intro" id="richWorldIntro">Les joueurs de Fap Fap, partout. Gagne des jetons pour monter.</p>
@@ -3357,6 +3447,7 @@
       <h3>Jeu</h3>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleLamp"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Ampoule au-dessus de la table</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleTrail"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Traînée lumineuse du doigt</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
     </div>
@@ -3416,6 +3507,7 @@
     <p class="small-note" id="lobbyNote">Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
+    <button class="big" id="btnMpFriends"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Défier un de mes amis</button>
   </div>
 </div>
 
@@ -3990,7 +4082,7 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_xjGudDvslcfN0bdadc3fbw__EaFG_uu';
 
   let mpNet = null, mpIsHost = false;
-  let myName = 'Toi', oppNameVal = 'Ton ami';
+  let myName = 'Toi', oppNameVal = 'Ton ami', oppUid = null; // oppUid: the online opponent's account, to add them as a friend
   const myNetId = Math.random().toString(36).slice(2,10);
   const MP_LOCAL = /[?&]mplocal\b/.test(location.search); // test mode: two tabs of this browser, no server
   function oppName(){ return mode==='mp' ? oppNameVal : oppPersona().name; }
@@ -4071,7 +4163,7 @@
 
   function mpTeardown(){
     try{ if(mpNet) mpNet.close(); }catch(e){}
-    mpNet = null; mpIsHost = false; mpMatchStarted = false;
+    mpNet = null; mpIsHost = false; mpMatchStarted = false; oppUid = null;
     clearInterval(mpResendTimer); mpResendTimer = null;
     mpOutSeq = 0; mpInNext = 1; mpPeerId = null; mpLastPresence = [];
     mpOutbox.clear(); mpInBuffer.clear();
@@ -4227,7 +4319,7 @@
     if(presentOthers().some(m=>m.role==='guest')){ status.textContent = 'Cette partie a déjà deux joueurs.'; mpTeardown(); return; }
     mpPeerId = host.id;
     status.textContent = 'Partie trouvée ! Lancement...';
-    mpSend({t:'hello', name: myName});
+    mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null});
   }
 
   function startMpMatch(){
@@ -4246,7 +4338,7 @@
     document.getElementById('matchOverOverlay').classList.add('hidden');
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
-      mpSend({t:'hello', name: myName}); // so the guest knows who they're facing
+      mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null}); // so the guest knows who they're facing
       mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake}); // flip perspective for the other side
       beginHand();
     }
@@ -4256,6 +4348,7 @@
   function handleMpMessage(msg){
     if(msg.t==='hello'){
       oppNameVal = msg.name || 'Ton ami';
+      oppUid = typeof msg.uid==='string' ? msg.uid : null;
       applyOppNameToUI();
       if(mpIsHost) startMpMatch();
       return;
@@ -5639,6 +5732,22 @@
   }
   document.getElementById('btnMute').addEventListener('click', ()=> setSound(!soundOn));
   function applyCalm(){ document.body.classList.toggle('calm', !!prefs.calm || window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  // a bare bulb hanging over every table that has no light of its own; now and then the current dips (délestage…)
+  function applyLamp(){ document.body.classList.toggle('lamp-on', !prefs.noLamp); }
+  applyLamp();
+  (function lampFlicker(){
+    const lamp = document.querySelector('#lgScene .sc-lamp');
+    if(!lamp) return;
+    const blink = ms=>{ lamp.classList.add('dip'); setTimeout(()=> lamp.classList.remove('dip'), ms); };
+    function dip(){
+      setTimeout(dip, 9000 + Math.random()*16000);
+      const b = document.body.classList;
+      if(!b.contains('lamp-on') || !b.contains('in-game') || b.contains('calm') || document.visibilityState!=='visible') return;
+      blink(80);
+      if(Math.random()<0.45) setTimeout(()=> blink(50), 170);
+    }
+    setTimeout(dip, 8000);
+  })();
   function refreshSettings(){
     const sw = (id, on)=> document.getElementById(id).classList.toggle('on', !!on);
     sw('btnToggleSound', soundOn);
@@ -5649,6 +5758,7 @@
     sw('btnToggleVibrate', !prefs.noVibrate);
     sw('btnToggleCalm', !!prefs.calm);
     sw('btnToggleTrail', !prefs.noTrail);
+    sw('btnToggleLamp', !prefs.noLamp);
     sw('btnToggleShare', !!prefs.alwaysShare);
     sw('btnToggleChat', !prefs.noChat);
     sw('btnToggleStats', !prefs.noStats);
@@ -5670,6 +5780,7 @@
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
+  toggle('btnToggleLamp',    ()=>{ prefs.noLamp = !prefs.noLamp; applyLamp(); });
   toggle('btnToggleShare',   ()=>{ prefs.alwaysShare = !prefs.alwaysShare; });
   toggle('btnToggleChat',    ()=>{ prefs.noChat = !prefs.noChat; refreshChatUI(); });
   toggle('btnToggleStats',   ()=>{ prefs.noStats = !prefs.noStats; });
@@ -5695,7 +5806,7 @@
       void el.offsetWidth;
       el.classList.add(dir==='back' ? 'pg-in-back' : 'pg-in-fwd');
       el.scrollTop = dir==='back' ? el.scrollTop : 0;
-      pageShown(id);
+      try{ pageShown(id); }catch(e){ console.error(e); } // a page that fails to fill itself must not block the way back
     },
     _out(id, dir){
       const el = document.getElementById(id);
@@ -5713,11 +5824,26 @@
       this.stack.push(id);
       this._in(id, 'fwd');
       sfxSwipe(false);
-      try{ history.pushState({fapfap: this.stack.length}, ''); }catch(e){}
-      syncScene();
+      this._known.add(id);
+      syncScene(); this.healSoon();
     },
-    // back button on the page → let the browser history drive it, so both back buttons behave the same
-    back(){ if(this.stack.length>1 || !inHome()) history.back(); },
+    // the back arrow on a page and the phone's back button both come here (the browser history is never stacked up)
+    back(){ if(this.stack.length>1 || (this.stack.length===1 && !inHome())) this._pop(); },
+    _known: new Set(['menuOverlay']),
+    // after every move, each page is put back in its exact place: only the current one visible, all the others hidden —
+    // so an animation cut short by a quick double tap can never leave two pages on top of each other
+    healSoon(){
+      clearTimeout(this._healT);
+      this._healT = setTimeout(()=>{
+        const cur = this.cur();
+        this._known.forEach(id=>{
+          const el = document.getElementById(id); if(!el) return;
+          if(id===cur){ if(el.classList.contains('hidden') || el.classList.contains('pg-out-fwd') || el.classList.contains('pg-out-back')){ clearTimeout(el._navT); el.classList.remove('hidden','pg-out-fwd','pg-out-back'); } }
+          else if(!el.classList.contains('hidden')){ clearTimeout(el._navT); el.classList.add('hidden'); el.classList.remove('pg-out-fwd','pg-out-back','pg-in-fwd','pg-in-back'); }
+        });
+        syncScene();
+      }, 420);
+    },
     _pop(){
       const id = this.stack.pop();
       if(!id) return;
@@ -5727,29 +5853,66 @@
       const prev = this.cur();
       if(prev) this._in(prev, 'back');
       else if(this.fromPause){ this.fromPause = false; refreshNowPlaying(); show('pauseOverlay'); }
-      syncScene();
+      syncScene(); this.healSoon();
     },
     home(){
       this.stack.slice().forEach(id=>{ if(id!=='menuOverlay'){ pageLeft(id); hide(id); } });
       this.stack = ['menuOverlay'];
       this._in('menuOverlay', 'back');
-      syncScene();
+      syncScene(); this.healSoon();
     },
-    clear(){ this.stack.slice().forEach(id=>{ pageLeft(id); hide(id); }); this.stack = []; this.fromPause = false; syncScene(); }
+    clear(){ this.stack.slice().forEach(id=>{ pageLeft(id); hide(id); }); this.stack = []; this.fromPause = false; syncScene(); this.healSoon(); }
   };
   function inHome(){ return Nav.stack.length===1 && Nav.stack[0]==='menuOverlay'; }
   // the scene behind the glass: the table while a game is on screen, the bar everywhere else
   function syncScene(){ document.body.classList.toggle('in-game', Nav.stack.length===0); }
   function inGame(){ return Nav.stack.length===0; }
-  try{ history.replaceState({fapfap: 0}, ''); }catch(e){}
-  window.addEventListener('popstate', ()=>{
-    if(Nav.stack.length>1 || (Nav.stack.length===1 && !inHome())){ Nav._pop(); return; }
+  // ---- The phone's back button ----
+  // The history always holds exactly two entries of this page and the game sits on the second one. A back press
+  // lands on the first; the game does what "back" means right now (close the open sheet, go back one page, pause
+  // the game…), then steps forward again. So the history can never drift out of step with the screen, however fast
+  // or often the button is pressed. On the home screen, a second press within 2 seconds leaves the game.
+  let backExitAt = 0;
+  function backPressed(){
+    const open = id=>{ const el = document.getElementById(id); return !!el && !el.classList.contains('hidden'); };
+    if(open('friendInviteOverlay')){ document.getElementById('fiNo').click(); return true; }
+    if(open('playerSheet')){ document.getElementById('psClose').click(); return true; }
+    if(open('confirmRestartOverlay')){ document.getElementById('btnConfirmRestartNo').click(); return true; }
+    if(open('chatSheet')){ closeChat(); return true; }
+    if(open('pauseOverlay') && inGame()){ closePause(); return true; }
+    if(Nav.stack.length>1 || (Nav.stack.length===1 && !inHome())){ Nav._pop(); return true; }
     if(inGame()){
-      // the phone's back button during a game: pause instead of leaving the page
-      if(document.getElementById('pauseOverlay').classList.contains('hidden')) openPause();
-      try{ history.pushState({fapfap:'game'}, ''); }catch(e){}
+      // the end-of-match screen and the forced choices (cut, elimination) stay; otherwise the game pauses
+      if(!open('matchOverOverlay') && !open('eliminateOverlay') && !open('choiceOverlay')) openPause();
+      return true;
     }
+    if(Date.now() - backExitAt < 2000) return false;
+    backExitAt = Date.now();
+    showToast('Appuie encore pour quitter', '', {ms:1800});
+    return true;
+  }
+  try{
+    if(!(history.state && history.state.ffTop)){
+      history.replaceState({ffBase:1}, '');
+      history.pushState({ffTop:1}, '');
+    }
+  }catch(e){}
+  window.addEventListener('popstate', (e)=>{
+    if(e.state && e.state.ffTop) return; // forward again onto our own entry: nothing to do
+    let stay = true;
+    try{ stay = backPressed(); }catch(err){ console.error(err); }
+    if(stay){ try{ history.pushState({ffTop:1}, ''); }catch(err){} }
+    else { try{ history.back(); }catch(err){} }
   });
+  // a nervous double tap must not do things twice (two rooms created, two purchases, two pages pushed…):
+  // a second click on the same button within 400 ms is swallowed before anything else sees it
+  document.addEventListener('click', (e)=>{
+    const b = e.target.closest && e.target.closest('button, [data-nav-back], .mode-card, .hcard, .hero-play, .tab');
+    if(!b || b.closest('.hand, #hand, .hand-zone, .sp-row, .hp-bets')) return; // cards and quick pickers stay instant
+    const now = performance.now();
+    if(b._lastTap && now - b._lastTap < 400){ e.stopImmediatePropagation(); e.preventDefault(); return; }
+    b._lastTap = now;
+  }, true);
   document.addEventListener('click', (e)=>{ if(e.target.closest('[data-nav-back]')) Nav.back(); });
   // the first touch anywhere wakes the audio (browsers forbid sound before it); every button answers with a soft tap
   document.addEventListener('pointerdown', (e)=>{
@@ -5904,7 +6067,7 @@
     Nav.clear(); gameGen++; resumeQueue.length = 0; setPaused(false);
     Music.play(currentTableId());
     ['pauseOverlay','confirmRestartOverlay'].forEach(hide);
-    try{ history.pushState({fapfap:'game'}, ''); }catch(e){} // the phone's back button then opens the pause menu
+    // (the phone's back button then opens the pause menu: see backPressed)
   }
 
   let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
@@ -7869,7 +8032,7 @@
     if(!m) return;
     const code = m[1].toUpperCase();
     // forget the code in the address bar, so a later reload doesn't try to rejoin an old room
-    try{ history.replaceState(null, '', location.pathname + location.search.replace(/[?&]partie=[A-Za-z0-9]{4}/,'').replace(/^&/,'?')); }catch(e){}
+    try{ history.replaceState(history.state, '', location.pathname + location.search.replace(/[?&]partie=[A-Za-z0-9]{4}/,'').replace(/^&/,'?')); }catch(e){}
     document.getElementById('inviteText').textContent = 'Une partie de Fap Fap t’attend (code '+code+'). Entre ton prénom et c’est parti !';
     document.getElementById('inviteNameInput').value = prefs.name || '';
     Nav.go('inviteOverlay'); // on top of the home page, so "no thanks" lands there
@@ -8021,7 +8184,7 @@
     renderRepPanel(repCommit());
     setWinShare(won ? {title:'VICTOIRE', line: myDisplayName()+' a battu '+oppName()+' '+mine+' à '+theirs+' au Fap Fap !'} : null);
     matchMaxDeficit = 0; // this match is settled; never let it leak into the next one
-    refreshRematchUI();
+    refreshRematchUI(); refreshFriendBtnMo();
     const mo = document.getElementById('matchOverOverlay');
     mo.dataset.result = won ? 'win' : 'lose';
     // the chips: what the stake brought (or cost), with the coins flying to you on a win
@@ -8712,7 +8875,7 @@
     }
     matchStake = 0;
     showChipsResult(res, won && res.stake ? 'Mise '+fmtChips(res.stake)+' × '+nPlayers+' joueurs' : null);
-    refreshRematchUI();
+    refreshRematchUI(); refreshFriendBtnMo();
     const remoteWatcher = sq && sq.remote;
     document.getElementById('btnRematch').classList.toggle('hidden', !!remoteWatcher);
     document.getElementById('rematchInfo').textContent = remoteWatcher ? 'Celui qui a créé la partie peut lancer la revanche.' : '';
@@ -10552,6 +10715,7 @@
     Cloud.user = user || null;
     if(user && user.id!==prev){ Cloud.hold = false; Cloud.error = null; Cloud.pullP = cloudPull(); }
     renderAccount(); renderAccountDot();
+    if(user) setTimeout(lobbyJoin, 400); // shows this player online to their friends
   }
   const isGuest = ()=> !Cloud.user || !!Cloud.user.is_anonymous;
 
@@ -10785,9 +10949,11 @@
     if(prefs.richTab!==t){ prefs.richTab = t; savePrefs(); }
     document.querySelectorAll('.rich-tabs .fmt').forEach(b=>{ const on = b.dataset.rt===t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
     $id('richWorldBox').classList.toggle('hidden', t!=='world');
-    $id('richLocalBox').classList.toggle('hidden', t==='world');
-    $id('richBest').classList.toggle('hidden', t==='world');
+    $id('richFriendsBox').classList.toggle('hidden', t!=='friends');
+    $id('richLocalBox').classList.toggle('hidden', t!=='local');
+    $id('richBest').classList.toggle('hidden', t!=='local');
     if(t==='world') renderRichWorld();
+    if(t==='friends') renderRichFriends();
   }
   document.querySelectorAll('.rich-tabs .fmt').forEach(b=> b.addEventListener('click', ()=> showRichTab(b.dataset.rt)));
   function richEmpty(list, msg, withAccount){
@@ -10838,8 +11004,188 @@
       if(r.saved) sub.insertAdjacentHTML('beforeend', ' '+ico('check'));
       fillAvatar(row.querySelector('.rich-av'), null, r.name);
       if(r.me) applyMyFrame(row.querySelector('.rich-av'));
+      // another player: touch to add them as a friend or challenge them
+      if(!r.me && r.pid){
+        row.classList.add('tappable');
+        row.dataset.pid = r.pid;
+        if(isFriend(r.pid)) row.querySelector('.rn').insertAdjacentHTML('afterend', '<span class="rich-friend" title="Ami">'+ico('users')+'</span>');
+        if(Lobby.online.has(r.pid)) row.querySelector('.rich-av').classList.add('is-online');
+        row.addEventListener('click', ()=> openPlayerSheet({id:r.pid, name:r.name, rep:r.rep, chips:r.chips, saved:r.saved}));
+      }
     });
   }
+
+  // ===================== Amis : ajoutés depuis le classement, défiés en un geste =====================
+  // profile.friends = [{id, name}] follows the account to the cloud. Who is online comes from one shared realtime
+  // channel ("fapfap-lobby") where every open game shows its account id; a challenge is a message on that channel
+  // carrying a room code, and the friend's phone offers to join. Offline friends get the WhatsApp link instead.
+  const Lobby = { ch:null, uid:null, online:new Set(), joining:false, pending:null, invT:null, incoming:null, sheet:null };
+  const myUid = ()=> (Cloud.user && Cloud.user.id) || null;
+  function friendList(){ if(!Array.isArray(profile.friends)) profile.friends = []; return profile.friends; }
+  function isFriend(id){ return friendList().some(f=> f.id===id); }
+  function addFriend(id, name, quiet){
+    if(!id || id===myUid() || isFriend(id)) return;
+    friendList().unshift({id, name:String(name||'Joueur').slice(0,16)});
+    if(profile.friends.length>60) profile.friends.length = 60;
+    saveProfile();
+    if(!quiet) showToast('Ami ajouté', String(name||'Ce joueur')+' est dans tes amis.', {ms:1800});
+  }
+  function removeFriend(id){ profile.friends = friendList().filter(f=> f.id!==id); saveProfile(); }
+
+  async function lobbyJoin(){
+    const uid = myUid();
+    if(!CLOUD_ON || !uid || !supaClient || Lobby.joining) return;
+    if(Lobby.ch && Lobby.uid===uid) return;
+    Lobby.joining = true;
+    try{
+      if(Lobby.ch){ try{ supaClient.removeChannel(Lobby.ch); }catch(e){} Lobby.ch = null; }
+      const ch = supaClient.channel('fapfap-lobby', { config:{ broadcast:{ self:false }, presence:{ key: uid } } });
+      ch.on('presence', {event:'sync'}, ()=>{ Lobby.online = new Set(Object.keys(ch.presenceState())); lobbyRefreshUi(); });
+      ch.on('broadcast', {event:'inv'}, ({payload})=> lobbyOnInvite(payload));
+      ch.on('broadcast', {event:'inv-no'}, ({payload})=> lobbyOnDecline(payload));
+      ch.subscribe(async st=>{ if(st==='SUBSCRIBED'){ try{ await ch.track({name:(prefs.name||'').trim().slice(0,16)}); }catch(e){} } });
+      Lobby.ch = ch; Lobby.uid = uid;
+    }catch(e){}
+    Lobby.joining = false;
+  }
+  const isOnline = id=> Lobby.online.has(id);
+  function lobbySend(event, payload){ try{ if(Lobby.ch) Lobby.ch.send({type:'broadcast', event, payload}); }catch(e){} }
+  function lobbyRefreshUi(){
+    if(!$id('richFriendsBox').classList.contains('hidden') && Nav.cur()==='richPage') renderRichFriends(true);
+    if(Lobby.sheet && !$id('playerSheet').classList.contains('hidden')) renderPlayerSheet();
+    const n = friendList().filter(f=> isOnline(f.id)).length;
+    $id('richFriendsTabSub').textContent = n ? n+' en ligne' : 'Défie-les en un geste';
+  }
+
+  // the friends tab: online first, names refreshed from the server when it can
+  let friendsFetched = 0;
+  async function renderRichFriends(quick){
+    const list = $id('richFriends');
+    const fl = friendList();
+    if(!fl.length){
+      list.innerHTML = '<div class="rich-empty">Tu n’as pas encore d’amis ici.<br>Va dans « Tout le quartier » et touche un joueur pour l’ajouter. Après une partie en ligne, tu peux aussi ajouter ton adversaire.</div>';
+      return;
+    }
+    const rows = fl.slice().sort((a,b)=> (isOnline(b.id)?1:0) - (isOnline(a.id)?1:0));
+    list.innerHTML = rows.map((f,i)=> '<div class="rich-row tappable" style="--d:'+Math.min(i,12)+'"><span class="avatar rich-av'+(isOnline(f.id) ? ' is-online' : '')+'" style="--s:42px"></span>'+
+      '<span class="rich-name"><span class="rn"></span><span class="rich-sub"></span></span>'+
+      '<button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button></div>').join('');
+    [...list.querySelectorAll('.rich-row')].forEach((row, i)=>{
+      const f = rows[i];
+      row.querySelector('.rn').textContent = f.name;
+      row.querySelector('.rich-sub').textContent = isOnline(f.id) ? 'En ligne' : 'Hors ligne'+(f.rep!=null ? ' · '+RANKS[rankIndex(f.rep||0)].name : '');
+      fillAvatar(row.querySelector('.rich-av'), null, f.name);
+      row.addEventListener('click', ()=> openPlayerSheet(f));
+      row.querySelector('.rich-go').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
+    });
+    if(quick || Date.now()-friendsFetched < 30000) return;
+    friendsFetched = Date.now();
+    try{
+      if(!(await cloudInit()) || !supaClient) return;
+      lobbyJoin();
+      const { data, error } = await supaClient.rpc('fapfap_players', { ids: fl.map(f=> f.id) });
+      if(error || !data) return;
+      data.forEach(r=>{ const f = fl.find(x=> x.id===r.pid); if(f){ if(r.name) f.name = r.name; f.rep = r.rep; f.chips = r.chips; } });
+      saveProfile();
+      renderRichFriends(true);
+    }catch(e){}
+  }
+
+  // the sheet of one player: challenge, add / remove
+  function openPlayerSheet(p){
+    Lobby.sheet = Object.assign({}, p);
+    renderPlayerSheet();
+    show('playerSheet');
+  }
+  function renderPlayerSheet(){
+    const p = Lobby.sheet; if(!p) return;
+    $id('psName').textContent = p.name || 'Joueur';
+    fillAvatar($id('psAvatar'), null, p.name || 'J');
+    $id('psAvatar').classList.toggle('is-online', isOnline(p.id));
+    $id('psSub').textContent = (p.rep!=null ? RANKS[rankIndex(p.rep||0)].name : '')+(p.chips!=null ? ' · '+fmtChips(p.chips)+' jetons' : '');
+    $id('psStatus').innerHTML = isOnline(p.id) ? '<i class="dot-on"></i> En ligne maintenant' : 'Hors ligne · tu pourras lui envoyer le lien par WhatsApp';
+    const fb = $id('psFriend');
+    fb.innerHTML = isFriend(p.id) ? ico('check')+' Ami · retirer' : ico('users')+' Ajouter en ami';
+  }
+  $id('psClose').addEventListener('click', ()=>{ hide('playerSheet'); Lobby.sheet = null; });
+  $id('psFriend').addEventListener('click', ()=>{
+    const p = Lobby.sheet; if(!p) return;
+    if(isFriend(p.id)) removeFriend(p.id); else addFriend(p.id, p.name);
+    renderPlayerSheet();
+    if(Nav.cur()==='richPage') (prefs.richTab==='friends' ? renderRichFriends(true) : renderRichWorld());
+  });
+  $id('psChallenge').addEventListener('click', ()=>{ const p = Lobby.sheet; hide('playerSheet'); Lobby.sheet = null; if(p) challengeFriend(p); });
+  $id('btnMpFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
+
+  // challenging: a room is created as usual, and the friend's phone is told the code
+  async function challengeFriend(f){
+    ensureAudio();
+    myName = (prefs.name||'').trim() || 'Toi';
+    clearInterval(Lobby.invT);
+    Nav.go('mpHostOverlay');
+    $id('btnShareLink').classList.toggle('hidden', !navigator.share);
+    await hostGame();
+    const code = currentCode(), st = $id('mpHostStatus');
+    if(!mpNet || !/^[A-Z0-9]{4}$/.test(code)) return;
+    await cloudInit(); await lobbyJoin();
+    if(!isOnline(f.id)){ st.textContent = f.name+' n’est pas en ligne. Envoie-lui le lien par WhatsApp, la partie l’attend :'; return; }
+    Lobby.pending = {id:f.id, name:f.name, code};
+    const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code});
+    send();
+    st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
+    let n = 0;
+    // repeated for a minute, in case the friend's phone was asleep for a moment
+    Lobby.invT = setInterval(()=>{
+      if(!mpNet || mpMatchStarted || Nav.cur()!=='mpHostOverlay' || currentCode()!==code || ++n>12){ clearInterval(Lobby.invT); if(n>12 && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
+      send();
+    }, 5000);
+  }
+  function lobbyOnDecline(p){
+    if(!p || p.to!==myUid() || !Lobby.pending || p.from!==Lobby.pending.id || p.code!==Lobby.pending.code) return;
+    clearInterval(Lobby.invT);
+    if(Nav.cur()==='mpHostOverlay') $id('mpHostStatus').textContent = Lobby.pending.name+(p.why==='busy' ? ' est déjà en pleine partie.' : ' ne peut pas jouer maintenant.')+' Tu peux réessayer plus tard.';
+    Lobby.pending = null;
+  }
+  function lobbyOnInvite(p){
+    if(!p || p.to!==myUid() || !/^[A-Z0-9]{4}$/.test(p.code||'')) return;
+    if(Lobby.incoming && Lobby.incoming.code===p.code) return; // the same challenge, sent again
+    if(inGame() || mpNet || storyRun){ lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'busy'}); return; }
+    Lobby.incoming = p;
+    $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+' te défie !';
+    $id('fiText').textContent = (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap. Tu acceptes ?';
+    fillAvatar($id('fiAvatar'), null, p.name || 'J');
+    show('friendInviteOverlay');
+    vibrate([60,80,60]);
+    sfx((c,t)=>{ [76,83,88].forEach((m,i)=> fmNote(c, sfxBus, t+i*0.12, mtof(m), {vol:0.07, dur:0.4, ratio:2, index:1})); });
+    clearTimeout(Lobby.incomingT);
+    Lobby.incomingT = setTimeout(()=>{ if(Lobby.incoming===p){ hide('friendInviteOverlay'); Lobby.incoming = null; } }, 60000);
+  }
+  $id('fiYes').addEventListener('click', ()=>{
+    const p = Lobby.incoming; hide('friendInviteOverlay'); if(!p) return;
+    ensureAudio();
+    myName = (prefs.name||'').trim() || 'Toi';
+    $id('mpCodeInput').value = p.code;
+    $id('mpJoinStatus').textContent = '';
+    if(!inHome() && !Nav.cur()) Nav.home();
+    Nav.go('mpJoinOverlay');
+    joinGame(p.code);
+    setTimeout(()=>{ Lobby.incoming = null; }, 65000);
+  });
+  $id('fiNo').addEventListener('click', ()=>{
+    const p = Lobby.incoming; hide('friendInviteOverlay');
+    if(p) lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'no'});
+  });
+  // after an online duel: add the opponent as a friend in one touch
+  function refreshFriendBtnMo(){
+    const b = $id('btnAddFriendMo');
+    const show = mode==='mp' && !!oppUid && oppUid!==myUid();
+    b.classList.toggle('hidden', !show);
+    if(!show) return;
+    const f = isFriend(oppUid);
+    b.disabled = f;
+    b.querySelector('span').textContent = f ? oppNameVal+' est ton ami' : 'Ajouter '+oppNameVal+' en ami';
+  }
+  $id('btnAddFriendMo').addEventListener('click', ()=>{ if(oppUid){ addFriend(oppUid, oppNameVal); refreshFriendBtnMo(); } });
 
   // the session comes back by itself; right away when returning from Google, otherwise once the home screen has settled
   if(CLOUD_ON){
@@ -10854,7 +11200,8 @@
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
-      storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen };
+      storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
+      lobbyOnInvite, Lobby, myUid };
   }
 
 })();
