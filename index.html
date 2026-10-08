@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -151,6 +151,9 @@
   .sq-score-item.turn .n{ color:var(--bulb); }
   .sq-score-item.out{ opacity:0.4; }
   .sq-score-item.out .n{ text-decoration:line-through; }
+  .sq-score-item.banked{ opacity:0.6; }
+  .sq-score-item.banked .v{ color: var(--bulb); font-style: italic; }
+  button.bank-btn{ animation:none !important; }
 
   .sq-table{
     flex:1; display:grid; position:relative;
@@ -231,10 +234,10 @@
     width:26px; height:38px; border-radius:4px; margin-left:-12px;
     border: 1px solid rgba(244,184,96,0.35);
     box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,0,0,0.3);
+    /* Bordeaux: guilloché rings on deep burgundy */
     background:
-      repeating-linear-gradient(45deg, rgba(244,184,96,0.10) 0 2px, transparent 2px 7px),
-      repeating-linear-gradient(-45deg, rgba(0,0,0,0.18) 0 2px, transparent 2px 7px),
-      linear-gradient(160deg, #3c1016, #230a0d 70%);
+      repeating-radial-gradient(circle at 50% 50%, rgba(244,184,96,0.13) 0 1px, transparent 1px 4px),
+      linear-gradient(160deg, #4a1219, #22080c 75%);
     position:relative;
   }
   .facedown::after{
@@ -304,6 +307,21 @@
   .slot.two .stack-item:first-child{ transform: rotate(-7deg) translateX(10px); }
   .slot.two .stack-item:last-child{ transform: rotate(6deg) translateX(-10px); }
   .card.holding{ box-shadow: 0 0 0 2px var(--bulb), 0 0 16px rgba(244,184,96,0.55), 0 3px 7px rgba(0,0,0,0.45); }
+  /* a claque: every card lands together in a tight fan */
+  .slot.fan .stack-item{ position:absolute; left:50%; top:50%; margin:-44px 0 0 -31px; }
+  .sq-cur.fan{ position:relative; min-width:120px; }
+  .sq-cur.fan .card{ position:absolute; left:50%; top:50%; margin:-34px 0 0 -24px; }
+  .card.slam-card{ box-shadow: 0 2px 3px rgba(0,0,0,0.6), 0 8px 18px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(180,130,60,0.35); }
+  /* cracks in the table: a dark split in the wood with a thin lit edge, drawn fast from the point of impact */
+  .table-crack{ position:absolute; left:0; top:0; pointer-events:none; z-index:1; overflow:visible; }
+  .sq-table > .table-crack{ z-index:0; }
+  .table-crack path{ fill:none; stroke-linecap:round; stroke-linejoin:miter; animation: crackDraw 0.22s cubic-bezier(.2,.7,.3,1) forwards; }
+  .table-crack .crk-d{ stroke: rgba(14,7,2,0.78); }
+  .table-crack .crk-l{ stroke: rgba(255,220,165,0.28); transform: translate(0.8px, 0.9px); }
+  .table-crack .crk-dust{ fill: rgba(30,18,8,0.35); filter: blur(6px); animation: crackDust 0.9s ease-out forwards; }
+  @keyframes crackDraw{ to{ stroke-dashoffset:0; } }
+  @keyframes crackDust{ from{ opacity:0.9; transform-box:fill-box; transform-origin:center; transform:scale(0.5); } to{ opacity:0.45; transform-box:fill-box; transform-origin:center; transform:scale(1); } }
+  html[data-q="low"] .table-crack .crk-dust{ display:none; }
 
   .card{
     width:62px; height:88px; border-radius:7px;
@@ -604,13 +622,16 @@
 
   /* ---- step 4: personalisation (classes on <body>: back-*, table-*, light-*) ---- */
   /* card backs */
-  body.back-lions .facedown{ background: linear-gradient(90deg, #007a3d 0 33.3%, #ce1126 33.3% 66.6%, #fcd116 66.6%); border-color: rgba(255,255,255,0.4); }
-  body.back-lions .facedown::after{ content:"★"; color:#fcd116; font-size:11px; text-shadow:0 0 2px #000; }
-  body.back-wax .facedown{ background:
-      radial-gradient(circle at 25% 25%, #f39c12 0 20%, transparent 22%), radial-gradient(circle at 75% 75%, #f39c12 0 20%, transparent 22%),
-      radial-gradient(circle at 75% 25%, #1f6fb2 0 15%, transparent 17%), radial-gradient(circle at 25% 75%, #1f6fb2 0 15%, transparent 17%), #7a1f3d;
-    background-size: 10px 10px; border-color: rgba(243,156,18,0.6); }
-  body.back-wax .facedown::after{ color:#fff3d6; text-shadow:0 0 3px #000; }
+  /* the green, red and yellow, with the star on a dark medallion */
+  body.back-lions .facedown, .facedown.back-lions{ background: linear-gradient(90deg, #00793b 0 33.4%, #c8102e 33.4% 66.6%, #f7c81e 66.6%); border-color: rgba(255,255,255,0.5); }
+  body.back-lions .facedown::after, .facedown.back-lions::after{ content:"★"; inset:auto; left:50%; top:50%; width:52%; aspect-ratio:1; transform:translate(-50%,-50%);
+    border-radius:50%; background:#1a1208; box-shadow:0 0 0 1px rgba(247,200,30,0.8); color:#f7c81e; font-size:9px; text-shadow:none; }
+  /* the round motifs of a market wax print */
+  body.back-wax .facedown, .facedown.back-wax{ background:
+      radial-gradient(circle at 50% 50%, #f5b041 0 24%, #7a1f3d 25% 34%, transparent 35%) 0 0/10px 10px,
+      radial-gradient(circle at 50% 50%, #2e86c1 0 18%, transparent 19%) 5px 5px/10px 10px, #7a1f3d;
+    border-color: rgba(245,176,65,0.7); }
+  body.back-wax .facedown::after, .facedown.back-wax::after{ content:""; inset:3px; border:1px solid rgba(255,240,210,0.7); border-radius:3px; }
   body.back-nuit .facedown{ background: repeating-linear-gradient(45deg, rgba(244,184,96,0.16) 0 1px, transparent 1px 6px), linear-gradient(160deg, #1d2a52, #0b1020); border-color: rgba(244,184,96,0.7); }
   body.back-nuit .facedown::after{ color: var(--bulb); }
   body.back-or .facedown{ background: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 7px), linear-gradient(160deg, #f6d27a, #a8741c); border-color:#fff3d6; }
@@ -2432,6 +2453,59 @@
   body.back-neonb .facedown::after, .facedown.back-neonb::after{ color:#f0abfc; text-shadow: 0 0 6px #d946ef; }
   body.back-ivoire .facedown, .facedown.back-ivoire{ background: radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(200,160,70,0.6) 31% 34%, transparent 35%), linear-gradient(160deg, #fbf6ea, #e8dcc0); border-color:#c9a24a; }
   body.back-ivoire .facedown::after, .facedown.back-ivoire::after{ color:#a5822e; }
+  /* Ndop: the indigo and white cloth of the Grassfields, a grid of lozenges and circles */
+  body.back-ndop .facedown, .facedown.back-ndop{ background-color:#18245e; border-color: rgba(238,241,255,0.55);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23eef1ff' stroke-width='1.3' opacity='.85'%3E%3Cpath d='M12 2 L22 12 L12 22 L2 12 Z'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='24' cy='0' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='0' cy='24' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='24' cy='24' r='1.6' fill='%23eef1ff'/%3E%3C/svg%3E");
+    background-size: 10px 10px; background-position:center; }
+  .ss-backs .facedown.back-ndop, .si-back .facedown.back-ndop{ background-size:16px 16px; }
+  body.back-ndop .facedown::after, .facedown.back-ndop::after{ content:""; inset:3px; border:1px solid rgba(238,241,255,0.75); border-radius:3px; }
+  /* Noir & or: black lacquer, a gold art-deco fan, the monogram in gold */
+  body.back-deco .facedown, .facedown.back-deco{ background: repeating-radial-gradient(circle at 50% 115%, rgba(217,164,65,0.5) 0 1px, transparent 1px 4px), linear-gradient(170deg, #1c1a17, #070606); border-color:#c9973a; }
+  body.back-deco .facedown::after, .facedown.back-deco::after{ color:#e7c374; font-family:'Playfair Display', Georgia, serif; }
+
+  /* ---- card faces (shop): a class on each card, f-<style> ---- */
+  /* Ivoire gravé: thick ivory stock, serif numerals, a fine gold rule inside the edge */
+  .card.f-ivoire{ background: repeating-linear-gradient(0deg, rgba(120,90,40,0.035) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(120,90,40,0.03) 0 1px, transparent 1px 3px), linear-gradient(160deg, #fffaf0, #f3e7cf);
+    box-shadow: 0 3px 7px rgba(0,0,0,0.45); }
+  .card.f-ivoire::before, .card.f-noir::before{ content:""; position:absolute; inset:3px; border-radius:5px; border:0.6px solid rgba(160,118,40,0.55); pointer-events:none; }
+  .card.f-ivoire .c-rank, .card.f-noir .c-rank{ font-family:'Playfair Display', Georgia, serif; font-weight:900; }
+  .card.f-ivoire .wm-svg{ filter: drop-shadow(0 0.6px 0 rgba(255,255,255,0.8)) drop-shadow(0 -0.4px 0 rgba(0,0,0,0.18)); }
+  .card.f-ivoire .card-suitname, .card.f-noir .card-suitname{ font-family:'Playfair Display', Georgia, serif; letter-spacing:0.14em; opacity:0.72; }
+  .card.f-ivoire.rank-ten{ background: repeating-linear-gradient(0deg, rgba(120,90,40,0.035) 0 1px, transparent 1px 3px), linear-gradient(160deg, #fff6df, #ecd8a6); }
+  .card.f-ivoire.rank-ten::before{ border:1.2px solid #b8862b; box-shadow: inset 0 0 0 1.2px rgba(255,240,200,0.9), inset 0 0 0 2px rgba(184,134,43,0.6); }
+  /* Wax: a strip of wax print around a white face; the print takes the colour of the suit */
+  .card.f-wax{ background: radial-gradient(circle at 50% 50%, #f5b041 0 22%, transparent 24%) 0 0/9px 9px, radial-gradient(circle at 50% 50%, #7a1020 0 40%, transparent 42%) 4.5px 4.5px/9px 9px, #c0392b;
+    box-shadow: 0 3px 7px rgba(0,0,0,0.45); }
+  .card.f-wax.suit-Black, .card.f-wax.suit-Tchaka{ background: radial-gradient(circle at 50% 50%, #f0c419 0 22%, transparent 24%) 0 0/9px 9px, radial-gradient(circle at 50% 50%, #0e1d4a 0 40%, transparent 42%) 4.5px 4.5px/9px 9px, #1f4e9c; }
+  .card.f-wax.rank-ten{ background: radial-gradient(circle at 50% 50%, #fff3c4 0 22%, transparent 24%) 0 0/9px 9px, radial-gradient(circle at 50% 50%, #8a5a12 0 40%, transparent 42%) 4.5px 4.5px/9px 9px, #d4a017; }
+  .card.f-wax::before{ content:""; position:absolute; inset:4px; border-radius:4px; background:#fffdf8; box-shadow: inset 0 0 0 0.6px rgba(0,0,0,0.12); pointer-events:none; }
+  .card.f-wax .corner-idx.tl{ top:7px; left:7px; } .card.f-wax .corner-idx.br{ bottom:7px; right:7px; }
+  .card.f-wax.sq-size .corner-idx.tl{ top:6px; left:6px; } .card.f-wax.sq-size .corner-idx.br{ bottom:6px; right:6px; }
+  /* Noir & or: a black card, gold numerals; the red suits turn coral so they stay readable on black */
+  .card.f-noir{ background: linear-gradient(150deg, #22201d, #0c0b0a 65%); box-shadow: 0 3px 7px rgba(0,0,0,0.6), inset 0 0 0 0.6px rgba(230,190,110,0.55); }
+  .card.f-noir::before{ border-color: rgba(230,190,110,0.28); }
+  .card.f-noir.suit-Black, .card.f-noir.suit-Tchaka{ color:#e9c77b; }
+  .card.f-noir.suit-Coubie, .card.f-noir.suit-Zing{ color:#ff7a66; }
+  .card.f-noir.rank-ten{ background: linear-gradient(150deg, #3a2c12, #120d05 70%); box-shadow: 0 3px 8px rgba(0,0,0,0.6), inset 0 0 0 1.2px #d9a441; }
+  .card.f-noir.rank-ten .c-rank{ color:#ffd479; }
+  /* Grand index: huge numbers and four colours, read at a glance on a small phone */
+  .card.f-grand{ background:#fbfaf7; box-shadow: 0 3px 7px rgba(0,0,0,0.45), inset 0 0 0 0.6px rgba(0,0,0,0.14); }
+  .card.f-grand.suit-Black{ color:#141414; } .card.f-grand.suit-Tchaka{ color:#16773a; } .card.f-grand.suit-Coubie{ color:#c0161c; } .card.f-grand.suit-Zing{ color:#1757b8; }
+  .card.f-grand .corner-idx.tl{ top:3px; left:4px; flex-direction:row; align-items:flex-start; gap:1px; }
+  .card.f-grand .corner-idx.br{ display:none; }
+  .card.f-grand:not(.sq-size) .c-rank{ font-size:28px; letter-spacing:-0.05em; }
+  .card.f-grand.sq-size .c-rank{ font-size:21px; letter-spacing:-0.05em; }
+  .card.f-grand .c-pip{ width:11px; height:11px; margin-top:4px; }
+  .card.f-grand .card-watermark{ inset:52% 10% 8% 42%; justify-content:flex-end; }
+  .card.f-grand .card-watermark .wm-svg{ max-height:100%; }
+  .card.f-grand .card-suitname{ display:none; }
+  .card.f-grand.rank-ten{ background: linear-gradient(165deg, #fffaf0, #f2e2b4); box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 0 0 1.4px #d9a441; }
+  .card.f-grand.rank-ten .c-rank{ color:inherit; }
+  .si-vis.si-face{ width:auto; height:64px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:4px; }
+  .si-face .card{ zoom:0.68; }
+  .si-face .card:first-child{ transform: rotate(-6deg); } .si-face .card:last-child{ transform: rotate(6deg); }
+  .ss-faces{ display:flex; gap:10px; }
+  .ss-faces .card:nth-child(1){ transform: rotate(-8deg); } .ss-faces .card:nth-child(3){ transform: rotate(8deg); }
   /* portrait frames */
   .avatar.frame-or{ box-shadow: 0 0 0 3px #ffd36b, 0 0 0 5px #a8741c, 0 0 18px rgba(255,200,90,0.7), 0 3px 8px rgba(0,0,0,0.5) !important; }
   .avatar.frame-neon{ box-shadow: 0 0 0 3px #22d3ee, 0 0 0 5px #d946ef, 0 0 20px rgba(34,211,238,0.8) !important; animation: frameNeon 2s ease-in-out infinite; }
@@ -2979,6 +3053,7 @@
       </div>
       <div class="actions">
         <button id="btnAnnounce" class="danger hidden">Annoncer victoire !</button>
+        <button id="btnBanque" class="passe-option bank-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Se banquer</button>
         <button id="btnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
         <button id="btnDump" class="primary hidden">Poser mes 2 cartes</button>
         <button id="btnClaque" class="primary claque-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg> Claquer !</button>
@@ -3034,6 +3109,7 @@
     </div>
     <div class="actions">
       <button id="sqBtnAnnounce" class="danger hidden">Annoncer victoire !</button>
+      <button id="sqBtnBanque" class="passe-option bank-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Se banquer</button>
       <button id="sqBtnPasse" class="passe-option hidden"><svg class="i" aria-hidden="true"><use href="#i-hand"/></svg> Je suis en passe</button>
       <button id="sqBtnDump" class="primary hidden">Poser mes 2 cartes</button>
       <button id="sqBtnClaque" class="primary claque-btn hidden"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg> Claquer !</button>
@@ -3624,6 +3700,7 @@
     </div>
     <div class="set-group">
       <h3>Jeu</h3>
+      <button class="set-row hidden" id="btnTogglePush"><span><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Notifications de défi (jeu fermé)</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Thème « Or sous verre » (essai)</span><span class="switch"></span></button>
@@ -4575,9 +4652,24 @@
       return;
     }
     if(msg.t==='chat'){ chatReceive(msg); return; }
+    if(msg.t==='bank'){
+      // the guest gives his hand up (22-24 points); only the host decides, and checks it really was allowed
+      if(mpIsHost && canBank('ai')) resolveBank('ai');
+      return;
+    }
     if(msg.t==='claque'){
-      // the friend slams his cards down: our answers to his last leads are played automatically
-      if(state && !state.handOver){ state.claque = 'ai'; claqueFx('ai'); renderAll(); if(!locked) gameTimeout(claqueTick, 400); }
+      // the guest wants to slam his cards down: the host checks it really is unstoppable, then plays it out
+      if(mpIsHost && state && !state.handOver && claqueOrder('ai')) slamAll('ai');
+      return;
+    }
+    if(msg.t==='slam'){
+      // the host shows us a claque (his or ours); the points follow with the 'handOver' message
+      if(!state || state.handOver || !Array.isArray(msg.cards)) return;
+      const who = msg.who==='you' ? 'you' : 'ai';
+      state.claque = who; locked = true;
+      if(who==='you') state.playerHand.length = 0; else state.aiHand.length = 0;
+      slamVisual(who, msg.cards);
+      renderAll();
       return;
     }
     if(msg.t==='rematch'){
@@ -4651,7 +4743,7 @@
         state.handOver = true;
         if(/automatique/i.test(msg.label||'')){
           const label = msg.label.replace(/^Victoire automatique — /,'');
-          showToast(msg.winner==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
+          showToast(msg.winner==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3600});
           sfxBigWin(); bigImpact();
           document.getElementById('btnAnnounce').classList.add('hidden');
           // the announced cards, checked before the point counts
@@ -4729,6 +4821,7 @@
       if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
       if(audioCtx.state==='suspended' && !document.hidden) audioCtx.resume();
       setupMixer(audioCtx);
+      loadSamples(audioCtx);
       Music.kick();
       return audioCtx;
     }catch(e){ return null; }
@@ -4759,6 +4852,47 @@
     node.connect(dest);
     if(verb && verbAmt){ const s = ctx.createGain(); s.gain.value = verbAmt; node.connect(s); s.connect(verb); }
     return g;
+  }
+  // ---- real recordings (Kenney « Casino Audio », CC0 — sfx/LICENSE-kenney.txt): cards on wood, chips ----
+  // Loaded once the audio is switched on; until a file has arrived the synthesized sound is used instead.
+  const CARD_PLACE = ['card-place-1','card-place-2','card-place-3','card-place-4'];
+  const CARD_SLIDE = ['card-slide-1','card-slide-2','card-slide-3','card-slide-4'];
+  const CARD_SHOVE = ['card-shove-1','card-shove-2','card-shove-3'];
+  const CARD_FAN = ['card-fan-1','card-fan-2'];
+  const CHIP_LAY = ['chip-lay-1','chip-lay-2','chip-lay-3'];
+  const CHIPS = ['chips-stack-1','chips-stack-2','chips-stack-3','chips-collide-1','chips-collide-2'];
+  const SAMPLE_NAMES = [].concat(CARD_PLACE, CARD_SLIDE, CARD_SHOVE, CARD_FAN, CHIP_LAY, CHIPS, ['card-shuffle','chips-handle-1','cards-pack-take-out-1']);
+  const samples = {};
+  let samplesAsked = false;
+  function loadSamples(ctx){
+    if(samplesAsked || !window.fetch) return;
+    samplesAsked = true;
+    SAMPLE_NAMES.forEach(n=>{
+      fetch('sfx/'+n+'.wav')
+        .then(r=> r.ok ? r.arrayBuffer() : Promise.reject(r.status))
+        .then(ab=> new Promise((res, rej)=> ctx.decodeAudioData(ab, res, rej)))   // callback form: older iPhones
+        .then(buf=>{ samples[n] = buf; })
+        .catch(()=>{});
+    });
+  }
+  // plays one recording (or a random one from a list), slightly varied each time so repeats never sound copied;
+  // returns false when nothing is loaded yet, so the caller can fall back on the synth
+  function sample(names, o){
+    o = o||{};
+    const ctx = ensureAudio();
+    if(!ctx || !sfxBus) return false;
+    const ready = (Array.isArray(names) ? names : [names]).filter(n=> samples[n]);
+    if(!ready.length) return false;
+    try{
+      const src = ctx.createBufferSource();
+      src.buffer = samples[ready[Math.floor(Math.random()*ready.length)]];
+      src.playbackRate.value = (o.rate||1) * (1 + (Math.random()-0.5)*(o.vary==null ? 0.1 : o.vary));
+      const g = outNode(ctx, sfxBus, o.pan||0, sfxVerb, o.verb==null ? 0.1 : o.verb);
+      g.gain.value = (o.vol==null ? 0.45 : o.vol) * (1 + (Math.random()-0.5)*0.12);
+      src.connect(g);
+      src.start(ctx.currentTime + 0.005 + (o.delay||0));
+      return true;
+    }catch(e){ return false; }
   }
   function perc(g, t, peak, a, d){
     g.gain.setValueAtTime(0.0001, t);
@@ -4845,17 +4979,17 @@
   function sfxTap(){ sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:1400, f1:950, dur:0.035, vol:0.03}); noiseHit(c, sfxBus, t, {dur:0.018, vol:0.01, type:'highpass', f0:5000}); }); }
   function sfxSwipe(back){ sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.2, vol:0.028, type:'bandpass', f0:back?2600:900, f1:back?900:2600, q:0.8, att:0.06, pan:back?-0.3:0.3})); }
   // coins landing: a quick shower of bright metallic clinks
-  function sfxCoins(n){ sfx((c,t)=>{ for(let i=0;i<Math.min(n||8,12);i++) fmNote(c, sfxBus, t+i*0.055+Math.random()*0.02, mtof(88+Math.floor(Math.random()*7)), {vol:0.035, dur:0.18, ratio:3.5, index:1.4, decayIdx:0.08, pan:Math.random()*0.6-0.3, verbNode:sfxVerb, verb:0.25, lp:9000}); }); }
+  function sfxCoins(n){ if(sample(CHIPS, {vol:0.5})){ for(let i=1;i<Math.min(n||8,12)/3;i++) sample(CHIPS, {vol:0.4, delay:i*0.09+Math.random()*0.04}); return; } sfx((c,t)=>{ for(let i=0;i<Math.min(n||8,12);i++) fmNote(c, sfxBus, t+i*0.055+Math.random()*0.02, mtof(88+Math.floor(Math.random()*7)), {vol:0.035, dur:0.18, ratio:3.5, index:1.4, decayIdx:0.08, pan:Math.random()*0.6-0.3, verbNode:sfxVerb, verb:0.25, lp:9000}); }); }
   function sfxToggle(on){ sfx((c,t)=> pluck(c, t, on ? 79 : 72, 0.05, 0, 1)); }
   // a card sliding then landing on the table: swish + soft thud + tiny tap
-  function sfxCardPlay(){ sfx((c,t)=>{
+  function sfxCardPlay(){ if(sample(CARD_PLACE, {vol:0.55})) return; sfx((c,t)=>{
     noiseHit(c, sfxBus, t, {dur:0.11, vol:0.07, type:'bandpass', f0:3200, f1:700, q:0.7, att:0.01});
     sweep(c, sfxBus, t+0.045, {f0:170, f1:62, dur:0.1, vol:0.13});
     noiseHit(c, sfxBus, t+0.045, {dur:0.015, vol:0.03, type:'highpass', f0:4500});
   }); }
-  function sfxDeal(n, step){ sfx((c,t)=>{ for(let i=0;i<(n||5);i++) noiseHit(c, sfxBus, t+i*(step||0.07), {dur:0.07, vol:0.035, type:'bandpass', f0:3600, f1:1400, q:0.9, att:0.008, pan:i%2 ? 0.25 : -0.25}); }); }
-  // control changes hands: a soft rising (you) or falling (opponent) glide
-  function sfxCtrl(mine){ sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:mine?520:780, f1:mine?780:520, dur:0.22, vol:0.04, type:'triangle', lp:2500, verb:0.3}); }); }
+  function sfxDeal(n, step){ if(samples['card-slide-1']){ for(let i=0;i<(n||5);i++) sample(CARD_SLIDE, {vol:0.28, delay:i*(step||0.07), pan:i%2 ? 0.25 : -0.25, verb:0.05}); return; } sfx((c,t)=>{ for(let i=0;i<(n||5);i++) noiseHit(c, sfxBus, t+i*(step||0.07), {dur:0.07, vol:0.035, type:'bandpass', f0:3600, f1:1400, q:0.9, att:0.008, pan:i%2 ? 0.25 : -0.25}); }); }
+  // control changes hands: the control coin is laid down (a chip on the wood) and a soft rising (you) or falling glide
+  function sfxCtrl(mine){ sample(CHIP_LAY, {vol:0.6, rate: mine ? 1.06 : 0.94}); sfx((c,t)=>{ sweep(c, sfxBus, t+0.03, {f0:mine?520:780, f1:mine?780:520, dur:0.22, vol:0.05, type:'triangle', lp:2500, verb:0.3}); }); }
   // the meteor: a falling, roaring whoosh…
   function sfxMeteor(big){ sfx((c,t)=>{
     noiseHit(c, sfxBus, t, {dur: big ? 0.6 : 0.5, vol: big ? 0.09 : 0.07, type:'bandpass', f0:900, f1:3200, q:0.6, att:0.35});
@@ -4867,6 +5001,15 @@
     noiseHit(c, sfxBus, t, {dur: big ? 0.9 : 0.7, vol: big ? 0.16 : 0.12, type:'lowpass', f0:2600, f1:120, att:0.004, verb:0.4});
     for(let i=0; i<(big ? 14 : 9); i++) noiseHit(c, sfxBus, t+0.15+Math.random()*1.4, {dur:0.03, vol:0.02+Math.random()*0.02, type:'highpass', f0:2500+Math.random()*3000});
   }); }
+  // a claque: the hand swinging down, then the cards hitting the wood and the table splitting
+  function sfxSlamWhoosh(){ if(sample(CARD_FAN, {vol:0.5, rate:1.25, vary:0.05})) return; sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.22, vol:0.06, type:'bandpass', f0:600, f1:2400, q:0.7, att:0.16})); }
+  function sfxSlam(big){ sample(CARD_SHOVE, {vol:0.9, rate:0.85, verb:0.2}); sample(CARD_PLACE, {vol:0.7, rate:0.8, delay:0.01}); sfx((c,t)=>{
+    sweep(c, sfxBus, t, {f0: big ? 120 : 140, f1:38, dur: big ? 0.5 : 0.38, vol: big ? 0.36 : 0.3});
+    noiseHit(c, sfxBus, t, {dur:0.09, vol:0.2, type:'bandpass', f0:1800, f1:500, q:0.8, att:0.001});
+    noiseHit(c, sfxBus, t, {dur:0.35, vol:0.08, type:'lowpass', f0:1400, f1:160, att:0.002, verb:0.25});
+    // the wood cracking: a burst of short dry ticks
+    for(let i=0; i<(big ? 16 : 10); i++) noiseHit(c, sfxBus, t+0.03+i*0.018+Math.random()*0.02, {dur:0.012, vol:0.03+Math.random()*0.03, type:'highpass', f0:1800+Math.random()*2500, pan:Math.random()*0.6-0.3});
+  }); }
   // the last trick: a slow heartbeat under the table
   function sfxHeartbeat(){ sfx((c,t)=>{ [0,0.26,1.05,1.31,2.1,2.36].forEach((d,i)=> sweep(c, sfxBus, t+d, {f0:72, f1:40, dur:0.2, vol:i%2 ? 0.13 : 0.2, lp:260})); }); }
   // the music steps back during the decisive moment, then comes back
@@ -4874,7 +5017,7 @@
     if(!audioCtx || !musicBus) return;
     musicBus.gain.setTargetAtTime(on ? musicLevel()*0.3 : musicLevel(), audioCtx.currentTime, on ? 0.35 : 0.8);
   }
-  function sfxPasse(){ sfx((c,t)=>{ noiseHit(c, sfxBus, t, {dur:0.35, vol:0.05, type:'lowpass', f0:2400, f1:300, q:0.5, att:0.04}); fmNote(c, sfxBus, t+0.05, mtof(57), {vol:0.06, dur:0.5, ratio:1, index:0.8, lp:1200}); }); }
+  function sfxPasse(){ const real = sample(CARD_SLIDE, {vol:0.3, rate:0.85}); sfx((c,t)=>{ if(!real) noiseHit(c, sfxBus, t, {dur:0.35, vol:0.05, type:'lowpass', f0:2400, f1:300, q:0.5, att:0.04}); fmNote(c, sfxBus, t+0.05, mtof(57), {vol:0.06, dur:0.5, ratio:1, index:0.8, lp:1200}); }); }
   function sfxTrickWinYou(){ sfx((c,t)=>{ pluck(c,t,76,0.09,0.2); pluck(c,t+0.07,83,0.08,0.25); sparkle(c,t+0.05); }); }
   function sfxTrickWinAI(){ sfx((c,t)=>{ pluck(c,t,64,0.07,-0.25,0.9); pluck(c,t+0.09,59,0.06,-0.25,0.9); }); }
   function sfxHandWin(){ sfx((c,t)=>{
@@ -5677,7 +5820,9 @@
       {id:'or',        name:'Or de légende',  swatch:'linear-gradient(160deg,#f6d27a,#a8741c)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'},
       {id:'verre',     name:'Verre dépoli',   swatch:'linear-gradient(160deg,rgba(255,255,255,.85),rgba(190,220,230,.6))', req:p=> shopOwns(p, 'back', 'verre'), hint:'Boutique · 2 500 jetons'},
       {id:'neonb',     name:'Néon',           swatch:'linear-gradient(160deg,#120625,#05020c)', req:p=> shopOwns(p, 'back', 'neonb'), hint:'Boutique · 4 000 jetons'},
-      {id:'ivoire',    name:'Ivoire et or',   swatch:'linear-gradient(160deg,#fbf6ea,#e8dcc0)', req:p=> shopOwns(p, 'back', 'ivoire'), hint:'Boutique · 6 000 jetons'}
+      {id:'ivoire',    name:'Ivoire et or',   swatch:'linear-gradient(160deg,#fbf6ea,#e8dcc0)', req:p=> shopOwns(p, 'back', 'ivoire'), hint:'Boutique · 6 000 jetons'},
+      {id:'ndop',      name:'Ndop',           swatch:'radial-gradient(circle,#eef1ff 0 14%,transparent 16%) 0 0/8px 8px,#18245e', req:p=> shopOwns(p, 'back', 'ndop'), hint:'Boutique · 3 000 jetons'},
+      {id:'deco',      name:'Noir & or',      swatch:'repeating-radial-gradient(circle at 50% 115%,rgba(217,164,65,.6) 0 1px,transparent 1px 4px),#0c0b0a', req:p=> shopOwns(p, 'back', 'deco'), hint:'Boutique · 4 500 jetons'}
     ],
     // each table comes with its own background music (see TRACKS)
     table: [
@@ -5960,6 +6105,7 @@
     sw('btnToggleThemeOr', prefs.themeOr===true);
     sw('btnToggleShare', !!prefs.alwaysShare);
     sw('btnToggleChat', !prefs.noChat);
+    if(window.pushSettingsRow) window.pushSettingsRow();
     sw('btnToggleStats', !prefs.noStats);
     const ni = document.getElementById('setNameInput');
     if(document.activeElement!==ni) ni.value = prefs.name || '';
@@ -6351,6 +6497,7 @@
     }
 
     workingDeck = shuffle(buildDeck());
+    sample('card-shuffle', {vol:0.38, vary:0.04});
     const nonDealer = dealer==='you' ? 'ai' : 'you';
     if(nonDealer==='you'){
       openChoiceForPlayer(false);
@@ -6550,6 +6697,10 @@
     renderAll(true);
     checkAutoWinWindow();
     if(storyRun && storyRun.rule==='spy') storySpy();
+    if(!state.handOver && aiWantsBank()){
+      gameTimeout(()=>{ if(!state.handOver && canBank('ai')) resolveBank('ai'); }, 1400 + lastDealMs);
+      if(state.leader==='ai') return;
+    }
     if(!state.handOver && state.leader==='ai'){
       gameTimeout(aiTakeTurn, 900 + lastDealMs); // the opponent waits until every card has landed
     }
@@ -6589,7 +6740,8 @@
     opts = opts||{};
     const d = document.createElement('div');
     const isTen = card.rank===10;
-    d.className = 'card suit-'+card.suit + (isTen?' rank-ten':'') + (opts.extraClass?(' '+opts.extraClass):'');
+    const face = opts.face || (profile.equip && profile.equip.face) || 'classique'; // the card style chosen in the shop
+    d.className = 'card suit-'+card.suit + (isTen?' rank-ten':'') + (face!=='classique' ? ' f-'+face : '') + (opts.extraClass?(' '+opts.extraClass):'');
     if(opts.style) d.style.cssText = opts.style;
     d.dataset.key = card.suit+'-'+card.rank;
     const cornerHtml = '<span class="c-rank">'+card.rank+'</span>'+suitSvg(card.suit,'c-pip');
@@ -6665,6 +6817,7 @@
     }
     document.getElementById('btnDump').classList.toggle('hidden', !dumping);
     document.getElementById('btnClaque').classList.toggle('hidden', !(yourTurn && !locked && !state.claque && claqueOrder('you')));
+    document.getElementById('btnBanque').classList.toggle('hidden', !canBank('you'));
 
     document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
     document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
@@ -6724,7 +6877,7 @@
     state.handOver = true;
     document.getElementById('btnAnnounce').classList.add('hidden');
     document.getElementById('btnPasse').classList.add('hidden');
-    showToast(who==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
+    showToast(who==='you' ? 'VICTOIRE AUTOMATIQUE !' : oppName().toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3600});
     sfxBigWin();
     bigImpact();
     penaltySay(who==='you' ? L('surprise') : L('win'));
@@ -6869,25 +7022,81 @@
   function pace(ms){ return state && state.claque ? Math.round(ms*0.24) : ms; }
   const CLAQUE_LINES = ['Clac ! Ramasse tes cartes.', 'Je claque. C’est plié.', 'Pose tout, c’est fini pour toi.', 'Plus rien ne m’arrête. Clac !'];
   function claqueFx(actor){
-    showToast(actor==='you' ? 'CLAC !' : oppName()+' claque !', actor==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1300});
-    sfxImpact(false); vibrate([30, 40, 60]);
-    const shell = document.querySelector('.app-shell');
-    if(shell && !calmOn()){ shell.classList.remove('quake'); void shell.offsetWidth; shell.classList.add('quake'); setTimeout(()=> shell.classList.remove('quake'), 700); }
+    showToast(actor==='you' ? 'CLAC !' : oppName()+' claque !', actor==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1600});
     if(actor==='ai' && mode==='ai') penaltySay(CLAQUE_LINES);
     if(actor==='you') claqueExtraFx();
   }
-  function startClaque(actor, order){
-    state.claque = actor; state.claqueOrder = order;
-    claqueFx(actor);
-    if(actor==='you' && mode==='mp') mpSend({t:'claque'});
+  // Claquer: every card left in the hand is slammed down AT ONCE and the hand is won on the spot.
+  // A 3 among them is a CORA, two 3s a 33 Glacée. The table cracks where they land.
+  function claqueResult(cards){
+    const threes = cards.filter(c=> c.rank===3).length;
+    if(threes>=2) return {pts:3, label:'LA 33 GLACÉE ! (claque)', level:3};
+    if(threes===1) return {pts:2, label:'CORA — claque !', level:2};
+    return {pts:1, label:'Claque — manche remportée', level:2};
   }
-  document.getElementById('btnClaque').addEventListener('click', ()=>{
-    if(locked || state.claque) return;
-    const order = claqueOrder('you');
-    if(!order) return;
-    startClaque('you', order);
+  // the picture only: the cards fall together into the claquer's slot, then one hard hit
+  function slamVisual(actor, cards){
+    archiveTrick();
+    const slot = document.getElementById(slotIds(actor)[0]);
+    slot.innerHTML = ''; slot.classList.remove('two'); slot.classList.add('fan');
+    const order = cards.filter(c=> c.rank!==3).concat(cards.filter(c=> c.rank===3)); // the 3s on top
+    const n = order.length;
+    const items = order.map((c, i)=>{
+      const wrap = document.createElement('div');
+      wrap.className = 'stack-item';
+      wrap.dataset.key = c.suit+'-'+c.rank;
+      const mid = (n-1)/2;
+      wrap.style.transform = 'translateX('+((i-mid)*22)+'px) rotate('+((i-mid)*7 + (Math.random()*4-2))+'deg)';
+      wrap.style.zIndex = i+1;
+      const el = cardEl(c, {extraClass:'slam-card'});
+      wrap.appendChild(el);
+      slot.appendChild(wrap);
+      return el;
+    });
+    claqueFx(actor);
+    sfxSlamWhoosh();
+    if(!calmOn()) items.forEach((el, i)=> el.animate([
+      {transform:'translateY('+(actor==='you' ? 150 : -150)+'px) scale(1.45) rotate('+(Math.random()*30-15)+'deg)', opacity:0.2},
+      {opacity:1, offset:0.35},
+      {transform:'none', opacity:1}
+    ], {duration:240, delay:i*12, easing:'cubic-bezier(.6,0,1,.5)', fill:'backwards'}));
+    const hitMs = calmOn() ? 0 : 260;
+    setTimeout(()=>{
+      const r = slot.getBoundingClientRect();
+      const res = claqueResult(cards);
+      sfxSlam(res.level>=3);
+      shock(res.level>=3 ? 3 : 2);
+      vibrate(res.level>=3 ? [90] : [70]);
+      crackAt(r.left + r.width/2, r.top + r.height/2, res.level>=3 ? 3 : 2);
+      landRing(slot);
+    }, hitMs);
+    return hitMs;
+  }
+  function slamAll(actor){
+    if(!state || state.handOver) return;
+    const hand = actor==='you' ? state.playerHand : state.aiHand;
+    const cards = [...hand];
+    hand.length = 0;
+    state.claque = actor; state.handOver = true; locked = true;
+    state.leadSuit = null;
+    cards.forEach(c=> state.history.push({type:'card', actor, card:c, claque:true}));
+    const res = claqueResult(cards);
+    if(mode==='mp' && mpIsHost) mpSend({t:'slam', who: actor==='you' ? 'ai' : 'you', cards});
+    const hitMs = slamVisual(actor, cards);
     renderAll();
-    gameTimeout(claqueTick, 520);
+    // a moment to see the cards on the cracked table before the points (and the CORA meteor) come
+    gameTimeout(()=>{
+      if(mode==='mp' && mpIsHost) mpSend({t:'handOver', winner: actor==='you' ? 'ai' : 'you', pts: res.pts, label: res.label});
+      awardPoints(actor, res.pts, res.label);
+    }, hitMs + 1300);
+  }
+  function startClaque(actor){ slamAll(actor); }
+  document.getElementById('btnClaque').addEventListener('click', ()=>{
+    if(locked || state.claque || state.handOver) return;
+    if(!claqueOrder('you')) return;
+    document.getElementById('btnClaque').classList.add('hidden');
+    if(mode==='mp' && !mpIsHost){ mpSend({t:'claque'}); return; } // the host checks it and slams for us
+    slamAll('you');
   });
   // during a claque, every move of the player is made automatically: the claquer's next card, or the answer to it
   function claqueTick(){
@@ -6903,6 +7112,49 @@
       return playerPlays(follow[0] || any[0]);
     }
   }
+
+  // ===================== SE BANQUER =====================
+  // With 22, 23 or 24 points in the five cards just dealt, a player may give the hand up before playing a card.
+  // Duel: the opponent takes the hand: 1 point, or a CORA (2 points) if he holds a 3. In the Carré the player who
+  // banks sits the hand out as a spectator; the winner can still choose to eliminate him.
+  const handTotal = h=> (h||[]).reduce((s, c)=> s + c.rank, 0);
+  const BANK_TOTALS = [22, 23, 24];
+  function canBank(actor){
+    if(!state || state.handOver || tuto || daily || state.claque) return false;
+    if(mode!=='ai' && mode!=='mp') return false;
+    if(state.history.some(e=> e.actor===actor)) return false;           // he has already played
+    const hand = actor==='you' ? state.playerHand : state.aiHand;
+    return hand.length===5 && BANK_TOTALS.includes(handTotal(hand));
+  }
+  // the computer gives a bad hand up: no 3 to save it and almost no strong cards
+  function aiWantsBank(){
+    if(mode!=='ai' || !canBank('ai')) return false;
+    const h = state.aiHand;
+    if(h.some(c=> c.rank===3)) return false;
+    const strong = h.filter(c=> c.rank>=9).length;
+    return strong<=1 && Math.random()<0.75;
+  }
+  function resolveBank(actor){
+    if(!state || state.handOver) return;
+    state.handOver = true;
+    locked = true;
+    const winner = actor==='you' ? 'ai' : 'you';
+    const winHand = winner==='you' ? state.playerHand : state.aiHand;
+    const cora = winHand.some(c=> c.rank===3);
+    const pts = cora ? 2 : 1;
+    const who = actor==='you' ? 'Tu te banques' : oppName()+' se banque';
+    showToast(who, handTotal(actor==='you' ? state.playerHand : state.aiHand)+' points · '+(cora ? (winner==='you' ? 'tu as un 3 : CORA !' : oppName()+' a un 3 : CORA !') : (winner==='you' ? 'la manche est pour toi' : 'la manche est pour '+oppName())), {ms:2600});
+    sfxPasse();
+    if(actor==='ai' && mode==='ai') penaltySay(['Mauvaise main. Je me banque.', 'Je pose. Prends ton point, va.', 'Pas ce coup-ci. Je me banque.']);
+    const label = cora ? 'CORA — gain x2 !' : 'Manche remportée (banque)';
+    if(mode==='mp' && mpIsHost) mpSend({t:'handOver', winner: winner==='you' ? 'ai' : 'you', pts, label});
+    gameTimeout(()=> awardPoints(winner, pts, label), 900);
+  }
+  document.getElementById('btnBanque').addEventListener('click', ()=>{
+    if(!canBank('you')) return;
+    if(mode==='mp' && !mpIsHost){ mpSend({t:'bank'}); document.getElementById('btnBanque').classList.add('hidden'); locked = true; return; }
+    resolveBank('you');
+  });
 
   function resolvePlay(actor, card, isPasse){
     if(isPasse){
@@ -7149,10 +7401,10 @@
         ], {duration:800+Math.random()*500, easing:'cubic-bezier(.2,.7,.4,1)', fill:'forwards'}).onfinish = ()=> e.remove();
         setTimeout(()=> e.remove(), 1600);
       }
-      // the quake
-      if(shell){ shell.classList.remove('quake','quake2'); void shell.offsetWidth; shell.classList.add(big ? 'quake2' : 'quake'); setTimeout(()=> shell.classList.remove('quake','quake2'), 1100); }
+      // the hit: one shock, and the table cracks under the card
+      fxHit(tx, ty, big || count>1);
       const lb = document.getElementById('lightBurst'); lb.classList.remove('fire'); void lb.offsetWidth; lb.classList.add('fire');
-      vibrate(big ? [60,40,90,40,140] : [50,40,90]);
+      vibrate(big ? [110] : [80]);
       sfxImpact(big);
       // the card turns gold and burns
       card = (getCard() && getCard().isConnected) ? getCard() : card;
@@ -7193,10 +7445,6 @@
     const r = card.getBoundingClientRect();
     return {getCard, card, x: r.left + r.width/2, y: r.top + r.height/2};
   }
-  function fxQuake(big){
-    const shell = document.querySelector('.app-shell');
-    if(shell){ shell.classList.remove('quake','quake2'); void shell.offsetWidth; shell.classList.add(big ? 'quake2' : 'quake'); setTimeout(()=> shell.classList.remove('quake','quake2'), 1100); }
-  }
   function fxEl(cls, x, y){ const e = document.createElement('div'); e.className = cls; e.style.left = x+'px'; e.style.top = y+'px'; document.body.appendChild(e); return e; }
   // la foudre: a jagged bolt falls from the sky onto the 3, white flash, crackling sparks, the card turns electric
   function fxFoudre(cardOrFn, count, done){
@@ -7211,7 +7459,7 @@
       document.body.appendChild(bolt); setTimeout(()=> bolt.remove(), 700);
       const fl = document.getElementById('stormFlash'); fl.classList.remove('flash'); void fl.offsetWidth; fl.classList.add('flash');
       sfxImpact(big); sfx((c,t)=> noiseHit(c, sfxBus, t, {dur:0.5, vol:0.12, type:'highpass', f0:2500, f1:600, att:0.002}));
-      vibrate(big ? [80,40,120] : [60,40,80]); fxQuake(big);
+      vibrate(big ? [110] : [80]); fxHit(T.x, T.y, big || count>1);
       for(let k=0; k<(big ? 22 : 14); k++){
         const s = fxEl('fx-spark', 0, 0); const a = Math.random()*Math.PI*2, v = 60 + Math.random()*90;
         s.animate([{transform:'translate('+T.x+'px,'+T.y+'px)', opacity:1}, {transform:'translate('+(T.x+Math.cos(a)*v)+'px,'+(T.y+Math.sin(a)*v)+'px) scale(.3)', opacity:0}], {duration:500+Math.random()*400, easing:'cubic-bezier(.2,.7,.4,1)', fill:'forwards'}).onfinish = ()=> s.remove();
@@ -7233,7 +7481,7 @@
       setTimeout(()=> b.remove(), 4500);
     }
     sfxCoins(12); setTimeout(()=> sfxCoins(10), 450); setTimeout(()=> sfxCoins(8), 900);
-    vibrate([40,30,40,30,60]); fxQuake(false);
+    vibrate([80]); fxHit(T.x, T.y, count>1);
     T.card.classList.add('cora-gold');
     if(done) setTimeout(done, 1900);
   }
@@ -7250,7 +7498,7 @@
     }
     sfx((c,t)=>{ sweep(c, sfxBus, t, {f0:240, f1:38, dur:1.3, vol:0.16, type:'sawtooth', lp:900}); });
     vibrate([20,20,20,20,20,20,120]);
-    setTimeout(()=>{ h.classList.add('out'); fxQuake(big); sfxImpact(big); const lb = document.getElementById('lightBurst'); lb.classList.remove('fire'); void lb.offsetWidth; lb.classList.add('fire'); T.card.classList.add('cora-void'); }, 1250);
+    setTimeout(()=>{ h.classList.add('out'); fxHit(T.x, T.y, big); vibrate([90]); sfxImpact(big); const lb = document.getElementById('lightBurst'); lb.classList.remove('fire'); void lb.offsetWidth; lb.classList.add('fire'); T.card.classList.add('cora-void'); }, 1250);
     setTimeout(()=> h.remove(), 2000);
     if(done) setTimeout(done, 1950);
   }
@@ -7271,7 +7519,7 @@
         }
       };
     }, s*300);
-    vibrate([30,60,30,60,30]);
+    vibrate([70]); fxHit(T.x, T.y, count>1);
     T.card.classList.add('cora-gold');
     if(done) setTimeout(done, shots*300 + 1100);
   }
@@ -7337,11 +7585,12 @@
         if(w.dataset.key){ const [s,r] = w.dataset.key.split('-'); hist.appendChild(miniCardEl({suit:s, rank:Number(r)})); }
         else if(w.dataset.passe) hist.appendChild(miniCardEl(null));
       });
-      slot.innerHTML=''; slot.classList.remove('two');
+      slot.innerHTML=''; slot.classList.remove('two','fan');
     });
   }
   function clearSlots(){
-    ['youSlot','aiSlot','youHist','aiHist'].forEach(id=>{ const el=document.getElementById(id); el.innerHTML=''; el.classList.remove('two'); });
+    ['youSlot','aiSlot','youHist','aiHist'].forEach(id=>{ const el=document.getElementById(id); el.innerHTML=''; el.classList.remove('two','fan'); });
+    clearCracks();
     setFinale(false);
     placeCtrlToken('ctrlToken');
     if(!calmOn() && mode!=='square') showPile('deckPile'); // the pack waits on the table until it is dealt
@@ -7434,7 +7683,7 @@
     if(!state.leadSuit){
       const brain = oppPersona().brain;
       // nothing can stop it any more: the AI slams its cards down
-      if(!state.claque && mode==='ai'){ const ord = claqueOrder('ai'); if(ord) startClaque('ai', ord); }
+      if(!state.claque && mode==='ai' && claqueOrder('ai')){ slamAll('ai'); return; }
       const claqued = state.claque==='ai' && state.claqueOrder && state.claqueOrder.find(c=> state.aiHand.some(h=> h.suit===c.suit && h.rank===c.rank));
       const card = claqued || (brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand));
       removeCard(state.aiHand, card);
@@ -7504,7 +7753,7 @@
       const opp = mode==='square' ? 'la table de Carré la Pute' : oppName();
       shareFeat(title, myDisplayName()+' a réussi '+(title==='CORA' ? 'un CORA' : 'la 33 Glacée')+' contre '+opp+' !').finally(dismiss);
     };
-    certTimer = setTimeout(dismiss, holdMs || (shareable ? 6200 : 4300));
+    certTimer = setTimeout(dismiss, holdMs || (shareable ? 8200 : 6800));
   }
 
   // ---- Sharing a feat as an image (a certificate drawn on a canvas), for WhatsApp ----
@@ -7561,13 +7810,118 @@
   }
 
   function bigImpact(){
-    document.body.classList.remove('shake'); void document.body.offsetWidth;
-    document.body.classList.add('shake');
+    shock(2);
     const lb = document.getElementById('lightBurst');
     lb.classList.remove('fire'); void lb.offsetWidth;
     lb.classList.add('fire');
-    vibrate([30,60,30,60,80]);
+    vibrate([60]);
   }
+
+  // ===================== Impacts: one short, sharp shock that dies away smoothly =====================
+  // The screen is hit once (pushed down, a hair sideways) and settles in a damped spring: two small rebounds,
+  // no jitter. level 1 = light, 2 = hard (claque, CORA), 3 = huge (33 Glacée).
+  let shockAnim = null;
+  function shock(level){
+    if(calmOn()) return;
+    const el = document.querySelector('.app-shell');
+    if(!el || !el.animate) return;
+    const A = [0, 4, 8, 12][level] || 8;             // first push, in px
+    const dur = [0, 300, 420, 520][level] || 420;
+    const side = Math.random()<0.5 ? -1 : 1;
+    const frames = [];
+    const N = 18;
+    for(let i=0; i<=N; i++){
+      const t = i/N, env = Math.exp(-5.2*t);
+      const y = A*env*Math.cos(2*Math.PI*2.1*t);
+      const x = side*A*0.3*env*Math.sin(2*Math.PI*1.7*t);
+      const r = side*A*0.045*env*Math.sin(2*Math.PI*1.9*t);
+      frames.push({transform: i===N ? 'none' : 'translate3d('+x.toFixed(2)+'px,'+y.toFixed(2)+'px,0) rotate('+r.toFixed(3)+'deg)'});
+    }
+    if(shockAnim) shockAnim.cancel();
+    shockAnim = el.animate(frames, {duration:dur, easing:'linear'});
+    shockAnim.onfinish = ()=>{ shockAnim = null; };
+  }
+  // the old class-based quakes now all go through the same shock
+  function fxQuake(big){ shock(big ? 3 : 2); }
+
+  // ===================== Cracks in the table =====================
+  // Drawn where the hit lands, on the table under the cards; they stay until the next hand is dealt.
+  function crackHost(){
+    return mode==='square' ? document.querySelector('.sq-table') : document.querySelector('#duoScreen .table') || document.querySelector('.gamearea .table');
+  }
+  function clearCracks(){ document.querySelectorAll('.table-crack').forEach(e=> e.remove()); }
+  function crackAt(x, y, level){
+    if(calmOn()) return;
+    const host = crackHost();
+    if(!host) return;
+    const hr = host.getBoundingClientRect();
+    if(!hr.width) return;
+    const cx = x - hr.left, cy = y - hr.top;
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'table-crack');
+    svg.setAttribute('width', hr.width); svg.setAttribute('height', hr.height);
+    const paths = [];
+    // one split in the wood: short straight segments with small kinks, thinning and fading towards its tip
+    const ray = (x0, y0, ang, len, w)=>{
+      let px = x0, py = y0, a = ang, done = 0;
+      const pts = [[px, py, a, 0]];
+      while(done < len){
+        const step = 5 + Math.random()*9;
+        a += (Math.random()-0.5)*0.42;
+        a += (Math.sin(a)>0 ? 1 : -1)*Math.cos(a)*0.05;    // the grain runs top to bottom: splits drift along it
+        px += Math.cos(a)*step; py += Math.sin(a)*step; done += step;
+        pts.push([px, py, a, done]);
+      }
+      // drawn in pieces, each thinner and fainter than the last
+      const pieces = Math.min(4, Math.max(2, Math.round(pts.length/3)));
+      const per = Math.ceil((pts.length-1)/pieces);
+      for(let k=0; k<pieces; k++){
+        const seg = pts.slice(k*per, Math.min(pts.length, (k+1)*per + 1));
+        if(seg.length<2) break;
+        const d = seg.map((p, i)=> (i ? 'L' : 'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+        const f = 1 - k/pieces;
+        paths.push({d, w: Math.max(0.45, w*f), len: len/pieces + 10, op: 0.35 + 0.65*f, delay: k*40});
+      }
+      return pts;
+    };
+    const big = level>=3;
+    const rays = big ? 10 : level>=2 ? 7 : 5;
+    const reach = big ? 180 : level>=2 ? 130 : 80;
+    for(let i=0; i<rays; i++){
+      const ang = (i/rays)*Math.PI*2 + Math.random()*0.6;
+      const len = reach*(0.35 + Math.random()*0.45)*(0.55 + 0.75*Math.abs(Math.sin(ang)));  // longer along the grain
+      const pts = ray(cx, cy, ang, len, big ? 1.9 : 1.5);
+      // a fine branch now and then
+      pts.forEach(p=>{ if(p[3]>20 && Math.random()<0.1) ray(p[0], p[1], p[2] + (Math.random()<0.5 ? -1 : 1)*(0.45+Math.random()*0.5), len*0.3*(0.5+Math.random()), 0.8); });
+    }
+    // the crushed ring right under the hit
+    const ringR = big ? 16 : 11;
+    let ring = '';
+    for(let k=0; k<=14; k++){ const a = k/14*Math.PI*2, rr = ringR*(0.8 + Math.random()*0.4); ring += (k ? ' L' : 'M')+(cx+Math.cos(a)*rr).toFixed(1)+' '+(cy+Math.sin(a)*rr).toFixed(1); }
+    paths.push({d: ring, w: 1.1, len: ringR*7, op: 0.8, delay: 0});
+    const g = document.createElementNS(NS, 'g');
+    paths.forEach(p=>{
+      // dark split in the wood, with a thin lit edge on one side
+      [['crk-d', p.w], ['crk-l', Math.max(0.4, p.w*0.4)]].forEach(([cls, w])=>{
+        const e = document.createElementNS(NS, 'path');
+        e.setAttribute('d', p.d); e.setAttribute('class', cls); e.setAttribute('stroke-width', w.toFixed(2));
+        e.setAttribute('opacity', p.op.toFixed(2));
+        e.style.strokeDasharray = (p.len*1.6).toFixed(0);
+        e.style.strokeDashoffset = (p.len*1.6).toFixed(0);
+        e.style.animationDelay = (p.delay + Math.round(Math.random()*30))+'ms';
+        g.appendChild(e);
+      });
+    });
+    const dust = document.createElementNS(NS, 'circle');
+    dust.setAttribute('cx', cx); dust.setAttribute('cy', cy); dust.setAttribute('r', ringR*2.2); dust.setAttribute('class', 'crk-dust');
+    svg.appendChild(dust);
+    svg.appendChild(g);
+    const felt = host.querySelector('.sq-felt');
+    if(felt) felt.after(svg); else host.insertBefore(svg, host.firstChild);
+  }
+  // a hard landing on a precise spot: the shock and the crack together
+  function fxHit(x, y, big){ shock(big ? 3 : 2); crackAt(x, y, big ? 3 : 2); }
 
   function burstConfetti(count){
     count = count || 24;
@@ -7645,7 +7999,7 @@
         sfxBigWin(); if(who==='you') burstConfetti(isGlacee ? 40 : 24);
       });
     } else if(!isAutoWin){
-      showToast(label, (who==='you'?'Tu remportes la manche':oppName()+' remporte la manche')+' (+'+pts+')', {ms:2200});
+      showToast(label, (who==='you'?'Tu remportes la manche':oppName()+' remporte la manche')+' (+'+pts+')', {ms:3200});
     }
     logMsg((who==='you'?'Toi':'Penalty')+' : '+label+' (+'+pts+' pt'+(pts>1?'s':'')+')', true);
     document.getElementById('btnPasse').classList.add('hidden');
@@ -7665,14 +8019,14 @@
     }
     trickTalks = 0; // a fresh remark allowance for the next hand
 
-    if(tuto){ gameTimeout(finishTuto, (isGlacee||isCora) ? 3800 : 1600); return; }
+    if(tuto){ gameTimeout(finishTuto, (isGlacee||isCora) ? 6800 : 2600); return; }
 
     if(daily && mode==='ai'){
       // daily challenge: a fixed number of hands, scored hand by hand, instead of "first to 5"
       daily.marks.push(who==='you' ? (isGlacee?'🧊':isCora?'🟨':isAutoWin?'⚡':'🟩') : '🟥');
       if(who==='you'){ daily.points += pts; chipsAdd(100); } // each hand won in the daily challenge pays 100 jetons
       saveProfile();
-      const delay = (isGlacee||isCora) ? 3700 : 1400;
+      const delay = (isGlacee||isCora) ? 6700 : isAutoWin ? 4400 : 2400;
       if(daily.marks.length>=DAILY_HANDS) gameTimeout(finishDaily, delay);
       else gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, delay);
       return;
@@ -7682,11 +8036,11 @@
     dealer = who;
     lastDeal = {key: dealKey(), dealer: who};
     if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
-      const matchOverDelay = (isGlacee||isCora) ? 3700 : 1800;
+      const matchOverDelay = (isGlacee||isCora) ? 6700 : isAutoWin ? 4800 : 3000;
       gameTimeout(()=> showMatchOver(scores.you>=TARGET_SCORE ? 'you':'ai'), matchOverDelay);
     } else {
       // winner deals next hand -> loser starts next hand
-      const nextDelay = (isGlacee||isCora) ? 3700 : 1000;
+      const nextDelay = (isGlacee||isCora) ? 6700 : isAutoWin ? 4000 : 2000;
       gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, nextDelay);
     }
   }
@@ -8257,11 +8611,20 @@
     const m = location.search.match(/[?&]partie=([A-Za-z0-9]{4})\b/);
     if(!m) return;
     const code = m[1].toUpperCase();
+    const de = location.search.match(/[?&]de=([^&]*)/);
+    let from = '';
+    try{ from = de ? decodeURIComponent(de[1].replace(/\+/g, ' ')).replace(/[<>]/g, '').trim().slice(0, 16) : ''; }catch(e){}
     // forget the code in the address bar, so a later reload doesn't try to rejoin an old room
-    try{ history.replaceState(history.state, '', location.pathname + location.search.replace(/[?&]partie=[A-Za-z0-9]{4}/,'').replace(/^&/,'?')); }catch(e){}
-    document.getElementById('inviteText').textContent = 'Une partie de Fap Fap t’attend (code '+code+'). Entre ton prénom et c’est parti !';
+    try{ history.replaceState(history.state, '', location.pathname + location.search.replace(/[?&](partie|de)=[^&]*/g,'').replace(/^&/,'?')); }catch(e){}
+    openInviteLink(code, from);
+  })();
+  // a room code received by link or by a challenge notification: offer to join it
+  function openInviteLink(code, from){
+    if(!/^[A-Z0-9]{4}$/.test(code||'')) return;
+    if(inGame() || mpNet){ showToast((from || 'Un ami')+' te défie', 'Termine ta partie en cours, puis rouvre la notification.', {ms:3200}); return; }
+    document.getElementById('inviteText').textContent = (from ? from+' te défie ! ' : 'Une partie de Fap Fap t’attend. ')+'Code '+code+'. Entre ton prénom et c’est parti !';
     document.getElementById('inviteNameInput').value = prefs.name || '';
-    Nav.go('inviteOverlay'); // on top of the home page, so "no thanks" lands there
+    if(Nav.cur()!=='inviteOverlay') Nav.go('inviteOverlay'); // on top of the home page, so "no thanks" lands there
     preloadNet();
     document.getElementById('btnInviteJoin').onclick = ()=>{
       ensureAudio();
@@ -8272,7 +8635,7 @@
       joinGame(code);
     };
     document.getElementById('btnInviteNo').onclick = ()=> Nav.back();
-  })();
+  }
   document.getElementById('btnCancelHost').addEventListener('click', ()=> Nav.back());
   document.getElementById('btnCancelJoin').addEventListener('click', ()=> Nav.back());
   document.getElementById('btnMpConnect').addEventListener('click', ()=>{
@@ -8577,6 +8940,7 @@
     sq.handNo++;
     const active = sqActivePlayers();
     const deck = shuffle(buildDeck());
+    if(!sq.fastForward) sample('card-shuffle', {vol:0.32, vary:0.04, rate:1.15});
     let i=0;
     active.forEach(id=>{
       const hand = deck.slice(i, i+5); i+=5;
@@ -8591,6 +8955,8 @@
     sq.announcePlan = {};     // per-AI: announce an automatic win now / a beat late / miss it
     sq.trickQueue = [];
     sq.claque = null; sq.claqueOrder = null; // nobody is slamming their cards down yet
+    sq.banked = new Set();    // players who gave this hand up (22-24 points): they watch until the next deal
+    clearCracks();            // last hand's cracks go with the old cards
     // the winner of the last hand deals (he is still at the table: the winner is never eliminated)
     if(sq.lastWinner && active.includes(sq.lastWinner)) sq.dealerIdx = active.indexOf(sq.lastWinner);
     sq.dealerIdx = sq.dealerIdx % active.length;
@@ -8602,9 +8968,67 @@
     checkSquareAutoWins();
     const myGen = sq.gen;
     if(!sq.handOver){
-      if(dealMs) gameTimeout(()=>{ if(sq.gen===myGen && !sq.handOver) sqLeadPhase(); }, dealMs+200);
-      else sqLeadPhase();
+      const go = ()=>{ if(sq.gen!==myGen || sq.handOver) return; sqAiBanks(); if(sq.gen===myGen && !sq.handOver) sqLeadPhase(); };
+      if(dealMs) gameTimeout(go, dealMs+200);
+      else go();
     }
+  }
+
+  // ---- Se banquer (Carré): the player sits the hand out as a spectator, and can still be eliminated ----
+  function sqCanBank(seat){
+    if(!sq || sq.remote || sq.handOver || sq.claque || !sq.banked) return false;
+    const pl = sq.players[seat];
+    if(!pl || pl.eliminated || sq.banked.has(seat) || pl.hand.length!==5) return false;
+    if((sq.history[seat]||[]).length) return false;                 // he has already played
+    return BANK_TOTALS.includes(handTotal(pl.hand));
+  }
+  // quiet: called at the deal, before anyone leads — only fix the leader, sqBeginHand starts the play itself
+  function sqBank(seat, quiet){
+    if(!sqCanBank(seat)) return false;
+    const pl = sq.players[seat];
+    pl.bankedHand = pl.hand; pl.hand = [];
+    sq.banked.add(seat);
+    const wasAsked = sq.trickQueue[0]===seat;
+    sq.trickQueue = sq.trickQueue.filter(id=> id!==seat);
+    showToast(seat==='you' ? 'Tu te banques' : sqName(seat)+' se banque', 'Spectateur pour cette manche', {ms:2200});
+    sfxPasse();
+    if(sqIsAI(seat)) sqBubble(seat, ['Mauvaise main. Je me banque.', 'Je regarde, allez-y.', 'Pas ce coup-ci.'][Math.floor(Math.random()*3)]);
+    sqEvent('bank', {seat});
+    const left = sqActivePlayers().filter(id=> sq.players[id].hand.length>0);
+    if(left.length===1){
+      // nobody left to fight: the last one in takes the hand (CORA if he holds a 3, as in the duel)
+      const w = left[0], cora = sq.players[w].hand.some(c=> c.rank===3);
+      sq.handOver = true;
+      sqHandWonShow(w, cora, false);
+      if(w==='you') sqHandWonRewards(cora, false, false);
+      sqEvent('handwin', {seat:w, cora, glacee:false});
+      renderSquare();
+      const myGen = sq.gen;
+      gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(w, cora ? 'CORA — gain x2 !' : 'Manche remportée', cora ? 2 : 1); }, sqDelay(cora ? 6500 : 3000));
+      return true;
+    }
+    if(!sq.leadSuit){
+      if(sq.leader===seat){
+        let nid = sqNextActive(seat), guard = 0;
+        while(sq.players[nid].hand.length===0 && guard++<8) nid = sqNextActive(nid);
+        sq.leader = nid;
+        if(!quiet){ sq.locked = false; sqLeadPhase(); return true; }
+      }
+      renderSquare();
+    } else if(wasAsked){
+      if(!sq.trickQueue.length) sqFinishTrick(); else sqAdvanceTrick();
+    } else renderSquare();
+    return true;
+  }
+  // the computer gives a bad hand up: no 3 to save it and almost no strong cards
+  function sqAiBanks(){
+    sqActivePlayers().forEach(id=>{
+      if(!sqIsAI(id) || !sqCanBank(id) || sq.handOver) return;
+      if(sqActivePlayers().filter(x=> !sq.banked.has(x)).length<=2) return; // keep at least two players in the hand
+      const h = sq.players[id].hand;
+      if(h.some(c=> c.rank===3) || h.filter(c=> c.rank>=9).length>1 || Math.random()>0.7) return;
+      sqBank(id, true);
+    });
   }
   // the pack in the middle deals round the table, starting with the player after the dealer
   function sqDealAnim(active, first){
@@ -8694,19 +9118,55 @@
     const threes = hand.filter(c=> c.rank===3), others = hand.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank);
     return others.concat(threes);
   }
-  function sqClaqueFx(seat){
-    showToast(seat==='you' ? 'CLAC !' : sqName(seat)+' claque !', seat==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1300});
-    sfxImpact(false); vibrate([30, 40, 60]);
-    const shell = document.querySelector('.app-shell');
-    if(shell && !calmOn()){ shell.classList.remove('quake'); void shell.offsetWidth; shell.classList.add('quake'); setTimeout(()=> shell.classList.remove('quake'), 700); }
+  // the slam itself, on this phone: the fanned cards drop onto the table in front of the seat, one hit, the wood cracks
+  function sqClaqueFx(seat, level){
+    showToast(seat==='you' ? 'CLAC !' : sqName(seat)+' claque !', seat==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1600});
     if(seat==='you') claqueExtraFx();
+    sfxSlamWhoosh();
+    const cur = document.getElementById('sqCur'+sqCap(seat));
+    const cards = cur ? [...cur.querySelectorAll('.card')] : [];
+    if(!calmOn()) cards.forEach((el, i)=> el.animate([
+      {transform: el.style.transform+' translateY('+(seat==='you' ? 120 : -120)+'px) scale(1.45)', opacity:0.2},
+      {opacity:1, offset:0.35},
+      {transform: el.style.transform, opacity:1}
+    ], {duration:240, delay:i*12, easing:'cubic-bezier(.6,0,1,.5)', fill:'backwards'}));
+    setTimeout(()=>{
+      sfxSlam(level>=3);
+      shock(level>=3 ? 3 : 2);
+      vibrate(level>=3 ? [90] : [70]);
+      const c = document.getElementById('sqCur'+sqCap(seat));
+      if(c){ const r = c.getBoundingClientRect(); crackAt(r.left + r.width/2, r.top + r.height/2, level>=3 ? 3 : 2); }
+    }, calmOn() ? 0 : 260);
   }
-  function sqStartClaque(seat, order){
-    sq.claque = seat; sq.claqueOrder = order;
-    sqEvent('claque', {seat});
-    sqClaqueFx(seat);
+  // Claquer in the Carré: every card left is slammed down at once and the hand is won on the spot
+  // (a 3 among them: CORA, two 3s: 33 Glacée — both let the winner knock out two players)
+  function sqStartClaque(seat){
+    if(sq.handOver) return;
+    const cards = [...sq.players[seat].hand];
+    sq.players[seat].hand.length = 0;
+    sq.claque = seat; sq.handOver = true; sq.locked = true;
+    sq.leadSuit = null; sq.trickQueue = [];
+    sq.trickNo++;
+    const order = cards.filter(c=> c.rank!==3).concat(cards.filter(c=> c.rank===3));
+    order.forEach(c=> sqPushHistory(seat, {type:'card', card:c, claque:true}));
+    sq.cardsPlayedThisHand += cards.length;
+    const threes = cards.filter(c=> c.rank===3).length;
+    const glacee = threes>=2, cora = threes>=1;
     if(sqIsAI(seat)) sqBubble(seat, CLAQUE_LINES[Math.floor(Math.random()*CLAQUE_LINES.length)]);
-    sqClaqueLead(seat);
+    renderSquare();
+    sqEvent('claque', {seat, level: glacee ? 3 : 2});
+    sqClaqueFx(seat, glacee ? 3 : 2);
+    const myGen = sq.gen;
+    gameTimeout(()=>{
+      if(sq.gen!==myGen) return;
+      const label = glacee ? 'LA 33 GLACÉE ! (claque)' : cora ? 'CORA — claque !' : 'Claque — manche remportée';
+      if(seat==='you') sqHandWonRewards(cora, glacee, false);
+      sqHandWonShow(seat, cora, glacee);
+      sqEvent('handwin', {seat, cora, glacee});
+      sqSay(seat, glacee ? 'glacee' : (cora ? 'cora' : 'win'));
+      renderSquare();
+      gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(seat, label, (glacee||cora) ? 2 : 1); }, (glacee||cora) ? 6500 : 2600);
+    }, calmOn() ? 600 : 1600);
   }
   function sqClaqueLead(seat){
     sq.locked = true; renderSquare();
@@ -8725,13 +9185,13 @@
   // the automatic-win window: your button, and the computer players deciding when (or whether) to announce
   function checkSquareAutoWins(){
     const btn = document.getElementById('sqBtnAnnounce');
-    if(!sq || sq.cardsPlayedThisHand>=2 || sq.handOver || sq.players.you.eliminated){ btn.classList.add('hidden'); return; }
+    if(!sq || sq.cardsPlayedThisHand>=2 || sq.handOver || sq.players.you.eliminated || (sq.banked && sq.banked.has('you'))){ btn.classList.add('hidden'); return; }
     const yourWin = checkAutoWin(sq.players.you.originalHand);
     btn.classList.toggle('hidden', !yourWin);
     if(yourWin) btn.dataset.label = yourWin.label;
     if(sq.remote) return; // a watching phone never decides for the computer players
     for(const id of sqActivePlayers()){
-      if(!sqIsAI(id)) continue;
+      if(!sqIsAI(id) || (sq.banked && sq.banked.has(id))) continue;
       const win = checkAutoWin(sq.players[id].originalHand);
       if(!win) continue;
       if(!sq.announcePlan[id]) sq.announcePlan[id] = pickAnnouncePlan();
@@ -8749,7 +9209,7 @@
     }
     document.getElementById('sqBtnAnnounce').classList.add('hidden');
     document.getElementById('sqBtnPasse').classList.add('hidden');
-    showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:2200});
+    showToast(winnerId==='you' ? 'VICTOIRE AUTOMATIQUE !' : sqName(winnerId).toUpperCase()+' ANNONCE !', label, {big:true, celebrate:true, ms:3600});
     sfxBigWin(); bigImpact(); vibrate([30,60,30,60,80]);
     const hand = sq.players[winnerId].originalHand;
     sqEvent('auto', {seat:winnerId, label, cards:hand});
@@ -8883,6 +9343,8 @@
       sqEndHandAutoWin(seat, win.label);
       return true;
     }
+    if(a.type==='bank') return sqBank(seat);
+    if(sq.banked && sq.banked.has(seat)) return false;
     if(a.type==='claque'){
       if(sq.leadSuit || sq.leader!==seat || sq.claque) return false;
       const ord = sqClaqueOrder(seat); if(!ord) return false;
@@ -8911,9 +9373,10 @@
   function sqLocalAct(a){
     if(!sq) return;
     if(sq.remote){ roomSendAct(a); return; }
-    if(sq.locked && a.type!=='announce' && a.type!=='elim') return;
+    if(sq.locked && a.type!=='announce' && a.type!=='elim' && a.type!=='bank') return;
     sqHumanAct('you', a);
   }
+  document.getElementById('sqBtnBanque').addEventListener('click', ()=>{ document.getElementById('sqBtnBanque').classList.add('hidden'); sqLocalAct({type:'bank'}); });
   function sqPlayerPlays(card){ sqLocalAct({type:'card', card:{suit:card.suit, rank:card.rank}}); }
   document.getElementById('sqBtnPasse').addEventListener('click', ()=> sqLocalAct({type:'passe'}));
   document.getElementById('sqBtnDump').addEventListener('click', ()=> sqLocalAct({type:'dump'}));
@@ -8966,7 +9429,7 @@
     renderSquare();
     const myGen = sq.gen;
     // a CORA or a 33 Glacée lets the winner knock out TWO players instead of one
-    gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 3500 : 1400));
+    gameTimeout(()=>{ if(sq.gen===myGen) sqShowEliminationChoice(winner, label, (glacee||cora) ? 2 : 1); }, sqDelay((glacee||cora) ? 6500 : 2600));
   }
   function sqHandWonRewards(cora, glacee, passed){
     repAdd(5, 'Manches gagnées');
@@ -8982,7 +9445,7 @@
         sfxBigWin(); if(me) burstConfetti(glacee ? 40 : 24);
       });
     }
-    else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:2200}); if(me) sfxHandWin(); else sfxHandLose(); }
+    else { showToast('Manche remportée', sqName(winner)+' rafle la table', {ms:3200}); if(me) sfxHandWin(); else sfxHandLose(); }
   }
 
   function sqShowEliminationChoice(winnerId, label, count){
@@ -9166,8 +9629,9 @@
     sb.innerHTML = SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent').map(id=>{
       const out = sq.players[id].eliminated;
       const n = sq.players[id].hand.length;
-      return '<div class="sq-score-item'+(out?' out':'')+(id===turnId?' turn':'')+'"><span class="n"></span>'+
-        '<span class="v">'+(out?'éliminé':(n+(n>1?' cartes':' carte')))+'</span></div>';
+      const bk = !out && sq.banked && sq.banked.has(id);
+      return '<div class="sq-score-item'+(out?' out':'')+(bk?' banked':'')+(id===turnId?' turn':'')+'"><span class="n"></span>'+
+        '<span class="v">'+(out?'éliminé':bk?'banqué':(n+(n>1?' cartes':' carte')))+'</span></div>';
     }).join('');
     [...sb.querySelectorAll('.n')].forEach((el,i)=>{ el.textContent = sqName(SQ_SEAT_ORDER.filter(id=> sq.ctrl[id]!=='absent')[i]); });
 
@@ -9187,9 +9651,13 @@
         const isCurrent = entry.trick===sq.trickNo;
         if(!isCurrent){ histEl.appendChild(miniCardEl(entry.type==='card' ? entry.card : null)); return; }
         if(entry.type==='passe'){ const p=document.createElement('div'); p.className='passe-chip sq-size'; p.textContent='Passe'; curEl.appendChild(p); }
-        else curEl.appendChild(cardEl(entry.card, {extraClass:'sq-size'}));
+        else curEl.appendChild(cardEl(entry.card, {extraClass:'sq-size'+(entry.claque ? ' slam-card' : '')}));
       });
-      curEl.classList.toggle('two', curEl.children.length>1);
+      // a claque: all the slammed cards in one tight fan
+      const slam = (sq.history[id]||[]).some(e=> e.claque && e.trick===sq.trickNo);
+      curEl.classList.toggle('fan', slam);
+      if(slam){ const cs = [...curEl.children], mid = (cs.length-1)/2; cs.forEach((c,i)=>{ c.style.transform = 'translateX('+((i-mid)*16)+'px) rotate('+((i-mid)*7)+'deg)'; c.style.zIndex = i+1; }); }
+      curEl.classList.toggle('two', !slam && curEl.children.length>1);
     });
     // glow the card currently holding control of the trick
     if(sq.leadSuit && sq.trickBest){
@@ -9222,6 +9690,7 @@
       eliminatedBox.classList.add('hidden');
       handLabel.classList.toggle('your-turn', myTurn);
       handLabel.textContent = sq.handOver ? 'Ta main'
+        : (sq.banked && sq.banked.has('you')) ? 'Banqué : tu regardes la manche'
         : dumping ? 'Pose tes 2 cartes'
         : myTurn ? (sq.leadSuit ? 'À toi de répondre' : 'À toi de commander')
         : (turnId ? sqName(turnId)+' réfléchit…' : 'Ta main');
@@ -9249,6 +9718,7 @@
     const canClaque = !sq.handOver && !sq.claque && !sq.leadSuit && sq.leader==='you' && !sq.players.you.eliminated
       && (sq.remote ? !!sq.canClaque : (!sq.locked && !!sqClaqueOrder('you')));
     document.getElementById('sqBtnClaque').classList.toggle('hidden', !canClaque);
+    document.getElementById('sqBtnBanque').classList.toggle('hidden', !(sq.remote ? !!sq.canBank : sqCanBank('you')));
     if(!document.getElementById('squareScreen').classList.contains('sq-dealing')) updateSqCtrlToken();
     if(sq.online && !sq.remote) roomBroadcastSoon(); // every change on the table goes out to the friends' phones
   }
@@ -9353,7 +9823,8 @@
       handOver: sq.handOver, cardsPlayed: sq.cardsPlayedThisHand, handNo: sq.handNo,
       ev: sq.events.slice(-12), elim: sq.pendingElim, champion: sq.championSeat, stake: sq.stake,
       tricksWon: sq.trickWinners.length, ack: room.acks[netId]||0,
-      cq: (!sq.handOver && !sq.leadSuit && !sq.claque && sq.leader===seat) ? !!sqClaqueOrder(seat) : false, claque: sq.claque || null
+      cq: (!sq.handOver && !sq.leadSuit && !sq.claque && sq.leader===seat) ? !!sqClaqueOrder(seat) : false, claque: sq.claque || null,
+      bk: sq.banked ? [...sq.banked] : [], cb: sqCanBank(seat)
     };
   }
   // a friend who's been gone for 20 s is replaced by the computer, so the game never gets stuck
@@ -9437,11 +9908,12 @@
       handOver: d.handOver, locked:false, fastForward:false, cardsPlayedThisHand: d.cardsPlayed, handNo: d.handNo,
       pendingElim: d.elim ? {seat: V(d.elim.seat), count: d.elim.count, options: d.elim.options.map(V), label: d.elim.label} : null,
       championSeat: d.champion ? V(d.champion) : null, tricksWon: d.tricksWon, stake: d.stake,
-      canClaque: !!d.cq, claque: d.claque ? V(d.claque) : null
+      canClaque: !!d.cq, claque: d.claque ? V(d.claque) : null,
+      banked: new Set((d.bk||[]).map(V)), canBank: !!d.cb && !(room.pending && room.pending.a.type==='bank')
     };
     if(newGame || document.getElementById('squareScreen').classList.contains('hidden')) sqShowScreen();
     renderSquare(newHand);
-    if(newHand){ const act = sqActivePlayers(); sqDealAnim(act, sq.leader); }
+    if(newHand){ clearCracks(); const act = sqActivePlayers(); sqDealAnim(act, sq.leader); }
     else {
       if(d.cardsPlayed>prevPlayed){ sfxCardPlay(); vibrate(12); }
       if(d.tricksWon>prevTricks){ const w = (d.best && V(d.best.actorId)); if(w==='you') sfxTrickWinYou(); else sfxTrickWinAI(); }
@@ -9464,7 +9936,7 @@
   function roomPlayEvent(ev, V){
     const me = V(ev.seat)==='you';
     if(ev.kind==='auto'){
-      showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:2200});
+      showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:3600});
       sfxBigWin(); bigImpact(); if(me){ burstConfetti(28); repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); }
       // everyone at the table gets to look at the announced cards
       if(ev.cards) showAutoWinReveal({mine: me, name: sqName(V(ev.seat)), hand: ev.cards, label: ev.label, watchOnly: true, autoMs: 20000});
@@ -9477,7 +9949,9 @@
     } else if(ev.kind==='say'){
       sqBubble(V(ev.seat), ev.text); avatarFx(V(ev.seat), 'speaking');
     } else if(ev.kind==='claque'){
-      sqClaqueFx(V(ev.seat));
+      sqClaqueFx(V(ev.seat), ev.level||2);
+    } else if(ev.kind==='bank'){
+      showToast(me ? 'Tu te banques' : sqName(V(ev.seat))+' se banque', 'Spectateur pour cette manche', {ms:2200}); sfxPasse();
     } else if(ev.kind==='champion'){
       sqChampionScreen(me, sqName(V(ev.seat)), sqSeated().length);
     }
@@ -9701,9 +10175,9 @@
   // ===================== The shop =====================
   const SHOP_KINDS = [
     {id:'table', label:'Tables'}, {id:'cora', label:'Effets CORA'}, {id:'claque', label:'Effets Claque'}, {id:'trail', label:'Traînée'},
-    {id:'back', label:'Dos de cartes'}, {id:'frame', label:'Cadres'}, {id:'title', label:'Titres'}, {id:'react', label:'Réactions'}
+    {id:'face', label:'Faces de cartes'}, {id:'back', label:'Dos de cartes'}, {id:'frame', label:'Cadres'}, {id:'title', label:'Titres'}, {id:'react', label:'Réactions'}
   ];
-  const SHOP_DEFAULT = {cora:'meteore', claque:'clac', trail:'table', frame:'', title:''};
+  const SHOP_DEFAULT = {cora:'meteore', claque:'clac', trail:'table', frame:'', title:'', face:'classique'};
   const SHOP_ITEMS = [
     ...SHOP_TABLES.map(t=> Object.assign({kind:'table'}, t)),
     {kind:'cora', id:'meteore',  name:'Météorite',        price:0,     icon:'flame',   desc:'Une météorite en feu s’écrase sur ton 3.'},
@@ -9721,6 +10195,13 @@
     {kind:'trail', id:'neon',    name:'Néon',             price:1500, col:'#22d3ee', desc:'Cyan et rose, comme une enseigne.'},
     {kind:'trail', id:'neige',   name:'Neige',            price:2000, col:'#dbeeff', desc:'Des flocons qui retombent doucement.'},
     {kind:'trail', id:'petales', name:'Pétales',          price:2500, col:'#ff8fb4', desc:'Des pétales roses qui tombent en tourbillonnant.'},
+    {kind:'face', id:'classique', name:'Classique',   price:0,    desc:'La carte crème du quartier.'},
+    {kind:'face', id:'ivoire',    name:'Ivoire gravé', price:0,    desc:'Papier ivoire épais, chiffres gravés, filet d’or. Offert.'},
+    {kind:'face', id:'grand',     name:'Grand index',  price:2000, desc:'Gros chiffres et quatre couleurs : se lit d’un coup d’œil.'},
+    {kind:'face', id:'wax',       name:'Wax',          price:3500, desc:'Un liseré de pagne wax aux couleurs de la carte.'},
+    {kind:'face', id:'noir',      name:'Noir & or',    price:5000, desc:'Cartes noires, chiffres d’or. La table des grands.'},
+    {kind:'back', id:'ndop',   name:'Ndop',          price:3000, desc:'L’étoffe indigo et blanche des Grassfields.'},
+    {kind:'back', id:'deco',   name:'Noir & or',     price:4500, desc:'Laque noire, éventail d’or, monogramme doré.'},
     {kind:'back', id:'verre',  name:'Verre dépoli',  price:2500, desc:'Des cartes de verre, on voit la table à travers.'},
     {kind:'back', id:'neonb',  name:'Néon',          price:4000, desc:'Noir profond, liseré cyan et rose.'},
     {kind:'back', id:'ivoire', name:'Ivoire et or',  price:6000, desc:'Ivoire, cercle d’or. Classe.'},
@@ -9797,6 +10278,7 @@
       const vis = item.kind==='table' ? '<span class="si-vis si-table" style="background:'+item.swatch+'"></span>'
         : item.kind==='trail' ? '<span class="si-vis si-trail" style="--c:'+item.col+'"></span>'
         : item.kind==='back' ? '<span class="si-vis si-back"><span class="facedown back-'+item.id+'"></span></span>'
+        : item.kind==='face' ? '<span class="si-vis si-face">'+cardEl({suit:'Coubie', rank:3}, {face:item.id}).outerHTML+cardEl({suit:'Black', rank:9}, {face:item.id}).outerHTML+'</span>'
         : item.kind==='frame' ? '<span class="si-vis"><span class="avatar si-av '+(item.id ? 'frame-'+item.id : '')+'" style="--s:46px"></span></span>'
         : item.kind==='title' ? '<span class="si-vis si-title">'+(item.id ? '<span class="my-title"></span>' : '—')+'</span>'
         : item.kind==='react' ? '<span class="si-vis si-react"></span>'
@@ -9829,6 +10311,7 @@
       }
     }
     else if(item.kind==='trail'){ view.innerHTML = '<span class="ss-trail">Glisse ton doigt sur l’écran</span>'; if(!quiet){ trailPreview = item.id==='table' ? null : item.id; if(item.id==='table') trailPreview = null; Trail.readColors(); } }
+    else if(item.kind==='face'){ view.innerHTML = '<span class="ss-faces"></span>'; [[3,'Coubie'],[10,'Black'],[7,'Tchaka']].forEach(([r,s])=> view.firstChild.appendChild(cardEl({suit:s, rank:r}, {face:item.id}))); }
     else if(item.kind==='back'){ view.innerHTML = '<span class="ss-backs"><span class="facedown back-'+item.id+'"></span><span class="facedown back-'+item.id+'"></span><span class="facedown back-'+item.id+'"></span></span>'; }
     else if(item.kind==='frame'){ view.innerHTML = '<span class="avatar '+(item.id ? 'frame-'+item.id : '')+'" style="--s:84px"></span>'; fillAvatar(view.firstChild, null, prefs.name||'Toi'); }
     else if(item.kind==='title'){ view.innerHTML = '<span class="ss-who"><b></b>'+(item.id ? '<span class="my-title"></span>' : '')+'</span>'; view.querySelector('b').textContent = (prefs.name||'Toi'); const tt = view.querySelector('.my-title'); if(tt) tt.textContent = item.name; }
@@ -11169,6 +11652,7 @@
     if(user && user.id!==prev){ Cloud.hold = false; Cloud.error = null; Cloud.pullP = cloudPull(); }
     renderAccount(); renderAccountDot();
     if(user) setTimeout(lobbyJoin, 400); // shows this player online to their friends
+    if(user && user.id!==prev) setTimeout(pushRefresh, 1500); // challenge notifications follow the account
   }
   const isGuest = ()=> !Cloud.user || !!Cloud.user.is_anonymous;
 
@@ -11581,16 +12065,27 @@
     const code = currentCode(), st = $id('mpHostStatus');
     if(!mpNet || !/^[A-Z0-9]{4}$/.test(code)) return;
     await cloudInit(); await lobbyJoin();
-    if(!isOnline(f.id)){ st.textContent = f.name+' n’est pas en ligne. Envoie-lui le lien par WhatsApp, la partie l’attend :'; return; }
+    const still = ()=> mpNet && !mpMatchStarted && Nav.cur()==='mpHostOverlay' && currentCode()===code;
+    if(!isOnline(f.id)){
+      // not in the game: try to wake their phone with a notification
+      st.textContent = 'Envoi d’une notification à '+f.name+'…';
+      const ok = await pushChallenge(f, code);
+      if(!still()) return;
+      st.textContent = ok ? 'Notification envoyée à '+f.name+'. La partie l’attend ; tu peux aussi lui envoyer le lien :'
+        : f.name+' n’est pas en ligne. Envoie-lui le lien par WhatsApp, la partie l’attend :';
+      return;
+    }
     Lobby.pending = {id:f.id, name:f.name, code};
     const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code});
     send();
     st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
     let n = 0;
-    // repeated for a minute, in case the friend's phone was asleep for a moment
+    // repeated for a minute, in case the friend's phone was asleep for a moment; a phone with the game left in
+    // the background doesn't hear the lobby, so after 10 s a notification is sent as well
     Lobby.invT = setInterval(()=>{
-      if(!mpNet || mpMatchStarted || Nav.cur()!=='mpHostOverlay' || currentCode()!==code || ++n>12){ clearInterval(Lobby.invT); if(n>12 && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
+      if(!still() || ++n>12){ clearInterval(Lobby.invT); if(n>12 && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
       send();
+      if(n===2) pushChallenge(f, code);
     }, 5000);
   }
   function lobbyOnDecline(p){
@@ -11640,6 +12135,84 @@
   }
   $id('btnAddFriendMo').addEventListener('click', ()=>{ if(oppUid){ addFriend(oppUid, oppNameVal); refreshFriendBtnMo(); } });
 
+  // ===================== Notifications de défi : le téléphone de l'ami sonne même jeu fermé (Web Push) =====================
+  // The phone subscribes once (Réglages), the subscription is kept with the account in Supabase (push_subs), and a
+  // challenge to a friend who isn't in the game calls the "fapfap-push" Edge Function, which wakes their phone.
+  // On iPhone this only works once the game has been added to the home screen (iOS 16.4 and later).
+  const VAPID_PUBLIC = 'BCHh_cQFNr3J_7ZfBHweHlQlgu9U32GsrxDX1LT4miGPDoB21WRl2sPfjsq8X2ueNwSWAxERe49LAQKE-CYG9RU'; // its private half is only in Supabase > Edge Functions > Secrets
+  const pushReady = ()=> !!VAPID_PUBLIC && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  function b64urlBytes(s){
+    const b = atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4));
+    return Uint8Array.from(b, c=> c.charCodeAt(0));
+  }
+  async function pushSave(sub){
+    if(!(await cloudInit()) || !supaClient || !myUid()) return false;
+    const j = sub.toJSON();
+    const { error } = await supaClient.rpc('fapfap_push_claim', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+    return !error;
+  }
+  // must start straight from a tap: iPhone only asks for the permission inside the gesture
+  async function pushEnable(){
+    if(isIOS && !isStandalone()){
+      showToast('D’abord sur l’écran d’accueil', 'Touche Partager, puis « Sur l’écran d’accueil », et ouvre le jeu depuis son icône.', {ms:5200});
+      return false;
+    }
+    if(!pushReady()){ showToast('Pas disponible ici', 'Ce navigateur ne reçoit pas les notifications du jeu.', {ms:3000}); return false; }
+    let perm = Notification.permission;
+    if(perm!=='granted') perm = await Notification.requestPermission();
+    if(perm!=='granted'){ showToast('Notifications refusées', 'Tu peux les autoriser dans les réglages du téléphone.', {ms:3200}); return false; }
+    try{
+      const reg = await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64urlBytes(VAPID_PUBLIC) });
+      if(!(await pushSave(sub))){ showToast('Pas de connexion', 'Réessaie quand tu as du réseau.', {ms:2600}); return false; }
+      prefs.push = true; savePrefs();
+      showToast('Notifications activées', 'Tes amis pourront te défier même jeu fermé.', {ms:2600});
+      return true;
+    }catch(e){ showToast('Échec', 'Le téléphone a refusé l’abonnement. Réessaie plus tard.', {ms:2600}); return false; }
+  }
+  async function pushDisable(){
+    prefs.push = false; savePrefs();
+    try{
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if(sub){
+        const endpoint = sub.endpoint;
+        await sub.unsubscribe();
+        if(supaClient && myUid()) await supaClient.from('push_subs').delete().eq('endpoint', endpoint);
+      }
+    }catch(e){}
+  }
+  // after a sign-in or an account switch, the phone's subscription follows the account that is now open
+  async function pushRefresh(){
+    if(!prefs.push || !pushReady() || Notification.permission!=='granted') return;
+    try{ const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if(sub) await pushSave(sub); }catch(e){}
+  }
+  // wakes the friend's phone; true when at least one of their phones was reached
+  async function pushChallenge(f, code){
+    if(!VAPID_PUBLIC || !supaClient || !myUid()) return false;
+    try{
+      const { data, error } = await supaClient.functions.invoke('fapfap-push', { body: { to: f.id, code, name: myName } });
+      return !error && !!data && data.sent>0;
+    }catch(e){ return false; }
+  }
+  window.pushSettingsRow = ()=>{
+    const row = $id('btnTogglePush');
+    row.classList.toggle('hidden', !VAPID_PUBLIC || !CLOUD_ON);
+    row.classList.toggle('on', !!prefs.push && 'Notification' in window && Notification.permission==='granted');
+  };
+  $id('btnTogglePush').addEventListener('click', async ()=>{
+    if(prefs.push && 'Notification' in window && Notification.permission==='granted') await pushDisable();
+    else await pushEnable();
+    window.pushSettingsRow();
+  });
+  // a challenge notification touched while the game is already open: the service worker hands us the room
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.addEventListener('message', e=>{
+      const d = e.data || {};
+      if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
+    });
+  }
+
   // the session comes back by itself; right away when returning from Google, otherwise once the home screen has settled
   if(CLOUD_ON){
     if(/access_token|error_code|error_description/.test(location.hash + location.search)) cloudInit();
@@ -11654,7 +12227,7 @@
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
-      lobbyOnInvite, Lobby, myUid };
+      lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock };
   }
 
 })();
