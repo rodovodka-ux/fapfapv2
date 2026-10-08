@@ -2105,6 +2105,123 @@
   .sc-lamp.dip .glass{ filter: brightness(0.55) saturate(1.4); }
   .sc-lamp.dip .lamp-dark{ filter: brightness(0.85); }
 
+  /* =====================================================================================
+     THÈME « OR SOUS VERRE » — the menu of the game: polished gold under thick glass
+     .og        = the slab of glass (the liquid-glass engine still bends the room through its edges)
+     ::before   = the gold plate inside, polished like a mirror (bands of light, a highlight that follows the tilt)
+     ::after    = gold leaf caught in the glass and the glint sliding with the tilt
+     .og.deep   = dark smoky glass over darker gold, for the cards with white text
+     ===================================================================================== */
+  body.theme-or .og{ overflow:hidden; color:#2a1804 !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.08) 22%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.14) 100%),
+      rgba(30,18,4,0.25) !important;
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.95), inset 0 -2px 1px rgba(255,230,160,0.55),
+      inset 2px 0 1px rgba(255,90,110,0.30), inset -2px 0 1px rgba(90,170,255,0.30),
+      inset 0 0 0 1px rgba(255,244,210,0.45), inset 0 0 18px rgba(255,236,190,0.18),
+      0 0 0 1.5px rgba(255,214,110,0.85), 0 0 0 3px rgba(120,72,6,0.85), 0 0 22px rgba(255,190,60,0.22),
+      0 16px 36px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.55) !important; }
+  body.theme-or .og::before{ content:""; position:absolute; inset:7px; border-radius:calc(var(--og-r, 26px) - 7px); z-index:0 !important; pointer-events:none; padding:0;
+    -webkit-mask:none; mask:none;
+    background:
+      radial-gradient(ellipse 70% 55% at calc(28% + var(--tx)*30%) calc(18% + var(--ty)*25%), rgba(255,255,240,0.95), rgba(255,240,180,0.35) 30%, transparent 60%),
+      linear-gradient(calc(100deg + var(--tx)*20deg),
+        #fff3b8 0%, #ffd23f 10%, #f2a40a 22%, #b56a00 34%, #6b3a00 42%, #c27b06 52%, #ffcf3a 62%, #fff0a8 68%, #e79b0c 78%, #9a5500 90%, #ffc93a 100%);
+    box-shadow: inset 0 2px 3px rgba(255,255,235,0.95), inset 0 -4px 10px rgba(80,40,0,0.7), inset 0 0 0 1px rgba(120,70,0,0.6), 0 0 10px rgba(255,200,60,0.35);
+    filter: saturate(1.25) contrast(1.08); }
+  body.theme-or .og::after{ content:""; position:absolute; inset:0; border-radius:inherit; z-index:2 !important; pointer-events:none;
+    background:
+      linear-gradient(112deg, transparent calc(26% + var(--tx)*35%), rgba(255,255,255,0) calc(30% + var(--tx)*35%), rgba(255,255,255,0.32) calc(37% + var(--tx)*35%), rgba(255,255,255,0) calc(44% + var(--tx)*35%), transparent 100%),
+      radial-gradient(circle at 12% 30%, #fff6c8 0 1.3px, transparent 2.2px), radial-gradient(circle at 78% 18%, #fff6c8 0 1px, transparent 1.9px),
+      radial-gradient(circle at 63% 74%, #fff6c8 0 1.5px, transparent 2.4px), radial-gradient(circle at 31% 82%, #fff6c8 0 1px, transparent 1.7px),
+      radial-gradient(circle at 90% 62%, #fff6c8 0 1.2px, transparent 2px), radial-gradient(circle at 46% 12%, #fff6c8 0 0.9px, transparent 1.6px);
+    mix-blend-mode: screen; }
+  body.theme-or .og > *{ position:relative; z-index:3; }
+  body.theme-or .og > .lg-mirror{ z-index:1 !important; }
+  /* text engraved in the bright gold */
+  body.theme-or .og:not(.deep), body.theme-or .og:not(.deep) :is(b, small, span, svg){ color:#2a1804 !important; }
+  body.theme-or .og:not(.deep) :is(b, small, span){ text-shadow: 0 1px 0 rgba(255,244,210,0.7), 0 -1px 0 rgba(60,30,0,0.25) !important; }
+  /* the deep variant: dark smoky glass, white text lit in gold */
+  body.theme-or .og.deep{ color:#fff8e2 !important; }
+  body.theme-or .og.deep::before{ background:
+      radial-gradient(ellipse 70% 55% at calc(28% + var(--tx)*30%) calc(14% + var(--ty)*25%), rgba(255,230,150,0.55), transparent 60%),
+      linear-gradient(calc(100deg + var(--tx)*20deg), #7a4a06 0%, #3a2000 30%, #1e1000 55%, #5a3404 80%, #2a1600 100%);
+    filter: saturate(1.2); }
+  body.theme-or .og.deep :is(b, small, span){ color:#fff8e2 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 14px rgba(255,200,90,0.3) !important; }
+  body.theme-or .og.deep small{ color: rgba(255,240,210,0.85) !important; }
+  /* gold symbols on the cards */
+  body.theme-or .og .gl-sym{ background: linear-gradient(160deg, #fff3c6, #f6c94a 40%, #a8640a) !important; color:#4a2806 !important;
+    box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(80,45,5,0.6), 0 3px 8px rgba(0,0,0,0.45) !important; }
+  body.theme-or .og .gl-sym svg, body.theme-or .og .gl-sym svg *{ color:#4a2806 !important; }
+  body.theme-or .og .gl-tag{ background: linear-gradient(180deg, #c4202f, #7a0f18) !important; color:#fff !important; text-shadow:none !important; }
+  body.theme-or .og .gl-chev{ background: rgba(255,255,255,0.3) !important; }
+  body.theme-or .og .rep-bar{ background: rgba(0,0,0,0.35) !important; }
+  body.theme-or .og .rep-bar > div{ background: linear-gradient(90deg, #b56a00, #ffd23f, #fff3b8) !important; box-shadow: 0 0 10px rgba(255,200,60,0.8) !important; }
+  body.theme-or .og.gl-round{ --og-r: 22px; }
+  body.theme-or .og.gl-round::before, body.theme-or .og.gl-pill::before{ inset:5px; border-radius:999px; }
+  body.theme-or .og.gl-pill{ --og-r: 22px; }
+  body.theme-or #homeTabbar.og::before{ inset:6px; border-radius:999px; }
+  body.theme-or #homeTabbar .tab{ color:#2a1804 !important; text-shadow: 0 1px 0 rgba(255,244,210,0.7); }
+  body.theme-or #homeTabbar .tab.on, body.theme-or #homeTabbar .tab.on svg.i{ color:#2a1804 !important; filter:none; }
+  body.theme-or #homeTabbar .tb-lens{ background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.14)) !important;
+    box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(0,0,0,0.35), inset 0 0 14px rgba(255,255,255,0.3) !important; z-index:3; }
+  body.theme-or .hx-home.og{ background: rgba(20,10,4,0.4) !important; }
+  body.theme-or .hx-home.og .hx-home-txt small{ color:#ffb3a8 !important; }
+  /* stars of light flaring on the gold */
+  .og-spark{ position:absolute; z-index:4; width:16px; height:16px; margin:-8px 0 0 -8px; pointer-events:none; opacity:0;
+    background: radial-gradient(circle, #fff 0 1.5px, rgba(255,240,180,0.9) 2.5px, transparent 5px),
+      linear-gradient(0deg, transparent 46%, rgba(255,255,255,0.95) 50%, transparent 54%),
+      linear-gradient(90deg, transparent 46%, rgba(255,255,255,0.95) 50%, transparent 54%);
+    filter: drop-shadow(0 0 4px rgba(255,220,120,0.9)); animation: ogSpark 1.1s ease-in-out forwards; }
+  @keyframes ogSpark{ 0%{ opacity:0; transform: scale(.2) rotate(0deg); } 45%{ opacity:1; transform: scale(1.15) rotate(25deg); } 100%{ opacity:0; transform: scale(.3) rotate(45deg); } }
+
+  /* ---- JOUER: a little aquarium of molten gold, filled to 3/5 ---- */
+  body.theme-or #btnGoPlay.og-play{ position:relative; overflow:hidden; min-height:118px; border-radius:34px; padding:0; display:block;
+    background: rgba(10,6,2,0.55) !important;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.85), inset 0 0 0 1px rgba(255,236,190,0.35), inset 0 -10px 24px rgba(0,0,0,0.5),
+      inset 2px 0 1px rgba(255,90,110,0.3), inset -2px 0 1px rgba(90,170,255,0.3),
+      0 0 0 2px rgba(255,214,110,0.85), 0 0 0 4px rgba(120,72,6,0.8), 0 0 26px rgba(255,190,60,0.3), 0 18px 40px rgba(0,0,0,0.6) !important; }
+  body.theme-or #btnGoPlay.og-play::before, body.theme-or #btnGoPlay.og-play::after{ display:none; }
+  #btnGoPlay .og-gold{ position:absolute !important; inset:0; width:100%; height:100%; z-index:0 !important; display:none; }
+  #btnGoPlay .og-glass{ position:absolute !important; inset:0; border-radius:inherit; pointer-events:none; z-index:1 !important; display:none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.06) 32%, transparent 55%, rgba(255,255,255,0.08)),
+      linear-gradient(105deg, transparent calc(30% + var(--tx)*30%), rgba(255,255,255,0.35) calc(36% + var(--tx)*30%), transparent calc(44% + var(--tx)*30%));
+    box-shadow: inset 0 0 30px rgba(255,220,150,0.18); }
+  body.theme-or #btnGoPlay .og-gold, body.theme-or #btnGoPlay .og-glass{ display:block; }
+  body.theme-or #btnGoPlay .hero-faces{ display:none; }
+  body.theme-or #btnGoPlay .hero-text{ position:absolute !important; left:22px; right:76px; top:0; bottom:0; display:flex; flex-direction:column; justify-content:space-between; padding:12px 0 13px; z-index:2 !important; }
+  body.theme-or #btnGoPlay .hero-text b{ font-size:36px; color:#fff8e2 !important; text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 16px rgba(255,200,90,0.4); }
+  body.theme-or #btnGoPlay .hero-text small{ color:#2a1804 !important; font-weight:800; text-shadow: 0 1px 0 rgba(255,244,210,0.7); }
+  body.theme-or #btnGoPlay .gl-chev{ position:absolute !important; right:18px; top:50%; margin-top:-22px; width:44px; height:44px; z-index:2 !important; color:#fff;
+    background: rgba(255,255,255,0.2) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 6px rgba(0,0,0,0.4) !important; }
+
+  /* ---- LE ROI D'OR: a golden mask that follows you with its eyes and taunts you ---- */
+  .og-king{ display:none; }
+  body.theme-or .og-king{ display:flex; position:relative; align-items:flex-end; gap:12px; min-height:150px; }
+  .og-king-head{ position:relative; width:136px; height:146px; flex:none; transform-origin:50% 90%; cursor:pointer; will-change: transform; }
+  /* the shadow and the golden halo are drawn once, under the head, instead of being recomputed on every move */
+  .og-king-head::before{ content:""; position:absolute; left:12%; right:12%; top:18%; bottom:-4%; border-radius:50%; z-index:-1; pointer-events:none;
+    background: radial-gradient(ellipse at 50% 45%, rgba(255,190,60,0.35), rgba(0,0,0,0.55) 60%, transparent 72%); filter: blur(10px); }
+  .og-king-head svg{ width:100%; height:100%; overflow:visible; }
+  .og-king-head .mouth{ transform-box: fill-box; transform-origin: 50% 50%; transform: scaleY(0.3); }
+  .og-king-head.talk .mouth{ animation: ogTalk .16s ease-in-out infinite alternate; }
+  @keyframes ogTalk{ from{ transform: scaleY(0.3); } to{ transform: scaleY(1.25); } }
+  .og-king-head .lid{ transform-box: fill-box; transform-origin: 50% 0%; transform: scaleY(0); transition: transform .08s; }
+  .og-king-head.blink .lid{ transform: scaleY(1); }
+  .og-king-head .brow-l, .og-king-head .brow-r{ transform-box: fill-box; transform-origin: 50% 50%; transition: transform .25s; }
+  .og-king-head.angry .brow-l{ transform: rotate(14deg) translateY(3px); } .og-king-head.angry .brow-r{ transform: rotate(-14deg) translateY(3px); }
+  .og-king .og-bubble{ flex:1; min-height:62px; margin-bottom:34px; padding:12px 14px; border-radius:20px 20px 20px 6px; font-size:14px; line-height:1.4; font-weight:700; transform-origin: 0% 100%; }
+  .og-king .og-bubble::before{ border-radius:14px 14px 14px 3px !important; }
+  .og-king .og-bubble .who{ display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#f6d27a !important; margin-bottom:3px; }
+  .og-king .og-bubble.say{ animation: ogSay .4s var(--spring); }
+  @keyframes ogSay{ from{ transform: scale(.85) rotate(-2deg); opacity:.3; } }
+  .og-dare{ position:absolute; right:0; bottom:0; padding:9px 16px; border-radius:999px; font-weight:800; font-size:13px; border:0; cursor:pointer;
+    color:#3a2408; background: linear-gradient(180deg, #fff1c0, #f6d27a 40%, #d9a43a); box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 #fff;
+    opacity:0; transform: translateY(8px) scale(.9); transition: .35s var(--spring); pointer-events:none; }
+  .og-dare.show{ opacity:1; transform:none; pointer-events:auto; }
+  html[data-q="eco"] .og-spark{ display:none; }
+
   /* ---- the bottom tab bar stays on the five main pages (Accueil, Profil, Boutique, Décors, Réglages) ---- */
   #homeTabbar{ z-index:61; transition: transform .35s var(--spring), opacity .25s; }
   body:not(.tabs-on) #homeTabbar{ opacity:0; pointer-events:none; transform: translateX(-50%) translateY(30px); }
@@ -3125,11 +3242,11 @@
 <div class="overlay page page-home" id="menuOverlay">
   <div class="page-body home-body">
     <div class="home-topbar">
-      <span class="lg gl gl-pill chips-pill press" id="chipsBar"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
+      <span class="lg gl gl-pill chips-pill press og" id="chipsBar"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
       <span class="hb-space"></span>
-      <button class="lg gl gl-pill tinted chips-claim hidden press" id="btnChipsClaim"></button>
-      <button class="lg gl gl-round press" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
-      <button class="lg gl gl-round press" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
+      <button class="lg gl gl-pill tinted chips-claim hidden press og" id="btnChipsClaim"></button>
+      <button class="lg gl gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
+      <button class="lg gl gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
     </div>
 
     <div class="home-top">
@@ -3137,48 +3254,94 @@
       <p class="home-tag">Le jeu de cartes du quartier</p>
     </div>
 
-    <div class="lg gl gl-card menu-rank" id="menuRank"></div>
+    <section class="og-king" id="ogKing" aria-label="Le Roi d’or">
+      <div class="og-king-head" id="ogHead" role="button" aria-label="Le Roi d’or">
+        <svg viewBox="0 0 150 160" aria-hidden="true">
+          <defs>
+            <radialGradient id="ogFace" cx="42%" cy="32%" r="75%"><stop offset="0" stop-color="#fffbe0"/><stop offset=".16" stop-color="#ffd84a"/><stop offset=".42" stop-color="#f2a40a"/><stop offset=".72" stop-color="#a85e00"/><stop offset="1" stop-color="#3e1c00"/></radialGradient>
+            <linearGradient id="ogCrown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3c6"/><stop offset=".45" stop-color="#e8b44c"/><stop offset="1" stop-color="#7a4f10"/></linearGradient>
+            <radialGradient id="ogEyeW" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#d8cdb4"/></radialGradient>
+            <radialGradient id="ogPupil" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#3a2a12"/><stop offset=".55" stop-color="#0b0703"/><stop offset="1" stop-color="#000"/></radialGradient>
+            <linearGradient id="ogShine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            <clipPath id="ogClipL"><path d="M41 70 C45 63 61 63 65 70 C61 76 45 76 41 70 Z"/></clipPath>
+            <clipPath id="ogClipR"><path d="M85 70 C89 63 105 63 109 70 C105 76 89 76 85 70 Z"/></clipPath>
+          </defs>
+          <path d="M38 34 L48 10 L62 28 L75 4 L88 28 L102 10 L112 34 Z" fill="url(#ogCrown)" stroke="#5e3c0c" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="75" cy="10" r="4" fill="#c4202f"/><circle cx="48" cy="14" r="3" fill="#1d6fb8"/><circle cx="102" cy="14" r="3" fill="#1d7a46"/>
+          <path d="M30 50 C30 30 52 30 75 30 C98 30 120 30 120 50 C122 72 118 92 110 110 C102 128 90 142 75 148 C60 142 48 128 40 110 C32 92 28 72 30 50 Z" fill="url(#ogFace)" stroke="#4a2e06" stroke-width="2"/>
+          <path d="M30 50 C28 74 32 94 40 110 C48 128 60 142 75 148 C62 136 52 118 46 98 C40 80 38 64 40 48 Z" fill="#3d2606" opacity=".38"/>
+          <path d="M120 50 C122 74 118 94 110 110 C102 128 90 142 75 148 C88 136 98 118 104 98 C110 80 112 64 110 48 Z" fill="#3d2606" opacity=".48"/>
+          <ellipse cx="50" cy="94" rx="11" ry="6" fill="#fff0c0" opacity=".28" transform="rotate(-20 50 94)"/>
+          <ellipse cx="100" cy="94" rx="11" ry="6" fill="#fff0c0" opacity=".18" transform="rotate(20 100 94)"/>
+          <g stroke="#5e3c0c" stroke-width="1.6" stroke-linecap="round" opacity=".7"><path d="M40 100 L52 104"/><path d="M41 106 L52 109"/><path d="M43 112 L53 114"/><path d="M110 100 L98 104"/><path d="M109 106 L98 109"/><path d="M107 112 L97 114"/></g>
+          <path d="M72 74 C71 88 68 98 64 104 C68 110 82 110 86 104 C82 98 79 88 78 74 Z" fill="#a8741c" opacity=".55"/>
+          <path d="M76 74 C77 86 79 96 82 102" stroke="#fff3c6" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+          <ellipse cx="69" cy="105" rx="3.4" ry="2" fill="#2a1804" opacity=".75"/><ellipse cx="81" cy="105" rx="3.4" ry="2" fill="#2a1804" opacity=".75"/>
+          <path d="M38 70 C42 60 64 58 68 70 C64 78 44 80 38 70 Z" fill="#2a1804" opacity=".85"/>
+          <path d="M82 70 C86 58 108 60 112 70 C106 80 86 78 82 70 Z" fill="#2a1804" opacity=".85"/>
+          <g clip-path="url(#ogClipL)"><rect x="38" y="60" width="30" height="20" fill="url(#ogEyeW)"/>
+            <g class="og-pupil"><circle cx="53" cy="70" r="5.2" fill="url(#ogPupil)"/><circle cx="53" cy="70" r="5.6" fill="none" stroke="#d9a43a" stroke-width="1.4"/><circle cx="51.4" cy="68.2" r="1.3" fill="#fff"/></g>
+            <path d="M38 60 L68 60 L68 68 C60 66 46 66 38 69 Z" fill="#b8822a"/><rect class="lid" x="38" y="60" width="30" height="20" fill="#b8822a"/></g>
+          <g clip-path="url(#ogClipR)"><rect x="82" y="60" width="30" height="20" fill="url(#ogEyeW)"/>
+            <g class="og-pupil"><circle cx="97" cy="70" r="5.2" fill="url(#ogPupil)"/><circle cx="97" cy="70" r="5.6" fill="none" stroke="#d9a43a" stroke-width="1.4"/><circle cx="95.4" cy="68.2" r="1.3" fill="#fff"/></g>
+            <path d="M82 60 L112 60 L112 69 C104 66 90 66 82 68 Z" fill="#a8741c"/><rect class="lid" x="82" y="60" width="30" height="20" fill="#a8741c"/></g>
+          <path d="M41 70 C45 63 61 63 65 70" stroke="#3a2406" stroke-width="1.6" fill="none"/>
+          <path d="M85 70 C89 63 105 63 109 70" stroke="#3a2406" stroke-width="1.6" fill="none"/>
+          <path class="brow-l" d="M36 60 C44 52 58 54 68 61 L66 64 C57 59 46 58 38 63 Z" fill="#6b4410" stroke="#3a2406" stroke-width="1"/>
+          <path class="brow-r" d="M114 60 C106 52 92 54 82 61 L84 64 C93 59 104 58 112 63 Z" fill="#6b4410" stroke="#3a2406" stroke-width="1"/>
+          <path d="M60 121 C66 117 72 119 75 120 C78 119 86 116 93 119 C88 122 82 123 75 123 C68 123 64 123 60 121 Z" fill="#8a5a14" stroke="#4a2e06" stroke-width="1.2"/>
+          <path class="mouth" d="M62 123 C68 126 84 126 92 121 C86 131 66 131 62 123 Z" fill="#1d1003"/>
+          <path d="M64 126 C70 132 82 132 90 125 C86 134 68 135 64 126 Z" fill="#c8902c" stroke="#4a2e06" stroke-width="1"/>
+          <ellipse cx="75" cy="139" rx="9" ry="4" fill="#fff0c0" opacity=".2"/>
+          <path d="M42 42 C54 35 70 34 84 36 C66 40 54 46 46 56 Z" fill="url(#ogShine)" opacity=".75"/>
+        </svg>
+      </div>
+      <div class="lg gl og deep og-bubble" id="ogBubble" style="--og-r:20px"><span class="who">Le Roi d’or</span><span id="ogSay">Tu me regardes depuis tout à l’heure… Tu as peur ou quoi ?</span></div>
+      <button class="og-dare" id="ogDare">Ose me défier ›</button>
+    </section>
 
-    <button class="lg gl tinted hero-play press" id="btnGoPlay" style="--d:1">
+    <div class="lg gl gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
+
+    <button class="lg gl tinted hero-play press og-play" id="btnGoPlay" style="--d:1"><canvas class="og-gold" aria-hidden="true"></canvas><span class="og-glass" aria-hidden="true"></span>
       <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:44px"></span><span class="avatar" data-char="aristide" style="--s:44px"></span><span class="avatar" data-char="penalty" style="--s:44px"></span></span>
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
 
-    <button class="lg gl hx-home press" id="btnStory" style="--d:2">
+    <button class="lg gl hx-home press og deep" id="btnStory" style="--d:2">
       <span class="hx-home-art" aria-hidden="true"><img src="art/story/mireille.jpg" alt=""><img src="art/story/ekwalla.jpg" alt=""><img src="art/story/bobo.jpg" alt=""></span>
       <span class="hx-home-txt"><small>Mode histoire</small><b>La Nuit des 33</b><span id="hxHomeSub">32 joueurs entrent. Un seul ressort.</span></span>
       <span class="gl-tag hx-home-tag" id="hxHomeTag">Nouveau</span>
     </button>
 
     <div class="home-row2">
-      <button class="lg gl hcard press" id="modeDaily" style="--d:2">
+      <button class="lg gl hcard press og deep" id="modeDaily" style="--d:2">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
         <b>Défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small>
       </button>
-      <button class="lg gl hcard press" id="btnShowRules" style="--d:3">
+      <button class="lg gl hcard press og deep" id="btnShowRules" style="--d:3">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>
         <b>Les règles</b><small>CORA, Passe, victoires automatiques</small>
       </button>
     </div>
 
-    <button class="lg gl hcard wide press" id="modeTuto" style="--d:4">
+    <button class="lg gl hcard wide press og" id="modeTuto" style="--d:4">
       <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
       <span class="hc-txt"><b>Apprendre à jouer</b><small>2 minutes avec Penalty, qui t'explique tout</small></span>
       <span class="gl-tag">Nouveau</span>
     </button>
-    <button class="lg gl hcard wide press hidden" id="btnTutoAgain" style="--d:4">
+    <button class="lg gl hcard wide press hidden og" id="btnTutoAgain" style="--d:4">
       <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
       <span class="hc-txt"><b>Partie guidée</b><small>Rejoue la leçon avec Penalty</small></span>
     </button>
 
-    <div class="lg gl gl-pill quote-bar" id="quoteBar" aria-live="polite">
+    <div class="lg gl gl-pill quote-bar og deep" id="quoteBar" aria-live="polite">
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
       <div class="qb-track"><p class="qb-text" id="quoteText"></p></div>
     </div>
     <button class="lg gl tinted hcard wide press hidden" id="btnInstall"><span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hc-txt"><b>Installer le jeu</b><small>Sur l'écran d'accueil de ce téléphone</small></span></button>
   </div>
-  <nav class="lg gl tabbar" id="homeTabbar" aria-label="Menu principal">
+  <nav class="lg gl tabbar og" id="homeTabbar" aria-label="Menu principal">
     <span class="tb-lens" id="tabLens"></span>
     <button class="tab on" id="tabHome"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Accueil</button>
     <button class="tab" id="btnShowStats"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Profil</button>
@@ -3463,6 +3626,7 @@
       <h3>Jeu</h3>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Thème « Or sous verre »</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleLamp"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Ampoule au-dessus de la table</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleTrail"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Traînée lumineuse du doigt</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
@@ -5793,6 +5957,7 @@
     sw('btnToggleCalm', !!prefs.calm);
     sw('btnToggleTrail', !prefs.noTrail);
     sw('btnToggleLamp', !prefs.noLamp);
+    sw('btnToggleThemeOr', !prefs.themeClassic);
     sw('btnToggleShare', !!prefs.alwaysShare);
     sw('btnToggleChat', !prefs.noChat);
     sw('btnToggleStats', !prefs.noStats);
@@ -5815,6 +5980,7 @@
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
   toggle('btnToggleLamp',    ()=>{ prefs.noLamp = !prefs.noLamp; applyLamp(); });
+  toggle('btnToggleThemeOr', ()=>{ prefs.themeClassic = !prefs.themeClassic; if(window.applyOrTheme) window.applyOrTheme(); });
   toggle('btnToggleShare',   ()=>{ prefs.alwaysShare = !prefs.alwaysShare; });
   toggle('btnToggleChat',    ()=>{ prefs.noChat = !prefs.noChat; refreshChatUI(); });
   toggle('btnToggleStats',   ()=>{ prefs.noStats = !prefs.noStats; });
@@ -10598,6 +10764,212 @@
     tabs.forEach((t, i)=> t.addEventListener('click', ()=>{ lensTo(i); goTab(TAB_PAGES[i]); }));
     window.homeTabsReset = ()=> window.tabsSync();
     window.tabsSync();
+  })();
+
+  // ===================== THÈME « OR SOUS VERRE » : l'or liquide, le Roi d'or, les étincelles =====================
+  // Everything here only runs while the home screen is on display (and pauses otherwise), to keep the game light.
+  (function orTheme(){
+    const applyTheme = ()=> document.body.classList.toggle('theme-or', !prefs.themeClassic);
+    applyTheme();
+    window.applyOrTheme = applyTheme;
+    const homeOn = ()=> document.body.classList.contains('theme-or') && Nav.cur()==='menuOverlay' && document.visibilityState==='visible';
+    const clamp = (v, a, b)=> Math.max(a, Math.min(b, v));
+    // the phone's tilt (or the mouse on a computer) moves the light and the liquid
+    let tiltX = 0, gravX = 0, hasOrient = false;
+    window.addEventListener('deviceorientation', e=>{ if(e.gamma==null) return; hasOrient = true; tiltX = clamp(e.gamma/35, -1, 1); gravX = clamp(e.gamma/40, -1, 1); });
+    window.addEventListener('pointermove', e=>{ if(!hasOrient && e.pointerType==='mouse'){ tiltX = (e.clientX/innerWidth)*2 - 1; } }, {passive:true});
+
+    // ---------- JOUER: a little aquarium of molten gold, filled to 3/5 ----------
+    const play = document.getElementById('btnGoPlay'), cv = play.querySelector('.og-gold'), g = cv.getContext('2d');
+    const FILL = 0.6, N = 64, h = new Float32Array(N), v = new Float32Array(N);
+    let W = 0, H = 0, dpr = 1, slope = 0, slopeV = 0, drops = [], stir = null;
+    function resize(){
+      const r = play.getBoundingClientRect(); if(r.width < 10) return;
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = Math.round(r.width*dpr); H = Math.round(r.height*dpr); cv.width = W; cv.height = H;
+    }
+    window.addEventListener('resize', ()=>{ W = 0; });
+    const colOf = x=> clamp(Math.round(x/W*(N-1)), 0, N-1);
+    const surfaceY = i=> H*(1-FILL) + (i/(N-1) - 0.5)*W*slope - h[i]*dpr;
+    function poke(x, s){ const i = colOf(x); for(let k=-3;k<=3;k++){ const j = i+k; if(j>=0 && j<N) v[j] += s*(1 - Math.abs(k)/4); } }
+    const local = e=>{ const r = cv.getBoundingClientRect(); return {x:(e.clientX-r.left)*dpr, y:(e.clientY-r.top)*dpr}; };
+    play.addEventListener('pointerdown', e=>{
+      if(!homeOn() || !W) return;
+      const p = local(e); stir = {x:p.x, y:p.y, x0:p.x, y0:p.y, moved:false};
+      const i = colOf(p.x), sy = surfaceY(i);
+      poke(p.x, p.y > sy ? -9 : -5);
+      for(let k=0;k<6;k++) drops.push({x:p.x + (Math.random()-0.5)*20*dpr, y:sy, vx:(Math.random()-0.5)*3*dpr, vy:-(2.5+Math.random()*3)*dpr, r:(1.5+Math.random()*2.5)*dpr});
+    });
+    play.addEventListener('pointermove', e=>{
+      if(!stir) return;
+      const p = local(e), vx = p.x - stir.x, vy = p.y - stir.y; stir.x = p.x; stir.y = p.y;
+      if(Math.hypot(p.x - stir.x0, p.y - stir.y0) > 14*dpr) stir.moved = true;
+      const i = colOf(p.x), sy = surfaceY(i);
+      if(Math.abs(p.y - sy) < 40*dpr || p.y > sy) poke(p.x, vy*0.25 - Math.abs(vx)*0.08);
+    });
+    // stirring the gold is not a tap: it doesn't open the page
+    play.addEventListener('click', e=>{ if(stir && stir.moved){ e.stopImmediatePropagation(); e.preventDefault(); } stir = null; }, true);
+    ['pointerup','pointercancel','pointerleave'].forEach(t=> play.addEventListener(t, ()=>{ setTimeout(()=>{ stir = null; }, 0); }));
+    function stepGold(){
+      const target = clamp(gravX*0.16, -0.12, 0.12); // a gentle lean: the gold stays readable
+      slopeV += (target - slope)*0.06; slopeV *= 0.82;
+      const before = slope; slope += slopeV; const dS = slope - before;
+      for(let i=0;i<N;i++) v[i] += dS*(i/(N-1) - 0.5)*W/dpr*0.9;
+      for(let i=0;i<N;i++){ v[i] += -0.035*h[i]; v[i] *= 0.975; h[i] += v[i]; }
+      for(let pass=0; pass<6; pass++) for(let i=0;i<N;i++){
+        if(i>0) v[i-1] += 0.12*(h[i]-h[i-1]);
+        if(i<N-1) v[i+1] += 0.12*(h[i]-h[i+1]);
+      }
+      let mean = 0; for(let i=0;i<N;i++) mean += h[i]; mean /= N; for(let i=0;i<N;i++) h[i] -= mean;
+      drops = drops.filter(d=>{ d.vy += 0.175*dpr; d.x += d.vx; d.y += d.vy; const i = colOf(d.x);
+        if(d.vy > 0 && d.y >= surfaceY(i)){ v[i] -= 1.2; return false; } return d.y < H; });
+    }
+    function curve(pts){ g.moveTo(pts[0][0], pts[0][1]);
+      for(let i=1;i<N-1;i++){ const mx = (pts[i][0]+pts[i+1][0])/2, my = (pts[i][1]+pts[i+1][1])/2; g.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
+      g.lineTo(pts[N-1][0], pts[N-1][1]); }
+    function drawGold(){
+      const t = performance.now()/1000, eco = document.documentElement.dataset.q==='eco';
+      g.clearRect(0, 0, W, H);
+      const pts = []; for(let i=0;i<N;i++) pts.push([i/(N-1)*W, surfaceY(i)]);
+      const top = Math.min(...pts.map(p=> p[1]));
+      g.beginPath(); g.moveTo(0, H); g.lineTo(pts[0][0], pts[0][1]); curve(pts); g.lineTo(W, H); g.closePath();
+      const body = g.createLinearGradient(0, top, 0, H);
+      body.addColorStop(0, '#fff6c2'); body.addColorStop(0.07, '#ffd84a'); body.addColorStop(0.28, '#f5a60c'); body.addColorStop(0.55, '#c26c00'); body.addColorStop(0.82, '#7a3c00'); body.addColorStop(1, '#3e1c00');
+      g.fillStyle = body; g.fill();
+      g.save(); g.clip();
+      for(let k=0;k<3;k++){
+        const x = W*(0.2 + 0.3*k) + Math.sin(t*0.6 + k*2)*W*0.08 + tiltX*W*0.1, y = top + (H-top)*(0.45 + 0.15*Math.sin(t*0.5 + k));
+        const rg = g.createRadialGradient(x, y, 0, x, y, H*0.6); rg.addColorStop(0, 'rgba(255,236,170,0.28)'); rg.addColorStop(1, 'rgba(255,236,170,0)');
+        g.fillStyle = rg; g.fillRect(0, 0, W, H);
+      }
+      const bx = clamp(0.35 + tiltX*0.25, 0.15, 0.85), band = g.createLinearGradient(0, 0, W, 0);
+      band.addColorStop(bx-0.12, 'rgba(255,255,255,0)'); band.addColorStop(bx, 'rgba(255,250,220,0.38)'); band.addColorStop(bx+0.12, 'rgba(255,255,255,0)');
+      g.fillStyle = band; g.fillRect(0, 0, W, H);
+      if(!eco){
+        g.globalCompositeOperation = 'lighter';
+        for(let k=0;k<4;k++){
+          g.beginPath();
+          for(let i=0;i<N;i++){ const x = i/(N-1)*W, y = surfaceY(i) + (8 + k*9)*dpr + Math.sin(i*0.35 + t*(1.8+k*0.4) + k)*3*dpr + h[i]*0.5*dpr; if(i===0) g.moveTo(x, y); else g.lineTo(x, y); }
+          g.strokeStyle = 'rgba(255,230,140,'+(0.22 - k*0.045)+')'; g.lineWidth = (2.2 - k*0.4)*dpr; g.stroke();
+        }
+        g.globalCompositeOperation = 'source-over';
+      }
+      g.restore();
+      g.beginPath(); curve(pts);
+      g.shadowColor = 'rgba(255,200,60,1)'; g.shadowBlur = 22*dpr; g.strokeStyle = 'rgba(255,250,225,1)'; g.lineWidth = 2.6*dpr; g.stroke();
+      g.shadowBlur = 0; g.strokeStyle = 'rgba(255,255,255,0.8)'; g.lineWidth = 1*dpr; g.stroke();
+      for(let i=2;i<N-2;i++){
+        const face = Math.max(0, -(h[i+1]-h[i-1])*0.35 - tiltX*0.6 + Math.sin(t*3 + i)*0.15);
+        if(face < 0.35) continue;
+        const x = i/(N-1)*W, y = surfaceY(i), r = (4 + face*8)*dpr, rg = g.createRadialGradient(x, y, 0, x, y, r);
+        rg.addColorStop(0, 'rgba(255,255,255,'+Math.min(1, face)+')'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = rg; g.fillRect(x-r, y-r, r*2, r*2);
+      }
+      const hx = (0.5 + Math.sin(t*0.7)*0.25 + tiltX*0.2)*W, hy = surfaceY(colOf(hx)), hg = g.createRadialGradient(hx, hy, 0, hx, hy, 26*dpr);
+      hg.addColorStop(0, 'rgba(255,255,255,0.9)'); hg.addColorStop(0.3, 'rgba(255,240,190,0.4)'); hg.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = hg; g.fillRect(hx-26*dpr, hy-26*dpr, 52*dpr, 52*dpr);
+      for(const d of drops){ const rg = g.createRadialGradient(d.x - d.r*0.3, d.y - d.r*0.3, 0, d.x, d.y, d.r);
+        rg.addColorStop(0, '#fff6d0'); rg.addColorStop(0.5, '#e8b44c'); rg.addColorStop(1, '#8a5a14');
+        g.fillStyle = rg; g.beginPath(); g.arc(d.x, d.y, d.r, 0, Math.PI*2); g.fill(); }
+    }
+
+    // ---------- LE ROI D'OR ----------
+    const head = document.getElementById('ogHead'), pupils = [...head.querySelectorAll('.og-pupil')];
+    const bubble = document.getElementById('ogBubble'), sayEl = document.getElementById('ogSay'), dare = document.getElementById('ogDare');
+    const nm = ()=> (prefs.name||'').trim();
+    const LINES = {
+      idle: ["Tu dors ? Le Fap Fap n’attend pas, mola.", "Tu tournes autour du pot depuis tout à l’heure. Joue !", "Je compte tes jetons d’ici. Il n’y en a pas beaucoup.", "Même ma grand-mère te bat. Et elle est aveugle.", ()=> nm() ? nm()+"… joli prénom pour un perdant." : "Tu n’as même pas de prénom ? Normal, personne ne se souvient des perdants."],
+      look: ["Ne me regarde pas comme ça. On ne regarde pas le Roi dans les yeux.", "Tes yeux tremblent. Ta main va trembler aussi.", "Je vois tout ce que tu fais. Même tes cartes, bientôt.", "Ton 3, tu le gardes pour qui ? Pour moi ?"],
+      fast: ["Arrête de gigoter, tu me donnes le tournis.", "Calme-toi ! On dirait un benskineur sans frein.", "Tu cherches la sortie ? Il n’y en a pas."],
+      near: ["Ne me touche pas. On ne touche pas la Couronne.", "Recule. Ou assieds-toi en face de moi.", "Approche encore… si tu oses."],
+      play: ["Ah, tu touches l’or ? Il faut le gagner, petit.", "Doucement avec mon or. Il n’est pas à toi.", "Tu as les mains sales. Va les laver avant de toucher l’or."],
+      tap: ["Enfin un peu de courage ! Ose me défier, si tu es un homme.", "Tu veux ma couronne ? Viens la chercher.", "D’accord. Cinq cartes. Toi et moi. Maintenant."]
+    };
+    const lastLine = {};
+    function pick(kind){ const a = LINES[kind]; let s; let n = 0; do{ s = a[Math.floor(Math.random()*a.length)]; s = typeof s==='function' ? s() : s; } while(a.length>1 && s===lastLine[kind] && ++n<5); lastLine[kind] = s; return s; }
+    let talkT = null, lastSay = 0, angryT = null;
+    function say(kind, force){
+      if(!homeOn()) return;
+      if(!force && performance.now() - lastSay < 4200) return;
+      lastSay = performance.now();
+      const text = pick(kind);
+      sayEl.textContent = text;
+      bubble.classList.remove('say'); void bubble.offsetWidth; bubble.classList.add('say');
+      head.classList.add('talk'); clearTimeout(talkT); talkT = setTimeout(()=> head.classList.remove('talk'), Math.min(2600, 300 + text.length*38));
+      if(kind==='tap' || kind==='near') dare.classList.add('show');
+      if(kind==='near' || kind==='fast'){ head.classList.add('angry'); clearTimeout(angryT); angryT = setTimeout(()=> head.classList.remove('angry'), 1800); }
+    }
+    let look = {x: innerWidth/2, y: innerHeight*0.6}, lastMove = performance.now(), speed = 0, prev = null;
+    window.addEventListener('pointermove', e=>{
+      if(!homeOn()) return;
+      const now = performance.now();
+      if(prev){ const d = Math.hypot(e.clientX-prev.x, e.clientY-prev.y), dt = Math.max(1, now-prev.t); speed = speed*0.8 + (d/dt)*0.2; }
+      prev = {x:e.clientX, y:e.clientY, t:now}; look = {x:e.clientX, y:e.clientY}; lastMove = now;
+      if(speed > 2.2) say('fast');
+      const r = head.getBoundingClientRect();
+      if(Math.hypot(e.clientX - (r.left+r.width/2), e.clientY - (r.top+r.height/2)) < r.width*0.75) say('near');
+    }, {passive:true});
+    window.addEventListener('pointerdown', e=>{ if(homeOn()){ look = {x:e.clientX, y:e.clientY}; lastMove = performance.now(); } }, {passive:true});
+    head.addEventListener('click', ()=> say('tap', true));
+    play.addEventListener('pointerdown', ()=> say('play'));
+    // "Ose me défier": straight into a duel against the strongest opponent you can face
+    dare.addEventListener('click', ()=>{
+      dare.classList.remove('show');
+      const id = isOppUnlocked('mbarga') ? 'mbarga' : 'penalty';
+      duelOpp = id; prefs.lastOpp = id; savePrefs();
+      mode = 'ai'; setMatchLength(!!prefs.quick);
+      enterGame(); applyOppNameToUI(); newMatch();
+    });
+    let eye = {x:0, y:0}, shown = {x:9, y:9}, kingT = 0;
+    function stepKing(){
+      const now = performance.now();
+      if(now - kingT < 33) return; // 30 moves a second is plenty for the eyes
+      kingT = now;
+      const r = head.getBoundingClientRect(); if(!r.width) return;
+      const cx = r.left + r.width/2, cy = r.top + r.height*0.44;
+      let tx = look.x - cx, ty = look.y - cy;
+      // nobody moves: he glances around the room, a look here, a look there, then stays still
+      if(now - lastMove > 5000){
+        if(!stepKing.idle || now > stepKing.idle.until) stepKing.idle = {x:(Math.random()*2-1)*180, y:Math.random()*140 - 20, until: now + 1200 + Math.random()*2200};
+        tx = stepKing.idle.x; ty = stepKing.idle.y;
+      }
+      const d = Math.hypot(tx, ty) || 1, k = Math.min(1, d/220), ax = tx/d*k, ay = ty/d*k;
+      eye.x += (ax - eye.x)*0.35; eye.y += (ay - eye.y)*0.35;
+      // nothing to redraw when the eyes have not really moved
+      if(Math.abs(eye.x - shown.x) < 0.01 && Math.abs(eye.y - shown.y) < 0.01) return;
+      shown = {x:eye.x, y:eye.y};
+      const tr = 'translate('+(eye.x*5.2).toFixed(2)+' '+(eye.y*3).toFixed(2)+')';
+      pupils.forEach(p=> p.setAttribute('transform', tr));
+      head.style.transform = 'rotate('+(eye.x*7).toFixed(2)+'deg) translateY('+(eye.y*3).toFixed(1)+'px)';
+    }
+    (function blink(){ setTimeout(()=>{ if(homeOn()){ head.classList.add('blink'); setTimeout(()=> head.classList.remove('blink'), 140); } blink(); }, 2200 + Math.random()*3500); })();
+    setInterval(()=>{ if(!homeOn()) return; if(performance.now() - lastMove > 7000) say('idle'); else if(Math.random()<0.25) say('look'); }, 6500);
+
+    // ---------- stars of light flaring on the gold ----------
+    setInterval(()=>{
+      if(!homeOn() || document.documentElement.dataset.q==='eco' || document.body.classList.contains('calm')) return;
+      const slabs = [...document.querySelectorAll('#menuOverlay .og:not(.hidden), #homeTabbar.og')].filter(el=>{ const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; });
+      const el = slabs[Math.floor(Math.random()*slabs.length)]; if(!el) return;
+      const s = document.createElement('span'); s.className = 'og-spark';
+      s.style.left = (10 + Math.random()*80)+'%'; s.style.top = (14 + Math.random()*72)+'%';
+      el.appendChild(s); setTimeout(()=> s.remove(), 1200);
+    }, 420);
+
+    // one loop for the liquid and the king, paused whenever the home screen isn't showing
+    let lastDraw = 0;
+    function frame(){
+      if(!W) resize();
+      if(W){ stepGold(); drawGold(); lastDraw = performance.now(); }
+      stepKing();
+    }
+    function loop(){
+      if(homeOn()){ frame(); requestAnimationFrame(loop); }
+      else setTimeout(()=> requestAnimationFrame(loop), 400);
+    }
+    loop();
+    // when the browser holds back animation frames (battery saver, page in the background of an app…),
+    // the gold is still drawn a few times a second, so the glass is never empty
+    setInterval(()=>{ if(homeOn() && performance.now() - lastDraw > 300) frame(); }, 250);
   })();
 
   // ===================== The storm table: raindrops rippling on the table, lightning, then the thunder =====================
