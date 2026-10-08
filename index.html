@@ -2105,6 +2105,14 @@
   .sc-lamp.dip .glass{ filter: brightness(0.55) saturate(1.4); }
   .sc-lamp.dip .lamp-dark{ filter: brightness(0.85); }
 
+  /* ---- the "le jeu a déménagé" banner on the old addresses ---- */
+  .moved-banner{ display:flex; flex-direction:column; gap:6px; margin:0 0 12px; padding:12px 14px; border-radius:20px; color:#fff; text-align:left;
+    background: linear-gradient(135deg, rgba(214,58,71,0.92), rgba(142,20,32,0.92)); box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-size:13px; line-height:1.4; }
+  .moved-banner b{ font-size:15px; }
+  .moved-banner .mb-row{ display:flex; gap:8px; margin-top:4px; }
+  .moved-banner .mb-row > *{ flex:1; padding:9px 10px; border-radius:14px; font-weight:800; font-size:13px; text-align:center; text-decoration:none; color:#fff; background: rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); }
+  .moved-banner .mb-go{ background:#fff; color:#8e1420; }
+
   /* ---- amis ---- */
   .rich-tabs{ grid-template-columns: repeat(3, 1fr) !important; }
   .rich-tabs .fmt{ padding-left:4px; padding-right:4px; } .rich-tabs .fmt b{ font-size:13px; } .rich-tabs .fmt small{ font-size:10.5px; }
@@ -3811,6 +3819,21 @@
 (function(){
   // test shortcuts (?debug, ?story) only work on the developer's own computer, never on the published game
   const DEV_HOST = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  // the official address of the game (invitations and shared pictures always point there)
+  const GAME_URL = 'https://fapfap-jeu.vercel.app/';
+  // the game opened from one of its old addresses (github.io, githack): tell the player it has moved.
+  // A guest's progression lives with the address, so they are asked to save it to their account first.
+  (function movedBanner(){
+    if(DEV_HOST || location.hostname==='fapfap-jeu.vercel.app') return;
+    const home = document.querySelector('#menuOverlay .home-body');
+    if(!home) return;
+    const b = document.createElement('div');
+    b.className = 'moved-banner';
+    b.innerHTML = '<b>Le jeu a déménagé !</b><span>Nouvelle adresse : <u>fapfap-jeu.vercel.app</u>. Sauvegarde d’abord ta progression dans « Mon compte », puis reconnecte-toi là-bas.</span>'+
+      '<span class="mb-row"><button class="mb-acct">Mon compte</button><a class="mb-go" href="'+GAME_URL+'">Ouvrir le nouveau lien</a></span>';
+    home.insertBefore(b, home.firstChild);
+    b.querySelector('.mb-acct').addEventListener('click', ()=> document.getElementById('btnShowAccount').click());
+  })();
   // an icon from the SVG set at the top of the page
   const ico = name=> '<svg class="i" aria-hidden="true"><use href="#i-'+name+'"/></svg>';
   const SUITS = ['Black','Tchaka','Coubie','Zing'];
@@ -6081,6 +6104,9 @@
     repStart(); matchMaxDeficit = 0;
     document.querySelector('.scorebar .mid').textContent = TARGET_SCORE===1 ? 'Partie rapide · 1 manche' : 'Premier à '+TARGET_SCORE;
   }
+  // the table remembers who won the last hand against whom (this phone, this session)
+  let lastDeal = null;
+  function dealKey(){ return mode==='mp' ? 'mp:'+(oppUid||oppNameVal) : mode+':'+duelOpp; }
   function newMatch(){
     startMatchTracking();
     scores = {you:0, ai:0};
@@ -6088,7 +6114,9 @@
     document.getElementById('scoreAI').textContent = '0';
     document.getElementById('matchOverOverlay').classList.add('hidden');
     if(mode==='ai' && !tuto && !daily && !storyRun) takeStake(); else matchStake = 0; // the story takes its own bets
-    dealer = Math.random()<0.5 ? 'you' : 'ai';
+    // who deals: the winner of the last hand played against this same opponent (a rematch continues the table);
+    // drawn at random only for a first game
+    dealer = (lastDeal && lastDeal.key===dealKey()) ? lastDeal.dealer : (Math.random()<0.5 ? 'you' : 'ai');
     beginHand();
   }
 
@@ -7321,7 +7349,7 @@
     g.save(); g.translate(880,850); g.rotate(0.24);
     g.strokeStyle = 'rgba(138,42,26,0.85)'; g.lineWidth = 6; g.beginPath(); g.arc(0,0,92,0,Math.PI*2); g.stroke();
     g.fillStyle = 'rgba(138,42,26,0.85)'; g.font = '800 34px "Bricolage Grotesque", sans-serif'; g.fillText('CERTIFIÉ', 0, 12); g.restore();
-    g.fillStyle = '#ab9c87'; g.font = '30px Manrope, sans-serif'; g.fillText('Joue toi aussi : '+location.host+location.pathname.replace(/index\.html$/,''), 540, 1010);
+    g.fillStyle = '#ab9c87'; g.font = '30px Manrope, sans-serif'; g.fillText('Joue toi aussi : fapfap-jeu.vercel.app', 540, 1010);
     return new Promise(res=> c.toBlob(res, 'image/png'));
   }
   async function shareFeat(title, line){
@@ -7461,11 +7489,14 @@
       return;
     }
 
+    // the winner of the hand always deals the next one — also the first hand of a rematch against the same opponent
+    dealer = who;
+    lastDeal = {key: dealKey(), dealer: who};
     if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
       const matchOverDelay = (isGlacee||isCora) ? 3700 : 1800;
       gameTimeout(()=> showMatchOver(scores.you>=TARGET_SCORE ? 'you':'ai'), matchOverDelay);
     } else {
-      dealer = who; // winner deals next hand -> loser starts next hand
+      // winner deals next hand -> loser starts next hand
       const nextDelay = (isGlacee||isCora) ? 3700 : 1000;
       gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, nextDelay);
     }
@@ -7947,7 +7978,7 @@
   });
 
   // ---- Invitation links: …/?partie=CODE opens the game straight into that room ----
-  function inviteUrl(code){ return location.origin + location.pathname + '?partie=' + code; }
+  function inviteUrl(code){ return GAME_URL + '?partie=' + code; } // always the official address, whatever link this phone used
   function inviteMessage(code){
     return myName+' te défie au Fap Fap ! 🃏 Clique pour rejoindre la partie : '+inviteUrl(code)+'  (code : '+code+')';
   }
@@ -8107,7 +8138,7 @@
   }
   function mpMaybeStartRematch(){
     if(!(mpRematch.me && mpRematch.opp) || !mpIsHost) return;
-    const d = Math.random()<0.5 ? 'you' : 'ai';
+    const d = dealer; // the winner of the last hand deals the first hand of the rematch
     mpSend({t:'newMatch', dealer: d==='you' ? 'ai' : 'you'});
     mpStartRematchLocal(d);
   }
@@ -8308,6 +8339,7 @@
     return active[(idx+1)%active.length];
   }
 
+  let sqLastChampion = null; // who won the last hand at this Carré table: deals first in the rematch
   // cfg: {n: players (offline)} or {ctrl, net, names, online:true, stake} (online, built by the room)
   function sqNewGame(cfg){
     cfg = cfg || (sq && sq.config) || {n:4};
@@ -8325,7 +8357,8 @@
       config: cfg, ctrl, net: cfg.net || {}, names: cfg.names || {}, online: !!cfg.online,
       gameId: Math.random().toString(36).slice(2,8), handNo: 0, events: [], evSeq: 0, pendingElim: null, championSeat: null,
       players: {}, history: {}, knownVoid: {},
-      dealerIdx: Math.floor(Math.random()*seated.length),
+      // a new game at the same table: last game's winner deals; otherwise drawn at random
+      dealerIdx: (sqLastChampion && seated.includes(sqLastChampion) && sq && sq.config===cfg) ? seated.indexOf(sqLastChampion) : Math.floor(Math.random()*seated.length),
       leader:null, leadSuit:null, leadCard:null, leadActor:null,
       trickWinners:[], trickQueue:[], trickBest:null, trickHadPasse:false,
       cardsPlayedThisHand:0, handOver:false, locked:false, passers:new Set(), trickNo:0,
@@ -8369,6 +8402,8 @@
     sq.announcePlan = {};     // per-AI: announce an automatic win now / a beat late / miss it
     sq.trickQueue = [];
     sq.claque = null; sq.claqueOrder = null; // nobody is slamming their cards down yet
+    // the winner of the last hand deals (he is still at the table: the winner is never eliminated)
+    if(sq.lastWinner && active.includes(sq.lastWinner)) sq.dealerIdx = active.indexOf(sq.lastWinner);
     sq.dealerIdx = sq.dealerIdx % active.length;
     sq.leader = active[(sq.dealerIdx+1) % active.length];
     document.getElementById('sqBtnNext').classList.add('hidden');
@@ -8762,6 +8797,7 @@
   }
 
   function sqShowEliminationChoice(winnerId, label, count){
+    sq.lastWinner = winnerId; sqLastChampion = winnerId;
     const others = sqActivePlayers().filter(id=>id!==winnerId);
     if(others.length===0){ return sqShowChampion(winnerId); }
     const n = Math.min(count||1, others.length);

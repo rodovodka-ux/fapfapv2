@@ -311,3 +311,7 @@ Version corrigée : [fapfap.html](fapfap.html). Les points marqués *(changement
 - La bibliothèque Supabase (qui gère la connexion) est maintenant une copie fixe dans le jeu (vendor/supabase-2.117.3.js), plus chargée depuis un site extérieur à version variable.
 - Politique de sécurité du contenu : la page ne peut exécuter que son propre code et ne parler qu'à son serveur Supabase.
 - Limites connues : les parties se calculent sur les téléphones, donc un tricheur très motivé peut encore gagner 200 000 jetons par jour ou voir les cartes en ligne avec un jeu modifié ; seule une version où le serveur arbitre chaque partie l'empêcherait complètement.
+
+## Qui distribue, déménagement (v28, 08/10/2026)
+- Correction : le gagnant d'une manche distribue toujours la suivante, y compris la première manche d'une revanche (avant, chaque nouveau match ou revanche tirait le donneur au sort, donc en partie rapide l'ordinateur pouvait gagner puis « partager » sans te poser la question). Tirage au sort seulement pour le tout premier match contre un adversaire. Même règle en ligne (revanche) et en Carré (le gagnant de la manche distribue la suivante ; le gagnant de la partie distribue la première de la revanche).
+- Lien officiel : https://fapfap-jeu.vercel.app/ (Vercel gratuit, mis à jour automatiquement depuis GitHub). Les invitations WhatsApp et l'image de partage pointent toujours vers ce lien. Sur les anciennes adresses (github.io, githack), un bandeau « Le jeu a déménagé » invite à sauvegarder sa progression puis à ouvrir le nouveau lien.
