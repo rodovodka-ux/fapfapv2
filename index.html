@@ -3626,7 +3626,7 @@
       <h3>Jeu</h3>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
-      <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Thème « Or sous verre »</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Thème « Or sous verre » (essai)</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleLamp"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Ampoule au-dessus de la table</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleTrail"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Traînée lumineuse du doigt</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
@@ -5957,7 +5957,7 @@
     sw('btnToggleCalm', !!prefs.calm);
     sw('btnToggleTrail', !prefs.noTrail);
     sw('btnToggleLamp', !prefs.noLamp);
-    sw('btnToggleThemeOr', !prefs.themeClassic);
+    sw('btnToggleThemeOr', prefs.themeOr===true);
     sw('btnToggleShare', !!prefs.alwaysShare);
     sw('btnToggleChat', !prefs.noChat);
     sw('btnToggleStats', !prefs.noStats);
@@ -5980,7 +5980,7 @@
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
   toggle('btnToggleLamp',    ()=>{ prefs.noLamp = !prefs.noLamp; applyLamp(); });
-  toggle('btnToggleThemeOr', ()=>{ prefs.themeClassic = !prefs.themeClassic; if(window.applyOrTheme) window.applyOrTheme(); });
+  toggle('btnToggleThemeOr', ()=>{ prefs.themeOr = !(prefs.themeOr===true); if(window.applyOrTheme) window.applyOrTheme(); });
   toggle('btnToggleShare',   ()=>{ prefs.alwaysShare = !prefs.alwaysShare; });
   toggle('btnToggleChat',    ()=>{ prefs.noChat = !prefs.noChat; refreshChatUI(); });
   toggle('btnToggleStats',   ()=>{ prefs.noStats = !prefs.noStats; });
@@ -10769,7 +10769,8 @@
   // ===================== THÈME « OR SOUS VERRE » : l'or liquide, le Roi d'or, les étincelles =====================
   // Everything here only runs while the home screen is on display (and pauses otherwise), to keep the game light.
   (function orTheme(){
-    const applyTheme = ()=> document.body.classList.toggle('theme-or', !prefs.themeClassic);
+    // the gold theme is not ready: off for everyone until it is redone (it can still be tried in Réglages)
+    const applyTheme = ()=> document.body.classList.toggle('theme-or', prefs.themeOr===true);
     applyTheme();
     window.applyOrTheme = applyTheme;
     const homeOn = ()=> document.body.classList.contains('theme-or') && Nav.cur()==='menuOverlay' && document.visibilityState==='visible';
@@ -10824,7 +10825,8 @@
       drops = drops.filter(d=>{ d.vy += 0.175*dpr; d.x += d.vx; d.y += d.vy; const i = colOf(d.x);
         if(d.vy > 0 && d.y >= surfaceY(i)){ v[i] -= 1.2; return false; } return d.y < H; });
     }
-    function curve(pts){ g.moveTo(pts[0][0], pts[0][1]);
+    // the surface line; `join` = continue the current shape instead of starting a new one (the body of the gold)
+    function curve(pts, join){ if(join) g.lineTo(pts[0][0], pts[0][1]); else g.moveTo(pts[0][0], pts[0][1]);
       for(let i=1;i<N-1;i++){ const mx = (pts[i][0]+pts[i+1][0])/2, my = (pts[i][1]+pts[i+1][1])/2; g.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
       g.lineTo(pts[N-1][0], pts[N-1][1]); }
     function drawGold(){
@@ -10832,7 +10834,7 @@
       g.clearRect(0, 0, W, H);
       const pts = []; for(let i=0;i<N;i++) pts.push([i/(N-1)*W, surfaceY(i)]);
       const top = Math.min(...pts.map(p=> p[1]));
-      g.beginPath(); g.moveTo(0, H); g.lineTo(pts[0][0], pts[0][1]); curve(pts); g.lineTo(W, H); g.closePath();
+      g.beginPath(); g.moveTo(0, H); curve(pts, true); g.lineTo(W, H); g.closePath();
       const body = g.createLinearGradient(0, top, 0, H);
       body.addColorStop(0, '#fff6c2'); body.addColorStop(0.07, '#ffd84a'); body.addColorStop(0.28, '#f5a60c'); body.addColorStop(0.55, '#c26c00'); body.addColorStop(0.82, '#7a3c00'); body.addColorStop(1, '#3e1c00');
       g.fillStyle = body; g.fill();
