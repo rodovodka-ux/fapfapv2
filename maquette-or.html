@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Maquette — Or sous verre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================================================
+     OR SOUS VERRE — mockup of the new theme for FAP FAP
+     Gold sits *behind* thick glass: brushed gold plates, flakes of gold leaf caught in the glass,
+     polished gold edges, a glint that follows the tilt of the phone. Liquid gold sloshes inside the
+     "Jouer" capsule and parts under the finger. A golden mask watches you and taunts you.
+     ===================================================================================== */
+  :root{
+    --tx:0; --ty:0;                         /* tilt of the phone (or mouse), -1..1 */
+    --gold-1:#fff4c8; --gold-2:#f6d27a; --gold-3:#d9a43a; --gold-4:#a8741c; --gold-5:#5e3c0c;
+    --ink:#120c05;
+    --font-display:'Bricolage Grotesque', system-ui, sans-serif;
+    --font-body:'Manrope', system-ui, sans-serif;
+    --spring: cubic-bezier(.34,1.56,.64,1);
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html, body{ margin:0; height:100%; background:#050302; color:#fff; font-family:var(--font-body); overflow:hidden; }
+  body{ touch-action: manipulation; -webkit-user-select:none; user-select:none; }
+
+  /* ---- the room: a black velvet bar, warm light from above ---- */
+  .room{ position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 80% 45% at 50% -5%, rgba(255,200,110,0.22), transparent 70%),
+      radial-gradient(ellipse 120% 70% at 50% 110%, rgba(120,70,10,0.25), transparent 70%),
+      linear-gradient(180deg, rgba(5,3,2,0.55), rgba(5,3,2,0.92)),
+      url(art/home-bar.jpg) center/cover;
+    filter: saturate(0.8); }
+  .room::after{ content:""; position:absolute; inset:0;
+    background-image: radial-gradient(circle, rgba(255,215,120,0.55) 0 0.8px, transparent 1.3px);
+    background-size: 47px 61px; opacity:.25; animation: dust 18s linear infinite; }
+  @keyframes dust{ to{ background-position: 30px -300px; } }
+
+  .app{ position:relative; z-index:1; height:100%; overflow-y:auto; overflow-x:hidden;
+    padding: calc(env(safe-area-inset-top) + 12px) 16px calc(110px + env(safe-area-inset-bottom)); }
+
+  /* =====================================================================================
+     THE MATERIAL: gold under glass
+     .og = a slab of thick glass; ::before = the brushed gold plate inside it, set back from the edge;
+     ::after = flakes of gold leaf caught in the glass + the glint that follows the tilt
+     ===================================================================================== */
+  .og{ position:relative; isolation:isolate; border-radius:26px; color:#fff;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.20), rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.10)),
+      rgba(20,12,4,0.35);
+    box-shadow:
+      inset 0 1.5px 0 rgba(255,255,255,0.75),           /* top edge of the glass catching the light */
+      inset 0 -1px 0 rgba(255,220,150,0.35),
+      inset 0 0 0 1px rgba(255,236,190,0.28),
+      inset 0 0 0 3px rgba(0,0,0,0.25),
+      0 1px 0 rgba(255,214,120,0.55),                  /* the polished gold rim seen through the glass */
+      0 0 0 1.5px rgba(214,160,60,0.55),
+      0 14px 34px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.5);
+    -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); }
+  /* the gold plate, a few pixels inside the glass so the clear rim shows around it */
+  .og::before{ content:""; position:absolute; inset:5px; border-radius:21px; z-index:-1; pointer-events:none;
+    background:
+      repeating-linear-gradient(92deg, rgba(255,255,255,0.06) 0 1px, rgba(0,0,0,0.05) 1px 2px, transparent 2px 4px),   /* brushing */
+      radial-gradient(ellipse 120% 90% at calc(30% + var(--tx)*25%) calc(20% + var(--ty)*20%), rgba(255,248,215,0.55), transparent 55%),
+      linear-gradient(160deg, var(--gold-2) 0%, var(--gold-3) 28%, var(--gold-4) 55%, #7a5212 75%, var(--gold-3) 100%);
+    box-shadow: inset 0 2px 4px rgba(255,250,220,0.6), inset 0 -3px 8px rgba(70,40,5,0.6), 0 0 0 1px rgba(90,55,10,0.5);
+    filter: saturate(1.05); }
+  /* gold leaf flakes in the glass + the glint sliding with the tilt */
+  .og::after{ content:""; position:absolute; inset:0; border-radius:inherit; z-index:2; pointer-events:none;
+    background:
+      linear-gradient(115deg, transparent calc(38% + var(--tx)*30%), rgba(255,255,255,0.45) calc(44% + var(--tx)*30%), transparent calc(52% + var(--tx)*30%)),
+      radial-gradient(circle at 12% 30%, rgba(255,236,170,0.95) 0 1.2px, transparent 2px),
+      radial-gradient(circle at 78% 18%, rgba(255,236,170,0.9) 0 1px, transparent 1.8px),
+      radial-gradient(circle at 63% 74%, rgba(255,236,170,0.85) 0 1.4px, transparent 2.2px),
+      radial-gradient(circle at 31% 82%, rgba(255,236,170,0.8) 0 0.9px, transparent 1.6px),
+      radial-gradient(circle at 90% 62%, rgba(255,236,170,0.9) 0 1.1px, transparent 1.8px);
+    mix-blend-mode: screen; opacity:.9; }
+  /* a "dark gold" variant: the plate is deep and the text sits on it (cards, lists) */
+  .og.deep::before{ background:
+      repeating-linear-gradient(92deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse 120% 90% at calc(30% + var(--tx)*25%) calc(15% + var(--ty)*20%), rgba(255,220,140,0.35), transparent 60%),
+      linear-gradient(160deg, #6b4510 0%, #3d2606 45%, #241503 75%, #4a300a 100%); }
+  .og.press{ transition: transform .35s var(--spring); }
+  .og.press:active{ transform: scale(.97); }
+  .og.pop{ animation: pop .5s var(--spring); }
+  @keyframes pop{ 0%{ transform: scale(.96); } 60%{ transform: scale(1.03); } 100%{ transform:none; } }
+  /* text engraved in the gold */
+  .engraved{ color: var(--ink); text-shadow: 0 1px 0 rgba(255,240,200,0.65), 0 -1px 0 rgba(60,35,5,0.35); }
+  .lit{ color:#fff8e2; text-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 0 14px rgba(255,200,90,0.35); }
+
+  /* ---- top bar ---- */
+  .top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .chips{ display:flex; align-items:center; gap:8px; height:44px; padding:0 16px 0 8px; border-radius:999px; }
+  .chips::before{ border-radius:999px; }
+  .coin{ width:30px; height:30px; border-radius:50%; flex:none;
+    background: radial-gradient(circle at 35% 30%, #fff6d0, var(--gold-2) 30%, var(--gold-4) 70%, #5e3c0c);
+    box-shadow: inset 0 -2px 3px rgba(60,35,5,0.6), 0 2px 4px rgba(0,0,0,0.5), inset 0 0 0 3px rgba(255,236,170,0.35); }
+  .chips b{ font-family:var(--font-display); font-size:19px; }
+  .sp{ flex:1; }
+  .round{ width:44px; height:44px; border-radius:50%; display:grid; place-items:center; flex:none; }
+  .round::before{ border-radius:50%; inset:4px; }
+  .round svg{ width:20px; height:20px; position:relative; z-index:3; }
+
+  .logo{ display:block; width:min(300px, 80%); margin: 4px auto 0; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.7)); }
+
+  /* =====================================================================================
+     LE ROI — a golden mask that follows you with its eyes, and taunts you
+     ===================================================================================== */
+  .king{ position:relative; display:flex; align-items:flex-end; gap:12px; margin: 8px 0 14px; min-height:160px; }
+  .king-head{ position:relative; width:150px; height:160px; flex:none; transform-origin: 50% 90%;
+    transition: transform .25s ease-out; cursor:pointer; filter: drop-shadow(0 14px 24px rgba(0,0,0,0.7)); }
+  .king-head svg{ width:100%; height:100%; overflow:visible; }
+  .king-head.talk .mouth{ animation: talk .16s ease-in-out infinite alternate; }
+  @keyframes talk{ from{ transform: scaleY(0.3); } to{ transform: scaleY(1.25); } }
+  .king-head .mouth{ transform-box: fill-box; transform-origin: 50% 50%; transform: scaleY(0.3); }
+  .king-head .lid{ transform-box: fill-box; transform-origin: 50% 0%; transform: scaleY(0); transition: transform .08s; }
+  .king-head.blink .lid{ transform: scaleY(1); }
+  .king-head.angry .brow-l{ transform: rotate(14deg) translateY(3px); } .king-head.angry .brow-r{ transform: rotate(-14deg) translateY(3px); }
+  .king-head .brow-l, .king-head .brow-r{ transform-box: fill-box; transform-origin: 50% 50%; transition: transform .25s; }
+  .king-head.photo{ width:140px; height:140px; border-radius:50%; perspective: 500px; }
+  .king-head.photo .ph{ position:absolute; inset:0; border-radius:50%; overflow:hidden; transition: transform .2s ease-out;
+    box-shadow: 0 0 0 4px var(--gold-3), 0 0 0 7px rgba(255,236,170,0.4), 0 0 0 9px var(--gold-5); }
+  .king-head.photo .ph img{ width:116%; height:116%; margin:-8%; object-fit:cover; transition: transform .2s ease-out; }
+
+  .bubble{ position:relative; flex:1; padding:12px 14px; border-radius:20px 20px 20px 6px; font-size:14.5px; line-height:1.4; font-weight:700;
+    min-height:62px; margin-bottom:36px; transform-origin: 0% 100%; }
+  .bubble::before{ border-radius:16px 16px 16px 3px; }
+  .bubble .who{ display:block; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-2); margin-bottom:3px; }
+  .bubble.say{ animation: say .4s var(--spring); }
+  @keyframes say{ from{ transform: scale(.85) rotate(-2deg); opacity:.3; } }
+  .dare{ position:absolute; right:0; bottom:0; padding:9px 16px; border-radius:999px; font-weight:800; font-size:13px; border:0; cursor:pointer;
+    color:#3a2408; background: linear-gradient(180deg, #fff1c0, var(--gold-2) 40%, var(--gold-3)); box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 #fff;
+    opacity:0; transform: translateY(8px) scale(.9); transition: .35s var(--spring); pointer-events:none; }
+  .dare.show{ opacity:1; transform:none; pointer-events:auto; }
+
+  /* =====================================================================================
+     JOUER — a glass capsule full of liquid gold that sloshes with the tilt and parts under the finger
+     ===================================================================================== */
+  .play{ position:relative; height:118px; border-radius:34px; overflow:hidden; cursor:pointer; margin-bottom:14px;
+    background: rgba(10,6,2,0.55);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.8), inset 0 0 0 1px rgba(255,236,190,0.35), inset 0 -10px 24px rgba(0,0,0,0.55),
+      0 0 0 2px rgba(214,160,60,0.7), 0 0 0 4px rgba(60,35,5,0.6), 0 18px 40px rgba(0,0,0,0.6);
+    transition: transform .35s var(--spring); }
+  .play:active{ transform: scale(.98); }
+  .play canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .play .glass{ position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.06) 32%, transparent 55%, rgba(255,255,255,0.08)),
+      linear-gradient(105deg, transparent calc(30% + var(--tx)*30%), rgba(255,255,255,0.35) calc(36% + var(--tx)*30%), transparent calc(44% + var(--tx)*30%));
+    box-shadow: inset 0 0 30px rgba(255,220,150,0.18); }
+  .play .label{ position:absolute; inset:0; display:flex; align-items:center; padding: 0 24px; gap:14px; pointer-events:none; }
+  .play .label b{ font-family:var(--font-display); font-size:40px; letter-spacing:-0.01em; }
+  .play .label small{ display:block; font-size:12.5px; font-weight:700; opacity:.9; max-width:170px; line-height:1.3; }
+  .play .chev{ margin-left:auto; width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+    background: rgba(255,255,255,0.18); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 6px rgba(0,0,0,0.4); }
+
+  /* ---- the cards of the home screen ---- */
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+  .card{ padding:16px 14px 14px; min-height:132px; display:flex; flex-direction:column; gap:6px; cursor:pointer; text-align:left; border:0; font:inherit; }
+  .card .ic{ width:40px; height:40px; border-radius:13px; display:grid; place-items:center; position:relative; z-index:3;
+    background: linear-gradient(160deg, #fff3c6, var(--gold-2) 40%, var(--gold-4)); box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px rgba(80,45,5,0.6), 0 3px 8px rgba(0,0,0,0.45); }
+  .card .ic svg{ width:20px; height:20px; color:#4a2e06; }
+  .card b{ position:relative; z-index:3; font-family:var(--font-display); font-size:18px; }
+  .card small{ position:relative; z-index:3; font-size:12.5px; line-height:1.35; opacity:.85; }
+  .wide{ grid-column: 1 / -1; min-height:auto; flex-direction:row; align-items:center; gap:12px; }
+  .wide .txt{ display:flex; flex-direction:column; gap:2px; position:relative; z-index:3; }
+
+  /* ---- the bottom tab bar, a bar of gold under glass with a lens of clear glass ---- */
+  .tabbar{ position:fixed; z-index:5; left:50%; bottom: calc(12px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    width:min(420px, calc(100% - 24px)); height:70px; border-radius:999px; display:flex; padding:7px; }
+  .tabbar::before{ border-radius:999px; }
+  .tabbar .lens{ position:absolute; top:7px; bottom:7px; left:7px; width:calc((100% - 14px)/5); border-radius:999px; z-index:3;
+    background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.12)); box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(0,0,0,0.35), inset 0 0 14px rgba(255,255,255,0.25);
+    transition: transform .55s var(--spring); }
+  .tab{ flex:1; position:relative; z-index:4; border:0; background:none; color:#3a2408; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    font: 800 10.5px var(--font-body); cursor:pointer; text-shadow: 0 1px 0 rgba(255,240,200,0.6); }
+  .tab svg{ width:23px; height:23px; transition: transform .45s var(--spring); }
+  .tab.on svg{ transform: scale(1.15); }
+
+  /* ---- the mockup's own switcher (not part of the game) ---- */
+  .switch{ position:fixed; z-index:9; top: calc(env(safe-area-inset-top) + 64px); right:8px; display:flex; flex-direction:column; gap:4px; font-size:10px; }
+  .switch button{ border:0; border-radius:10px; padding:5px 8px; font:700 10px var(--font-body); color:#fff; background: rgba(0,0,0,0.55); }
+  .switch button.on{ background: var(--gold-3); color:#2a1a04; }
+  .note{ text-align:center; font-size:11.5px; color: rgba(255,236,190,0.6); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<div class="room" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></g></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></g></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15 15h2a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7" r="1.2" fill="currentColor"/><circle cx="15" cy="7.5" r="1.2" fill="currentColor"/></g></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></g></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></g></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></g></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 6c3 1 6 1 9 0s6-1 9 0c0 8-4 13-9 13S3 14 3 6z"/><path d="M7 10.5c1-.8 2.4-.8 3.4 0M13.6 10.5c1-.8 2.4-.8 3.4 0"/></g></symbol>
+  </defs>
+</svg>
+
+<div class="switch" aria-label="Choix de la tête (maquette)">
+  <button id="swMask" class="on">Masque d’or</button>
+  <button id="swPhoto">Penalty</button>
+</div>
+
+<main class="app" id="app">
+  <div class="top">
+    <span class="og chips"><span class="coin"></span><b class="engraved">1 500</b><small class="engraved" style="font-weight:800">jetons</small></span>
+    <span class="sp"></span>
+    <button class="og round press" aria-label="Classement"><svg class="engraved" style="color:#3a2408"><use href="#i-crown"/></svg></button>
+  </div>
+
+  <img class="logo" src="art/logo.png" alt="Fap Fap">
+
+  <!-- the king -->
+  <section class="king">
+    <div class="king-head" id="head" role="button" aria-label="Le Roi d’or">
+      <svg viewBox="0 0 150 160" id="mask">
+        <defs>
+          <radialGradient id="gFace" cx="42%" cy="32%" r="75%">
+            <stop offset="0" stop-color="#fff6d2"/><stop offset=".18" stop-color="#f6d27a"/><stop offset=".5" stop-color="#d39a32"/><stop offset=".8" stop-color="#8a5a14"/><stop offset="1" stop-color="#4a2e06"/>
+          </radialGradient>
+          <linearGradient id="gCrown" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#fff3c6"/><stop offset=".45" stop-color="#e8b44c"/><stop offset="1" stop-color="#7a4f10"/>
+          </linearGradient>
+          <radialGradient id="gEye" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#d8cdb4"/></radialGradient>
+          <radialGradient id="gPupil" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#3a2a12"/><stop offset=".55" stop-color="#0b0703"/><stop offset="1" stop-color="#000"/></radialGradient>
+          <linearGradient id="gShine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
+        </defs>
+        <g id="headTilt">
+          <!-- crown -->
+          <path d="M38 34 L48 10 L62 28 L75 4 L88 28 L102 10 L112 34 Z" fill="url(#gCrown)" stroke="#5e3c0c" stroke-width="1.5" stroke-linejoin="round"/>
+          <circle cx="75" cy="10" r="4" fill="#c4202f" stroke="#fff3" stroke-width="1"/>
+          <circle cx="48" cy="14" r="3" fill="#1d6fb8"/><circle cx="102" cy="14" r="3" fill="#1d7a46"/>
+          <!-- face: a cast gold mask, strong jaw and cheekbones -->
+          <path d="M30 50 C30 30 52 30 75 30 C98 30 120 30 120 50 C122 72 118 92 110 110 C102 128 90 142 75 148 C60 142 48 128 40 110 C32 92 28 72 30 50 Z" fill="url(#gFace)" stroke="#4a2e06" stroke-width="2"/>
+          <!-- modelling: the sides of the face turn away from the light -->
+          <path d="M30 50 C28 74 32 94 40 110 C48 128 60 142 75 148 C62 136 52 118 46 98 C40 80 38 64 40 48 Z" fill="#3d2606" opacity=".38"/>
+          <path d="M120 50 C122 74 118 94 110 110 C102 128 90 142 75 148 C88 136 98 118 104 98 C110 80 112 64 110 48 Z" fill="#3d2606" opacity=".48"/>
+          <!-- cheekbones catching the light -->
+          <ellipse cx="50" cy="94" rx="11" ry="6" fill="#fff0c0" opacity=".28" transform="rotate(-20 50 94)"/>
+          <ellipse cx="100" cy="94" rx="11" ry="6" fill="#fff0c0" opacity=".18" transform="rotate(20 100 94)"/>
+          <!-- engraved scarifications on the cheeks -->
+          <g stroke="#5e3c0c" stroke-width="1.6" stroke-linecap="round" opacity=".7">
+            <path d="M40 100 L52 104"/><path d="M41 106 L52 109"/><path d="M43 112 L53 114"/>
+            <path d="M110 100 L98 104"/><path d="M109 106 L98 109"/><path d="M107 112 L97 114"/>
+          </g>
+          <!-- nose: bridge, wings, nostrils in shadow -->
+          <path d="M72 74 C71 88 68 98 64 104 C68 110 82 110 86 104 C82 98 79 88 78 74 Z" fill="#a8741c" opacity=".55"/>
+          <path d="M76 74 C77 86 79 96 82 102" stroke="#fff3c6" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/>
+          <ellipse cx="69" cy="105" rx="3.4" ry="2" fill="#2a1804" opacity=".75"/><ellipse cx="81" cy="105" rx="3.4" ry="2" fill="#2a1804" opacity=".75"/>
+          <!-- deep eye sockets -->
+          <path d="M38 70 C42 60 64 58 68 70 C64 78 44 80 38 70 Z" fill="#2a1804" opacity=".85"/>
+          <path d="M82 70 C86 58 108 60 112 70 C106 80 86 78 82 70 Z" fill="#2a1804" opacity=".85"/>
+          <!-- eyes: almond, ivory, pupils ringed with gold that follow the finger -->
+          <clipPath id="clipL"><path d="M41 70 C45 63 61 63 65 70 C61 76 45 76 41 70 Z"/></clipPath>
+          <clipPath id="clipR"><path d="M85 70 C89 63 105 63 109 70 C105 76 89 76 85 70 Z"/></clipPath>
+          <g clip-path="url(#clipL)"><rect x="38" y="60" width="30" height="20" fill="url(#gEye)"/>
+            <g id="pupilL"><circle cx="53" cy="70" r="5.2" fill="url(#gPupil)"/><circle cx="53" cy="70" r="5.6" fill="none" stroke="#d9a43a" stroke-width="1.4"/><circle cx="51.4" cy="68.2" r="1.3" fill="#fff"/></g>
+            <!-- heavy upper lid: a half-closed, scornful look -->
+            <path d="M38 60 L68 60 L68 68 C60 66 46 66 38 69 Z" fill="#b8822a"/>
+            <rect class="lid" x="38" y="60" width="30" height="20" fill="#b8822a"/></g>
+          <g clip-path="url(#clipR)"><rect x="82" y="60" width="30" height="20" fill="url(#gEye)"/>
+            <g id="pupilR"><circle cx="97" cy="70" r="5.2" fill="url(#gPupil)"/><circle cx="97" cy="70" r="5.6" fill="none" stroke="#d9a43a" stroke-width="1.4"/><circle cx="95.4" cy="68.2" r="1.3" fill="#fff"/></g>
+            <path d="M82 60 L112 60 L112 69 C104 66 90 66 82 68 Z" fill="#a8741c"/>
+            <rect class="lid" x="82" y="60" width="30" height="20" fill="#a8741c"/></g>
+          <path d="M41 70 C45 63 61 63 65 70" stroke="#3a2406" stroke-width="1.6" fill="none"/>
+          <path d="M85 70 C89 63 105 63 109 70" stroke="#3a2406" stroke-width="1.6" fill="none"/>
+          <!-- heavy brows, frowning toward the nose -->
+          <path class="brow-l" d="M36 60 C44 52 58 54 68 61 L66 64 C57 59 46 58 38 63 Z" fill="#6b4410" stroke="#3a2406" stroke-width="1"/>
+          <path class="brow-r" d="M114 60 C106 52 92 54 82 61 L84 64 C93 59 104 58 112 63 Z" fill="#6b4410" stroke="#3a2406" stroke-width="1"/>
+          <!-- lips with a crooked smirk; the mouth opens when he talks -->
+          <path d="M60 121 C66 117 72 119 75 120 C78 119 86 116 93 119 C88 122 82 123 75 123 C68 123 64 123 60 121 Z" fill="#8a5a14" stroke="#4a2e06" stroke-width="1.2"/>
+          <path class="mouth" d="M62 123 C68 126 84 126 92 121 C86 131 66 131 62 123 Z" fill="#1d1003"/>
+          <path d="M64 126 C70 132 82 132 90 125 C86 134 68 135 64 126 Z" fill="#c8902c" stroke="#4a2e06" stroke-width="1"/>
+          <!-- chin -->
+          <ellipse cx="75" cy="139" rx="9" ry="4" fill="#fff0c0" opacity=".2"/>
+          <!-- shine on the gold -->
+          <path d="M42 42 C54 35 70 34 84 36 C66 40 54 46 46 56 Z" fill="url(#gShine)" opacity=".75"/>
+        </g>
+      </svg>
+    </div>
+    <div class="og deep bubble" id="bubble"><span class="who">Le Roi d’or</span><span id="say" class="lit">Tu me regardes depuis tout à l’heure… Tu as peur ou quoi ?</span></div>
+    <button class="dare" id="dare">Ose me défier ›</button>
+  </section>
+
+  <!-- liquid gold -->
+  <div class="play" id="play">
+    <canvas id="gold"></canvas>
+    <div class="glass"></div>
+    <div class="label"><span><b class="lit">Jouer</b><small class="lit">Route du quartier · Ami en ligne · Carré la Pute</small></span><span class="chev"><svg width="22" height="22" style="color:#fff"><use href="#i-chev"/></svg></span></div>
+  </div>
+
+  <div class="grid">
+    <button class="og deep card press"><span class="ic"><svg><use href="#i-mask"/></svg></span><b class="lit">La Nuit des 33</b><small class="lit">Mode histoire · 32 joueurs entrent, un seul ressort.</small></button>
+    <button class="og deep card press"><span class="ic"><svg><use href="#i-cal"/></svg></span><b class="lit">Défi du jour</b><small class="lit">La même donne pour tout le quartier.</small></button>
+    <button class="og card wide press"><span class="ic"><svg><use href="#i-book"/></svg></span><span class="txt"><b class="engraved">Les règles</b><small class="engraved">CORA, Passe, victoires automatiques</small></span></button>
+  </div>
+  <p class="note">Maquette « Or sous verre » · incline le téléphone et touche l’or liquide</p>
+</main>
+
+<nav class="og tabbar" id="tabbar">
+  <span class="lens" id="lens"></span>
+  <button class="tab on"><svg><use href="#i-home"/></svg>Accueil</button>
+  <button class="tab"><svg><use href="#i-user"/></svg>Profil</button>
+  <button class="tab"><svg><use href="#i-bag"/></svg>Boutique</button>
+  <button class="tab"><svg><use href="#i-palette"/></svg>Décors</button>
+  <button class="tab"><svg><use href="#i-sliders"/></svg>Réglages</button>
+</nav>
+
+<script>
+(function(){
+  const root = document.documentElement.style;
+  // ---------- tilt: the light (and the liquid gold) follow the phone ----------
+  let tilt = {x:0, y:0}, gravity = {x:0, y:1};
+  function setTilt(x, y){
+    tilt.x = Math.max(-1, Math.min(1, x)); tilt.y = Math.max(-1, Math.min(1, y));
+    root.setProperty('--tx', tilt.x.toFixed(3)); root.setProperty('--ty', tilt.y.toFixed(3));
+  }
+  function onOrient(e){
+    if(e.gamma == null) return;
+    setTilt(e.gamma/35, (e.beta-40)/35);
+    gravity.x = Math.max(-1, Math.min(1, e.gamma/40)); gravity.y = Math.max(0.15, Math.min(1, (e.beta)/60));
+  }
+  window.addEventListener('pointerdown', function once(){
+    if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
+      DeviceOrientationEvent.requestPermission().then(p=>{ if(p==='granted') window.addEventListener('deviceorientation', onOrient); }).catch(()=>{});
+    } else window.addEventListener('deviceorientation', onOrient);
+    window.removeEventListener('pointerdown', once);
+  });
+
+  // ---------- the bottom bar's lens ----------
+  const tabs = [...document.querySelectorAll('.tab')], lens = document.getElementById('lens');
+  tabs.forEach((t,i)=> t.addEventListener('click', ()=>{
+    tabs.forEach((x,k)=> x.classList.toggle('on', k===i));
+    lens.style.transform = 'translateX('+(i*100)+'%) scaleX(1.12)';
+    setTimeout(()=> lens.style.transform = 'translateX('+(i*100)+'%)', 170);
+  }));
+  document.querySelectorAll('.press').forEach(b=> b.addEventListener('pointerup', ()=>{ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }));
+
+  // =====================================================================================
+  // LIQUID GOLD — a handful of blobs pulled down by the tilt, pushed by the finger, drawn as one
+  // molten surface (metaballs) with light on it
+  // =====================================================================================
+  const play = document.getElementById('play'), cv = document.getElementById('gold'), g = cv.getContext('2d');
+  const W = 230, H = 76;                // the simulation is small and smooth; the canvas is stretched
+  cv.width = W; cv.height = H;
+  const img = g.createImageData(W, H), px = img.data, F = new Float32Array(W*H);
+  const balls = [];
+  for(let i=0;i<13;i++) balls.push({x: 14 + i*16, y: 55 + Math.random()*10, vx:0, vy:0, r: 13 + Math.random()*7});
+  let finger = null;
+  function toLocal(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*W, y:(e.clientY-r.top)/r.height*H}; }
+  play.addEventListener('pointerdown', e=>{ finger = toLocal(e); finger.down = true; play.setPointerCapture(e.pointerId); });
+  play.addEventListener('pointermove', e=>{ const p = toLocal(e); if(finger){ finger.vx = p.x-finger.x; finger.vy = p.y-finger.y; } finger = Object.assign(finger||{}, p); });
+  play.addEventListener('pointerup', ()=>{ if(finger) finger.down = false; setTimeout(()=>{ if(finger && !finger.down) finger = null; }, 60); });
+  play.addEventListener('pointerleave', ()=>{ finger = null; });
+
+  function step(){
+    const gx = gravity.x*0.09, gy = gravity.y*0.12;
+    for(const b of balls){
+      b.vx += gx; b.vy += gy;
+      if(finger){
+        const dx = b.x - finger.x, dy = b.y - finger.y, d2 = dx*dx + dy*dy, rr = finger.down ? 900 : 380;
+        if(d2 < rr){ const d = Math.sqrt(d2)||1, f = (1 - d/Math.sqrt(rr)) * (finger.down ? 1.6 : 0.7); b.vx += dx/d*f + (finger.vx||0)*0.05; b.vy += dy/d*f + (finger.vy||0)*0.05; }
+      }
+      for(const o of balls){ if(o===b) continue; const dx = o.x-b.x, dy = o.y-b.y, d = Math.hypot(dx,dy)||1;
+        const want = (b.r+o.r)*0.55; const f = (d-want)*0.0025; b.vx += dx/d*f; b.vy += dy/d*f; }
+      b.vx *= 0.96; b.vy *= 0.96;
+      b.x += b.vx; b.y += b.vy;
+      const m = b.r*0.55;
+      if(b.x < m){ b.x = m; b.vx *= -0.5; } if(b.x > W-m){ b.x = W-m; b.vx *= -0.5; }
+      if(b.y < m){ b.y = m; b.vy *= -0.5; } if(b.y > H-m*0.6){ b.y = H-m*0.6; b.vy *= -0.4; }
+    }
+  }
+  const LX = -0.45, LY = -0.75, LZ = 0.5; // light from the top left
+  function draw(){
+    const t = performance.now()/1000;
+    // 1) the field of the molten pool, computed once per pixel
+    for(let y=0; y<H; y++) for(let x=0; x<W; x++){
+      let f = 0; for(const b of balls){ const dx = x-b.x, dy = y-b.y; f += (b.r*b.r)/(dx*dx + dy*dy + 1); }
+      F[y*W + x] = f;
+    }
+    // 2) shading: smooth edge (no stair steps), light and glint on the curved surface
+    for(let y=0; y<H; y++){
+      for(let x=0; x<W; x++){
+        const i = (y*W + x)*4, f = F[y*W + x];
+        // the empty glass behind: almost black, warmed by the gold nearby
+        const glow = Math.min(1, f/1.1);
+        const br = 14 + glow*glow*70, bg = 9 + glow*glow*42, bb = 4 + glow*glow*10;
+        const a = Math.max(0, Math.min(1, (f - 0.82)/0.16));   // soft rim of the liquid
+        if(a <= 0){ px[i] = br; px[i+1] = bg; px[i+2] = bb; px[i+3] = 255; continue; }
+        const xl = x>0 ? F[y*W + x-1] : f, xr = x<W-1 ? F[y*W + x+1] : f, yu = y>0 ? F[(y-1)*W + x] : f, yd = y<H-1 ? F[(y+1)*W + x] : f;
+        const nx = xl - xr, ny = yu - yd, nz = 0.6, nl = Math.hypot(nx, ny, nz);
+        const ux = nx/nl, uy = ny/nl, uz = nz/nl;
+        const diff = Math.max(0, -(ux*LX + uy*LY) + uz*LZ);
+        const spec = Math.pow(Math.max(0, uz*0.92 - (ux*(LX + tilt.x*0.4) + uy*(LY + tilt.y*0.3))*0.5), 26);
+        const depth = Math.min(1, (f - 0.82)*1.4);              // thicker gold is darker and richer
+        const ripple = 0.05*Math.sin(x*0.21 + t*2.2) * Math.sin(y*0.27 - t*1.6);
+        const k = (0.32 + diff*0.8 + ripple) * (0.6 + depth*0.4);
+        const r = Math.min(255, 80 + k*195 + spec*255), gg = Math.min(255, 44 + k*148 + spec*235), b2 = Math.min(255, 8 + k*52 + spec*175);
+        px[i] = br + (r-br)*a; px[i+1] = bg + (gg-bg)*a; px[i+2] = bb + (b2-bb)*a; px[i+3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+  }
+  function loop(){ step(); draw(); requestAnimationFrame(loop); }
+  loop();
+
+  // =====================================================================================
+  // LE ROI D'OR — follows the finger with its eyes and head, blinks, talks, taunts, dares you
+  // =====================================================================================
+  const head = document.getElementById('head'), tiltG = document.getElementById('headTilt');
+  const pupL = document.getElementById('pupilL'), pupR = document.getElementById('pupilR');
+  const bubble = document.getElementById('bubble'), sayEl = document.getElementById('say'), dare = document.getElementById('dare');
+  let photoMode = false;
+  const LINES = {
+    idle: ["Tu dors ? Le Fap Fap n’attend pas, mola.", "Tu tournes autour du pot depuis tout à l’heure. Joue !", "Je compte tes jetons d’ici. Il n’y en a pas beaucoup.", "Même ma grand-mère te bat. Et elle est aveugle."],
+    look: ["Ne me regarde pas comme ça. On ne regarde pas le Roi dans les yeux.", "Tes yeux tremblent. Ta main va trembler aussi.", "Je vois tout ce que tu fais. Même tes cartes, bientôt."],
+    fast: ["Arrête de gigoter, tu me donnes le tournis.", "Calme-toi ! On dirait un benskineur sans frein.", "Tu cherches la sortie ? Il n’y en a pas."],
+    near: ["Ne me touche pas. On ne touche pas la Couronne.", "Recule. Ou assieds-toi en face de moi.", "Approche encore… si tu oses."],
+    play: ["Ah, tu touches l’or ? Il faut le gagner, petit.", "Doucement avec mon or. Il n’est pas à toi.", "Tu as les mains sales. Va les laver avant de toucher l’or."],
+    tap: ["Enfin un peu de courage ! Ose me défier, si tu es un homme.", "Tu veux ma couronne ? Viens la chercher.", "D’accord. Cinq cartes. Toi et moi. Maintenant."]
+  };
+  const lastLine = {};
+  function pick(kind){ const a = LINES[kind]; let s; do{ s = a[Math.floor(Math.random()*a.length)]; } while(a.length>1 && s===lastLine[kind]); lastLine[kind] = s; return s; }
+  let talkT = null, lastSay = 0, angryT = null;
+  function say(kind, force){
+    if(!force && performance.now() - lastSay < 4200) return;
+    lastSay = performance.now();
+    const text = pick(kind);
+    sayEl.textContent = text;
+    bubble.classList.remove('say'); void bubble.offsetWidth; bubble.classList.add('say');
+    head.classList.add('talk');
+    clearTimeout(talkT); talkT = setTimeout(()=> head.classList.remove('talk'), Math.min(2600, 300 + text.length*38));
+    if(kind==='tap' || kind==='near'){ dare.classList.add('show'); }
+    if(kind==='near' || kind==='fast'){ head.classList.add('angry'); clearTimeout(angryT); angryT = setTimeout(()=> head.classList.remove('angry'), 1800); }
+  }
+  // where the eyes look: the finger (or the mouse); otherwise, slowly, around the room
+  let look = {x: innerWidth/2, y: innerHeight*0.65}, lastMove = performance.now(), speed = 0, prev = null;
+  window.addEventListener('pointermove', e=>{
+    const now = performance.now();
+    if(prev){ const d = Math.hypot(e.clientX-prev.x, e.clientY-prev.y), dt = Math.max(1, now-prev.t); speed = speed*0.8 + (d/dt)*0.2; }
+    prev = {x:e.clientX, y:e.clientY, t:now};
+    look = {x:e.clientX, y:e.clientY}; lastMove = now;
+    if(speed > 2.2) say('fast');
+    const r = head.getBoundingClientRect();
+    if(Math.hypot(e.clientX - (r.left+r.width/2), e.clientY - (r.top+r.height/2)) < r.width*0.75) say('near');
+  }, {passive:true});
+  window.addEventListener('pointerdown', e=>{ look = {x:e.clientX, y:e.clientY}; lastMove = performance.now(); }, {passive:true});
+  head.addEventListener('click', ()=> say('tap', true));
+  play.addEventListener('pointerdown', ()=> say('play'));
+  dare.addEventListener('click', ()=>{ sayEl.textContent = 'Assieds-toi. Je mélange… et je te laisse couper, par pitié.'; dare.classList.remove('show'); head.classList.add('talk'); setTimeout(()=> head.classList.remove('talk'), 1800); });
+
+  let eye = {x:0, y:0};
+  function eyesLoop(){
+    const r = head.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height*0.44;
+    let tx = look.x - cx, ty = look.y - cy;
+    const idle = performance.now() - lastMove > 5000;
+    if(idle){ const t = performance.now()/1000; tx = Math.sin(t*0.7)*160; ty = Math.cos(t*0.45)*80 + 40; }
+    const d = Math.hypot(tx, ty) || 1, k = Math.min(1, d/220);
+    const ax = tx/d*k, ay = ty/d*k;
+    eye.x += (ax - eye.x)*0.25; eye.y += (ay - eye.y)*0.25;
+    pupL.setAttribute('transform', 'translate('+(eye.x*5.2).toFixed(2)+' '+(eye.y*3).toFixed(2)+')');
+    pupR.setAttribute('transform', 'translate('+(eye.x*5.2).toFixed(2)+' '+(eye.y*3).toFixed(2)+')');
+    head.style.transform = 'rotate('+(eye.x*7).toFixed(2)+'deg) translateY('+(eye.y*3).toFixed(1)+'px)';
+    if(photoMode){
+      const ph = head.querySelector('.ph');
+      if(ph){ ph.style.transform = 'rotateY('+(eye.x*22).toFixed(1)+'deg) rotateX('+(-eye.y*16).toFixed(1)+'deg)';
+        ph.firstChild.style.transform = 'translate('+(eye.x*-6).toFixed(1)+'px,'+(eye.y*-4).toFixed(1)+'px)'; }
+    }
+    requestAnimationFrame(eyesLoop);
+  }
+  eyesLoop();
+  // blinking, now and then
+  (function blink(){ setTimeout(()=>{ head.classList.add('blink'); setTimeout(()=> head.classList.remove('blink'), 140); blink(); }, 2200 + Math.random()*3500); })();
+  // when nobody moves, he gets bored and pushes you
+  setInterval(()=>{ if(performance.now() - lastMove > 7000) say('idle'); else if(Math.random()<0.25) say('look'); }, 6000);
+
+  // ---------- the mockup's switch: golden mask, or Penalty's portrait turning toward you ----------
+  const svgMask = document.getElementById('mask');
+  document.getElementById('swPhoto').addEventListener('click', ()=>{
+    photoMode = true;
+    document.getElementById('swPhoto').classList.add('on'); document.getElementById('swMask').classList.remove('on');
+    head.classList.add('photo'); svgMask.style.display = 'none';
+    if(!head.querySelector('.ph')){ const ph = document.createElement('div'); ph.className = 'ph'; ph.innerHTML = '<img src="art/penalty.jpg" alt="">'; head.appendChild(ph); }
+    head.querySelector('.ph').style.display = '';
+    bubble.querySelector('.who').textContent = 'Penalty';
+  });
+  document.getElementById('swMask').addEventListener('click', ()=>{
+    photoMode = false;
+    document.getElementById('swMask').classList.add('on'); document.getElementById('swPhoto').classList.remove('on');
+    head.classList.remove('photo'); svgMask.style.display = '';
+    const ph = head.querySelector('.ph'); if(ph) ph.style.display = 'none';
+    bubble.querySelector('.who').textContent = 'Le Roi d’or';
+  });
+})();
+</script>
+</body>
+</html>
