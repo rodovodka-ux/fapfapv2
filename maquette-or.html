@@ -152,7 +152,9 @@
       linear-gradient(105deg, transparent calc(30% + var(--tx)*30%), rgba(255,255,255,0.35) calc(36% + var(--tx)*30%), transparent calc(44% + var(--tx)*30%));
     box-shadow: inset 0 0 30px rgba(255,220,150,0.18); }
   .play .label{ position:absolute; inset:0; display:flex; align-items:center; padding: 0 24px; gap:14px; pointer-events:none; }
-  .play .label b{ font-family:var(--font-display); font-size:40px; letter-spacing:-0.01em; }
+  .play .label b{ font-family:var(--font-display); font-size:38px; letter-spacing:-0.01em; line-height:1; }
+  .play .lbl-col{ height:100%; display:flex; flex-direction:column; justify-content:space-between; padding: 8px 0 12px; }
+  .play .lbl-col small{ max-width:none; font-weight:800; }
   .play .label small{ display:block; font-size:12.5px; font-weight:700; opacity:.9; max-width:170px; line-height:1.3; }
   .play .chev{ margin-left:auto; width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
     background: rgba(255,255,255,0.18); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 2px 6px rgba(0,0,0,0.4); }
@@ -295,7 +297,7 @@
   <div class="play" id="play">
     <canvas id="gold"></canvas>
     <div class="glass"></div>
-    <div class="label"><span><b class="lit">Jouer</b><small class="lit">Route du quartier · Ami en ligne · Carré la Pute</small></span><span class="chev"><svg width="22" height="22" style="color:#fff"><use href="#i-chev"/></svg></span></div>
+    <div class="label"><span class="lbl-col"><b class="lit">Jouer</b><small class="engraved">Route du quartier · Ami en ligne · Carré la Pute</small></span><span class="chev"><svg width="22" height="22" style="color:#fff"><use href="#i-chev"/></svg></span></div>
   </div>
 
   <div class="grid">
@@ -346,69 +348,111 @@
   document.querySelectorAll('.press').forEach(b=> b.addEventListener('pointerup', ()=>{ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }));
 
   // =====================================================================================
-  // LIQUID GOLD — a handful of blobs pulled down by the tilt, pushed by the finger, drawn as one
-  // molten surface (metaballs) with light on it
+  // LIQUID GOLD — the capsule is a small aquarium seen from the front, filled to 3/5 with molten gold.
+  // The surface stays level with the ground: it leans when the phone tilts, sloshes when it moves,
+  // and makes waves (and a splash) where the finger touches it.
   // =====================================================================================
   const play = document.getElementById('play'), cv = document.getElementById('gold'), g = cv.getContext('2d');
-  const W = 230, H = 76;                // the simulation is small and smooth; the canvas is stretched
-  cv.width = W; cv.height = H;
-  const img = g.createImageData(W, H), px = img.data, F = new Float32Array(W*H);
-  const balls = [];
-  for(let i=0;i<13;i++) balls.push({x: 14 + i*16, y: 55 + Math.random()*10, vx:0, vy:0, r: 13 + Math.random()*7});
-  let finger = null;
-  function toLocal(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*W, y:(e.clientY-r.top)/r.height*H}; }
-  play.addEventListener('pointerdown', e=>{ finger = toLocal(e); finger.down = true; play.setPointerCapture(e.pointerId); });
-  play.addEventListener('pointermove', e=>{ const p = toLocal(e); if(finger){ finger.vx = p.x-finger.x; finger.vy = p.y-finger.y; } finger = Object.assign(finger||{}, p); });
-  play.addEventListener('pointerup', ()=>{ if(finger) finger.down = false; setTimeout(()=>{ if(finger && !finger.down) finger = null; }, 60); });
-  play.addEventListener('pointerleave', ()=>{ finger = null; });
-
-  function step(){
-    const gx = gravity.x*0.09, gy = gravity.y*0.12;
-    for(const b of balls){
-      b.vx += gx; b.vy += gy;
-      if(finger){
-        const dx = b.x - finger.x, dy = b.y - finger.y, d2 = dx*dx + dy*dy, rr = finger.down ? 900 : 380;
-        if(d2 < rr){ const d = Math.sqrt(d2)||1, f = (1 - d/Math.sqrt(rr)) * (finger.down ? 1.6 : 0.7); b.vx += dx/d*f + (finger.vx||0)*0.05; b.vy += dy/d*f + (finger.vy||0)*0.05; }
-      }
-      for(const o of balls){ if(o===b) continue; const dx = o.x-b.x, dy = o.y-b.y, d = Math.hypot(dx,dy)||1;
-        const want = (b.r+o.r)*0.55; const f = (d-want)*0.0025; b.vx += dx/d*f; b.vy += dy/d*f; }
-      b.vx *= 0.96; b.vy *= 0.96;
-      b.x += b.vx; b.y += b.vy;
-      const m = b.r*0.55;
-      if(b.x < m){ b.x = m; b.vx *= -0.5; } if(b.x > W-m){ b.x = W-m; b.vx *= -0.5; }
-      if(b.y < m){ b.y = m; b.vy *= -0.5; } if(b.y > H-m*0.6){ b.y = H-m*0.6; b.vy *= -0.4; }
-    }
+  const FILL = 0.6;                                  // 3/5 of the height
+  const N = 64;                                      // columns of the surface
+  const h = new Float32Array(N), v = new Float32Array(N);   // height of each column above/below the rest level, and its speed
+  let W = 0, H = 0, dpr = 1, slope = 0, slopeV = 0, finger = null, drops = [];
+  function resize(){
+    const r = play.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = Math.round(r.width*dpr); H = Math.round(r.height*dpr);
+    cv.width = W; cv.height = H;
   }
-  const LX = -0.45, LY = -0.75, LZ = 0.5; // light from the top left
+  resize(); window.addEventListener('resize', resize);
+  const colOf = x=> Math.max(0, Math.min(N-1, Math.round(x/W*(N-1))));
+  function toLocal(e){ const r = cv.getBoundingClientRect(); return {x:(e.clientX-r.left)*dpr, y:(e.clientY-r.top)*dpr}; }
+  function surfaceY(i){ return H*(1-FILL) + (i/(N-1) - 0.5)*W*slope - h[i]*dpr; }
+  function poke(p, strength){
+    const i = colOf(p.x);
+    for(let k=-3;k<=3;k++){ const j = i+k; if(j<0||j>=N) continue; v[j] += strength*(1 - Math.abs(k)/4); }
+  }
+  play.addEventListener('pointerdown', e=>{
+    const p = toLocal(e); finger = Object.assign(p, {down:true, vx:0, vy:0});
+    play.setPointerCapture(e.pointerId);
+    const i = colOf(p.x), sy = surfaceY(i);
+    // a tap on the gold: it sinks under the finger, a few drops jump out
+    poke(p, p.y > sy ? -9 : -5);
+    for(let k=0;k<6;k++) drops.push({x:p.x + (Math.random()-0.5)*20*dpr, y:sy, vx:(Math.random()-0.5)*3*dpr, vy:-(2.5+Math.random()*3)*dpr, r:(1.5+Math.random()*2.5)*dpr});
+  });
+  play.addEventListener('pointermove', e=>{
+    if(!finger) return;
+    const p = toLocal(e); finger.vx = p.x - finger.x; finger.vy = p.y - finger.y; finger.x = p.x; finger.y = p.y;
+    // stirring: the finger drags the surface with it
+    const i = colOf(p.x), sy = surfaceY(i);
+    if(Math.abs(p.y - sy) < 40*dpr || p.y > sy) poke(p, finger.vy*0.25 - Math.abs(finger.vx)*0.08);
+  });
+  const release = ()=>{ finger = null; };
+  play.addEventListener('pointerup', release); play.addEventListener('pointercancel', release);
+
+  let lastT = performance.now();
+  function step(){
+    // the level leans with the phone (perpendicular to gravity); the change itself makes the gold slosh
+    const target = Math.max(-0.35, Math.min(0.35, gravity.x*0.45));
+    slopeV += (target - slope)*0.06; slopeV *= 0.82;
+    const before = slope; slope += slopeV;
+    const dS = slope - before;
+    for(let i=0;i<N;i++) v[i] += dS*(i/(N-1) - 0.5)*W/dpr*0.9;
+    // a field of springs: each column wants to go back to the level, and passes its motion to its neighbours
+    for(let i=0;i<N;i++){ v[i] += -0.035*h[i]; v[i] *= 0.975; h[i] += v[i]; }
+    for(let pass=0; pass<6; pass++){
+      for(let i=0;i<N;i++){
+        if(i>0){ const d = 0.12*(h[i]-h[i-1]); v[i-1] += d; }
+        if(i<N-1){ const d = 0.12*(h[i]-h[i+1]); v[i+1] += d; }
+      }
+    }
+    // the liquid stays in the glass
+    let mean = 0; for(let i=0;i<N;i++) mean += h[i]; mean /= N; for(let i=0;i<N;i++) h[i] -= mean;
+    // drops of gold flying and falling back
+    drops = drops.filter(d=>{ d.vy += 0.35*dpr*0.5; d.x += d.vx; d.y += d.vy; const i = colOf(d.x);
+      if(d.vy > 0 && d.y >= surfaceY(i)){ v[i] -= 1.2; return false; } return d.y < H; });
+  }
+
   function draw(){
     const t = performance.now()/1000;
-    // 1) the field of the molten pool, computed once per pixel
-    for(let y=0; y<H; y++) for(let x=0; x<W; x++){
-      let f = 0; for(const b of balls){ const dx = x-b.x, dy = y-b.y; f += (b.r*b.r)/(dx*dx + dy*dy + 1); }
-      F[y*W + x] = f;
+    g.clearRect(0, 0, W, H);
+    // surface points (smoothed)
+    const pts = [];
+    for(let i=0;i<N;i++) pts.push([i/(N-1)*W, surfaceY(i)]);
+    const top = Math.min(...pts.map(p=> p[1]));
+    // the body of the gold: light near the surface, deep and dark at the bottom
+    g.beginPath();
+    g.moveTo(0, H); g.lineTo(pts[0][0], pts[0][1]);
+    for(let i=1;i<N-1;i++){ const mx = (pts[i][0]+pts[i+1][0])/2, my = (pts[i][1]+pts[i+1][1])/2; g.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
+    g.lineTo(pts[N-1][0], pts[N-1][1]); g.lineTo(W, H); g.closePath();
+    const body = g.createLinearGradient(0, top, 0, H);
+    body.addColorStop(0, '#ffe7a0'); body.addColorStop(0.12, '#f3c45e'); body.addColorStop(0.45, '#c98d26'); body.addColorStop(0.8, '#7a4f10'); body.addColorStop(1, '#4a2e06');
+    g.fillStyle = body; g.fill();
+    // inside the gold: slow molten swirls and a light band that follows the tilt
+    g.save(); g.clip();
+    for(let k=0;k<3;k++){
+      const x = W*(0.2 + 0.3*k) + Math.sin(t*0.6 + k*2)*W*0.08 + tilt.x*W*0.1;
+      const y = top + (H-top)*(0.45 + 0.15*Math.sin(t*0.5 + k));
+      const rg = g.createRadialGradient(x, y, 0, x, y, H*0.6);
+      rg.addColorStop(0, 'rgba(255,236,170,0.28)'); rg.addColorStop(1, 'rgba(255,236,170,0)');
+      g.fillStyle = rg; g.fillRect(0, 0, W, H);
     }
-    // 2) shading: smooth edge (no stair steps), light and glint on the curved surface
-    for(let y=0; y<H; y++){
-      for(let x=0; x<W; x++){
-        const i = (y*W + x)*4, f = F[y*W + x];
-        // the empty glass behind: almost black, warmed by the gold nearby
-        const glow = Math.min(1, f/1.1);
-        const br = 14 + glow*glow*70, bg = 9 + glow*glow*42, bb = 4 + glow*glow*10;
-        const a = Math.max(0, Math.min(1, (f - 0.82)/0.16));   // soft rim of the liquid
-        if(a <= 0){ px[i] = br; px[i+1] = bg; px[i+2] = bb; px[i+3] = 255; continue; }
-        const xl = x>0 ? F[y*W + x-1] : f, xr = x<W-1 ? F[y*W + x+1] : f, yu = y>0 ? F[(y-1)*W + x] : f, yd = y<H-1 ? F[(y+1)*W + x] : f;
-        const nx = xl - xr, ny = yu - yd, nz = 0.6, nl = Math.hypot(nx, ny, nz);
-        const ux = nx/nl, uy = ny/nl, uz = nz/nl;
-        const diff = Math.max(0, -(ux*LX + uy*LY) + uz*LZ);
-        const spec = Math.pow(Math.max(0, uz*0.92 - (ux*(LX + tilt.x*0.4) + uy*(LY + tilt.y*0.3))*0.5), 26);
-        const depth = Math.min(1, (f - 0.82)*1.4);              // thicker gold is darker and richer
-        const ripple = 0.05*Math.sin(x*0.21 + t*2.2) * Math.sin(y*0.27 - t*1.6);
-        const k = (0.32 + diff*0.8 + ripple) * (0.6 + depth*0.4);
-        const r = Math.min(255, 80 + k*195 + spec*255), gg = Math.min(255, 44 + k*148 + spec*235), b2 = Math.min(255, 8 + k*52 + spec*175);
-        px[i] = br + (r-br)*a; px[i+1] = bg + (gg-bg)*a; px[i+2] = bb + (b2-bb)*a; px[i+3] = 255;
-      }
-    }
-    g.putImageData(img, 0, 0);
+    const band = g.createLinearGradient(0, 0, W, 0);
+    const bx = 0.35 + tilt.x*0.25;
+    band.addColorStop(Math.max(0, bx-0.12), 'rgba(255,255,255,0)'); band.addColorStop(bx, 'rgba(255,250,220,0.22)'); band.addColorStop(Math.min(1, bx+0.12), 'rgba(255,255,255,0)');
+    g.fillStyle = band; g.fillRect(0, 0, W, H);
+    g.restore();
+    // the surface itself: a bright molten rim, with a soft glow above it
+    g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+    for(let i=1;i<N-1;i++){ const mx = (pts[i][0]+pts[i+1][0])/2, my = (pts[i][1]+pts[i+1][1])/2; g.quadraticCurveTo(pts[i][0], pts[i][1], mx, my); }
+    g.lineTo(pts[N-1][0], pts[N-1][1]);
+    g.shadowColor = 'rgba(255,214,120,0.9)'; g.shadowBlur = 14*dpr;
+    g.strokeStyle = 'rgba(255,248,220,0.95)'; g.lineWidth = 2.2*dpr; g.stroke();
+    g.shadowBlur = 0;
+    g.strokeStyle = 'rgba(255,255,255,0.5)'; g.lineWidth = 0.8*dpr; g.stroke();
+    // the drops
+    for(const d of drops){ const rg = g.createRadialGradient(d.x - d.r*0.3, d.y - d.r*0.3, 0, d.x, d.y, d.r);
+      rg.addColorStop(0, '#fff6d0'); rg.addColorStop(0.5, '#e8b44c'); rg.addColorStop(1, '#8a5a14');
+      g.fillStyle = rg; g.beginPath(); g.arc(d.x, d.y, d.r, 0, Math.PI*2); g.fill(); }
   }
   function loop(){ step(); draw(); requestAnimationFrame(loop); }
   loop();
