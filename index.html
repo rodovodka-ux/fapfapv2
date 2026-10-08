@@ -2105,6 +2105,11 @@
   .sc-lamp.dip .glass{ filter: brightness(0.55) saturate(1.4); }
   .sc-lamp.dip .lamp-dark{ filter: brightness(0.85); }
 
+  /* ---- the bottom tab bar stays on the five main pages (Accueil, Profil, Boutique, Décors, Réglages) ---- */
+  #homeTabbar{ z-index:61; transition: transform .35s var(--spring), opacity .25s; }
+  body:not(.tabs-on) #homeTabbar{ opacity:0; pointer-events:none; transform: translateX(-50%) translateY(30px); }
+  body.tabs-on :is(#statsOverlay, #shopPage, #skinsOverlay, #settingsPage) .page-body{ padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+
   /* ---- the "le jeu a déménagé" banner on the old addresses ---- */
   .moved-banner{ display:flex; flex-direction:column; gap:6px; margin:0 0 12px; padding:12px 14px; border-radius:20px; color:#fff; text-align:left;
     background: linear-gradient(135deg, rgba(214,58,71,0.92), rgba(142,20,32,0.92)); box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-size:13px; line-height:1.4; }
@@ -5894,7 +5899,25 @@
   };
   function inHome(){ return Nav.stack.length===1 && Nav.stack[0]==='menuOverlay'; }
   // the scene behind the glass: the table while a game is on screen, the bar everywhere else
-  function syncScene(){ document.body.classList.toggle('in-game', Nav.stack.length===0); }
+  function syncScene(){ document.body.classList.toggle('in-game', Nav.stack.length===0); if(window.tabsSync) window.tabsSync(); }
+  // the five pages of the bottom tab bar, in its order
+  const TAB_PAGES = ['menuOverlay','statsOverlay','shopPage','skinsOverlay','settingsPage'];
+  // going to a tab: from home it opens on top of home; from another tab it takes that tab's place, sliding the
+  // way of the bar (so "back" from any tab always lands on Accueil)
+  function goTab(id){
+    const cur = Nav.cur();
+    if(cur===id) return;
+    if(id==='menuOverlay'){ if(Nav.stack[0]==='menuOverlay') Nav.home(); return; }
+    if(cur==='menuOverlay' || !TAB_PAGES.includes(cur) || Nav.stack[0]!=='menuOverlay'){ Nav.go(id); return; }
+    const dir = TAB_PAGES.indexOf(id) > TAB_PAGES.indexOf(cur) ? 'fwd' : 'back';
+    pageLeft(cur);
+    Nav._out(cur, dir);
+    Nav.stack[Nav.stack.length-1] = id;
+    Nav._known.add(id);
+    Nav._in(id, dir);
+    sfxSwipe(dir==='back');
+    syncScene(); Nav.healSoon();
+  }
   function inGame(){ return Nav.stack.length===0; }
   // ---- The phone's back button ----
   // The history always holds exactly two entries of this page and the game sits on the second one. A back press
@@ -7906,7 +7929,7 @@
   document.getElementById('btnGoPlay').addEventListener('click', ()=>{ ensureAudio(); Nav.go('playPage'); });
   document.getElementById('modeAI').addEventListener('click', ()=>{ ensureAudio(); Nav.go('oppSelectOverlay'); });
   document.getElementById('btnShowRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
-  document.getElementById('btnShowSettings').addEventListener('click', ()=> Nav.go('settingsPage'));
+  document.getElementById('btnShowSettings').addEventListener('click', ()=> goTab('settingsPage'));
   document.getElementById('btnProfTrophies').addEventListener('click', ()=> Nav.go('trophiesOverlay'));
   document.getElementById('btnProfSkins').addEventListener('click', ()=> Nav.go('skinsOverlay'));
 
@@ -7921,7 +7944,7 @@
     }).join('');
   }
   // trophies are reached from the profile now; the home tab bar has the shop in their place
-  document.getElementById('btnShowShop').addEventListener('click', ()=> Nav.go('shopPage'));
+  document.getElementById('btnShowShop').addEventListener('click', ()=> goTab('shopPage'));
   document.getElementById('chipsBar').addEventListener('click', ()=> Nav.go('shopPage'));
   // ---- Décors screen ----
   function renderSkins(){
@@ -7950,7 +7973,7 @@
       box.appendChild(g);
     });
   }
-  document.getElementById('btnShowSkins').addEventListener('click', ()=> Nav.go('skinsOverlay'));
+  document.getElementById('btnShowSkins').addEventListener('click', ()=> goTab('skinsOverlay'));
   applySkins();
   fillAllAvatars();
   applyOppNameToUI();
@@ -9404,7 +9427,7 @@
         '<div class="stats-row"><span class="label">Taux de bluff des adversaires (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
       '</div>';
   }
-  document.getElementById('btnShowStats').addEventListener('click', ()=> Nav.go('statsOverlay'));
+  document.getElementById('btnShowStats').addEventListener('click', ()=> goTab('statsOverlay'));
 
   // Carré la Pute: choose 2, 3 or 4 players (and the stake), or open a table online with friends
   document.getElementById('modeSquare').addEventListener('click', ()=>{ ensureAudio(); Nav.go('carrePage'); });
@@ -10552,15 +10575,29 @@
       if(!g) return;
       g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop');
     }, {passive:true});
-    // home tab bar: the glass lens slides to the tab that was touched
-    const tabs = [...document.querySelectorAll('#homeTabbar .tab')], lens = document.getElementById('tabLens');
-    function lensTo(i){
+    // ---- the tab bar at the bottom: Accueil · Profil · Boutique · Décors · Réglages ----
+    // It stays on screen on all five pages; touching a tab swaps the page (no pile of pages to go back through),
+    // and the glass lens slides to the tab of the page shown.
+    const bar = document.getElementById('homeTabbar');
+    document.body.appendChild(bar); // out of the home page, so it can stay while the pages change
+    const tabs = [...bar.querySelectorAll('.tab')], lens = document.getElementById('tabLens');
+    let lensAt = 0;
+    function lensTo(i, quick){
       tabs.forEach((t, k)=> t.classList.toggle('on', k===i));
+      if(i===lensAt && quick) return;
+      lensAt = i;
       lens.style.transform = 'translateX('+(i*100)+'%) scaleX(1.12)';
-      setTimeout(()=>{ lens.style.transform = 'translateX('+(i*100)+'%)'; }, 170);
+      setTimeout(()=>{ if(lensAt===i) lens.style.transform = 'translateX('+(i*100)+'%)'; }, 170);
     }
-    tabs.forEach((t, i)=> t.addEventListener('pointerdown', ()=> lensTo(i)));
-    window.homeTabsReset = ()=>{ if(lens.style.transform && lens.style.transform !== 'translateX(0%)') lensTo(0); };
+    window.tabsSync = ()=>{
+      const cur = Nav.cur(), i = TAB_PAGES.indexOf(cur);
+      const on = i>=0 && Nav.stack[0]==='menuOverlay' && Nav.stack.length<=2 && !Nav.fromPause;
+      document.body.classList.toggle('tabs-on', on);
+      if(on) lensTo(i, true);
+    };
+    tabs.forEach((t, i)=> t.addEventListener('click', ()=>{ lensTo(i); goTab(TAB_PAGES[i]); }));
+    window.homeTabsReset = ()=> window.tabsSync();
+    window.tabsSync();
   })();
 
   // ===================== The storm table: raindrops rippling on the table, lightning, then the thunder =====================
