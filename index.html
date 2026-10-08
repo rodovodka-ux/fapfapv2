@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@800&display=swap" rel="stylesheet">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -1466,7 +1466,7 @@
       radial-gradient(ellipse 90% 45% at 50% 52%, rgba(8,5,3,0.55), rgba(8,5,3,0) 75%),
       linear-gradient(180deg, rgba(8,5,3,0.10) 0%, rgba(8,5,3,0.30) 30%, rgba(8,5,3,0.45) 60%, rgba(8,5,3,0.80) 100%),
       linear-gradient(var(--h-tint), var(--h-tint)),
-      url('art/home-bar.jpg') center top / cover no-repeat, #0d0804 !important;
+      url('art/fond-dragon.webp') 64% 38% / cover no-repeat, #0b0705 !important;
     background-blend-mode: normal, normal, color, normal !important;
   }
   body.table-velours{ --h-tint: rgba(190,18,34,0.62); --p1:#ff9484; --p2:#e0343f; --p3:#a3121f; --pd:#5c0a12; --pt:#fff4f0; --ps:#ffd9d2; --ic1:#ff9e8e; --ic2:#b81f2c; --ict:#fff4f0; }
@@ -1555,6 +1555,11 @@
     mix-blend-mode: overlay; animation: logoShine 5.5s ease-in-out 2.2s infinite;
   }
   @keyframes logoShine{ 0%{ background-position:160% 0; } 28%,100%{ background-position:-60% 0; } }
+  /* the engraved gold logo (logo B, 2026-10-08): no sweeping light, a calm fade-in, the dragon behind kept readable */
+  .logo.has-img:has(.logo-svg)::after{ display:none; }
+  .logo-svg{ overflow:visible; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.75)) !important; }
+  .intro .logo-svg{ animation: fadeUp 0.7s ease 0.1s backwards !important; }
+  .lg-scene .sc-shade{ background: linear-gradient(180deg, rgba(6,4,8,0.40) 0%, rgba(6,4,8,0.18) 28%, rgba(6,4,8,0.55) 52%, rgba(6,4,8,0.85) 100%) !important; }
   @keyframes logoDrop{
     0%{ opacity:0; transform: translateY(-90px) scale(0.55) rotate(-8deg); }
     60%{ opacity:1; transform: translateY(8px) scale(1.06) rotate(2deg); }
@@ -1789,7 +1794,8 @@
   body{ background:#0b0704; }
   .lg-scene{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
   .lg-scene > div{ position:absolute; inset:0; transition: opacity .6s ease; }
-  .lg-scene .sc-photo{ position:absolute; inset:-3%; background:url('art/home-bar.jpg') center 22% / cover no-repeat; transform: scale(1.04); }
+  .lg-scene .sc-photo{ position:absolute; inset:-3%; background:url('art/fond-dragon.webp') 64% 38% / cover no-repeat; transform: scale(1.04); }
+  .lg-scene .sc-tint{ display:none; } /* the dragon keeps its own fire and ice colours */
   .lg-scene .sc-tint{ position:absolute; inset:0; background: var(--h-tint); mix-blend-mode: color; }
   .lg-scene .sc-shade{ position:absolute; inset:0; background:
       radial-gradient(120% 70% at 50% 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.35) 78%),
@@ -3227,7 +3233,7 @@
     </div>
 
     <div class="home-top">
-      <h2 class="logo has-img" aria-label="Fap Fap"><img class="logo-img" src="art/logo.png" alt="Fap Fap" width="857" height="446" onerror="this.parentNode.classList.remove('has-img'); this.remove();"><span class="logo-txt"><span style="--i:0">F</span><span style="--i:1">a</span><span style="--i:2">p</span><span class="sp"></span><span style="--i:3">F</span><span style="--i:4">a</span><span style="--i:5">p</span></span></h2>
+      <h2 class="logo has-img" aria-label="Fap Fap"><svg class="logo-img logo-svg" viewBox="0 0 360 124" role="img" aria-label="Fap Fap"><defs><linearGradient id="lgGoldB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7d6"/><stop offset=".32" stop-color="#f5d06e"/><stop offset=".52" stop-color="#b8862b"/><stop offset=".62" stop-color="#e9bd55"/><stop offset=".85" stop-color="#fbe39a"/><stop offset="1" stop-color="#9c6a1a"/></linearGradient></defs><path d="M30 20 H150 M210 20 H330 M30 24 H140 M220 24 H330" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M30 84 H330 M40 88 H320" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M180 12 l7 8 l-7 8 l-7 -8 Z" fill="url(#lgGoldB)"/><g font-family="Cinzel, 'Times New Roman', serif" font-weight="800" font-size="50" letter-spacing="7"><text x="180" y="72" text-anchor="middle" fill="#1a0f02" opacity=".7" transform="translate(0 2.5)">FAP FAP</text><text x="180" y="72" text-anchor="middle" fill="url(#lgGoldB)" stroke="#5a3a08" stroke-width=".7">FAP FAP</text></g><path transform="translate(180 102) scale(.62)" d="M0 14 C0 14 -12 6 -12 -1 C-12 -6 -8.5 -9 -4.6 -9 C-2.3 -9 -0.5 -7.6 0 -5.6 C0.5 -7.6 2.3 -9 4.6 -9 C8.5 -9 12 -6 12 -1 C12 6 0 14 0 14 Z" fill="#c4202f" stroke="#f5d06e" stroke-width="1.6"/></svg><span class="logo-txt"></span></h2>
       <p class="home-tag">Le jeu de cartes du quartier</p>
     </div>
 
