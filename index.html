@@ -3197,7 +3197,7 @@
     <button class="lg gl tinted hx-go press" id="hxGo"><b id="hxGoT">Commencer</b><small id="hxGoS"></small></button>
     <div class="hx-list" id="hxList"></div>
     <div class="hx-ends" id="hxEnds"></div>
-    <p class="small-note">Un nouveau chapitre chaque jour. Tes choix comptent : certains ne se rattrapent pas. Les mises en jetons sont réelles.</p>
+    <p class="small-note">Joue d’une traite ou reprends quand tu veux : ta progression est gardée. Tes choix comptent, certains ne se rattrapent pas. Les mises en jetons sont réelles.</p>
   </div>
 </div>
 
@@ -10088,9 +10088,8 @@
   function stUnlocked(ch){
     const P = stGet();
     if(ch<=1) return true;
-    const prev = P.done[ch-1];
-    if(!prev) return false;
-    return !!(P.replay || P.paid[ch] || STORY_DEBUG || prev < dayKey());
+    // the story is played straight through: a chapter opens as soon as the one before is finished
+    return !!P.done[ch-1];
   }
   function stChapterTitle(k){ const c = CHAPTERS[k-1]; return c ? stVal(c.t, stGet().S) : ''; }
 
@@ -10139,10 +10138,11 @@
     }).join('');
   }
   document.getElementById('btnStory').addEventListener('click', ()=> Nav.go('storyPage'));
+  renderStoryHome(); // the home screen was drawn before the story was loaded: show where the player stands
   document.getElementById('hxGo').addEventListener('click', ()=>{
     const P = stGet();
     if(P.ch>CHAPTERS.length){
-      askConfirm('Recommencer l’histoire ?', 'Tu repars du chapitre 1, sans attendre entre les chapitres. Tes fins découvertes restent.', 'Recommencer', ()=>{
+      askConfirm('Recommencer l’histoire ?', 'Tu repars du chapitre 1 pour découvrir une autre fin. Tes fins découvertes restent.', 'Recommencer', ()=>{
         Object.assign(P, {ch:1, i:0, S:stFresh(), done:{}, paid:{}, replay:true}); saveProfile(); renderStory(); hxOpen();
       });
       return;
