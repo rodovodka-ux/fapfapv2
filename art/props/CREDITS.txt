@@ -1,0 +1,4 @@
+Objets posés sur les tables : rendus 3D faits pour FAP FAP à partir de modèles Poly Haven (https://polyhaven.com), licence CC0 :
+cigarette_pack, vintage_lighter, vintage_oil_lamp, boombox, brass_goblets, wine_bottles_01, tea_set_01, wooden_bowl_01,
+pocket_watch, service_pistol, can_rusted, lemon, brass_candleholders, cigarette_case, round_spectacles, portable_cassette_player.
+Jetons, liasse, bouteille de bière et verre : modélisés directement (models-src/render.html).
