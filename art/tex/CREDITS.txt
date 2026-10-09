@@ -3,3 +3,4 @@ wood_table_worn, lacquered_cherry_wood, wood_table_001, dark_wood, velour_velvet
 corrugated_iron, rusty_corrugated_iron, rough_linen, quatrefoil_jacquard_fabric, plywood,
 red_sand, coast_sand_02, fine_grained_wood, granite_tile.
 Réduites en 768 x 768, WebP qualité 0,72.
+v42 : wood_floor_deck, black_painted_planks, metal_plate, metal_plate_02, blue_metal_plate, marble_rock_01, marble_rock_02, weathered_planks, slate_floor, leather_red_03, fabric_pattern_07, mossy_rock, large_sandstone_blocks, snow_02, volcanic_rock_tiles, flamed_black_veneer, coral_gravel, white_sandstone_blocks_02.
