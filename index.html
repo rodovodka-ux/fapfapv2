@@ -2337,6 +2337,53 @@
   .avatar .av-mask{ position:absolute; inset:0; display:grid; place-items:center; background:#0e0a06; border-radius:inherit; overflow:hidden; }
   .avatar .av-mask svg{ width:118%; height:auto; margin-top:12%; }
 
+  /* =====================================================================================
+     AMBIANCE « NUIT DE YAOUNDÉ » (v39, maquette validée par l'utilisateur) — the game lives in the novel's world:
+     the city at night behind the menus, the novel's places behind the table, people in photographs.
+     Real glass only on the chips, « Jouer » and the tab bar; everything else is a solid dark card.
+     ===================================================================================== */
+  body{ background:#07060a; }
+  .lg-scene .sc-photo{ background:url('art/livre/lieu-yaounde.webp') 50% 30% / cover no-repeat; }
+  .lg-scene .sc-shade{ background: linear-gradient(180deg, rgba(7,6,10,.55) 0%, rgba(7,6,10,.78) 40%, rgba(7,6,10,.94) 75%, #07060a 100%) !important; }
+  /* blur behind translucent panels is the most expensive effect on iPhone: only the three glass pieces keep it */
+  body *:not(#chipsBar):not(#btnGoPlay):not(#homeTabbar):not(.lg-mirror):not(.lg-mirror-in){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  .gl.solid{ background:#15110d; box-shadow: inset 0 0 0 1px rgba(214,171,82,.28), 0 8px 22px rgba(0,0,0,.35); }
+  .gl.solid::before, .gl.solid::after{ display:none; }
+  .gl.solid.tinted{ background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; text-shadow:none; box-shadow:0 8px 22px rgba(0,0,0,.35); }
+  .gl.solid.gl-round{ color:#f3d68a; }
+  .gl.solid .gl-sym{ background:rgba(214,171,82,.12); box-shadow:none; color:#f3d68a; }
+  .home-tag{ letter-spacing:.22em !important; text-transform:uppercase; font-size:12px !important; font-weight:700; color:#b9ad9d !important; }
+  /* the table: the place of the novel where this opponent plays (default table only) */
+  .lg-scene .sc-place{ position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; }
+  body:not([class*="table-"]) .lg-scene .sc-place{ opacity:1; }
+  /* the boss waits on the home screen, in a photograph */
+  body.theme-or .og-king{ display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; min-height:0; padding:12px; border-radius:18px; background:#15110d; border:1px solid rgba(214,171,82,.32); }
+  .og-king-head{ width:96px; height:118px; border-radius:12px; background:url('art/livre/perso-masque.webp') 50% 22% / cover no-repeat #1a1612; box-shadow:0 0 0 1px rgba(214,171,82,.5); }
+  .og-king-head::before{ display:none; }
+  .og-king .og-bubble{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:0; padding:0; border-radius:0; background:none; font:italic 400 15px/1.4 'Literata', Georgia, serif; color:#f4eee4; }
+  .og-king .og-bubble .who{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.18em; color:#d6ab52; margin:0; }
+  .og-king .og-dare{ position:static; padding:4px 0; background:none !important; box-shadow:none !important; color:#ff8a7e !important; font:800 13.5px 'Manrope', sans-serif; }
+  /* the novel: a real cover */
+  .home-topbar:has(#btnChipsClaim:not(.hidden)) #chipsBar small{ display:none; }
+  .hx-novel{ position:relative; width:100%; min-height:190px; border-radius:20px !important; overflow:hidden; display:flex; align-items:flex-end; padding:16px; border:1px solid rgba(214,171,82,.32); background:#15110d; text-align:left; color:#f4eee4; cursor:pointer; }
+  .hx-novel::before{ content:""; position:absolute; inset:0; background:url('art/livre/perso-stephane.webp') 70% 20% / cover no-repeat; }
+  .hx-novel::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, #07060a 8%, rgba(7,6,10,.82) 45%, rgba(7,6,10,.15) 100%); }
+  .hx-novel .hx-home-txt{ position:relative; z-index:1; max-width:68%; flex:none; }
+  .hx-novel .hx-home-txt b{ font:700 22px/1.2 'Cinzel', serif; margin:6px 0 8px; text-wrap:balance; }
+  .hx-novel #hxHomeSub{ font-size:12.5px; color:#b9ad9d; font-weight:700; }
+  .hx-bar{ display:block; height:3px; border-radius:3px; background:rgba(255,255,255,.15); margin:8px 0 0; overflow:hidden; } .hx-bar[hidden]{ display:none; }
+  .hx-bar i{ display:block; height:100%; width:0; background:#d6ab52; }
+  .hx-cta{ align-self:flex-start; margin-top:12px; border-radius:999px; padding:10px 18px; font-weight:800; font-size:14px; background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; }
+  /* the road: each opponent in a photograph, at their place */
+  .opp-card{ display:grid !important; grid-template-columns:96px 1fr; gap:14px; align-items:stretch !important; padding:12px !important; border-radius:18px !important; background:#15110d !important; border:1px solid rgba(255,255,255,.1) !important; box-shadow:none !important; }
+  .opp-card:last-child{ border-color:rgba(214,171,82,.6) !important; background:linear-gradient(160deg, #241a0c, #15110d 60%) !important; }
+  .opp-card.locked{ opacity:1; }
+  .opp-ph{ position:relative; width:96px; height:124px; border-radius:12px; background:center 18% / cover no-repeat #222; }
+  .opp-card.locked .opp-ph{ filter:grayscale(1) brightness(.45); }
+  .opp-lock{ position:absolute; inset:0; display:grid; place-items:center; color:#fff; } .opp-lock svg{ width:26px; height:26px; }
+  .opp-place{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#d6ab52; font-weight:800; }
+  .opp-card .opp-name{ font-family:'Cinzel', serif; font-weight:700; font-size:17px; }
+
   /* ---- the bottom tab bar stays on the five main pages (Accueil, Profil, Boutique, Décors, Réglages) ---- */
   #homeTabbar{ z-index:61; transition: transform .35s var(--spring), opacity .25s; }
   body:not(.tabs-on) #homeTabbar{ opacity:0; pointer-events:none; transform: translateX(-50%) translateY(30px); }
@@ -3065,7 +3112,7 @@
      On iPhone the glass engine copies it into each piece of glass to draw the lens, so it is styled by classes only. -->
 <div class="lg-scene" id="lgScene" aria-hidden="true">
   <div class="sc-bar"><div class="sc-photo"></div><div class="sc-tint"></div><div class="sc-shade"></div></div>
-  <div class="sc-table"><div class="sc-felt"></div><div class="sc-light"></div><div class="sc-fx"></div><div class="sc-lamp"><div class="lamp-swing"><div class="lamp-dark"></div><div class="lamp-pool"></div><div class="lamp-cone"></div><div class="lamp-bulb"><i class="cord"></i><i class="socket"></i><i class="glass"><i class="filament"></i></i><i class="halo"></i></div></div></div></div>
+  <div class="sc-table"><div class="sc-felt"></div><div class="sc-place"></div><div class="sc-light"></div><div class="sc-fx"></div><div class="sc-lamp"><div class="lamp-swing"><div class="lamp-dark"></div><div class="lamp-pool"></div><div class="lamp-cone"></div><div class="lamp-bulb"><i class="cord"></i><i class="socket"></i><i class="glass"><i class="filament"></i></i><i class="halo"></i></div></div></div></div>
 </div>
 <div class="storm-flash" id="stormFlash" aria-hidden="true"></div>
 <!-- Age check: the very first screen. "No" closes the game. -->
@@ -3365,7 +3412,7 @@
 <div class="overlay hidden" id="matchOverOverlay">
   <div class="mo-glow" aria-hidden="true"></div>
   <div class="winner-face" id="matchOverFace"></div>
-  <div class="lg gl mo-panel" id="moPanel">
+  <div class="gl solid mo-panel" id="moPanel">
     <span class="mo-kicker" id="moKicker">Victoire</span>
     <h2 id="matchOverTitle" class="mo-title">Victoire !</h2>
     <p id="matchOverText" class="mo-text"></p>
@@ -3414,62 +3461,60 @@
     <div class="home-topbar">
       <span class="lg gl gl-pill chips-pill press og" id="chipsBar"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
       <span class="hb-space"></span>
-      <button class="lg gl gl-pill tinted chips-claim hidden press og" id="btnChipsClaim"></button>
-      <button class="lg gl gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
-      <button class="lg gl gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
+      <button class="gl solid gl-pill tinted chips-claim hidden press og" id="btnChipsClaim"></button>
+      <button class="gl solid gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
+      <button class="gl solid gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
     </div>
 
     <div class="home-top">
       <h2 class="logo has-img" aria-label="Fap Fap"><svg class="logo-img logo-svg" viewBox="0 0 360 124" role="img" aria-label="Fap Fap"><defs><linearGradient id="lgGoldB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7d6"/><stop offset=".32" stop-color="#f5d06e"/><stop offset=".52" stop-color="#b8862b"/><stop offset=".62" stop-color="#e9bd55"/><stop offset=".85" stop-color="#fbe39a"/><stop offset="1" stop-color="#9c6a1a"/></linearGradient></defs><path d="M30 20 H150 M210 20 H330 M30 24 H140 M220 24 H330" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M30 84 H330 M40 88 H320" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M180 12 l7 8 l-7 8 l-7 -8 Z" fill="url(#lgGoldB)"/><g font-family="Cinzel, 'Times New Roman', serif" font-weight="800" font-size="50" letter-spacing="7"><text x="180" y="72" text-anchor="middle" fill="#1a0f02" opacity=".7" transform="translate(0 2.5)">FAP FAP</text><text x="180" y="72" text-anchor="middle" fill="url(#lgGoldB)" stroke="#5a3a08" stroke-width=".7">FAP FAP</text></g><path transform="translate(180 102) scale(.62)" d="M0 14 C0 14 -12 6 -12 -1 C-12 -6 -8.5 -9 -4.6 -9 C-2.3 -9 -0.5 -7.6 0 -5.6 C0.5 -7.6 2.3 -9 4.6 -9 C8.5 -9 12 -6 12 -1 C12 6 0 14 0 14 Z" fill="#c4202f" stroke="#f5d06e" stroke-width="1.6"/></svg><span class="logo-txt"></span></h2>
-      <p class="home-tag">Le jeu de cartes du quartier</p>
+      <p class="home-tag">Yaoundé · la nuit · les cartes</p>
     </div>
 
     <section class="og-king" id="ogKing" aria-label="Le Ngonzormorrr">
       <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le masque du Ngonzormorrr"></div>
-      <div class="lg gl og-bubble" id="ogBubble"><span class="who">Le Ngonzormorrr</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span></div>
-      <button class="og-dare" id="ogDare">Ose me défier ›</button>
+      <div class="og-bubble" id="ogBubble"><span class="who">Le Ngonzormorrr</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span><button class="og-dare" id="ogDare">Ose me défier ›</button></div>
     </section>
 
-    <div class="lg gl gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
+    <div class="gl solid gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
 
-    <button class="lg gl tinted hero-play press" id="btnGoPlay" style="--d:1">
+    <button class="lg gl hero-play press" id="btnGoPlay" style="--d:1">
       <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:44px"></span><span class="avatar" data-char="aristide" style="--s:44px"></span><span class="avatar" data-char="penalty" style="--s:44px"></span></span>
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
 
-    <button class="lg gl hx-home press og deep" id="btnStory" style="--d:2">
-      <span class="hx-home-art" aria-hidden="true"><img src="art/livre/perso-caroline.webp" alt=""><img src="art/livre/perso-penalty.webp" alt=""><img src="art/livre/perso-stephane.webp" alt=""></span>
-      <span class="hx-home-txt"><small>Mode histoire · 18+</small><b>Pourquoi je suis mort ?</b><span id="hxHomeSub">Le roman de Penalty, à lire et à jouer.</span></span>
-      <span class="gl-tag hx-home-tag" id="hxHomeTag">Nouveau</span>
+    <button class="hx-novel press" id="btnStory" style="--d:2">
+      <span class="hx-home-txt"><small>Mode histoire · 18+</small><b>Pourquoi je suis mort ?</b><span id="hxHomeSub">Le roman de Penalty, à lire et à jouer.</span>
+        <span class="hx-bar"><i id="hxHomeBar"></i></span><span class="hx-cta" id="hxHomeTag">Commencer l’enquête</span></span>
     </button>
 
     <div class="home-row2">
-      <button class="lg gl hcard press og deep" id="modeDaily" style="--d:2">
+      <button class="gl solid hcard press og deep" id="modeDaily" style="--d:2">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
         <b>Défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small>
       </button>
-      <button class="lg gl hcard press og deep" id="btnShowRules" style="--d:3">
+      <button class="gl solid hcard press og deep" id="btnShowRules" style="--d:3">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>
         <b>Les règles</b><small>CORA, Passe, victoires automatiques</small>
       </button>
     </div>
 
-    <button class="lg gl hcard wide press og" id="modeTuto" style="--d:4">
+    <button class="gl solid hcard wide press og" id="modeTuto" style="--d:4">
       <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
       <span class="hc-txt"><b>Apprendre à jouer</b><small>2 minutes avec Penalty, qui t'explique tout</small></span>
       <span class="gl-tag">Nouveau</span>
     </button>
-    <button class="lg gl hcard wide press hidden og" id="btnTutoAgain" style="--d:4">
+    <button class="gl solid hcard wide press hidden og" id="btnTutoAgain" style="--d:4">
       <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
       <span class="hc-txt"><b>Partie guidée</b><small>Rejoue la leçon avec Penalty</small></span>
     </button>
 
-    <div class="lg gl gl-pill quote-bar og deep" id="quoteBar" aria-live="polite">
+    <div class="gl solid gl-pill quote-bar og deep" id="quoteBar" aria-live="polite">
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
       <div class="qb-track"><p class="qb-text" id="quoteText"></p></div>
     </div>
-    <button class="lg gl tinted hcard wide press hidden" id="btnInstall"><span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hc-txt"><b>Installer le jeu</b><small>Sur l'écran d'accueil de ce téléphone</small></span></button>
+    <button class="gl solid tinted hcard wide press hidden" id="btnInstall"><span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hc-txt"><b>Installer le jeu</b><small>Sur l'écran d'accueil de ce téléphone</small></span></button>
   </div>
   <nav class="lg gl tabbar og" id="homeTabbar" aria-label="Menu principal">
     <span class="tb-lens" id="tabLens"></span>
@@ -3526,7 +3571,7 @@
         <p>Chaque année, dans le sous-sol du Royal, à Melen, 32 joueurs s’assoient pour un tournoi clandestin de Fap Fap. Un seul ressort avec la Couronne. Bobo, ton frère de cœur, est descendu il y a trois jours. Il n’est pas remonté.</p>
       </div>
     </div>
-    <button class="lg gl tinted hx-go press" id="hxGo"><b id="hxGoT">Commencer</b><small id="hxGoS"></small></button>
+    <button class="gl solid tinted hx-go press" id="hxGo"><b id="hxGoT">Commencer</b><small id="hxGoS"></small></button>
     <div class="hx-list" id="hxList"></div>
     <div class="hx-ends" id="hxEnds"></div>
     <p class="small-note">Joue d’une traite ou reprends quand tu veux : ta progression est gardée. Tes choix comptent, certains ne se rattrapent pas. Les mises en jetons sont réelles.</p>
@@ -3538,9 +3583,9 @@
   <div class="hx-rain" aria-hidden="true"></div>
   <div class="hx-flash" id="hxFlash" aria-hidden="true"></div>
   <div class="hx-top">
-    <button class="lg gl gl-round press" id="hxClose" aria-label="Quitter la scène">‹</button>
+    <button class="gl solid gl-round press" id="hxClose" aria-label="Quitter la scène">‹</button>
     <span class="hx-chap" id="hxChap"></span>
-    <button class="lg gl gl-round press" id="hxSkip" aria-label="Avance rapide">»</button>
+    <button class="gl solid gl-round press" id="hxSkip" aria-label="Avance rapide">»</button>
   </div>
   <div class="hx-stage" id="hxStage"><img class="hx-portrait" id="hxPortrait" alt=""></div>
   <div class="hx-title hidden" id="hxTitle"><small id="hxTitleK"></small><b id="hxTitleB"></b><span id="hxTitleS"></span></div>
@@ -3725,9 +3770,9 @@
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Boutique</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
     <div class="shop-top">
-      <span class="lg gl gl-pill chips-pill"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="shopChips">0</b><small>jetons</small></span>
+      <span class="gl solid gl-pill chips-pill"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="shopChips">0</b><small>jetons</small></span>
     </div>
-    <div class="lg gl shop-stage" id="shopStage">
+    <div class="gl solid shop-stage" id="shopStage">
       <div class="ss-view" id="shopView"></div>
       <p class="ss-hint" id="shopHint">Touche un article pour le voir en action.</p>
     </div>
@@ -5676,7 +5721,7 @@
   //                                                                       cards, seen from across the table
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
-  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall'};
+  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque'};
   function artImgTag(base){
     if(base.indexOf('livre/')===0) return '<img src="art/'+base+'.webp" alt="" onerror="this.remove()">';
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
@@ -5686,7 +5731,7 @@
     if(!el) return;
     const p = DUEL_PERSONAS[charId];
     const initial = ((label || (p && p.name) || '?').trim().charAt(0) || '?').toUpperCase();
-    el.innerHTML = '<span class="av-ini"></span>' + (charId==='mbarga' ? maskMedal() : ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : '');
+    el.innerHTML = '<span class="av-ini"></span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : charId==='mbarga' ? maskMedal() : '');
     el.firstChild.textContent = initial; // names come from other players: always written as plain text
   }
   function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
@@ -6665,8 +6710,21 @@
     Nav.home();
   }
   // every way into a game goes through here: no page stays on top of the table
+  // the table stands somewhere in the novel: each opponent plays at home (with the default table only;
+  // a table bought in « Décors » keeps its own look)
+  const OPP_PLACE = {gervais:['lieu-studio','Le studio · Biyem-Assi'], aristide:['lieu-veillee','La veillée · Mvog-Ada'], penalty:['lieu-villa','La villa · Santa Barbara'], mbarga:['lieu-table-masque','Le rideau rouge · Bastos']};
+  const BOOK_PLACE = {veillee:'lieu-veillee', cobra:'lieu-coin', tchinda:'lieu-palmiers', kiosque:'lieu-kiosque', ismael:'lieu-bastos', mballa:'lieu-bar-police', christelle:'lieu-studio', caroline:'lieu-salon-the', masque:'lieu-table-masque', villa:'lieu-villa', videur:'lieu-prestige', neuf:'lieu-coin'};
+  function scenePlace(){
+    let img = 'lieu-coin';
+    if(storyRun && storyRun.book) img = BOOK_PLACE[storyRun.key] || img;
+    else if(mode==='ai' && OPP_PLACE[duelOpp]) img = OPP_PLACE[duelOpp][0];
+    else if(mode==='mp') img = 'lieu-kiosque';
+    const el = document.querySelector('#lgScene .sc-place');
+    if(el) el.style.backgroundImage = 'linear-gradient(180deg, rgba(7,6,10,.62), rgba(7,6,10,.80) 55%, rgba(7,6,10,.9)), url("art/livre/'+img+'.webp")';
+  }
   function enterGame(){
     Nav.clear(); gameGen++; resumeQueue.length = 0; setPaused(false);
+    scenePlace();
     Music.play(currentTableId());
     ['pauseOverlay','confirmRestartOverlay'].forEach(hide);
     // (the phone's back button then opens the pause menu: see backPressed)
@@ -8484,9 +8542,10 @@
       const b = document.createElement('button');
       b.className = 'opp-card'+(open?'':' locked')+(beaten?' beaten':'');
       b.innerHTML =
-        (open ? '<span class="avatar" data-char="'+id+'" style="--s:52px"></span>'
-              : '<span class="avatar locked" style="--s:52px"><span class="av-ini">'+ico('lock')+'</span></span>')+
+        // each opponent waits at their place in the novel, in a photograph
+        '<span class="opp-ph" style="background-image:url(&quot;art/'+ART_FILE[id]+'.webp&quot;)">'+(open ? '' : '<span class="opp-lock">'+ico('lock')+'</span>')+'</span>'+
         '<span class="opp-body">'+
+          (OPP_PLACE[id] ? '<span class="opp-place">'+OPP_PLACE[id][1]+'</span>' : '')+
           '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+ico('star').repeat(p.stars)+'<span class="dim">'+ico('star').repeat(4-p.stars)+'</span></span></span>'+
           '<span class="opp-tag">'+(open ? p.tagline : p.lockedHint)+'</span>'+
           '<span class="opp-rec">'+(rec.w+rec.l>0 ? (beaten?ico('check')+' ':'')+'Ton bilan : '+rec.w+'V – '+rec.l+'D' : 'Jamais affronté')+' · +'+p.repWin+' rép. si tu gagnes</span>'+
@@ -11017,8 +11076,14 @@
   // ---- the home card and the chapters page ----
   function renderStoryHome(){
     // the home card now opens the book « Pourquoi je suis mort ? »
-    const B = profile.book, bSub = document.getElementById('hxHomeSub'), bTag = document.getElementById('hxHomeTag');
-    if(bSub){ if(B && B.ended && B.ended.length){ bSub.textContent = 'Livre terminé · relis-le, ou découvre la fin cachée'; bTag.textContent = 'Relire'; } else if(B && (B.ch || B.i)){ bSub.textContent = 'Chapitre '+(B.ch+1)+' · reprends ta lecture'; bTag.textContent = 'Suite'; } else { bSub.textContent = 'Le roman de Penalty, à lire et à jouer.'; bTag.textContent = 'Nouveau'; } }
+    const B = profile.book, bSub = document.getElementById('hxHomeSub'), bTag = document.getElementById('hxHomeTag'), bar = document.getElementById('hxHomeBar');
+    if(bSub){
+      const started = B && (B.ch || B.i);
+      if(started){ bSub.textContent = 'Chapitre '+(B.ch+1)+(B.chT ? ' · '+B.chT : ''); bTag.textContent = 'Reprendre l’enquête'; }
+      else if(B && B.ended && B.ended.length){ bSub.textContent = 'Livre terminé · la fin cachée t’attend'; bTag.textContent = 'Relire'; }
+      else { bSub.textContent = 'Le roman de Penalty, à lire et à jouer.'; bTag.textContent = 'Commencer l’enquête'; }
+      bar.style.width = (started ? (B.pc||0) : 0)+'%'; bar.parentNode.hidden = !started;
+    }
     return;
     if(!CHAPTERS) return;
     const P = stGet(), sub = document.getElementById('hxHomeSub'), tag = document.getElementById('hxHomeTag');
@@ -11526,8 +11591,10 @@
     function progress(){
       const n = BK.chapters.length, part = steps.length ? (i+1)/steps.length : 0;
       $('bkProg').style.width = Math.min(100, ((chIdx + part)/n)*100)+'%';
-      const c = chapterOf(chIdx);
+      const c = chapterOf(chIdx), S = st();
       $('bkWhere').textContent = c.ending ? 'Épilogue' : c.n+' · '+c.t;
+      // remembered for the home screen, which does not load the book
+      S.chT = c.ending ? 'Épilogue' : c.t; S.pc = Math.round(Math.min(1, (chIdx + part)/n)*100);
     }
     function openChapter(idx, at){
       chIdx = idx; steps = parse(chapterOf(idx)); i = -1;
@@ -12050,16 +12117,16 @@
   }
 
   // ===================== Liquid Glass: which parts of the interface are real glass =====================
-  // The big, important surfaces go through the glass engine (lens on the edges, dispersion, frost);
-  // long lists use the same look in plain CSS, so the game stays fluid.
+  // Since the « nuit de Yaoundé » look (v39), real glass is kept for three things only: the chips, « Jouer » and the
+  // tab bar. Everything else is a solid dark card (class "solid"): sharper, and much lighter for the phone.
   (function setupGlass(){
     const add = (sel, cls)=> document.querySelectorAll(sel).forEach(el=> el.classList.add(...cls.split(' ')));
-    add('#btnMenu, #btnMute', 'lg gl gl-round press');
-    add('#duoScreen .scorebar, #sqScoreboard', 'lg gl');
-    add('.overlay.page .back-btn', 'lg gl gl-round press');
-    add('.sheet', 'lg gl');
+    add('#btnMenu, #btnMute', 'gl solid gl-round press');
+    add('#duoScreen .scorebar, #sqScoreboard', 'gl solid');
+    add('.overlay.page .back-btn', 'gl solid gl-round press');
+    add('.sheet', 'gl solid');
     add('#btnRematch', 'press');
-    add('.overlay.page .mode-card', 'lg gl press');
+    add('.overlay.page .mode-card', 'gl solid press');
     document.querySelectorAll('#btnMenu, #btnMute').forEach(b=>{ b.classList.remove('ghost', 'icon-btn'); b.removeAttribute('style'); });
     // the glass settings, remembered on this phone
     const depthIn = document.getElementById('glassDepth'), frostIn = document.getElementById('glassFrost');
@@ -12165,7 +12232,7 @@
     window.applyOrTheme = applyTheme;
     const homeOn = ()=> document.body.classList.contains('theme-or') && Nav.cur()==='menuOverlay' && document.visibilityState==='visible';
     const head = document.getElementById('ogHead');
-    head.innerHTML = '<svg viewBox="0 0 400 540" aria-hidden="true">'+maskSVG('home')+'</svg>';
+    // the mask is now the photograph of the novel (no moving eyes or jaw: the photo stays still)
     const pupils = [...head.querySelectorAll('.pupil')], jaw = head.querySelector('.jaw');
     const bubble = document.getElementById('ogBubble'), sayEl = document.getElementById('ogSay'), dare = document.getElementById('ogDare');
     const nm = ()=> (prefs.name||'').trim();
@@ -12194,7 +12261,7 @@
       sayEl.textContent = text;
       bubble.classList.remove('say'); void bubble.offsetWidth; bubble.classList.add('say');
       if(talkAnim) talkAnim.cancel();
-      if(calmOn() || !jaw.animate) return;
+      if(calmOn() || !jaw || !jaw.animate) return;
       // the jaw drops in rhythm with the sentence, then closes
       const syll = Math.max(4, Math.min(16, Math.round(text.length/6))), frames = [];
       for(let i=0; i<syll; i++){ frames.push({transform:'translateY(0px)'}); frames.push({transform:'translateY('+(6 + (i*7)%9)+'px)'}); }
