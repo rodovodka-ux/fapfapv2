@@ -2226,6 +2226,96 @@
   .bk-ph .ride{ font-size:13px; line-height:1.5; color:#e8e8ee; }
   .bk-ph .close{ margin:10px 14px 16px; appearance:none; border:0; border-radius:999px; padding:12px; font:800 14px 'Manrope', sans-serif; background:#e9e1d3; color:#141414; cursor:pointer; }
   /* Brouillard: after the joint, two of your cards stay blurred until you play them */
+  /* where am I: chapter in the bar, a resume card on the cover, marks in the list */
+  .bk-where{ flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+  .bk-where span{ font:700 11px 'Manrope', sans-serif; letter-spacing:.06em; color:#b9ad9d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bk-bar #bkNoteBtn{ border-color:rgba(214,171,82,.55); color:#f3d68a; }
+  .bk-bar #bkNoteBtn.ping{ animation: bkPing 1.2s ease; } @keyframes bkPing{ 0%,100%{ box-shadow:0 0 0 0 rgba(214,171,82,0); } 30%{ box-shadow:0 0 0 6px rgba(214,171,82,.35); } }
+  .bk-toc button.done .w{ color:#7fae7a; } .bk-toc button.here{ background:rgba(214,171,82,.08); } .bk-toc button.here .w{ color:#d6ab52; }
+  .bk-resume{ width:100%; text-align:left; border:1px solid rgba(214,171,82,.35); border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; background:rgba(214,171,82,.05); }
+  .bk-resume .rs-k{ font:800 11px 'Manrope', sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#d6ab52; }
+  .bk-resume .rs-t{ font:700 19px 'Cinzel', serif; color:#f4eee4; }
+  .bk-resume .rs-bar{ height:3px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden; } .bk-resume .rs-bar i{ display:block; height:100%; background:#d6ab52; }
+  .bk-resume .rs-p small{ display:block; font:700 11px 'Manrope', sans-serif; color:#8a7f72; letter-spacing:.08em; margin:4px 0 2px; }
+  .bk-resume .rs-p p{ margin:0; font:italic 14.5px/1.45 'Literata', Georgia, serif; color:#cfc4b4; }
+  /* a clue noted: a quiet line at the bottom, then it fades */
+  .bk-notice{ position:absolute; left:16px; right:16px; bottom:calc(64px + env(safe-area-inset-bottom, 0px)); z-index:4; pointer-events:none; opacity:0; transform:translateY(10px);
+    background:#15110d; border:1px solid rgba(214,171,82,.45); border-radius:14px; padding:10px 14px; display:flex; flex-direction:column; gap:2px; font-family:'Manrope', sans-serif; }
+  .bk-notice small{ font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#d6ab52; } .bk-notice b{ font-size:14px; color:#f4eee4; font-weight:700; line-height:1.35; }
+  .bk-notice.on{ animation: bkNote 3.6s ease forwards; } @keyframes bkNote{ 0%{ opacity:0; transform:translateY(10px); } 10%,80%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateY(-4px); } }
+  /* interrogation, search, the wall, the report: a full black page */
+  .bk-inv, .bk-nb{ position:absolute; inset:0; z-index:6; background:#07060a; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .bk-inv .iv{ max-width:440px; margin:0 auto; min-height:100%; padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(26px + env(safe-area-inset-bottom, 0px)); display:flex; flex-direction:column; gap:14px; font-family:'Manrope', system-ui, sans-serif; }
+  .iv-top{ display:flex; align-items:center; justify-content:space-between; font:800 11px 'Manrope', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#d6ab52; }
+  .iv-dots{ display:flex; gap:6px; } .iv-dots i{ width:9px; height:9px; border-radius:50%; border:1.5px solid #6d6357; }
+  .iv-dots i.cur{ border-color:#d6ab52; } .iv-dots i.ok{ background:#8fc48a; border-color:#8fc48a; } .iv-dots i.ko{ background:#e0574b; border-color:#e0574b; }
+  .iv-face{ display:block; width:min(52vw, 210px); aspect-ratio:3/4; margin:2px auto 0; border-radius:16px; background:center 18%/cover no-repeat #1a1612;
+    box-shadow:0 0 0 1px rgba(214,171,82,.35), 0 18px 40px rgba(0,0,0,.6); animation: ivIn .7s ease both; }
+  @keyframes ivIn{ from{ opacity:0; transform:scale(.96); } to{ opacity:1; transform:none; } }
+  .iv-name{ text-align:center; font:700 15px 'Cinzel', serif; letter-spacing:.2em; color:#d6ab52; text-transform:uppercase; margin-top:-4px; }
+  .iv-ask{ margin:0; font:italic 15.5px/1.45 'Literata', Georgia, serif; color:#b9ad9d; }
+  .iv-ask small, .iv-l small{ display:block; font:800 10.5px 'Manrope', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#8a7f72; font-style:normal; margin-bottom:2px; }
+  .iv-say{ margin:0; font:400 19px/1.5 'Literata', Georgia, serif; color:#f4eee4; text-wrap:pretty; }
+  .iv-tell{ margin:0; display:flex; gap:10px; align-items:flex-start; font:italic 15px/1.45 'Literata', Georgia, serif; color:#9fb6c9; border-left:2px solid rgba(159,182,201,.4); padding:2px 0 2px 12px; }
+  .iv-tell svg{ width:18px; height:18px; flex:none; margin-top:2px; }
+  .iv-acts{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:4px; }
+  .iv-acts button{ appearance:none; min-height:52px; border-radius:14px; font:800 14px 'Manrope', sans-serif; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; background:transparent; }
+  .iv-acts .a-c{ color:#a9d8a4; border:1.5px solid rgba(143,196,138,.6); } .iv-acts .a-d{ color:#f0c76a; border:1.5px solid rgba(240,199,106,.6); } .iv-acts .a-x{ color:#ff8a7e; border:1.5px solid rgba(224,87,75,.7); }
+  .iv-acts button:active{ transform:scale(.97); }
+  .iv-pick{ display:flex; flex-direction:column; gap:8px; }
+  .iv-pk{ font:800 11px 'Manrope', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#ff8a7e; }
+  .iv-clue{ appearance:none; text-align:left; background:#15110d; border:1px solid rgba(214,171,82,.3); border-radius:12px; padding:11px 13px; color:#f4eee4; cursor:pointer; display:flex; flex-direction:column; gap:3px; }
+  .iv-clue b{ font:700 14.5px 'Manrope', sans-serif; } .iv-clue span{ font:13.5px/1.4 'Special Elite', 'Courier New', monospace; color:#b9ad9d; }
+  .iv-back{ appearance:none; background:transparent; border:1px solid rgba(255,255,255,.18); color:#f4eee4; border-radius:999px; padding:11px; font:700 14px 'Manrope', sans-serif; cursor:pointer; }
+  .iv-none{ color:#8a7f72; margin:0; }
+  .iv-res{ display:flex; flex-direction:column; gap:10px; }
+  .iv-stamp{ align-self:center; font-family:'Anton', Impact, sans-serif; font-size:34px; letter-spacing:.06em; text-transform:uppercase; padding:2px 16px; border:3px solid; border-radius:8px; transform:rotate(-4deg); animation: ivStamp .4s cubic-bezier(.2,1.6,.4,1) both; }
+  .iv-stamp.ok{ color:#8fc48a; } .iv-stamp.ko{ color:#e0574b; }
+  @keyframes ivStamp{ from{ opacity:0; transform:rotate(-4deg) scale(1.8); } to{ opacity:1; transform:rotate(-4deg) scale(1); } }
+  .iv-l{ margin:0; font:17px/1.5 'Literata', Georgia, serif; color:#f4eee4; opacity:0; animation: bkRise .5s ease forwards; }
+  .iv-l.me{ color:#cfc4b4; font-style:italic; } .iv-l.ghost{ font-style:italic; color:#b9ad9d; } .iv-l.reveal{ font-family:'Cinzel', serif; font-weight:700; font-size:19px; }
+  .iv-l.slam{ font-family:'Anton', Impact, sans-serif; font-size:26px; text-transform:uppercase; } .iv-l.type{ font-family:'Special Elite', 'Courier New', monospace; font-size:15px; }
+  .iv-got{ opacity:0; animation: bkRise .5s ease forwards; border:1px dashed rgba(214,171,82,.6); border-radius:12px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; }
+  .iv-got small{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#d6ab52; } .iv-got b{ font:700 15px 'Manrope', sans-serif; }
+  .iv-row{ display:flex; flex-direction:column; gap:8px; margin-top:6px; opacity:0; animation: bkRise .5s ease forwards; }
+  .bk-inv .go{ appearance:none; border:0; border-radius:999px; padding:14px; font:800 15px 'Manrope', sans-serif; background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; cursor:pointer; }
+  .bk-inv .later{ appearance:none; border:1px solid rgba(255,255,255,.18); background:transparent; color:#f4eee4; border-radius:999px; padding:12px; font:700 14px 'Manrope', sans-serif; cursor:pointer; }
+  .sr-img{ height:min(34vh, 230px); margin:0 -20px; background:center/cover no-repeat; position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding:16px 20px; }
+  .sr-img::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(7,6,10,.2), #07060a 96%); }
+  .sr-img span, .sr-img b{ position:relative; } .sr-img span{ font:800 11px 'Manrope', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#d6ab52; } .sr-img b{ font:700 22px 'Cinzel', serif; }
+  .bk-inv .iv.sr{ padding-top:0; }
+  .sr-in{ margin:0; font:italic 15.5px/1.45 'Literata', Georgia, serif; color:#b9ad9d; }
+  .sr-list{ display:flex; flex-direction:column; gap:8px; }
+  .sr-it{ border:1px solid rgba(255,255,255,.12); border-radius:14px; overflow:hidden; }
+  .sr-it > button{ appearance:none; width:100%; text-align:left; background:transparent; border:0; color:#f4eee4; padding:14px; font:700 15px 'Manrope', sans-serif; cursor:pointer; display:flex; justify-content:space-between; }
+  .sr-it > button::after{ content:"Examiner ›"; font-size:12px; color:#d6ab52; font-weight:800; }
+  .sr-it.on > button{ color:#b9ad9d; cursor:default; } .sr-it.on > button::after{ content:""; }
+  .sr-out p{ margin:0; padding:0 14px 12px; font:15px/1.5 'Literata', Georgia, serif; color:#e8e0d2; animation: bkRise .5s ease; }
+  .sr-more{ appearance:none; margin:0 14px 12px; background:transparent; border:1px solid rgba(214,171,82,.5); color:#f3d68a; border-radius:999px; padding:8px 12px; font:700 13px 'Manrope', sans-serif; cursor:pointer; }
+  .sr-foot{ display:flex; align-items:center; gap:12px; margin-top:auto; padding-top:6px; } .sr-n{ flex:1; font:700 13px 'Manrope', sans-serif; color:#b9ad9d; } .sr-foot .go{ padding:12px 26px; }
+  .ac-q{ margin:0; font:19px/1.45 'Literata', Georgia, serif; }
+  .ac-who{ display:flex; flex-direction:column; gap:10px; }
+  .ac-card{ appearance:none; display:grid; grid-template-columns:72px 1fr; grid-template-rows:auto auto; column-gap:14px; align-items:center; text-align:left; background:#15110d; border:1px solid rgba(214,171,82,.35); border-radius:16px; padding:10px; color:#f4eee4; cursor:pointer; }
+  .ac-ph{ grid-row:span 2; width:72px; height:90px; border-radius:10px; background:center 18%/cover no-repeat #222; }
+  .ac-card b{ font:700 17px 'Cinzel', serif; align-self:end; } .ac-card small{ font:italic 13.5px/1.4 'Literata', Georgia, serif; color:#b9ad9d; align-self:start; }
+  .rp-stars{ text-align:center; font-size:40px; color:#d6ab52; letter-spacing:.1em; } .rp-stars i{ font-style:normal; color:#3a332b; }
+  .iv.rp dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:10px 16px; font-size:15px; } .iv.rp dt{ color:#8a7f72; font-weight:700; } .iv.rp dd{ margin:0; color:#f4eee4; }
+  .rp-n{ margin:0; color:#8a7f72; font-size:13.5px; line-height:1.5; }
+  /* the notebook */
+  .bk-nb .nb{ max-width:460px; margin:0 auto; padding: calc(14px + env(safe-area-inset-top, 0px)) 18px calc(24px + env(safe-area-inset-bottom, 0px)); font-family:'Manrope', sans-serif; }
+  .nb-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; } .nb-top b{ font:700 18px 'Cinzel', serif; letter-spacing:.06em; }
+  .nb-x{ appearance:none; width:40px; height:40px; border-radius:50%; border:1px solid rgba(255,255,255,.18); background:transparent; color:#f4eee4; font-size:16px; cursor:pointer; }
+  .nb-tabs{ display:grid; grid-template-columns:1fr 1fr; gap:6px; background:rgba(255,255,255,.06); padding:4px; border-radius:999px; margin-bottom:14px; }
+  .nb-tabs button{ appearance:none; border:0; background:transparent; color:#b9ad9d; border-radius:999px; padding:10px; font:800 13.5px 'Manrope', sans-serif; cursor:pointer; } .nb-tabs button.on{ background:#d6ab52; color:#1d1404; }
+  .nb-h{ margin:0 0 10px; color:#8a7f72; font-size:13px; font-weight:700; }
+  .nb-clue{ background:#f1e9da; color:#231c12; border-radius:4px; padding:12px 14px; margin-bottom:10px; box-shadow:0 6px 16px rgba(0,0,0,.4); transform:rotate(-.4deg); }
+  .nb-clue:nth-child(2n){ transform:rotate(.5deg); }
+  .nb-clue b{ display:block; font:700 15px 'Manrope', sans-serif; margin-bottom:4px; } .nb-clue p{ margin:0 0 6px; font:14px/1.5 'Special Elite', 'Courier New', monospace; } .nb-clue small{ font-size:11.5px; font-weight:700; color:#7a6a54; }
+  .nb-sus{ display:grid; grid-template-columns:76px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+  .nb-sus .ph{ width:76px; height:96px; border-radius:6px; background:center 18%/cover no-repeat #222; box-shadow:0 0 0 3px #f1e9da, 0 8px 18px rgba(0,0,0,.5); transform:rotate(-2deg); }
+  .nb-sus b{ font:700 16px 'Cinzel', serif; } .nb-sus ul{ margin:6px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; }
+  .nb-sus li{ font:13.5px/1.45 'Special Elite', 'Courier New', monospace; color:#e8dcc6; padding-left:12px; position:relative; } .nb-sus li::before{ content:""; position:absolute; left:0; top:.55em; width:5px; height:5px; border-radius:50%; background:#e0574b; }
+  .bk-box .opt small{ display:block; font-weight:600; font-size:12px; color:#ff8a7e; margin-top:4px; } .bk-box .opt[disabled]{ opacity:.55; cursor:default; }
   body.book-fog #playerHand .card:nth-child(2n){ filter: blur(3px) saturate(.6); }
   @media (prefers-reduced-motion: reduce){ .bk-shot.on{ animation:none; transform:none; } .bk-lines .w, .bk-lines .pic{ animation:none !important; opacity:1; transform:none; filter:none; } }
 
@@ -3088,7 +3178,7 @@
       <div class="sq-bubble" id="sqBubbleAristide"></div>
     </div>
     <div class="sq-seat sq-right" id="sqSeatGervais">
-      <div class="sq-name"><span class="avatar" data-char="gervais" style="--s:26px"></span>Joëlle</div>
+      <div class="sq-name"><span class="avatar" data-char="gervais" style="--s:26px"></span>Christelle</div>
       <div class="sq-cards" id="sqCardsGervais"></div>
       <div class="sq-hist" id="sqHistGervais"></div>
       <div class="sq-cur" id="sqCurGervais"></div>
@@ -3313,7 +3403,7 @@
   <p>Tu viens de réussir un CORA contre Penalty. Tu connais l'essentiel : commander, suivre la couleur, prendre le contrôle, et gagner sur la dernière carte.</p>
   <p class="small-note">Il reste deux armes à découvrir : la Passe et les victoires automatiques. Tout est dans les règles.</p>
   <p id="tutoRep" class="rematch-info"></p>
-  <button class="primary big" id="btnTutoPlay">Affronter Joëlle</button>
+  <button class="primary big" id="btnTutoPlay">Affronter Christelle</button>
   <button id="btnTutoRules"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg> Lire les règles</button>
   <button class="ghost" id="btnTutoMenu">Retour à l'accueil</button>
 </div>
@@ -3399,12 +3489,13 @@
       <h1 class="bk-cv-t">POURQUOI<br>JE SUIS MORT ?</h1>
       <span class="bk-rule"></span>
       <span class="bk-cv-a">PENALTY</span>
-      <p class="bk-cv-p">Un roman à lire et à jouer. Sexe, drogue, alcool, violence : ce livre parle de tout, sans détour.</p>
+      <p class="bk-cv-p">Un roman à lire et à jouer. Tu es Stéphane : écoute, fouille, crois ou accuse. Sexe, drogue, alcool, violence : ce livre parle de tout, sans détour.</p>
+      <div class="bk-resume hidden" id="bkResume"><span class="rs-k"></span><b class="rs-t"></b><span class="rs-bar"><i></i></span><div class="rs-p"></div></div>
       <button class="bk-btn" id="bkRead" type="button">Lire</button>
+      <button class="bk-btn ghost hidden" id="bkNoteCv" type="button">Carnet de l’enquête</button>
       <button class="bk-btn ghost" id="bkChapters" type="button">Chapitres</button>
       <button class="bk-btn ghost hidden" id="bkHidden" type="button">Et si j’étais parti ?</button>
       <button class="bk-btn ghost" id="bkLeave" type="button">Retour au jeu</button>
-      <p class="bk-credits">Illustrations créées avec l’intelligence artificielle · Bruitages : Kenney (CC0)</p>
     </div>
     <div class="bk-toc hidden" id="bkToc"></div>
   </div>
@@ -3414,10 +3505,13 @@
     <div class="bk-lines" id="bkLines" aria-live="polite"></div>
     <div class="bk-who" id="bkWho"><span class="face"></span><b></b></div>
     <div class="bk-card" id="bkCard"></div>
-    <div class="bk-bar"><button type="button" id="bkBack" aria-label="Phrase précédente">‹</button><div class="bk-prog"><i id="bkProg"></i></div><button type="button" id="bkMenu">Livre</button></div>
+    <div class="bk-bar"><button type="button" id="bkBack" aria-label="Phrase précédente">‹</button><div class="bk-where"><span id="bkWhere"></span><div class="bk-prog"><i id="bkProg"></i></div></div><button type="button" id="bkNoteBtn">Carnet</button><button type="button" id="bkMenu">Livre</button></div>
+    <div class="bk-notice" id="bkNotice" aria-live="polite"><small></small><b></b></div>
     <div class="bk-hint" id="bkHint">Touche l’écran pour continuer · monte le son</div>
   </div>
   <div class="bk-panel hidden" id="bkPanel"><div class="bk-box" id="bkBox"></div></div>
+  <div class="bk-inv hidden" id="bkInv"></div>
+  <div class="bk-nb hidden" id="bkNb"></div>
   <div class="bk-panel hidden" id="bkPhone"><div class="bk-ph"><div class="crack"></div><div class="top"><span>Orange CM</span><span>23:58</span></div><div class="scr" id="bkPhS"></div><button class="close" id="bkPhC" type="button">Continuer</button></div></div>
 </div>
 
@@ -3461,7 +3555,7 @@
     <button class="mode-card" id="modeAI" style="--d:0">
       <span class="mode-faces"><span class="avatar" data-char="gervais" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="mbarga" style="--s:38px"></span></span>
       <b>La route du quartier</b>
-      <small>Affronte Joëlle, RALL, Penalty… puis le Ngonzormorrr, le masque d’or.</small>
+      <small>Affronte Christelle, RALL, Penalty… puis le Ngonzormorrr, le masque d’or.</small>
     </button>
     <button class="mode-card mode-online" id="modeMP" style="--d:1">
       <span class="mode-ico"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg></span>
@@ -3471,7 +3565,7 @@
     <button class="mode-card mode-carre" id="modeSquare" style="--d:2">
       <span class="mode-faces"><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="gervais" style="--s:38px"></span></span>
       <b>Carré la Pute</b>
-      <small>4 joueurs : Penalty, RALL, Joëlle et toi. Le vainqueur de chaque manche élimine qui il veut.</small>
+      <small>4 joueurs : Penalty, RALL, Christelle et toi. Le vainqueur de chaque manche élimine qui il veut.</small>
     </button>
   </div>
 </div>
@@ -3522,7 +3616,7 @@
     <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Le dernier debout gagne tout.</p>
     <div class="cp-pick">
       <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et Penalty</small></button>
-      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Avec Joëlle et RALL</small></button>
+      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Avec Christelle et RALL</small></button>
       <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>La table complète</small></button>
     </div>
     <div class="stake-pick">
@@ -3565,7 +3659,7 @@
     <div class="format-pick rich-tabs" role="tablist" aria-label="Classement">
       <button class="fmt" data-rt="world" role="tab"><b>Tout le quartier</b><small>Les vrais joueurs</small></button>
       <button class="fmt" data-rt="friends" role="tab"><b>Mes amis</b><small id="richFriendsTabSub">Défie-les en un geste</small></button>
-      <button class="fmt" data-rt="local" role="tab"><b>L’ordinateur</b><small>Joëlle, RALL, Penalty…</small></button>
+      <button class="fmt" data-rt="local" role="tab"><b>L’ordinateur</b><small>Christelle, RALL, Penalty…</small></button>
     </div>
     <div id="richFriendsBox" class="hidden">
       <p class="page-intro" id="richFriendsIntro">Tes amis, et qui est en ligne en ce moment. Touche un ami pour le défier.</p>
@@ -5466,16 +5560,16 @@
   // announce = [chance to announce an automatic win at once, chance to announce at most one card late]
   const DUEL_PERSONAS = {
     gervais: {
-      name:'Joëlle', stars:1, brain:'easy', announce:[0.5, 0.8], repWin:50,
-      tagline:'Nerveuse et superstitieuse. Elle joue vite… et se trompe souvent.',
+      name:'Christelle', stars:1, brain:'easy', announce:[0.5, 0.8], repWin:50,
+      tagline:'La reine de Penalty. Elle joue avec le cœur : vite, et pas toujours juste.',
       lines:{
-        control:["Je l'ai ! Je l'ai ! … je l'ai, non ?","Ne souffle pas sur mes cartes.","Ma grand-mère m'a dit de jouer celle-là.","Pardon, pardon, c'est la chance."],
-        win:["J'ai gagné ?! Attends, je vérifie.","Je vais le raconter à toute la famille.","Ma prière a marché !","Ne fais pas cette tête, c'est la chance."],
-        cora:["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
-        glacee:["Deux 3… je vais m'évanouir.","33 Glacée ! Quelqu'un filme ?!"],
-        surprise:["Hein ?! C'était autorisé, ça ?","Tu as un marabout ou quoi ?","Non non non, je n'ai rien vu.","Aïe, mon cœur."],
-        lose:["C'est la chaise. Elle me porte la poisse.","Je change de place la prochaine fois.","Pas grave, je n'ai pas dormi."],
-        behind:["Ne regarde pas mes mains, ça me stresse.","Attends, je me concentre… voilà, c'est perdu.","Je vais me refaire. Peut-être.","Arrête de sourire comme ça."],
+        control:["Il jouait cette carte-là aussi.","Laisse-moi, je sais ce que je fais… je crois.","Ne me regarde pas comme ça.","Celle-là, c'est pour lui."],
+        win:["Tu vois ? Je sais jouer, moi aussi.","Il m'a appris. Il serait fier.","Range ce sourire, j'ai gagné.","Le dimanche, je battais tout le monde."],
+        cora:["Un 3… pour lui.","CORA ! Il criait toujours comme ça."],
+        glacee:["Deux 3… je tremble.","33 Glacée. Il ne va jamais me croire."],
+        surprise:["Hein ? Tu as ses mains.","Tu as triché ou quoi ?","Aïe. Je n'ai rien vu venir.","Ça, c'était méchant."],
+        lose:["Je n'avais pas la tête à ça.","Pas grave. On rejoue dimanche.","Tu joues comme lui. Ça me fait mal."],
+        behind:["Attends, je me concentre.","Ne souffle pas, je réfléchis.","Je vais me refaire. Peut-être.","Arrête de sourire comme lui."],
         missed:["Attends… j'avais une victoire automatique ! Trop tard…","J'ai encore oublié d'annoncer…"]
       }
     },
@@ -5521,7 +5615,7 @@
         intro:["Tiens… un mortel. Assieds-toi, ça ne prendra pas longtemps.","Le Ngonzormorrr ne joue pas. Il encaisse.","Tu as payé le taxi pour venir perdre ? J'admire l'engagement.","Enlève ce sourire. Il ne survivra pas à la troisième carte.","On m'a dit que tu avais battu Penalty. Penalty bat aussi les enfants de la maternelle.","Je joue depuis avant l'électricité à Melen. Chez vous, elle n'est toujours pas revenue.","Pose tes jetons ici. Je vais les garder au chaud.","Ton grand-père a joué contre moi. Demande-lui comment ça s'est fini. Ah… pardon."],
         introRevenge:["Encore toi ? La dernière fois, tu es reparti à pied. Tes jetons ont pris le taxi avec moi.","Tu reviens ? J'aime les clients fidèles.","La dernière fois, tu as pleuré si fort que le chef de quartier est venu voir.","Ah, le revenant. Tu as révisé, ou tu viens juste rembourser ?","Je t'ai gardé ta place. Elle est encore chaude de ta défaite."],
         introVendetta:["Toi… Tu as eu de la chance. La chance, c'est comme le courant chez nous : ça part sans prévenir.","Le masque n'oublie pas. Ce soir, je reprends ce que tu m'as volé.","Tu as gagné une fois et tu te prends pour Roger Milla ? Assieds-toi.","J'ai dormi les yeux ouverts depuis ta victoire. Ce soir, c'est toi qui ne dormiras pas."],
-        locked:["Toi ? Contre moi ? Va d'abord t'entraîner avec mes bons petits : Joëlle, RALL, Penalty. Ils sont gentils, ils vont te préparer.","Le Ngonzormorrr ne reçoit pas les débutants. Bats Penalty, et on verra si tu mérites mon temps.","Même RALL rigole quand tu passes. Reviens quand Penalty pleurera.","Va jouer avec mes petits. Moi, je mange les grands.","On ne monte pas le mont Cameroun en sandales. Va d'abord battre Penalty.","Tu veux me défier ? Tu n'as même pas fini la route du quartier. Allez, ouste."],
+        locked:["Toi ? Contre moi ? Va d'abord t'entraîner avec mes bons petits : Christelle, RALL, Penalty. Ils sont gentils, ils vont te préparer.","Le Ngonzormorrr ne reçoit pas les débutants. Bats Penalty, et on verra si tu mérites mon temps.","Même RALL rigole quand tu passes. Reviens quand Penalty pleurera.","Va jouer avec mes petits. Moi, je mange les grands.","On ne monte pas le mont Cameroun en sandales. Va d'abord battre Penalty.","Tu veux me défier ? Tu n'as même pas fini la route du quartier. Allez, ouste."],
         matchWin:["Rentre chez toi. Dis à ta famille que tu as rencontré le Ngonzormorrr. Ils comprendront.","Tes jetons ont trouvé un meilleur propriétaire.","Reviens quand tu auras grandi. Ou jamais : c'est mieux pour ton porte-monnaie.","C'était court. Comme ta carrière.","J'accroche ta photo avec les autres. Le mur commence à être plein."],
         matchLose:["Rejoue. Tout de suite. Personne ne part avec MES jetons sans me laisser une revanche.","Assis ! On ne quitte pas la table du Ngonzormorrr en gagnant. Jamais.","Une victoire, c'est un accident. Deux, c'est une enquête. Rejoue.","Tu as triché. Je ne sais pas comment, mais rejoue et je vais trouver.","Les gains sont multipliés par 5 contre moi, et tu veux t'arrêter là ? Lâche."],
         quitLost:["Il fuit ! Regardez-le fuir ! Même la pluie de Douala court moins vite.","Pars, pars. Mais laisse la porte ouverte, tu vas revenir pleurer.","Bonne route. Ta défaite te suit, elle connaît le chemin.","Le Ngonzormorrr se souviendra de ton dos. C'est tout ce que tu m'as montré."],
@@ -5569,7 +5663,7 @@
     const truth = Math.random()<0.5;
     const showStrong = truth ? strong : !strong;
     const STRONG = ["Ma main est lourde ce soir, mola. Très lourde.","Mon 3 dort ici, tranquille. Je te préviens, c'est tout.","J'ai les 10, j'ai le 3, j'ai tout. Abandonne, ça ira plus vite.","Regarde mes yeux. Tu vois ? C'est la main d'un champion."];
-    const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Joëlle n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
+    const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Christelle n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
     gameTimeout(()=>{ if(state && !state.handOver) penaltySay([ (showStrong ? STRONG : WEAK)[Math.floor(Math.random()*4)] ]); }, 1500 + lastDealMs);
   }
   const DUEL_ORDER = ['gervais','aristide','penalty','mbarga'];
@@ -5581,7 +5675,8 @@
   //   art/penalty-table.jpg, art/joelle-table.jpg, …                      optional: arms + hands holding the
   //                                                                       cards, seen from across the table
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
-  const ART_FILE = {penalty:'penalty', gervais:'joelle', aristide:'rall'}; // the mask (mbarga) is drawn: see maskSVG
+  // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
+  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall'};
   function artImgTag(base){
     if(base.indexOf('livre/')===0) return '<img src="art/'+base+'.webp" alt="" onerror="this.remove()">';
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
@@ -5602,7 +5697,7 @@
     if(!img || !zone) return;
     const off = ()=>{ img.hidden = true; zone.classList.remove('has-art'); };
     off();
-    if(!ART_FILE[charId] || ART_FILE[charId].indexOf('story/')===0) return; // story portraits have no "at the table" picture
+    if(!ART_FILE[charId] || /^(story|livre)\//.test(ART_FILE[charId])) return; // portraits only: no drawn "hands at the table" any more
     const base = 'art/'+ART_FILE[charId]+'-table';
     let triedPng = false;
     img.onload = ()=>{ img.hidden = false; zone.classList.add('has-art'); };
@@ -5870,7 +5965,7 @@
     {id:'remontada',    icon:'flame', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
     {id:'serie3',       icon:'trend', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
     {id:'revanche',     icon:'repeat', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
-    {id:'beat_gervais', icon:'smile', name:'Joëlle calmée',             desc:'Battre Joëlle.'},
+    {id:'beat_gervais', icon:'smile', name:'Christelle consolée',             desc:'Battre Christelle.'},
     {id:'beat_aristide',icon:'hush', name:'RALL se tait',              desc:'Battre RALL.'},
     {id:'beat_penalty', icon:'book', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
     {id:'beat_mbarga',  icon:'crown', name:'Le masque est tombé',      desc:'Battre le Ngonzormorrr.'},
@@ -8717,23 +8812,23 @@
     ['Commander Black sans Black, c’est le ndem assuré.', 'Penalty'],
     ['Le kongossa, c’est après la partie. Jamais pendant.', 'Le Ngonzormorrr'],
     ['Tu as mangé quoi ce matin pour jouer comme ça ?', 'RALL'],
-    ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Joëlle'],
+    ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Christelle'],
     ['On dit quoi ? On dit CORA !', 'Penalty'],
-    ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Joëlle'],
+    ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Christelle'],
     ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Le Ngonzormorrr'],
     ['Au quartier, le contrôle se prend. Il ne se demande pas.', 'Penalty'],
     ['Tchaka sur la table, silence dans la salle.', 'RALL'],
     ['Ce n’est pas la chance, c’est le manuel. Chapitre 5.', 'Penalty'],
     ['La 33 Glacée, ça ne se raconte pas : ça se montre.', 'RALL'],
-    ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Joëlle'],
+    ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Christelle'],
     ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Le Ngonzormorrr'],
     ['Mola, range ton 10. On a déjà compris.', 'RALL'],
     ['Le Fap Fap, c’est comme le benskin : il faut savoir quand freiner.', 'Penalty'],
     ['Tu mènes ? Le score aime les menteurs.', 'Le Ngonzormorrr'],
     ['Ça va aller… mais pas pour toi cette manche.', 'Penalty'],
-    ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Joëlle'],
+    ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Christelle'],
     ['Tu partages ou tu coupes ? Décide, le taxi attend.', 'RALL'],
-    ['Un CORA le matin, la journée est bénie.', 'Joëlle'],
+    ['Un CORA le matin, la journée est bénie.', 'Christelle'],
     ['On ne joue pas contre Penalty. On joue après lui.', 'Le Ngonzormorrr']
   ];
   (function quoteTicker(){
@@ -8984,7 +9079,7 @@
       lose: ["OK. Ça, c'était un accident.","Profitez, ça arrive une fois par an."]
     },
     gervais: {
-      name:'Joëlle',
+      name:'Christelle',
       control: ["Je l'ai ! … je l'ai, non ?","Ne soufflez pas sur mes cartes.","Ma grand-mère m'a dit de jouer celle-là."],
       win: ["J'ai gagné ?! Attendez, je vérifie.","Ma prière a marché !","Je vais le raconter à toute la famille."],
       cora: ["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
@@ -8994,7 +9089,7 @@
   };
   // ===================== Seats =====================
   // Four places around the table, in playing order: you (bottom) → right → top → left. Each seat belongs to
-  // someone: 'local' (you), 'ai' (Joëlle / Penalty / RALL), 'remote' (a friend online) or 'absent' (a 2- or
+  // someone: 'local' (you), 'ai' (Christelle / Penalty / RALL), 'remote' (a friend online) or 'absent' (a 2- or
   // 3-player game). Online, the creator's phone runs the game and every other phone just shows it.
   function sqSeatsFor(n){ return n===2 ? ['you','penalty'] : n===3 ? ['you','gervais','aristide'] : ['you','gervais','penalty','aristide']; }
   const sqCap = id=> id.charAt(0).toUpperCase()+id.slice(1);
@@ -11196,7 +11291,7 @@
     if(run && run.book){
       if(won){ sfxMatchWin(); bigImpact(); } else sfxMatchLose();
       touchDayStreak();
-      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Le livre continue.' : 'Il faudra rejouer cette partie.', {big:true, celebrate:won, ms:1700});
+      showToast(won ? 'Victoire !' : 'Défaite…', run.press ? (won ? 'Il va parler.' : 'Il ne dira rien de plus.') : won ? 'Le livre continue.' : 'Il faudra rejouer cette partie.', {big:true, celebrate:won, ms:1700});
       setTimeout(()=>{ goToMainMenu(); Book.afterMatch(run, won); }, 1900);
       return;
     }
@@ -11240,7 +11335,11 @@
     const $ = id=> document.getElementById(id);
     const page = $('bookPage'), stage = $('bkStage'), linesEl = $('bkLines'), cardEl = $('bkCard'), whoEl = $('bkWho');
     const shots = [$('bkShotA'), $('bkShotB')];
-    function st(){ if(!profile.book) profile.book = {ch:0, i:0, choices:{}, won:{}, ended:[]}; return profile.book; }
+    function st(){
+      if(!profile.book) profile.book = {ch:0, i:0, choices:{}, won:{}, ended:[]};
+      const S = profile.book; if(!S.clues) S.clues = {}; if(!S.notes) S.notes = {}; if(!S.iv) S.iv = {}; if(!S.read) S.read = {};
+      return S;
+    }
     function load(){
       if(BK) return Promise.resolve(BK);
       if(loading) return loading;
@@ -11267,7 +11366,9 @@
       let mood = null;
       lines.forEach(raw=>{
         let l = raw, cond = null;
-        const mc = l.match(/^\?(\w+)=(\w+)\s+/); if(mc){ cond = [mc[1], mc[2]]; l = l.slice(mc[0].length); }
+        // ?key=value · ?!key=value · ?clue:id · ?!clue:id
+        const mc = l.match(/^\?(!?)(?:clue:(\w+)|(\w+)=(\w+))\s+/);
+        if(mc){ cond = mc[2] ? {neg:!!mc[1], clue:mc[2]} : {neg:!!mc[1], k:mc[3], v:mc[4]}; l = l.slice(mc[0].length); }
         const ev = l.match(/^\[(\w+)\s*([^\]]*)\]$/);
         if(ev){
           const k = ev[1], a = ev[2].trim();
@@ -11278,6 +11379,11 @@
           else if(k==='game') s = {game:a, cond};
           else if(k==='phone') s = {phone:1, cond};
           else if(k==='choice'){ const parts = a.split('|'); s = {choice:parts[0], opts:parts.slice(1), cond}; }
+          else if(k==='clue') s = {clue:a, instant:1, cond};
+          else if(k==='note'){ const p = a.split('|'); s = {note:[p[0], p.slice(1).join('|')], instant:1, cond}; }
+          else if(k==='search') s = {search:a, cond};
+          else if(k==='interro') s = {interro:a, cond};
+          else if(k==='accuse') s = {accuse:1, cond};
           if(s){ if(mood){ s.mood = mood; mood = null; } out.push(s); }
           return;
         }
@@ -11293,10 +11399,15 @@
         if(mood && !s.mood){ s.mood = mood; mood = null; }
         out.push(s);
       });
-      if(ch.ending) out.push({card:['', 'FIN', BK.author], last:true});
+      if(ch.ending){ if(!st().hiddenRun) out.push({report:1}); out.push({card:['', 'FIN', BK.author], last:true}); }
       return out;
     }
-    const visible = s=> !s.cond || String(st().choices[s.cond[0]])===s.cond[1];
+    function visible(s){
+      const c = s.cond; if(!c) return true;
+      const S = st(), yes = c.clue ? !!S.clues[c.clue] : String(S.choices[c.k])===c.v;
+      return c.neg ? !yes : yes;
+    }
+    const hasClue = id=> !!st().clues[id];
     const esc = t=> t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
     const castPic = id=> BK.cast[id] && BK.cast[id][1] ? 'art/livre/'+BK.cast[id][1]+'.webp' : '';
     // the big lines are sized to fit the screen: a long blow never runs off the edge
@@ -11359,6 +11470,10 @@
       buzz: ()=> { hit((c,t0)=>{ [0,.35,.7].forEach(d=>{ const t = t0+d, o = c.createOscillator(), g = c.createGain(); o.type='square'; o.frequency.value = 140; g.gain.setValueAtTime(.05,t); g.gain.setValueAtTime(.0001,t+.22); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.23); }); }); vibrate([200,150,200]); },
       tick: ()=> hit((c,t)=>{ const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); n.buffer = noiseB(c,.03); f.type='bandpass'; f.frequency.value = 2400; g.gain.setValueAtTime(.08,t); g.gain.exponentialRampToValueAtTime(.001,t+.03); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t); }),
       cora: ()=> { FX.thud(); hit((c,t0)=>{ [523,659,784,1046].forEach((fq,k)=>{ const t = t0+.05+k*.08, o = c.createOscillator(), g = c.createGain(); o.type='triangle'; o.frequency.value = fq; g.gain.setValueAtTime(.14,t); g.gain.exponentialRampToValueAtTime(.001,t+.7); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.75); }); }); },
+      // the notebook: a soft bell for a clue, two rising notes for a good read, one falling note for a bad one
+      clue: ()=> hit((c,t0)=>{ [988,1319].forEach((fq,k)=>{ const t = t0+k*.09, o = c.createOscillator(), g = c.createGain(); o.type='sine'; o.frequency.value = fq; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.12,t+.01); g.gain.exponentialRampToValueAtTime(.001,t+.9); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.95); }); }),
+      good: ()=> hit((c,t0)=>{ [392,587].forEach((fq,k)=>{ const t = t0+k*.16, o = c.createOscillator(), g = c.createGain(); o.type='triangle'; o.frequency.value = fq; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.2,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+1.1); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+1.15); }); }),
+      bad: ()=> hit((c,t)=>{ const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter(); o.type='sawtooth'; f.type='lowpass'; f.frequency.value = 700; o.frequency.setValueAtTime(196,t); o.frequency.exponentialRampToValueAtTime(98,t+.9); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.16,t+.03); g.gain.exponentialRampToValueAtTime(.001,t+1.2); o.connect(f); f.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+1.25); FX.thud(); }),
       shuffle: ()=> sample('card-shuffle', {vol:.5}),
       card: ()=> sample(CARD_PLACE, {vol:.8}),
       coins: ()=> sfxCoins(10)
@@ -11392,6 +11507,10 @@
       if(s.game){ openGame(s.game); return; }
       if(s.choice){ openChoice(s); return; }
       if(s.phone){ openPhone(); return; }
+      if(s.search){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openSearch(s.search); return; }
+      if(s.interro){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openInterro(s.interro); return; }
+      if(s.accuse){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openAccuse(); return; }
+      if(s.report){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openReport(); return; }
       const w = s.who && BK.cast[s.who];
       if(w){ $('bkWho').querySelector('b').textContent = w[0]; const f = whoEl.querySelector('.face'); f.classList.toggle('empty', !w[1]); if(w[1]) f.style.backgroundImage = 'url("art/livre/'+w[1]+'.webp")'; whoEl.classList.add('on'); }
       else whoEl.classList.remove('on');
@@ -11403,15 +11522,44 @@
       if(s.s==='type'){ const cs = box.querySelectorAll('.c'); let k = 0; typeT = setInterval(()=>{ if(k >= cs.length){ clearInterval(typeT); return; } cs[k++].classList.add('on'); if(!quiet && k%2) FX.tick(); }, 45); }
       if(!quiet) fire(s);
     }
-    function progress(){ const n = BK.chapters.length; $('bkProg').style.width = Math.min(100, ((chIdx + (steps.length ? (i+1)/steps.length : 0))/n)*100)+'%'; }
+    // where am I: the chapter, its title, and how far into it
+    function progress(){
+      const n = BK.chapters.length, part = steps.length ? (i+1)/steps.length : 0;
+      $('bkProg').style.width = Math.min(100, ((chIdx + part)/n)*100)+'%';
+      const c = chapterOf(chIdx);
+      $('bkWhere').textContent = c.ending ? 'Épilogue' : c.n+' · '+c.t;
+    }
     function openChapter(idx, at){
       chIdx = idx; steps = parse(chapterOf(idx)); i = -1;
       const S = st(); S.ch = idx; saveProfile();
       goTo(Math.max(0, Math.min(steps.length-1, at||0)), true, true);
     }
+    // a clue or a note is written in the notebook as the reader goes past it
+    function addClue(id, quiet){
+      const S = st(), c = BK.clues[id];
+      if(!c || S.clues[id]) return false;
+      S.clues[id] = chIdx+1; saveProfile();
+      if(!quiet){ FX.clue(); notice('Nouvel indice', c.t); }
+      return true;
+    }
+    function addNote(who, text, quiet){
+      const S = st(), l = S.notes[who] = S.notes[who] || [];
+      if(!who || !text || l.includes(text)) return;
+      l.push(text); saveProfile();
+      if(!quiet) notice('Carnet', (BK.suspects[who] ? BK.suspects[who].n+' · ' : '')+text);
+    }
+    function notice(k, t){
+      const el = $('bkNotice'); el.querySelector('small').textContent = k; el.querySelector('b').textContent = t;
+      el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+      $('bkNoteBtn').classList.remove('ping'); void $('bkNoteBtn').offsetWidth; $('bkNoteBtn').classList.add('ping');
+    }
     function goTo(to, quiet, fromStart){
-      // skip the beats that belong to another choice
-      while(to < steps.length && !visible(steps[to])) to++;
+      // skip the beats that belong to another choice; write down the clues on the way
+      while(to < steps.length && (!visible(steps[to]) || steps[to].instant)){
+        const s = steps[to];
+        if(visible(s) && !(quiet && !fromStart)){ if(s.clue) addClue(s.clue); if(s.note) addNote(s.note[0], s.note[1]); }
+        to++;
+      }
       if(to >= steps.length) return nextChapter();
       i = to; const S = st(); S.i = i; saveProfile();
       // the music of the scene is the last one set before this beat (coming back, or reopening the book)
@@ -11420,8 +11568,9 @@
       progress();
       $('bkHint').style.opacity = (chIdx===0 && i < 3) ? 1 : 0;
     }
-    function next(){ if(!$('bkPanel').classList.contains('hidden') || !$('bkPhone').classList.contains('hidden')) return; const s = steps[i]; if(s && s.last) return finish(); goTo(i+1); }
-    function prev(){ let k = i-1; while(k >= 0 && (!visible(steps[k]) || steps[k].game || steps[k].choice || steps[k].phone)) k--; if(k >= 0) goTo(k, true); }
+    const blocked = ()=> ['bkPanel','bkPhone','bkInv','bkNb'].some(id=> !$(id).classList.contains('hidden'));
+    function next(){ if(blocked()) return; const s = steps[i]; if(s && s.last) return finish(); goTo(i+1); }
+    function prev(){ if(blocked()) return; let k = i-1; while(k >= 0 && (!visible(steps[k]) || steps[k].game || steps[k].choice || steps[k].phone || steps[k].instant || steps[k].search || steps[k].interro || steps[k].accuse || steps[k].report)) k--; if(k >= 0) goTo(k, true); }
     function nextChapter(){
       const S = st();
       if(chIdx < BK.chapters.length-1){ openChapter(chIdx+1); return; }
@@ -11431,6 +11580,8 @@
     function finish(){
       const S = st();
       if(!S.ended.includes(S.ending)){ S.ended.push(S.ending); if(!S.hiddenRun){ chipsAdd(1000); showToast('Livre terminé', '+1 000 jetons · la fin cachée est débloquée', {ms:3200}); } }
+      // the next reading is a new investigation (the endings read and the best report stay)
+      if(!S.hiddenRun){ S.clues = {}; S.notes = {}; S.iv = {}; S.sx = {}; S.choices = {}; }
       S.hiddenRun = false; S.ch = 0; S.i = 0; saveProfile();
       cover();
     }
@@ -11449,10 +11600,11 @@
       const sk = $('bkBox').querySelector('.later'); if(sk) sk.onclick = ()=>{ $('bkPanel').classList.add('hidden'); goTo(i+1); };
       $('bkPanel').classList.remove('hidden');
     }
-    function startMatch(key){
+    // press = {iv, q}: one hand to make a witness talk again, during an interrogation
+    function startMatch(key, press){
       const g = BK.games[key], S = st();
-      $('bkPanel').classList.add('hidden'); setMood('none');
-      storyRun = {book:true, key, bet:0, odds:1, rule:g.rule||null, m:g, target0:TARGET_SCORE, art:{}, sqp:{}};
+      $('bkPanel').classList.add('hidden'); $('bkInv').classList.add('hidden'); setMood('none');
+      storyRun = {book:true, key, bet:0, odds:1, rule:g.rule||null, m:g, target0:TARGET_SCORE, art:{}, sqp:{}, press:press||null};
       if(g.fog && String(S.choices[g.fog])==='1'){ storyRun.rule = 'fog'; document.body.classList.add('book-fog'); }
       if(g.peek && String(S.choices[g.peek])!=='0') storyRun.rule = 'peek'; // he stayed with his back to the mirror
       if(g.carre){
@@ -11465,22 +11617,23 @@
           SQ_PERSONAS[seat] = {name, control:[], win:[], cora:[], glacee:[], lose:[]};
         });
         sqNewGame({n, names});
-        document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · Carré au kiosque';
+        document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · Carré · '+(key==='kiosque' ? 'au kiosque' : 'sous le manguier');
         return;
       }
       let pid = g.opp;
       if(!pid){ pid = 'bk_'+key; DUEL_PERSONAS[pid] = {name:g.name, stars:3, brain:g.brain||'heuristic', pimcMs:g.ms, pimcSamples:g.samples, announce:[0.8, 0.95], repWin:0, tagline:'', lines:g.lines||{}}; storyRun.art[pid] = undefined; }
       else storyRun.art[pid] = ART_FILE[pid];
       if(g.art) ART_FILE[pid] = 'livre/'+g.art;
-      duelOpp = pid; mode = 'ai'; TARGET_SCORE = g.target || 3;
+      duelOpp = pid; mode = 'ai'; TARGET_SCORE = press ? 1 : (g.target || 3);
       enterGame(); applyOppNameToUI(); newMatch();
-      document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · Stéphane contre '+(g.name || oppName());
+      document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · '+(g.as || 'Stéphane')+' contre '+(g.name || oppName())+(press ? ' · une manche' : '');
       if(storyRun.rule==='fog') setTimeout(()=> showToast('Tu as fumé', 'Deux de tes cartes restent floues.', {ms:2600}), 900);
       if(storyRun.rule==='nopasse') setTimeout(()=> showToast('Pas de Passe', 'L’adjudant ne passe jamais. Toi non plus.', {ms:2600}), 900);
     }
     function afterMatch(run, won){
       Nav.go('bookPage'); showReader();
       const S = st(), key = run.key, g = BK.games[key];
+      if(run.press){ pressDone(run.press, won); return; }
       if(won){
         if(!S.won[key]){ S.won[key] = true; const before = profile.chips; chipsAdd(200); renderChips(before); }
         saveProfile();
@@ -11493,14 +11646,235 @@
       $('bkBox').querySelector('.later').onclick = ()=>{ $('bkPanel').classList.add('hidden'); cover(); };
       $('bkPanel').classList.remove('hidden');
     }
-    // ---------- choices ----------
+    // ---------- choices (an answer ending in #clue:id needs that clue) ----------
     function openChoice(s){
       const S = st();
       $('bkBox').innerHTML = '<div class="k">À toi de choisir</div>';
-      s.opts.forEach((o, k)=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o;
+      s.opts.forEach((raw, k)=>{
+        const m = raw.match(/^(.*)#clue:(\w+)$/), o = m ? m[1] : raw, need = m && !hasClue(m[2]);
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o;
+        if(need){ b.disabled = true; const sm = document.createElement('small'); sm.textContent = 'Il te manque une preuve : '+BK.clues[m[2]].t; b.appendChild(sm); }
         b.onclick = ()=>{ S.choices[s.choice] = k; saveProfile(); $('bkPanel').classList.add('hidden'); FX.thud(); goTo(i+1); };
         $('bkBox').appendChild(b); });
       $('bkPanel').classList.remove('hidden');
+    }
+    // ---------- the investigation: interrogations, searches, the name, the report ----------
+    const inv = $('bkInv');
+    const castName = id=> (BK.cast[id] && BK.cast[id][0]) || '';
+    const face = id=> castPic(id) ? '<span class="iv-face" style="background-image:url(&quot;'+castPic(id)+'&quot;)"></span>' : '';
+    // a line of the interrogation: "@who text", "@who ~ text", "~ text", "> text"
+    function ivLine(raw){
+      let l = raw, who = '', cls = '';
+      const w = l.match(/^@(\w+)\s+/); if(w){ who = w[1]; l = l.slice(w[0].length); }
+      const mk = l.match(/^([!*~>+])\s+/); if(mk){ cls = {'!':'slam','*':'reveal','~':'ghost','>':'type','+':''}[mk[1]]; l = l.slice(mk[0].length); }
+      const p = document.createElement('p'); p.className = 'iv-l '+cls;
+      if(who && who!=='stephane'){ const n = document.createElement('small'); n.textContent = castName(who); p.appendChild(n); }
+      else if(who==='stephane') p.classList.add('me');
+      p.appendChild(document.createTextNode(glue(l)));
+      return p;
+    }
+    function openInterro(id){
+      const D = BK.interros[id], S = st();
+      let R = S.iv[id];
+      if(!R) R = S.iv[id] = {q:0, res:[], pressed:0};
+      saveProfile(); setMood('tension');
+      // already over (the book was closed on its last answer): the story goes on
+      if(R.q >= D.q.length){ R.done = true; saveProfile(); inv.classList.add('hidden'); return goTo(i+1); }
+      const q = D.q[R.q], who = q.who || D.who;
+      inv.className = 'bk-inv';
+      inv.innerHTML = '<div class="iv"><div class="iv-top"><span>Interrogatoire</span><span class="iv-dots">'+D.q.map((x,k)=> '<i class="'+(R.res[k]||'')+(k===R.q ? ' cur' : '')+'"></i>').join('')+'</span></div>'+
+        face(who)+'<div class="iv-name"></div>'+
+        (q.ask ? '<p class="iv-ask"><small>Stéphane</small></p>' : '')+
+        '<p class="iv-say"></p><p class="iv-tell"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg><span></span></p>'+
+        '<div class="iv-acts"><button type="button" class="a-c" data-a="croire">Croire</button><button type="button" class="a-d" data-a="douter">Douter</button><button type="button" class="a-x" data-a="accuser">Accuser</button></div>'+
+        '<div class="iv-pick hidden"></div><div class="iv-res hidden"></div></div>';
+      inv.querySelector('.iv-name').textContent = castName(who);
+      if(q.ask) inv.querySelector('.iv-ask').appendChild(document.createTextNode(glue(q.ask)));
+      inv.querySelector('.iv-say').textContent = glue(q.say);
+      inv.querySelector('.iv-tell span').textContent = glue(q.tell);
+      inv.querySelectorAll('.iv-acts button').forEach(b=> b.onclick = ()=>{
+        if(b.dataset.a==='accuser') return pickProof('Avec quelle preuve ?', p=> answer(id, p ? 'accuser' : null, p));
+        answer(id, b.dataset.a);
+      });
+      inv.classList.remove('hidden');
+      FX.tick();
+    }
+    // the notebook opens inside the interrogation: choose the clue that proves the lie
+    function pickProof(title, done, allowNone){
+      const S = st(), box = inv.querySelector('.iv-pick');
+      inv.querySelector('.iv-acts').classList.add('hidden');
+      box.innerHTML = '<div class="iv-pk">'+esc(title)+'</div>';
+      const ids = Object.keys(S.clues).filter(k=> BK.clues[k]).sort((a,b)=> S.clues[b]-S.clues[a]);
+      if(!ids.length){ const p = document.createElement('p'); p.className = 'iv-none'; p.textContent = 'Ton carnet est vide.'; box.appendChild(p); }
+      ids.forEach(k=>{ const c = BK.clues[k], b = document.createElement('button'); b.type = 'button'; b.className = 'iv-clue';
+        b.innerHTML = '<b></b><span></span>'; b.children[0].textContent = c.t; b.children[1].textContent = c.d;
+        b.onclick = ()=> done(k); box.appendChild(b); });
+      if(allowNone){ const n = document.createElement('button'); n.type = 'button'; n.className = 'iv-back'; n.textContent = 'Sans preuve'; n.onclick = ()=> done(null); box.appendChild(n); }
+      const back = document.createElement('button'); back.type = 'button'; back.className = 'iv-back'; back.textContent = 'Retour';
+      back.onclick = ()=>{ box.classList.add('hidden'); inv.querySelector('.iv-acts').classList.remove('hidden'); };
+      box.appendChild(back);
+      box.classList.remove('hidden'); box.scrollTop = 0;
+    }
+    function answer(id, a, proof){
+      if(!a) return;
+      const D = BK.interros[id], S = st(), R = S.iv[id], qi = R.q, q = D.q[qi];
+      const good = q.ans===a && (a!=='accuser' || (q.proof||[]).includes(proof));
+      const trap = !good && a==='accuser' && q.trap && q.trap[proof];
+      R.res[qi] = good ? 'ok' : 'ko'; R.q = qi+1; if(R.q >= D.q.length) R.done = true;
+      const lines = good ? q.ok : trap ? q.trapKo : q.ko;
+      if(good){ if(q.clue) addClue(q.clue, true); if(q.note) addNote(q.note[0], q.note[1], true); if(q.flag){ const [k,v] = q.flag.split('='); S.choices[k] = v; } }
+      else {
+        if(q.clue_ko) addClue(q.clue_ko, true);
+        const n = trap ? q.note_trap : q.note_ko; if(n) addNote(n[0], n[1], true);
+        const f = trap ? q.flag_trap : q.flag_ko; if(f){ const [k,v] = f.split('='); S.choices[k] = v; }
+      }
+      saveProfile();
+      good ? FX.good() : FX.bad(); vibrate(good ? 15 : [30,50,30]);
+      inv.querySelector('.iv-acts').classList.add('hidden'); inv.querySelector('.iv-pick').classList.add('hidden');
+      inv.querySelector('.iv-tell').classList.add('hidden');
+      const dots = inv.querySelectorAll('.iv-dots i'); if(dots[qi]){ dots[qi].className = R.res[qi]; }
+      const res = inv.querySelector('.iv-res');
+      res.innerHTML = '<div class="iv-stamp '+(good ? 'ok' : 'ko')+'">'+(good ? 'Bien vu' : trap ? 'Fausse piste' : 'Raté')+'</div>';
+      (lines||[]).forEach((l, k)=>{ const p = ivLine(l); p.style.animationDelay = (0.35 + k*0.5)+'s'; res.appendChild(p); });
+      const got = good ? q.clue : q.clue_ko;
+      if(got && BK.clues[got]){ const c = document.createElement('div'); c.className = 'iv-got'; c.style.animationDelay = (0.4 + (lines||[]).length*0.5)+'s'; c.innerHTML = '<small>Nouvel indice</small><b></b>'; c.querySelector('b').textContent = BK.clues[got].t; res.appendChild(c); setTimeout(FX.clue, 400 + (lines||[]).length*500); }
+      const row = document.createElement('div'); row.className = 'iv-row'; row.style.animationDelay = (0.5 + (lines||[]).length*0.5)+'s';
+      const canPress = !good && q.press && !R.pressed && D.game && BK.games[D.game];
+      if(canPress){
+        const p = document.createElement('button'); p.type = 'button'; p.className = 'go'; p.textContent = 'Une manche pour le faire parler';
+        p.onclick = ()=>{ R.pressed = 1; R.q = qi; R.res[qi] = ''; R.done = false; saveProfile(); startMatch(D.game, {iv:id, q:qi}); };
+        row.appendChild(p);
+      }
+      const c = document.createElement('button'); c.type = 'button'; c.className = canPress ? 'later' : 'go'; c.textContent = canPress ? 'Laisser tomber' : 'Continuer';
+      c.onclick = ()=>{ inv.classList.add('hidden'); if(R.q >= D.q.length){ R.done = true; saveProfile(); goTo(i+1); } else openInterro(id); };
+      row.appendChild(c); res.appendChild(row);
+      res.classList.remove('hidden'); res.scrollIntoView({block:'nearest'});
+    }
+    // after the hand played to make a witness talk: a win asks the same question again, a loss moves on
+    function pressDone(press, won){
+      const D = BK.interros[press.iv], S = st(), R = S.iv[press.iv];
+      if(!won){ R.res[press.q] = 'ko'; R.q = press.q+1; if(R.q >= D.q.length) R.done = true; saveProfile(); }
+      if(R.q >= D.q.length){ inv.classList.add('hidden'); return goTo(i+1); }
+      openInterro(press.iv);
+      if(won) notice('Il reprend la parole', 'Une seule chance. Lis bien.');
+    }
+    // searching a place: what you look at, what you find
+    function openSearch(id){
+      const D = BK.searches[id], S = st(); S.sx = S.sx || {}; const seen = S.sx[id] = S.sx[id] || [];
+      setMood('night');
+      const total = D.items.reduce((n, it)=> n + (it.clue ? 1 : 0) + (it.moreClue ? 1 : 0), 0);
+      const count = ()=> D.items.reduce((n, it)=> n + (it.clue && hasClue(it.clue) ? 1 : 0) + (it.moreClue && hasClue(it.moreClue) ? 1 : 0), 0);
+      inv.className = 'bk-inv';
+      inv.innerHTML = '<div class="iv sr"><div class="sr-img" style="background-image:url(&quot;art/livre/'+D.img+'.webp&quot;)"><span>Fouille</span><b></b></div><p class="sr-in"></p><div class="sr-list"></div><div class="sr-foot"><span class="sr-n"></span><button type="button" class="go">Partir</button></div></div>';
+      inv.querySelector('.sr-img b').textContent = D.t; inv.querySelector('.sr-in').textContent = D.intro;
+      const list = inv.querySelector('.sr-list'), n = inv.querySelector('.sr-n');
+      const upd = ()=>{ n.textContent = 'Indices trouvés : '+count()+' / '+total; };
+      D.items.forEach((it, k)=>{
+        const row = document.createElement('div'); row.className = 'sr-it';
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = it.n; row.appendChild(b);
+        const out = document.createElement('div'); out.className = 'sr-out'; row.appendChild(out);
+        const showMore = ()=>{
+          const p = document.createElement('p'); p.textContent = it.moreD; out.appendChild(p);
+          if(it.moreClue && addClue(it.moreClue, true)){ FX.clue(); notice('Nouvel indice', BK.clues[it.moreClue].t); }
+          upd();
+        };
+        const open = (silent)=>{
+          b.disabled = true; row.classList.add('on');
+          const p = document.createElement('p'); p.textContent = it.d; out.appendChild(p);
+          if(it.clue && addClue(it.clue, true) && !silent){ FX.clue(); notice('Nouvel indice', BK.clues[it.clue].t); }
+          else if(!silent) FX.tick();
+          if(it.more){
+            if(seen.includes(k+'m')) showMore();
+            else { const m = document.createElement('button'); m.type = 'button'; m.className = 'sr-more'; m.textContent = it.more+' ›';
+              m.onclick = ()=>{ m.remove(); seen.push(k+'m'); saveProfile(); showMore(); }; out.appendChild(m); }
+          }
+          upd();
+        };
+        b.onclick = ()=>{ seen.push(k); saveProfile(); open(false); };
+        if(seen.includes(k)) open(true);
+        list.appendChild(row);
+      });
+      upd();
+      inv.querySelector('.sr-foot .go').onclick = ()=>{ inv.classList.add('hidden'); goTo(i+1); };
+      inv.classList.remove('hidden');
+    }
+    // the name given to the Ngonzormorrr
+    function openAccuse(){
+      const A = BK.accuse, S = st();
+      setMood('tension');
+      inv.className = 'bk-inv';
+      inv.innerHTML = '<div class="iv"><div class="iv-top"><span>Le mur</span></div><p class="ac-q"></p><div class="ac-who"></div><div class="iv-pick hidden"></div><div class="iv-acts hidden"></div></div>';
+      inv.querySelector('.ac-q').textContent = A.q;
+      const box = inv.querySelector('.ac-who');
+      const done = (v)=>{ S.choices.acc = v; saveProfile(); FX.thud(); inv.classList.add('hidden'); goTo(i+1); };
+      A.who.forEach(k=>{
+        const P = BK.suspects[k], b = document.createElement('button'); b.type = 'button'; b.className = 'ac-card';
+        b.innerHTML = '<span class="ac-ph" style="background-image:url(&quot;art/livre/'+P.img+'.webp&quot;)"></span><b></b><small></small>';
+        b.querySelector('b').textContent = P.n;
+        const notes = (S.notes[k]||[]); b.querySelector('small').textContent = notes.length ? '« '+notes[notes.length-1]+' »' : 'Aucune note';
+        b.onclick = ()=>{ box.classList.add('hidden'); inv.querySelector('.ac-q').textContent = 'Tu donnes le nom de '+P.n+'. Le Ngonzormorrr voudra une preuve.';
+          pickProof('Quelle preuve tu poses sur la table ?', p=>{
+            if(k==='caroline') done(p==='releve' ? 'caroline2' : 'caroline1'); else done(k);
+          }, true);
+          inv.querySelector('.iv-pick .iv-back:last-child').onclick = ()=> openAccuse();
+        };
+        box.appendChild(b);
+      });
+      const keep = document.createElement('button'); keep.type = 'button'; keep.className = 'iv-back'; keep.textContent = A.keep; keep.onclick = ()=> done('none'); box.appendChild(keep);
+      inv.classList.remove('hidden');
+    }
+    // the case report, before the last page
+    function caseScore(){
+      const S = st(); let ok = 0, all = 0;
+      Object.keys(BK.interros).forEach(id=>{ const R = S.iv[id]; if(!R) return; (R.res||[]).forEach(r=>{ if(r){ all++; if(r==='ok') ok++; } }); });
+      const clues = Object.keys(S.clues).filter(k=> BK.clues[k]).length, cluesAll = Object.keys(BK.clues).length;
+      const acc = S.choices.acc, accV = {caroline2:1, caroline1:.6, none:.3, christelle:0}[acc] || 0;
+      const score = .45*(all ? ok/all : 0) + .25*(clues/cluesAll) + .3*accV;
+      return {ok, all, clues, cluesAll, acc, stars: Math.max(1, Math.min(5, Math.round(score*5)))};
+    }
+    function openReport(){
+      const S = st(), r = caseScore();
+      const accT = {caroline2:'Caroline. Juste, et prouvée.', caroline1:'Caroline. Juste, mais sans preuve.', christelle:'Christelle. Fausse piste : elle était innocente.', none:'Aucun nom donné.'}[r.acc] || '—';
+      S.best = Math.max(S.best||0, r.stars); saveProfile();
+      inv.className = 'bk-inv';
+      inv.innerHTML = '<div class="iv rp"><div class="iv-top"><span>Rapport d’enquête</span></div><div class="rp-stars">'+'★★★★★'.slice(0, r.stars)+'<i>'+'★★★★★'.slice(r.stars)+'</i></div>'+
+        '<dl><dt>Interrogatoires</dt><dd>'+r.ok+' bonnes lectures sur '+r.all+'</dd><dt>Indices</dt><dd>'+r.clues+' sur '+r.cluesAll+'</dd><dt>Le nom</dt><dd class="acc"></dd></dl>'+
+        '<p class="rp-n">Chaque chapitre se rejoue depuis la liste des chapitres. Tes réponses peuvent changer la fin.</p><button type="button" class="go">Continuer</button></div>';
+      inv.querySelector('.acc').textContent = accT;
+      inv.querySelector('.go').onclick = ()=>{ inv.classList.add('hidden'); goTo(i+1); };
+      inv.classList.remove('hidden'); FX.cora();
+    }
+    // ---------- the notebook: clues and the wall of suspects ----------
+    function openNotebook(tab){
+      const S = st(), nb = $('bkNb');
+      nb.innerHTML = '<div class="nb"><div class="nb-top"><b>Carnet de Stéphane</b><button type="button" class="nb-x" aria-label="Fermer">✕</button></div>'+
+        '<div class="nb-tabs" role="tablist"><button type="button" data-t="c">Indices</button><button type="button" data-t="s">Suspects</button></div><div class="nb-body"></div></div>';
+      const body = nb.querySelector('.nb-body');
+      const show = t=>{
+        nb.querySelectorAll('.nb-tabs button').forEach(b=> b.classList.toggle('on', b.dataset.t===t));
+        body.innerHTML = '';
+        if(t==='c'){
+          const ids = Object.keys(S.clues).filter(k=> BK.clues[k]).sort((a,b)=> S.clues[a]-S.clues[b]);
+          const h = document.createElement('p'); h.className = 'nb-h'; h.textContent = ids.length+' indice'+(ids.length>1 ? 's' : '')+' sur '+Object.keys(BK.clues).length; body.appendChild(h);
+          ids.forEach(k=>{ const c = BK.clues[k], d = document.createElement('div'); d.className = 'nb-clue';
+            d.innerHTML = '<b></b><p></p><small></small>'; d.children[0].textContent = c.t; d.children[1].textContent = c.d; d.children[2].textContent = c.w+' · chapitre '+S.clues[k]; body.appendChild(d); });
+          if(!ids.length){ const p = document.createElement('p'); p.className = 'nb-h'; p.textContent = 'Rien encore. Lis, écoute, regarde les mains.'; body.appendChild(p); }
+        } else {
+          Object.keys(BK.suspects).forEach(k=>{
+            const P = BK.suspects[k], notes = S.notes[k]||[];
+            if(chIdx < P.from && !notes.length) return;
+            const img = (k==='kappo' && S.ch >= 23) ? 'perso-kappo' : P.img;
+            const d = document.createElement('div'); d.className = 'nb-sus';
+            d.innerHTML = '<span class="ph" style="background-image:url(&quot;art/livre/'+img+'.webp&quot;)"></span><div><b></b><ul></ul></div>';
+            d.querySelector('b').textContent = P.n;
+            const ul = d.querySelector('ul'); (notes.length ? notes : ['Rien de noté.']).forEach(n=>{ const li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
+            body.appendChild(d);
+          });
+        }
+      };
+      nb.querySelectorAll('.nb-tabs button').forEach(b=> b.onclick = ()=> show(b.dataset.t));
+      nb.querySelector('.nb-x').onclick = ()=> nb.classList.add('hidden');
+      show(tab||'c'); nb.classList.remove('hidden');
     }
     // ---------- Penalty's phone ----------
     function openPhone(){
@@ -11514,24 +11888,46 @@
     function phoneApps(){
       sample(CHIP_LAY, {vol:.5});
       const scr = $('bkPhS'); scr.className = 'scr';
-      scr.innerHTML = '<div class="app"><b>Messages · C.</b><div class="msg">Viens ce soir. Il est en mission à Douala.</div><div class="msg me">J’arrive 😏</div><div class="msg">Garde le papier. Ne pose pas de questions.</div></div>'+
-        '<div class="app" style="animation-delay:.5s"><b>Yango · dernière course</b><div class="ride">22:43 · Résidence Les Palmiers, Bastos<br>Toyota Yaris grise · Chauffeur : Ismaël<br><span style="color:#ff8a7a">Course interrompue</span></div></div>'+
-        '<div class="app" style="animation-delay:1s"><b>Notes · « Idée noire »</b><div class="note">Les choses qui arrivent trop facilement cachent souvent une facture qu’on ne voit pas encore.</div></div>';
+      scr.innerHTML = '<div class="app"><b>Appels récents</b><div class="ride">C. · 6 77 41 08 12 · 14 appels<br>Ma reine ♥ · 6 99 23 55 05 · 31 appels<br>RALL · 6 55 10 47 33 · 9 appels</div></div>'+
+        '<div class="app" style="animation-delay:.4s"><b>Messages · C.</b><div class="msg">Viens ce soir. Il est en mission à Douala.</div><div class="msg me">J’arrive 😏</div><div class="msg">Garde le papier. Ne pose pas de questions.</div></div>'+
+        '<div class="app" style="animation-delay:.8s"><b>Messages · Ma reine ♥</b><div class="msg">Tu rentres à quelle heure ? J’ai fait le soya.</div><div class="msg me">Samedi on part. Promis.</div><div class="msg">Tu dis toujours samedi.</div></div>'+
+        '<div class="app" style="animation-delay:1.2s"><b>Yango · dernière course</b><div class="ride">22:43 · Résidence Les Palmiers, Bastos<br>Toyota Yaris grise · Chauffeur : Ismaël<br><span style="color:#ff8a7a">Course interrompue</span></div></div>'+
+        '<div class="app" style="animation-delay:1.6s"><b>Notes · « Idée noire »</b><div class="note">Les choses qui arrivent trop facilement cachent souvent une facture qu’on ne voit pas encore.</div></div>';
       $('bkPhC').textContent = 'Ranger le téléphone';
     }
-    $('bkPhC').addEventListener('click', ()=>{ if($('bkPhS').classList.contains('lock')) return; $('bkPhone').classList.add('hidden'); goTo(i+1); });
+    $('bkPhC').addEventListener('click', ()=>{ if($('bkPhS').classList.contains('lock')) return; $('bkPhone').classList.add('hidden');
+      const n = ['numero_c','reine','yango'].filter(k=> addClue(k, true)).length;
+      if(n){ FX.clue(); notice('Carnet', n+' indices notés : « C. », « Ma reine », la dernière course'); }
+      goTo(i+1); });
     // ---------- the cover and the chapter list ----------
     function showReader(){ $('bkCover').classList.add('hidden'); stage.classList.remove('hidden'); }
     function cover(){
       setMood('none'); hideShot();
-      stage.classList.add('hidden'); $('bkPanel').classList.add('hidden'); $('bkPhone').classList.add('hidden');
+      stage.classList.add('hidden'); ['bkPanel','bkPhone','bkInv','bkNb'].forEach(id=> $(id).classList.add('hidden'));
       $('bkCover').classList.remove('hidden'); $('bkToc').classList.add('hidden');
-      const S = st();
-      $('bkRead').textContent = (S.ch || S.i) ? 'Reprendre · chapitre '+(Math.min(S.ch, 23)+1) : 'Lire';
+      const S = st(), started = !!(S.ch || S.i);
+      $('bkRead').textContent = started ? 'Reprendre la lecture' : 'Lire';
       $('bkHidden').classList.toggle('hidden', !(S.ended && S.ended.length));
+      $('bkNoteCv').classList.toggle('hidden', !Object.keys(S.clues).length);
+      const box = $('bkResume'); box.classList.add('hidden');
+      // where the reader stopped: the chapter, how far, and the last lines read
+      if(started) load().then(()=>{
+        const c = chapterOf(Math.min(S.ch, BK.chapters.length)), all = parse(c);
+        const pct = Math.round(Math.min(1, (S.i+1)/Math.max(1, all.length))*100);
+        box.querySelector('.rs-k').textContent = c.ending ? 'Épilogue' : 'Chapitre '+c.n+' · '+pct+' %';
+        box.querySelector('.rs-t').textContent = c.t;
+        const last = []; for(let k = Math.min(S.i, all.length-1); k >= 0 && last.length < 2; k--){ const s = all[k]; if(s.t && visible(s)) last.unshift(s.t); }
+        const prev = box.querySelector('.rs-p'); prev.innerHTML = '';
+        if(last.length){ const h = document.createElement('small'); h.textContent = 'Précédemment…'; prev.appendChild(h); last.forEach(t=>{ const p = document.createElement('p'); p.textContent = t; prev.appendChild(p); }); }
+        box.querySelector('.rs-bar i').style.width = Math.round(((Math.min(S.ch, BK.chapters.length-1) + pct/100)/BK.chapters.length)*100)+'%';
+        box.classList.remove('hidden');
+      }).catch(()=>{});
     }
     function read(fromCh, at){
-      load().then(()=>{ showReader(); const S = st(); S.hiddenRun = false; openChapter(fromCh==null ? Math.min(S.ch, BK.chapters.length-1) : fromCh, fromCh==null ? S.i : (at||0)); })
+      load().then(()=>{ showReader(); const S = st(); S.hiddenRun = false;
+        // replaying a chapter from the list: its interrogations and searches start over
+        if(fromCh!=null) parse(chapterOf(fromCh)).forEach(s=>{ if(s.interro) delete S.iv[s.interro]; if(s.search && S.sx) delete S.sx[s.search]; });
+        openChapter(fromCh==null ? Math.min(S.ch, BK.chapters.length-1) : fromCh, fromCh==null ? S.i : (at||0)); })
         .catch(()=> showToast('Livre indisponible', 'Vérifie ta connexion et réessaie.', {ms:2600}));
     }
     function toc(){
@@ -11541,9 +11937,11 @@
         BK.chapters.forEach((c, k)=>{
           const b = document.createElement('button'); b.type = 'button';
           b.disabled = k > S.ch && !(S.ended && S.ended.length);
-          b.innerHTML = '<span class="n">'+c.n+'.</span><span></span><span class="w">'+c.who+'</span>';
+          const here = k===S.ch && (S.ch || S.i);
+          b.className = here ? 'here' : (k < S.ch ? 'done' : '');
+          b.innerHTML = '<span class="n">'+c.n+'.</span><span></span><span class="w">'+(here ? 'Tu es ici' : k < S.ch ? '✓ '+c.who : c.who)+'</span>';
           b.children[1].textContent = c.t;
-          b.onclick = ()=> read(k, 0);
+          b.onclick = ()=> here ? read() : read(k, 0);
           box.appendChild(b);
         });
         const back = document.createElement('button'); back.type = 'button'; back.innerHTML = '<span class="n">‹</span><span>Retour à la couverture</span>'; back.onclick = cover; box.appendChild(back);
@@ -11555,13 +11953,18 @@
     $('bkHidden').addEventListener('click', ()=>{ ac(); load().then(()=>{ const S = st(); S.hiddenRun = true; S.ending = 'cachee'; showReader(); openChapter(BK.chapters.length); }); });
     $('bkLeave').addEventListener('click', ()=> Nav.back());
     $('bkMenu').addEventListener('click', e=>{ e.stopPropagation(); cover(); });
+    $('bkNoteBtn').addEventListener('click', e=>{ e.stopPropagation(); openNotebook(); });
+    $('bkNoteCv').addEventListener('click', ()=> load().then(()=> openNotebook()));
+    $('bkNb').addEventListener('click', e=>{ if(e.target.id==='bkNb') $('bkNb').classList.add('hidden'); });
     $('bkBack').addEventListener('click', e=>{ e.stopPropagation(); prev(); });
     stage.addEventListener('click', e=>{ ac(); if(e.clientX < innerWidth*0.22) prev(); else next(); });
     return {
       open(){ Nav.go('bookPage'); },
       shown(){ Music.stop(); cover(); load().catch(()=>{}); },
       left(){ setMood('none'); clearInterval(typeT); },
-      afterMatch
+      afterMatch,
+      // for local tests (?debug): jump to the first beat of a kind in a chapter
+      _jump(ch, kind){ return load().then(()=>{ showReader(); openChapter(ch); const k = steps.findIndex(s=> s[kind]); if(k >= 0) goTo(k); return k; }); }
     };
   })();
   document.getElementById('btnStory').addEventListener('click', e=>{ e.stopImmediatePropagation(); Book.open(); }, true);
@@ -11775,7 +12178,7 @@
       // you touch the mask
       tap: ["Ne touche pas le masque. Tes doigts sentent la défaite.","Tu veux me défier ? Le bouton est juste là. Si tu oses.","On ne touche pas l’or quand on n’en a pas.","Encore ? Tu me chatouilles. C’est tout ce que tu sais faire ?"],
       // you open « Jouer » somewhere else
-      play: ["Va jouer avec mes petits. Je t’attends au bout de la route.","Joëlle ? RALL ? Tu choisis toujours les plus faciles, hein.","Prends ton temps. Je ne pars nulle part."],
+      play: ["Va jouer avec mes petits. Je t’attends au bout de la route.","Christelle ? RALL ? Tu choisis toujours les plus faciles, hein.","Prends ton temps. Je ne pars nulle part."],
       // he won the last time
       revenge: [()=> "La dernière fois, tu es reparti à pied. Tu reviens chercher ton taxi ?", ()=> rec().l>=2 ? rec().l+" défaites contre moi. Tu collectionnes ?" : "Je t’ai battu une fois. La deuxième sera plus douce : tu as l’habitude."],
       // you won the last time
@@ -12604,7 +13007,7 @@
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
-      lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect };
+      lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect, Book };
   }
 
 })();
