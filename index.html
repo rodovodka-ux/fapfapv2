@@ -16,7 +16,8 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@800&display=swap" rel="stylesheet">
+<!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -2132,6 +2133,102 @@
   .sc-lamp.dip .glass{ filter: brightness(0.55) saturate(1.4); }
   .sc-lamp.dip .lamp-dark{ filter: brightness(0.85); }
 
+  /* ===== the story book: black page, one beat at a time. Literata = the narration · Anton = the blows ·
+     Cinzel = names and reveals · Special Elite = what is written ===== */
+  .book-page{ position:fixed; inset:0; z-index:70; background:#07060a; color:#f4eee4; overflow:hidden; font-family:'Literata', Georgia, serif;
+    -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .book-page.pg-in-fwd, .book-page.pg-in-back{ animation: bkIn .45s ease both; } @keyframes bkIn{ from{ opacity:0; } }
+  .bk-cover{ position:absolute; inset:0; overflow:auto; display:flex; align-items:center; justify-content:center; padding: calc(24px + env(safe-area-inset-top, 0px)) 20px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .bk-cv-in{ display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; max-width:360px; width:100%; }
+  .bk-18{ font:800 11px 'Manrope', system-ui, sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#ff7a66; border:1px solid rgba(255,122,102,.5); border-radius:999px; padding:5px 12px; }
+  .bk-cv-t{ font-family:'Cinzel', serif; font-weight:700; font-size:clamp(30px, 9vw, 44px); line-height:1.15; letter-spacing:.04em; margin:6px 0 0; }
+  .bk-rule{ width:60px; height:1px; background:#d6ab52; }
+  .bk-cv-a{ font-family:'Cinzel', serif; letter-spacing:.4em; color:#d6ab52; font-size:15px; }
+  .bk-cv-p{ margin:4px 0 8px; color:#b9ad9d; font-size:15px; line-height:1.5; }
+  .bk-btn{ appearance:none; width:100%; border:0; border-radius:999px; padding:14px; font:800 16px 'Manrope', system-ui, sans-serif; cursor:pointer; background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; }
+  .bk-btn.ghost{ background:transparent; color:#f4eee4; border:1px solid rgba(255,255,255,.2); font-weight:700; }
+  .bk-btn:focus-visible{ outline:2px solid #d6ab52; outline-offset:3px; }
+  .bk-credits{ margin:10px 0 0; font:600 11.5px 'Manrope', system-ui, sans-serif; color:#8a7f72; line-height:1.5; }
+  .bk-toc{ position:absolute; inset:0; overflow:auto; background:#07060a; padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 30px; }
+  .bk-toc h2{ font-family:'Cinzel', serif; font-size:18px; letter-spacing:.2em; margin:0 0 14px; }
+  .bk-toc button{ appearance:none; display:flex; gap:12px; width:100%; text-align:left; background:none; border:0; border-bottom:1px solid rgba(255,255,255,.08); color:#f4eee4; padding:12px 2px; font:16px 'Literata', Georgia, serif; cursor:pointer; }
+  .bk-toc button[disabled]{ color:#5d554c; cursor:default; }
+  .bk-toc .n{ color:#8a7f72; width:2em; flex:none; font-variant-numeric:tabular-nums; } .bk-toc .w{ margin-left:auto; font:700 11px 'Manrope', sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#8a7f72; align-self:center; }
+  .bk-stage{ position:absolute; inset:0; cursor:pointer; }
+  .bk-shot{ position:absolute; inset:0; background:center/cover no-repeat; opacity:0; transition:opacity 1.2s ease; transform:scale(1.06); }
+  .bk-shot.on{ opacity:1; animation: bkPush 24s ease-out forwards; }
+  @keyframes bkPush{ to{ transform:scale(1); } }
+  .bk-flash{ position:absolute; inset:0; pointer-events:none; opacity:0; mix-blend-mode:screen; }
+  .bk-flash.red{ background: radial-gradient(ellipse at 20% 30%, rgba(255,40,40,.6), transparent 65%); }
+  .bk-flash.blue{ background: radial-gradient(ellipse at 80% 30%, rgba(40,110,255,.65), transparent 65%); }
+  .bk-flash.white{ background:#fff; mix-blend-mode:normal; }
+  .bk-flash.go{ animation: bkBlink .9s ease-out; } @keyframes bkBlink{ from{ opacity:1; } to{ opacity:0; } }
+  /* the lines: a column in the middle of the black page */
+  .bk-lines{ position:absolute; left:26px; right:26px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:.6em;
+    font-size:clamp(20px, 5.8vw, 26px); line-height:1.45; text-align:left; text-wrap:pretty; overflow-wrap:break-word; max-height:calc(100% - 150px); }
+  .bk-lines .ln.slam, .bk-lines .ln.reveal, .bk-lines .ln.ghost{ text-align:center; text-wrap:balance; }
+  .bk-lines .w{ display:inline-block; opacity:0; transform:translateY(8px); animation: bkRise .5s ease forwards; }
+  .bk-lines .read .w, .bk-lines .read{ animation:none; opacity:.5; transform:none; }
+  @keyframes bkRise{ to{ opacity:1; transform:none; } }
+  .bk-lines .slam{ font-family:'Anton', 'Arial Narrow', Impact, sans-serif; text-transform:uppercase; line-height:1.02; letter-spacing:.01em; }
+  .bk-lines .slam .w{ animation: bkSlam .32s cubic-bezier(.2,1.6,.4,1) forwards; }
+  @keyframes bkSlam{ 0%{ opacity:0; transform:scale(2.2); filter:blur(5px); } 100%{ opacity:1; transform:none; filter:none; } }
+  .bk-lines .red .w{ color:#ff5a4f; text-shadow:0 0 24px rgba(255,40,40,.75); } .bk-lines .blue .w{ color:#7fb0ff; text-shadow:0 0 24px rgba(40,110,255,.75); }
+  /* a reveal: the words come out of the blur and settle — no change of letter spacing, so the line never re-wraps while it moves */
+  .bk-lines .reveal{ font-family:'Cinzel', serif; font-weight:700; letter-spacing:.04em; line-height:1.25; }
+  .bk-lines .reveal .w{ animation: bkReveal 1s cubic-bezier(.2,.7,.2,1) forwards; }
+  @keyframes bkReveal{ 0%{ opacity:0; transform:scale(1.15); filter:blur(8px); } 100%{ opacity:1; transform:none; filter:none; } }
+  .bk-lines .ghost{ font-style:italic; }
+  .bk-lines .ghost .w{ animation: bkGhost 1.5s ease forwards; } @keyframes bkGhost{ from{ opacity:0; filter:blur(10px); } to{ opacity:1; filter:none; } }
+  .bk-lines .type{ font-family:'Special Elite', 'Courier New', monospace; } .bk-lines .type .c{ opacity:0; } .bk-lines .type .c.on{ opacity:1; }
+  .bk-lines .dlg{ font-style:italic; }
+  .bk-lines .pic{ display:block; width:min(46vw, 200px); aspect-ratio:3/4; object-fit:cover; object-position:50% 18%; border-radius:14px; margin:0 auto 6px;
+    box-shadow:0 0 0 1px rgba(214,171,82,.35), 0 18px 40px rgba(0,0,0,.7); animation: bkPic 1.3s ease both; }
+  @keyframes bkPic{ from{ opacity:0; transform:scale(1.06); filter:blur(8px) grayscale(1); } to{ opacity:1; transform:none; filter:none; } }
+  .bk-who{ position:absolute; left:16px; bottom:calc(70px + env(safe-area-inset-bottom, 0px)); display:flex; align-items:center; gap:12px; opacity:0; transform:translateY(10px); transition:.45s ease; pointer-events:none; }
+  .bk-who.on{ opacity:1; transform:none; }
+  .bk-who .face{ width:60px; height:60px; border-radius:50%; background:center 20%/cover no-repeat #222; box-shadow:0 0 0 2px rgba(214,171,82,.7); }
+  .bk-who .face.empty{ display:none; }
+  .bk-who b{ font-family:'Cinzel', serif; font-size:14px; letter-spacing:.18em; color:#d6ab52; }
+  .bk-card{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#07060a; opacity:0; pointer-events:none; transition:opacity .8s ease; text-align:center; padding:0 24px; }
+  .bk-card.on{ opacity:1; }
+  .bk-card .k{ font-family:'Cinzel', serif; letter-spacing:.35em; color:#b9ad9d; font-size:13px; }
+  .bk-card .t{ font-family:'Cinzel', serif; font-weight:700; font-size:clamp(26px, 8vw, 40px); line-height:1.2; text-wrap:balance; }
+  .bk-card.on .t{ animation: bkReveal 1.3s cubic-bezier(.2,.7,.2,1); }
+  .bk-card .a{ font-family:'Cinzel', serif; letter-spacing:.4em; color:#d6ab52; font-size:14px; }
+  .bk-card .r{ width:60px; height:1px; background:#d6ab52; }
+  .bk-bar{ position:absolute; left:0; right:0; top:0; padding:calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; display:flex; align-items:center; gap:10px; z-index:3; font-family:'Manrope', system-ui, sans-serif; }
+  .bk-bar button{ appearance:none; border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.4); color:#f4eee4; border-radius:999px; padding:7px 12px; font:700 13px 'Manrope', system-ui, sans-serif; cursor:pointer; }
+  .bk-prog{ flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,.15); overflow:hidden; } .bk-prog i{ display:block; height:100%; width:0; background:#d6ab52; transition:width .4s; }
+  .bk-hint{ position:absolute; left:0; right:0; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); text-align:center; font:600 12px 'Manrope', sans-serif; color:#8a7f72; letter-spacing:.08em; transition:opacity .6s; pointer-events:none; }
+  .bk-shake{ animation: bkShk .45s cubic-bezier(.3,.7,.4,1); }
+  @keyframes bkShk{ 15%{ transform:translate(-9px,5px); } 35%{ transform:translate(7px,-4px); } 55%{ transform:translate(-4px,2px); } 75%{ transform:translate(2px,-1px); } }
+  .bk-panel{ position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; background:rgba(4,3,6,.86); padding:20px; }
+  .bk-box{ width:100%; max-width:380px; background:#15110d; border:1px solid rgba(214,171,82,.4); border-radius:20px; padding:20px; text-align:center; font-family:'Manrope', system-ui, sans-serif; display:flex; flex-direction:column; gap:12px; }
+  .bk-box .k{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#d6ab52; font-weight:800; }
+  .bk-box h3{ font-family:'Cinzel', serif; font-size:20px; margin:0; } .bk-box p{ margin:0; color:#b9ad9d; font-size:14.5px; line-height:1.5; }
+  .bk-box .face{ width:84px; height:84px; border-radius:50%; margin:0 auto; background:center 20%/cover no-repeat #222; box-shadow:0 0 0 2px rgba(214,171,82,.6); }
+  .bk-box .opt{ appearance:none; border:1px solid rgba(214,171,82,.45); background:rgba(214,171,82,.08); color:#f4eee4; border-radius:14px; padding:13px; font:700 15px 'Manrope', sans-serif; cursor:pointer; }
+  .bk-box .go{ appearance:none; border:0; border-radius:999px; padding:13px; font:800 15px 'Manrope', sans-serif; background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; cursor:pointer; }
+  .bk-box .later{ appearance:none; border:1px solid rgba(255,255,255,.18); background:transparent; color:#f4eee4; border-radius:999px; padding:11px; font:700 14px 'Manrope', sans-serif; cursor:pointer; }
+  .bk-ph{ width:min(300px, 86vw); height:min(600px, 78vh); border-radius:40px; background:#0b0b0d; border:3px solid #2a2a2e; box-shadow:0 30px 60px rgba(0,0,0,.7); position:relative; overflow:hidden; font-family:'Manrope', system-ui, sans-serif; display:flex; flex-direction:column; }
+  .bk-ph .crack{ position:absolute; inset:0; pointer-events:none; background: linear-gradient(118deg, transparent 47%, rgba(255,255,255,.35) 47.3%, transparent 47.8%), linear-gradient(64deg, transparent 58%, rgba(255,255,255,.25) 58.2%, transparent 58.6%); }
+  .bk-ph .top{ padding:14px 18px 6px; display:flex; justify-content:space-between; font-size:12px; color:#ccc; }
+  .bk-ph .scr{ flex:1; padding:10px 14px; display:flex; flex-direction:column; gap:10px; overflow:auto; }
+  .bk-ph .lock{ align-items:center; justify-content:center; gap:16px; text-align:center; }
+  .bk-ph .time{ font-size:56px; font-weight:300; }
+  .bk-ph .dots{ display:flex; gap:10px; } .bk-ph .dots i{ width:12px; height:12px; border-radius:50%; border:1.5px solid #ddd; } .bk-ph .dots i.f{ background:#ddd; }
+  .bk-ph .app{ background:#1b1b20; border-radius:14px; padding:12px; text-align:left; opacity:0; animation: bkRise .5s ease forwards; transform:translateY(8px); }
+  .bk-ph .app b{ display:block; font-size:12px; color:#9a9aa5; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px; }
+  .bk-ph .msg{ background:#2a2a32; border-radius:14px 14px 14px 4px; padding:8px 11px; font-size:14px; line-height:1.35; margin:4px 0; max-width:85%; }
+  .bk-ph .msg.me{ background:#0b6b4f; margin-left:auto; border-radius:14px 14px 4px 14px; }
+  .bk-ph .note{ font-family:'Special Elite', 'Courier New', monospace; font-size:14px; line-height:1.5; color:#e8e8ee; }
+  .bk-ph .ride{ font-size:13px; line-height:1.5; color:#e8e8ee; }
+  .bk-ph .close{ margin:10px 14px 16px; appearance:none; border:0; border-radius:999px; padding:12px; font:800 14px 'Manrope', sans-serif; background:#e9e1d3; color:#141414; cursor:pointer; }
+  /* Brouillard: after the joint, two of your cards stay blurred until you play them */
+  body.book-fog #playerHand .card:nth-child(2n){ filter: blur(3px) saturate(.6); }
+  @media (prefers-reduced-motion: reduce){ .bk-shot.on{ animation:none; transform:none; } .bk-lines .w, .bk-lines .pic{ animation:none !important; opacity:1; transform:none; filter:none; } }
+
   /* ---- MODE OR: the Ngonzormorrr's golden mask on the home screen — its eyes follow you, the jaw moves when he talks ---- */
   .og-king{ display:none; }
   body.theme-or .og-king{ display:flex; position:relative; align-items:center; gap:10px; min-height:170px; }
@@ -3252,8 +3349,8 @@
     </button>
 
     <button class="lg gl hx-home press og deep" id="btnStory" style="--d:2">
-      <span class="hx-home-art" aria-hidden="true"><img src="art/story/mireille.jpg" alt=""><img src="art/story/ekwalla.jpg" alt=""><img src="art/story/bobo.jpg" alt=""></span>
-      <span class="hx-home-txt"><small>Mode histoire</small><b>La Nuit des 33</b><span id="hxHomeSub">32 joueurs entrent. Un seul ressort.</span></span>
+      <span class="hx-home-art" aria-hidden="true"><img src="art/livre/perso-caroline.webp" alt=""><img src="art/livre/perso-penalty.webp" alt=""><img src="art/livre/perso-stephane.webp" alt=""></span>
+      <span class="hx-home-txt"><small>Mode histoire · 18+</small><b>Pourquoi je suis mort ?</b><span id="hxHomeSub">Le roman de Penalty, à lire et à jouer.</span></span>
       <span class="gl-tag hx-home-tag" id="hxHomeTag">Nouveau</span>
     </button>
 
@@ -3292,6 +3389,36 @@
     <button class="tab" id="btnShowSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg>Décors</button>
     <button class="tab" id="btnShowSettings"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg>Réglages</button>
   </nav>
+</div>
+
+<!-- ===== Mode histoire : le livre « Pourquoi je suis mort ? » (texte dans livre/livre.js) ===== -->
+<div class="book-page hidden" id="bookPage" aria-label="Pourquoi je suis mort ?">
+  <div class="bk-cover" id="bkCover">
+    <div class="bk-cv-in">
+      <span class="bk-18">Interdit aux moins de 18 ans</span>
+      <h1 class="bk-cv-t">POURQUOI<br>JE SUIS MORT ?</h1>
+      <span class="bk-rule"></span>
+      <span class="bk-cv-a">PENALTY</span>
+      <p class="bk-cv-p">Un roman à lire et à jouer. Sexe, drogue, alcool, violence : ce livre parle de tout, sans détour.</p>
+      <button class="bk-btn" id="bkRead" type="button">Lire</button>
+      <button class="bk-btn ghost" id="bkChapters" type="button">Chapitres</button>
+      <button class="bk-btn ghost hidden" id="bkHidden" type="button">Et si j’étais parti ?</button>
+      <button class="bk-btn ghost" id="bkLeave" type="button">Retour au jeu</button>
+      <p class="bk-credits">Illustrations créées avec l’intelligence artificielle · Bruitages : Kenney (CC0)</p>
+    </div>
+    <div class="bk-toc hidden" id="bkToc"></div>
+  </div>
+  <div class="bk-stage hidden" id="bkStage" role="button" aria-label="Toucher pour continuer">
+    <div class="bk-shot" id="bkShotA"></div><div class="bk-shot" id="bkShotB"></div>
+    <div class="bk-flash red" id="bkFR"></div><div class="bk-flash blue" id="bkFB"></div><div class="bk-flash white" id="bkFW"></div>
+    <div class="bk-lines" id="bkLines" aria-live="polite"></div>
+    <div class="bk-who" id="bkWho"><span class="face"></span><b></b></div>
+    <div class="bk-card" id="bkCard"></div>
+    <div class="bk-bar"><button type="button" id="bkBack" aria-label="Phrase précédente">‹</button><div class="bk-prog"><i id="bkProg"></i></div><button type="button" id="bkMenu">Livre</button></div>
+    <div class="bk-hint" id="bkHint">Touche l’écran pour continuer · monte le son</div>
+  </div>
+  <div class="bk-panel hidden" id="bkPanel"><div class="bk-box" id="bkBox"></div></div>
+  <div class="bk-panel hidden" id="bkPhone"><div class="bk-ph"><div class="crack"></div><div class="top"><span>Orange CM</span><span>23:58</span></div><div class="scr" id="bkPhS"></div><button class="close" id="bkPhC" type="button">Continuer</button></div></div>
 </div>
 
 <div class="overlay page hidden" id="storyPage">
@@ -5456,6 +5583,7 @@
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
   const ART_FILE = {penalty:'penalty', gervais:'joelle', aristide:'rall'}; // the mask (mbarga) is drawn: see maskSVG
   function artImgTag(base){
+    if(base.indexOf('livre/')===0) return '<img src="art/'+base+'.webp" alt="" onerror="this.remove()">';
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
       'onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\';}else{this.remove();}">';
   }
@@ -6297,6 +6425,7 @@
     return skinUnlocked('table', sk.table) ? sk.table : 'tripot';
   }
   function pageShown(id){
+    if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
     if(id==='menuOverlay'){ renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); }
     else if(id==='storyPage') renderStory();
@@ -6313,6 +6442,7 @@
     else if(id==='mpLobbyOverlay'){ document.getElementById('mpNameInput').value = prefs.name || ''; preloadNet(); renderStakePicks(); }
   }
   function pageLeft(id){
+    if(id==='bookPage') Book.left();
     if(id==='shopPage' && trailPreview){ trailPreview = null; Trail.readColors(); } // the trail tried on in the shop goes back to yours
     // backing out of the "your code" / "join" pages before a match starts closes the connection
     const roomPlaying = room.active && room.started;
@@ -6707,7 +6837,7 @@
     };
     resetVoidTracking();
     state.sandbaggedThisHand = false;
-    state.peek = maskOn() ? maskPeek(playerHand) : null;
+    state.peek = (maskOn() || (storyRun && storyRun.rule==='peek')) ? maskPeek(playerHand) : null;
     locked = !state.handOver && state.leader==='ai';
     renderAll(true);
     checkAutoWinWindow();
@@ -10791,6 +10921,10 @@
 
   // ---- the home card and the chapters page ----
   function renderStoryHome(){
+    // the home card now opens the book « Pourquoi je suis mort ? »
+    const B = profile.book, bSub = document.getElementById('hxHomeSub'), bTag = document.getElementById('hxHomeTag');
+    if(bSub){ if(B && B.ended && B.ended.length){ bSub.textContent = 'Livre terminé · relis-le, ou découvre la fin cachée'; bTag.textContent = 'Relire'; } else if(B && (B.ch || B.i)){ bSub.textContent = 'Chapitre '+(B.ch+1)+' · reprends ta lecture'; bTag.textContent = 'Suite'; } else { bSub.textContent = 'Le roman de Penalty, à lire et à jouer.'; bTag.textContent = 'Nouveau'; } }
+    return;
     if(!CHAPTERS) return;
     const P = stGet(), sub = document.getElementById('hxHomeSub'), tag = document.getElementById('hxHomeTag');
     if(!sub) return;
@@ -11053,10 +11187,19 @@
     Object.keys(r.art).forEach(k=>{ if(r.art[k]===undefined) delete ART_FILE[k]; else ART_FILE[k] = r.art[k]; });
     Object.keys(r.sqp).forEach(k=> SQ_PERSONAS[k] = r.sqp[k]);
     TARGET_SCORE = r.target0;
+    document.body.classList.remove('book-fog');
+    if(duelOpp.indexOf('bk_')===0) duelOpp = prefs.lastOpp && DUEL_PERSONAS[prefs.lastOpp] ? prefs.lastOpp : 'penalty';
     if(duelOpp.indexOf('st_')===0) duelOpp = prefs.lastOpp && DUEL_PERSONAS[prefs.lastOpp] ? prefs.lastOpp : 'penalty';
   }
   function storyMatchEnd(won){
     const run = storyRun;
+    if(run && run.book){
+      if(won){ sfxMatchWin(); bigImpact(); } else sfxMatchLose();
+      touchDayStreak();
+      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Le livre continue.' : 'Il faudra rejouer cette partie.', {big:true, celebrate:won, ms:1700});
+      setTimeout(()=>{ goToMainMenu(); Book.afterMatch(run, won); }, 1900);
+      return;
+    }
     if(won){ sfxMatchWin(); bigImpact(); burstConfetti(40); } else sfxMatchLose();
     touchDayStreak();
     showToast(won ? 'Victoire !' : 'Défaite…', won ? 'L’histoire continue.' : 'Le Cercle ne pardonne pas.', {big:true, celebrate:won, ms:1700});
@@ -11089,6 +11232,340 @@
     p.classList.remove('hidden');
     hxPortrait(run.m.carre ? null : run.m.opp);
   }
+  // ===================== MODE HISTOIRE : « Pourquoi je suis mort ? » (Penalty) =====================
+  // The book (livre/livre.js, loaded on first opening) is read one beat at a time on a black page. Stéphane's games
+  // are real games of Fap Fap: winning one opens the rest of the book. Progress: profile.book = {ch, i, choices, won, ended}.
+  const Book = (function(){
+    let BK = null, loading = null, steps = [], chIdx = 0, i = -1, typeT = null, shotCur = '', shotI = 0;
+    const $ = id=> document.getElementById(id);
+    const page = $('bookPage'), stage = $('bkStage'), linesEl = $('bkLines'), cardEl = $('bkCard'), whoEl = $('bkWho');
+    const shots = [$('bkShotA'), $('bkShotB')];
+    function st(){ if(!profile.book) profile.book = {ch:0, i:0, choices:{}, won:{}, ended:[]}; return profile.book; }
+    function load(){
+      if(BK) return Promise.resolve(BK);
+      if(loading) return loading;
+      loading = new Promise((ok, ko)=>{
+        const s = document.createElement('script'); s.src = 'livre/livre.js';
+        s.onload = ()=>{ BK = window.FF_BOOK; BK ? ok(BK) : ko(); }; s.onerror = ()=>{ loading = null; ko(); };
+        document.head.appendChild(s);
+      });
+      return loading;
+    }
+    // ---------- the text: one line = one beat ----------
+    // French spacing: the « ? ! : ; » stay glued to their word, and the dialogue dash to the first word
+    const glue = t=> t.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ').replace(/^— /, '— ');
+    function chapterOf(idx){
+      const S = st();
+      if(idx < BK.chapters.length) return BK.chapters[idx];
+      const e = BK.endings[S.ending] || BK.endings['0'];
+      return {n:'', t:e.t, who:'Fin', text:e.text, ending:true};
+    }
+    function parse(ch){
+      const out = [], lines = ch.text.split('\n').map(l=> l.trim()).filter(Boolean);
+      const card = ch.ending ? ['ÉPILOGUE', ch.t, ''] : ['CHAPITRE '+ch.n, ch.t, (ch.who||'').toUpperCase()];
+      if(!lines.includes('[title]')) out.push({card});
+      let mood = null;
+      lines.forEach(raw=>{
+        let l = raw, cond = null;
+        const mc = l.match(/^\?(\w+)=(\w+)\s+/); if(mc){ cond = [mc[1], mc[2]]; l = l.slice(mc[0].length); }
+        const ev = l.match(/^\[(\w+)\s*([^\]]*)\]$/);
+        if(ev){
+          const k = ev[1], a = ev[2].trim();
+          if(k==='mood'){ mood = a; return; }
+          let s = null;
+          if(k==='title'){ out.push({card:['', BK.title, BK.author], cond, mood}); mood = null; s = {card, cond}; }
+          else if(k==='img') s = {img:'art/livre/'+a+'.webp', cond};
+          else if(k==='game') s = {game:a, cond};
+          else if(k==='phone') s = {phone:1, cond};
+          else if(k==='choice'){ const parts = a.split('|'); s = {choice:parts[0], opts:parts.slice(1), cond}; }
+          if(s){ if(mood){ s.mood = mood; mood = null; } out.push(s); }
+          return;
+        }
+        const s = {cond};
+        l = l.replace(/\{(\w+):([^}]*)\}/g, (m, k, v)=>{ s[k] = v; return ''; }).trim();
+        let mm;
+        while((mm = l.match(/^(@\w+|[!*~>+])\s+/))){
+          const t = mm[1];
+          if(t[0]==='@') s.who = t.slice(1); else if(t==='+') s.stack = 1; else s.s = {'!':'slam','*':'reveal','~':'ghost','>':'type'}[t];
+          l = l.slice(mm[0].length);
+        }
+        s.t = glue(l);
+        if(mood && !s.mood){ s.mood = mood; mood = null; }
+        out.push(s);
+      });
+      if(ch.ending) out.push({card:['', 'FIN', BK.author], last:true});
+      return out;
+    }
+    const visible = s=> !s.cond || String(st().choices[s.cond[0]])===s.cond[1];
+    const esc = t=> t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const castPic = id=> BK.cast[id] && BK.cast[id][1] ? 'art/livre/'+BK.cast[id][1]+'.webp' : '';
+    // the big lines are sized to fit the screen: a long blow never runs off the edge
+    function fitSize(s, text){
+      const W = Math.min(innerWidth, 520) - 52, n = Math.max(2, text.length);
+      if(s==='slam') return Math.round(Math.min(110, W/(n*0.48)));
+      if(s==='reveal') return Math.round(Math.max(24, Math.min(48, W/(n*0.42))));
+      if(s==='ghost') return Math.round(Math.max(22, Math.min(36, W/(n*0.38))));
+      return 0;
+    }
+    function makeLine(s, live){
+      const box = document.createElement('div');
+      const pic = live && s.pic ? castPic(s.pic) : '';
+      if(pic){ const im = document.createElement('img'); im.className = 'pic'; im.src = pic; im.alt = BK.cast[s.pic][0]; box.appendChild(im); }
+      const ln = document.createElement('div');
+      ln.className = 'ln '+(s.s||'')+' '+(s.c||'')+(s.t.startsWith('—') ? ' dlg' : '')+(live ? '' : ' read');
+      const fs = fitSize(s.s, s.t); if(fs) ln.style.fontSize = fs+'px';
+      if(!live) ln.textContent = s.t;
+      else if(s.s==='type') ln.innerHTML = [...s.t].map(ch=> '<span class="c">'+esc(ch)+'</span>').join('');
+      else { const gap = s.s==='slam' ? 0 : s.s==='ghost' ? 110 : 26; ln.innerHTML = s.t.split(' ').map((w,k)=> '<span class="w" style="animation-delay:'+(k*gap)+'ms">'+esc(w)+'</span>').join(' '); }
+      box.appendChild(ln);
+      return box;
+    }
+    // ---------- sound: the music under each scene and the noises of the story ----------
+    let mus = null, mood = 'none', moodNodes = null;
+    const noiseB = (c, d)=>{ const b = c.createBuffer(1, Math.floor(c.sampleRate*d), c.sampleRate), x = b.getChannelData(0); for(let k=0;k<x.length;k++) x[k] = Math.random()*2-1; return b; };
+    function ac(){ const c = ensureAudio(); if(c && !mus){ mus = c.createGain(); mus.gain.value = 1; mus.connect(master); } return c; }
+    const MOODS = { night:{n:[45,52,57,60], cut:700, vol:.06, pulse:0}, wake:{n:[43,50,55,58], cut:900, vol:.065, pulse:0}, tension:{n:[40,47,52,55], cut:520, vol:.07, pulse:1.6} };
+    function setMood(m){
+      if(!m || m===mood) return; mood = m; const c = ac(); if(!c) return; const t = c.currentTime;
+      if(moodNodes){ const old = moodNodes; old.g.gain.setTargetAtTime(0, t, .8); setTimeout(()=> old.o.forEach(o=>{ try{ o.stop(); }catch(e){} }), 4000); moodNodes = null; }
+      const M = MOODS[m]; if(!M) return;
+      const g = c.createGain(); g.gain.value = 0; const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = M.cut; f.Q.value = .7;
+      const o = [];
+      M.n.forEach((n,k)=> [-6,6].forEach(det=>{ const x = c.createOscillator(); x.type = k ? 'sawtooth' : 'triangle'; x.frequency.value = mtof(n); x.detune.value = det; const xg = c.createGain(); xg.gain.value = k ? .18 : .4; x.connect(xg); xg.connect(f); x.start(); o.push(x); }));
+      const l = c.createOscillator(), lg = c.createGain(); l.frequency.value = .07; lg.gain.value = M.cut*.35; l.connect(lg); lg.connect(f.frequency); l.start(); o.push(l);
+      if(M.pulse){ const amp = c.createGain(); amp.gain.value = .5; const p = c.createOscillator(), pg = c.createGain(); p.frequency.value = M.pulse; pg.gain.value = .5; p.connect(pg); pg.connect(amp.gain); p.start(); o.push(p); f.connect(amp); amp.connect(g); }
+      else f.connect(g);
+      g.connect(mus); g.gain.setTargetAtTime(M.vol, t, 1.5);
+      moodNodes = {g, o};
+    }
+    function duck(){ if(!mus) return; const t = audioCtx.currentTime; mus.gain.cancelScheduledValues(t); mus.gain.setValueAtTime(.25, t); mus.gain.linearRampToValueAtTime(1, t+2.5); }
+    function hit(fn){ const c = ac(); if(c) try{ fn(c, c.currentTime); }catch(e){} }
+    const FX = {
+      shot: ()=> hit((c,t)=>{ duck();
+        const n = c.createBufferSource(); n.buffer = noiseB(c,.7); const f = c.createBiquadFilter(); f.type='lowpass'; f.frequency.setValueAtTime(5000,t); f.frequency.exponentialRampToValueAtTime(250,t+.45);
+        const g = c.createGain(); g.gain.setValueAtTime(1,t); g.gain.exponentialRampToValueAtTime(.001,t+.6); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t);
+        const o = c.createOscillator(); o.frequency.setValueAtTime(110,t); o.frequency.exponentialRampToValueAtTime(35,t+.35); const og = c.createGain(); og.gain.setValueAtTime(.9,t); og.gain.exponentialRampToValueAtTime(.001,t+.4); o.connect(og); og.connect(sfxBus); o.start(t); o.stop(t+.45);
+        const e = c.createBufferSource(); e.buffer = noiseB(c,.5); const ef = c.createBiquadFilter(); ef.type='lowpass'; ef.frequency.value = 900; const eg = c.createGain(); eg.gain.setValueAtTime(.0001,t+.18); eg.gain.exponentialRampToValueAtTime(.25,t+.22); eg.gain.exponentialRampToValueAtTime(.001,t+.7); e.connect(ef); ef.connect(eg); eg.connect(sfxBus); e.start(t+.18); }),
+      thud: ()=> hit((c,t)=>{ const o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(70,t); o.frequency.exponentialRampToValueAtTime(30,t+.5); g.gain.setValueAtTime(.9,t); g.gain.exponentialRampToValueAtTime(.001,t+.6); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.65); }),
+      heart: ()=> hit((c,t0)=>{ [0,.28,1,1.28].forEach((d,k)=>{ const t = t0+d, o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(68,t); o.frequency.exponentialRampToValueAtTime(38,t+.18); g.gain.setValueAtTime(k%2 ? .35 : .55,t); g.gain.exponentialRampToValueAtTime(.001,t+.22); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.25); }); }),
+      glass: ()=> hit((c,t)=>{ const n = c.createBufferSource(); n.buffer = noiseB(c,.4); const f = c.createBiquadFilter(); f.type='highpass'; f.frequency.value = 3000; const g = c.createGain(); g.gain.setValueAtTime(.7,t); g.gain.exponentialRampToValueAtTime(.001,t+.35); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t);
+        for(let k=0;k<9;k++){ const tt = t+.02+Math.random()*.35, o = c.createOscillator(), og = c.createGain(); o.frequency.value = 2500+Math.random()*4000; og.gain.setValueAtTime(.12,tt); og.gain.exponentialRampToValueAtTime(.001,tt+.18); o.connect(og); og.connect(sfxBus); o.start(tt); o.stop(tt+.2); } }),
+      siren: ()=> hit((c,t)=>{ const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter(); o.type='triangle'; f.type='lowpass'; f.frequency.value = 1400; o.frequency.setValueAtTime(620,t);
+        for(let k=0;k<4;k++){ o.frequency.linearRampToValueAtTime(900, t+.5+k); o.frequency.linearRampToValueAtTime(620, t+1+k); }
+        g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.06,t+.6); g.gain.setValueAtTime(.06,t+3.2); g.gain.exponentialRampToValueAtTime(.0001,t+4); o.connect(f); f.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+4.1); }),
+      city: ()=> hit((c,t)=>{ const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); n.buffer = noiseB(c,6); f.type='lowpass'; f.frequency.value = 600; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.06,t+1.2); g.gain.setValueAtTime(.06,t+4); g.gain.exponentialRampToValueAtTime(.0001,t+6); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t); }),
+      car: ()=> hit((c,t)=>{ const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); n.buffer = noiseB(c,4); f.type='lowpass'; f.frequency.setValueAtTime(180,t); f.frequency.linearRampToValueAtTime(420,t+1.8); f.frequency.linearRampToValueAtTime(160,t+3.6); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.18,t+1.8); g.gain.exponentialRampToValueAtTime(.0001,t+3.8); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t); }),
+      brake: ()=> hit((c,t)=>{ const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); n.buffer = noiseB(c,1); f.type='bandpass'; f.Q.value = 12; f.frequency.setValueAtTime(2600,t); f.frequency.linearRampToValueAtTime(1800,t+.8); g.gain.setValueAtTime(.25,t); g.gain.exponentialRampToValueAtTime(.001,t+.9); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t); FX.thud(); }),
+      buzz: ()=> { hit((c,t0)=>{ [0,.35,.7].forEach(d=>{ const t = t0+d, o = c.createOscillator(), g = c.createGain(); o.type='square'; o.frequency.value = 140; g.gain.setValueAtTime(.05,t); g.gain.setValueAtTime(.0001,t+.22); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.23); }); }); vibrate([200,150,200]); },
+      tick: ()=> hit((c,t)=>{ const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); n.buffer = noiseB(c,.03); f.type='bandpass'; f.frequency.value = 2400; g.gain.setValueAtTime(.08,t); g.gain.exponentialRampToValueAtTime(.001,t+.03); n.connect(f); f.connect(g); g.connect(sfxBus); n.start(t); }),
+      cora: ()=> { FX.thud(); hit((c,t0)=>{ [523,659,784,1046].forEach((fq,k)=>{ const t = t0+.05+k*.08, o = c.createOscillator(), g = c.createGain(); o.type='triangle'; o.frequency.value = fq; g.gain.setValueAtTime(.14,t); g.gain.exponentialRampToValueAtTime(.001,t+.7); o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t+.75); }); }); },
+      shuffle: ()=> sample('card-shuffle', {vol:.5}),
+      card: ()=> sample(CARD_PLACE, {vol:.8}),
+      coins: ()=> sfxCoins(10)
+    };
+    function flash(id){ const el = $(id); el.classList.remove('go'); void el.offsetWidth; el.classList.add('go'); }
+    function shake(){ stage.classList.remove('bk-shake'); void stage.offsetWidth; stage.classList.add('bk-shake'); }
+    function fire(s){
+      const f = s.fx;
+      if(!f) return;
+      if(f==='red'){ flash('bkFR'); FX.thud(); vibrate(20); }
+      else if(f==='blue'){ flash('bkFB'); FX.thud(); vibrate(20); }
+      else if(f==='shot'){ flash('bkFW'); shake(); FX.shot(); vibrate(70); }
+      else if(f==='shock'){ shake(); FX.thud(); FX.heart(); vibrate([40,60,40]); }
+      else if(f==='thud'){ FX.thud(); shake(); }
+      else if(f==='cora'){ FX.cora(); flash('bkFW'); vibrate(50); }
+      else if(f==='hush'){ if(mus) mus.gain.setTargetAtTime(.05, audioCtx.currentTime, .3); }
+      else if(FX[f]) FX[f]();
+    }
+    // ---------- showing a beat ----------
+    function showShot(src){ if(src===shotCur) return; shotCur = src; shotI ^= 1; const a = shots[shotI], b = shots[shotI^1]; a.style.backgroundImage = 'url("'+src+'")'; a.classList.remove('on'); void a.offsetWidth; a.classList.add('on'); b.classList.remove('on'); }
+    function hideShot(){ shots.forEach(x=> x.classList.remove('on')); shotCur = ''; }
+    function render(s, quiet){
+      clearInterval(typeT);
+      if(s.mood) setMood(s.mood);
+      cardEl.classList.remove('on');
+      if(s.card){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); hideShot();
+        cardEl.innerHTML = (s.card[0] ? '<div class="k">'+esc(s.card[0])+'</div>' : '')+'<div class="t">'+esc(s.card[1])+'</div>'+(s.card[2] ? '<div class="r"></div><div class="a">'+esc(s.card[2])+'</div>' : '');
+        void cardEl.offsetWidth; cardEl.classList.add('on'); return; }
+      if(s.img){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); showShot(s.img); return; }
+      hideShot();
+      if(s.game){ openGame(s.game); return; }
+      if(s.choice){ openChoice(s); return; }
+      if(s.phone){ openPhone(); return; }
+      const w = s.who && BK.cast[s.who];
+      if(w){ $('bkWho').querySelector('b').textContent = w[0]; const f = whoEl.querySelector('.face'); f.classList.toggle('empty', !w[1]); if(w[1]) f.style.backgroundImage = 'url("art/livre/'+w[1]+'.webp")'; whoEl.classList.add('on'); }
+      else whoEl.classList.remove('on');
+      // lines marked « stack » build up under the ones before; any other line starts a clean page
+      linesEl.innerHTML = '';
+      let g = i; while(g > 0 && steps[g].stack) g--;
+      for(let k = g; k < i; k++) if(steps[k].t && visible(steps[k])) linesEl.appendChild(makeLine(steps[k], false));
+      const box = makeLine(s, true); linesEl.appendChild(box);
+      if(s.s==='type'){ const cs = box.querySelectorAll('.c'); let k = 0; typeT = setInterval(()=>{ if(k >= cs.length){ clearInterval(typeT); return; } cs[k++].classList.add('on'); if(!quiet && k%2) FX.tick(); }, 45); }
+      if(!quiet) fire(s);
+    }
+    function progress(){ const n = BK.chapters.length; $('bkProg').style.width = Math.min(100, ((chIdx + (steps.length ? (i+1)/steps.length : 0))/n)*100)+'%'; }
+    function openChapter(idx, at){
+      chIdx = idx; steps = parse(chapterOf(idx)); i = -1;
+      const S = st(); S.ch = idx; saveProfile();
+      goTo(Math.max(0, Math.min(steps.length-1, at||0)), true, true);
+    }
+    function goTo(to, quiet, fromStart){
+      // skip the beats that belong to another choice
+      while(to < steps.length && !visible(steps[to])) to++;
+      if(to >= steps.length) return nextChapter();
+      i = to; const S = st(); S.i = i; saveProfile();
+      // the music of the scene is the last one set before this beat (coming back, or reopening the book)
+      for(let k = i; k >= 0; k--) if(steps[k].mood){ setMood(steps[k].mood); break; }
+      render(steps[i], quiet && !fromStart);
+      progress();
+      $('bkHint').style.opacity = (chIdx===0 && i < 3) ? 1 : 0;
+    }
+    function next(){ if(!$('bkPanel').classList.contains('hidden') || !$('bkPhone').classList.contains('hidden')) return; const s = steps[i]; if(s && s.last) return finish(); goTo(i+1); }
+    function prev(){ let k = i-1; while(k >= 0 && (!visible(steps[k]) || steps[k].game || steps[k].choice || steps[k].phone)) k--; if(k >= 0) goTo(k, true); }
+    function nextChapter(){
+      const S = st();
+      if(chIdx < BK.chapters.length-1){ openChapter(chIdx+1); return; }
+      if(chIdx===BK.chapters.length-1){ S.ending = S.hiddenRun ? 'cachee' : String(S.choices.fin||'0'); openChapter(BK.chapters.length); return; }
+      finish();
+    }
+    function finish(){
+      const S = st();
+      if(!S.ended.includes(S.ending)){ S.ended.push(S.ending); if(!S.hiddenRun){ chipsAdd(1000); showToast('Livre terminé', '+1 000 jetons · la fin cachée est débloquée', {ms:3200}); } }
+      S.hiddenRun = false; S.ch = 0; S.i = 0; saveProfile();
+      cover();
+    }
+    // ---------- the games ----------
+    function openGame(key){
+      const g = BK.games[key], S = st();
+      const img = g.art ? 'art/livre/'+g.art+'.webp' : (key==='masque' ? 'art/livre/perso-masque.webp' : '');
+      $('bkBox').innerHTML = '<div class="k">'+(g.carre ? 'Carré · un seul survivant' : 'Partie de Fap Fap · premier à '+(g.target||3))+'</div>'+
+        (img ? '<span class="face" style="background-image:url(&quot;'+img+'&quot;)"></span>' : '')+
+        '<h3></h3><p class="pl"></p><p class="in"></p>'+(S.won[key] ? '' : '<p style="font-size:13px">Gagne, et le livre continue. 200 jetons à la clé.</p>')+
+        '<button class="go" type="button">Jouer</button>'+(S.won[key] ? '<button class="later" type="button">Passer (déjà gagnée)</button>' : '');
+      $('bkBox').querySelector('h3').textContent = g.carre ? 'Contre '+g.carre.map(x=> x[0]).join(', ') : 'Contre '+(g.name || (key==='masque' ? 'le Ngonzormorrr' : ''));
+      $('bkBox').querySelector('.pl').textContent = g.place || '';
+      $('bkBox').querySelector('.in').textContent = g.intro || '';
+      $('bkBox').querySelector('.go').onclick = ()=> startMatch(key);
+      const sk = $('bkBox').querySelector('.later'); if(sk) sk.onclick = ()=>{ $('bkPanel').classList.add('hidden'); goTo(i+1); };
+      $('bkPanel').classList.remove('hidden');
+    }
+    function startMatch(key){
+      const g = BK.games[key], S = st();
+      $('bkPanel').classList.add('hidden'); setMood('none');
+      storyRun = {book:true, key, bet:0, odds:1, rule:g.rule||null, m:g, target0:TARGET_SCORE, art:{}, sqp:{}};
+      if(g.fog && String(S.choices[g.fog])==='1'){ storyRun.rule = 'fog'; document.body.classList.add('book-fog'); }
+      if(g.peek && String(S.choices[g.peek])!=='0') storyRun.rule = 'peek'; // he stayed with his back to the mirror
+      if(g.carre){
+        const n = g.carre.length + 1, names = {};
+        sqSeatsFor(n).filter(s=> s!=='you').forEach((seat, k)=>{
+          const [name, img] = g.carre[k];
+          names[seat] = name;
+          storyRun.art[seat] = ART_FILE[seat]; ART_FILE[seat] = img ? 'livre/'+img : '';
+          storyRun.sqp[seat] = SQ_PERSONAS[seat];
+          SQ_PERSONAS[seat] = {name, control:[], win:[], cora:[], glacee:[], lose:[]};
+        });
+        sqNewGame({n, names});
+        document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · Carré au kiosque';
+        return;
+      }
+      let pid = g.opp;
+      if(!pid){ pid = 'bk_'+key; DUEL_PERSONAS[pid] = {name:g.name, stars:3, brain:g.brain||'heuristic', pimcMs:g.ms, pimcSamples:g.samples, announce:[0.8, 0.95], repWin:0, tagline:'', lines:g.lines||{}}; storyRun.art[pid] = undefined; }
+      else storyRun.art[pid] = ART_FILE[pid];
+      if(g.art) ART_FILE[pid] = 'livre/'+g.art;
+      duelOpp = pid; mode = 'ai'; TARGET_SCORE = g.target || 3;
+      enterGame(); applyOppNameToUI(); newMatch();
+      document.querySelector('header .sub').textContent = 'Pourquoi je suis mort ? · Stéphane contre '+(g.name || oppName());
+      if(storyRun.rule==='fog') setTimeout(()=> showToast('Tu as fumé', 'Deux de tes cartes restent floues.', {ms:2600}), 900);
+      if(storyRun.rule==='nopasse') setTimeout(()=> showToast('Pas de Passe', 'L’adjudant ne passe jamais. Toi non plus.', {ms:2600}), 900);
+    }
+    function afterMatch(run, won){
+      Nav.go('bookPage'); showReader();
+      const S = st(), key = run.key, g = BK.games[key];
+      if(won){
+        if(!S.won[key]){ S.won[key] = true; const before = profile.chips; chipsAdd(200); renderChips(before); }
+        saveProfile();
+        goTo(i+1);
+        return;
+      }
+      $('bkBox').innerHTML = '<div class="k">Défaite</div><h3></h3><p>Le livre ne peut pas continuer sans cette victoire. Respire, et retourne t’asseoir.</p><button class="go" type="button">Rejouer</button><button class="later" type="button">Plus tard</button>';
+      $('bkBox').querySelector('h3').textContent = g.carre ? 'Éliminé au kiosque.' : (g.name || 'Le Ngonzormorrr')+' t’a battu.';
+      $('bkBox').querySelector('.go').onclick = ()=> startMatch(key);
+      $('bkBox').querySelector('.later').onclick = ()=>{ $('bkPanel').classList.add('hidden'); cover(); };
+      $('bkPanel').classList.remove('hidden');
+    }
+    // ---------- choices ----------
+    function openChoice(s){
+      const S = st();
+      $('bkBox').innerHTML = '<div class="k">À toi de choisir</div>';
+      s.opts.forEach((o, k)=>{ const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o;
+        b.onclick = ()=>{ S.choices[s.choice] = k; saveProfile(); $('bkPanel').classList.add('hidden'); FX.thud(); goTo(i+1); };
+        $('bkBox').appendChild(b); });
+      $('bkPanel').classList.remove('hidden');
+    }
+    // ---------- Penalty's phone ----------
+    function openPhone(){
+      $('bkPhone').classList.remove('hidden'); vibrate([30,40,30]);
+      const scr = $('bkPhS'); scr.className = 'scr lock';
+      scr.innerHTML = '<div class="time">23:58</div><div style="font-size:13px;color:#aaa">Entrer le code</div><div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+      const dots = scr.querySelectorAll('.dots i');
+      dots.forEach((d,k)=> setTimeout(()=>{ d.classList.add('f'); FX.tick(); if(k===dots.length-1) setTimeout(phoneApps, 500); }, 350 + k*260));
+      $('bkPhC').textContent = 'Fouiller le téléphone';
+    }
+    function phoneApps(){
+      sample(CHIP_LAY, {vol:.5});
+      const scr = $('bkPhS'); scr.className = 'scr';
+      scr.innerHTML = '<div class="app"><b>Messages · C.</b><div class="msg">Viens ce soir. Il est en mission à Douala.</div><div class="msg me">J’arrive 😏</div><div class="msg">Garde le papier. Ne pose pas de questions.</div></div>'+
+        '<div class="app" style="animation-delay:.5s"><b>Yango · dernière course</b><div class="ride">22:43 · Résidence Les Palmiers, Bastos<br>Toyota Yaris grise · Chauffeur : Ismaël<br><span style="color:#ff8a7a">Course interrompue</span></div></div>'+
+        '<div class="app" style="animation-delay:1s"><b>Notes · « Idée noire »</b><div class="note">Les choses qui arrivent trop facilement cachent souvent une facture qu’on ne voit pas encore.</div></div>';
+      $('bkPhC').textContent = 'Ranger le téléphone';
+    }
+    $('bkPhC').addEventListener('click', ()=>{ if($('bkPhS').classList.contains('lock')) return; $('bkPhone').classList.add('hidden'); goTo(i+1); });
+    // ---------- the cover and the chapter list ----------
+    function showReader(){ $('bkCover').classList.add('hidden'); stage.classList.remove('hidden'); }
+    function cover(){
+      setMood('none'); hideShot();
+      stage.classList.add('hidden'); $('bkPanel').classList.add('hidden'); $('bkPhone').classList.add('hidden');
+      $('bkCover').classList.remove('hidden'); $('bkToc').classList.add('hidden');
+      const S = st();
+      $('bkRead').textContent = (S.ch || S.i) ? 'Reprendre · chapitre '+(Math.min(S.ch, 23)+1) : 'Lire';
+      $('bkHidden').classList.toggle('hidden', !(S.ended && S.ended.length));
+    }
+    function read(fromCh, at){
+      load().then(()=>{ showReader(); const S = st(); S.hiddenRun = false; openChapter(fromCh==null ? Math.min(S.ch, BK.chapters.length-1) : fromCh, fromCh==null ? S.i : (at||0)); })
+        .catch(()=> showToast('Livre indisponible', 'Vérifie ta connexion et réessaie.', {ms:2600}));
+    }
+    function toc(){
+      load().then(()=>{
+        const S = st(), box = $('bkToc');
+        box.innerHTML = '<h2>CHAPITRES</h2>';
+        BK.chapters.forEach((c, k)=>{
+          const b = document.createElement('button'); b.type = 'button';
+          b.disabled = k > S.ch && !(S.ended && S.ended.length);
+          b.innerHTML = '<span class="n">'+c.n+'.</span><span></span><span class="w">'+c.who+'</span>';
+          b.children[1].textContent = c.t;
+          b.onclick = ()=> read(k, 0);
+          box.appendChild(b);
+        });
+        const back = document.createElement('button'); back.type = 'button'; back.innerHTML = '<span class="n">‹</span><span>Retour à la couverture</span>'; back.onclick = cover; box.appendChild(back);
+        box.classList.remove('hidden');
+      }).catch(()=> showToast('Livre indisponible', 'Vérifie ta connexion et réessaie.', {ms:2600}));
+    }
+    $('bkRead').addEventListener('click', ()=>{ ac(); read(); });
+    $('bkChapters').addEventListener('click', toc);
+    $('bkHidden').addEventListener('click', ()=>{ ac(); load().then(()=>{ const S = st(); S.hiddenRun = true; S.ending = 'cachee'; showReader(); openChapter(BK.chapters.length); }); });
+    $('bkLeave').addEventListener('click', ()=> Nav.back());
+    $('bkMenu').addEventListener('click', e=>{ e.stopPropagation(); cover(); });
+    $('bkBack').addEventListener('click', e=>{ e.stopPropagation(); prev(); });
+    stage.addEventListener('click', e=>{ ac(); if(e.clientX < innerWidth*0.22) prev(); else next(); });
+    return {
+      open(){ Nav.go('bookPage'); },
+      shown(){ Music.stop(); cover(); load().catch(()=>{}); },
+      left(){ setMood('none'); clearInterval(typeT); },
+      afterMatch
+    };
+  })();
+  document.getElementById('btnStory').addEventListener('click', e=>{ e.stopImmediatePropagation(); Book.open(); }, true);
+
   // story rules inside the card game
   function storyBlindage(deck){
     const d = deck.slice();

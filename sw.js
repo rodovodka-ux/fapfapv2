@@ -1,6 +1,6 @@
 // Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v36';
+const CACHE = 'fapfap-v37';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/fond-dragon.webp'];
 
 self.addEventListener('install', (event)=>{
