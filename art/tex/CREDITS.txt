@@ -1,0 +1,5 @@
+Textures des tables : Poly Haven (https://polyhaven.com), licence CC0 (domaine public).
+wood_table_worn, lacquered_cherry_wood, wood_table_001, dark_wood, velour_velvet, marble_01,
+corrugated_iron, rusty_corrugated_iron, rough_linen, quatrefoil_jacquard_fabric, plywood,
+red_sand, coast_sand_02, fine_grained_wood, granite_tile.
+Réduites en 768 x 768, WebP qualité 0,72.
