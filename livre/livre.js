@@ -6,7 +6,11 @@
  *   ?key=value  only shown when that choice was made
  * and end with tags: {fx:shot} {c:red} {pic:stephane} {mood:tension}
  * Lines in brackets are events: [img lieu-x] a full-screen shot · [game id] a game of Fap Fap · [phone] Penalty's phone
- *   [choice key|answer 1|answer 2|…] a choice · [mood x] change the music
+ *   [choice key|answer 1|answer 2|…] a choice (an answer ending in #clue:id needs that clue) · [mood x] change the music
+ *   [clue id] Stéphane notes a clue · [note suspect|text] a line on the wall of suspects · [search id] he searches a place
+ *   [interro id] an interrogation (believe / doubt / accuse with a proof) · [accuse] the name given to the Ngonzormorrr
+ *   [report] the case report, at the end
+ *   ?key=value  only when that choice was made · ?clue:id  only with that clue · ?!clue:id  only without it
  * Everything else is plain narration.
  */
 window.FF_BOOK = {
@@ -35,8 +39,164 @@ games: {
               lines:{control:['Comme avant…','Il jouait cette carte-là aussi.','Ne me regarde pas comme ça.'], win:['Tu vois ? Je sais jouer, moi aussi.','Laisse-moi finir ma valise.'], lose:['…Il faut que je te dise quelque chose.','D’accord. Je vais tout te raconter.'], cora:['Un 3… pour lui.'], surprise:['Tu as ses mains.'], behind:['Je n’ai plus la tête à ça.']}},
   caroline:  {name:'Caroline', art:'perso-caroline', brain:'pimc', ms:450, samples:120, target:3, place:'Dans un salon de thé de Bastos, avec un jeu de cartes encore sous plastique.', intro:'Elle te laisse gagner les premiers plis. Elle garde toujours son 3 pour la fin.',
               lines:{control:['Doucement, mon cœur.','Tu lui ressembles tellement.','Tu crois que tu mènes ?'], win:['Ton frère jouait mieux.','On joue encore ? J’adore te regarder perdre.'], lose:['Tu es plus malin que lui.','Bien joué. Vraiment.'], cora:['Je garde toujours mon 3 pour la fin.'], surprise:['Intéressant…'], behind:['Je te laisse croire.']}},
-  masque:    {opp:'mbarga', target:5, peek:'chaise', place:'Derrière le rideau rouge du Prestige, sous la lampe basse.', intro:'Le plus fort de tous. Personne ne l’a jamais battu.'}
+  masque:    {opp:'mbarga', target:5, peek:'chaise', place:'Derrière le rideau rouge du Prestige, sous la lampe basse.', intro:'Le plus fort de tous. Personne ne l’a jamais battu.'},
+  // Penalty himself, the night of the villa: this time the player holds his cards
+  villa:     {name:'Le Député', as:'Penalty', brain:'heuristic', target:3, place:'Une villa de Santa Barbara. Des liasses de dix mille sur la table.', intro:'Caroline s’est penchée à ton oreille : « Gagne. »',
+              lines:{control:['Le petit a de la main.','Hm. Encore lui.','On joue, on joue.'], win:['Merci, jeune homme.','La chance tourne, mon fils.'], lose:['Prends. Tu l’as mérité.','Caroline, où as-tu trouvé ce garçon ?'], cora:['Le 3, monsieur. Le 3.'], surprise:['Tiens donc…'], behind:['La nuit est encore jeune.']}},
+  videur:    {name:'Le videur', brain:'easy', target:2, place:'Devant la porte du Prestige, sous les néons bleus.', intro:'« Ici, personne n’entre. Mais tu peux toujours perdre. »',
+              lines:{control:['Hm.','Avance.','Pas ici.'], win:['Dégage.','La porte est fermée, petit.'], lose:['…','D’accord. Une phrase. Pas deux.'], cora:['Le 3. Comme mes mains.'], surprise:['Hein ?'], behind:['Je suis payé pour attendre.']}},
+  neuf:      {carre:[['RALL','perso-rall'], ['Boris le Cobra','perso-cobra'], ['Christelle','perso-christelle']], place:'Sous le manguier, le neuvième jour.', intro:'Le deuil se lève. Les cartes restent. Un seul survivant.'}
 },
+// what Stéphane writes in his notebook. t = the title, d = what he noted, w = who or where it came from
+clues: {
+  telephone: {t:'Le téléphone de Penalty', d:'Coque fissurée. Code : la date de naissance de maman. Des messages de « C. ».', w:'Christelle, à la veillée'},
+  numero_c:  {t:'Le numéro de « C. »', d:'Dans le téléphone, un contact sans nom : « C. » · 6 77 41 08 12. « Viens ce soir. Il est en mission à Douala. »', w:'Le téléphone de Penalty'},
+  reine:     {t:'« Ma reine »', d:'Un autre contact : « Ma reine ♥ » · 6 99 23 55 05. Les messages parlent de soya, de dimanche et de loyer en retard.', w:'Le téléphone de Penalty'},
+  yango:     {t:'La dernière course', d:'22 h 43 · Résidence Les Palmiers, Bastos. Toyota Yaris grise, chauffeur Ismaël. Course interrompue.', w:'Le téléphone de Penalty'},
+  surnom:    {t:'« Idée noire »', d:'Penalty appelait la femme comme ça. Il n’a jamais dit son nom. « Si tu connais son nom, tu es en danger toi aussi. »', w:'RALL'},
+  liasses:   {t:'Les liasses', d:'Depuis trois mois, Penalty payait les tournées. Il disait que c’était la chance aux cartes.', w:'RALL'},
+  caroline:  {t:'Caroline', d:'La femme s’appelle Caroline. Son mari, on l’appelle le Ngonzormorrr.', w:'Le Cobra'},
+  hommes:    {t:'Les hommes au 4x4', d:'Des hommes ont payé pour des renseignements sur Penalty. Ils roulaient dans un 4x4 noir, vitres fermées.', w:'Le Cobra'},
+  palmiers:  {t:'Le paquet de cigarettes', d:'Une adresse au stylo : « Résidence Les Palmiers. Bastos. »', w:'Le Cobra'},
+  dame:      {t:'La dame qui paie', d:'La dame donnait de l’argent au gardien. Beaucoup. Pour qu’il oublie les visages.', w:'Papa Tchinda'},
+  balcon:    {t:'Le balcon, 22 h 50', d:'Dix minutes après le départ de Penalty, la dame téléphone sur le balcon. Elle ne pleure pas. Elle ne rit pas. « Elle parlait comme on commande un taxi. » Après, aucun taxi n’est venu.', w:'Papa Tchinda'},
+  quatre:    {t:'Le 4x4 noir', d:'Le soir de Bastos, le grand 4x4 noir était garé au bout de la rue depuis 20 h. Moteur éteint. Le mari n’était pas à Douala.', w:'Papa Tchinda'},
+  megot:     {t:'Le mégot', d:'Sous le balcon : un mégot fin, taché de rouge à lèvres bordeaux.', w:'Résidence Les Palmiers'},
+  plaque:    {t:'Le cahier du gardien', d:'Papa Tchinda note les plaques. Une revient presque tous les soirs : LT 4471 · 4x4 noir.', w:'Résidence Les Palmiers'},
+  minuit:    {t:'Minuit, par derrière', d:'Le Ngonzormorrr arrive à minuit, par la porte de derrière. Il ne s’assoit jamais dos au miroir.', w:'Le videur du Prestige'},
+  rumeur:    {t:'La rumeur payée', d:'Quelqu’un a payé le Sénateur pour raconter que Christelle était à Bastos le soir du meurtre.', w:'Le kiosque de Mami Ange'},
+  miroir:    {t:'Le miroir', d:'« On dit qu’il voit les cartes des autres. » Toujours un miroir dans le dos de celui qui joue contre lui.', w:'Le militaire'},
+  barrage:   {t:'Le barrage', d:'La police n’est pas arrivée : elle attendait au deuxième carrefour. Elle connaissait la couleur de la Yaris et le numéro.', w:'Ismaël'},
+  vingtmille:{t:'Les vingt mille francs', d:'Deux billets de dix mille, pliés en quatre, jamais dépensés. Un agent les a donnés à Ismaël : l’adjudant Mballa.', w:'Ismaël'},
+  enveloppe_p:{t:'L’enveloppe de la police', d:'Les policiers ont été payés. Une enveloppe, plus que trois mois de salaire.', w:'Adjudant Mballa'},
+  voix:      {t:'La voix', d:'Ce n’était pas le mari qui a appelé. Une femme. Une voix calme. Elle a donné l’heure à la minute près.', w:'Adjudant Mballa'},
+  releve:    {t:'Le relevé d’appels', d:'Appels reçus au poste cette nuit-là : 22 h 51 · appel entrant · 6 77 41 08 12 · 1 min 40.', w:'Adjudant Mballa'},
+  banque:    {t:'L’enveloppe de banque', d:'Dans la valise de Christelle, sous un pagne : une enveloppe de banque, fermée.', w:'Le studio de Christelle'},
+  ticket:    {t:'Le ticket de car', d:'Yaoundé – Bafoussam, aller simple. Acheté deux jours AVANT Bastos.', w:'Le studio de Christelle'},
+  tickets2:  {t:'Deux tickets', d:'Ils étaient collés : deux tickets pour Bafoussam, le samedi après Bastos. Le deuxième est au nom de Penalty.', w:'Le studio de Christelle'},
+  serviette: {t:'La serviette en papier', d:'Caroline y a écrit son numéro : 6 77 41 08 12. « Si tu trouves le papier, appelle-moi. »', w:'Caroline'},
+  mensonge:  {t:'Le taxi qui n’est jamais venu', d:'Caroline dit qu’elle a appelé un taxi, ce soir-là. Aucun taxi n’est venu aux Palmiers.', w:'Caroline'}
+},
+// the wall: who Stéphane suspects (the notes are written as the story goes)
+suspects: {
+  caroline:  {n:'Caroline', img:'perso-caroline', from:4},
+  christelle:{n:'Christelle', img:'perso-christelle', from:1},
+  kappo:     {n:'Le Ngonzormorrr', img:'perso-masque', from:4},
+  rall:      {n:'RALL', img:'perso-rall', from:1},
+  cobra:     {n:'Boris le Cobra', img:'perso-cobra', from:4},
+  mballa:    {n:'Adjudant Mballa', img:'perso-mballa', from:14}
+},
+// searching a place: tap the things around you. clue = what it gives; more = look closer (and what you find then)
+searches: {
+  palmiers: {img:'lieu-palmiers', t:'Résidence Les Palmiers', intro:'Papa Tchinda est parti faire sa ronde. Tu as cinq minutes.', items:[
+    {n:'La poubelle du portail', d:'Des bouteilles de Top, des sachets de plantain. La vie des gens riches ressemble beaucoup à celle des autres, dans une poubelle.'},
+    {n:'Sous le balcon', d:'Entre deux pots de fleurs, un mégot fin. Pas une cigarette de quartier.', clue:'megot', more:'Regarder le filtre', moreD:'Une trace de rouge à lèvres. Bordeaux. Le genre de rouge qui coûte le prix d’un sac de riz.'},
+    {n:'Le cahier du gardien', d:'Des dates, des heures, des plaques d’immatriculation écrites avec soin.', clue:'plaque'},
+    {n:'La radio', d:'Elle capte encore Radio Tiémeni Siantou. Rien d’autre.'}
+  ]},
+  studio: {img:'lieu-studio', t:'Le studio de Christelle', intro:'Christelle est sortie remplir la bouilloire au robinet de la cour. Tu as deux minutes.', items:[
+    {n:'La valise', d:'Des pagnes pliés, des chaussures, une photo de vous trois. Et sous un pagne, le coin d’une enveloppe de banque.', clue:'banque'},
+    {n:'La poubelle', d:'Des épluchures, un sachet de lait, et un ticket de car froissé.', clue:'ticket', more:'Déplier le ticket', moreD:'Le papier est épais. Il y en a deux, collés l’un à l’autre par le jus de foléré. Le deuxième porte un autre nom : Penalty.', moreClue:'tickets2'},
+    {n:'Le miroir', d:'Une photo coincée dans le cadre : un dimanche, du soya, trois sourires. Lui, elle, et toi.'},
+    {n:'Le réchaud', d:'Une marmite de riz froid. Pour une personne.'}
+  ]}
+},
+// the interrogations. say = the answer; tell = what Stéphane notices; ans = croire | douter | accuser (proof = the clues that work)
+// ok / ko = what follows a good or a bad read; clue / note / flag = what it changes; press = a hand of Fap Fap can make them talk again
+interros: {
+  rall: {who:'rall', game:'veillee', q:[
+    {ask:'Mon frère. Il avait des problèmes ?', say:'— Ton frère ? Il était clean. Pas d’histoires, pas de dettes, rien.', tell:'Ses mains tremblent encore. Il regarde la bâche, pas toi.', ans:'douter',
+     ok:['@stephane — Il payait les tournées depuis trois mois, RALL. Avec quel argent ?','@rall — … D’accord. Il avait des liasses. Il disait que c’était la chance aux cartes.','@rall — Moi, je ne pose pas de questions à la chance.'], clue:'liasses',
+     ko:['@rall — Laisse-le reposer, petit. C’est sa nuit.','Il a souri. Soulagé.']},
+    {ask:'La femme. Tu connais son nom ?', say:'— Il l’appelait « Idée noire ». Il n’a jamais dit son nom. Jamais.', tell:'Il te regarde droit dans les yeux. Pour la première fois de la nuit.', ans:'croire',
+     ok:['@rall — Il disait que si je connaissais son nom, je serais en danger moi aussi.','@rall — Je n’ai pas insisté. Je suis peut-être lâche. Mais je suis vivant.'], clue:'surnom',
+     ko:['@rall — Tu crois que je te mens ? Le soir de sa veillée ?','Il s’est levé. La table s’est tue.','@rall — Va chercher tes réponses ailleurs.'], note_ko:['rall','Il savait pour l’autre femme. Il a refusé de parler.'], flag_ko:'l_rall=1'}
+  ]},
+  cobra: {who:'cobra', game:'cobra', q:[
+    {ask:'Mon frère avait changé ?', say:'— Ton frère a changé, ces derniers mois. Des chaussures neuves. Un téléphone neuf. Il payait les tournées.', tell:'Il ne cligne pas des yeux. Il ne cligne jamais.', ans:'croire',
+     ok:['@cobra — Dans le quartier, quand un gars mange bien sans travailler plus, les gens ne demandent pas comment.','@cobra + — Ils demandent qui.','@stephane — Qui ?','@cobra — Elle s’appelle Caroline. Son mari… on l’appelle le Ngonzormorrr.'], clue:'caroline', note:['caroline','La femme d’un homme puissant. Elle payait Penalty.'],
+     ko:['@cobra — Tu ne me crois pas ? Alors cherche tout seul, petit.','Il a tiré sur son joint. La fumée a caché son visage.']},
+    {ask:'Quelqu’un d’autre est venu poser des questions sur lui ?', say:'— Non. Personne. Ici, on ne parle pas.', tell:'Il rallume son joint. Alors qu’il n’était pas éteint.', ans:'douter',
+     ok:['@cobra — … Des gars. Un soir. Ils payaient bien.','@stephane — Tu as parlé ?','@cobra — J’ai dit ce que tout le monde savait.','~ Dans ce pays, ce que tout le monde sait finit toujours chez celui qui paie.','@cobra — Ils roulaient dans un 4x4 noir. Vitres fermées.'], clue:'hommes', note:['cobra','Il a vendu des renseignements sur Penalty.'],
+     ko:['@cobra — Personne, je te dis.','~ Il a regardé la radio. Même la radio savait qu’il mentait.'], note_ko:['cobra','Il cache quelque chose. Quoi ?']},
+    {ask:'Où il allait, quand il disparaissait des nuits entières ?', say:'— Je ne sais pas, moi. Je ne suis pas sa femme.', tell:'Il touche sa poche. Un paquet de cigarettes vide.', ans:'douter',
+     ok:['Le Cobra a soupiré. Il a sorti le paquet vide, et il a écrit une adresse dessus.'], clue:'palmiers',
+     ko:['@cobra — Rentre chez toi, petit.','En se levant, le paquet vide est tombé de sa poche. Une adresse au stylo.'], clue_ko:'palmiers'}
+  ]},
+  tchinda: {who:'tchinda', game:'tchinda', q:[
+    {ask:'La dame. Elle venait souvent ?', say:'— Je ne sais pas de quelle dame tu parles, mon fils.', tell:'Il resserre son manteau. Il ne fait pas froid.', ans:'douter',
+     ok:['@tchinda — Ton frère était gentil. Il me donnait toujours mille francs.','@tchinda — La dame aussi donnait. Plus. Beaucoup plus. Pour que j’oublie les visages.'], clue:'dame',
+     ko:['@tchinda — Les vieux oublient, mon fils. C’est leur droit.']},
+    {ask:'Et cette nuit-là ?', say:'— Ton frère est sorti vers vingt-deux heures quarante. Il avait l’air pressé. Il regardait son téléphone.', tell:'Il parle lentement. Comme quelqu’un qui a répété cette phrase toute la semaine dans sa tête.', ans:'croire', press:1,
+     ok:['@stephane — Et elle ?','@tchinda — Dix minutes après, la dame est sortie sur le balcon. Elle a téléphoné.','@stephane — Elle pleurait ?','@tchinda — Non.','@stephane — Elle riait ?','@tchinda — Non plus.','@tchinda * — Elle parlait comme on commande un taxi.','@tchinda — Et je te le dis : après, aucun taxi n’est venu.'], clue:'balcon', note:['caroline','22 h 50, au téléphone sur le balcon. Calme.'],
+     ko:['@tchinda — Tu me traites de menteur ? Devant mon portail ?','Il a remonté le son de sa radio. La conversation était finie.']},
+    {ask:'Et le mari ?', say:'— En mission à Douala. Tout le monde le sait.', tell:'Il regarde le bout de la rue. Puis il regarde vite ailleurs.', ans:'accuser', proof:['hommes','plaque'],
+     ok:['@stephane — Des hommes en 4x4 noir posaient des questions sur mon frère. Vitres fermées.','Papa Tchinda a ri tout bas. Un rire triste.','@tchinda — Douala ? Mon fils… Cette nuit-là, le grand 4x4 noir était garé au bout de la rue.','@tchinda + — Depuis vingt heures. Moteur éteint. Vitres fermées.','* Douala n’avait jamais été aussi proche.'], clue:'quatre', note:['kappo','Il n’était pas à Douala. Il attendait au bout de la rue.'],
+     ko:['@tchinda — Douala, mon fils. Douala.','~ Il a dit Douala comme on ferme une porte.']}
+  ]},
+  kiosque: {who:'mami', game:null, q:[
+    {who:'senateur', ask:'Et la copine de mon frère ?', say:'— Christelle ? Je l’ai vue le soir de Bastos, devant le Prestige. Bien habillée. Elle attendait quelqu’un.', tell:'Il demande une bière avant de répondre. Et il ne la paie pas.', ans:'douter',
+     ok:['@stephane — Ce soir-là, tu étais ici. Tu criais sur le match.','@mami — C’est vrai. Il m’a même cassé un verre.','@senateur — Bon… On m’a dit de le dire, c’est tout. Une dame a payé.','@stephane — Quelle dame ?','@senateur — Une dame qui ne descend jamais de sa voiture.'], clue:'rumeur', note:['christelle','Quelqu’un paie pour la salir.'],
+     ko:['@senateur — Je l’ai vue comme je te vois.','Mami Ange a détourné les yeux.'], note_ko:['christelle','Vue devant le Prestige le soir de Bastos ?'], flag_ko:'l_chris=1'},
+    {who:'militaire', ask:'Comment il gagne, le masque ?', say:'— On dit qu’il voit les cartes des autres.', tell:'Il a enlevé son béret. Les mains à plat sur la table.', ans:'croire',
+     ok:['@militaire — Un miroir, petit. Toujours un miroir dans le dos de celui qui joue contre lui.','@militaire — Ceux qui ont cherché à savoir ne jouent plus.'], clue:'miroir',
+     ko:['@militaire — Alors va voir toi-même. Et laisse ton argent à la maison.']}
+  ]},
+  ismael: {who:'ismael', game:'ismael', q:[
+    {ask:'Cette nuit-là. Que s’est-il passé ?', say:'— Rien ! La police nous a arrêtés, c’est tout. Un contrôle.', tell:'Ses mains sont sur le volant. Il conduit encore, moteur coupé.', ans:'douter',
+     ok:['@ismael * — La police n’est pas arrivée.','@stephane — Comment ça ?','@ismael — Elle attendait. Au deuxième carrefour.','@ismael + — Ils savaient la couleur de ma voiture. Mon numéro.','@ismael + — Ils ont levé la main avant même que j’arrive à leur hauteur.','@ismael — Ils l’ont fait descendre. Ils l’ont mis dans une autre voiture. Une voiture de police, mais pas avec des policiers comme les autres.'], clue:'barrage',
+     ko:['@ismael — Un contrôle, je te dis ! Un contrôle !','~ Il l’a répété trois fois. Les vrais contrôles, on ne les répète pas.']},
+    {ask:'Et toi, ils t’ont laissé partir comme ça ?', say:'— Je n’ai rien reçu. Rien. Je suis un honnête chauffeur, moi.', tell:'Il touche la boîte à gants. Deux fois.', ans:'douter',
+     ok:['Ismaël a ouvert la boîte à gants. Deux billets de dix mille, pliés en quatre.','@ismael — Un agent me les a donnés. Il m’a dit d’oublier la route.','@ismael — Mballa. C’était écrit sur sa poitrine.','@ismael ~ — Je ne les ai jamais dépensés. Ils me brûlent les doigts.'], clue:'vingtmille', note:['mballa','Il a payé le chauffeur pour qu’il oublie.'],
+     ko:['@ismael — Descends. S’il te plaît. Descends.','Sur le tableau de bord, il y avait le papier du contrôle. Signé : Adjudant Mballa.']}
+  ]},
+  mballa: {who:'mballa', game:'mballa', q:[
+    {ask:'Qui vous a payés ?', say:'— Personne. Un contrôle de routine. On en fait tous les soirs.', tell:'Il vide sa bière d’un coup.', ans:'accuser', proof:['barrage','vingtmille'],
+     ok:['@stephane — Vous attendiez au deuxième carrefour. Vous connaissiez la voiture. Et tu as payé le chauffeur.','Mballa a regardé la porte du bar.','@mballa — … On nous a payés. Une enveloppe. Plus que mon salaire de trois mois.'], clue:'enveloppe_p',
+     ko:['@mballa — Doute autant que tu veux, petit. Le doute ne passe pas au tribunal.']},
+    {ask:'C’était le mari ?', say:'— Ce n’était pas le mari. C’était une femme.', tell:'Il baisse les yeux. Pas pour mentir. Pour se cacher.', ans:'croire',
+     ok:['@mballa — Une voix calme. Très calme. Elle a donné l’heure à la minute près.','@mballa — Elle n’a pas appelé mon portable. Elle a appelé le poste. Directement.'], clue:'voix', note:['caroline','Une femme a donné l’heure à la police. Elle ?'],
+     ko:['@mballa — Crois ce que tu veux. Une femme, je te dis. Une voix calme.'], clue_ko:'voix'},
+    {ask:'Tu as gardé une trace de cet appel ?', say:'— Une trace ? Ici, rien ne reste. Rien.', tell:'Sa main reste posée sur la poche de sa chemise.', ans:'douter', press:1,
+     ok:['En partant, il a glissé un papier plié sous le jeu de cartes.','> Le relevé des appels reçus au poste cette nuit-là.','> 22 h 51 · appel entrant · 6 77 41 08 12 · 1 min 40','@mballa — Je n’ai jamais vu ton visage, petit. Et toi, tu n’as jamais vu le mien.'], clue:'releve',
+     ko:['@mballa — Je n’ai jamais vu ton visage, petit. Et toi, tu n’as jamais vu le mien.','Il est parti. La main toujours sur sa poche.']}
+  ]},
+  christelle: {who:'christelle', game:'christelle', q:[
+    {say:'— Je savais pour elle. Pour Caroline. Pour l’argent. Pour son mari. Il m’a tout dit.', tell:'Elle pleure. Pour de vrai, cette fois.', ans:'croire',
+     ok:['@christelle — Il y avait un plan.','@stephane — Quel plan ?','@christelle ~ — Pour comprendre, il faut remonter trois mois en arrière.'],
+     ko:['@christelle — Tu crois que je joue la comédie ? Pour lui ?','Elle a essuyé ses yeux avec le pagne. Elle n’a plus rien dit pendant longtemps.'], note_ko:['christelle','Elle savait tout. Elle n’a rien dit à la veillée.'], flag_ko:'l_chris=1'},
+    {ask:'Bafoussam. C’est prévu depuis quand ?', say:'— Depuis cette semaine. Après l’enterrement.', tell:'Elle regarde la poubelle. Une seconde.', ans:'accuser', proof:['tickets2'], trap:{ticket:1},
+     ok:['@stephane — Il y avait deux tickets. Le deuxième à son nom.','@christelle — … On devait partir ensemble. Le samedi.','~ Le samedi. Le lendemain de Bastos.','@christelle — Lui, moi, et une nouvelle vie. Il disait qu’on ne nous retrouverait jamais.'], note:['christelle','Elle devait partir AVEC lui. Le samedi.'],
+     ko:['@christelle — Tu fouilles ma poubelle, maintenant ?','Elle a fermé la valise d’un coup.'],
+     trapKo:['@stephane — Ce ticket a été acheté deux jours avant Bastos. Tu savais qu’il allait mourir.','Christelle t’a regardé comme on regarde un étranger.','@christelle — Sors de chez moi.'], note_trap:['christelle','Elle avait prévu de partir AVANT la mort de Penalty.'], flag_trap:'l_chris=1'},
+    {ask:'Il y avait un papier ?', say:'— Non.', tell:'Elle ne cligne pas des yeux. Sur la valise, un coin d’enveloppe dépasse d’un pagne.', ans:'accuser', proof:['banque'], press:1,
+     ok:['@stephane — L’enveloppe de banque. Dans ta valise.','Christelle s’est assise. Lentement.','@christelle — Il me l’a donnée trois jours avant. « S’il m’arrive quelque chose, tu envoies ça. »','@christelle — Je ne l’ai pas envoyée. J’avais peur.','@christelle — Laisse-moi une nuit. Demain, je te la donne.'], flag:'papier=1',
+     ko:['@christelle ! — Non.','Elle a menti. Et elle a soutenu ton regard.']}
+  ]},
+  caroline: {who:'caroline', game:'caroline', q:[
+    {say:'— Je l’aimais. Mon mari est un monstre. J’étais une prisonnière dans une belle maison. Je n’ai rien pu faire.', tell:'Elle a enlevé ses lunettes noires. Ses yeux sont secs.', ans:'douter',
+     ok:['@stephane — Le deuil te va bien. Tu l’as choisi.','Elle a souri. Pour la première fois, un vrai sourire.','@caroline — Tu es plus malin que lui.'], note:['caroline','Elle joue la veuve. Les yeux secs.'],
+     ko:['~ Une belle histoire.','Je l’avais crue, moi aussi.']},
+    {ask:'Le soir de Bastos. Tu as téléphoné, sur le balcon. 22 h 50.', say:'— J’ai appelé un taxi.', tell:'Elle pose une carte. Lentement.', ans:'accuser', proof:['balcon'],
+     ok:['@stephane — Aucun taxi n’est venu aux Palmiers, ce soir-là. Le gardien était devant le portail.','Caroline a posé une autre carte. Sa main a tremblé. Une seconde.','@caroline * — Il y a beaucoup de femmes calmes à Yaoundé.'], clue:'mensonge', note:['caroline','Elle ment sur le coup de fil du balcon.'],
+     ko:['@caroline — Tu doutes ? Doute, mon cœur. Ça te va bien.','@caroline * — Il y a beaucoup de femmes calmes à Yaoundé.']}
+  ]},
+  kappo: {who:'kappo', game:'masque', q:[
+    {say:'— Une femme m’a appelé. Elle pleurait. Elle disait que ton frère la menaçait. Elle m’a donné l’heure, l’adresse, la couleur du Yango.', tell:'Il enlève son alliance. Puis il la remet.', ans:'accuser', proof:['balcon','voix'], press:1,
+     ok:['@stephane * — Elle ne pleurait pas. Le gardien l’a vue, sur le balcon. Elle parlait comme on commande un taxi.','Le Ngonzormorrr est resté silencieux.','+ Longtemps.','~ Pour la première fois de sa vie, quelqu’un avait vu ses cartes à lui.'], note:['kappo','On s’est servi de lui. Il ne le savait pas.'],
+     ko:['@kappo — Tu ne sais rien, petit. Tu as juste le visage de ton frère.']},
+    {ask:'Et tu l’as crue ?', say:'— Je crois ce que je vois. Et ce soir-là, j’ai vu ton frère sortir de chez moi.', tell:'Sa voix ne tremble pas. Ses yeux, si.', ans:'croire',
+     ok:['@kappo — Il était dans mon lit. Dans ma maison. Avec ma femme.','@kappo — Je n’ai pas eu besoin qu’on me pousse beaucoup.','~ Les hommes jaloux sont des armes chargées. Il suffit de savoir où appuyer.'],
+     ko:['@kappo — Tu veux me faire pleurer sur mon propre crime ? Assieds-toi.']}
+  ]},
+  rall2: {who:'rall', game:'veillee', q:[
+    {ask:'Le soir de Bastos, tu étais où ?', say:'— Ici. Sous le manguier. Avec le Cobra, jusqu’à deux heures du matin.', tell:'Le Cobra hoche la tête. Sans cligner.', ans:'croire',
+     ok:['@rall — Je n’ai pas voulu parler à la veillée parce que j’avais honte.','@rall — Il m’avait proposé de partir avec lui et Christelle. J’ai dit non. Je me suis moqué de lui.','~ Il y a des gens qui ne se pardonnent pas d’avoir eu raison.'], note:['rall','Il avait honte. Pas peur.'], flag:'l_rall=0',
+     ko:['@rall — Tu m’accuses encore ? Va. Va, petit.','~ RALL est resté seul sous le manguier.']}
+  ]}
+},
+// the name Stéphane gives to the Ngonzormorrr
+accuse: {q:'Le Ngonzormorrr veut un nom : la femme qui a appelé la police.', who:['caroline','christelle'], keep:'Garder le nom pour toi'},
 chapters: [
 
 {n:1, t:'Le bruit après le silence', who:'Penalty', text:`
@@ -135,6 +295,8 @@ RALL a ri. Un rire trop court.
 @rall — Toi, c’est le diable.
 Puis il a baissé la voix. {mood:tension}
 @rall — Ton frère avait une femme. Pas Christelle. Une autre. Une femme qui sent l’argent.
+~ Mon petit frère ne pose jamais une question au hasard. Il regarde d’abord les mains.
+[interro rall]
 Stéphane n’a rien répondu.
 + Il a juste rangé les cartes.
 Vers trois heures du matin, Christelle est venue s’asseoir à côté de lui. {mood:wake}{pic:christelle}
@@ -147,7 +309,13 @@ Je le savais.
 Le téléphone avait encore sa coque fissurée. Le code, c’était la date de naissance de notre mère.
 + Stéphane l’a ouvert du premier coup.
 [phone]
+[clue telephone]
 Des notes. Des vocaux. Des messages que je n’avais jamais effacés.
+Deux femmes, dans ce téléphone.
++ Une qui s’appelait « Ma reine ».
++ Une qui ne s’appelait que « C. ».
+~ Il fallait savoir laquelle des deux m’avait coûté la vie.
+[note christelle|Elle a gardé le téléphone trois jours avant de le donner.]
 ~ Cette nuit-là, pendant que tout le monde chantait pour moi, mon petit frère a commencé à chercher pour moi. {mood:night}
 `},
 
@@ -224,28 +392,17 @@ Ils ont joué sur une caisse de bière retournée.
 [game cobra]
 Après la partie, le Cobra a parlé.
 ~ Les gens parlent toujours mieux après avoir perdu. Ils ont besoin de gagner quelque chose.
-@cobra — Ton frère a changé, ces derniers mois. Des chaussures neuves. Un téléphone neuf. Il payait les tournées.
-Il a tiré sur son joint.
-@cobra — Dans le quartier, quand un gars mange bien sans travailler plus, les gens ne demandent pas comment.
-@cobra + — Ils demandent qui.
-@stephane — Qui ?
 Le Cobra a regardé autour de lui. Même la radio semblait écouter. {mood:tension}
-@cobra — Elle s’appelle Caroline. Son mari… on l’appelle le Ngonzormorrr.
+[interro cobra]
+Puis il a dit un mot. Un seul.
 ! Ngonzormorrr. {fx:thud}
 Le silence est tombé sur le banc.
 @cobra — Personne ne sait vraiment qui il est. On dit qu’il joue aux cartes avec un masque d’or.
 @cobra + — Que personne ne l’a jamais battu.
 @cobra + — Que même ceux qui le battent finissent par perdre.
-Stéphane n’a pas bougé.
-@stephane — Autre chose ?
-Le Cobra a hésité. Longtemps.
-@cobra — Un soir, des gars sont venus poser des questions sur ton frère. Ils payaient bien.
-@stephane — Tu as parlé ?
-@cobra — J’ai dit ce que tout le monde savait.
-~ Dans ce pays, ce que tout le monde sait finit toujours chez celui qui paie.
-Avant de partir, Stéphane a demandé où j’allais quand je disparaissais des nuits entières.
-Le Cobra a écrit une adresse sur un paquet de cigarettes vide.
+Stéphane a regardé le paquet de cigarettes.
 > Résidence Les Palmiers. Bastos.
+[note kappo|Le mari. Un masque d’or. Personne ne l’a jamais battu.]
 `},
 
 {n:6, t:'La femme d’un autre', who:'Penalty', text:`
@@ -287,6 +444,8 @@ Caroline s’est penchée à mon oreille. {pic:caroline}
 @caroline * — Gagne.
 Juste ça.
 + Gagne.
+~ Cette nuit-là, c’est toi qui tiens mes cartes.
+[game villa]
 Et j’ai gagné. {fx:card}
 + Une fois.
 + Deux fois.
@@ -333,27 +492,16 @@ Il a ramassé ses cartes. {fx:shuffle}
 Papa Tchinda joue comme les vieux. Il ne se presse jamais.
 + Il garde ses grosses cartes jusqu’au moment où tu as oublié qu’il les avait.
 Quand il a perdu, il a souri. Le sourire de quelqu’un qui voulait perdre depuis le début.
-@tchinda — Ton frère était gentil. Il me donnait toujours mille francs.
-Il a baissé la voix.
-@tchinda — La dame aussi donnait. Plus. Beaucoup plus. Pour que j’oublie les visages.
-@stephane — Et cette nuit-là ?
 Le vieux a regardé le balcon du deuxième étage. {mood:tension}
-@tchinda — Ton frère est sorti vers vingt-deux heures quarante. Il avait l’air pressé. Il regardait son téléphone.
-@stephane — Et elle ?
-@tchinda — Dix minutes après, la dame est sortie sur le balcon. Elle a téléphoné.
-@stephane — Elle pleurait ?
-@tchinda — Non.
-@stephane + — Elle riait ?
-@tchinda + — Non plus.
-@tchinda * — Elle parlait comme on commande un taxi.
-Stéphane a demandé pour le mari.
-> “En mission à Douala.”
-Papa Tchinda a ri tout bas. Un rire triste.
-@tchinda — Douala ? Mon fils… Cette nuit-là, le grand 4x4 noir était garé au bout de la rue.
-@tchinda + — Depuis vingt heures. Moteur éteint. Vitres fermées.
-* Douala n’avait jamais été aussi proche. {fx:heart}
-Je l’avais eue tous les soirs sous les yeux, au bout de la rue.
-~ Et je n’avais jamais regardé.
+[interro tchinda]
+Puis il s’est levé pour faire sa ronde. Il a laissé sa lampe allumée.
++ Et son cahier ouvert.
+~ Les vieux ne laissent jamais rien ouvert par hasard.
+[search palmiers]
+?clue:quatre Je l’avais eue tous les soirs sous les yeux, au bout de la rue. {fx:heart}
+?clue:quatre ~ Et je n’avais jamais regardé.
+?!clue:quatre Au bout de la rue, il n’y avait plus rien. Juste une tache d’huile sur le goudron.
+?!clue:quatre ~ Les choses qui attendent ne laissent pas beaucoup de traces.
 `},
 
 {n:9, t:'L’homme de Douala', who:'Penalty', text:`
@@ -406,8 +554,16 @@ Tout le monde à Bastos connaît le Prestige.
 C’est un cabaret avec des néons bleus, des voitures garées en double file et un videur qui pèse le poids d’un frigo.
 Au fond, derrière un rideau rouge, il y a une salle.
 * C’est là que le Ngonzormorrr joue.
-Stéphane n’a pas essayé d’entrer.
-Il s’est assis en face, au kiosque de Mami Ange, là où les chauffeurs, les vendeuses et les retraités refont le monde toute la nuit. {mood:night}
+Stéphane s’est avancé vers la porte.
+Le videur a regardé son visage. Il a reculé d’un pas.
++ Puis il a sorti un jeu de cartes de sa poche. {fx:shuffle}
+@videur — Ici, personne n’entre. Mais tu peux toujours perdre.
+[game videur]
+Le videur n’a pas ouvert la porte.
++ Mais il a donné une phrase. Une seule.
+@videur — Il arrive à minuit. Par derrière. Et il ne s’assoit jamais dos au miroir.
+[clue minuit]
+Alors Stéphane s’est assis en face, au kiosque de Mami Ange, là où les chauffeurs, les vendeuses et les retraités refont le monde toute la nuit. {mood:night}
 [img lieu-kiosque]
 ~ Le kongossa a ses propres institutions. Le kiosque de Mami Ange est une des plus anciennes.
 Trois personnes jouaient au Carré.
@@ -423,11 +579,11 @@ Sénateur est tombé le premier. Il a parlé le premier.
 Mami Ange est tombée ensuite.
 @mami — Il a une femme très belle. Caroline.
 @mami * — Elle sourit trop pour une femme heureuse.
-Le vieux militaire a tenu jusqu’au bout. Quand il a perdu, il a enlevé son béret pour la première fois de la soirée.
-@militaire — On dit qu’il voit les cartes des autres. {mood:tension}
-@stephane — Comment ?
-@militaire — Personne ne sait. Ceux qui ont cherché à savoir ne jouent plus.
-Il a remis son béret.
+[note caroline|« Elle sourit trop pour une femme heureuse. »]
+Le vieux militaire a tenu jusqu’au bout. Quand il a perdu, il a enlevé son béret pour la première fois de la soirée. {mood:tension}
+~ Au kiosque, la vérité et le kongossa boivent dans le même verre. À toi de les séparer.
+[interro kiosque]
+Le militaire a remis son béret.
 @militaire — Petit, laisse tomber. Ton frère aussi posait des questions.
 ! Non.
 Moi, je ne posais pas de questions.
@@ -511,15 +667,7 @@ Ismaël joue comme il conduit quand il a peur.
 + Trop vite.
 + Il a perdu sans comprendre comment.
 Alors il a parlé. Les mains sur le volant, comme s’il conduisait encore. {mood:tension}
-@ismael * — La police n’est pas arrivée.
-@stephane — Comment ça ?
-@ismael — Elle attendait. Au deuxième carrefour.
-@ismael + — Ils savaient la couleur de ma voiture. Mon numéro.
-@ismael + — Ils ont levé la main avant même que j’arrive à leur hauteur.
-Il a avalé sa salive.
-@ismael — Ils l’ont fait descendre. Ils l’ont mis dans une autre voiture. Une voiture de police, mais pas avec des policiers comme les autres.
-@stephane — Et toi ?
-@ismael — Un agent m’a donné vingt mille francs. Il m’a dit d’oublier la route.
+[interro ismael]
 Il a regardé Stéphane dans le rétroviseur. Puis il a détourné les yeux.
 @ismael ~ — J’ai oublié. Jusqu’à ce soir.
 Moi aussi, j’avais vu ces gyrophares.
@@ -546,20 +694,8 @@ Mballa joue comme un policier. Droit devant.
 + Il ne passe jamais.
 + Il ne recule jamais.
 ~ C’est comme ça qu’on perd au Fap Fap.
-Quand le dernier pli est tombé, il a vidé sa bière d’un coup.
-@mballa — On nous a payés. Une enveloppe. Plus que mon salaire de trois mois. {mood:tension}
-@stephane — Qui ?
-@mballa — Je ne connais pas le nom. Ces gens-là n’ont pas de nom.
-Il a regardé la porte du bar.
-@mballa — Mais l’appel. L’heure. La couleur de la voiture.
-@mballa + — Ce n’était pas le mari.
-@stephane — C’était qui ?
-@mballa ! — Une femme.
-Il a baissé les yeux.
-@mballa — Une voix calme. Très calme. Elle a donné l’heure à la minute près.
-En partant, il a glissé un papier plié sous le jeu de cartes.
-+ > Le relevé des appels reçus au poste cette nuit-là.
-@mballa — Je n’ai jamais vu ton visage, petit. Et toi, tu n’as jamais vu le mien.
+Quand le dernier pli est tombé, il a commandé une autre bière. {mood:tension}
+[interro mballa]
 * Une femme.
 + Calme.
 Dans ma vie, il n’y en avait qu’une qui pouvait parler aussi calmement d’un homme qu’elle envoyait mourir.
@@ -618,33 +754,24 @@ Derrière elle, une valise.
 @christelle — Je vais chez ma tante à Bafoussam. Quelques jours.
 Elle mentait mal. Elle a toujours menti mal.
 ~ C’est pour ça que je l’aimais.
+@christelle — Je fais du thé. Assieds-toi.
+Elle est sortie avec la bouilloire. Le robinet est au fond de la cour.
+[search studio]
+Quand elle est revenue, Stéphane était assis sur le lit. Comme si de rien n’était.
 Ils ont joué sur le lit, comme on jouait tous les trois avant. Elle, moi et lui.
 + Le dimanche, avec du soya et du jus de foléré.
 [game christelle]
 Au milieu de la partie, elle s’est arrêtée.
 + Elle a posé ses cartes.
 + Elle a pleuré.
-Pas comme à la veillée.
-+ Pour de vrai, cette fois.
-@christelle * — Je savais pour elle.
-Stéphane n’a rien dit.
-@christelle — Je savais pour Caroline. Pour l’argent. Pour son mari. Il m’a tout dit. Il y avait un plan.
-@stephane — Quel plan ?
-Christelle a essuyé ses yeux avec le pagne.
-@christelle ~ — Pour comprendre, il faut remonter trois mois en arrière.
-Et elle a raconté.
-Stéphane l’a écoutée jusqu’au bout. Puis il a posé une seule question.
-@stephane — Il y avait un papier ?
-Christelle n’a pas cligné des yeux.
-@christelle ! — Non.
-* Elle a menti.
-Je le sais.
-+ Parce que c’est moi qui le lui avais donné.
-Sur la valise, il y avait une enveloppe de banque mal cachée sous un pagne.
-Stéphane l’a vue.
-+ Il n’a rien dit.
-Mon petit frère a toujours su attendre.
-~ Moi, jamais.
+[interro christelle]
+?papier=1 Mon petit frère a laissé la nuit à Christelle.
+?papier=1 ~ Il a toujours su attendre. Moi, jamais.
+?!papier=1 * Elle a menti.
+?!papier=1 Je le sais.
+?!papier=1 + Parce que c’est moi qui le lui avais donné.
+?!papier=1 Mon petit frère est reparti sans rien.
+?!papier=1 ~ Il a toujours su attendre. Moi, jamais.
 `},
 
 {n:18, t:'Même mort', who:'Penalty', text:`
@@ -765,7 +892,40 @@ Et pendant que nous préparions notre avenir…
 ! Lui préparait notre fin. {fx:heart}
 `},
 
-{n:22, t:'Caroline', who:'Stéphane', text:`
+{n:22, t:'Le neuvième jour', who:'Stéphane', text:`
+[mood wake]
+Le neuvième jour, on lève le deuil.
+On lave les bâches.
++ On rend les chaises au voisin.
++ Les tantes repartent avec les restes de riz dans des sachets noirs.
+~ Et ceux qui restent font semblant de reprendre leur vie.
+[img lieu-coin]
+Sous le manguier, derrière la boutique de Mama Nicole, RALL avait sorti les cartes. {fx:shuffle}
+Le Cobra était là. Ses yeux ne clignaient toujours pas.
+Et Christelle est venue. {pic:christelle}
++ Sans valise.
++ Sans pagne de deuil.
+Elle s’est assise en face de Stéphane. Elle ne l’a pas regardé une seule fois.
+@rall — Une dernière pour lui. Le Carré. Le gagnant choisit la musique.
+[game neuf]
+Christelle a joué ses 3 trop tôt.
++ Comme quelqu’un qui a hâte que la partie se termine.
+RALL a ri. Pour la première fois depuis la veillée, son rire n’était pas trop court. {mood:night}
+?l_rall=1 Stéphane, lui, n’avait pas oublié la veillée. Ni les mains qui tremblaient.
+?l_rall=1 [interro rall2]
+Quand les autres sont partis, RALL est resté. Il a parlé sans qu’on lui demande rien.
+@rall — Le samedi avant Bastos, ton frère m’a dit une phrase. Je n’ai pas compris, sur le moment.
+@rall — « Si je ne viens pas samedi, c’est que je suis parti avec ma reine. »
+~ Ma reine.
++ C’est comme ça que j’appelais Christelle.
+[clue reine]
+[note christelle|« Si je ne viens pas samedi, c’est que je suis parti avec ma reine. »]
+Stéphane a regardé la chaise vide de Christelle.
++ Il a rangé les cartes.
+~ Il restait une femme à voir. Celle qui sent l’argent.
+`},
+
+{n:23, t:'Caroline', who:'Stéphane', text:`
 [mood tension]
 Elle a donné rendez-vous à Stéphane dans un salon de thé à Bastos.
 + Un endroit où le café coûte le prix d’un repas au quartier.
@@ -787,19 +947,12 @@ Caroline joue comme elle vit.
 Elle te laisse gagner les premiers plis.
 + Elle te laisse croire.
 * Et elle garde son 3 pour la fin.
-Pendant la partie, elle a raconté sa version.
-Elle m’aimait.
-+ Son mari était un monstre.
-+ Elle était une prisonnière dans une belle maison.
-+ Elle n’avait rien pu faire.
-~ Une belle histoire.
-Je l’avais crue, moi aussi.
-@stephane — Le gardien t’a vue téléphoner. Vingt-deux heures cinquante. Sur le balcon.
-@caroline — J’ai appelé un taxi.
-@stephane — La police dit que c’était une femme. Calme.
-Caroline a posé une carte. Lentement. {fx:card}
-@caroline * — Il y a beaucoup de femmes calmes à Yaoundé.
-À la fin, elle a posé sa main sur le poignet de mon frère.
+Après la partie, elle a commandé deux thés. Elle a raconté sa version.
+[interro caroline]
+À la fin, elle a pris une serviette en papier. Elle y a écrit un numéro.
+@caroline — Ton frère avait quelque chose à moi. Un papier. Si tu le trouves, appelle-moi. Je saurai être reconnaissante.
+[clue serviette]
+Elle a posé sa main sur le poignet de mon frère.
 + La même main.
 + Le même sourire.
 @caroline — Ton frère avait quelque chose à moi. Un papier. Si tu le trouves, apporte-le-moi. Je saurai être reconnaissante.
@@ -808,7 +961,7 @@ J’ai vu sa main sur le poignet de Stéphane.
 ~ Les morts aussi peuvent avoir froid.
 `},
 
-{n:23, t:'Le Ngonzormorrr', who:'Stéphane', text:`
+{n:24, t:'Le Ngonzormorrr', who:'Stéphane', text:`
 [mood tension]
 Le message est arrivé sur mon téléphone. Sur le téléphone que Stéphane portait maintenant dans sa poche. {fx:buzz}
 + Un numéro masqué.
@@ -833,6 +986,7 @@ Les premières cartes sont tombées. Le masque jouait comme s’il voyait à tra
 Puis mon petit frère a levé les yeux.
 + Il a vu le miroir derrière lui.
 + Il a vu ses propres cartes dedans.
+?clue:miroir ~ Le militaire du kiosque l’avait prévenu. Toujours un miroir dans le dos.
 [choice chaise|Tourner sa chaise face au mur|Rester assis et jouer quand même]
 ?chaise=0 Il n’a rien dit. Il s’est levé. Il a tourné sa chaise. Il s’est rassis face au mur.
 ?chaise=0 Le masque n’a pas protesté.
@@ -846,13 +1000,23 @@ Derrière, il n’y avait pas un démon.
 * Il y avait un homme de cinquante-cinq ans. {pic:kappo}
 Fatigué, avec des cernes et une alliance trop serrée.
 ! Le mari.
-@kappo — Ta Caroline m’a appelé elle-même. Elle m’a donné l’heure, l’adresse, la couleur du Yango.
-@kappo + — Elle pleurait. Elle disait que ton frère la menaçait.
-@stephane * — Elle ne pleurait pas. Le gardien l’a vue.
-Le Ngonzormorrr est resté silencieux.
-+ Longtemps.
-~ Pour la première fois de sa vie, quelqu’un avait vu ses cartes à lui.
+[note kappo|Derrière le masque : le mari. Cinquante-cinq ans. Une alliance trop serrée.]
+[interro kappo]
 @kappo — Il existe un papier, n’est-ce pas ? Apporte-le-moi. Je paie le double de ce qu’elle t’a promis.
+@kappo — Et donne-moi un nom. La femme qui a appelé la police, ce soir-là.
+~ Un nom. Ici, un nom suffit à tuer quelqu’un.
+[accuse]
+?acc=caroline2 Le Ngonzormorrr a sorti son téléphone. Il a cherché un contact. Il a comparé, chiffre par chiffre.
+?acc=caroline2 * 6 77 41 08 12.
+?acc=caroline2 Il a reposé le téléphone sur la table verte. Très doucement.
+?acc=caroline2 ~ Les hommes comme lui ne crient pas quand ils ont mal. Ils notent.
+?acc=caroline1 @kappo — Caroline… Tu as un visage, petit. Pas une preuve.
+?acc=caroline1 ~ Il l’a crue à moitié. Un homme comme lui ne croit jamais rien entièrement.
+?acc=christelle @kappo — La petite de Biyem-Assi… Je m’en occupe.
+?acc=christelle ! Non. {fx:thud}
+?acc=christelle ~ Mon petit frère venait de jouer la mauvaise carte. Et je ne pouvais pas lui prendre la main.
+?acc=none @stephane — Le nom, je le garde. Comme le papier.
+?acc=none @kappo — Tu ressembles vraiment à ton frère. Lui aussi gardait tout.
 Les deux m’avaient tué.
 + L’un avec une arme.
 + L’autre avec un coup de téléphone.
@@ -861,7 +1025,7 @@ Et maintenant, les deux voulaient la même chose.
 * Pour la première fois de ma vie, ou de ma mort, quelqu’un de ma famille tenait toutes les cartes.
 `},
 
-{n:24, t:'Le papier', who:'Penalty', text:`
+{n:25, t:'Le papier', who:'Penalty', text:`
 [mood night]
 On croit souvent que les morts ne font plus rien.
 + Qu’ils restent là où on les a laissés.
@@ -884,11 +1048,20 @@ Puis elle avait vu mes yeux.
 Elle avait peur.
 + Et elle avait envie de l’argent.
 ~ Les deux sont humains.
-Le matin où Stéphane est revenu de Bastos, elle l’attendait devant chez ma mère. Sa valise à la main.
-Elle lui a tendu l’enveloppe de banque. {pic:christelle}
-@christelle — Il voulait que ça parte. Moi, je n’ai pas eu le courage. Toi, tu fais ce que tu veux.
-Puis elle a pris son car pour Bafoussam.
-~ Je ne sais pas si elle reviendra.
+?!acc=christelle Le matin où Stéphane est revenu de Bastos, elle l’attendait devant chez ma mère. Sa valise à la main.
+?!acc=christelle Elle lui a tendu l’enveloppe de banque. {pic:christelle}
+?!acc=christelle @christelle — Il voulait que ça parte. Moi, je n’ai pas eu le courage. Toi, tu fais ce que tu veux.
+?!acc=christelle Puis elle a pris son car pour Bafoussam.
+?!acc=christelle ~ Je ne sais pas si elle reviendra.
+?acc=christelle Le matin où Stéphane est revenu de Bastos, personne ne l’attendait devant chez ma mère.
+?acc=christelle Il est allé à Biyem-Assi. La porte du studio était ouverte.
+?acc=christelle + La valise était là.
+?acc=christelle + Le pagne, plié.
+?acc=christelle + Le riz froid, dans la marmite.
+?acc=christelle ! Christelle n’était plus là. {fx:thud}
+?acc=christelle Sous l’oreiller, il y avait l’enveloppe de banque. Et un mot, au crayon.
+?acc=christelle > Il voulait que ça parte. Moi, je n’ai pas eu le courage. Toi, tu fais ce que tu veux.
+?acc=christelle ~ Elle l’avait écrit la veille. Pour le lui donner le matin.
 [img lieu-chambre]
 Mon petit frère s’est assis sur le lit où on dormait enfants. Il a ouvert le papier.
 * Et moi, enfin, j’ai compris. {mood:tension}
@@ -912,7 +1085,8 @@ Caroline avait gardé son 3 pour la fin.
 Mais elle avait oublié une chose.
 * Dans ma famille aussi, on sait compter les cartes.
 Maintenant, c’était à mon petit frère de jouer le dernier pli.
-[choice fin|Envoyer le papier|Envoyer le papier et le relevé d’appels|Vendre le papier au plus offrant]
+?!clue:releve ~ Il manquait une page à mon petit frère. Celle que l’adjudant Mballa avait gardée dans sa poche.
+[choice fin|Envoyer le papier|Envoyer le papier et le relevé d’appels#clue:releve|Vendre le papier au plus offrant]
 `}
 ],
 
@@ -932,6 +1106,9 @@ Trois semaines après, on a parlé d’un accident sur la route de Douala.
 + Pour de vrai, cette fois.
 Caroline portait du noir. Un beau noir. Bien coupé. {pic:caroline}
 ~ Elle pleurait juste assez pour que personne ne pose de questions.
+?acc=christelle Christelle n’est jamais arrivée à Bafoussam.
+?acc=christelle + Le car, si. Sa place est restée vide.
+?acc=christelle ~ Personne ne l’a cherchée. On ne cherche pas les filles du quartier.
 ! Elle avait gagné.
 Avec mon papier. Avec ma mort. Avec la main de mon petit frère.
 * Même mort, je l’ai tué.
@@ -942,8 +1119,12 @@ Avec mon papier. Avec ma mort. Avec la main de mon petit frère.
 Stéphane a envoyé deux pages.
 La première, c’était le compte.
 La deuxième, c’était le relevé d’appels que l’adjudant Mballa avait glissé sous le jeu de cartes.
-> Vingt-deux heures cinquante. Un numéro.
+> Vingt-deux heures cinquante et une. 6 77 41 08 12.
 * Le numéro de Caroline.
+?acc=christelle Quand il a relu ce numéro, Stéphane a sorti mon téléphone. « Ma reine ♥ » : 6 99 23 55 05.
+?acc=christelle ! Pas le même. {fx:thud}
+?acc=christelle ~ Il avait donné le mauvais nom. Christelle n’est jamais arrivée à Bafoussam.
+?acc=christelle Il a envoyé les deux pages quand même. Il n’y avait plus rien d’autre à faire.
 Le Ngonzormorrr est parti en mission à Douala.
 + Pour de vrai.
 Caroline n’a pas eu le temps de choisir sa robe noire.
@@ -962,6 +1143,7 @@ Même mort, je l’ai tué.
 [mood tension]
 Stéphane n’a rien envoyé.
 * Il a vendu le papier. Au plus offrant.
+?acc=christelle ~ Christelle n’est jamais arrivée à Bafoussam. Il n’a pas demandé pourquoi. Il avait de l’argent, maintenant.
 Des chaussures neuves.
 + Un téléphone neuf.
 + Des tournées pour tout le quartier.
