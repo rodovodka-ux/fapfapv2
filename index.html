@@ -2345,8 +2345,8 @@
   body{ background:#07060a; }
   .lg-scene .sc-photo{ background:url('art/livre/lieu-yaounde.webp') 50% 30% / cover no-repeat; }
   .lg-scene .sc-shade{ background: linear-gradient(180deg, rgba(7,6,10,.55) 0%, rgba(7,6,10,.78) 40%, rgba(7,6,10,.94) 75%, #07060a 100%) !important; }
-  /* blur behind translucent panels is the most expensive effect on iPhone: only the three glass pieces keep it */
-  body *:not(#chipsBar):not(#btnGoPlay):not(#homeTabbar):not(.lg-mirror):not(.lg-mirror-in){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  /* blur behind translucent panels is the most expensive effect on iPhone: only the glass pieces keep it (chips, « Jouer », tab bar, and the two cards of the cut: « Partage ! » / « Je coupe ») */
+  body *:not(#chipsBar):not(#btnGoPlay):not(#homeTabbar):not(.ritual-card):not(.lg-mirror):not(.lg-mirror-in){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   .gl.solid{ background:#15110d; box-shadow: inset 0 0 0 1px rgba(214,171,82,.28), 0 8px 22px rgba(0,0,0,.35); }
   .gl.solid::before, .gl.solid::after{ display:none; }
   .gl.solid.tinted{ background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; text-shadow:none; box-shadow:0 8px 22px rgba(0,0,0,.35); }
@@ -2355,7 +2355,8 @@
   .home-tag{ letter-spacing:.22em !important; text-transform:uppercase; font-size:12px !important; font-weight:700; color:#b9ad9d !important; }
   /* the table: the place of the novel where this opponent plays (default table only) */
   .lg-scene .sc-place{ position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; }
-  body:not([class*="table-"]) .lg-scene .sc-place{ opacity:1; }
+  body:not([class*="table-"]) .lg-scene .sc-place, body[class*="table-l-"] .lg-scene .sc-place, body.book-place .lg-scene .sc-place{ opacity:1; }
+  body.book-place .lg-scene .sc-fx{ display:none; }
   /* the boss waits on the home screen, in a photograph */
   body.theme-or .og-king{ display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; min-height:0; padding:12px; border-radius:18px; background:#15110d; border:1px solid rgba(214,171,82,.32); }
   .og-king-head{ width:96px; height:118px; border-radius:12px; background:url('art/livre/perso-masque.webp') 50% 22% / cover no-repeat #1a1612; box-shadow:0 0 0 1px rgba(214,171,82,.5); }
@@ -3313,8 +3314,8 @@
     </div>
     <h2 class="ritual-q" id="ritualQ">« Je partage<br>ou tu coupes ? »</h2>
     <div class="ritual-choices">
-      <button class="ritual-card" id="btnPartage"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg></span><b>Partage !</b><small>Il distribue tout de suite</small></button>
-      <button class="ritual-card rc-cut" id="btnDepose"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg></span><b>Je coupe</b><small>Tu coupes le paquet et tu prends ton tas</small></button>
+      <button class="lg ritual-card" id="btnPartage"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg></span><b>Partage !</b><small>Il distribue tout de suite</small></button>
+      <button class="lg ritual-card rc-cut" id="btnDepose"><span class="rc-ico"><svg class="i" aria-hidden="true"><use href="#i-scissors"/></svg></span><b>Je coupe</b><small>Tu coupes le paquet et tu prends ton tas</small></button>
     </div>
     <div class="ritual-extra">
       <label class="pref-check"><input type="checkbox" id="prefAlwaysShare"> Toujours partager (ne plus me demander)</label>
@@ -6021,8 +6022,71 @@
     {id:'defi',         icon:'calendar', name:'Rendez-vous quotidien',     desc:'Terminer un défi du jour.'},
     {id:'defi_parfait', icon:'sparkle', name:'Défi parfait',              desc:'Gagner les 3 manches d’un défi du jour.'},
     {id:'streak3',      icon:'flame', name:'Fidèle au quartier',        desc:'Jouer 3 jours d’affilée.'},
-    {id:'streak7',      icon:'calcheck', name:'Une semaine au tripot',     desc:'Jouer 7 jours d’affilée.'}
+    {id:'streak7',      icon:'calcheck', name:'Une semaine au tripot',     desc:'Jouer 7 jours d’affilée.'},
+    // ---- the exploits (v40): tiers counted over the whole career; test(p) says when they are earned (see checkExploits) ----
+    {id:'x_win10',   icon:'medal',   name:'Habitué du tripot',        desc:'Gagner 10 matchs.',                       test:p=> totalWins(p)>=10},
+    {id:'x_win50',   icon:'medal',   name:'Pilier du quartier',       desc:'Gagner 50 matchs.',                       test:p=> totalWins(p)>=50},
+    {id:'x_win200',  icon:'crown',   name:'Monument de Melen',        desc:'Gagner 200 matchs.',                      test:p=> totalWins(p)>=200},
+    {id:'x_win500',  icon:'crown',   name:'Immortel',                 desc:'Gagner 500 matchs.',                      test:p=> totalWins(p)>=500},
+    {id:'x_cora10',  icon:'three',   name:'Le 3 te connaît',          desc:'Réussir 10 CORA.',                        test:p=> st_(p,'coras')>=10},
+    {id:'x_cora50',  icon:'three',   name:'CORA en série',            desc:'Réussir 50 CORA.',                        test:p=> st_(p,'coras')>=50},
+    {id:'x_cora150', icon:'three',   name:'Seigneur du 3',            desc:'Réussir 150 CORA.',                       test:p=> st_(p,'coras')>=150},
+    {id:'x_glace5',  icon:'snow',    name:'Froid comme la nuit',      desc:'Réussir 5 33 Glacées.',                   test:p=> st_(p,'glacees')>=5},
+    {id:'x_glace20', icon:'snow',    name:'Banquise',                 desc:'Réussir 20 33 Glacées.',                  test:p=> st_(p,'glacees')>=20},
+    {id:'x_clac1',   icon:'zap',     name:'Clac !',                   desc:'Claquer pour la première fois.',          test:p=> st_(p,'claques')>=1},
+    {id:'x_clac10',  icon:'zap',     name:'Main lourde',              desc:'Claquer 10 fois.',                        test:p=> st_(p,'claques')>=10},
+    {id:'x_clac50',  icon:'flame',   name:'Tremblement de terre',     desc:'Claquer 50 fois.',                        test:p=> st_(p,'claques')>=50},
+    {id:'x_auto5',   icon:'sparkle', name:'Chanceux',                 desc:'Annoncer 5 victoires automatiques.',      test:p=> st_(p,'autos')>=5},
+    {id:'x_auto25',  icon:'sparkle', name:'Béni des cartes',          desc:'Annoncer 25 victoires automatiques.',     test:p=> st_(p,'autos')>=25},
+    {id:'x_chips10k',icon:'coin',    name:'Poches pleines',           desc:'Avoir 10 000 jetons.',                    test:p=> (p.chipsBest||0)>=10000},
+    {id:'x_chips100k',icon:'coin',   name:'Petit patron',             desc:'Avoir 100 000 jetons.',                   test:p=> (p.chipsBest||0)>=100000},
+    {id:'x_chips1m', icon:'crown',   name:'Millionnaire du quartier', desc:'Avoir 1 000 000 de jetons.',              test:p=> (p.chipsBest||0)>=1000000},
+    {id:'x_chris10', icon:'repeat',  name:'Le dimanche, c’est toi',   desc:'Battre Christelle 10 fois.',              test:p=> lw(p,'gervais')>=10},
+    {id:'x_rall10',  icon:'repeat',  name:'Bluff démasqué',           desc:'Battre RALL 10 fois.',                    test:p=> lw(p,'aristide')>=10},
+    {id:'x_pen10',   icon:'book',    name:'L’élève devenu maître',    desc:'Battre Penalty 10 fois.',                 test:p=> lw(p,'penalty')>=10},
+    {id:'x_mask5',   icon:'crown',   name:'Cinq fois sans masque',    desc:'Battre le Ngonzormorrr 5 fois.',          test:p=> lw(p,'mbarga')>=5},
+    {id:'x_mask20',  icon:'crown',   name:'Le nouveau Ngonzormorrr',  desc:'Battre le Ngonzormorrr 20 fois.',         test:p=> lw(p,'mbarga')>=20},
+    {id:'x_carre10', icon:'home',    name:'Roi du Carré',             desc:'Gagner 10 parties de Carré.',             test:p=> (p.squareWins||0)>=10},
+    {id:'x_carre50', icon:'home',    name:'Le Carré, c’est chez moi', desc:'Gagner 50 parties de Carré.',             test:p=> (p.squareWins||0)>=50},
+    {id:'x_online10',icon:'globe',   name:'Star en ligne',            desc:'Gagner 10 matchs contre des amis.',       test:p=> (p.onlineWins||0)>=10},
+    {id:'x_days14',  icon:'calcheck',name:'Deux semaines au quartier',desc:'Jouer 14 jours d’affilée.',              test:p=> (p.dayStreak||0)>=14},
+    {id:'x_days30',  icon:'calcheck',name:'Un mois sans manquer',     desc:'Jouer 30 jours d’affilée.',               test:p=> (p.dayStreak||0)>=30},
+    {id:'x_legend',  icon:'star',    name:'Légende de Melen',         desc:'Atteindre le plus haut rang.',            test:p=> rankIndex(p.rep||0)>=RANKS.length-1},
+    {id:'x_shop5',   icon:'bag',     name:'Collectionneur',           desc:'Posséder 5 objets de la boutique.',       test:p=> ownedCount(p)>=5},
+    {id:'x_shop15',  icon:'palette', name:'Grand collectionneur',     desc:'Posséder 15 objets de la boutique.',      test:p=> ownedCount(p)>=15},
+    // the novel « Pourquoi je suis mort ? »
+    {id:'b_first',   icon:'book',    name:'Premier témoin',           desc:'Gagner la première partie du livre.',     test:p=> bk(p).won && Object.keys(bk(p).won).length>=1},
+    {id:'b_penalty', icon:'cards',   name:'Dans la peau de Penalty',  desc:'Gagner à la villa de Santa Barbara.',     test:p=> !!(bk(p).won && bk(p).won.villa)},
+    {id:'b_fog',     icon:'flame',   name:'Les yeux rouges',          desc:'Battre le Cobra après avoir fumé.',       test:p=> !!(bk(p).won && bk(p).won.cobra) && String((bk(p).choices||{}).joint)==='1'},
+    {id:'b_mirror',  icon:'target',  name:'Dos au miroir',            desc:'Battre le masque sans tourner ta chaise.',test:p=> !!(bk(p).won && bk(p).won.masque) && String((bk(p).choices||{}).chaise)==='1'},
+    {id:'b_read',    icon:'hand',    name:'Lecteur de visages',       desc:'Réussir toutes les questions d’un interrogatoire.', test:p=> Object.values(bk(p).iv||{}).some(r=> r.done && r.res && r.res.length && r.res.every(x=> x==='ok'))},
+    {id:'b_press',   icon:'zap',     name:'Il a parlé',               desc:'Faire parler un témoin en gagnant une manche.', test:p=> !!bk(p).pressWon},
+    {id:'b_clues',   icon:'sparkle', name:'Rien ne m’échappe',        desc:'Trouver tous les indices du livre.',      test:p=> Object.keys(bk(p).clues||{}).length>=27},
+    {id:'b_truth',   icon:'check',   name:'La vérité, prouvée',       desc:'Donner le bon nom, avec la bonne preuve.',test:p=> (bk(p).choices||{}).acc==='caroline2' || !!bk(p).accTrue},
+    {id:'b_trap',    icon:'repeat',  name:'Fausse piste',             desc:'Tomber dans le piège de Christelle.',     test:p=> (bk(p).choices||{}).acc==='christelle' || !!bk(p).accTrap},
+    {id:'b_end',     icon:'book',    name:'Pourquoi je suis mort ?',  desc:'Finir le livre.',                         test:p=> (bk(p).ended||[]).some(e=> e!=='cachee')},
+    {id:'b_all',     icon:'medal',   name:'Toutes les vérités',       desc:'Lire les trois fins du livre.',           test:p=> ['0','1','2'].every(e=> (bk(p).ended||[]).includes(e))},
+    {id:'b_hidden',  icon:'sparkle', name:'Et si j’étais parti ?',    desc:'Lire la fin cachée.',                     test:p=> (bk(p).ended||[]).includes('cachee')},
+    {id:'b_star5',   icon:'star',    name:'Inspecteur',               desc:'Finir l’enquête avec 5 étoiles.',         test:p=> (bk(p).best||0)>=5}
   ];
+  // helpers for the exploits
+  const st_ = (p, k)=> (p.stats && p.stats[k]) || 0;
+  const lw = (p, id)=> (p.ladder && p.ladder[id] && p.ladder[id].w) || 0;
+  const totalWins = p=> ['gervais','aristide','penalty','mbarga'].reduce((s, id)=> s + lw(p, id), 0) + (p.squareWins||0) + (p.onlineWins||0);
+  const ownedCount = p=> Object.values(p.owned||{}).reduce((s, l)=> s + (Array.isArray(l) ? l.length : 0), 0);
+  const bk = p=> p.book || {};
+  // a career counter went up (a CORA, a claque…): count it, then see if an exploit is earned
+  function stat(k, n){ profile.stats = profile.stats || {}; profile.stats[k] = (profile.stats[k]||0) + (n||1); checkExploits(); }
+  function checkExploits(){ TROPHIES.forEach(t=>{ if(t.test && !profile.trophies[t.id]){ try{ if(t.test(profile)) unlockTrophy(t.id); }catch(e){} } }); }
+  // at start: exploits already earned before they existed are given quietly, with a single notice
+  setTimeout(()=>{
+    const got = TROPHIES.filter(t=>{ try{ return t.test && !profile.trophies[t.id] && t.test(profile); }catch(e){ return false; } });
+    if(!got.length) return;
+    got.forEach(t=> profile.trophies[t.id] = Date.now());
+    chipsAdd(200*got.length); saveProfile();
+    try{ renderChips(); }catch(e){}
+    showToast(got.length+' exploit'+(got.length>1 ? 's' : '')+' déjà accompli'+(got.length>1 ? 's' : ''), '+'+fmtChips(200*got.length)+' jetons · voir Profil › Trophées', {ms:4200});
+  }, 2500);
   const TROPHY_BY_ID = Object.fromEntries(TROPHIES.map(t=>[t.id, t]));
   const TROPHY_REP = 50;
 
@@ -6082,6 +6146,21 @@
     {id:'temple',    name:'Temple grec',         price:12000, swatch:'radial-gradient(circle,#fbf8f0 0 40%,#d9c38a 46%,#cfc4ad 60%)', desc:'Du marbre blanc et de l’or, entre les colonnes.'},
     {id:'metropole', name:'Métropole du futur',  price:15000, swatch:'linear-gradient(rgba(80,200,255,.4) 1px,transparent 1px) 0 0/8px 8px,linear-gradient(180deg,#0c2440,#050b16)', desc:'Au sommet d’une tour, la ville et ses voitures volantes.'}
   ];
+  // [image (art/livre/lieu-…), name, the book game that opens it (* = finish the book), how to get it]
+  const BOOK_TABLES = [
+    ['veillee', 'La veillée de Mvog-Ada', 'veillee', 'bats RALL à la veillée'],
+    ['coin', 'Sous le manguier', 'cobra', 'bats le Cobra'],
+    ['villa', 'La villa de Santa Barbara', 'villa', 'gagne à la villa'],
+    ['palmiers', 'Résidence Les Palmiers', 'tchinda', 'bats Papa Tchinda'],
+    ['prestige', 'Les néons du Prestige', 'videur', 'bats le videur'],
+    ['kiosque', 'Le kiosque de Mami Ange', 'kiosque', 'gagne le Carré du kiosque'],
+    ['bastos', 'La station de Bastos', 'ismael', 'bats Ismaël'],
+    ['bar-police', 'Le bar du commissariat', 'mballa', 'bats l’adjudant Mballa'],
+    ['studio', 'Le studio de Biyem-Assi', 'christelle', 'bats Christelle'],
+    ['salon-the', 'Le salon de thé de Bastos', 'caroline', 'bats Caroline'],
+    ['table-masque', 'Derrière le rideau rouge', 'masque', 'bats le masque d’or'],
+    ['yaounde', 'Yaoundé la nuit', '*', 'finis le livre']
+  ];
   function shopOwns(p, kind, id){ return !!(p.owned && p.owned[kind] && p.owned[kind].includes(id)); }
 
   const SKINS = {
@@ -6120,6 +6199,9 @@
       {id:'or',       name:'Table d’or',            swatch:'radial-gradient(ellipse at 40% 35%,#f3d27a,#a06c18 72%)', req:p=>rankIndex(p.rep)>=5, hint:'Rang « Légende de Melen »'},
       // the story's reward: the room where « La Nuit des 33 » ends
       {id:'soussol',  name:'Le Sous-sol du Royal',  swatch:'radial-gradient(ellipse 60% 45% at 50% 55%,#2a6b45 0,#123a24 45%,#000 80%),repeating-linear-gradient(100deg,rgba(200,220,255,.3) 0 1px,transparent 1px 7px)', req:p=> !!(p.story && p.story.finished), hint:'Termine le mode histoire « La Nuit des 33 »'},
+      // the places of the novel « Pourquoi je suis mort ? »: each one opens when its game is won in the book
+      ...BOOK_TABLES.map(([id, name, game, hint])=> ({id:'l-'+id, name, swatch:'linear-gradient(rgba(7,6,10,.25),rgba(7,6,10,.45)),url(art/livre/lieu-'+id+'.webp) center/cover',
+        req: p=> game==='*' ? !!(p.book && p.book.ended && p.book.ended.length) : !!(p.book && p.book.won && p.book.won[game]), hint:'Mode histoire · '+hint})),
       // the exceptional tables: only in the shop
       ...SHOP_TABLES.map(t=> ({id:t.id, name:t.name, swatch:t.swatch, req:p=> shopOwns(p, 'table', t.id), hint:'Boutique · '+t.price.toLocaleString('fr-FR')+' jetons'}))
     ],
@@ -6716,11 +6798,16 @@
   const BOOK_PLACE = {veillee:'lieu-veillee', cobra:'lieu-coin', tchinda:'lieu-palmiers', kiosque:'lieu-kiosque', ismael:'lieu-bastos', mballa:'lieu-bar-police', christelle:'lieu-studio', caroline:'lieu-salon-the', masque:'lieu-table-masque', villa:'lieu-villa', videur:'lieu-prestige', neuf:'lieu-coin'};
   function scenePlace(){
     let img = 'lieu-coin';
+    const tid = currentTableId();
     if(storyRun && storyRun.book) img = BOOK_PLACE[storyRun.key] || img;
+    else if(tid.indexOf('l-')===0) img = 'lieu-'+tid.slice(2); // a place of the novel chosen in « Décors »
     else if(mode==='ai' && OPP_PLACE[duelOpp]) img = OPP_PLACE[duelOpp][0];
     else if(mode==='mp') img = 'lieu-kiosque';
+    // in the book, the table is always the place of the scene, whatever table is chosen in « Décors »
+    document.body.classList.toggle('book-place', !!(storyRun && storyRun.book));
     const el = document.querySelector('#lgScene .sc-place');
-    if(el) el.style.backgroundImage = 'linear-gradient(180deg, rgba(7,6,10,.62), rgba(7,6,10,.80) 55%, rgba(7,6,10,.9)), url("art/livre/'+img+'.webp")';
+    // the photo stays visible around the table; a soft shade keeps the cards readable in the middle
+    if(el) el.style.backgroundImage = 'radial-gradient(ellipse 85% 60% at 50% 52%, rgba(7,6,10,.30), rgba(7,6,10,.72)), linear-gradient(180deg, rgba(7,6,10,.45), rgba(7,6,10,.15) 35%, rgba(7,6,10,.65)), url("art/livre/'+img+'.webp")';
   }
   function enterGame(){
     Nav.clear(); gameGen++; resumeQueue.length = 0; setPaused(false);
@@ -7353,6 +7440,7 @@
       return el;
     });
     claqueFx(actor);
+    if(actor==='you') stat('claques');
     sfxSlamWhoosh();
     if(!calmOn()) items.forEach((el, i)=> el.animate([
       {transform:'translateY('+(actor==='you' ? 150 : -150)+'px) scale(1.45) rotate('+(Math.random()*30-15)+'deg)', opacity:0.2},
@@ -8281,9 +8369,9 @@
     // (not during the guided game: its CORA is handed to you, it shouldn't count)
     if(who==='you' && !tuto){
       repAdd(5, 'Manches gagnées');
-      if(isGlacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; }
-      else if(isCora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; }
-      if(isAutoWin){ repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); if(/4 symboles/.test(label)) unlockTrophy('quad'); }
+      if(isGlacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; stat('glacees'); }
+      else if(isCora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; stat('coras'); }
+      if(isAutoWin){ repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); stat('autos'); if(/4 symboles/.test(label)) unlockTrophy('quad'); }
       if(state && state.history.some(e=>e.type==='passe' && e.actor==='you')) unlockTrophy('passe');
       if(state && state.youSlept) unlockTrophy('sommeil');
     }
@@ -9045,12 +9133,12 @@
         profile.winStreak = 0;
       }
       profile.lastDuel = {opp: duelOpp, won};
-      saveProfile();
+      saveProfile(); checkExploits();
     } else if(mode==='mp'){
       profile.onlineGames = (profile.onlineGames||0)+1;
       if(won){ profile.onlineWins = (profile.onlineWins||0)+1; repAdd(80, 'Victoire en ligne'); unlockTrophy('premiere'); unlockTrophy('en_ligne'); }
       else repAdd(25, 'Match en ligne');
-      saveProfile();
+      saveProfile(); checkExploits();
     }
     document.getElementById('matchOverTitle').textContent = won ? 'Tu gagnes '+mine+' à '+theirs+' !' : oppName()+' gagne '+theirs+' à '+mine+'.';
     let text;
@@ -9428,6 +9516,7 @@
   }
   // the slam itself, on this phone: the fanned cards drop onto the table in front of the seat, one hit, the wood cracks
   function sqClaqueFx(seat, level){
+    if(seat==='you') stat('claques');
     showToast(seat==='you' ? 'CLAC !' : sqName(seat)+' claque !', seat==='you' ? 'Plus rien ne peut t’arrêter' : 'Plus rien ne peut l’arrêter', {ms:1600});
     if(seat==='you') claqueExtraFx();
     sfxSlamWhoosh();
@@ -9512,7 +9601,7 @@
     if(sq.handOver) return;
     sq.handOver = true;
     if(winnerId==='you'){
-      repAdd(10, 'Victoires automatiques'); unlockTrophy('auto');
+      repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); stat('autos');
       if(/4 symboles/.test(label)) unlockTrophy('quad');
     }
     document.getElementById('sqBtnAnnounce').classList.add('hidden');
@@ -9741,8 +9830,8 @@
   }
   function sqHandWonRewards(cora, glacee, passed){
     repAdd(5, 'Manches gagnées');
-    if(glacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; }
-    else if(cora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; }
+    if(glacee){ repAdd(40, '33 Glacée'); unlockTrophy('glacee'); matchGlacees++; stat('glacees'); }
+    else if(cora){ repAdd(15, 'CORA'); unlockTrophy('cora'); matchCoras++; stat('coras'); }
     if(passed) unlockTrophy('passe');
   }
   function sqHandWonShow(winner, cora, glacee){
@@ -9854,7 +9943,7 @@
     profile.squareGamesPlayed += 1;
     if(won) profile.squareWins += 1;
     saveProfile();
-    if(won){ repAdd(150, 'Dernier survivant'); unlockTrophy('survivant'); unlockTrophy('premiere'); }
+    if(won){ repAdd(150, 'Dernier survivant'); unlockTrophy('survivant'); unlockTrophy('premiere'); setTimeout(checkExploits, 0); }
     else repAdd(25, 'Partie de Carré');
     track('square_end', {won, players:nPlayers, online: !!(sq && (sq.online||sq.remote))});
     touchDayStreak();
@@ -10245,7 +10334,7 @@
     const me = V(ev.seat)==='you';
     if(ev.kind==='auto'){
       showToast(me ? 'VICTOIRE AUTOMATIQUE !' : sqName(V(ev.seat)).toUpperCase()+' ANNONCE !', ev.label, {big:true, celebrate:true, ms:3600});
-      sfxBigWin(); bigImpact(); if(me){ burstConfetti(28); repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); }
+      sfxBigWin(); bigImpact(); if(me){ burstConfetti(28); repAdd(10, 'Victoires automatiques'); unlockTrophy('auto'); stat('autos'); }
       // everyone at the table gets to look at the announced cards
       if(ev.cards) showAutoWinReveal({mine: me, name: sqName(V(ev.seat)), hand: ev.cards, label: ev.label, watchOnly: true, autoMs: 20000});
     } else if(ev.kind==='handwin'){
@@ -11605,7 +11694,7 @@
     function addClue(id, quiet){
       const S = st(), c = BK.clues[id];
       if(!c || S.clues[id]) return false;
-      S.clues[id] = chIdx+1; saveProfile();
+      S.clues[id] = chIdx+1; saveProfile(); checkExploits();
       if(!quiet){ FX.clue(); notice('Nouvel indice', c.t); }
       return true;
     }
@@ -11647,6 +11736,7 @@
     function finish(){
       const S = st();
       if(!S.ended.includes(S.ending)){ S.ended.push(S.ending); if(!S.hiddenRun){ chipsAdd(1000); showToast('Livre terminé', '+1 000 jetons · la fin cachée est débloquée', {ms:3200}); } }
+      checkExploits();
       // the next reading is a new investigation (the endings read and the best report stay)
       if(!S.hiddenRun){ S.clues = {}; S.notes = {}; S.iv = {}; S.sx = {}; S.choices = {}; }
       S.hiddenRun = false; S.ch = 0; S.i = 0; saveProfile();
@@ -11703,7 +11793,7 @@
       if(run.press){ pressDone(run.press, won); return; }
       if(won){
         if(!S.won[key]){ S.won[key] = true; const before = profile.chips; chipsAdd(200); renderChips(before); }
-        saveProfile();
+        saveProfile(); checkExploits();
         goTo(i+1);
         return;
       }
@@ -11821,6 +11911,7 @@
     function pressDone(press, won){
       const D = BK.interros[press.iv], S = st(), R = S.iv[press.iv];
       if(!won){ R.res[press.q] = 'ko'; R.q = press.q+1; if(R.q >= D.q.length) R.done = true; saveProfile(); }
+      else { S.pressWon = true; saveProfile(); checkExploits(); }
       if(R.q >= D.q.length){ inv.classList.add('hidden'); return goTo(i+1); }
       openInterro(press.iv);
       if(won) notice('Il reprend la parole', 'Une seule chance. Lis bien.');
@@ -11873,7 +11964,7 @@
       inv.innerHTML = '<div class="iv"><div class="iv-top"><span>Le mur</span></div><p class="ac-q"></p><div class="ac-who"></div><div class="iv-pick hidden"></div><div class="iv-acts hidden"></div></div>';
       inv.querySelector('.ac-q').textContent = A.q;
       const box = inv.querySelector('.ac-who');
-      const done = (v)=>{ S.choices.acc = v; saveProfile(); FX.thud(); inv.classList.add('hidden'); goTo(i+1); };
+      const done = (v)=>{ S.choices.acc = v; if(v==='caroline2') S.accTrue = true; if(v==='christelle') S.accTrap = true; saveProfile(); checkExploits(); FX.thud(); inv.classList.add('hidden'); goTo(i+1); };
       A.who.forEach(k=>{
         const P = BK.suspects[k], b = document.createElement('button'); b.type = 'button'; b.className = 'ac-card';
         b.innerHTML = '<span class="ac-ph" style="background-image:url(&quot;art/livre/'+P.img+'.webp&quot;)"></span><b></b><small></small>';
@@ -11902,7 +11993,7 @@
     function openReport(){
       const S = st(), r = caseScore();
       const accT = {caroline2:'Caroline. Juste, et prouvée.', caroline1:'Caroline. Juste, mais sans preuve.', christelle:'Christelle. Fausse piste : elle était innocente.', none:'Aucun nom donné.'}[r.acc] || '—';
-      S.best = Math.max(S.best||0, r.stars); saveProfile();
+      S.best = Math.max(S.best||0, r.stars); saveProfile(); checkExploits();
       inv.className = 'bk-inv';
       inv.innerHTML = '<div class="iv rp"><div class="iv-top"><span>Rapport d’enquête</span></div><div class="rp-stars">'+'★★★★★'.slice(0, r.stars)+'<i>'+'★★★★★'.slice(r.stars)+'</i></div>'+
         '<dl><dt>Interrogatoires</dt><dd>'+r.ok+' bonnes lectures sur '+r.all+'</dd><dt>Indices</dt><dd>'+r.clues+' sur '+r.cluesAll+'</dd><dt>Le nom</dt><dd class="acc"></dd></dl>'+
