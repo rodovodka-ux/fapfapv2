@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -2346,7 +2346,7 @@
   .lg-scene .sc-photo{ background:url('art/livre/lieu-yaounde.webp') 50% 30% / cover no-repeat; }
   .lg-scene .sc-shade{ background: linear-gradient(180deg, rgba(7,6,10,.55) 0%, rgba(7,6,10,.78) 40%, rgba(7,6,10,.94) 75%, #07060a 100%) !important; }
   /* blur behind translucent panels is the most expensive effect on iPhone: only the glass pieces keep it (chips, « Jouer », tab bar, and the two cards of the cut: « Partage ! » / « Je coupe ») */
-  body *:not(#chipsBar):not(#btnGoPlay):not(#homeTabbar):not(.ritual-card):not(.lg-mirror):not(.lg-mirror-in){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body *:not(#chipsBar):not(#btnGoPlay):not(#homeTabbar):not(#neonPlate):not(.ritual-card):not(.lg-mirror):not(.lg-mirror-in){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   .gl.solid{ background:#15110d; box-shadow: inset 0 0 0 1px rgba(214,171,82,.28), 0 8px 22px rgba(0,0,0,.35); }
   .gl.solid::before, .gl.solid::after{ display:none; }
   .gl.solid.tinted{ background:linear-gradient(180deg,#ffe08a,#d6ab52); color:#1d1404; text-shadow:none; box-shadow:0 8px 22px rgba(0,0,0,.35); }
@@ -2357,6 +2357,62 @@
   .lg-scene .sc-place{ position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; }
   body:not([class*="table-"]) .lg-scene .sc-place, body[class*="table-l-"] .lg-scene .sc-place, body.book-place .lg-scene .sc-place{ opacity:1; }
   body.book-place .lg-scene .sc-fx{ display:none; }
+  /* ---- the logo (v41, maquette validée): a neon sign on a plate of liquid glass, light running inside the tubes ---- */
+  .overlay h2.logo.neon-logo{ display:block; width:100%; margin:4px 0 0; line-height:0; text-shadow:none; color:inherit; }
+  .neon-plate{ position:relative; display:block !important; width:100%; border-radius:28px; padding:16px 10px 12px; overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.22);
+    -webkit-backdrop-filter:blur(16px) saturate(1.5) !important; backdrop-filter:blur(16px) saturate(1.5) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -10px 30px rgba(0,0,0,.25), 0 18px 40px rgba(0,0,0,.45); }
+  .neon-plate::before{ content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit; background: radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,.18), transparent 55%); }
+  .neon-sign{ display:block; width:100%; height:auto; overflow:visible; }
+  .neon-sign text{ font-family:'Tilt Neon', 'Manrope', sans-serif; font-size:92px; letter-spacing:4px; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .n-glow text{ stroke-width:10; opacity:.55; } .n-glow .p{ stroke:#ff3d8f; } .n-glow .b{ stroke:#2f8cff; }
+  .n-tube text{ stroke:rgba(255,255,255,.16); stroke-width:9; }
+  .n-gas text{ stroke-width:3.6; } .n-gas .p{ stroke:#ff6fab; } .n-gas .b{ stroke:#5aa6ff; }
+  .n-flow text{ stroke-width:3.2; stroke-dasharray:46 230; animation: neonFlow 3.4s linear infinite; } .n-flow .p{ stroke:#ffd1e6; } .n-flow .b{ stroke:#d4ecff; animation-delay:-1.7s; }
+  .n-flow2 text{ stroke-width:8; stroke-dasharray:46 230; opacity:.35; animation: neonFlow 3.4s linear infinite; } .n-flow2 .p{ stroke:#ff3d8f; } .n-flow2 .b{ stroke:#2f8cff; animation-delay:-1.7s; }
+  .n-shine text{ stroke:rgba(255,255,255,.55); stroke-width:1.2; }
+  @keyframes neonFlow{ to{ stroke-dashoffset:-276; } }
+  html[data-q="eco"] .n-flow text, html[data-q="eco"] .n-flow2 text, body.calm .n-flow text, body.calm .n-flow2 text{ animation:none; }
+  @media (prefers-reduced-motion: reduce){ .n-flow text, .n-flow2 text{ animation:none; } }
+  .page-home .home-tag{ color:#d8c9de !important; margin-top:8px !important; }
+  /* ---- the realistic room (v41): place at the back, the table in perspective, the things on it, the light ---- */
+  .sc-place{ overflow:hidden; z-index:1; }
+  /* the room has its own light: the old bulb over the table goes out */
+  body.room-on .lg-scene .sc-lamp, body.room-on .lg-scene .sc-light, body.room-on .lg-scene .sc-fx{ display:none !important; }
+  body.room-on .bulb-glow{ opacity:0 !important; }
+  .sc-place > div{ position:absolute; }
+  .rm-place{ inset:0 0 50% 0; background:center 40% / cover no-repeat; transform:scale(1.05); }
+  .rm-place::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(7,6,10,.3), rgba(7,6,10,.1) 50%, rgba(7,6,10,.8)); }
+  .rm-top{ left:-35%; right:-35%; bottom:-6%; height:130%; transform-origin:50% 100%; transform:perspective(1100px) rotateX(30deg); background-repeat:repeat; background-size:340px 340px; }
+  .rm-top::before{ content:""; position:absolute; left:0; right:0; top:0; height:3%; background:linear-gradient(180deg, rgba(0,0,0,.85), rgba(0,0,0,0)); box-shadow:0 -1px 0 rgba(255,235,200,.25); }
+  .rm-top::after{ content:""; position:absolute; left:0; right:0; top:-1.2%; height:1.2%; background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55)); filter:blur(4px); }
+  .rm-edge{ position:absolute; left:0; right:0; bottom:0; height:4.2%; background:inherit; filter:brightness(.45); box-shadow:inset 0 2px 0 rgba(255,255,255,.18), 0 -6px 14px rgba(0,0,0,.45); }
+  .rm-props, .rm-lights{ inset:0; }
+  .rm-lights > div{ position:absolute; inset:0; }
+  /* a thing on the table: a tight contact shadow at its foot, and a longer one thrown away from the light */
+  .rm-prop{ position:absolute; display:block; }
+  .rm-prop img{ display:block; width:100%; height:auto; position:relative; z-index:1;
+    filter: drop-shadow(calc(var(--shx)*.25) calc(var(--shy)*.25) 1.5px rgba(0,0,0,.75)) drop-shadow(var(--shx) var(--shy) 7px rgba(0,0,0,.6)) drop-shadow(calc(var(--shx)*2.2) calc(var(--shy)*2.2) 14px rgba(0,0,0,.35)); }
+  .rm-prop::after{ content:""; position:absolute; left:8%; right:8%; bottom:-4%; height:16%; border-radius:50%; background:radial-gradient(closest-side, rgba(0,0,0,.6), transparent); transform:translate(calc(var(--shx)*.4), calc(var(--shy)*.3)); }
+  .rm-prop.far img{ filter: drop-shadow(calc(var(--shx)*.2) calc(var(--shy)*.2) 1px rgba(0,0,0,.7)) drop-shadow(calc(var(--shx)*.7) calc(var(--shy)*.7) 5px rgba(0,0,0,.55)) blur(.5px) brightness(.85); }
+  .rm-amb{ mix-blend-mode:multiply; } .rm-key{ mix-blend-mode:soft-light; } .rm-glow, .rm-fx{ mix-blend-mode:screen; } .rm-win{ mix-blend-mode:multiply; filter:blur(3px);
+    -webkit-mask: linear-gradient(180deg, transparent 33%, #000 40%); mask: linear-gradient(180deg, transparent 33%, #000 40%); }
+  .an-flick{ animation: rmFlick 7s infinite; } @keyframes rmFlick{ 0%,93%,100%{ opacity:1; } 94%{ opacity:.35; } 95%{ opacity:.9; } 96.5%{ opacity:.5; } 97.5%{ opacity:1; } }
+  .an-tube{ animation: rmTube 9s infinite; } @keyframes rmTube{ 0%,88%,100%{ opacity:1; } 89%{ opacity:.2; } 90%{ opacity:1; } 91%{ opacity:.3; } 92.5%{ opacity:1; } }
+  .an-gyroR{ animation: rmGyroR 1.6s linear infinite; } @keyframes rmGyroR{ 0%,100%{ opacity:0; } 10%,30%{ opacity:1; } 45%{ opacity:0; } }
+  .an-gyroB{ animation: rmGyroB 1.6s linear infinite; } @keyframes rmGyroB{ 0%,45%,100%{ opacity:0; } 55%,75%{ opacity:1; } 90%{ opacity:0; } }
+  .an-lamp{ animation: rmLamp 3.2s ease-in-out infinite; } @keyframes rmLamp{ 0%,100%{ opacity:1; } 30%{ opacity:.86; } 60%{ opacity:.96; } }
+  .an-smoke{ animation: rmSmoke 26s linear infinite; -webkit-mask: radial-gradient(ellipse 45% 55% at 50% 40%, #000, transparent 75%); mask: radial-gradient(ellipse 45% 55% at 50% 40%, #000, transparent 75%); }
+  @keyframes rmSmoke{ from{ background-position:0 0, 0 0; } to{ background-position:300px -60px, -220px 40px; } }
+  .an-leaves{ animation: rmLeaves 7s ease-in-out infinite; } @keyframes rmLeaves{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(8px,4px); } }
+  .an-sweep{ animation: rmSweep 11s ease-in-out infinite; } @keyframes rmSweep{ 0%,70%{ transform:translateX(-120%); opacity:0; } 75%{ opacity:1; } 90%{ transform:translateX(120%); opacity:1; } 100%{ transform:translateX(120%); opacity:0; } }
+  html[data-q="eco"] .rm-lights > div, body.calm .rm-lights > div{ animation:none !important; }
+  /* the cards lie on the table: a contact shadow and a cast shadow in the direction of the light */
+  body.room-on .slot .card, body.room-on .sq-cur .card, body.room-on .stack-item .card{
+    box-shadow: 0 1px 2px rgba(0,0,0,.6), var(--shx) var(--shy) 14px -2px rgba(0,0,0,.6), calc(var(--shx)*2) calc(var(--shy)*2) 26px rgba(0,0,0,.28), inset 0 0 0 1px rgba(180,130,60,.35), inset 0 0 0 4px rgba(255,252,244,.5); }
+  body.room-on .hand .card{ box-shadow: 0 2px 3px rgba(0,0,0,.5), var(--shx) var(--shy) 16px -2px rgba(0,0,0,.55), inset 0 0 0 1px rgba(180,130,60,.35), inset 0 0 0 4px rgba(255,252,244,.5); }
+  body.room-on .hand .card.playable{ box-shadow: 0 0 0 2px var(--bulb), var(--shx) var(--shy) 16px -2px rgba(0,0,0,.55); }
   /* the boss waits on the home screen, in a photograph */
   body.theme-or .og-king{ display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; min-height:0; padding:12px; border-radius:18px; background:#15110d; border:1px solid rgba(214,171,82,.32); }
   .og-king-head{ width:96px; height:118px; border-radius:12px; background:url('art/livre/perso-masque.webp') 50% 22% / cover no-repeat #1a1612; box-shadow:0 0 0 1px rgba(214,171,82,.5); }
@@ -3468,7 +3524,7 @@
     </div>
 
     <div class="home-top">
-      <h2 class="logo has-img" aria-label="Fap Fap"><svg class="logo-img logo-svg" viewBox="0 0 360 124" role="img" aria-label="Fap Fap"><defs><linearGradient id="lgGoldB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7d6"/><stop offset=".32" stop-color="#f5d06e"/><stop offset=".52" stop-color="#b8862b"/><stop offset=".62" stop-color="#e9bd55"/><stop offset=".85" stop-color="#fbe39a"/><stop offset="1" stop-color="#9c6a1a"/></linearGradient></defs><path d="M30 20 H150 M210 20 H330 M30 24 H140 M220 24 H330" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M30 84 H330 M40 88 H320" stroke="url(#lgGoldB)" stroke-width="1.3"/><path d="M180 12 l7 8 l-7 8 l-7 -8 Z" fill="url(#lgGoldB)"/><g font-family="Cinzel, 'Times New Roman', serif" font-weight="800" font-size="50" letter-spacing="7"><text x="180" y="72" text-anchor="middle" fill="#1a0f02" opacity=".7" transform="translate(0 2.5)">FAP FAP</text><text x="180" y="72" text-anchor="middle" fill="url(#lgGoldB)" stroke="#5a3a08" stroke-width=".7">FAP FAP</text></g><path transform="translate(180 102) scale(.62)" d="M0 14 C0 14 -12 6 -12 -1 C-12 -6 -8.5 -9 -4.6 -9 C-2.3 -9 -0.5 -7.6 0 -5.6 C0.5 -7.6 2.3 -9 4.6 -9 C8.5 -9 12 -6 12 -1 C12 6 0 14 0 14 Z" fill="#c4202f" stroke="#f5d06e" stroke-width="1.6"/></svg><span class="logo-txt"></span></h2>
+      <h2 class="logo neon-logo" aria-label="Fap Fap"><span class="neon-plate" id="neonPlate"><svg class="neon-sign" viewBox="0 0 400 120" aria-hidden="true"><defs><filter id="neonBlur" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="n-glow" filter="url(#neonBlur)"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-tube"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g><g class="n-gas"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow2"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-shine" transform="translate(-1.2 -1.6)"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g></svg></span></h2>
       <p class="home-tag">Yaoundé · la nuit · les cartes</p>
     </div>
 
@@ -3863,7 +3919,12 @@
       <button class="set-row" id="btnToggleStats"><span><svg class="i" aria-hidden="true"><use href="#i-chart"/></svg> Statistiques anonymes</span><span class="switch"></span></button>
       <p class="small-note">Aucun nom ni message n'est envoyé : seulement des chiffres de jeu, pour améliorer Fap Fap.</p>
     </div>
-    <p class="small-note app-version">Fap Fap · version du 5 octobre 2026</p>
+    <div class="set-group">
+      <h3>Code cadeau</h3>
+      <label class="set-row set-input"><span>Ton code</span><input id="giftCodeInput" class="mp-input" maxlength="32" placeholder="CODE" autocomplete="off" autocapitalize="characters"></label>
+      <button class="set-row" id="btnGiftCode"><span><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg> Valider le code</span></button>
+    </div>
+    <p class="small-note app-version">Fap Fap · version du 9 octobre 2026 · tables et objets 3D : Poly Haven (CC0)</p>
   </div>
 </div>
 
@@ -6078,6 +6139,23 @@
   // a career counter went up (a CORA, a claque…): count it, then see if an exploit is earned
   function stat(k, n){ profile.stats = profile.stats || {}; profile.stats[k] = (profile.stats[k]||0) + (n||1); checkExploits(); }
   function checkExploits(){ TROPHIES.forEach(t=>{ if(t.test && !profile.trophies[t.id]){ try{ if(t.test(profile)) unlockTrophy(t.id); }catch(e){} } }); }
+  // ---- gift codes: only the SHA-256 of each code is written here, so reading the game does not reveal them ----
+  const GIFT_CODES = {'9368d3b728bdb6f93029a35ac14a81a876f1d28f731755773cf6c98146b61c8b': {chips:1000000, label:'Cadeau du créateur'}};
+  document.getElementById('btnGiftCode').addEventListener('click', async ()=>{
+    const inp = document.getElementById('giftCodeInput'), code = (inp.value||'').trim().toUpperCase();
+    if(!code) return;
+    let hex = '';
+    try{ const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(code)); hex = [...new Uint8Array(h)].map(b=> b.toString(16).padStart(2,'0')).join(''); }catch(e){}
+    const g = GIFT_CODES[hex];
+    profile.gifts = profile.gifts || {};
+    if(!g){ showToast('Code inconnu', 'Vérifie les lettres et les tirets.', {ms:2400}); vibrate([30,40,30]); return; }
+    if(profile.gifts[hex]){ showToast('Déjà utilisé', 'Ce code a déjà été encaissé sur ce compte.', {ms:2600}); return; }
+    profile.gifts[hex] = Date.now();
+    const before = profile.chips; chipsAdd(g.chips); saveProfile(); checkExploits();
+    try{ renderChips(before); }catch(e){}
+    inp.value = ''; sfxCoins && sfxCoins(14);
+    showToast(g.label, '+'+fmtChips(g.chips)+' jetons', {big:true, celebrate:true, ms:3200});
+  });
   // at start: exploits already earned before they existed are given quietly, with a single notice
   setTimeout(()=>{
     const got = TROPHIES.filter(t=>{ try{ return t.test && !profile.trophies[t.id] && t.test(profile); }catch(e){ return false; } });
@@ -6796,6 +6874,92 @@
   // a table bought in « Décors » keeps its own look)
   const OPP_PLACE = {gervais:['lieu-studio','Le studio · Biyem-Assi'], aristide:['lieu-veillee','La veillée · Mvog-Ada'], penalty:['lieu-villa','La villa · Santa Barbara'], mbarga:['lieu-table-masque','Le rideau rouge · Bastos']};
   const BOOK_PLACE = {veillee:'lieu-veillee', cobra:'lieu-coin', tchinda:'lieu-palmiers', kiosque:'lieu-kiosque', ismael:'lieu-bastos', mballa:'lieu-bar-police', christelle:'lieu-studio', caroline:'lieu-salon-the', masque:'lieu-table-masque', villa:'lieu-villa', videur:'lieu-prestige', neuf:'lieu-coin'};
+  // ---- the rooms (v41): the place in photo at the back, a real table in perspective (CC0 textures from Poly Haven,
+  // art/tex), the things of the place in 3D renders (art/props), and the light of the place: where it comes from,
+  // its colour, what moves, and where the shadows fall (sh = [x, y] px). Light layers: amb (multiply, the colour of the
+  // room), key (soft-light, where it lands), glow (screen, the sources), fx (what moves), dark (all that is far from it).
+  // props: [image, x %, y % (its foot), width px, rotation, far?]
+  const ROOMS = {
+    veillee:{top:'plywood', sh:[0,10], props:[['can-rusted',12,46,46,-8,1],['wooden-bowl-01',86,44,74,0,1],['cigarette-pack',90,70,46,12],['vintage-lighter',80,74,44,-20],['biere',8,73,30,0]],
+      L:[['amb','linear-gradient(180deg, rgba(255,190,120,.28), rgba(120,70,30,.18))'],
+         ['glow','radial-gradient(circle at 18% 31%, rgba(255,220,150,.8) 0 4px, rgba(255,190,90,.25) 14px, transparent 60px), radial-gradient(circle at 50% 29%, rgba(255,220,150,.8) 0 4px, rgba(255,190,90,.25) 14px, transparent 60px), radial-gradient(circle at 82% 31%, rgba(255,220,150,.8) 0 4px, rgba(255,190,90,.25) 14px, transparent 60px)'],
+         ['fx flick','radial-gradient(circle at 50% 29%, rgba(255,210,140,.5), transparent 90px)'],
+         ['key','radial-gradient(ellipse 90% 45% at 50% 40%, rgba(255,205,140,.8), transparent 75%)'],
+         ['glow','radial-gradient(ellipse 70% 30% at 50% 42%, rgba(255,180,100,.3), transparent 75%)'],
+         ['dark','radial-gradient(ellipse 80% 55% at 50% 44%, transparent 28%, rgba(8,4,2,.6) 68%, rgba(4,2,1,.94) 100%)']]},
+    villa:{top:'lacquered-cherry-wood', f:'brightness(1.25) saturate(1.1)', sh:[-9,10], props:[['brass-goblets',14,47,78,0,1],['liasse',84,50,84,-14,1],['liasse',88,57,84,8],['chips',10,72,74,0],['pocket-watch',86,76,48,20],['cigarette-case',22,78,66,-30]],
+      L:[['amb','linear-gradient(200deg, rgba(150,180,255,.24), rgba(255,200,140,.2) 55%)'],
+         ['key','radial-gradient(ellipse 80% 40% at 45% 42%, rgba(255,210,150,.85), transparent 75%)'],
+         ['glow','linear-gradient(250deg, rgba(150,190,255,.34), transparent 35%)'],
+         ['fx','radial-gradient(ellipse 34% 6% at 55% 44%, rgba(255,240,210,.45), transparent 70%), radial-gradient(ellipse 10% 3% at 70% 62%, rgba(200,220,255,.35), transparent 70%)'],
+         ['glow','radial-gradient(ellipse 60% 26% at 46% 44%, rgba(255,200,130,.24), transparent 75%)'],
+         ['dark','radial-gradient(ellipse 85% 60% at 48% 46%, transparent 28%, rgba(6,3,2,.55) 68%, rgba(3,2,2,.92) 100%)']]},
+    rideau:{top:'velour-velvet', f:'hue-rotate(165deg) saturate(.75) brightness(.62)', sh:[0,7], props:[['chips',16,45,70,0,1],['liasse',82,45,86,10,1],['service-pistol',84,60,92,-24],['brass-goblets',12,62,64,0],['cigarette-pack',90,78,40,-8]],
+      L:[['amb','linear-gradient(90deg, rgba(200,40,40,.38), rgba(80,20,20,.12) 40%, rgba(0,0,0,0))'],
+         ['key','radial-gradient(ellipse 55% 30% at 50% 50%, rgba(255,215,150,.95), transparent 80%)'],
+         ['fx smoke','radial-gradient(ellipse 20% 12% at 30% 30%, rgba(255,240,220,.09), transparent 70%) 0 0/300px 200px, radial-gradient(ellipse 25% 15% at 70% 60%, rgba(255,240,220,.08), transparent 70%) 0 0/260px 220px'],
+         ['glow','radial-gradient(ellipse 45% 22% at 50% 52%, rgba(255,215,150,.32), transparent 80%)'],
+         ['dark','radial-gradient(ellipse 60% 42% at 50% 52%, transparent 24%, rgba(3,2,2,.68) 64%, rgba(0,0,0,.97) 100%)']]},
+    kiosque:{top:'corrugated-iron', f:'brightness(.8)', sh:[11,7], props:[['biere',10,48,30,0,1],['verre',18,50,38,0,1],['can-rusted',86,47,40,10,1],['portable-cassette-player',84,74,80,-12],['lemon',14,76,34,0]],
+      L:[['amb','linear-gradient(90deg, rgba(190,255,220,.26), rgba(255,170,80,.2))'],
+         ['key tube','linear-gradient(90deg, rgba(220,255,240,.85), transparent 70%)'],
+         ['fx','radial-gradient(circle at 92% 18%, rgba(255,170,70,.45), transparent 120px)'],
+         ['dark','linear-gradient(90deg, transparent 15%, rgba(4,3,3,.55) 65%, rgba(2,2,2,.88) 100%), radial-gradient(ellipse 100% 70% at 30% 50%, transparent 45%, rgba(4,3,3,.72))']]},
+    salon:{top:'marble-01', f:'brightness(1.05)', sh:[-14,8], props:[['tea-set-01',50,44,190,0,1],['lemon',86,70,36,0],['round-spectacles',14,76,74,15],['cigarette-case',84,79,62,-10]],
+      L:[['amb','linear-gradient(110deg, rgba(220,230,255,.12), rgba(255,240,220,.1))'],
+         ['key','linear-gradient(115deg, transparent 20%, rgba(255,250,235,.85) 60%, rgba(255,250,235,.95))'],
+         ['win','repeating-linear-gradient(115deg, transparent 0 70px, rgba(0,0,0,.32) 70px 84px), linear-gradient(25deg, transparent 48%, rgba(0,0,0,.28) 48% 51%, transparent 51%)'],
+         ['dark','linear-gradient(115deg, rgba(10,8,6,.58), transparent 45%), radial-gradient(ellipse 120% 90% at 75% 45%, transparent 55%, rgba(10,8,6,.52) 100%)']]},
+    manguier:{top:'wood-table-worn', f:'brightness(1.1)', sh:[-10,9], props:[['vintage-oil-lamp',16,58,44,0],['boombox',82,46,118,-8,1],['biere',90,66,30,0],['cigarette-pack',10,78,40,-14],['vintage-lighter',24,80,36,25]],
+      L:[['amb','linear-gradient(180deg, rgba(110,140,230,.36), rgba(60,70,130,.32))'],
+         ['fx leaves','radial-gradient(circle at 20% 18%, rgba(200,215,255,.35) 0 20px, transparent 40px), radial-gradient(circle at 46% 24%, rgba(200,215,255,.3) 0 14px, transparent 34px), radial-gradient(circle at 70% 14%, rgba(200,215,255,.3) 0 18px, transparent 38px), radial-gradient(circle at 58% 40%, rgba(200,215,255,.22) 0 12px, transparent 30px)'],
+         ['key lamp','radial-gradient(circle at 16% 54%, rgba(255,190,110,.95), transparent 42%)'],
+         ['glow lamp','radial-gradient(circle at 16.5% 48%, rgba(255,200,120,.75) 0 6px, rgba(255,170,80,.25) 26px, transparent 80px)'],
+         ['dark','radial-gradient(ellipse 110% 85% at 30% 55%, transparent 38%, rgba(3,4,10,.82) 100%)']]},
+    bar:{top:'wood-table-001', f:'brightness(1.1)', sh:[8,10], props:[['biere',12,47,30,0,1],['biere',18,48,30,0,1],['verre',86,49,38,0,1],['cigarette-pack',88,74,42,10],['chips',12,76,58,0]],
+      L:[['amb','linear-gradient(180deg, rgba(255,190,120,.22), rgba(120,80,50,.16))'],
+         ['key','radial-gradient(ellipse 85% 45% at 60% 42%, rgba(255,200,140,.7), transparent 75%)'],
+         ['fx gyroR','linear-gradient(100deg, rgba(255,40,40,.55), transparent 55%)'],
+         ['fx gyroB','linear-gradient(100deg, rgba(40,110,255,.6), transparent 55%)'],
+         ['dark','radial-gradient(ellipse 85% 55% at 58% 45%, transparent 28%, rgba(6,3,2,.58) 68%, rgba(3,2,1,.92) 100%)']]},
+    // Christelle's room: a bed sheet, the little lamp on the right, the city through the window
+    studio:{top:'rough-linen', f:'brightness(.9) saturate(.8)', sh:[-11,8], props:[['wooden-bowl-01',14,46,70,0,1],['verre',86,48,38,0,1],['portable-cassette-player',84,76,78,14],['cigarette-pack',12,78,40,-10]],
+      L:[['amb','linear-gradient(180deg, rgba(255,200,150,.22), rgba(90,80,140,.2))'],
+         ['key','radial-gradient(ellipse 70% 50% at 82% 45%, rgba(255,205,150,.85), transparent 75%)'],
+         ['glow','radial-gradient(circle at 92% 30%, rgba(255,215,160,.55) 0 8px, transparent 90px)'],
+         ['dark','radial-gradient(ellipse 100% 70% at 70% 48%, transparent 30%, rgba(6,4,6,.6) 70%, rgba(3,2,4,.9) 100%)']]},
+    // the guard's little table under his lamp, the radio on
+    palmiers:{top:'fine-grained-wood', f:'brightness(1.15)', sh:[9,9], props:[['portable-cassette-player',16,47,80,-6,1],['round-spectacles',84,48,70,10,1],['cigarette-pack',88,74,42,8],['vintage-lighter',12,76,36,-18]],
+      L:[['amb','linear-gradient(180deg, rgba(255,210,150,.25), rgba(40,50,80,.3))'],
+         ['key','radial-gradient(ellipse 70% 45% at 30% 40%, rgba(255,215,160,.85), transparent 75%)'],
+         ['glow','radial-gradient(circle at 26% 26%, rgba(255,225,170,.7) 0 5px, rgba(255,200,120,.2) 20px, transparent 70px)'],
+         ['dark','radial-gradient(ellipse 90% 65% at 32% 44%, transparent 28%, rgba(4,4,8,.62) 68%, rgba(2,2,4,.92) 100%)']]},
+    // the station at night: the cold canopy lights, a car passing
+    station:{top:'granite-tile', f:'brightness(.85)', sh:[7,10], props:[['can-rusted',14,47,40,0,1],['cigarette-pack',86,48,42,12,1],['biere',88,72,30,0]],
+      L:[['amb','linear-gradient(180deg, rgba(200,255,235,.2), rgba(40,60,80,.25))'],
+         ['key','linear-gradient(180deg, rgba(230,255,245,.75), transparent 70%)'],
+         ['fx sweep','linear-gradient(80deg, transparent 30%, rgba(255,250,220,.45) 45%, transparent 60%)'],
+         ['dark','radial-gradient(ellipse 100% 70% at 50% 40%, transparent 30%, rgba(3,4,6,.65) 70%, rgba(1,2,3,.9) 100%)']]},
+    // in front of the Prestige: the blue and pink of the sign
+    prestige:{top:'rusty-corrugated-iron', f:'brightness(.75)', sh:[0,9], props:[['can-rusted',12,47,40,-6,1],['cigarette-pack',86,72,42,10],['vintage-lighter',18,76,36,20]],
+      L:[['amb','linear-gradient(90deg, rgba(60,120,255,.32), rgba(255,60,160,.3))'],
+         ['key','radial-gradient(ellipse 80% 45% at 50% 35%, rgba(200,160,255,.65), transparent 75%)'],
+         ['fx tube','linear-gradient(90deg, rgba(80,140,255,.35), transparent 40%, transparent 60%, rgba(255,70,170,.35))'],
+         ['dark','radial-gradient(ellipse 90% 60% at 50% 42%, transparent 30%, rgba(4,2,8,.62) 70%, rgba(2,1,4,.92) 100%)']]}
+  };
+  const ROOM_OF = {'lieu-veillee':'veillee', 'lieu-villa':'villa', 'lieu-table-masque':'rideau', 'lieu-kiosque':'kiosque', 'lieu-salon-the':'salon',
+    'lieu-coin':'manguier', 'lieu-yaounde':'manguier', 'lieu-bar-police':'bar', 'lieu-studio':'studio', 'lieu-palmiers':'palmiers', 'lieu-bastos':'station', 'lieu-prestige':'prestige'};
+  let roomKey = '';
+  function buildRoom(img){
+    const host = document.querySelector('#lgScene .sc-place'); if(!host) return;
+    const R = ROOMS[ROOM_OF[img]] || ROOMS.manguier;
+    if(roomKey===img) return; roomKey = img;
+    document.documentElement.style.setProperty('--shx', R.sh[0]+'px'); document.documentElement.style.setProperty('--shy', R.sh[1]+'px');
+    host.innerHTML = '<div class="rm-place" style="background-image:url(&quot;art/livre/'+img+'.webp&quot;)"></div>'+
+      '<div class="rm-top" style="background-image:url(&quot;art/tex/'+R.top+'.webp&quot;);'+(R.f ? 'filter:'+R.f : '')+'"><div class="rm-edge"></div></div>'+
+      '<div class="rm-props">'+R.props.map(p=> '<span class="rm-prop'+(p[5] ? ' far' : '')+'" style="left:'+p[1]+'%;top:'+p[2]+'%;width:'+p[3]+'px;transform:translate(-50%,-100%) rotate('+p[4]+'deg)"><img src="art/props/'+p[0]+'.webp" alt=""></span>').join('')+'</div>'+
+      '<div class="rm-lights">'+R.L.map(l=> '<div class="rm-'+l[0].split(' ')[0]+' '+l[0].split(' ').slice(1).map(c=> 'an-'+c).join(' ')+'" style="background:'+l[1]+'"></div>').join('')+'</div>';
+  }
   function scenePlace(){
     let img = 'lieu-coin';
     const tid = currentTableId();
@@ -6805,9 +6969,9 @@
     else if(mode==='mp') img = 'lieu-kiosque';
     // in the book, the table is always the place of the scene, whatever table is chosen in « Décors »
     document.body.classList.toggle('book-place', !!(storyRun && storyRun.book));
-    const el = document.querySelector('#lgScene .sc-place');
-    // the photo stays visible around the table; a soft shade keeps the cards readable in the middle
-    if(el) el.style.backgroundImage = 'radial-gradient(ellipse 85% 60% at 50% 52%, rgba(7,6,10,.30), rgba(7,6,10,.72)), linear-gradient(180deg, rgba(7,6,10,.45), rgba(7,6,10,.15) 35%, rgba(7,6,10,.65)), url("art/livre/'+img+'.webp")';
+    // the realistic room shows with the default table, a place of the novel, or in the book (the shop tables keep their own look)
+    document.body.classList.toggle('room-on', !!(storyRun && storyRun.book) || tid==='tripot' || tid.indexOf('l-')===0);
+    buildRoom(img);
   }
   function enterGame(){
     Nav.clear(); gameGen++; resumeQueue.length = 0; setPaused(false);
