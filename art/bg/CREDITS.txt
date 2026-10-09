@@ -1,0 +1,2 @@
+﻿Décors des tables : vues en perspective rendues à partir de panoramas Poly Haven (https://polyhaven.com), licence CC0.
+glasshouse_interior, billiard_hall, shanghai_bund, dikhololo_night, mirrored_hall, vignaioli_night, secluded_beach, rogland_sunset, lapa, school_hall, thatch_chapel, blue_lagoon_night, warm_bar, warm_restaurant, neon_photostudio, ballroom, theater_01, bank_vault, drachenfels_cellar, valley_of_desolation, satara_night, surgery, ushaka_sea_world_aquarium, rainforest_trail, goegap, snowy_field, historic_cloister_passage, homecoming_center_rooftop.
