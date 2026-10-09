@@ -1794,7 +1794,7 @@
   body{ background:#0b0704; }
   .lg-scene{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
   .lg-scene > div{ position:absolute; inset:0; transition: opacity .6s ease; }
-  .lg-scene .sc-photo{ position:absolute; inset:-3%; background:url('art/fond-dragon.webp') 64% 38% / cover no-repeat; transform: scale(1.04); }
+  .lg-scene .sc-photo{ position:absolute; inset:0; background:url('art/fond-dragon.webp') 64% 38% / cover no-repeat; }
   .lg-scene .sc-tint{ display:none; } /* the dragon keeps its own fire and ice colours */
   .lg-scene .sc-tint{ position:absolute; inset:0; background: var(--h-tint); mix-blend-mode: color; }
   .lg-scene .sc-shade{ position:absolute; inset:0; background:
@@ -3699,7 +3699,20 @@
   // Safari (iPhone) cannot bend what is behind an element. There, each piece of glass carries its own copy of the
   // scene, magnified like through a lens and only visible on its rim ("mirror" mode). ?mirror forces it for testing.
   const forceMirror = /[?&]mirror\b/.test(location.search);
-  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, lite: false, scene: '.lg-scene, .scene' };
+  // Crash guard: if the last start never got through its first seconds (the phone killed the page), this start
+  // is the light one. The counter is reset once the game has run for a while.
+  let safe = false;
+  try{
+    const boots = +(localStorage.getItem('ff_boot') || 0);
+    safe = boots >= 1;
+    localStorage.setItem('ff_boot', String(boots + 1));
+    setTimeout(()=>{ try{ localStorage.setItem('ff_boot', '0'); }catch(e){} }, 9000);
+  }catch(e){}
+  window.__ffSafe = safe;
+  // Mirror mode copies the whole scene into every piece of glass: far too heavy for a phone (it crashed iPhones
+  // set to a higher display resolution). It is only built when the player picks « Haute » himself; by default the
+  // glass is frosted only (lite).
+  const state = { depth: 60, frost: 30, refract: chromium && !forceMirror, lite: !(chromium && !forceMirror) || safe, scene: '.lg-scene, .scene' };
 
   const css = document.createElement('style');
   css.textContent =
@@ -11191,9 +11204,12 @@
     const QL = ['haute', 'moyenne', 'eco'], QL_NAME = {haute:'Haute', moyenne:'Moyenne', eco:'Économie'};
     function applyQuality(){
       const pick = prefs.quality || 'auto';
+      // after a crash at start, Auto falls back to Économie and stays there until the player changes it
+      if(window.__ffSafe && pick === 'auto' && prefs.qAuto !== 'eco'){ prefs.qAuto = 'eco'; savePrefs(); }
       const lvl = pick === 'auto' ? (prefs.qAuto || 'haute') : pick;
       document.documentElement.setAttribute('data-q', lvl);
-      LiquidGlass.set({lite: lvl !== 'haute'});
+      // on iPhone the lens copies (mirror mode) are only for a player who chose « Haute » himself
+      LiquidGlass.set({lite: lvl !== 'haute' || (!LiquidGlass.state.refract && pick === 'auto')});
       document.querySelectorAll('#qualityPick .fmt').forEach(b=> b.classList.toggle('on', b.dataset.ql === pick));
       document.getElementById('qualityVal').textContent = pick === 'auto' ? '(auto : ' + QL_NAME[lvl] + ')' : '';
     }
