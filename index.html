@@ -4345,6 +4345,7 @@
     <div class="set-group">
       <h3>Jeu</h3>
       <button class="set-row hidden" id="btnTogglePush"><span><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Notifications de défi (jeu fermé)</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleQuips"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Répliques piquantes des adversaires</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Mode Or : le Ngonzormorrr à l’accueil</span><span class="switch"></span></button>
@@ -6229,6 +6230,103 @@
   }
   const DUEL_ORDER = ['gervais','aristide','penalty','mbarga'];
 
+  // ===================== LES RÉPLIQUES PIQUANTES =====================
+  // Each opponent's voice for the moments of a match that the game really sees (see quip()):
+  //   youLoseStreak  you lose a 2nd (or more) hand in a row       youWinStreak  you win a 2nd (or more) hand in a row
+  //   youAlmost      you are one point from winning the match      choke         …and you lose the hand right then
+  //   comeback       he was 2+ points behind and caught you up     theyComeback  you were 2+ behind and caught him up
+  //   slow           you have been thinking for a long time        mistake       "le Sommeil": you followed low while holding the card that took control
+  //   rematch        you lost and ask for a rematch                rematchWon    you won and come back for more
+  // Their characters are the ones already written: RALL the bluffer who provokes, Penalty the calculator who wrote the
+  // manual, Christelle who plays with her heart (tender, a bit of a bad loser), the Ngonzormorrr, few words, all sharp.
+  const QUIPS = {
+    aristide:{
+      youLoseStreak:["Grand, même au concours de malchance, tu vas finir deuxième derrière quelqu’un qui n’est pas venu.","Même ton village a coupé le réseau. On ne peut plus rien faire pour toi.","Tu ne perds pas seulement, tu développes le chômage dans ta main.","Deux manches de suite, mola. Tu collectionnes ?","Tu perds avec la régularité d’un fonctionnaire.","Même le délestage fait des pauses. Toi, non."],
+      choke:["Toi, même si on distribue la chance gratuitement, tu vas demander le reçu.","Tu es le genre de personne qui tombe sur une banane en marchant sur une peau de banane.","Tu peux acheter un parapluie en plein soleil et recevoir la pluie dans la maison.","Un point, mola. Un seul. Comme le taxi qui te dépasse quand tu lèves la main."],
+      youAlmost:["Tu parles comme quelqu’un qui a déjà acheté le terrain, alors que tu n’as même pas payé la réservation.","Tu as la bouche d’un milliardaire et le jeu d’un gars qui demande 200 francs pour rentrer.","Tu cries déjà victoire. C’est comme ça qu’on finit par expliquer la défaite à la maison.","Tu as dit “je maîtrise” ? Même ton partenaire vient de demander un changement de table.","Respire, mola. Le dernier point, c’est moi qui le garde."],
+      youWinStreak:["Calme-toi, grand. Même le planton qui ouvre le portail ne se comporte pas comme ça.","Tu célèbres comme si Paul Biya venait de t’appeler personnellement.","Le problème avec toi, c’est qu’après une victoire, tu demandes même au perdant de financer la célébration.","Deux manches et tu fais déjà les comptes ? Le njangi n’a pas encore tourné."],
+      theyComeback:["Tu reviens ? Profite du paysage, tu ne vas pas rester.","Eh ! Qui t’a rechargé ? Orange ou MTN ?"],
+      comeback:["Tu as vu ton avance ? Moi non plus. Elle est partie en benskin.","Le score était à toi. Je l’ai juste emprunté. Pour toujours."],
+      slow:["Grand, tu joues une carte ou tu négocies le budget de l’État ?","Choisis ta carte, grand. La retraite approche et on attend toujours.","Mola, la carte ne va pas se jouer seule.","On attend toi ou le prochain délestage ?"],
+      mistake:["Grand, même un bébé qui apprend à marcher aurait vu le piège.","Mon frère, tu as ouvert la porte, invité le problème et préparé le repas.","Tu m’as fait un cadeau ? Ce n’est pas encore Noël, mola."],
+      rematch:["Tu veux la revanche ? Même ta défaite n’a pas encore fini de charger.","Tu as perdu et tu demandes encore ? Grand, tu es abonné ou tu es amoureux de la souffrance ?","Tu insistes comme quelqu’un qui poursuit une fille qui l’appelle “mon frère”.","Revanche ? D’accord. Prépare tes excuses à l’avance, ça gagne du temps."],
+      rematchWon:["Tu as gagné une fois. On va voir si c’était toi ou la chance.","Rassieds-toi. La chance ne fait pas deux trajets le même soir."]
+    },
+    penalty:{
+      youLoseStreak:["Tu as commencé la partie avec la confiance d’un ministre. Maintenant, tu as le silence d’un fonctionnaire devant un dossier compliqué.","Si perdre donnait le GCE, tu serais déjà professeur d’université.","Même quand tu as les bonnes cartes, on dirait que tu cherches le mauvais chemin sur Google Maps.","Page douze du manuel : quand on perd deux fois, on arrête d’improviser.","Tu perds avec méthode. C’est déjà une qualité."],
+      choke:["Ta chance est partie au village depuis les obsèques. Elle n’a même pas laissé son numéro.","Ta malchance est tellement organisée qu’elle a déjà un groupe WhatsApp.","À un point de la victoire… C’est là que les grands joueurs deviennent des souvenirs.","Je l’avais calculé : tu allais trembler au dernier pli."],
+      youAlmost:["Tu annonces la victoire comme un meeting politique. On attend maintenant les résultats du scrutin.","Ton assurance-là, c’est crédit ou argent comptant ? Parce que les résultats ne suivent pas.","Tu fais le grand joueur, mais même les cartes ont demandé à voir ton diplôme.","Le dernier point est le plus lourd. Tu vas voir."],
+      youWinStreak:["Tu as gagné une partie et tu marches déjà comme si tu avais acheté Douala.","Une victoire et tu as déjà changé de démarche. Le Cameroun est vraiment un pays de miracles.","Deux manches de suite. Je note ta façon de jouer. Ça va te coûter."],
+      theyComeback:["Tu remontes ? C’est dans le manuel aussi. Chapitre suivant : la rechute.","Bien. Maintenant je sais ce que tu caches."],
+      comeback:["Je t’ai laissé mener pour voir ta main. Merci pour la visite.","Avance, recul, victoire. Le manuel, chapitre trois."],
+      slow:["Tu calcules quoi ? Le PIB du Cameroun ou les deux cartes qui te restent ?","Frère, si réfléchir faisait gagner, les professeurs seraient tous champions.","Tu es entré dans le jeu à 15 heures, il est déjà l’heure du journal de 20 h.","Plus tu réfléchis, plus je lis ton visage."],
+      mistake:["Tu viens de faire une erreur tellement grave que même la carte a demandé pardon.","C’est à cause de toi que les notices ont des images.","Même quand on explique deux fois, tu trouves le moyen de créer une troisième erreur.","Ta décision-là mérite une commission d’enquête.","Le Sommeil. Chapitre huit. Tu devrais lire le manuel."],
+      rematch:["La revanche-là, c’est comme le crédit au quartier : tu promets de rembourser, mais on ne voit rien.","On va rejouer, mais cette fois, viens avec ta chance. Nous, on ne fait pas les transferts.","Revanche. Mais cette fois, joue avec la tête, pas avec l’espoir."],
+      rematchWon:["Revanche ? Avec plaisir. J’ai noté chacun de tes coups.","Tu as gagné. Maintenant, je te connais."]
+    },
+    gervais:{
+      youLoseStreak:["Tu perds comme lui le dimanche. Il accusait toujours la chaise.","Encore ? Je vais finir par avoir pitié de toi… presque.","Deux fois de suite ! Je l’écris dans le groupe de la famille."],
+      choke:["Quand tu te lèves le matin, même le coq hésite à chanter.","Chez toi, même le “bonne année” arrive avec trois mois de retard.","Si près… Lui aussi tremblait au dernier pli."],
+      youAlmost:["Ne fais pas le malin, je suis encore là.","Doucement. Le dernier point est toujours le plus lourd. Il le disait."],
+      youWinStreak:["On dirait que tu viens de recevoir un financement de l’Union européenne.","Arrête de sourire comme ça. C’est la distribution, c’est tout.","Qui a mélangé ? Toi ? Voilà. Tout s’explique."],
+      theyComeback:["Non, non, non… les cartes sont contre moi ce soir.","C’est sûrement la chaise. Je change de place."],
+      comeback:["Tu vois ? Il ne faut jamais m’enterrer trop vite.","Je reviens, comme le courant. Sans prévenir."],
+      slow:["Depuis que tu réfléchis, le plantain a mûri, on a fait le ndolé et tu es toujours là.","Même le conseil de famille n’a pas duré aussi longtemps.","Prends ton temps… mais pas toute la nuit, hein."],
+      mistake:["Oh… tu viens de faire exactement son erreur.","Celle-là, même moi je l’ai vue."],
+      rematch:["Tu veux rejouer ? Même ton compte Mobile Money demande une pause.","Encore une ? D’accord. Mais après, tu m’aides à ranger."],
+      rematchWon:["Revanche ! Cette fois, je ne te laisse rien.","Attends, je reprends ma chance. Elle était sortie deux minutes."]
+    },
+    mbarga:{
+      youLoseStreak:["Tu joues comme quelqu’un qui a emprunté les cartes à la tontine et qui doit rembourser ce soir.","Mon frère, même le dernier taxi pour Nkolbisson ne fait pas autant de détours que ta stratégie.","Deux. Je compte pour toi, puisque tu as arrêté.","Tu perds avec constance. Le masque apprécie la discipline."],
+      choke:["Même si on te donne les cartes gagnantes, tu vas trouver le moyen de demander pardon.","Un point. Un seul. C’est là que je cueille les rêves."],
+      youAlmost:["Grand, baisse un peu le volume. Même la SONARA ne produit pas autant de confiance.","Approche. Le dernier point est sous mon masque."],
+      youWinStreak:["Tu as gagné aux cartes, pas le marché central.","Tu as gagné aujourd’hui. Demain, même ta chaise peut te battre.","Savoure. Les petites joies coûtent cher, ici."],
+      theyComeback:["Tu remontes. Le crocodile laisse toujours la proie nager un peu.","Hm. Enfin un peu de sport."],
+      comeback:["Le score s’est souvenu de son propriétaire.","Tu vois ? Je ne perds pas. Je patiente."],
+      slow:["Même un agent des impôts traite un dossier plus vite que toi.","Je peux attendre. Ta défaite aussi.","Le masque ne s’ennuie jamais. Toi, tu devrais."],
+      mistake:["Tu as joué ça comment ? Avec les yeux ou avec les conseils du voisin ?","Même ton téléphone aurait refusé de valider cette opération.","Merci. Je ne demandais pas tant."],
+      rematch:["Tu veux encore essayer ? Même le commissariat a des heures de fermeture.","Tu es venu jouer aux cartes ou chercher la délivrance ?","Assieds-toi. Ton argent n’avait pas fini de partir."],
+      rematchWon:["Une revanche ? C’est moi qui la réclame.","Tu as eu ta soirée. Maintenant, la mienne."]
+    }
+  };
+  // the opponents of the novel keep their own tone (the story is serious): fewer jokes, each in their voice
+  const QUIPS_BOOK = {
+    cobra:{slow:["Prends ton temps, petit. Le quartier a toute la nuit.","Tu réfléchis ou tu pries ?"], youLoseStreak:["Tu perds comme on paie le loyer : en retard, mais en entier.","Deux de suite. Le Cobra prend note."], youWinStreak:["Deux manches et tu te prends déjà pour le chef de quartier ?"], mistake:["Petit… ton frère n’aurait jamais joué ça."], choke:["Si près. C’est toujours là que ça mord."]},
+    tchinda:{slow:["La patience est une vertu, mon fils. Mais toi, tu en abuses.","Pendant que tu réfléchis, j’ai encore vieilli un peu."], youLoseStreak:["Perdre, c’est apprendre. Toi, tu prépares un doctorat.","Le plantain ne mûrit pas plus vite parce qu’on le regarde."], youWinStreak:["Le chien qui court devant le chasseur ne sait pas où il va.","Doucement. Même le fleuve se fatigue avant la mer."], mistake:["On n’ouvre pas la porte au voleur pour voir s’il est poli."], choke:["Le dernier pas est toujours le plus long, mon fils."]},
+    ismael:{slow:["Joue vite, s’il te plaît, j’ai un client à Mvan !","Frère, même ici le compteur tourne."], youLoseStreak:["Pardon… je ne fais pas exprès, je te jure.","Encore moi ? Dieu est vraiment grand."], youWinStreak:["Doucement ! Je dois encore payer l’essence."], mistake:["Euh… tu es sûr de ta carte ?"], choke:["Ouf… Jésus a freiné pour moi."]},
+    mballa:{slow:["Le temps de réflexion réglementaire est dépassé.","Même un dossier au commissariat avance plus vite."], youLoseStreak:["Deuxième infraction. Je verbalise.","Ton dossier s’épaissit, petit."], youWinStreak:["Ne dépasse pas la vitesse autorisée."], mistake:["Faute grave. Je note au procès-verbal."], choke:["Arrêté au dernier carrefour. Comme les autres."]},
+    christelle:{slow:["Tu réfléchis comme lui… beaucoup trop longtemps."], youLoseStreak:["Tu n’as pas la tête à ça non plus, hein ?"]},
+    caroline:{slow:["Prends ton temps, mon cœur. J’adore les hommes indécis.","Tu calcules, ou tu rêves de moi ?"], youLoseStreak:["Tu perds avec élégance. C’est déjà ça.","Ton frère, au moins, faisait semblant."], youWinStreak:["Ne t’emballe pas. Je laisse toujours gagner au début."], mistake:["Oh… je t’avais surestimé."], choke:["Si près du but. C’est là que je préfère les hommes."]},
+    villa:{slow:["Jeune homme, à l’Assemblée on vote plus vite que ça.","Le budget de l’État se décide plus vite que ta carte."], youLoseStreak:["Tu perds comme un candidat sans parrain.","La politique, c’est aussi savoir perdre. Tu es doué, mon fils."], youWinStreak:["Ne fais pas le ministre. Tu n’es même pas conseiller municipal."], mistake:["Erreur de débutant. On t’aurait éliminé au premier tour."], choke:["Battu au dépouillement. Classique."]},
+    videur:{slow:["Joue.","J’ai la nuit. Pas toi."], youLoseStreak:["Dehors.","Encore. Dehors."], youWinStreak:["Calme."], mistake:["Mauvais."], choke:["Presque. Dehors."]}
+  };
+  // merged into each opponent's own lines (new arrays: Penalty's base lines are shared with the Carré)
+  Object.keys(QUIPS).forEach(id=>{ const p = DUEL_PERSONAS[id]; if(!p) return; p.lines = Object.assign({}, p.lines);
+    Object.keys(QUIPS[id]).forEach(k=>{ p.lines[k] = (p.lines[k] || []).concat(QUIPS[id][k]); }); });
+  const QUIP_KINDS = ['youLoseStreak','youWinStreak','youAlmost','choke','comeback','theyComeback','slow','mistake','rematch','rematchWon'];
+  // the state of the match the remarks look at (reset by newMatch)
+  const QS = {aiRun:0, youRun:0, oppDown:0, youDown:0, cameBack:false, theyCameBack:false, slowSaid:false, turnAt:0, sleptSaid:false, last:null};
+  function quipReset(){ Object.assign(QS, {aiRun:0, youRun:0, oppDown:0, youDown:0, cameBack:false, theyCameBack:false, slowSaid:false, turnAt:0, sleptSaid:false}); }
+  // never the same line again before the others of the same moment have been heard
+  const quipUsed = new WeakMap();
+  function quipLine(lines){
+    if(!lines || !lines.length) return null;
+    let used = quipUsed.get(lines); if(!used || used.size >= lines.length) used = new Set();
+    const free = lines.filter((_, k)=> !used.has(k)); const pick = free[Math.floor(Math.random()*free.length)];
+    used.add(lines.indexOf(pick)); quipUsed.set(lines, used); return pick;
+  }
+  // say a remark of this kind, if the opponent has one; never over another remark, never when switched off
+  function quip(kind, delay){
+    try{
+      if(prefs.noQuips || mode!=='ai' || tuto) return false;
+      const lines = (oppPersona().lines || {})[kind];
+      if(!lines || !lines.length || Date.now() - lastTalkAt < 3500) return false;
+      const line = quipLine(lines); if(!line) return false;
+      if(delay) gameTimeout(()=> penaltySay([line], kind), delay); else penaltySay([line], kind);
+      return true;
+    }catch(e){ return false; }
+  }
+
   // ---- Character illustrations ----
   // Drop the pictures in an "art" folder next to index.html and they appear everywhere automatically
   // (.jpg tried first, then .png):
@@ -6449,7 +6547,7 @@
   function rigTrick(winner){ if(mode!=='ai') return; const av = document.getElementById('oppAvatar'); if(!av || !av._rig || Math.random() > .6) return;
     Rig.react(av, winner==='ai' ? (Math.random() < .5 ? 'Bluff' : 'Content') : (Math.random() < .5 ? 'Gêné' : 'Surpris'), 1600); }
   // a kind of remark → the face that goes with it
-  const RIG_FACE = {win:'Content', cora:'Fier', glacee:'Fier', lose:'En colère', surprise:'Choqué', missed:'Gêné', behind:'Bluff', claque:'Fier', control:'Bluff', bank:'Gêné'};
+  const RIG_FACE = {youLoseStreak:'Fier', choke:'Content', youAlmost:'Bluff', youWinStreak:'Gêné', comeback:'Fier', theyComeback:'Gêné', slow:'Bluff', mistake:'Content', rematch:'Bluff', rematchWon:'En colère', win:'Content', cora:'Fier', glacee:'Fier', lose:'En colère', surprise:'Choqué', missed:'Gêné', behind:'Bluff', claque:'Fier', control:'Bluff', bank:'Gêné'};
 
   function fillAvatar(el, charId, label){
     if(!el) return;
@@ -6503,7 +6601,7 @@
     if(!kind){ const PL = oppPersona().lines || {}; kind = Object.keys(PL).find(k=> PL[k]===lines) || (typeof CLAQUE_LINES!=='undefined' && lines===CLAQUE_LINES ? 'claque' : ''); }
     const av = document.getElementById('oppAvatar');
     Rig.react(av, RIG_FACE[kind] || 'Bluff', 3300); Rig.talk(av, 1500);
-    let line = lines[Math.floor(Math.random()*lines.length)];
+    let line = quipLine(lines) || lines[0];
     if(line===lastLine && lines.length>1) line = lines[(lines.indexOf(line)+1) % lines.length];
     lastLine = line; lastTalkAt = Date.now();
     bubble.textContent = line;
@@ -7207,6 +7305,7 @@
     document.getElementById('musicVol').value = Math.round(100*(prefs.musicVol==null ? 0.6 : prefs.musicVol));
     document.getElementById('sfxVol').value = Math.round(100*(prefs.sfxVol==null ? 0.8 : prefs.sfxVol));
     refreshNowPlaying();
+    sw('btnToggleQuips', !prefs.noQuips);
     sw('btnToggleVibrate', !prefs.noVibrate);
     sw('btnToggleCalm', !!prefs.calm);
     sw('btnToggleTrail', !prefs.noTrail);
@@ -7233,6 +7332,7 @@
   });
   // the drawn interface: the only look of the game now
   document.body.classList.add('ui-d');
+  toggle('btnToggleQuips',   ()=>{ prefs.noQuips = !prefs.noQuips; });
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
@@ -7910,7 +8010,7 @@
   let lastDeal = null;
   function dealKey(){ return mode==='mp' ? 'mp:'+(oppUid||oppNameVal) : mode+':'+duelOpp; }
   function newMatch(){
-    startMatchTracking();
+    startMatchTracking(); quipReset();
     scores = {you:0, ai:0};
     document.getElementById('scoreYou').textContent = '0';
     document.getElementById('scoreAI').textContent = '0';
@@ -7943,7 +8043,18 @@
 
   // No more "Nouvelle manche → Continuer" screen: a short toast announces who shuffles, and the
   // ritual question only appears when it's actually your call (and never again if you always share).
+  // you take too long: once a hand, after 18 s of your turn (only when nothing else is on screen)
+  setInterval(()=>{
+    try{
+      const hl = document.getElementById('handLabel');
+      const busy = ['choiceOverlay','pauseOverlay','revealOverlay','matchOverOverlay','eliminateOverlay'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); }) || document.querySelector('.cert-overlay.show');
+      if(mode!=='ai' || tuto || !inGame() || busy || !hl || !hl.classList.contains('your-turn') || document.hidden){ QS.turnAt = 0; return; }
+      if(!QS.turnAt) QS.turnAt = Date.now();
+      if(!QS.slowSaid && Date.now() - QS.turnAt > 18000){ QS.slowSaid = true; quip('slow'); }
+    }catch(e){}
+  }, 1000);
   function beginHand(){
+    QS.slowSaid = false; QS.turnAt = 0; QS.sleptSaid = false;
     document.getElementById('btnNext').classList.add('hidden');
     clearSlots();
     const shuffler = dealer==='you' ? 'Tu mélanges' : oppName()+' mélange';
@@ -8678,6 +8789,7 @@
     }
     state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA/glacée
     rigTrick(winner);
+    if(state.youSlept && winner==='ai' && !QS.sleptSaid){ QS.sleptSaid = true; quip('mistake', 700); }
     state.leader = winner;
     state.leadSuit = null; state._leadCard=null; state._leadActor=null;
     renderAll();
@@ -9480,15 +9592,29 @@
     document.getElementById('btnAnnounce').classList.add('hidden');
     renderAll();
 
+    // the run of hands, the gaps in the score: what the opponent's remark looks at
+    const wasAlmost = who==='ai' && TARGET_SCORE>1 && scores.you===TARGET_SCORE-1;
+    if(who==='ai'){ QS.aiRun++; QS.youRun = 0; } else { QS.youRun++; QS.aiRun = 0; }
+    QS.oppDown = Math.max(QS.oppDown, scores.you - scores.ai); QS.youDown = Math.max(QS.youDown, scores.ai - scores.you);
     if(who==='ai'){
       if(!isGlacee && !isCora) sfxHandWin(); // big wins already got sfxBigWin() just above
       if(isGlacee) penaltySay(L('glacee'));
       else if(isCora) penaltySay(L('cora'));
-      else if(!isAutoWin && Math.random()<0.6) penaltySay(L('win')); // auto-win already spoke at its own call site
+      else if(!isAutoWin){ // auto-win already spoke at its own call site
+        if(wasAlmost && quip('choke')) {}
+        else if(!QS.cameBack && QS.oppDown>=2 && scores.ai>=scores.you && (QS.cameBack = quip('comeback'))) {}
+        else if(QS.aiRun>=2 && Math.random()<0.8 && quip('youLoseStreak')) {}
+        else if(Math.random()<0.6) penaltySay(L('win'));
+      }
     } else {
       if(!isGlacee && !isCora) sfxHandLose();
       if(isGlacee || isCora) penaltySay(L('surprise'));
-      else if(!isAutoWin && Math.random()<0.6) penaltySay(L('lose'));
+      else if(!isAutoWin){
+        if(TARGET_SCORE>1 && scores.you===TARGET_SCORE-1 && Math.random()<0.85 && quip('youAlmost')) {}
+        else if(!QS.theyCameBack && QS.youDown>=2 && scores.you>=scores.ai && (QS.theyCameBack = quip('theyComeback'))) {}
+        else if(QS.youRun>=2 && Math.random()<0.8 && quip('youWinStreak')) {}
+        else if(Math.random()<0.6) penaltySay(L('lose'));
+      }
     }
     trickTalks = 0; // a fresh remark allowance for the next hand
 
@@ -10152,7 +10278,9 @@
     if(mode==='mp'){ mpRequestRematch(); return; }
     hide('matchOverOverlay');
     if(mode==='square'){ if(sq && sq.remote) return; sqNewGame(); return; } // online, only the creator restarts
+    const lost = QS.last==='lost', won = QS.last==='won';
     newMatch();
+    if(mode==='ai' && duelOpp!=='mbarga' && (lost || won)) quip(lost ? 'rematch' : 'rematchWon', 2600);
   });
 
   // online rematch: both players must ask; the host then starts the new match for both
@@ -10192,7 +10320,7 @@
   }
 
   function showMatchOver(who){
-    const won = who==='you';
+    const won = who==='you'; QS.last = won ? 'won' : 'lost';
     if(storyRun && mode==='ai'){ storyMatchEnd(won); return; }
     const mine = scores.you, theirs = scores.ai;
     let unlockedMbarga = false;
@@ -10306,10 +10434,10 @@
     aristide: {
       name:'RALL',
       control: ["Vous êtes nés hier ou bien ?","Merci pour le cadeau, mola.","Prévisible comme le délestage.","Range-toi, je passe."],
-      win: ["Comme d'habitude. Au suivant.","Qui veut des cours ? Je fais des prix.","Rentrez dormir, il est tard pour vous."],
+      win: ["Comme d'habitude. Au suivant.","Qui veut des cours ? Je fais des prix.","Rentrez dormir, il est tard pour vous.","Même le délestage fait des pauses. Vous, non.","Vous jouez comme des gens qui doivent rembourser la tontine ce soir."],
       cora: ["CORA ! Dites bonjour au 3.","Un CORA, sans transpirer, mola."],
       glacee: ["33 Glacée. Le quartier va en parler une semaine.","Deux 3. Respirez, respirez."],
-      lose: ["OK. Ça, c'était un accident.","Profitez, ça arrive une fois par an."]
+      lose: ["OK. Ça, c'était un accident.","Profitez, ça arrive une fois par an.","Calmez-vous. Vous avez gagné aux cartes, pas le marché central."]
     },
     gervais: {
       name:'Christelle',
@@ -10317,7 +10445,7 @@
       win: ["J'ai gagné ?! Attendez, je vérifie.","Ma prière a marché !","Je vais le raconter à toute la famille."],
       cora: ["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
       glacee: ["Deux 3… je vais m'évanouir.","33 Glacée ! Quelqu'un filme ?!"],
-      lose: ["C'est la chaise. Elle me porte la poisse.","Pas grave, je n'ai pas dormi."]
+      lose: ["C'est la chaise. Elle me porte la poisse.","Pas grave, je n'ai pas dormi.","Qui a mélangé ? Voilà. Tout s'explique."]
     }
   };
   // ===================== Seats =====================
@@ -10341,7 +10469,7 @@
       if(Math.random()>0.2 || Date.now()-(sqSay.last||0) < 10000) return;
     }
     sqSay.last = Date.now();
-    const text = lines[Math.floor(Math.random()*lines.length)];
+    const text = quipLine(lines) || lines[0];
     sqBubble(id, text);
     const sav = document.querySelector('.sq-name .avatar[data-seat="'+id+'"]'); if(sav){ Rig.react(sav, RIG_FACE[category] || 'Bluff', 3000); Rig.talk(sav, 1400); }
     avatarFx(id, category==='win'||category==='cora'||category==='glacee' ? 'hop' : 'speaking');
@@ -12867,7 +12995,8 @@
         return;
       }
       let pid = g.opp;
-      if(!pid){ pid = 'bk_'+key; DUEL_PERSONAS[pid] = {name:g.name, stars:3, brain:g.brain||'heuristic', pimcMs:g.ms, pimcSamples:g.samples, announce:[0.8, 0.95], repWin:0, tagline:'', lines:g.lines||{}}; storyRun.art[pid] = undefined; }
+      if(!pid){ pid = 'bk_'+key; const ln = Object.assign({}, g.lines||{}), Q = QUIPS_BOOK[key] || {}; Object.keys(Q).forEach(k=> ln[k] = (ln[k]||[]).concat(Q[k]));
+        DUEL_PERSONAS[pid] = {name:g.name, stars:3, brain:g.brain||'heuristic', pimcMs:g.ms, pimcSamples:g.samples, announce:[0.8, 0.95], repWin:0, tagline:'', lines:ln}; storyRun.art[pid] = undefined; }
       else storyRun.art[pid] = ART_FILE[pid];
       if(g.art) ART_FILE[pid] = 'livre/'+g.art;
       duelOpp = pid; mode = 'ai'; TARGET_SCORE = press ? 1 : (g.target || 3);
@@ -14261,7 +14390,7 @@
 
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
   if(DEV_HOST && /[?&]debug\b/.test(location.search)){
-    window.__ff = { DScene, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
+    window.__ff = { DScene, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
