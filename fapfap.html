@@ -3410,6 +3410,104 @@
   body.ui-d:not(#z) #matchOverOverlay .rep-bar{ background:#FBE9BC; border:2.5px solid #1B120C; } body.ui-d:not(#z) #matchOverOverlay .rep-bar > div{ background:#FFC93C !important; box-shadow:none !important; }
   body.ui-d:not(#z) #matchOverOverlay .winner-face .avatar{ border:3px solid #1B120C; box-shadow:0 5px 0 #000 !important; }
   body.ui-d:not(#z) #revealOverlay .sheet :is(.rv-kicker){ color:#B83333 !important; }
+
+  /* ===================== LE LIVRE, DESSINÉ ===================== */
+  /* the night of the drawn style: indigo, thick outlines, the places drawn (art/d/lieu-*.svg);
+     reading is calm: the text sits in a comic box at the top, a new line fades in whole, nothing jumps */
+  body.ui-d:not(#z) .book-page{ background:#141130 !important; font-family:var(--d-b); }
+  body.ui-d:not(#z) .book-page :is(h1, h2, h3, b){ text-shadow:none; }
+  /* the cover */
+  body.ui-d:not(#z) .bk-cover{ background:radial-gradient(circle at 50% 18%, rgba(255,201,60,.18), transparent 55%), #141130; }
+  body.ui-d:not(#z) .bk-cv-t{ font:700 clamp(34px, 10vw, 48px)/1.05 var(--d-t) !important; letter-spacing:0 !important; color:#fff; -webkit-text-stroke:0; text-shadow:0 5px 0 #000, 3px 3px 0 #000, -3px 3px 0 #000 !important; }
+  body.ui-d:not(#z) .bk-rule{ height:5px; border-radius:5px; background:#FFC93C; border:2px solid #000; width:70px; }
+  body.ui-d:not(#z) .bk-cv-a{ font:700 16px var(--d-t) !important; letter-spacing:.3em !important; color:#FFC93C !important; }
+  body.ui-d:not(#z) .bk-cv-p{ color:#cfc8ee !important; font:700 15px/1.5 var(--d-b) !important; }
+  body.ui-d:not(#z) .bk-18{ font:800 11px var(--d-b) !important; color:#fff !important; background:#E24B4A; border:2.5px solid #000 !important; }
+  body.ui-d:not(#z) .bk-btn{ font:700 18px var(--d-t) !important; background:#FFC93C !important; color:#1B120C !important; border:3px solid #000 !important; border-radius:18px !important; box-shadow:0 5px 0 #000 !important; }
+  body.ui-d:not(#z) .bk-btn.ghost{ background:#2b2660 !important; color:#fff !important; font-size:16px !important; }
+  body.ui-d:not(#z) :is(.bk-btn, .bk-box button, .bk-inv button, .bk-nb button, .bk-bar button, .bk-exit, .bk-ph .close, .bk-toc button):active{ transform:translateY(3px); }
+  body.ui-d:not(#z) .bk-resume{ background:#FFF7E6 !important; border:3px solid #000 !important; border-radius:20px !important; box-shadow:0 5px 0 #000; }
+  body.ui-d:not(#z) .bk-resume :is(.rs-t, .rs-p p){ color:#1B120C !important; font-family:var(--d-t) !important; }
+  body.ui-d:not(#z) .bk-resume .rs-p p{ font:700 14.5px/1.45 var(--d-b) !important; color:#5a4630 !important; }
+  body.ui-d:not(#z) .bk-resume :is(.rs-k){ color:#B83333 !important; } body.ui-d:not(#z) .bk-resume .rs-bar{ height:10px; background:#FBE9BC; border:2px solid #000; } body.ui-d:not(#z) .bk-resume .rs-bar i{ background:#FFC93C; }
+  body.ui-d:not(#z) .bk-toc{ background:#141130 !important; }
+  body.ui-d:not(#z) .bk-toc h2{ font:700 24px var(--d-t) !important; letter-spacing:0 !important; padding-left:56px; min-height:44px; display:flex; align-items:center; }
+  body.ui-d:not(#z) .bk-toc button{ background:#2b2660 !important; border:3px solid #000 !important; border-radius:16px !important; box-shadow:0 4px 0 #000; margin-bottom:10px; padding:12px 14px !important; font:700 16px var(--d-b) !important; color:#fff !important; }
+  body.ui-d:not(#z) .bk-toc button.here{ background:#FFC93C !important; color:#1B120C !important; } body.ui-d:not(#z) .bk-toc button.here .w{ color:#1B120C !important; }
+  body.ui-d:not(#z) .bk-toc button[disabled]{ opacity:.45; box-shadow:none; }
+  body.ui-d:not(#z) .bk-toc .w{ font-family:var(--d-b) !important; }
+  /* the reading */
+  body.ui-d:not(#z) .bk-shot{ transform:none !important; transition:opacity .8s ease !important; }
+  body.ui-d:not(#z) .bk-shot.on{ animation:none !important; }
+  body.ui-d:not(#z) .bk-lines{ top:calc(84px + env(safe-area-inset-top, 0px)) !important; transform:none !important; max-height:calc(100% - 230px) !important; overflow:auto;
+    font:700 clamp(18px, 5.2vw, 22px)/1.5 var(--d-b) !important; color:#fff; background:rgba(20,17,48,.86); border:3px solid #000; border-radius:22px; padding:16px 18px; box-shadow:0 6px 0 #000; gap:.55em !important; }
+  body.ui-d:not(#z) .bk-lines:empty{ display:none; }
+  body.ui-d:not(#z) .bk-lines .w{ opacity:1 !important; transform:none !important; animation:none !important; filter:none !important; }
+  body.ui-d:not(#z) .bk-lines > :last-child{ animation:dLineIn .35s ease both; }
+  body.ui-d:not(#z) .bk-lines > .slam:last-child{ animation:dSlam .32s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes dLineIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  @keyframes dSlam{ from{ opacity:0; transform:scale(1.4); } to{ opacity:1; transform:none; } }
+  body.ui-d:not(#z) .bk-lines .read, body.ui-d:not(#z) .bk-lines .read .w{ opacity:.72 !important; }
+  body.ui-d:not(#z) .bk-lines .slam{ font-family:var(--d-t) !important; font-weight:700; text-transform:none; color:#FFC93C; font-size:1.25em; line-height:1.15; }
+  body.ui-d:not(#z) .bk-lines .reveal{ font-family:var(--d-t) !important; letter-spacing:0 !important; color:#FFC93C; }
+  body.ui-d:not(#z) .bk-lines :is(.red .w){ color:#ff7a70 !important; text-shadow:none !important; } body.ui-d:not(#z) .bk-lines :is(.blue .w){ color:#8fbaff !important; text-shadow:none !important; }
+  body.ui-d:not(#z) .bk-lines .pic{ border:3px solid #000; box-shadow:0 5px 0 #000 !important; animation:dLineIn .4s ease both !important; }
+  body.ui-d:not(#z) .bk-who .face{ border:3px solid #000; box-shadow:0 4px 0 #000 !important; background-color:#2a2552; }
+  body.ui-d:not(#z) .bk-who b{ font:700 15px var(--d-t) !important; letter-spacing:.04em !important; color:#1B120C !important; background:#FFC93C; border:2.5px solid #000; border-radius:999px; padding:3px 12px; }
+  body.ui-d:not(#z) .bk-card{ background:#141130 !important; }
+  body.ui-d:not(#z) .bk-card :is(.k, .a){ font-family:var(--d-b) !important; font-weight:800; letter-spacing:.2em !important; color:#FFC93C !important; }
+  body.ui-d:not(#z) .bk-card .t{ font:700 clamp(30px, 9vw, 44px)/1.1 var(--d-t) !important; color:#fff; text-shadow:0 5px 0 #000 !important; }
+  body.ui-d:not(#z) .bk-card .r{ height:5px; border-radius:5px; background:#FFC93C; border:2px solid #000; }
+  body.ui-d:not(#z) .bk-bar button{ background:#fff !important; color:#1B120C !important; border:3px solid #000 !important; box-shadow:0 3px 0 #000; font:800 13px var(--d-b) !important; }
+  body.ui-d:not(#z) .bk-bar #bkBack{ width:42px; height:42px; padding:0 !important; font-size:24px !important; }
+  body.ui-d:not(#z) .bk-bar #bkNoteBtn{ background:#FFC93C !important; }
+  body.ui-d:not(#z) .bk-where span{ color:#fff !important; font-family:var(--d-b) !important; text-shadow:0 1px 0 #000; }
+  body.ui-d:not(#z) .bk-prog{ height:9px !important; background:#2b2660 !important; border:2px solid #000; } body.ui-d:not(#z) .bk-prog i{ background:#FFC93C !important; }
+  body.ui-d:not(#z) .bk-hint{ color:#cfc8ee !important; font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .bk-notice{ background:#FFC93C !important; border:3px solid #000 !important; box-shadow:0 5px 0 #000; }
+  body.ui-d:not(#z) .bk-notice :is(small, b){ color:#1B120C !important; font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .bk-exit{ background:#fff !important; color:#1B120C !important; border:3px solid #000 !important; box-shadow:0 4px 0 #000; font:700 28px/1 var(--d-t) !important; }
+  /* the panels: a game, a choice, the phone */
+  body.ui-d:not(#z) .bk-panel{ background:rgba(20,17,48,.82) !important; }
+  body.ui-d:not(#z) .bk-box{ background:#FFF7E6 !important; color:#1B120C !important; border:3px solid #000 !important; border-radius:24px !important; box-shadow:0 7px 0 #000; font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .bk-box h3{ font:700 22px var(--d-t) !important; color:#1B120C; } body.ui-d:not(#z) .bk-box p{ color:#5a4630 !important; font-weight:700; }
+  body.ui-d:not(#z) .bk-box .k{ color:#B83333 !important; }
+  body.ui-d:not(#z) .bk-box .face{ border:3px solid #000; box-shadow:0 4px 0 #000 !important; background-color:#2a2552; }
+  body.ui-d:not(#z) .bk-box :is(.go, .opt, .later){ border:3px solid #000 !important; border-radius:16px !important; box-shadow:0 4px 0 #000; font:700 16px var(--d-t) !important; }
+  body.ui-d:not(#z) .bk-box .go{ background:#2FB36B !important; color:#fff !important; } body.ui-d:not(#z) .bk-box .opt{ background:#fff !important; color:#1B120C !important; } body.ui-d:not(#z) .bk-box .later{ background:#2b2660 !important; color:#fff !important; }
+  body.ui-d:not(#z) .bk-ph{ border:4px solid #000 !important; box-shadow:0 8px 0 #000 !important; }
+  body.ui-d:not(#z) .bk-ph .close{ background:#FFC93C !important; color:#1B120C !important; border:3px solid #000 !important; font-family:var(--d-t) !important; }
+  /* interrogation, search, accusation, report */
+  body.ui-d:not(#z) :is(.bk-inv, .bk-nb){ background:#141130 !important; }
+  body.ui-d:not(#z) .bk-inv .iv{ font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .iv-top{ color:#FFC93C !important; font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .iv-face{ border:3px solid #000; box-shadow:0 6px 0 #000 !important; background-color:#2a2552; }
+  body.ui-d:not(#z) .iv-name{ font:700 18px var(--d-t) !important; letter-spacing:.08em !important; color:#FFC93C !important; }
+  body.ui-d:not(#z) :is(.iv-say, .iv-l, .ac-q){ font-family:var(--d-b) !important; font-weight:700; color:#fff !important; }
+  body.ui-d:not(#z) :is(.iv-ask, .iv-tell, .sr-in){ font-family:var(--d-b) !important; font-weight:700; }
+  body.ui-d:not(#z) .iv-tell{ background:#2b2660; border:2.5px solid #000 !important; border-radius:14px; padding:10px 12px !important; color:#bfe0ff !important; }
+  body.ui-d:not(#z) .iv-acts button{ border:3px solid #000 !important; box-shadow:0 4px 0 #000; font:700 15px var(--d-t) !important; letter-spacing:.02em !important; color:#fff !important; }
+  body.ui-d:not(#z) .iv-acts .a-c{ background:#2FB36B !important; } body.ui-d:not(#z) .iv-acts .a-d{ background:#E8A817 !important; color:#1B120C !important; } body.ui-d:not(#z) .iv-acts .a-x{ background:#E24B4A !important; }
+  body.ui-d:not(#z) :is(.iv-clue, .ac-card){ background:#FFF7E6 !important; color:#1B120C !important; border:3px solid #000 !important; box-shadow:0 4px 0 #000; }
+  body.ui-d:not(#z) :is(.iv-clue, .ac-card) :is(b, span, small){ color:#1B120C !important; font-family:var(--d-b) !important; }
+  body.ui-d:not(#z) .ac-ph{ border:2.5px solid #000; background-color:#2a2552; }
+  body.ui-d:not(#z) :is(.iv-back, .bk-inv .later){ background:#2b2660 !important; color:#fff !important; border:3px solid #000 !important; box-shadow:0 4px 0 #000; font-family:var(--d-t) !important; }
+  body.ui-d:not(#z) .bk-inv .go{ background:#2FB36B !important; color:#fff !important; border:3px solid #000 !important; box-shadow:0 4px 0 #000; font-family:var(--d-t) !important; }
+  body.ui-d:not(#z) .iv-stamp{ font-family:var(--d-t) !important; border-width:4px !important; background:#fff; }
+  body.ui-d:not(#z) .iv-got{ border:3px dashed #FFC93C !important; }
+  body.ui-d:not(#z) .sr-img{ border-bottom:3px solid #000; }
+  body.ui-d:not(#z) .sr-img::before{ background:linear-gradient(180deg, rgba(20,17,48,0), rgba(20,17,48,.9) 96%) !important; }
+  body.ui-d:not(#z) .sr-img b{ font-family:var(--d-t) !important; }
+  body.ui-d:not(#z) .sr-it{ background:#2b2660; border:3px solid #000 !important; box-shadow:0 4px 0 #000; }
+  body.ui-d:not(#z) .sr-it > button{ font-family:var(--d-b) !important; } body.ui-d:not(#z) .sr-out p{ font-family:var(--d-b) !important; font-weight:600; }
+  /* the notebook */
+  body.ui-d:not(#z) .nb-top b{ font:700 22px var(--d-t) !important; letter-spacing:0 !important; }
+  body.ui-d:not(#z) .nb-x{ background:#fff !important; color:#1B120C !important; border:3px solid #000 !important; box-shadow:0 3px 0 #000; }
+  body.ui-d:not(#z) .nb-tabs{ background:#2b2660 !important; border:3px solid #000; }
+  body.ui-d:not(#z) .nb-tabs button{ font-family:var(--d-b) !important; color:#cfc8ee !important; } body.ui-d:not(#z) .nb-tabs button.on{ background:#FFC93C !important; color:#1B120C !important; }
+  body.ui-d:not(#z) .nb-clue{ background:#FFF3A8 !important; border:2.5px solid #000; box-shadow:3px 4px 0 #000 !important; }
+  body.ui-d:not(#z) .nb-sus .ph{ box-shadow:0 0 0 3px #fff, 0 0 0 5.5px #000 !important; background-color:#2a2552; }
+  body.ui-d:not(#z) .nb-sus b{ font:700 17px var(--d-t) !important; }
 </style>
 </head>
 <body>
@@ -6095,7 +6193,7 @@
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
   const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque'};
   // the characters are drawn now (art/d, one light SVG each); places stay in art/livre
-  const PIC = n=> /^perso-/.test(n) ? 'art/d/'+n+'.svg' : 'art/livre/'+n+'.webp';
+  const PIC = n=> /^(perso|lieu)-/.test(n) ? 'art/d/'+n+'.svg' : 'art/livre/'+n+'.webp';
   const artSrc = base=> base.indexOf('livre/')===0 ? PIC(base.slice(6)) : 'art/'+base+'.webp';
   function artImgTag(base){
     if(base.indexOf('livre/')===0) return '<img src="'+artSrc(base)+'" alt="" onerror="this.remove()">';
@@ -6591,7 +6689,7 @@
       // the story's reward: the room where « La Nuit des 33 » ends
       {id:'soussol',  name:'Le Sous-sol du Royal',  swatch:'radial-gradient(ellipse 60% 45% at 50% 55%,#2a6b45 0,#123a24 45%,#000 80%),repeating-linear-gradient(100deg,rgba(200,220,255,.3) 0 1px,transparent 1px 7px)', req:p=> !!(p.story && p.story.finished), hint:'Termine le mode histoire « La Nuit des 33 »'},
       // the places of the novel « Pourquoi je suis mort ? »: each one opens when its game is won in the book
-      ...BOOK_TABLES.map(([id, name, game, hint])=> ({id:'l-'+id, name, swatch:'linear-gradient(rgba(7,6,10,.25),rgba(7,6,10,.45)),url(art/livre/lieu-'+id+'.webp) center/cover',
+      ...BOOK_TABLES.map(([id, name, game, hint])=> ({id:'l-'+id, name, swatch:'url('+PIC('lieu-'+id)+') center 70%/cover',
         req: p=> game==='*' ? !!(p.book && p.book.ended && p.book.ended.length) : !!(p.book && p.book.won && p.book.won[game]), hint:'Mode histoire · '+hint})),
       // the exceptional tables: only in the shop
       ...SHOP_TABLES.map(t=> ({id:t.id, name:t.name, swatch:t.swatch, req:p=> shopOwns(p, 'table', t.id), hint:'Boutique · '+t.price.toLocaleString('fr-FR')+' jetons'}))
@@ -12379,7 +12477,9 @@
         cardEl.innerHTML = (s.card[0] ? '<div class="k">'+esc(s.card[0])+'</div>' : '')+'<div class="t">'+esc(s.card[1])+'</div>'+(s.card[2] ? '<div class="r"></div><div class="a">'+esc(s.card[2])+'</div>' : '');
         void cardEl.offsetWidth; cardEl.classList.add('on'); return; }
       if(s.img){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); showShot(s.img); return; }
-      hideShot();
+      // the drawn place stays behind the text (the text sits in its own box), until the next place
+      let place = ''; for(let k = i; k >= 0; k--){ if(steps[k].card) break; if(steps[k].img && /lieu-/.test(steps[k].img)){ place = steps[k].img; break; } }
+      if(place) showShot(place); else hideShot();
       if(s.game){ openGame(s.game); return; }
       if(s.choice){ openChoice(s); return; }
       if(s.phone){ openPhone(); return; }
@@ -12645,7 +12745,7 @@
       const total = D.items.reduce((n, it)=> n + (it.clue ? 1 : 0) + (it.moreClue ? 1 : 0), 0);
       const count = ()=> D.items.reduce((n, it)=> n + (it.clue && hasClue(it.clue) ? 1 : 0) + (it.moreClue && hasClue(it.moreClue) ? 1 : 0), 0);
       inv.className = 'bk-inv';
-      inv.innerHTML = '<div class="iv sr"><div class="sr-img" style="background-image:url(&quot;art/livre/'+D.img+'.webp&quot;)"><span>Fouille</span><b></b></div><p class="sr-in"></p><div class="sr-list"></div><div class="sr-foot"><span class="sr-n"></span><button type="button" class="go">Partir</button></div></div>';
+      inv.innerHTML = '<div class="iv sr"><div class="sr-img" style="background-image:url(&quot;'+PIC(D.img)+'&quot;)"><span>Fouille</span><b></b></div><p class="sr-in"></p><div class="sr-list"></div><div class="sr-foot"><span class="sr-n"></span><button type="button" class="go">Partir</button></div></div>';
       inv.querySelector('.sr-img b').textContent = D.t; inv.querySelector('.sr-in').textContent = D.intro;
       const list = inv.querySelector('.sr-list'), n = inv.querySelector('.sr-n');
       const upd = ()=>{ n.textContent = 'Indices trouvés : '+count()+' / '+total; };
