@@ -3411,6 +3411,30 @@
   body.ui-d:not(#z) #matchOverOverlay .winner-face .avatar{ border:3px solid #1B120C; box-shadow:0 5px 0 #000 !important; }
   body.ui-d:not(#z) #revealOverlay .sheet :is(.rv-kicker){ color:#B83333 !important; }
 
+  /* ===================== LES PERSONNAGES VIVANTS ===================== */
+  .avatar.has-rig{ overflow:hidden; background:radial-gradient(circle at 50% 30%, #3a3470, #1d1940) !important; }
+  .avatar.has-rig > .av-ini, .avatar.has-rig > img{ display:none; }
+  svg.rig{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .rig .ex{ display:none; } .rig .ex.show{ display:inline; }
+  .rig .rl{ stroke:#1B120C; stroke-linecap:round; stroke-linejoin:round; }
+  .rig .rglow{ display:none; } .rig .rglow path{ fill:#fff; } .rig.masked .rglow path{ fill:#ff9b3a; }
+  .rig.masked :is(.reyes, .rmouths, .rbrows){ visibility:hidden; } .rig.masked .rme{ filter:drop-shadow(0 0 3px #ff8a2a); }
+  .rig .rb{ transform-origin:200px 320px; animation:rigBreathe 3.4s ease-in-out infinite; }
+  @keyframes rigBreathe{ 50%{ transform:scale(1.012, 1.022); } }
+  .rig.talk .rmouths{ transform-box:fill-box; transform-origin:center; animation:rigTalk .2s ease-in-out infinite; }
+  @keyframes rigTalk{ 50%{ transform:scaleY(.55); } }
+  body.d-cut .rig .rb{ opacity:.05; transition:opacity .4s; }
+  body.d-cut .rig .rglow{ display:inline; filter:drop-shadow(0 0 3px rgba(255,255,255,.9)) drop-shadow(0 0 8px rgba(255,255,255,.35)); }
+  body.d-cut.ui-d:not(#z) .ai-label .avatar.has-rig{ background:#05040c !important; }
+  body.ui-d:not(#z) .ai-label .avatar.has-rig{ --s:92px !important; width:92px !important; height:92px !important; }
+  body.ui-d:not(#z) .sq-name .avatar.has-rig{ --s:42px !important; width:42px !important; height:42px !important; border:2.5px solid #1B120C; }
+  body.ui-d:not(#z) .sq-name:has(.has-rig){ display:flex; flex-direction:column; align-items:center; gap:2px; background:none !important; border:none !important; padding:0 !important; }
+  body.ui-d:not(#z) .sq-name:has(.has-rig) .sqn-t{ background:#FFF7E6; border:2px solid #1B120C; border-radius:999px; padding:0 8px; }
+  body.ui-d:not(#z) .sq-seat.active-turn .sq-name .avatar.has-rig{ box-shadow:0 0 0 4px #FFC93C !important; }
+  @media (prefers-reduced-motion: reduce){ .rig .rb, .rig.talk .rmouths{ animation:none; } }
+  /* the announcements of a hand go in the middle of the table, never over the opponent's bubble */
+  body.ui-d:not(#z).in-game .toast{ top:44% !important; }
+
   /* ===================== LE LIVRE, DESSINÉ ===================== */
   /* the night of the drawn style: indigo, thick outlines, the places drawn (art/d/lieu-*.svg);
      reading is calm: the text sits in a comic box at the top, a new line fades in whole, nothing jumps */
@@ -6250,8 +6274,188 @@
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
       'onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\';}else{this.remove();}">';
   }
+  // ===================== LES PERSONNAGES VIVANTS =====================
+  // At the table the opponents are not pictures: each one is the drawing of the character sheet, built in SVG,
+  // alive — breathing, blinking, glancing — and reacting to the game with the eight expressions (the same faces as
+  // the sheet), the mouth moving while they talk. In a power cut only their eyes and teeth still shine.
+  const Rig = (()=>{
+    let N = 0; const live = new Set();
+    const SK = {warm:['#855034','#5E3420','#45240F','#B07650'], deep:['#6A3A20','#4A2513','#341809','#94603E'], ebony:['#58301A','#3D1F0F','#2A1307','#7E4E30'],
+      honey:['#93593A','#6A3B22','#4E2914','#C08560'], cocoa:['#7A4529','#56301A','#3E200E','#A66C48']};
+    const CAST = {
+      penalty:{sk:'warm', lips:['#4A2418','#94574A','#C38A78'], face:[66,56,307], neck:34, hair:'lineup', hc:['#130d0a','#3e2d23'], beard:'full', bc:'#1d140f', mous:'penalty', out:'tee', chain:1},
+      stephane:{sk:'ebony', lips:['#3A1C12','#7E4A3E','#A86E60'], face:[61,47,305], neck:30, hair:'lineup', hc:['#100b08','#35261d'], beard:'stubble', bc:'#140e0a', mous:'thin', out:'tee'},
+      christelle:{sk:'cocoa', lips:['#5A2A20','#A35F55','#D29A8C'], face:[59,46,299], neck:27, hair:'braids', hc:['#120c09','#3a2b22'], fem:1, out:'wax', open:2},
+      caroline:{sk:'honey', lips:['#6E2E26','#B4625A','#E2A196'], face:[60,47,299], neck:27, hair:'long', hc:['#140e0b','#3f2f26'], fem:1, out:'dress', open:2},
+      rall:{sk:'cocoa', lips:['#4A2418','#8E5245','#BC8576'], face:[61,49,305], neck:30, hair:'capBack', hc:['#120c09','#3a2b22'], beard:'goatee', bc:'#170f0b', mous:'thin', out:'hoodie', chain:2, open:-2},
+      cobra:{sk:'ebony', lips:['#3A1C12','#7A473B','#A06A5C'], face:[57,45,308], neck:29, hair:'twists', hc:['#0f0a07','#33261e'], beard:'stubble', bc:'#140e0a', mous:'thin', out:'denim'},
+      tchinda:{sk:'deep', lips:['#3E1E14','#7E4A3E','#A87264'], face:[63,52,306], neck:32, hair:'locsGrey', hc:['#b9b2a6','#7d766c'], brow:'#9d968b', beard:'fullBushy', bc:'#c9c2b6', bfade:'#8f887d', mous:'grey', out:'oldjacket', age:2, open:-1},
+      ismael:{sk:'ebony', lips:['#3A1C12','#7A473B','#A06A5C'], face:[58,46,306], neck:29, hair:'bald', hc:['#0f0a07','#33261e'], beard:'goatee', bc:'#140e0a', mous:'none', out:'polo', open:2},
+      mballa:{sk:'ebony', lips:['#3A1C12','#7A473B','#A06A5C'], face:[71,63,312], neck:38, hair:'receding', hc:['#1d1814','#5a524a'], beard:'none', bc:'#1a1410', mous:'thick', out:'uniform', age:1, open:-2},
+      mami:{sk:'deep', lips:['#4A2418','#8E5245','#BC8576'], face:[65,54,304], neck:31, hair:'wrap', hc:['#120c09','#3a2b22'], fem:1, out:'apron', age:1},
+      kappo:{sk:'ebony', lips:['#3A1C12','#7A473B','#A06A5C'], face:[66,60,312], neck:36, hair:'curlyTop', hc:['#0f0a07','#33261e'], beard:'full', bc:'#140e0a', mous:'penalty', out:'suit', open:-1}
+    };
+    CAST.masque = Object.assign({}, CAST.kappo, {mask:1});
+    const K = 'stroke="var(--rk)" stroke-linejoin="round" stroke-linecap="round"';
+    const mir = d=> d.replace(/(-?\d+(?:\.\d+)?)[ ,](-?\d+(?:\.\d+)?)/g, (m, x, y)=> (400 - +x)+' '+y);
+    const P = a=> a[0]+' '+a[1];
+    let seed = 7; const rnd = ()=> (seed = (seed*9301 + 49297) % 233280)/233280;
+    const faceD = (W, JW, C)=> 'M'+(200-W)+' 172 Q'+(198-W)+' 106 200 100 Q'+(202+W)+' 106 '+(200+W)+' 172 Q'+(204+W)+' 222 '+(200+JW)+' 260 Q'+(200+JW*.68)+' '+(C-5)+' 200 '+C+' Q'+(200-JW*.68)+' '+(C-5)+' '+(200-JW)+' 260 Q'+(196-W)+' 222 '+(200-W)+' 172 Z';
+    function curls(n, y0, y1, w0, w1, col, op){ let d = ''; for(let k = 0; k < n; k++){ const x = 146 + rnd()*108, y = y0 + rnd()*(y1-y0), w = w0 + rnd()*(w1-w0); d += 'M'+x.toFixed(1)+' '+y.toFixed(1)+' q'+(w/2).toFixed(1)+' -'+(w*.7).toFixed(1)+' '+w.toFixed(1)+' 0 '; }
+      return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-linecap="round" opacity="'+op+'"/>'; }
+    const HAIR = {
+      lineup(c){ const top = c.hair==='curlyTop' ? 'M131 174 Q122 84 172 70 Q200 62 228 70 Q278 84 269 174' : 'M131 174 Q124 94 172 78 Q200 70 228 78 Q276 94 269 174';
+        const sh = top+' L262 174 Q262 140 251 128 L246 121 Q222 115 200 116 Q178 115 154 121 L149 128 Q138 140 138 174 Z';
+        return {front:'<path id="hairShape" d="'+sh+'" fill="var(--hair)"/><clipPath id="hairClip"><use href="#hairShape"/></clipPath><g clip-path="url(#hairClip)"><path d="M127 174 Q125 140 133 122 L154 124 L146 174 Z M273 174 Q275 140 267 122 L246 124 L254 174 Z" fill="var(--fade)" opacity=".75"/>'+
+          (c.hair==='curlyTop' ? curls(90, 68, 118, 3, 6, '#3a2b22', .8) : curls(46, 84, 114, 2, 4.5, '#3a2b22', .6))+'</g><use href="#hairShape" fill="none" class="rl" stroke-width="3.5"/><path d="M156 121 Q178 115 200 116 Q222 115 244 121" fill="none" stroke="var(--hair)" stroke-width="2.4"/>'}; },
+      receding(){ const sh = 'M131 174 Q124 94 172 78 Q200 70 228 78 Q276 94 269 174 L262 174 Q262 140 254 124 L247 110 Q234 104 222 109 Q210 102 200 104 Q190 102 178 109 Q166 104 153 110 L146 124 Q138 140 138 174 Z';
+        let sp = ''; for(let k = 0; k < 60; k++) sp += 'M'+(140 + rnd()*120).toFixed(1)+' '+(80 + rnd()*90).toFixed(1)+' h1.6 ';
+        return {front:'<path id="hairShape" d="'+sh+'" fill="var(--hair)"/><clipPath id="hairClip"><use href="#hairShape"/></clipPath><g clip-path="url(#hairClip)"><path d="'+sp+'" stroke="#8d857c" stroke-width="1.6" stroke-linecap="round"/></g><use href="#hairShape" fill="none" class="rl" stroke-width="3.5"/>'}; },
+      bald(){ return {front:'<path d="M164 122 Q182 106 210 108" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".16"/>'}; },
+      capBack(){ return {front:'<path class="rl" d="M126 150 Q96 168 108 198 Q124 184 136 164 Z" fill="#141317" stroke-width="3.5"/><path class="rl" d="M128 160 Q120 78 200 72 Q280 78 272 160 Q262 140 244 134 Q200 126 156 134 Q138 140 128 160 Z" fill="#1d1c21" stroke-width="3.5"/>'+
+        '<path d="M176 136 Q200 131 224 136 L223 146 Q200 142 177 146 Z" fill="var(--hair)"/><path class="rl" d="M160 130 Q200 120 240 130 L239 140 Q200 131 161 140 Z" fill="#0d0d10" stroke-width="2.4"/><rect x="216" y="128" width="12" height="7" rx="1.5" fill="#cfcfd4" stroke="#1B120C" stroke-width="1.5"/>'}; },
+      twists(){ let s = ''; for(let x = 146; x <= 252; x += 9){ const mid = 1 - Math.abs(x - 200)/60, len = 118 + mid*30 + rnd()*6, bend = (x - 200)*.08 + (rnd()-.5)*4; s += 'M'+x+' 92 Q'+(x + bend).toFixed(1)+' '+(len - 20).toFixed(1)+' '+(x + bend*1.6).toFixed(1)+' '+len.toFixed(1)+' '; }
+        return {front:'<path class="rl" d="M132 172 Q124 88 200 76 Q276 88 268 172 L258 172 Q256 136 240 124 Q200 112 160 124 Q144 136 142 172 Z" fill="var(--hair)" stroke-width="3.5"/><path d="'+s+'" fill="none" stroke="var(--rk)" stroke-width="10" stroke-linecap="round"/><path d="'+s+'" fill="none" stroke="var(--hair)" stroke-width="7" stroke-linecap="round"/>'}; },
+      locsGrey(){ let s = ''; for(let x = 140; x <= 260; x += 10){ const a = (x - 200)/60, top = 70 + Math.abs(a)*14 + rnd()*6; s += 'M'+x+' 110 Q'+(x + a*10).toFixed(1)+' '+(top + 14).toFixed(1)+' '+(x + a*22).toFixed(1)+' '+top.toFixed(1)+' '; }
+        return {front:'<path d="'+s+'" fill="none" stroke="var(--rk)" stroke-width="11" stroke-linecap="round"/><path d="'+s+'" fill="none" stroke="var(--hair)" stroke-width="8" stroke-linecap="round"/><path class="rl" d="M132 172 Q126 98 200 90 Q274 98 268 172 L260 172 Q258 132 238 116 Q200 106 162 116 Q142 132 140 172 Z" fill="var(--hair)" stroke-width="3.5"/>'}; },
+      braids(){ const b = 'M136 150 Q108 260 118 430 L186 430 Q160 330 156 220 Z', st = 'M142 150 Q128 236 140 340 M152 168 Q142 250 152 350';
+        return {back:'<path class="rl" d="'+b+'" fill="var(--hair)" stroke-width="3.5"/><path class="rl" d="'+mir(b)+'" fill="var(--hair)" stroke-width="3.5"/>',
+          front:'<path class="rl" d="M134 180 Q126 90 200 82 Q274 90 266 180 Q262 140 246 122 Q222 108 200 110 Q178 108 154 122 Q138 140 134 180 Z" fill="var(--hair)" stroke-width="3.5"/><path d="'+st+' '+mir(st)+'" fill="none" stroke="var(--rk)" stroke-width="11" stroke-linecap="round"/><path d="'+st+' '+mir(st)+'" fill="none" stroke="var(--hair)" stroke-width="8" stroke-linecap="round"/><path d="'+st+' '+mir(st)+'" fill="none" stroke="#3a2b22" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>'}; },
+      long(){ const b = 'M134 150 Q98 240 106 330 Q118 348 148 342 Q168 338 178 324 Q156 262 156 182 Z';
+        return {back:'<path class="rl" d="'+b+'" fill="var(--hair)" stroke-width="3.5"/><path class="rl" d="'+mir(b)+'" fill="var(--hair)" stroke-width="3.5"/>',
+          front:'<path class="rl" d="M132 184 Q122 90 200 82 Q280 90 268 184 Q266 140 246 120 Q214 104 184 116 Q156 128 146 158 Q138 172 132 184 Z" fill="var(--hair)" stroke-width="3.5"/><g class="rl" stroke-width="2.6"><path d="M150 90 Q170 80 192 90 Q190 104 170 104 Q150 102 150 90 Z M208 90 Q230 80 250 90 Q250 102 230 104 Q210 104 208 90 Z" fill="#1c1b22"/></g>'}; },
+      wrap(){ return {front:'<path class="rl" d="M128 166 Q110 86 170 62 Q206 48 246 60 Q292 80 272 166 Q262 138 236 128 Q200 120 164 128 Q138 138 128 166 Z" fill="url(#waxB)" stroke-width="3.5"/><path class="rl" d="M204 64 Q226 26 262 46 Q256 66 226 72 Z" fill="url(#waxB)" stroke-width="3"/>'}; }
+    };
+    HAIR.curlyTop = HAIR.lineup;
+    function beard(c){
+      const [W, JW, C] = c.face, ext = c.beard==='fullBushy' ? 14 : 0;
+      const o = 'M'+(205-W)+' 178 Q'+(197-W)+' 226 '+(201-JW)+' 264 Q164 '+(C+3+ext)+' 200 '+(C+8+ext)+' Q236 '+(C+3+ext)+' '+(199+JW)+' 264 Q'+(203+W)+' 226 '+(195+W)+' 178';
+      const full = o+' L'+(191+W)+' 178 Q'+(192+W)+' 216 '+(189+JW)+' 238 Q232 252 230 266 Q229 285 215 295 Q207 298 205 288 Q204 282 200 282 Q196 282 195 288 Q193 298 185 295 Q171 285 170 266 Q168 252 '+(211-JW)+' 238 Q'+(208-W)+' 216 '+(209-W)+' 178 Z';
+      if(c.beard==='full' || c.beard==='fullBushy') return '<path d="'+full+'" fill="var(--beard)"/><path class="rl" d="'+o+'" fill="none" stroke-width="4"/>';
+      if(c.beard==='stubble') return '<path d="'+full+'" fill="var(--beard)" opacity=".32"/>';
+      if(c.beard==='goatee') return '<path d="M184 286 Q200 280 216 286 Q216 '+(C-2)+' 200 '+(C+6)+' Q184 '+(C-2)+' 184 286 Z" fill="var(--beard)"/>';
+      return '';
+    }
+    function moustache(c){
+      if(c.mous==='penalty' || c.mous==='grey') return '<path d="M169 268 Q171 255 181 250 Q189 246 196 248 L200 251.5 L204 248 Q211 246 219 250 Q229 255 231 268 Q227 261 220 258 Q211 255 205 256.5 Q200 258 195 256.5 Q189 255 180 258 Q173 261 169 268 Z" fill="var(--beard)"/>';
+      if(c.mous==='thin') return '<path d="M176 257 Q186 249 198 252 L200 253 L202 252 Q214 249 224 257 Q213 254 200 256 Q187 254 176 257 Z" fill="var(--beard)" opacity="'+(c.beard==='stubble' ? .6 : .95)+'"/>';
+      if(c.mous==='thick') return '<path class="rl" d="M160 270 Q162 250 182 244 Q194 242 200 247 Q206 242 218 244 Q238 250 240 270 Q232 260 220 258 Q210 256 200 259 Q190 256 180 258 Q168 260 160 270 Z" fill="var(--beard)" stroke-width="2.6"/>';
+      return '';
+    }
+    const OUT = {tee:['#2b2631','#17141b'], hoodie:['#1f1d22','#121114'], denim:['#33405a','#222b3d'], polo:['#3f6f9e','#2a4e75'], uniform:['#9b8d5f','#77693f'], suit:['#2a292e','#18171b'], apron:['#1f2a44','#141c30'], oldjacket:['#24211f','#161413']};
+    function outfit(c){
+      const SH = 'M34 430 Q38 350 138 331 Q160 326 170 330 Q200 352 230 330 Q240 326 262 331 Q362 350 366 430 Z';
+      if(c.out==='wax' || c.out==='dress') return '<path class="rl" d="M52 430 Q56 362 140 344 Q166 336 172 330 Q200 350 228 330 Q234 336 260 344 Q344 362 348 430 Z" fill="var(--skin)" stroke-width="4"/>'+
+        (c.out==='wax' ? '<path class="rl" d="M40 430 Q58 394 120 390 Q222 378 300 338 Q342 324 362 352 L364 430 Z" fill="url(#waxA)" stroke-width="4"/>' : '<path class="rl" d="M46 430 Q70 384 150 394 Q200 414 250 394 Q330 384 354 430 Z" fill="#151317" stroke-width="4"/>');
+      const o = OUT[c.out] || OUT.tee;
+      return '<path class="rl" d="'+SH+'" fill="'+o[0]+'" stroke-width="4"/><path d="M262 333 Q356 352 364 430 L298 430 Q306 372 262 333 Z" fill="'+o[1]+'"/><path class="rl" d="M166 330 Q200 360 234 330" fill="none" stroke-width="4"/>';
+    }
+    const MOUTHS = ''+
+      '<g class="ex" data-m="calm"><path d="M174 262 Q184 254 193 255 Q200 258 207 255 Q216 254 226 262 Q200 265 174 262 Z" fill="var(--lip)"/><path d="M175 262 Q200 266 225 262 Q218 278 200 280 Q182 278 175 262 Z" fill="var(--lip-lo)"/><ellipse cx="195" cy="270" rx="9" ry="3" fill="var(--lip-hi)" opacity=".75"/><path class="rl" d="M174 262 Q200 266 226 262" fill="none" stroke-width="2.6"/></g>'+
+      '<g class="ex" data-m="smile"><path class="rl" d="M174 260 Q200 268 226 260 Q222 284 200 287 Q178 284 174 260 Z" fill="#3a1210" stroke-width="2.4"/><path class="teeth" d="M178 261 Q200 268 222 261 L221 268 Q200 274 179 268 Z" fill="#FBF6EE"/><path d="M186 281 Q200 275 214 281 Q208 286 200 286 Q192 286 186 281 Z" fill="#b5473f"/><path d="M172 260 Q184 252 193 253 Q200 256 207 253 Q216 252 228 260 Q200 263 172 260 Z" fill="var(--lip)"/><path d="M178 284 Q200 292 222 284 Q214 295 200 296 Q186 295 178 284 Z" fill="var(--lip-lo)"/></g>'+
+      '<g class="ex" data-m="smirk"><path d="M176 264 Q186 257 194 257 Q200 259 206 256 Q216 252 228 251 Q214 262 176 264 Z" fill="var(--lip)"/><path d="M177 264 Q205 263 228 251 Q222 270 202 278 Q184 279 177 264 Z" fill="var(--lip-lo)"/><path class="teeth" d="M211 259 Q219 257 226 252.5 L224 258 Q218 261.5 211 262 Z" fill="#FBF6EE"/><path class="rl" d="M176 264 Q205 263 228 251 L232 249" fill="none" stroke-width="2.6"/></g>'+
+      '<g class="ex" data-m="shout"><path class="rl" d="M172 258 Q200 250 228 258 Q226 297 200 301 Q174 297 172 258 Z" fill="#3a1210" stroke-width="2.6"/><path class="teeth" d="M176 259 Q200 252 224 259 L223 267 Q200 262 177 267 Z M183 292 Q200 288 217 292 L215 285 Q200 282 185 285 Z" fill="#FBF6EE"/><path d="M170 258 Q186 248 200 251 Q214 248 230 258 Q200 254 170 258 Z" fill="var(--lip)"/><path d="M178 297 Q200 309 222 297 Q214 307 200 308 Q186 307 178 297 Z" fill="var(--lip-lo)"/></g>'+
+      '<g class="ex" data-m="grimace"><path class="rl" d="M170 266 Q200 256 230 266 Q228 279 200 279 Q172 279 170 266 Z" fill="#3a1210" stroke-width="2.4"/><path class="teeth" d="M174 266 Q200 259 226 266 Q224 277 200 277 Q176 277 174 266 Z" fill="#FBF6EE"/><path d="M188 261 L188 277 M200 260 L200 277 M212 261 L212 277" stroke="#8a7a6a" stroke-width="1.3"/><path d="M168 267 Q184 252 200 256 Q216 252 232 267 Q200 259 168 267 Z" fill="var(--lip)"/></g>'+
+      '<g class="ex" data-m="o"><ellipse class="rl" cx="200" cy="273" rx="12" ry="15" fill="#3a1210" stroke-width="2.4"/><path class="teeth" d="M190 262 Q200 258 210 262 L209 266.5 Q200 264 191 266.5 Z" fill="#FBF6EE"/><path d="M184 267 Q187 254 200 255 Q213 254 216 267 Q210 259 200 258 Q190 259 184 267 Z" fill="var(--lip)"/></g>'+
+      '<g class="ex" data-m="grin"><path class="rl" d="M168 258 Q200 266 232 256 Q224 281 200 283 Q176 281 168 258 Z" fill="#3a1210" stroke-width="2.4"/><path class="teeth" d="M172 259 Q200 266 228 257 Q224 275 200 277 Q176 275 172 259 Z" fill="#FBF6EE"/><path d="M166 258 Q184 250 194 252 Q200 254 206 252 Q216 250 234 256 Q200 262 166 258 Z" fill="var(--lip)"/><path d="M176 279 Q200 293 224 277 Q214 291 200 292 Q186 291 176 279 Z" fill="var(--lip-lo)"/></g>'+
+      '<g class="ex" data-m="drop"><path class="rl" d="M180 260 Q200 254 220 260 Q224 301 200 311 Q176 301 180 260 Z" fill="#3a1210" stroke-width="2.6"/><path class="teeth" d="M183 261 Q200 256 217 261 L216 268 Q200 264 184 268 Z" fill="#FBF6EE"/><path d="M186 301 Q200 291 214 301 Q208 309 200 309 Q192 309 186 301 Z" fill="#b5473f"/><path d="M178 260 Q190 250 200 253 Q210 250 222 260 Q200 256 178 260 Z" fill="var(--lip)"/></g>';
+    const SIGNS = '<g class="ex" data-x="sweat"><path class="rl" d="M272 138 Q285 159 272 168 Q259 159 272 138 Z" fill="#85B7EB" stroke-width="2.6"/></g>'+
+      '<g class="ex" data-x="vein"><path d="M226 128 l10 -10 m-6 14 l14 -6 m-16 -4 l6 13 m4 -16 l6 13" fill="none" stroke="#E24B4A" stroke-width="4" stroke-linecap="round"/></g>'+
+      '<g class="ex" data-x="spark"><path class="rl" d="M282 108 l5 14 14 5 -14 5 -5 14 -5 -14 -14 -5 14 -5z" fill="#FFC93C" stroke-width="2.4"/></g>'+
+      '<g class="ex" data-x="blush"><path d="M150 206 l6 -6 m2 8 l6 -6 m2 8 l6 -6 M230 206 l6 -6 m2 8 l6 -6 m2 8 l6 -6" stroke="#E24B4A" stroke-width="2.6" stroke-linecap="round"/></g>';
+    const BASE = {o:[152,182], i:[188,183], u:[170,170], l:[171,192], r:7.5, dy:0};
+    const EX = {
+      'Calme':{m:'calm', bl:'M189 160 Q170 149 150 153 Q144 155 143 159 Q160 155 172 158 Q182 160 188 167 Z', eye:{}},
+      'Content':{m:'smile', bl:'M189 157 Q170 145 150 149 Q144 151 143 155 Q160 151 172 154 Q182 156 188 164 Z', eye:{u:[170,168], l:[171,183]}},
+      'Bluff':{m:'smirk', bl:'M189 163 Q170 157 150 158 Q144 159 143 163 Q160 161 172 163 Q182 165 188 170 Z', br:'M189 153 Q170 139 150 145 Q144 147 143 151 Q160 146 172 150 Q182 152 188 160 Z', eye:{u:[170,179], l:[171,190]}, eyeR:{u:[170,172], l:[171,191]}, look:3},
+      'Surpris':{m:'o', bl:'M189 148 Q170 132 150 138 Q144 140 143 144 Q160 139 172 142 Q182 145 188 155 Z', eye:{u:[170,159], l:[171,199], r:6.5}},
+      'En colère':{m:'shout', bl:'M191 168 Q172 154 150 150 Q144 150 143 154 Q162 158 174 164 Q184 169 189 176 Z', eye:{o:[152,179], i:[188,185], u:[176,177], l:[171,194]}, x:['vein']},
+      'Gêné':{m:'grimace', bl:'M189 152 Q172 151 150 161 Q145 164 145 167 Q164 160 174 160 Q183 159 188 159 Z', eye:{o:[152,184], i:[188,181], u:[164,168], l:[171,192]}, look:-4, x:['sweat','blush']},
+      'Fier':{m:'grin', bl:'M189 161 Q170 150 150 152 Q144 154 143 158 Q160 154 172 157 Q182 159 188 167 Z', eye:{u:[170,175], l:[171,185]}, x:['spark']},
+      'Choqué':{m:'drop', bl:'M189 141 Q170 124 150 132 Q144 134 143 138 Q160 132 172 136 Q182 139 188 149 Z', eye:{u:[170,153], l:[171,205], r:4.5}}
+    };
+    function markup(c){
+      const [W, JW, Cy] = c.face, sx = W/66, dx = W - 66, nk = c.neck, sk = SK[c.sk]; seed = 7;
+      const vars = '--skin:'+sk[0]+';--skin-sh:'+sk[1]+';--skin-dp:'+sk[2]+';--skin-hi:'+sk[3]+';--lip:'+c.lips[0]+';--lip-lo:'+c.lips[1]+';--lip-hi:'+c.lips[2]+';--hair:'+c.hc[0]+';--fade:'+c.hc[1]+';--brow:'+(c.brow||c.hc[0])+';--beard:'+(c.bc||c.hc[0])+';--rk:#1B120C';
+      const hair = HAIR[c.hair](c), fd = faceD(W, JW, Cy);
+      const mask = c.mask ? '<g>'+['M150 138 Q108 110 116 56 Q134 96 166 116 Z', mir('M150 138 Q108 110 116 56 Q134 96 166 116 Z')].map(d=> '<path class="rl" d="'+d+'" fill="#c9a03c" stroke-width="3.5"/>').join('')+
+        '<path class="rl" d="M138 136 Q138 96 200 90 Q262 96 262 136 Q268 202 248 262 Q230 302 200 308 Q170 302 152 262 Q132 202 138 136 Z" fill="#c8a040" stroke-width="4"/><path d="M226 94 Q266 110 262 160 Q264 230 240 280 Q222 304 206 307 Q240 260 244 200 Q248 136 226 94 Z" fill="#94701f" opacity=".75"/>'+
+        '<path class="rl" d="M146 170 Q170 150 194 170 M254 170 Q230 150 206 170" fill="none" stroke-width="4.5"/><path d="M148 184 Q170 166 194 184 Q170 198 148 184 Z M252 184 Q230 166 206 184 Q230 198 252 184 Z" fill="#1a0d05"/>'+
+        '<path class="rl" d="M164 262 Q200 248 236 262 Q222 292 200 294 Q178 292 164 262 Z" fill="#1a0d05" stroke-width="3"/><path id="fangs" d="M174 263 L181 284 L188 264 Z M212 264 L219 284 L226 263 Z" fill="#f1e6c8"/></g><g class="rme"><path id="mEyeL" fill="#ff8a2a"/><path id="mEyeR" fill="#ff8a2a"/></g>' : '';
+      return '<defs><pattern id="waxA" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)"><rect width="40" height="40" fill="#1d3f8a"/><path d="M0 20 Q10 4 20 20 T40 20" fill="none" stroke="#F2B81D" stroke-width="6"/><circle cx="20" cy="32" r="6" fill="#C8352B"/></pattern>'+
+        '<pattern id="waxB" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><rect width="30" height="30" fill="#B8262E"/><path d="M0 15 L15 0 L30 15 L15 30 Z" fill="#F2B81D"/><circle cx="15" cy="15" r="5" fill="#1d3f8a"/></pattern>'+
+        '<clipPath id="faceClip"><path id="faceShape" d="'+fd+'"/></clipPath></defs>'+
+        '<g class="rb" style="'+vars+'">'+(hair.back||'')+outfit(c)+
+        '<path class="rl" d="M'+(202-nk)+' 276 L'+(200-nk)+' 334 Q200 358 '+(200+nk)+' 334 L'+(198+nk)+' 276 Z" fill="var(--skin)" stroke-width="3.5"/><path d="M'+(200-nk)+' 286 Q200 336 '+(200+nk)+' 286 L'+(200+nk)+' 326 Q200 346 '+(200-nk)+' 326 Z" fill="var(--skin-dp)" opacity=".7"/>'+
+        (c.chain ? '<path d="M'+(200-nk+7)+' 337 Q184 384 200 394 Q216 384 '+(200+nk-7)+' 337" fill="none" stroke="#E9BE55" stroke-width="'+(c.chain===2 ? 4.4 : 2.6)+'" stroke-dasharray="4 2.5"/>' : '')+
+        '<path class="rl" d="M'+(137-dx)+' 180 Q'+(115-dx)+' 172 '+(117-dx)+' 197 Q'+(119-dx)+' 222 '+(141-dx)+' 219" fill="var(--skin)" stroke-width="3.5"/><path class="rl" d="M'+(263+dx)+' 180 Q'+(285+dx)+' 172 '+(283+dx)+' 197 Q'+(281+dx)+' 222 '+(259+dx)+' 219" fill="var(--skin-sh)" stroke-width="3.5"/>'+
+        '<use href="#faceShape" fill="var(--skin)"/><g clip-path="url(#faceClip)"><path d="M228 102 Q'+(206+W)+' 118 '+(203+W)+' 182 Q'+(202+W)+' 244 '+(200+JW*.71).toFixed(1)+' 290 Q218 '+Cy+' 204 '+Cy+' Q240 268 '+(182+W)+' 212 Q'+(186+W)+' 152 228 102 Z" fill="var(--skin-sh)"/>'+
+        '<ellipse cx="171" cy="177" rx="22" ry="10" fill="var(--skin-sh)" opacity=".4"/><ellipse cx="229" cy="177" rx="22" ry="10" fill="var(--skin-dp)" opacity=".45"/>'+
+        (c.age ? '<path d="M179 236 Q167 250 171 270 M221 236 Q233 250 229 270" fill="none" stroke="var(--skin-dp)" stroke-width="2.4" stroke-linecap="round"/>' : '')+'</g>'+
+        '<use href="#faceShape" fill="none" class="rl" stroke-width="4"/><g transform="translate(200 0) scale('+sx.toFixed(3)+' 1) translate(-200 0)">'+hair.front+'</g>'+
+        '<g class="rbrows"><path id="browL"/><path id="browR"/></g>'+
+        '<g class="reyes"><path id="lidL" fill="var(--skin-sh)" opacity=".75"/><path id="lidR" fill="var(--skin-dp)" opacity=".75"/><path id="eyeWL" fill="#FBF6EE"/><path id="eyeWR" fill="#FBF6EE"/>'+
+        '<clipPath id="ecL"><use href="#eyeWL"/></clipPath><clipPath id="ecR"><use href="#eyeWR"/></clipPath>'+
+        '<g id="irises"><g clip-path="url(#ecL)"><g id="irL"><circle r="7.5" fill="#140c08"/><circle r="4" fill="#000"/><circle cx="-2.6" cy="-2.6" r="2.2" fill="#fff"/></g></g><g clip-path="url(#ecR)"><g id="irR"><circle r="7.5" fill="#140c08"/><circle r="4" fill="#000"/><circle cx="-2.6" cy="-2.6" r="2.2" fill="#fff"/></g></g></g>'+
+        '<path id="lashL" class="rl" fill="none" stroke-width="'+(c.fem ? 5 : 4.2)+'"/><path id="lashR" class="rl" fill="none" stroke-width="'+(c.fem ? 5 : 4.2)+'"/></g>'+
+        '<g transform="translate(200 0) scale('+(c.fem ? .88 : 1)+' 1) translate(-200 0)"><path d="M206 182 Q211 204 215 222 Q208 218 204 210 Q202 196 206 182 Z" fill="var(--skin-sh)" opacity=".85"/><path d="M180 238 Q200 251 220 238 Q214 247 200 249 Q186 247 180 238 Z" fill="var(--skin-dp)" opacity=".7"/>'+
+        '<path class="rl" d="M181 231 Q177 238 183 242 Q187 244 191 242 M219 231 Q223 238 217 242 Q213 244 209 242" fill="none" stroke-width="2.8"/><ellipse cx="189" cy="238.5" rx="4.2" ry="2.2" fill="#2a140a"/><ellipse cx="211" cy="238.5" rx="4.2" ry="2.2" fill="#2a140a"/></g>'+
+        (c.mask ? '' : beard(c) + moustache(c))+'<g class="rmouths">'+MOUTHS+'</g>'+(c.mask ? beard(c) + mask : '')+SIGNS+'</g>'+
+        '<g class="rglow"><path id="gEyeL"/><path id="gEyeR"/>'+(c.mask ? '' : '<use href="#irises"/>')+'<path id="gTeeth"/></g>';
+    }
+    function eyeSet(R, side, e){
+      const o = e.o, i = e.i, u = R.closed ? [e.u[0], 186] : e.u, l = R.closed ? [e.l[0], 187] : e.l, f = side==='R' ? mir : (d=> d);
+      const white = 'M'+P(o)+' Q'+P(u)+' '+P(i)+' Q'+P(l)+' '+P(o)+' Z';
+      R.q('eyeW'+side).setAttribute('d', f(white)); R.q('gEye'+side).setAttribute('d', f(white)); const me = R.q('mEye'+side); if(me) me.setAttribute('d', f(white));
+      R.q('lash'+side).setAttribute('d', f('M'+(o[0]-3)+' '+(o[1]+1)+' Q'+P(u)+' '+P(i)+(R.c.fem ? ' M'+(o[0]+2)+' '+(o[1]-1)+' L'+(o[0]-6)+' '+(o[1]-6) : '')));
+      R.q('lid'+side).setAttribute('d', f('M'+P(o)+' Q'+P(u)+' '+P(i)+' L'+(i[0]-3)+' '+(i[1]-5)+' Q'+u[0]+' '+(u[1]-8)+' '+(o[0]+2)+' '+(o[1]-5)+' Z'));
+      R.q('ir'+side).setAttribute('transform', 'translate('+((side==='L' ? 171 : 229) + R.look)+' 183) scale('+(e.r/7.5)+')');
+    }
+    function eyes(R){ const x = EX[R.cur], k = R.c.open || 0;
+      const eL = Object.assign({}, BASE, x.eye); eL.u = [eL.u[0], eL.u[1] - k]; eL.l = [eL.l[0], eL.l[1] + k/2];
+      const eR = Object.assign({}, eL, x.eyeR || {}); if(x.eyeR){ eR.u = [eR.u[0], eR.u[1] - k]; eR.l = [eR.l[0], eR.l[1] + k/2]; }
+      eyeSet(R, 'L', eL); eyeSet(R, 'R', eR); }
+    function setEx(R, name){
+      R.cur = name; const e = EX[name], thin = R.c.fem, top = d=> d.match(/^M\S+ \S+ Q\S+ \S+ \S+ \S+/)[0];
+      const bl = e.bl, br = mir(e.br || e.bl);
+      [['browL', bl], ['browR', br]].forEach(([id, d])=>{ const el = R.q(id); el.setAttribute('d', thin ? top(d) : d); el.setAttribute('fill', thin ? 'none' : 'var(--brow)'); el.setAttribute('stroke', thin ? 'var(--brow)' : '#1B120C'); el.setAttribute('stroke-width', thin ? 4.4 : 1.2); el.setAttribute('stroke-linecap', 'round'); });
+      R.look = e.look || 0; eyes(R);
+      let teeth = '';
+      R.svg.querySelectorAll('[data-m]').forEach(g=>{ const on = g.dataset.m===e.m; g.classList.toggle('show', on); if(on) g.querySelectorAll('.teeth').forEach(t=> teeth += t.getAttribute('d')+' '); });
+      if(R.c.mask) teeth = R.q('fangs').getAttribute('d');
+      R.q('gTeeth').setAttribute('d', teeth.trim() || 'M0 0');
+      R.svg.querySelectorAll('[data-x]').forEach(g=> g.classList.toggle('show', (e.x||[]).includes(g.dataset.x)));
+    }
+    function mount(el, id){
+      const c = CAST[id]; if(!c || !el) return false;
+      const n = ++N, sfx = '-r'+n;
+      let html = markup(c).replace(/id="([A-Za-z]+)"/g, 'id="$1'+sfx+'"').replace(/url\(#([A-Za-z]+)\)/g, 'url(#$1'+sfx+')').replace(/href="#([A-Za-z]+)"/g, 'href="#$1'+sfx+'"');
+      el.innerHTML = '<svg class="rig'+(c.mask ? ' masked' : '')+(c.fem ? '' : '')+'" viewBox="98 66 204 204" aria-hidden="true">'+html+'</svg>';
+      el.classList.add('has-rig');
+      const svg = el.firstChild, R = {c, svg, el, cur:'Calme', look:0, closed:false, back:0, q:x=> svg.querySelector('#'+x+sfx)};
+      el._rig = R; setEx(R, 'Calme'); live.add(R); return true;
+    }
+    function react(el, name, ms){ const R = el && el._rig; if(!R) return; setEx(R, name); clearTimeout(R.back); R.back = setTimeout(()=>{ if(R.svg.isConnected) setEx(R, 'Calme'); }, ms || 2600); }
+    function talk(el, ms){ const R = el && el._rig; if(!R) return; R.svg.classList.remove('talk'); void R.svg.getBBox; R.svg.classList.add('talk'); clearTimeout(R.tk); R.tk = setTimeout(()=> R.svg.classList.remove('talk'), ms || 1500); }
+    // alive: blinking, glancing, now and then a little look while thinking
+    setInterval(()=>{ live.forEach(R=>{ if(!R.svg.isConnected){ live.delete(R); return; }
+      if(Math.random() < .28){ R.closed = true; eyes(R); setTimeout(()=>{ R.closed = false; eyes(R); }, 130); }
+      if(R.cur==='Calme' && !EX[R.cur].look && Math.random() < .35){ R.look = Math.round((Math.random() - .5)*6); eyes(R); } }); }, 1100);
+    const castOf = charId=>{ if(charId==='mbarga') return 'masque'; const f = ART_FILE[charId] || ''; const m = /perso-([a-z-]+)/.exec(f); if(!m) return null;
+      return {'mami-ange':'mami'}[m[1]] || m[1]; };
+    return {mount, react, talk, castOf, has:id=> !!CAST[id]};
+  })();
+  // after each trick the opponent's face says what he thinks of it (not every time, so it stays alive and not mechanical)
+  function rigTrick(winner){ if(mode!=='ai') return; const av = document.getElementById('oppAvatar'); if(!av || !av._rig || Math.random() > .6) return;
+    Rig.react(av, winner==='ai' ? (Math.random() < .5 ? 'Bluff' : 'Content') : (Math.random() < .5 ? 'Gêné' : 'Surpris'), 1600); }
+  // a kind of remark → the face that goes with it
+  const RIG_FACE = {win:'Content', cora:'Fier', glacee:'Fier', lose:'En colère', surprise:'Choqué', missed:'Gêné', behind:'Bluff', claque:'Fier', control:'Bluff', bank:'Gêné'};
+
   function fillAvatar(el, charId, label){
     if(!el) return;
+    // the opponent at the table, and the players of the Carré: a living character
+    if(charId && (el.id==='oppAvatar' || el.dataset.seat) && Rig.mount(el, Rig.castOf(charId))) return;
+    el.classList.remove('has-rig');
     const p = DUEL_PERSONAS[charId];
     const initial = ((label || (p && p.name) || '?').trim().charAt(0) || '?').toUpperCase();
     el.innerHTML = '<span class="av-ini"></span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : charId==='mbarga' ? maskMedal() : '');
@@ -6287,10 +6491,18 @@
     trickTalks++;
     penaltySay(lines);
   }
-  function penaltySay(lines){
+  function penaltySay(lines, kind){
     if(mode==='mp') return;
     const bubble = document.getElementById('penaltyBubble');
     if(!bubble || !lines || lines.length===0) return;
+    // a big certificate (CORA, 33 Glacée) covers the table: the remark waits until it is gone, so it is always seen
+    const cert = document.querySelector('.cert-overlay.show');
+    if(cert && !(penaltySay._w > 12)){ penaltySay._w = (penaltySay._w||0) + 1; setTimeout(()=> penaltySay(lines, kind), 450); return; }
+    penaltySay._w = 0;
+    // the face goes with the words
+    if(!kind){ const PL = oppPersona().lines || {}; kind = Object.keys(PL).find(k=> PL[k]===lines) || (typeof CLAQUE_LINES!=='undefined' && lines===CLAQUE_LINES ? 'claque' : ''); }
+    const av = document.getElementById('oppAvatar');
+    Rig.react(av, RIG_FACE[kind] || 'Bluff', 3300); Rig.talk(av, 1500);
     let line = lines[Math.floor(Math.random()*lines.length)];
     if(line===lastLine && lines.length>1) line = lines[(lines.indexOf(line)+1) % lines.length];
     lastLine = line; lastTalkAt = Date.now();
@@ -6442,7 +6654,9 @@
     if(document.body.classList.contains('calm')) return;
     const sel = who==='ai' ? '#oppAvatar, #oppTableArt' : '.sq-name .avatar[data-seat="'+who+'"]';
     document.querySelectorAll(sel).forEach(el=>{
-      el.classList.remove('speaking','hop','shake'); void el.offsetWidth; el.classList.add(kind);
+      if(el._rig && kind!=='speaking') Rig.react(el, kind==='hop' ? 'Content' : 'En colère', 1300);
+    if(el._rig && kind==='speaking') Rig.talk(el, 1400);
+    el.classList.remove('speaking','hop','shake'); void el.offsetWidth; el.classList.add(kind);
       clearTimeout(el._fxT);
       el._fxT = setTimeout(()=> el.classList.remove(kind), kind==='speaking' ? 1800 : 700);
     });
@@ -8463,6 +8677,7 @@
       logMsg((actor==='you'?'Toi':'Penalty')+(card.suit!==leadCard.suit?' joue libre — pas de contrôle.':' suit mais reste plus faible.'));
     }
     state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA/glacée
+    rigTrick(winner);
     state.leader = winner;
     state.leadSuit = null; state._leadCard=null; state._leadActor=null;
     renderAll();
@@ -8502,6 +8717,7 @@
       if(!best) markVoid(actor, leadCard.suit);
     }
     state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA
+    rigTrick(winner);
     state.passer = null;
     state.leader = winner;
     state.leadSuit = null; state._leadCard=null; state._leadActor=null;
@@ -10127,6 +10343,7 @@
     sqSay.last = Date.now();
     const text = lines[Math.floor(Math.random()*lines.length)];
     sqBubble(id, text);
+    const sav = document.querySelector('.sq-name .avatar[data-seat="'+id+'"]'); if(sav){ Rig.react(sav, RIG_FACE[category] || 'Bluff', 3000); Rig.talk(sav, 1400); }
     avatarFx(id, category==='win'||category==='cora'||category==='glacee' ? 'hop' : 'speaking');
     sqEvent('say', {seat:id, text});
   }
