@@ -3437,8 +3437,30 @@
   body.ui-d:not(#z) .bk-toc button[disabled]{ opacity:.45; box-shadow:none; }
   body.ui-d:not(#z) .bk-toc .w{ font-family:var(--d-b) !important; }
   /* the reading */
-  body.ui-d:not(#z) .bk-shot{ transform:none !important; transition:opacity .8s ease !important; }
+  /* the place is a comic panel in its frame, at the bottom; the text box stays at the top */
+  body.ui-d:not(#z) .bk-shot{ inset:auto !important; left:50% !important; bottom:calc(84px + env(safe-area-inset-bottom, 0px)) !important; transform:translateX(-50%) !important;
+    width:min(calc(100% - 28px), calc(40vh * var(--ar, 1.2))); aspect-ratio:var(--ar, 1.2); background-size:100% 100% !important; background-color:#0b0920;
+    border:4px solid #000; border-radius:20px; box-shadow:0 7px 0 #000; overflow:hidden; transition:opacity .8s ease !important; }
   body.ui-d:not(#z) .bk-shot.on{ animation:none !important; }
+  body.ui-d:not(#z) .bk-lines{ max-height:34vh !important; }
+  .bk-shot i{ position:absolute; pointer-events:none; font-style:normal; }
+  .cf-bulb{ width:34%; aspect-ratio:1; transform:translate(-50%, -50%); border-radius:50%; background:radial-gradient(circle, rgba(255,236,170,.55), rgba(255,200,110,.18) 40%, transparent 70%); mix-blend-mode:screen; animation:cfBulb 7s steps(1) infinite; }
+  @keyframes cfBulb{ 0%,88%,93%,100%{ opacity:1; } 89%,91%{ opacity:.25; } 90%,92%{ opacity:.8; } }
+  .cf-tw{ width:4px; height:4px; border-radius:50%; background:#FFE6A8; box-shadow:0 0 6px 2px rgba(255,214,106,.8); animation:cfTw 3s ease-in-out infinite; }
+  @keyframes cfTw{ 0%,100%{ opacity:.15; } 50%{ opacity:1; } }
+  .cf-smoke{ width:9%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle, rgba(235,235,235,.55), transparent 70%); transform:translate(-50%, 0); animation:cfSmoke 4s ease-out infinite; }
+  @keyframes cfSmoke{ 0%{ transform:translate(-50%, 0) scale(.5); opacity:0; } 20%{ opacity:.8; } 100%{ transform:translate(-30%, -150%) scale(1.8); opacity:0; } }
+  .cf-head{ width:22%; aspect-ratio:1; transform:translate(-50%, -50%); border-radius:50%; background:radial-gradient(circle, rgba(255,240,200,.6), transparent 65%); mix-blend-mode:screen; animation:cfHead 3.2s ease-in-out infinite; }
+  @keyframes cfHead{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+  .cf-glow{ width:30%; aspect-ratio:1; transform:translate(-50%, -50%); border-radius:50%; background:radial-gradient(circle, var(--c), transparent 65%); mix-blend-mode:screen; opacity:.5; animation:cfHead 4.5s ease-in-out infinite; }
+  .cf-pol{ width:60%; aspect-ratio:1; transform:translate(-50%, -50%); border-radius:50%; mix-blend-mode:screen; animation:cfPol 1.1s steps(1) infinite; }
+  .cf-pol.r{ background:radial-gradient(circle, rgba(255,40,40,.75), transparent 60%); } .cf-pol.b{ background:radial-gradient(circle, rgba(40,110,255,.8), transparent 60%); animation-delay:-.55s; }
+  @keyframes cfPol{ 0%{ opacity:1; } 50%{ opacity:.08; } }
+  .cf-neon{ background:radial-gradient(ellipse at 50% 50%, rgba(80,160,255,.35), transparent 70%); mix-blend-mode:screen; animation:cfNeon 5s ease-in-out infinite; }
+  @keyframes cfNeon{ 0%,100%{ opacity:.35; } 45%{ opacity:.85; } 47%{ opacity:.3; } 49%{ opacity:.85; } }
+  .cf-flick{ width:22%; aspect-ratio:1.6; transform:translate(-50%, -50%); background:radial-gradient(ellipse, rgba(255,90,220,.6), transparent 65%); mix-blend-mode:screen; animation:cfBulb 4s steps(1) infinite; }
+  .cf-spot{ width:70%; height:70%; transform:translateX(-50%); background:radial-gradient(ellipse at 50% 0, rgba(255,226,170,.35), transparent 70%); mix-blend-mode:screen; animation:cfHead 6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce){ .bk-shot i{ animation:none !important; } }
   body.ui-d:not(#z) .bk-lines{ top:calc(84px + env(safe-area-inset-top, 0px)) !important; transform:none !important; max-height:calc(100% - 230px) !important; overflow:auto;
     font:700 clamp(18px, 5.2vw, 22px)/1.5 var(--d-b) !important; color:#fff; background:rgba(20,17,48,.86); border:3px solid #000; border-radius:22px; padding:16px 18px; box-shadow:0 6px 0 #000; gap:.55em !important; }
   body.ui-d:not(#z) .bk-lines:empty{ display:none; }
@@ -6193,7 +6215,35 @@
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
   const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque'};
   // the characters are drawn now (art/d, one light SVG each); places stay in art/livre
-  const PIC = n=> /^(perso|lieu)-/.test(n) ? 'art/d/'+n+'.svg' : 'art/livre/'+n+'.webp';
+  // the places of the novel: a comic panel when one exists (art/d/case-*.jpg, width/height), otherwise a drawing
+  const CASES = {yaounde:[354,790], veillee:[472,397], coin:[422,397], meuble:[403,397], villa:[442,397], palmiers:[502,357], prestige:[518,357],
+    'table-masque':[318,357], kiosque:[413,365], bastos:[419,365], barrage:[419,365], studio:[400,365], 'bar-police':[445,365]};
+  const PIC = n=> /^lieu-/.test(n) && CASES[n.slice(5)] ? 'art/d/case-'+n.slice(5)+'.jpg' : /^(perso|lieu)-/.test(n) ? 'art/d/'+n+'.svg' : 'art/livre/'+n+'.webp';
+  // what moves in each panel, in % of the panel: bulbs that buzz, smoke, city lights, police lights, neon…
+  const CASE_FX = {
+    yaounde:[['tw',5,20,90,22,16]], veillee:[['bulb',52,26]], coin:[['bulb',52,17],['smoke',37,33],['smoke',70,31,1.6]],
+    meuble:[['glow',4,58,'#9fd0ff']], villa:[['bulb',51,8]], palmiers:[['head',93,77]],
+    prestige:[['neon',0,0,78,100],['glow',50,58,'#ff4fd8'],['flick',88,7]], 'table-masque':[['tw',44,22,32,30,8],['spot',50,0]],
+    kiosque:[['bulb',40,24],['head',86,62]], bastos:[['tw',2,12,60,22,12],['head',62,78],['head',79,74]],
+    barrage:[['pol',31,33,'r'],['pol',54,33,'b']], studio:[['glow',88,14,'#ffe6a8']], 'bar-police':[['tw',4,4,92,26,16]]
+  };
+  function caseFx(name){
+    let seed = name.length*7 + 3; const rnd = ()=> (seed = (seed*9301 + 49297) % 233280)/233280;
+    return (CASE_FX[name] || []).map(f=>{
+      if(f[0]==='tw'){ let s = ''; for(let k = 0; k < f[5]; k++) s += '<i class="cf-tw" style="left:'+(f[1] + rnd()*f[3]).toFixed(1)+'%;top:'+(f[2] + rnd()*f[4]).toFixed(1)+'%;animation-delay:-'+(rnd()*4).toFixed(2)+'s;animation-duration:'+(2.5 + rnd()*3).toFixed(2)+'s"></i>'; return s; }
+      if(f[0]==='neon') return '<i class="cf-neon" style="left:'+f[1]+'%;top:'+f[2]+'%;width:'+f[3]+'%;height:'+f[4]+'%"></i>';
+      if(f[0]==='glow') return '<i class="cf-glow" style="left:'+f[1]+'%;top:'+f[2]+'%;--c:'+f[3]+'"></i>';
+      if(f[0]==='pol') return '<i class="cf-pol '+f[3]+'" style="left:'+f[1]+'%;top:'+f[2]+'%"></i>';
+      if(f[0]==='smoke') return '<i class="cf-smoke" style="left:'+f[1]+'%;top:'+f[2]+'%;animation-delay:-'+(f[3]||0)+'s"></i><i class="cf-smoke" style="left:'+f[1]+'%;top:'+f[2]+'%;animation-delay:-'+((f[3]||0) + 2)+'s"></i>';
+      return '<i class="cf-'+f[0]+'" style="left:'+f[1]+'%;top:'+f[2]+'%"></i>';
+    }).join('');
+  }
+  // dress a picture frame of the book with its panel: its proportions, and what moves in it
+  function dressShot(el, src){
+    const m = /case-([a-z-]+)\.jpg/.exec(src || '');
+    if(m && CASES[m[1]]){ el.style.setProperty('--ar', (CASES[m[1]][0]/CASES[m[1]][1]).toFixed(4)); el.innerHTML = caseFx(m[1]); }
+    else { el.style.setProperty('--ar', /lieu-/.test(src || '') ? (4/7).toFixed(4) : '0.75'); el.innerHTML = ''; }
+  }
   const artSrc = base=> base.indexOf('livre/')===0 ? PIC(base.slice(6)) : 'art/'+base+'.webp';
   function artImgTag(base){
     if(base.indexOf('livre/')===0) return '<img src="'+artSrc(base)+'" alt="" onerror="this.remove()">';
@@ -12467,7 +12517,7 @@
       else if(FX[f]) FX[f]();
     }
     // ---------- showing a beat ----------
-    function showShot(src){ if(src===shotCur) return; shotCur = src; shotI ^= 1; const a = shots[shotI], b = shots[shotI^1]; a.style.backgroundImage = 'url("'+src+'")'; a.classList.remove('on'); void a.offsetWidth; a.classList.add('on'); b.classList.remove('on'); }
+    function showShot(src){ if(src===shotCur) return; shotCur = src; shotI ^= 1; const a = shots[shotI], b = shots[shotI^1]; a.style.backgroundImage = 'url("'+src+'")'; dressShot(a, src); a.classList.remove('on'); void a.offsetWidth; a.classList.add('on'); b.classList.remove('on'); }
     function hideShot(){ shots.forEach(x=> x.classList.remove('on')); shotCur = ''; }
     function render(s, quiet){
       clearInterval(typeT);
@@ -12478,7 +12528,7 @@
         void cardEl.offsetWidth; cardEl.classList.add('on'); return; }
       if(s.img){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); showShot(s.img); return; }
       // the drawn place stays behind the text (the text sits in its own box), until the next place
-      let place = ''; for(let k = i; k >= 0; k--){ if(steps[k].card) break; if(steps[k].img && /lieu-/.test(steps[k].img)){ place = steps[k].img; break; } }
+      let place = ''; for(let k = i; k >= 0; k--){ if(steps[k].card) break; if(steps[k].img && /lieu-|case-/.test(steps[k].img)){ place = steps[k].img; break; } }
       if(place) showShot(place); else hideShot();
       if(s.game){ openGame(s.game); return; }
       if(s.choice){ openChoice(s); return; }
