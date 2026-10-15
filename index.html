@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -3121,6 +3121,190 @@
   .gl-slider > span{ display:flex !important; justify-content:space-between; }
   .gl-slider b{ color: var(--p1); font-variant-numeric: tabular-nums; }
   .overlay.page .gl-slider input[type=range]{ width:100%; max-width:none; }
+
+  /* ===================== L'INTERFACE DESSINÉE (body.ui-d) =====================
+     Menus and pages in daylight: cream paper with mango dots, fat black outlines, a hard shadow under every
+     button that sinks when touched (like a cartoon), Fredoka for titles and Nunito for text. The table and the
+     book keep their night. Switched off in Réglages > « Interface dessinée ». */
+  body.ui-d{ --d-ink:#1B120C; --d-cream:#FFF6DC; --d-cream2:#FBE9BC; --d-card:#fff; --d-mango:#FFC93C; --d-mango-d:#E8A817; --d-red:#E24B4A;
+    --d-green:#2FB36B; --d-green-d:#1F8A50; --d-blue:#3D7FD9; --d-pink:#F06BA8; --d-txt:#2A1D12; --d-mute:#7A6650; --d-night:#1d1940;
+    --d-t:'Fredoka', 'Trebuchet MS', system-ui, sans-serif; --d-b:'Nunito', 'Segoe UI', system-ui, sans-serif; }
+  body.ui-d :is(#menuOverlay, .overlay.page){ background:var(--d-cream) !important; color:var(--d-txt);
+    background-image:radial-gradient(circle at 12px 12px, rgba(232,168,23,.16) 2.5px, transparent 3px) !important; background-size:26px 26px !important; font-family:var(--d-b); }
+  body.ui-d :is(#menuOverlay, .overlay.page)::before, body.ui-d :is(#menuOverlay, .overlay.page)::after{ display:none !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) .gl::before, body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) .gl::after{ content:none !important; display:none !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) :is(.gl, .lg){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page) :is(h2, h3, b){ text-shadow:none !important; }
+  body.ui-d .overlay.page :is(p, .page-intro, .small-note, .acct-note, .acct-info){ color:var(--d-mute) !important; text-shadow:none !important; font-family:var(--d-b); font-weight:700; }
+  body.ui-d :is(#menuOverlay, .overlay.page) svg.i{ color:inherit; }
+
+  /* the page header: big title, round back button on the left */
+  body.ui-d .overlay.page .page-head{ background:transparent !important; justify-content:flex-start; gap:12px; }
+  body.ui-d .overlay.page .page-head::before{ display:none !important; }
+  body.ui-d .overlay.page .page-head h2{ color:var(--d-txt) !important; -webkit-text-fill-color:var(--d-txt) !important; font:700 24px var(--d-t) !important; text-align:left; flex:1; }
+  body.ui-d .overlay.page .back-btn{ width:46px; height:46px; border-radius:50%; background:var(--d-card) !important; color:var(--d-ink) !important; border:3px solid var(--d-ink) !important;
+    box-shadow:0 4px 0 var(--d-ink) !important; font:700 28px/1 var(--d-t); padding:0 0 4px; display:grid; place-items:center; }
+  body.ui-d .overlay.page .back-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.page .ph-spacer{ display:none; }
+
+  /* every button in the menus: outline, hard shadow, sinks when touched */
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button:not(.tab):not(.back-btn):not(.fmt):not(.ghost):not(.set-row):not(.sp-chip){
+    font-family:var(--d-b); font-weight:800; color:var(--d-txt); background:var(--d-card); border:3px solid var(--d-ink) !important; border-radius:18px;
+    box-shadow:0 5px 0 var(--d-ink) !important; text-shadow:none !important; filter:none !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button:not(.tab):not(.back-btn):not(.fmt):not(.ghost):not(.set-row):not(.sp-chip):active{ transform:translateY(4px) !important; box-shadow:0 1px 0 var(--d-ink) !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button.primary{ background:var(--d-green) !important; color:#fff !important; font:700 18px var(--d-t) !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button.danger{ background:var(--d-red) !important; color:#fff !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button.whatsapp{ background:#25d366 !important; color:#06281a !important; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button.ghost{ color:var(--d-mute) !important; font-weight:800; font-family:var(--d-b); text-decoration:underline; }
+  body.ui-d :is(#menuOverlay, .overlay.page, .overlay.modal) button:disabled{ opacity:.45; }
+
+  /* cards and rows */
+  body.ui-d .overlay.page :is(.set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .stats-block, .mode-card){
+    background:var(--d-card) !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; box-shadow:0 5px 0 var(--d-ink) !important; border-radius:20px !important;
+    -webkit-backdrop-filter:none !important; backdrop-filter:none !important; text-shadow:none !important; }
+  body.ui-d .overlay.page :is(.set-row, .opp-card, .rich-row, .cp-n, .skin-opt, .level-btn, .shop-item, .mode-card):active{ transform:translateY(4px) !important; box-shadow:0 1px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.page :is(.set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .shop-item, .mode-card) :is(b, span, small, div){ color:inherit; }
+  body.ui-d .overlay.page :is(small, .rich-sub, .opp-rec, .skin-opt small, .cp-n small, .mode-card small){ color:var(--d-mute) !important; opacity:1 !important; }
+  body.ui-d .overlay.page :is(.set-group h3, .rm-title, .sp-head > span:first-child, .skin-group h3, .stats-group h3, .rules-box h3){ color:var(--d-mute) !important; font:800 12px var(--d-b) !important; letter-spacing:.1em; text-transform:uppercase; }
+  body.ui-d .overlay.page .rules-box h3{ color:var(--d-red) !important; font:700 17px var(--d-t) !important; letter-spacing:0; text-transform:none; }
+  body.ui-d .overlay.page .rules-box p{ color:var(--d-txt) !important; font-weight:600; font-size:15px; }
+  body.ui-d .overlay.page :is(.set-row > span:first-child svg.i){ color:var(--d-ink) !important; }
+
+  /* the play modes */
+  body.ui-d .overlay.page .mode-card{ min-height:0 !important; padding:16px !important; }
+  body.ui-d .overlay.page .mode-card b{ color:var(--d-txt) !important; font:700 24px var(--d-t) !important; }
+  body.ui-d .overlay.page .mode-card#modeAI{ background:#FFE9A8 !important; } body.ui-d .overlay.page .mode-card.mode-online{ background:#D7E8FF !important; } body.ui-d .overlay.page .mode-card.mode-carre{ background:#FFD9E8 !important; }
+  body.ui-d .overlay.page .mode-ico{ background:var(--d-blue) !important; color:#fff !important; border:3px solid var(--d-ink) !important; box-shadow:none !important; }
+
+  /* opponents */
+  body.ui-d .overlay.page .opp-card:last-child{ background:#FFF0C4 !important; }
+  body.ui-d .overlay.page .opp-card.locked{ background:#EFE6CF !important; }
+  body.ui-d .overlay.page .opp-ph{ border:3px solid var(--d-ink); border-radius:14px; background-color:var(--d-night); }
+  body.ui-d .overlay.page .opp-place{ color:var(--d-blue) !important; }
+  body.ui-d .overlay.page .opp-name{ font:700 21px var(--d-t) !important; color:var(--d-txt) !important; }
+  body.ui-d .overlay.page .opp-stars svg.i{ color:var(--d-mango-d) !important; } body.ui-d .overlay.page .opp-stars .dim svg.i{ color:#d8ccb0 !important; }
+  body.ui-d .overlay.page .opp-tag{ color:var(--d-txt) !important; font-weight:700; }
+  body.ui-d .overlay.page .opp-lock{ background:var(--d-mango) !important; color:var(--d-ink) !important; border:3px solid var(--d-ink); }
+
+  /* segmented choices, bets, switches, inputs */
+  body.ui-d .overlay.page .format-pick{ background:var(--d-cream2) !important; border:3px solid var(--d-ink) !important; border-radius:18px !important; box-shadow:none !important; }
+  body.ui-d .overlay.page .format-pick .fmt{ border-radius:13px !important; background:transparent !important; box-shadow:none !important; }
+  body.ui-d .overlay.page .fmt b{ color:var(--d-txt) !important; font:700 17px var(--d-t) !important; } body.ui-d .overlay.page .fmt small{ color:var(--d-mute) !important; font-weight:700; }
+  body.ui-d .overlay.page .fmt.on{ background:var(--d-card) !important; box-shadow:inset 0 0 0 2.5px var(--d-ink), 0 3px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.page .fmt.on :is(b, small){ text-shadow:none !important; }
+  body.ui-d .overlay.page .sp-chip{ background:var(--d-card) !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:14px !important; box-shadow:0 3px 0 var(--d-ink) !important; padding:9px 13px; font:800 15px var(--d-b); }
+  body.ui-d .overlay.page .sp-chip.on{ background:var(--d-mango) !important; color:var(--d-ink) !important; text-shadow:none !important; }
+  body.ui-d .overlay.page .sp-chip svg.i{ color:var(--d-mango-d) !important; }
+  body.ui-d .overlay.page .sp-have{ color:var(--d-mute); font-weight:800; }
+  body.ui-d .overlay.page .switch{ width:52px; height:30px; border-radius:99px; background:var(--d-cream2) !important; border:2.5px solid var(--d-ink); box-shadow:none !important; }
+  body.ui-d .overlay.page .switch::after{ top:2px; left:2px; width:20px; height:20px; background:#fff; border:2.5px solid var(--d-ink); box-shadow:none; }
+  body.ui-d .overlay.page .on > .switch{ background:var(--d-green) !important; }
+  body.ui-d .overlay.page .set-row{ font:800 15px var(--d-b) !important; }
+  body.ui-d :is(.overlay.page, .overlay.modal) .mp-input{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:16px !important; box-shadow:inset 0 3px 0 rgba(0,0,0,.06) !important; font-family:var(--d-b); font-weight:800; }
+  body.ui-d .overlay.page .mp-code{ background:#fff; color:var(--d-txt); border:3px dashed var(--d-ink); font-family:var(--d-t); }
+  body.ui-d .overlay.page input[type=range]{ accent-color:var(--d-green); }
+  body.ui-d .overlay.page .gl-slider b{ color:var(--d-green-d); }
+
+  /* trophies, ranking, decors, account, shop */
+  body.ui-d .overlay.page .trophy{ opacity:1; } body.ui-d .overlay.page .trophy:not(.got){ background:#F3EAD3 !important; box-shadow:0 3px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.page .trophy.got{ background:#FFF0C4 !important; }
+  body.ui-d .overlay.page .trophy .t-icon{ border:2.5px solid var(--d-ink); background:#fff !important; color:var(--d-ink) !important; box-shadow:none !important; }
+  body.ui-d .overlay.page .trophy.got .t-icon{ background:var(--d-mango) !important; }
+  body.ui-d .overlay.page .rich-row.me{ background:#FFF0C4 !important; }
+  body.ui-d .overlay.page :is(.rich-pos, .rich-name){ color:var(--d-txt) !important; } body.ui-d .overlay.page .rich-chips{ color:var(--d-mango-d) !important; }
+  body.ui-d .overlay.page .rich-go{ background:var(--d-card) !important; color:var(--d-txt) !important; border:2.5px solid var(--d-ink) !important; }
+  body.ui-d .overlay.page .rich-go.on{ background:var(--d-green) !important; color:#fff !important; }
+  body.ui-d .overlay.page .skin-opt.on{ background:#FFF0C4 !important; }
+  body.ui-d .overlay.page .skin-swatch{ border:2.5px solid var(--d-ink) !important; border-radius:12px; }
+  body.ui-d .overlay.page .skin-music{ color:var(--d-blue) !important; }
+  body.ui-d .overlay.page :is(.acct-name){ color:var(--d-txt) !important; font-family:var(--d-t); }
+  body.ui-d .overlay.page .acct-state{ border:2px solid var(--d-ink); }
+  body.ui-d .overlay.page .acct-state.guest{ background:#FFD9CF; color:#8a2a1a; } body.ui-d .overlay.page .acct-state.saved{ background:#CFF2DE; color:#1F6B42; }
+  body.ui-d .overlay.page .shop-tabs .sp-chip{ flex-shrink:0; }
+  body.ui-d .overlay.page .shop-stage{ background:var(--d-night) !important; color:#fff !important; }
+  body.ui-d .overlay.page .shop-item.equipped{ background:#E3F7EA !important; }
+  body.ui-d .overlay.page .chips-pill{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; box-shadow:0 4px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.page .profile-card *{ text-shadow:none !important; }
+  body.ui-d .overlay.page .stats-block :is(b, strong){ color:var(--d-txt) !important; }
+
+  /* modal sheets (pause, confirmations, a player's card…) */
+  body.ui-d .overlay.modal{ background:rgba(27,18,12,.55) !important; }
+  body.ui-d .overlay.modal .sheet{ background:var(--d-cream) !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:28px !important; box-shadow:0 7px 0 var(--d-ink) !important; }
+  body.ui-d .overlay.modal .sheet :is(h2){ color:var(--d-txt) !important; font:700 26px var(--d-t) !important; text-shadow:none !important; }
+  body.ui-d .overlay.modal .sheet p{ color:var(--d-mute) !important; text-shadow:none !important; font-weight:700; }
+  body.ui-d .overlay.modal .sheet .menu-list button{ border-radius:18px !important; }
+  body.ui-d .overlay.modal .sheet .menu-list button .mi{ color:var(--d-ink); }
+
+  /* ---- the home screen ---- */
+  body.ui-d #menuOverlay .home-topbar .gl-pill, body.ui-d #menuOverlay #chipsBar{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; box-shadow:0 4px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay #chipsBar :is(b, small, span){ color:var(--d-txt) !important; font-family:var(--d-b); }
+  body.ui-d #menuOverlay #chipsBar svg.i{ color:var(--d-mango-d) !important; }
+  body.ui-d #menuOverlay .chips-claim{ background:var(--d-green) !important; color:#fff !important; }
+  body.ui-d #menuOverlay .gl-round{ background:#fff !important; color:var(--d-ink) !important; border:3px solid var(--d-ink) !important; box-shadow:0 4px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay .tile-dot{ background:var(--d-red) !important; border:2.5px solid var(--d-ink); }
+  body.ui-d #menuOverlay h2.logo.neon-logo{ display:none !important; }
+  .logo-d{ display:none; } body.ui-d #menuOverlay .logo-d{ display:block; width:min(86%, 340px); margin:4px auto 0; }
+  body.ui-d #menuOverlay .home-tag{ color:var(--d-mute) !important; letter-spacing:.04em !important; text-transform:none; font:700 14px var(--d-b) !important; opacity:1; }
+  body.ui-d #menuOverlay .og-king-head{ border:3px solid var(--d-ink); border-radius:18px; box-shadow:0 5px 0 var(--d-ink) !important; background-color:var(--d-night); }
+  body.ui-d #menuOverlay .og-bubble{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:18px !important; box-shadow:0 5px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay .og-bubble :is(span, p){ color:var(--d-txt) !important; font-family:var(--d-b); font-weight:700; text-shadow:none !important; }
+  body.ui-d #menuOverlay .og-bubble .who{ color:#B83333 !important; font:700 12px var(--d-t) !important; letter-spacing:.06em; text-transform:uppercase; }
+  body.ui-d #menuOverlay .og-dare{ background:var(--d-red) !important; color:#fff !important; font:700 15px var(--d-t) !important; border-radius:12px !important; box-shadow:0 3px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay .menu-rank{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; box-shadow:0 5px 0 var(--d-ink) !important; border-radius:20px !important; max-width:none; }
+  body.ui-d #menuOverlay .menu-rank :is(.mr-name, b){ color:var(--d-txt) !important; font-family:var(--d-t) !important; }
+  body.ui-d #menuOverlay .menu-rank :is(.mr-rep, small, span){ color:var(--d-mute) !important; }
+  body.ui-d #menuOverlay .rep-bar{ height:14px; background:var(--d-cream2); border:2.5px solid var(--d-ink); }
+  body.ui-d #menuOverlay .rep-bar > div{ background:var(--d-mango); box-shadow:inset 0 4px 0 rgba(255,255,255,.45); }
+  body.ui-d #menuOverlay .hero-play{ background:var(--d-green) !important; border:3px solid var(--d-ink) !important; border-radius:24px !important; box-shadow:0 5px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay .hero-play .hero-text b{ color:#fff !important; font:700 30px var(--d-t) !important; text-shadow:0 3px 0 var(--d-green-d) !important; }
+  body.ui-d #menuOverlay .hero-play .hero-text small{ color:#fff !important; font-weight:800; }
+  body.ui-d #menuOverlay .hero-play .gl-chev{ background:rgba(255,255,255,.25) !important; border:2.5px solid var(--d-ink); color:#fff !important; }
+  body.ui-d #menuOverlay .hero-play .hero-faces .avatar{ box-shadow:0 0 0 3px var(--d-ink) !important; }
+  body.ui-d #menuOverlay .hx-novel{ border:3px solid var(--d-ink) !important; border-radius:24px !important; box-shadow:0 5px 0 var(--d-ink) !important; background-color:var(--d-night) !important; }
+  body.ui-d #menuOverlay .hx-novel::before{ background:url('art/d/perso-penalty.svg') right -10px bottom -14px / 150px auto no-repeat !important; opacity:.95; }
+  body.ui-d #menuOverlay .hx-novel b{ font-family:var(--d-t) !important; }
+  body.ui-d #menuOverlay .hx-cta{ background:var(--d-mango) !important; color:var(--d-ink) !important; border:3px solid var(--d-ink); border-radius:12px !important; font:700 15px var(--d-t) !important; box-shadow:0 3px 0 #000 !important; }
+  body.ui-d #menuOverlay .hcard{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:20px !important; box-shadow:0 5px 0 var(--d-ink) !important; }
+  body.ui-d #menuOverlay .hcard b{ color:var(--d-txt) !important; font:700 17px var(--d-t) !important; } body.ui-d #menuOverlay .hcard small{ color:var(--d-mute) !important; font-weight:700; }
+  body.ui-d #menuOverlay .hcard .gl-sym{ background:#FFE9A8 !important; color:var(--d-ink) !important; border:2.5px solid var(--d-ink); box-shadow:none !important; }
+  body.ui-d #menuOverlay #btnShowRules .gl-sym{ background:#D7E8FF !important; } body.ui-d #menuOverlay :is(#modeTuto, #btnTutoAgain) .gl-sym{ background:var(--d-blue) !important; color:#fff !important; }
+  body.ui-d #menuOverlay .gl-tag{ background:var(--d-green) !important; color:#fff !important; border:2px solid var(--d-ink); }
+  body.ui-d #menuOverlay .quote-bar{ background:var(--d-cream2) !important; border:3px dashed #c9a24a !important; box-shadow:none !important; color:#6b4f1d !important; }
+  body.ui-d #menuOverlay .quote-bar :is(p, span){ color:#6b4f1d !important; font-weight:700; text-shadow:none !important; }
+  body.ui-d #menuOverlay .quote-bar .qb-ico{ color:#6b4f1d !important; background:none !important; }
+  body.ui-d #menuOverlay .og-king{ background:none !important; border:none !important; box-shadow:none !important; padding:0 !important; gap:12px; align-items:flex-end; }
+  body.ui-d #menuOverlay .og-bubble{ padding:10px 12px 12px !important; }
+  body.ui-d #menuOverlay .og-bubble #ogSay{ font-style:normal !important; font-size:15px !important; line-height:1.35; display:block; margin:2px 0 8px; }
+  body.ui-d #menuOverlay button#btnChipsClaim{ background:var(--d-green) !important; color:#fff !important; }
+  body.ui-d #menuOverlay button#btnChipsClaim svg.i{ color:#fff !important; }
+  body.ui-d #menuOverlay button.hx-novel, body.ui-d #menuOverlay button.hx-novel :is(b, span){ color:#fff !important; }
+  body.ui-d #menuOverlay button.hx-novel small{ color:var(--d-pink) !important; }
+  body.ui-d #menuOverlay button.hx-novel #hxHomeSub{ color:#cfc8ee !important; font-weight:700; }
+  body.ui-d #menuOverlay button.hx-novel .hx-cta{ color:var(--d-ink) !important; }
+  body.ui-d #menuOverlay .hx-novel .hx-home-txt{ position:relative; z-index:1; max-width:62%; }
+  body.ui-d #menuOverlay .hx-bar{ background:#3a3470 !important; border:2px solid #0d0b20; }
+  body.ui-d #menuOverlay .hx-bar i{ background:var(--d-mango) !important; }
+  body.ui-d .overlay.page .stats-block *{ color:var(--d-txt) !important; text-shadow:none !important; }
+  body.ui-d .overlay.page .stats-block :is(h3, h4, .stats-group h3){ color:var(--d-mute) !important; }
+  body.ui-d .overlay.page .stats-block :is(td:first-child, .st-k, dt){ color:var(--d-mute) !important; }
+  body.ui-d .overlay.page .pc-nums div{ background:var(--d-cream2) !important; border:2.5px solid var(--d-ink); }
+  body.ui-d .overlay.page :is(.pc-name, .pc-nums b){ color:var(--d-txt) !important; font-family:var(--d-t) !important; }
+  body.ui-d .overlay.page .pc-rank{ color:var(--d-red) !important; }
+  body.ui-d .overlay.page .pc-bar{ height:14px; background:var(--d-cream2); border:2.5px solid var(--d-ink); } body.ui-d .overlay.page .pc-bar i{ background:var(--d-mango); box-shadow:inset 0 4px 0 rgba(255,255,255,.45); }
+  body.ui-d .overlay.page .chips-pill :is(b, small){ color:var(--d-txt) !important; }
+  body.ui-d #homeTabbar .tab:not(.on){ background:transparent !important; box-shadow:none !important; outline:none; }
+  /* the tab bar */
+  body.ui-d #homeTabbar{ background:#fff !important; border:3px solid var(--d-ink) !important; box-shadow:0 5px 0 var(--d-ink) !important; border-radius:24px !important; }
+  body.ui-d #homeTabbar .tb-lens{ display:none !important; }
+  body.ui-d #homeTabbar .tab{ color:var(--d-mute) !important; font:800 11px var(--d-b) !important; border-radius:16px; margin:5px 2px; }
+  body.ui-d #homeTabbar .tab.on{ background:var(--d-mango) !important; color:var(--d-ink) !important; box-shadow:inset 0 0 0 2.5px var(--d-ink); }
+  body.ui-d #homeTabbar .tab.on svg.i{ color:var(--d-ink) !important; filter:none !important; }
+
+  /* toasts */
+  body.ui-d .toast{ background:var(--d-ink) !important; color:#fff !important; border:3px solid var(--d-ink) !important; border-radius:18px !important; font-family:var(--d-t) !important; box-shadow:0 5px 0 rgba(0,0,0,.35) !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body.ui-d .toast .sub{ color:#FFE9A8 !important; font-family:var(--d-b); font-weight:700; }
+  /* settings that only meant something for the glass look */
+  body.ui-d #glassGroup, body.ui-d #btnToggleThemeOr{ display:none !important; }
 </style>
 </head>
 <body>
@@ -3544,6 +3728,7 @@
 
     <div class="home-top">
       <h2 class="logo neon-logo" aria-label="Fap Fap"><span class="neon-plate" id="neonPlate"><svg class="neon-sign" viewBox="0 0 400 120" aria-hidden="true"><defs><filter id="neonBlur" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="n-glow" filter="url(#neonBlur)"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-tube"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g><g class="n-gas"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow2"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-shine" transform="translate(-1.2 -1.6)"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g></svg></span></h2>
+      <svg class="logo-d" viewBox="0 0 360 112" role="img" aria-label="Fap Fap"><g font-family="Fredoka, Trebuchet MS, sans-serif" font-weight="700" font-size="80" text-anchor="middle" stroke-linejoin="round"><text x="88" y="92" fill="#1B120C" stroke="#1B120C" stroke-width="16">FAP</text><text x="272" y="92" fill="#1B120C" stroke="#1B120C" stroke-width="16">FAP</text><text x="88" y="86" fill="#1B120C" stroke="#1B120C" stroke-width="10">FAP</text><text x="272" y="86" fill="#1B120C" stroke="#1B120C" stroke-width="10">FAP</text><text x="88" y="86" fill="#F06BA8">FAP</text><text x="272" y="86" fill="#3D7FD9">FAP</text></g><path d="M42 34 q14 -10 30 -8 M226 34 q14 -10 30 -8" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".7"/><g transform="translate(180 30) rotate(12)"><rect x="-13" y="-17" width="26" height="34" rx="5" fill="#fff" stroke="#1B120C" stroke-width="3"/><path d="M0 -8 C-7 -15 -12 -4 0 6 C12 -4 7 -15 0 -8Z" fill="#E24B4A" stroke="#1B120C" stroke-width="2"/></g></svg>
       <p class="home-tag">Yaoundé · la nuit · les cartes</p>
     </div>
 
@@ -3911,6 +4096,7 @@
     <div class="set-group">
       <h3>Jeu</h3>
       <button class="set-row hidden" id="btnTogglePush"><span><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Notifications de défi (jeu fermé)</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleDraw"><span><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg> Interface dessinée</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Mode Or : le Ngonzormorrr à l’accueil</span><span class="switch"></span></button>
@@ -3923,7 +4109,7 @@
       <label class="set-row set-input"><span>Ton prénom</span><input id="setNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom"></label>
       <button class="set-row" id="btnToggleChat"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Chat avec les autres joueurs</span><span class="switch"></span></button>
     </div>
-    <div class="set-group">
+    <div class="set-group" id="glassGroup">
       <h3>Verre liquide</h3>
       <label class="set-row set-slider gl-slider"><span>Profondeur du verre <b id="glassDepthVal">60</b></span><input type="range" id="glassDepth" min="0" max="100" step="1"></label>
       <label class="set-row set-slider gl-slider"><span>Givre <b id="glassFrostVal">30</b></span><input type="range" id="glassFrost" min="0" max="100" step="1"></label>
@@ -6555,6 +6741,7 @@
     document.getElementById('musicVol').value = Math.round(100*(prefs.musicVol==null ? 0.6 : prefs.musicVol));
     document.getElementById('sfxVol').value = Math.round(100*(prefs.sfxVol==null ? 0.8 : prefs.sfxVol));
     refreshNowPlaying();
+    sw('btnToggleDraw', !prefs.noDraw);
     sw('btnToggleVibrate', !prefs.noVibrate);
     sw('btnToggleCalm', !!prefs.calm);
     sw('btnToggleTrail', !prefs.noTrail);
@@ -6579,6 +6766,10 @@
     el.addEventListener('input', ()=>{ prefs[key] = el.value/100; applyAudioLevels(); });
     el.addEventListener('change', ()=>{ savePrefs(); if(key==='sfxVol') sfxTrickWinYou(); });
   });
+  // the drawn interface (menus in daylight, outlines, sinking buttons); the old look stays one switch away
+  function applyDraw(){ document.body.classList.toggle('ui-d', !prefs.noDraw); }
+  applyDraw();
+  toggle('btnToggleDraw',    ()=>{ prefs.noDraw = !prefs.noDraw; applyDraw(); });
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
