@@ -2203,6 +2203,12 @@
   .bk-hint{ position:absolute; left:0; right:0; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); text-align:center; font:600 12px 'Manrope', sans-serif; color:#8a7f72; letter-spacing:.08em; transition:opacity .6s; pointer-events:none; }
   .bk-shake{ animation: bkShk .45s cubic-bezier(.3,.7,.4,1); }
   @keyframes bkShk{ 15%{ transform:translate(-9px,5px); } 35%{ transform:translate(7px,-4px); } 55%{ transform:translate(-4px,2px); } 75%{ transform:translate(2px,-1px); } }
+  /* one way out, always at the same place: top left, above every panel of the book (hidden only while reading, where the bar has its own buttons) */
+  .bk-exit{ position:absolute; z-index:9; left:14px; top:calc(12px + env(safe-area-inset-top, 0px)); width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.22);
+    background:rgba(20,16,24,.92); color:#f4eee4; font:400 30px/1 system-ui, sans-serif; display:grid; place-items:center; padding:0 0 4px; cursor:pointer; }
+  .bk-exit:active{ transform:scale(.94); }
+  .bk-inv .iv-top, .bk-nb .nb-top{ padding-left:56px; min-height:44px; }
+  .book-page:has(#bkStage:not(.hidden)):not(:has(#bkPanel:not(.hidden), #bkInv:not(.hidden), #bkPhone:not(.hidden), #bkNb:not(.hidden))) .bk-exit{ display:none; }
   .bk-panel{ position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; background:rgba(4,3,6,.86); padding:20px; }
   .bk-box{ width:100%; max-width:380px; background:#15110d; border:1px solid rgba(214,171,82,.4); border-radius:20px; padding:20px; text-align:center; font-family:'Manrope', system-ui, sans-serif; display:flex; flex-direction:column; gap:12px; }
   .bk-box .k{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:#d6ab52; font-weight:800; }
@@ -3626,6 +3632,7 @@
   <div class="bk-panel hidden" id="bkPanel"><div class="bk-box" id="bkBox"></div></div>
   <div class="bk-inv hidden" id="bkInv"></div>
   <div class="bk-nb hidden" id="bkNb"></div>
+  <button class="bk-exit" id="bkExit" type="button" aria-label="Retour">‹</button>
   <div class="bk-panel hidden" id="bkPhone"><div class="bk-ph"><div class="crack"></div><div class="top"><span>Orange CM</span><span>23:58</span></div><div class="scr" id="bkPhS"></div><button class="close" id="bkPhC" type="button">Continuer</button></div></div>
 </div>
 
@@ -6690,6 +6697,10 @@
     if(open('confirmRestartOverlay')){ document.getElementById('btnConfirmRestartNo').click(); return true; }
     if(open('chatSheet')){ closeChat(); return true; }
     if(open('pauseOverlay') && inGame()){ closePause(); return true; }
+    if(open('bookPage') && Book.back()) return true;
+    if(open('iosInstallOverlay')){ document.getElementById('btnCloseIosInstall').click(); return true; }
+    if(open('tutoDoneOverlay')){ document.getElementById('btnTutoMenu').click(); return true; }
+    if(open('matchOverOverlay')){ document.getElementById('btnToMenu').click(); return true; }
     if(Nav.stack.length>1 || (Nav.stack.length===1 && !inHome())){ Nav._pop(); return true; }
     if(inGame()){
       // the end-of-match screen and the forced choices (cut, elimination) stay; otherwise the game pauses
@@ -12343,6 +12354,18 @@
     $('bkChapters').addEventListener('click', toc);
     $('bkHidden').addEventListener('click', ()=>{ ac(); load().then(()=>{ const S = st(); S.hiddenRun = true; S.ending = 'cachee'; showReader(); openChapter(BK.chapters.length); }); });
     $('bkLeave').addEventListener('click', ()=> Nav.back());
+    // the way out: close what is open, or stop reading (where you stopped is kept), or leave the book
+    function back(){
+      const vis = id=> !$(id).classList.contains('hidden');
+      if(vis('bkNb')){ $('bkNb').classList.add('hidden'); return true; }
+      if(vis('bkToc')){ cover(); return true; }
+      if(!stage.classList.contains('hidden') || vis('bkPanel') || vis('bkInv') || vis('bkPhone')){
+        const mid = vis('bkInv') || vis('bkPanel');
+        cover(); if(mid) showToast('Enquête en pause', 'Tu reprendras exactement ici.', {ms:2200});
+        return true; }
+      return false;
+    }
+    $('bkExit').addEventListener('click', e=>{ e.stopPropagation(); if(!back()) Nav.back(); });
     $('bkMenu').addEventListener('click', e=>{ e.stopPropagation(); cover(); });
     $('bkNoteBtn').addEventListener('click', e=>{ e.stopPropagation(); openNotebook(); });
     $('bkNoteCv').addEventListener('click', ()=> load().then(()=> openNotebook()));
@@ -12351,6 +12374,7 @@
     stage.addEventListener('click', e=>{ ac(); if(e.clientX < innerWidth*0.22) prev(); else next(); });
     return {
       open(){ Nav.go('bookPage'); },
+      back,
       shown(){ Music.stop(); cover(); load().catch(()=>{}); },
       left(){ setMood('none'); clearInterval(typeT); },
       afterMatch,
