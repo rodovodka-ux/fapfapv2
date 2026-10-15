@@ -717,6 +717,7 @@
     box-shadow: 0 0 0 2px rgba(244,184,96,0.55), 0 3px 8px rgba(0,0,0,0.5); }
   .avatar .av-ini{ font-family:var(--font-display); font-weight:800; color:#20160a; font-size:calc(var(--s) * 0.46); line-height:1; }
   .avatar img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .avatar img[src*="art/d/"]{ object-position:50% 30%; }
   .avatar.locked{ background:#2a2018; }
   .sq-name .avatar{ margin-right:6px; }
   .ai-hands{ gap:12px; }
@@ -2433,7 +2434,7 @@
   body.room-on .hand .card.playable{ box-shadow: 0 0 0 2px var(--bulb), var(--shx) var(--shy) 16px -2px rgba(0,0,0,.55); }
   /* the boss waits on the home screen, in a photograph */
   body.theme-or .og-king{ display:grid; grid-template-columns:96px 1fr; gap:14px; align-items:center; min-height:0; padding:12px; border-radius:18px; background:#15110d; border:1px solid rgba(214,171,82,.32); }
-  .og-king-head{ width:96px; height:118px; border-radius:12px; background:url('art/livre/perso-masque.webp') 50% 22% / cover no-repeat #1a1612; box-shadow:0 0 0 1px rgba(214,171,82,.5); }
+  .og-king-head{ width:96px; height:118px; border-radius:12px; background:url('art/d/perso-masque.svg') 50% 30% / cover no-repeat #1a1612; box-shadow:0 0 0 1px rgba(214,171,82,.5); }
   .og-king-head::before{ display:none; }
   .og-king .og-bubble{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; min-height:0; padding:0; border-radius:0; background:none; font:italic 400 15px/1.4 'Literata', Georgia, serif; color:#f4eee4; }
   .og-king .og-bubble .who{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.18em; color:#d6ab52; margin:0; }
@@ -2441,7 +2442,7 @@
   /* the novel: a real cover */
   .home-topbar:has(#btnChipsClaim:not(.hidden)) #chipsBar small{ display:none; }
   .hx-novel{ position:relative; width:100%; min-height:190px; border-radius:20px !important; overflow:hidden; display:flex; align-items:flex-end; padding:16px; border:1px solid rgba(214,171,82,.32); background:#15110d; text-align:left; color:#f4eee4; cursor:pointer; }
-  .hx-novel::before{ content:""; position:absolute; inset:0; background:url('art/livre/perso-stephane.webp') 70% 20% / cover no-repeat; }
+  .hx-novel::before{ content:""; position:absolute; inset:0; background:url('art/d/perso-stephane.svg') 70% 30% / cover no-repeat; }
   .hx-novel::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, #07060a 8%, rgba(7,6,10,.82) 45%, rgba(7,6,10,.15) 100%); }
   .hx-novel .hx-home-txt{ position:relative; z-index:1; max-width:68%; flex:none; }
   .hx-novel .hx-home-txt b{ font:700 22px/1.2 'Cinzel', serif; margin:6px 0 8px; text-wrap:balance; }
@@ -5803,8 +5804,11 @@
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
   const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque'};
+  // the characters are drawn now (art/d, one light SVG each); places stay in art/livre
+  const PIC = n=> /^perso-/.test(n) ? 'art/d/'+n+'.svg' : 'art/livre/'+n+'.webp';
+  const artSrc = base=> base.indexOf('livre/')===0 ? PIC(base.slice(6)) : 'art/'+base+'.webp';
   function artImgTag(base){
-    if(base.indexOf('livre/')===0) return '<img src="art/'+base+'.webp" alt="" onerror="this.remove()">';
+    if(base.indexOf('livre/')===0) return '<img src="'+artSrc(base)+'" alt="" onerror="this.remove()">';
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
       'onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\';}else{this.remove();}">';
   }
@@ -8875,7 +8879,7 @@
       b.className = 'opp-card'+(open?'':' locked')+(beaten?' beaten':'');
       b.innerHTML =
         // each opponent waits at their place in the novel, in a photograph
-        '<span class="opp-ph" style="background-image:url(&quot;art/'+ART_FILE[id]+'.webp&quot;)">'+(open ? '' : '<span class="opp-lock">'+ico('lock')+'</span>')+'</span>'+
+        '<span class="opp-ph" style="background-image:url(&quot;'+artSrc(ART_FILE[id])+'&quot;)">'+(open ? '' : '<span class="opp-lock">'+ico('lock')+'</span>')+'</span>'+
         '<span class="opp-body">'+
           (OPP_PLACE[id] ? '<span class="opp-place">'+OPP_PLACE[id][1]+'</span>' : '')+
           '<span class="opp-top"><span class="opp-name">'+p.name+'</span><span class="opp-stars">'+ico('star').repeat(p.stars)+'<span class="dim">'+ico('star').repeat(4-p.stars)+'</span></span></span>'+
@@ -11773,7 +11777,7 @@
           if(k==='mood'){ mood = a; return; }
           let s = null;
           if(k==='title'){ out.push({card:['', BK.title, BK.author], cond, mood}); mood = null; s = {card, cond}; }
-          else if(k==='img') s = {img:'art/livre/'+a+'.webp', cond};
+          else if(k==='img') s = {img:PIC(a), cond};
           else if(k==='game') s = {game:a, cond};
           else if(k==='phone') s = {phone:1, cond};
           else if(k==='choice'){ const parts = a.split('|'); s = {choice:parts[0], opts:parts.slice(1), cond}; }
@@ -11807,7 +11811,7 @@
     }
     const hasClue = id=> !!st().clues[id];
     const esc = t=> t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    const castPic = id=> BK.cast[id] && BK.cast[id][1] ? 'art/livre/'+BK.cast[id][1]+'.webp' : '';
+    const castPic = id=> BK.cast[id] && BK.cast[id][1] ? PIC(BK.cast[id][1]) : '';
     // the big lines are sized to fit the screen: a long blow never runs off the edge
     function fitSize(s, text){
       const W = Math.min(innerWidth, 520) - 52, n = Math.max(2, text.length);
@@ -11910,7 +11914,7 @@
       if(s.accuse){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openAccuse(); return; }
       if(s.report){ linesEl.innerHTML = ''; whoEl.classList.remove('on'); openReport(); return; }
       const w = s.who && BK.cast[s.who];
-      if(w){ $('bkWho').querySelector('b').textContent = w[0]; const f = whoEl.querySelector('.face'); f.classList.toggle('empty', !w[1]); if(w[1]) f.style.backgroundImage = 'url("art/livre/'+w[1]+'.webp")'; whoEl.classList.add('on'); }
+      if(w){ $('bkWho').querySelector('b').textContent = w[0]; const f = whoEl.querySelector('.face'); f.classList.toggle('empty', !w[1]); if(w[1]) f.style.backgroundImage = 'url("'+PIC(w[1])+'")'; whoEl.classList.add('on'); }
       else whoEl.classList.remove('on');
       // lines marked « stack » build up under the ones before; any other line starts a clean page
       linesEl.innerHTML = '';
@@ -11989,7 +11993,7 @@
     // ---------- the games ----------
     function openGame(key){
       const g = BK.games[key], S = st();
-      const img = g.art ? 'art/livre/'+g.art+'.webp' : (key==='masque' ? 'art/livre/perso-masque.webp' : '');
+      const img = g.art ? PIC(g.art) : (key==='masque' ? PIC('perso-masque') : '');
       $('bkBox').innerHTML = '<div class="k">'+(g.carre ? 'Carré · un seul survivant' : 'Partie de Fap Fap · premier à '+(g.target||3))+'</div>'+
         (img ? '<span class="face" style="background-image:url(&quot;'+img+'&quot;)"></span>' : '')+
         '<h3></h3><p class="pl"></p><p class="in"></p>'+(S.won[key] ? '' : '<p style="font-size:13px">Gagne, et le livre continue. 200 jetons à la clé.</p>')+
@@ -12211,7 +12215,7 @@
       const done = (v)=>{ S.choices.acc = v; if(v==='caroline2') S.accTrue = true; if(v==='christelle') S.accTrap = true; saveProfile(); checkExploits(); FX.thud(); inv.classList.add('hidden'); goTo(i+1); };
       A.who.forEach(k=>{
         const P = BK.suspects[k], b = document.createElement('button'); b.type = 'button'; b.className = 'ac-card';
-        b.innerHTML = '<span class="ac-ph" style="background-image:url(&quot;art/livre/'+P.img+'.webp&quot;)"></span><b></b><small></small>';
+        b.innerHTML = '<span class="ac-ph" style="background-image:url(&quot;'+PIC(P.img)+'&quot;)"></span><b></b><small></small>';
         b.querySelector('b').textContent = P.n;
         const notes = (S.notes[k]||[]); b.querySelector('small').textContent = notes.length ? '« '+notes[notes.length-1]+' »' : 'Aucune note';
         b.onclick = ()=>{ box.classList.add('hidden'); inv.querySelector('.ac-q').textContent = 'Tu donnes le nom de '+P.n+'. Le Ngonzormorrr voudra une preuve.';
@@ -12267,7 +12271,7 @@
             if(chIdx < P.from && !notes.length) return;
             const img = (k==='kappo' && S.ch >= 23) ? 'perso-kappo' : P.img;
             const d = document.createElement('div'); d.className = 'nb-sus';
-            d.innerHTML = '<span class="ph" style="background-image:url(&quot;art/livre/'+img+'.webp&quot;)"></span><div><b></b><ul></ul></div>';
+            d.innerHTML = '<span class="ph" style="background-image:url(&quot;'+PIC(img)+'&quot;)"></span><div><b></b><ul></ul></div>';
             d.querySelector('b').textContent = P.n;
             const ul = d.querySelector('ul'); (notes.length ? notes : ['Rien de noté.']).forEach(n=>{ const li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
             body.appendChild(d);
