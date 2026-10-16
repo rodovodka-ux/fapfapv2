@@ -86,19 +86,40 @@ suspects: {
   cobra:     {n:'Boris le Cobra', img:'perso-cobra', from:4},
   mballa:    {n:'Adjudant Mballa', img:'perso-mballa', from:14}
 },
+// the map of Yaoundé: where Stéphane goes, chapter by chapter (null = a memory of Penalty, nobody moves).
+// mem = the place a memory of Penalty brings out of the fog. sms = the anonymous message received when arriving there (once)
+map: {
+  ch:['maison','maison',null,null,'coin',null,null,'palmiers',null,null,'prestige',null,null,'station','police',null,'studio',null,null,null,null,'coin','salon','prestige',null],
+  mem:{6:'meuble', 7:'villa', 12:'bastos', 13:'barrage', 18:'meuble'},
+  places:{
+    maison:{n:'La maison', d:'Mvog-Ada', x:790, y:1340, who:['christelle','rall'], t:'La bâche est encore tendue dans la cour. Les chaises en plastique attendent le neuvième jour.'},
+    coin:{n:'Le coin des gars', d:'Mvog-Ada', x:470, y:1230, who:['cobra'], t:'Derrière la boutique, les caisses de bière servent de chaises. Le Cobra ne dit rien gratuitement.'},
+    palmiers:{n:'Résidence Les Palmiers', d:'Bastos', x:760, y:300, who:['tchinda'], t:'La dernière course de Penalty s’arrête ici, à 22 h 43. Le gardien note toutes les plaques dans un cahier.', q:'« Je ne parle pas aux inconnus. Mais je joue avec eux. »'},
+    prestige:{n:'Le Prestige', d:'Centre-ville', x:700, y:760, who:['mami','masque'], t:'Un club où l’on joue gros. En face, le kiosque de Mami Ange : tout le quartier y passe, et toutes les rumeurs aussi.', q:'« Tu veux savoir qui ment ? Commence par ceux qui parlent trop. »'},
+    station:{n:'La station', d:'Mokolo', x:250, y:650, who:['ismael'], t:'Un chauffeur de Yaris attend ses clients sous les néons. Il a conduit Penalty, le dernier soir.'},
+    police:{n:'Le bar des policiers', d:'Mokolo', x:300, y:990, who:['mballa'], t:'Quelqu’un, au poste, a reçu un appel à 22 h 51. Ici, on boit en uniforme.'},
+    studio:{n:'Le studio de Christelle', d:'Essos', x:1010, y:1150, who:['christelle'], t:'Une chambre au fond d’une cour, un robinet commun. Christelle a fait sa valise. Pourquoi maintenant ?', q:'« Tu crois que c’est moi ? Dis-le en face, Stéphane. »'},
+    salon:{n:'Le salon de thé', d:'Bastos', x:1000, y:420, who:['caroline'], t:'Des tasses fines, des cartes encore sous plastique. Une femme qui garde son 3 pour la fin.'},
+    meuble:{n:'Le meublé', d:'Essos', x:880, y:930, mem:1, t:'Une chambre louée à l’heure. C’est ici que Penalty retrouvait son idée noire.'},
+    villa:{n:'La villa', d:'Santa Barbara', x:200, y:230, mem:1, t:'Des liasses de dix mille sur la table. On n’y entre pas sans invitation.'},
+    bastos:{n:'La rue de Bastos', d:'Bastos', x:960, y:170, mem:1, t:'Les ambassades, les grilles, les gardiens qui dorment. La nuit où tout a commencé à mal tourner.'},
+    barrage:{n:'Le deuxième carrefour', d:'Route de Santa Barbara', x:380, y:500, mem:1, t:'La police n’attendait pas au bon endroit. Ou alors si.'}
+  },
+  sms:{palmiers:'« Rentre chez toi, Stéphane. Ton frère aussi posait trop de questions. »', police:'« Les policiers boivent avec tout le monde. Même avec ceux qui ont tué ton frère. »', salon:'« Elle va te sourire. Ne bois rien de ce qu’elle te sert. »'}
+},
 // searching a place: tap the things around you. clue = what it gives; more = look closer (and what you find then)
 searches: {
   palmiers: {img:'lieu-palmiers', t:'Résidence Les Palmiers', intro:'Papa Tchinda est parti faire sa ronde. Tu as cinq minutes.', items:[
-    {n:'La poubelle du portail', d:'Des bouteilles de Top, des sachets de plantain. La vie des gens riches ressemble beaucoup à celle des autres, dans une poubelle.'},
-    {n:'Sous le balcon', d:'Entre deux pots de fleurs, un mégot fin. Pas une cigarette de quartier.', clue:'megot', more:'Regarder le filtre', moreD:'Une trace de rouge à lèvres. Bordeaux. Le genre de rouge qui coûte le prix d’un sac de riz.'},
-    {n:'Le cahier du gardien', d:'Des dates, des heures, des plaques d’immatriculation écrites avec soin.', clue:'plaque'},
-    {n:'La radio', d:'Elle capte encore Radio Tiémeni Siantou. Rien d’autre.'}
+    {n:'La poubelle du portail', s:'La poubelle', at:[47,90], d:'Des bouteilles de Top, des sachets de plantain. La vie des gens riches ressemble beaucoup à celle des autres, dans une poubelle.'},
+    {n:'Sous le balcon', s:'Sous le balcon', at:[68,30], d:'Entre deux pots de fleurs, un mégot fin. Pas une cigarette de quartier.', clue:'megot', more:'Regarder le filtre', moreD:'Une trace de rouge à lèvres. Bordeaux. Le genre de rouge qui coûte le prix d’un sac de riz.'},
+    {n:'Le cahier du gardien', s:'Le cahier', at:[36,62], d:'Des dates, des heures, des plaques d’immatriculation écrites avec soin.', clue:'plaque'},
+    {n:'La radio', s:'La radio', at:[15,80], d:'Elle capte encore Radio Tiémeni Siantou. Rien d’autre.'}
   ]},
   studio: {img:'lieu-studio', t:'Le studio de Christelle', intro:'Christelle est sortie remplir la bouilloire au robinet de la cour. Tu as deux minutes.', items:[
-    {n:'La valise', d:'Des pagnes pliés, des chaussures, une photo de vous trois. Et sous un pagne, le coin d’une enveloppe de banque.', clue:'banque'},
-    {n:'La poubelle', d:'Des épluchures, un sachet de lait, et un ticket de car froissé.', clue:'ticket', more:'Déplier le ticket', moreD:'Le papier est épais. Il y en a deux, collés l’un à l’autre par le jus de foléré. Le deuxième porte un autre nom : Penalty.', moreClue:'tickets2'},
-    {n:'Le miroir', d:'Une photo coincée dans le cadre : un dimanche, du soya, trois sourires. Lui, elle, et toi.'},
-    {n:'Le réchaud', d:'Une marmite de riz froid. Pour une personne.'}
+    {n:'La valise', s:'La valise', at:[62,40], d:'Des pagnes pliés, des chaussures, une photo de vous trois. Et sous un pagne, le coin d’une enveloppe de banque.', clue:'banque'},
+    {n:'La poubelle', s:'La poubelle', at:[20,88], d:'Des épluchures, un sachet de lait, et un ticket de car froissé.', clue:'ticket', more:'Déplier le ticket', moreD:'Le papier est épais. Il y en a deux, collés l’un à l’autre par le jus de foléré. Le deuxième porte un autre nom : Penalty.', moreClue:'tickets2'},
+    {n:'Le miroir', s:'Le miroir', at:[80,16], d:'Une photo coincée dans le cadre : un dimanche, du soya, trois sourires. Lui, elle, et toi.'},
+    {n:'Le réchaud', s:'Le réchaud', at:[20,30], d:'Une marmite de riz froid. Pour une personne.'}
   ]}
 },
 // the interrogations. say = the answer; tell = what Stéphane notices; ans = croire | douter | accuser (proof = the clues that work)
