@@ -9077,7 +9077,12 @@
       const sq = !document.getElementById('squareScreen').classList.contains('hidden');
       const el = document.querySelector(sq ? '.sq-table' : '#duoScreen .table'); if(!el) return null;
       const r = el.getBoundingClientRect(); if(!r.height) return null;
-      return {top: Math.max(60, r.top - (sq ? 10 : 26))};
+      const top = Math.max(60, r.top - (sq ? 10 : 26));
+      // the whole table is seen, its rim all around: it stops just above the player's hand
+      const hz = document.querySelector(sq ? '#squareScreen .hand-zone' : '#duoScreen .hand-zone'), hr = hz && hz.getBoundingClientRect();
+      // (the drawn table wraps the whole card area, slots included, and stops before the hand)
+      const bottom = Math.max(r.bottom + 14, hr && hr.height ? Math.min(hr.top - 8, r.bottom + 60) : r.bottom + 14);
+      return {top, bottom: Math.max(top + 220, Math.min(innerHeight - 8, bottom))};
     }
     function grain(c,x,y,w,h,n,a,b){ for(let k=0;k<n;k++){ c.fillStyle=rnd()<.5?a:b; c.fillRect(x+rnd()*w,y+rnd()*h,1.4,1.4); } }
     function paintTripot(c){
@@ -9436,9 +9441,9 @@
     function layout(){
       D = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; OFF = W + 400;
       const t = tableRect(); if(!t) return false;
-      const k = [W, H, Math.round(t.top), tid()].join('|'); if(k === lkey) return true; lkey = k; key = tid();
+      const k = [W, H, Math.round(t.top), Math.round(t.bottom), tid()].join('|'); if(k === lkey) return true; lkey = k; key = tid();
       cv.width = Math.round(W*D); cv.height = Math.round(H*D); base.width = cv.width; base.height = cv.height; lm.width = Math.ceil(W/3); lm.height = Math.ceil(H/3);
-      const vh = H - t.top - 4;
+      const vh = t.bottom - t.top;
       F = {x:8, y:t.top, w:W - 16, h:vh}; let ins = 19;
       if(key==='bar'){ F.w = W - 40; ins = 8; }
       if(key==='veranda'){ F.x = 34; F.w = W - 46; ins = 4; }
