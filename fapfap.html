@@ -3434,6 +3434,19 @@
   body.ui-d:not(#z) .sq-name:has(.has-rig) .sqn-t{ background:#FFF7E6; border:2px solid #1B120C; border-radius:999px; padding:0 8px; }
   body.ui-d:not(#z) .sq-seat.active-turn .sq-name .avatar.has-rig{ box-shadow:0 0 0 4px #FFC93C !important; }
   @media (prefers-reduced-motion: reduce){ .rig .rb, .rig.talk .rmouths{ animation:none; } }
+
+  /* ===== the night home and the dark pages ===== */
+  #homeScene{ position:fixed; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+  body.in-game #homeScene{ display:none; }
+  body:not(.in-game) #dScene{ visibility:hidden; }
+  #glassLogo{ display:block; width:100%; height:140px; touch-action:manipulation; cursor:pointer; }
+  body.ui-d:not(#z) #menuOverlay :is(.logo-d, .neon-logo){ display:none !important; }
+  body.ui-d:not(#z) :is(#menuOverlay, .overlay.page){ background:transparent !important; background-image:none !important; --d-txt:#FFF1D6; --d-mute:#dcc6a2; color:#FFF1D6; }
+  body.ui-d:not(#z) :is(#menuOverlay, .overlay.page) :is(.gl, .set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .stats-block, .mode-card, .hcard, .hero-play, .menu-rank, .quote-bar, .og-bubble, .rep-panel, .card-box, .panel, input, select, textarea, button:not(.tab):not(.back-btn):not(.ghost)){ --d-txt:#2A1D12; --d-mute:#7A6650; }
+  body.ui-d:not(#z) .overlay.page :is(.page-intro, .small-note, .acct-note){ color:#dcc6a2 !important; }
+  body.ui-d:not(#z) #menuOverlay .home-tag{ color:#dcc6a2 !important; letter-spacing:.14em; }
+  body.ui-d:not(#z) #menuOverlay .home-topbar > *{ order:3; } body.ui-d:not(#z) #menuOverlay .home-topbar .hb-space{ order:1; } body.ui-d:not(#z) #menuOverlay .home-topbar #chipsBar{ order:2; }
+
   /* ===== the new characters (Rig2) ===== */
   svg.rig2{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .rig2 .fg{ fill:none; stroke-linecap:round; }
@@ -6144,11 +6157,25 @@
     lofi:   {types:['triangle','sine'],     mix:0.7,  det:14, lp:850,  att:0.25, rel:1.2, vol:0.12}
   };
   const TRACKS = {
-    // lofi hip-hop: 2 bars per chord at 80 bpm, a muffled e-piano, a boom-bap beat with a little swing, vinyl crackle
-    verre:   {name:'Sieste en terrasse', mood:'lofi hip-hop, détendu', dur:6, pad:'lofi', lead:'epiano', density:0.28, bass:true, amb:'vinyl',
-      beat:{bpm:80, swing:0.6},
+    // the nine tables and the menus, with groove (two bars per chord)
+    bar:     {name:'Néon rouge', mood:'afro-rock, énergique', dur:4.07, pad:'synth', lead:'synth', density:0.32, bass:true, amb:'murmur', beat:{bpm:118, swing:0.5, style:'rock'},
+      parts:[['Em7','Em7','Cmaj7','D','Em7','G','Am7','B7sus4'], ['Cmaj7','D','Bm7','Em7','Am7','D','Em7','B7']]},
+    veranda: {name:'Lampe tempête', mood:'makossa, chaleureux', dur:4.62, pad:'warm', lead:'balafon', density:0.42, bass:true, amb:'crickets', beat:{bpm:104, swing:0.55, style:'afro'},
+      parts:[['Gmaj7','Em9','Cmaj9','D6','Bm7','Em7','Am9','D7sus4'], ['Cmaj7','D','Bm7','Em7','Am7','D9','Gsus2','G6']]},
+    cour:    {name:'Sous le manguier', mood:'afrobeat, joyeux', dur:4.36, pad:'glass', lead:'kalimba', density:0.45, bass:true, amb:'crickets', beat:{bpm:110, swing:0.55, style:'afro'},
+      parts:[['Dmaj9','Gmaj7#11','Dmaj9','Gmaj7#11','Bm9','Gmaj9','Em9','A7sus4'], ['Gmaj9','A6','F#m7','Bm9','Gmaj7','Em9','Asus4','A']]},
+    chambre: {name:'Persiennes', mood:'lofi, smooth', dur:6, pad:'lofi', lead:'epiano', density:0.28, bass:true, amb:'vinyl', beat:{bpm:80, swing:0.6},
       parts:[['Fmaj9','Em7','Dm9','Cmaj7','Fmaj9','Em7','Am9','G7sus4'], ['Dm9','G9','Cmaj9','Am9','Fmaj7','E7sus4','Am9','Am9']]},
-    home:    {name:'Le quartier s’éveille', mood:'doux, apaisant', dur:6.5, pad:'warm', lead:'felt', density:0.3, bass:true,
+    maquis:  {name:'L’orage du maquis', mood:'afro-rock, tendu', dur:3.87, pad:'synth', lead:'epiano', density:0.3, bass:true, amb:'rain', beat:{bpm:124, swing:0.5, style:'rock'},
+      parts:[['Am7','Am7','Fmaj7','G','Am7','C','Dm7','E7sus4'], ['Fmaj7','G','Em7','Am7','Dm7','G','Am7','E7']]},
+    cave:    {name:'La cave', mood:'smooth, mystérieux', dur:5.71, pad:'strings', lead:'bell', density:0.22, bass:true, beat:{bpm:84, swing:0.55, style:'smooth'},
+      parts:[['Cm9','Abmaj7','Fm9','G7sus4','Cm9','Ebmaj7','Abmaj9','G7'], ['Fm9','Bb9','Ebmaj9','Abmaj7','Dm7b5','G7sus4','Cm9','Cmmaj7']]},
+    club:    {name:'Club VIP', mood:'afro-house, élégant', dur:4, pad:'synth', lead:'synth', density:0.34, bass:true, beat:{bpm:120, swing:0.5, style:'house'},
+      parts:[['F#m9','Dmaj7','Amaj7','E6','F#m9','Dmaj9','Bm9','C#7sus4'], ['Dmaj7','E','C#m7','F#m7','Bm9','E9','Amaj7','C#7sus4']]},
+    // lofi hip-hop: 2 bars per chord at 80 bpm, a muffled e-piano, a boom-bap beat with a little swing, vinyl crackle
+    verre:   {name:'Sous le lustre', mood:'smooth, lumineux', dur:5.22, pad:'glass', lead:'epiano', density:0.3, bass:true, beat:{bpm:92, swing:0.55, style:'smooth'},
+      parts:[['Fmaj9','Em7','Dm9','Cmaj7','Fmaj9','Em7','Am9','G7sus4'], ['Dm9','G9','Cmaj9','Am9','Fmaj7','E7sus4','Am9','Am9']]},
+    home:    {name:'Yaoundé la nuit', mood:'afro smooth, chaleureux', dur:4.8, pad:'warm', lead:'epiano', density:0.32, bass:true, beat:{bpm:100, swing:0.55, style:'afro'},
       parts:[['Fmaj9','C/E','Dm9','Cmaj7','Bbmaj7','Am7','Gsus4','G6'], ['Am9','Fmaj7','Cmaj7','G6','Dm9','Am7','Bbmaj7','E7sus4']]},
     tripot:  {name:'Soir au tripot', mood:'jazzy, chaleureux', dur:5.2, pad:'warm', lead:'epiano', density:0.4, bass:true, walk:true, amb:'murmur',
       parts:[['Dm9','G9','Cmaj9','Am7','Dm9','G7sus4','Cmaj7','A7'], ['Fmaj7','Fm6','Em7','A7','Dm9','G9','Cmaj9','Cmaj9']]},
@@ -6261,7 +6288,7 @@
     const ch = parseChord(part[inst.ci]);
     const lastOfPart = inst.ci===part.length-1;
     const d = tr.dur * (lastOfPart && !tr.beat ? 1.5 : 1); // the end of each section breathes a little longer (never with a beat: bars must stay whole)
-    if(tr.beat && inst.drums) scheduleDrums(inst, tr, t, d);
+    if(tr.beat && inst.drums) scheduleDrums(inst, tr, t, d, ch);
     // pad: chord in the middle register, sometimes inverted so the colour keeps moving
     let base = 48 + ch.root; if(base>57) base -= 12;
     let notes = ch.iv.map(i=> base+i);
@@ -6324,7 +6351,40 @@
     o.start(t); o.stop(t+0.16);
   }
   function drumHat(ctx, dest, t, vel, open){ musNoise(ctx, dest, t, 'highpass', 7500, 0.6, (open ? 0.045 : 0.055)*vel, open ? 0.2 : 0.035); }
-  function scheduleDrums(inst, tr, t, d){
+  // ---- the grooves with energy: afrobeat and makossa, afro-rock, afro-house, smooth ----
+  function shaker(ctx, dest, t, vel){ musNoise(ctx, dest, t, 'highpass', 6500, 0.8, 0.032*vel, 0.05); }
+  function conga(ctx, dest, t, f, vel){ const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(f*1.25, t); o.frequency.exponentialRampToValueAtTime(f, t+0.05);
+    const g = ctx.createGain(); o.connect(g); g.connect(dest); perc(g, t, 0.15*vel, 0.002, 0.22); o.start(t); o.stop(t+0.3); musNoise(ctx, dest, t, 'bandpass', f*3, 1.2, 0.03*vel, 0.03); }
+  function cowbell(ctx, dest, t, vel){ [560, 845].forEach(f=>{ const o = ctx.createOscillator(); o.type = 'square'; o.frequency.value = f; const b = ctx.createBiquadFilter(); b.type = 'bandpass'; b.frequency.value = f; b.Q.value = 4;
+    const g = ctx.createGain(); o.connect(b); b.connect(g); g.connect(dest); perc(g, t, 0.045*vel, 0.001, 0.12); o.start(t); o.stop(t+0.15); }); }
+  let GUIT = null;
+  function guitarStab(ctx, dest, t, root, len){ if(!GUIT){ GUIT = new Float32Array(256); for(let i=0;i<256;i++){ const x = i/128-1; GUIT[i] = Math.tanh(x*6); } }
+    const sh = ctx.createWaveShaper(); sh.curve = GUIT; const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2200; const g = ctx.createGain(); sh.connect(lp); lp.connect(g); g.connect(dest); perc(g, t, 0.045, 0.005, len);
+    const f = mtof(40 + root); [1, 1.5, 2].forEach(m=>{ const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f*m*(1 + (Math.random()-0.5)*0.004); o.connect(sh); o.start(t); o.stop(t+len+0.05); }); }
+  function styleDrums(inst, tr, t, d, ch){
+    const ctx = audioCtx, dest = inst.drums, st = tr.beat.style, six = 60/tr.beat.bpm/4, bars = Math.max(1, Math.round(d/(six*16)));
+    for(let b=0; b<bars; b++){ const bar = t + b*16*six;
+      if(st==='afro'){ // afrobeat / makossa: the kick that pushes, snare on 2 and 4, shakers, the conga talking, the bell
+        [0, 6, 8, 14].forEach(s=> drumKick(ctx, dest, bar+s*six, s===0 ? 1 : 0.7)); [4, 12].forEach(s=> drumSnare(ctx, dest, bar+s*six, 0.8));
+        for(let s=0; s<16; s++) shaker(ctx, dest, bar+s*six, s%2 ? 0.6 : 1);
+        [[2,330],[3,280],[7,330],[10,250],[11,330],[15,280]].forEach(([s, f])=> conga(ctx, dest, bar+s*six, f, 0.8));
+        [0, 3, 6, 10, 12].forEach(s=> cowbell(ctx, dest, bar+s*six, 0.7)); }
+      else if(st==='rock'){ // afro-rock: straight eighths, big kick and snare, the distorted guitar on the chord
+        [0, 8, 10].forEach(s=> drumKick(ctx, dest, bar+s*six, 1)); [4, 12].forEach(s=> drumSnare(ctx, dest, bar+s*six, 1.1));
+        for(let s=0; s<16; s+=2) drumHat(ctx, dest, bar+s*six, s%4 ? 0.6 : 1, s===14);
+        for(let s=1; s<16; s+=2) shaker(ctx, dest, bar+s*six, 0.5);
+        if(ch){ guitarStab(ctx, dest, bar, ch.root, 0.45); guitarStab(ctx, dest, bar+6*six, ch.root, 0.22); guitarStab(ctx, dest, bar+10*six, ch.root, 0.3); } }
+      else if(st==='house'){ // afro-house: four on the floor, off-beat hats, rolling congas
+        for(let s=0; s<16; s+=4) drumKick(ctx, dest, bar+s*six, 1); [4, 12].forEach(s=> musNoise(ctx, dest, bar+s*six, 'bandpass', 1500, 1, 0.08, 0.12));
+        for(let s=2; s<16; s+=4) drumHat(ctx, dest, bar+s*six, 0.9, s===14); for(let s=0; s<16; s++) shaker(ctx, dest, bar+s*six, 0.5);
+        [[3,300],[6,260],[7,300],[11,300],[13,240],[14,260]].forEach(([s, f])=> conga(ctx, dest, bar+s*six, f, 0.7)); }
+      else { // smooth: a soft kick, the rimshot, brushes
+        [0, 7, 10].forEach(s=> drumKick(ctx, dest, bar+s*six, 0.6)); [4, 12].forEach(s=> musNoise(ctx, dest, bar+s*six, 'bandpass', 2800, 2, 0.06, 0.05));
+        for(let s=0; s<16; s+=2) musNoise(ctx, dest, bar+s*six, 'highpass', 5000, 0.5, 0.02, 0.09); }
+    }
+  }
+  function scheduleDrums(inst, tr, t, d, ch){
+    if(tr.beat.style){ styleDrums(inst, tr, t, d, ch); return; }
     const ctx = audioCtx, dest = inst.drums;
     const six = 60/tr.beat.bpm/4;                       // one 16th note
     const swingShift = (tr.beat.swing-0.5)*2*six;       // late off-beat 8ths = the lazy lofi groove
@@ -8738,6 +8798,258 @@
   // above the screen: a warm pool on the table, a beam, dust in the light, a flicker now and then, and a draught that
   // sets it swinging once in a while. The cards (HTML, above) get their shadow from the bulb's position.
   // Some quartiers lose the power: the room goes dark, only the opponent's eyes and teeth still shine, a torch helps.
+
+  // ===================== L'ACCUEIL DE NUIT =====================
+  // The menus are a wall of a bar at night: plaster above, a painted dado below, a bare bulb hanging in the top
+  // left corner that lights the whole screen (rays, dust, a rare flicker; touch it and it swings), and the sign
+  // FAP FAP in glass with little bulbs inside the letters that light the wall under them.
+  const HomeScene = (()=>{
+    const cv = document.createElement('canvas'); cv.id = 'homeScene'; cv.setAttribute('aria-hidden', 'true'); document.body.insertBefore(cv, document.body.firstChild);
+    const logoEl = document.createElement('canvas'); logoEl.id = 'glassLogo'; logoEl.setAttribute('role', 'img'); logoEl.setAttribute('aria-label', 'Fap Fap');
+    { const host = document.querySelector('#menuOverlay .home-top'); if(host) host.insertBefore(logoEl, host.firstChild); }
+    const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const cx = cv.getContext('2d');
+    const lc = document.createElement('canvas'), lx = lc.getContext('2d');   // carte de lumière basse résolution
+    const wall = document.createElement('canvas'), wx = wall.getContext('2d');
+    let W=0, H=0, D=1;
+
+    // ---- l'ampoule : un pendule presque immobile ----
+    const B = {px:46, py:-14, L:104, th:0, om:0, power:1, flick:null, cut:false};
+    const bulbPos = ()=>({x:B.px + Math.sin(B.th)*B.L, y:B.py + Math.cos(B.th)*B.L});
+
+    function paintWall(){
+      wall.width = W*D; wall.height = H*D; wx.setTransform(D,0,0,D,0,0);
+      let s = 7; const r = ()=> (s = (s*9301+49297)%233280)/233280;
+      // crépi ocre en haut, soubassement peint en vert-bleu en bas (comme dans les bars du quartier)
+      const band = H*0.62;
+      wx.fillStyle = '#8a6a52'; wx.fillRect(0,0,W,H);
+      wx.fillStyle = '#3e6a66'; wx.fillRect(0,band,W,H-band);
+      for(let i=0;i<900;i++){ // grain du crépi
+        const x=r()*W, y=r()*H, rr=1+r()*3.2, l=r();
+        wx.fillStyle = l>.5 ? 'rgba(255,240,215,'+(.03+r()*.05)+')' : 'rgba(30,15,5,'+(.04+r()*.07)+')';
+        wx.beginPath(); wx.arc(x,y,rr,0,7); wx.fill();
+      }
+      for(let i=0;i<14;i++){ // taches d'humidité
+        const x=r()*W, y=r()*H, rr=30+r()*90;
+        const g=wx.createRadialGradient(x,y,0,x,y,rr); g.addColorStop(0,'rgba(40,22,10,.16)'); g.addColorStop(1,'rgba(40,22,10,0)');
+        wx.fillStyle=g; wx.fillRect(x-rr,y-rr,rr*2,rr*2);
+      }
+      // bord écaillé de la peinture
+      wx.fillStyle='#3e6a66'; wx.beginPath(); wx.moveTo(0,band);
+      for(let x=0;x<=W;x+=14){ wx.lineTo(x, band - (r()<.25 ? r()*10 : r()*2)); }
+      wx.lineTo(W,band+4); wx.lineTo(0,band+4); wx.fill();
+      wx.strokeStyle='rgba(18,11,8,.75)'; wx.lineWidth=2.5; wx.beginPath(); wx.moveTo(0,band+3); wx.lineTo(W,band+3); wx.stroke();
+      // fissures
+      wx.strokeStyle='rgba(18,11,8,.45)'; wx.lineWidth=1.2;
+      for(let k=0;k<4;k++){ let x=r()*W, y=r()*band; wx.beginPath(); wx.moveTo(x,y); for(let j=0;j<7;j++){ x+= (r()-.4)*22; y+= 8+r()*14; wx.lineTo(x,y);} wx.stroke(); }
+      // fil électrique agrafé au mur, de l'ampoule vers la droite
+      wx.strokeStyle='#120b08'; wx.lineWidth=3; wx.beginPath(); wx.moveTo(B.px,6); wx.bezierCurveTo(W*.35,14, W*.6,4, W+10,12); wx.stroke();
+      wx.fillStyle='#d8d0c0'; for(let x=90;x<W;x+=110){ const y=8+Math.sin(x)*3; wx.fillRect(x-3,y-2,6,5); }
+    }
+
+    function resize(){
+      D = Math.min(1.5, devicePixelRatio||1); W = innerWidth; H = innerHeight;
+      cv.width = W*D; cv.height = H*D; lc.width = Math.ceil(W/4); lc.height = Math.ceil(H/4);
+      paintWall(); Logo.setup();
+    }
+
+    // ---- poussière et fumée dans la lumière ----
+    const dust = Array.from({length: RM?0:70}, ()=>({x:Math.random(), y:Math.random(), z:.4+Math.random()*.9, ph:Math.random()*6.3}));
+    const haze = Array.from({length: RM?0:5}, (_,i)=>({x:Math.random(), y:.1+Math.random()*.6, r:.25+Math.random()*.3, v:(Math.random()-.5)*.000012}));
+
+    function lightAt(x,y){ const p=bulbPos(); const d=Math.hypot(x-p.x,y-p.y); return Math.max(0, 1 - d/Math.max(W*1.25, 620)); }
+
+    function drawScene(t){
+      const p = bulbPos(), P = B.power, Lg = Logo.glow;
+      // 1. carte de lumière (basse résolution) : nuit bleutée + ampoule chaude + lueurs du logo
+      lx.setTransform(1,0,0,1,0,0); lx.globalCompositeOperation='source-over';
+      lx.fillStyle = 'rgb(16,15,30)'; lx.fillRect(0,0,lc.width,lc.height);
+      lx.setTransform(.25,0,0,.25,0,0); lx.globalCompositeOperation='lighter';
+      if(P>0.01){
+        const R = Math.max(W*1.3, 700);
+        const g = lx.createRadialGradient(p.x,p.y,0,p.x,p.y,R);
+        g.addColorStop(0, `rgba(255,236,190,${P})`); g.addColorStop(.18, `rgba(255,214,150,${.86*P})`);
+        g.addColorStop(.5, `rgba(190,140,90,${.42*P})`); g.addColorStop(1,'rgba(60,40,30,0)');
+        lx.fillStyle=g; lx.fillRect(0,0,W,H);
+      }
+      if(Lg.a>0.01){ // les ampoules du logo éclairent le mur : rose sous le premier FAP, bleu sous le second
+        const r = Lg.rect, cy = r.top + r.height*.55;
+        [[r.left + r.width*.26,'255,120,180'],[r.left + r.width*.74,'110,160,255']].forEach(([x,c])=>{
+          const g=lx.createRadialGradient(x,cy,0,x,cy,r.width*.55); g.addColorStop(0,`rgba(${c},${.55*Lg.a})`); g.addColorStop(1,`rgba(${c},0)`);
+          lx.fillStyle=g; lx.fillRect(x-r.width, cy-r.width, r.width*2, r.width*2);
+        });
+      }
+      // 2. mur × lumière
+      cx.setTransform(1,0,0,1,0,0); cx.globalCompositeOperation='source-over';
+      cx.drawImage(wall,0,0);
+      cx.globalCompositeOperation='multiply'; cx.imageSmoothingEnabled=true; cx.drawImage(lc,0,0,cv.width,cv.height);
+      cx.setTransform(D,0,0,D,0,0);
+      // 3. diffusion : halo, rayons, fumée, poussière (additif)
+      cx.globalCompositeOperation='lighter';
+      if(P>0.01){
+        const h = cx.createRadialGradient(p.x,p.y,0,p.x,p.y,170);
+        h.addColorStop(0,`rgba(255,230,170,${.55*P})`); h.addColorStop(.25,`rgba(255,200,120,${.22*P})`); h.addColorStop(1,'rgba(255,180,100,0)');
+        cx.fillStyle=h; cx.fillRect(p.x-180,p.y-180,360,360);
+        // rayons doux qui partent de l'ampoule (l'air est chargé)
+        const rays = [[.18,.5],[.55,.42],[.95,.36],[1.28,.3]];
+        rays.forEach(([a,w],i)=>{
+          const br = (.035 + .02*Math.sin(t*.0004 + i*1.7))*P, len = Math.max(W,H)*1.1;
+          const a0 = a + B.th*.6;
+          const g = cx.createRadialGradient(p.x,p.y,10,p.x,p.y,len); g.addColorStop(0,`rgba(255,220,160,${br})`); g.addColorStop(1,'rgba(255,220,160,0)');
+          cx.fillStyle=g; cx.beginPath(); cx.moveTo(p.x,p.y); cx.arc(p.x,p.y,len,a0-w*.12,a0+w*.12); cx.closePath(); cx.fill();
+        });
+        haze.forEach(z=>{
+          z.x += z.v*16; if(z.x<-.3) z.x=1.3; if(z.x>1.3) z.x=-.3;
+          const x=z.x*W, y=z.y*H, rr=z.r*Math.max(W,H), li=lightAt(x,y)*P;
+          const g=cx.createRadialGradient(x,y,0,x,y,rr); g.addColorStop(0,`rgba(255,215,160,${.05*li})`); g.addColorStop(1,'rgba(255,215,160,0)');
+          cx.fillStyle=g; cx.fillRect(x-rr,y-rr,rr*2,rr*2);
+        });
+        dust.forEach(d=>{
+          d.y -= .00003*d.z*16; d.x += Math.sin(t*.0003+d.ph)*.00004*16; if(d.y<-.02){ d.y=1.02; d.x=Math.random(); }
+          const x=d.x*W, y=d.y*H, li=lightAt(x,y);
+          const a = li*li*P*(.35+.35*Math.sin(t*.002+d.ph));
+          if(a<.02) return;
+          cx.fillStyle=`rgba(255,235,200,${a})`; cx.beginPath(); cx.arc(x,y,.7+d.z*.9,0,7); cx.fill();
+        });
+      }
+      cx.globalCompositeOperation='source-over';
+      // 4. vignette
+      const v = cx.createRadialGradient(W*.3,H*.25,Math.min(W,H)*.3, W*.5,H*.5,Math.max(W,H)*.85);
+      v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(5,3,8,.55)'); cx.fillStyle=v; cx.fillRect(0,0,W,H);
+      drawBulb(p,P);
+    }
+
+    function drawBulb(p,P){
+      cx.save();
+      // le fil
+      cx.strokeStyle='#120b08'; cx.lineWidth=3.5; cx.lineCap='round';
+      cx.beginPath(); cx.moveTo(B.px,B.py); cx.lineTo(p.x - Math.sin(B.th)*30, p.y - Math.cos(B.th)*30); cx.stroke();
+      cx.translate(p.x,p.y); cx.rotate(-B.th);
+      // douille en bakélite
+      cx.fillStyle='#211814'; cx.strokeStyle='#120b08'; cx.lineWidth=3;
+      cx.beginPath(); cx.roundRect(-9,-32,18,18,4); cx.fill(); cx.stroke();
+      cx.fillStyle='#7a6a55'; cx.fillRect(-7,-15,14,5);
+      // le verre
+      const g = cx.createRadialGradient(-4,2,2,0,6,18);
+      if(P>.05){ g.addColorStop(0,`rgba(255,255,240,${.95})`); g.addColorStop(.5,`rgba(255,226,150,${.55+.4*P})`); g.addColorStop(1,`rgba(255,190,90,${.35+.4*P})`); }
+      else { g.addColorStop(0,'rgba(120,120,135,.5)'); g.addColorStop(1,'rgba(60,60,75,.6)'); }
+      cx.fillStyle=g; cx.beginPath(); cx.moveTo(-6,-10); cx.bezierCurveTo(-7,-4,-16,0,-16,10); cx.arc(0,10,16,Math.PI,0,true); cx.bezierCurveTo(16,0,7,-4,6,-10); cx.closePath(); cx.fill();
+      cx.strokeStyle='#120b08'; cx.lineWidth=2.5; cx.stroke();
+      // filament
+      cx.strokeStyle = P>.05 ? `rgba(255,250,225,${.6+.4*P})` : 'rgba(200,90,40,.5)'; cx.lineWidth=1.6;
+      cx.beginPath(); cx.moveTo(-4,-8); cx.lineTo(-4,6); cx.lineTo(-2,9); cx.lineTo(0,6); cx.lineTo(2,9); cx.lineTo(4,6); cx.lineTo(4,-8); cx.stroke();
+      // reflet
+      cx.strokeStyle='rgba(255,255,255,.55)'; cx.lineWidth=2.2; cx.beginPath(); cx.arc(0,10,11,Math.PI*1.1,Math.PI*1.4); cx.stroke();
+      cx.restore();
+    }
+
+    // ---- l'enseigne FAP FAP : lettres en verre, ampoules à l'intérieur ----
+    const Logo = {
+      el: logoEl, glow:{a:0, rect:{left:0,top:0,width:1,height:1}},
+      pts:[], tc:document.createElement('canvas'), fs:96, on:1, mode:'wave', mt:0,
+      setup(){
+        const el=this.el, w=el.clientWidth, h=el.clientHeight; this.w=w; this.h=h; if(!w || !h) return;
+        el.width=w*D; el.height=h*D; this.tc.width=w*D; this.tc.height=h*D;
+        this.ctx=el.getContext('2d'); this.tx=this.tc.getContext('2d');
+        this.fs = Math.min(92, w/4.3);
+        this.y = h*.5 + this.fs*.36; this.x1 = w*.26; this.x2 = w*.74;
+        // repérer les points bien à l'intérieur des lettres pour y visser des ampoules
+        const m=document.createElement('canvas'); m.width=w; m.height=h; const mx=m.getContext('2d');
+        mx.font=`700 ${this.fs}px Fredoka, "Trebuchet MS", sans-serif`; mx.textAlign='center'; mx.fillStyle='#fff';
+        mx.fillText('FAP',this.x1,this.y); mx.fillText('FAP',this.x2,this.y);
+        const data=mx.getImageData(0,0,w,h).data, A=(x,y)=> (x<0||y<0||x>=w||y>=h)?0:data[(y|0)*w*4+(x|0)*4+3];
+        const e=Math.max(4,this.fs*.065), cand=[];
+        for(let y=0;y<h;y+=3) for(let x=0;x<w;x+=3){
+          if(A(x,y)>200 && A(x+e,y)>200 && A(x-e,y)>200 && A(x,y+e)>200 && A(x,y-e)>200 && A(x+e*.7,y+e*.7)>200 && A(x-e*.7,y-e*.7)>200) cand.push([x,y]);
+        }
+        const gap=this.fs*.15, pts=[];
+        cand.forEach(c=>{ if(pts.every(q=>Math.hypot(q[0]-c[0],q[1]-c[1])>gap)) pts.push(c); });
+        this.pts = pts.map(([x,y])=>({x,y,w:x<w/2?0:1,b:1}));
+      },
+      text(c, fn){ c.font=`700 ${this.fs}px Fredoka, "Trebuchet MS", sans-serif`; c.textAlign='center'; fn(this.x1,0); fn(this.x2,1); },
+      draw(t){
+        const c=this.ctx, tc=this.tx, w=this.w, h=this.h, P=B.power;
+        const r=this.el.getBoundingClientRect(); this.glow.rect=r;
+        // allumage des ampoules : vague qui court, parfois une salve mot par mot
+        if(t>this.mt){ this.mode = Math.random()<.35 ? 'burst' : 'wave'; this.mt = t + (this.mode==='burst'?2200:9000); this.t0=t; }
+        let sum=0;
+        this.pts.forEach(p=>{
+          let b;
+          if(RM) b=1;
+          else if(this.mode==='burst'){ const k=(t-this.t0)/2200; b = k<.15?.2 : (p.w===0 ? (k<.5?1:.75) : (k<.4?.2:1)); }
+          else b = .62 + .38*Math.sin(t*.005 - p.x*.045);
+          p.b = b * this.on * (P>.05 ? 1 : 0); sum+=p.b;
+        });
+        const avg = this.pts.length ? sum/this.pts.length : 0;
+        this.glow.a = avg;
+        c.setTransform(D,0,0,D,0,0); c.clearRect(0,0,w,h);
+        // ombre portée du logo, à l'opposé de l'ampoule
+        const bp=bulbPos(), lcx=r.left+r.width/2, lcy=r.top+r.height/2, dx=lcx-bp.x, dy=lcy-bp.y, dd=Math.hypot(dx,dy)||1;
+        const ox=dx/dd*(5+dd*.012), oy=dy/dd*(5+dd*.012);
+        c.lineJoin='round';
+        this.text(c,(x)=>{ c.fillStyle='rgba(5,2,0,.5)'; c.fillText('FAP',x+ox*2.2,this.y+oy*2.2); });
+        this.text(c,(x)=>{ c.fillStyle='rgba(5,2,0,.75)'; c.fillText('FAP',x+ox,this.y+oy); });
+        this.text(c,(x)=>{ c.strokeStyle='#120b08'; c.lineWidth=9; c.strokeText('FAP',x,this.y); });
+        // le verre : on voit le mur à travers (un peu déformé), teinté, avec un bord épais et un reflet
+        tc.setTransform(D,0,0,D,0,0); tc.globalCompositeOperation='source-over'; tc.clearRect(0,0,w,h);
+        this.text(tc,(x)=>{ tc.fillStyle='#fff'; tc.fillText('FAP',x,this.y); });
+        tc.globalCompositeOperation='source-in';
+        tc.setTransform(1,0,0,1,0,0);
+        const sx=Math.max(0,(r.left-r.width*.03)*D), sy=Math.max(0,(r.top-r.height*.05)*D);
+        tc.drawImage(cv, sx, sy, r.width*1.06*D, r.height*1.1*D, 0, 0, w*D, h*D);
+        tc.setTransform(D,0,0,D,0,0);
+        tc.globalCompositeOperation='source-atop';
+        tc.fillStyle='rgba(240,107,168,.48)'; tc.fillRect(0,0,w/2,h);
+        tc.fillStyle='rgba(61,127,217,.5)'; tc.fillRect(w/2,0,w/2,h);
+        [[12,.16],[8,.16],[4,.2]].forEach(([lw,a])=>{ this.text(tc,(x)=>{ tc.strokeStyle=`rgba(10,4,12,${a})`; tc.lineWidth=lw; tc.strokeText('FAP',x,this.y); }); });
+        // lumière des ampoules dans la masse du verre
+        tc.globalCompositeOperation='lighter';
+        this.pts.forEach(p=>{ if(p.b<.05) return; const g=tc.createRadialGradient(p.x,p.y,0,p.x,p.y,this.fs*.22); g.addColorStop(0,`rgba(255,220,150,${.38*p.b})`); g.addColorStop(1,'rgba(255,200,120,0)'); tc.fillStyle=g; tc.fillRect(p.x-30,p.y-30,60,60); });
+        tc.globalCompositeOperation='source-atop';
+        const sp=tc.createLinearGradient(0,this.y-this.fs*.75,0,this.y-this.fs*.25); sp.addColorStop(0,'rgba(255,255,255,.42)'); sp.addColorStop(1,'rgba(255,255,255,0)');
+        tc.fillStyle=sp; tc.fillRect(0,0,w,h);
+        tc.globalCompositeOperation='source-over';
+        c.setTransform(1,0,0,1,0,0); c.drawImage(this.tc,0,0); c.setTransform(D,0,0,D,0,0);
+        // fin liseré clair sur le bord du verre, côté ampoule
+        this.text(c,(x)=>{ c.strokeStyle='rgba(255,240,220,.35)'; c.lineWidth=1.4; c.strokeText('FAP',x-dx/dd*1.2,this.y-dy/dd*1.2); });
+        // les ampoules
+        this.pts.forEach(p=>{
+          c.fillStyle='#120b08'; c.beginPath(); c.arc(p.x,p.y,4.6,0,7); c.fill();
+          const g=c.createRadialGradient(p.x-1,p.y-1,0,p.x,p.y,3.6);
+          if(p.b>.05){ g.addColorStop(0,'#fffef2'); g.addColorStop(1,`rgba(255,${190+40*p.b|0},90,${.5+.5*p.b})`); }
+          else { g.addColorStop(0,'#6b6470'); g.addColorStop(1,'#35303a'); }
+          c.fillStyle=g; c.beginPath(); c.arc(p.x,p.y,3.4,0,7); c.fill();
+        });
+        c.globalCompositeOperation='lighter';
+        this.pts.forEach(p=>{ if(p.b<.08) return; const g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,12); g.addColorStop(0,`rgba(255,225,150,${.55*p.b})`); g.addColorStop(1,'rgba(255,200,120,0)'); c.fillStyle=g; c.fillRect(p.x-12,p.y-12,24,24); });
+        c.globalCompositeOperation='source-over';
+      }
+    };
+
+    const inMenu = ()=> !document.body.classList.contains('in-game') && !document.hidden;
+    function flicker(seq, end){ B.flick = {seq, i:0, t:0, end}; }
+    const swing = ()=>{ B.om += (B.th > 0 ? -1 : 1)*2.2; };
+    addEventListener('pointerdown', e=>{ if(!inMenu() || e.target.closest('button, a, input, canvas#glassLogo')) return; const p = bulbPos(); if(Math.hypot(e.clientX - p.x, e.clientY - p.y) < 60) swing(); }, {passive:true});
+    logoEl.addEventListener('click', ()=>{ Logo.mode = 'burst'; Logo.t0 = performance.now(); Logo.mt = Logo.t0 + 2200; });
+    let last = performance.now(), nextFlick = last + 25000 + Math.random()*25000, acc = 0, ready = false;
+    function frame(t){
+      requestAnimationFrame(frame);
+      if(!ready || !inMenu()){ last = t; return; }
+      const dt = Math.min(.05, (t - last)/1000); last = t;
+      const w0 = 4.2, rest = RM ? 0 : Math.sin(t*.00035)*.006;
+      B.om += (-w0*w0*Math.sin(B.th - rest) - 1.1*B.om)*dt; B.th += B.om*dt;
+      if(B.flick){ const f = B.flick; f.t += dt*1000; if(f.t > 70){ f.t = 0; f.i++; } if(f.i >= f.seq.length){ B.power = f.end; B.flick = null; } else B.power = f.seq[f.i]; }
+      else { B.power = .985 + .015*Math.sin(t*.003); if(t > nextFlick && !RM){ flicker([.55, 1, .75, 1], 1); nextFlick = t + 30000 + Math.random()*30000; } }
+      acc += dt; if(acc < 1/30 && !RM) return; acc = 0;
+      if(W !== innerWidth || H !== innerHeight) resize();
+      if(logoEl.clientWidth && Logo.w !== logoEl.clientWidth) Logo.setup();
+      drawScene(t); if(Logo.w && Logo.pts) Logo.draw(t);
+    }
+    addEventListener('resize', ()=>{ if(ready) resize(); });
+    (document.fonts && document.fonts.load ? document.fonts.load('700 96px Fredoka') : Promise.resolve()).catch(()=>{}).then(()=>{ resize(); ready = true; requestAnimationFrame(frame); });
+    return {swing};
+  })();
+
   // ===================== LES TABLES (nouvelle génération) =====================
   // Nine real places of Yaoundé, each lit by its own light: the bulb of the tripot, the red neon of the bar, the
   // storm lamp of the veranda, the spots of the VIP club, the moon and the string lights of the yard, the street lamp
