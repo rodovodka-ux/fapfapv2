@@ -1,6 +1,6 @@
-// Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
+﻿// Fap Fap â€” service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v50';
+const CACHE = 'fapfap-v51';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
 self.addEventListener('install', (event)=>{
@@ -15,12 +15,12 @@ self.addEventListener('activate', (event)=>{
   );
 });
 
-// a friend's challenge, even with the game closed: show it…
+// a friend's challenge, even with the game closed: show itâ€¦
 self.addEventListener('push', (event)=>{
   let d = {};
   try{ d = event.data ? event.data.json() : {}; }catch(e){ d = {body: event.data ? event.data.text() : ''}; }
   event.waitUntil(self.registration.showNotification(d.title || 'Fap Fap', {
-    body: d.body || 'Une partie t’attend.',
+    body: d.body || 'Une partie tâ€™attend.',
     icon: './icon-192.png',
     badge: './icon-192.png',
     tag: d.tag || 'fapfap',
@@ -29,7 +29,7 @@ self.addEventListener('push', (event)=>{
     data: { url: d.url || './', code: d.code || '', name: d.name || '' }
   }));
 });
-// …and a touch on it opens the game on the invitation (the open game if there is one, a new window otherwise)
+// â€¦and a touch on it opens the game on the invitation (the open game if there is one, a new window otherwise)
 self.addEventListener('notificationclick', (event)=>{
   event.notification.close();
   const d = event.notification.data || {};
