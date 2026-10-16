@@ -79,12 +79,25 @@ clues: {
 },
 // the wall: who Stéphane suspects (the notes are written as the story goes)
 suspects: {
-  caroline:  {n:'Caroline', img:'perso-caroline', from:4},
-  christelle:{n:'Christelle', img:'perso-christelle', from:1},
-  kappo:     {n:'Le Ngonzormorrr', img:'perso-masque', from:4},
-  rall:      {n:'RALL', img:'perso-rall', from:1},
-  cobra:     {n:'Boris le Cobra', img:'perso-cobra', from:4},
-  mballa:    {n:'Adjudant Mballa', img:'perso-mballa', from:14}
+  caroline:  {n:'Caroline', img:'perso-caroline', from:4, f:'elle', role:'La femme que Penalty voyait en secret. Bastos, robe noire, boucles en or.'},
+  christelle:{n:'Christelle', img:'perso-christelle', from:1, f:'elle', role:'La reine de Penalty. Elle a fait sa valise juste après la veillée.'},
+  kappo:     {n:'Le Ngonzormorrr', img:'perso-masque', from:4, f:'il', role:'Le mari de Caroline. Personne n’a jamais vu son visage à la table.'},
+  rall:      {n:'RALL', img:'perso-rall', from:1, f:'il', role:'Le meilleur ami. Il sait des choses, et il a peur.'},
+  cobra:     {n:'Boris le Cobra', img:'perso-cobra', from:4, f:'il', role:'Il vend tout ce qu’il entend. Même ce qui peut tuer.'},
+  mballa:    {n:'Adjudant Mballa', img:'perso-mballa', from:14, f:'il', role:'Le policier du deuxième carrefour. Il ne passe jamais.'}
+},
+// the board of suspects (cork, polaroids, red strings): which clue proves what against whom.
+// fit[clue] = {suspect: 'mobile' | 'occasion' | 'moyen'} · breaks[clue] = the clue it shows was a lie (a planted lead)
+board: {
+  fit: {
+    dame:{caroline:'mobile'}, liasses:{caroline:'mobile', rall:'mobile'}, balcon:{caroline:'occasion'}, mensonge:{caroline:'occasion'}, megot:{caroline:'occasion'},
+    releve:{caroline:'moyen'}, voix:{caroline:'moyen'}, serviette:{caroline:'moyen'}, numero_c:{caroline:'moyen'},
+    caroline:{kappo:'mobile'}, surnom:{kappo:'mobile'}, quatre:{kappo:'occasion'}, plaque:{kappo:'occasion'}, minuit:{kappo:'occasion'}, enveloppe_p:{kappo:'moyen', mballa:'mobile'}, hommes:{kappo:'moyen', cobra:'mobile'},
+    banque:{christelle:'mobile'}, ticket:{christelle:'occasion'}, telephone:{christelle:'moyen'},
+    barrage:{mballa:'occasion'}, vingtmille:{mballa:'moyen'}, palmiers:{cobra:'occasion'}
+  },
+  breaks: {tickets2:'ticket', rumeur:'ticket'},
+  why: {tickets2:'Le deuxième ticket est au nom de Penalty : elle voulait partir AVEC lui, pas le tuer.', rumeur:'Quelqu’un a payé pour salir Christelle. On voulait que tu l’accuses.'}
 },
 // the map of Yaoundé: where Stéphane goes, chapter by chapter (null = a memory of Penalty, nobody moves).
 // mem = the place a memory of Penalty brings out of the fog. sms = the anonymous message received when arriving there (once)
@@ -110,16 +123,16 @@ map: {
 // searching a place: tap the things around you. clue = what it gives; more = look closer (and what you find then)
 searches: {
   palmiers: {img:'lieu-palmiers', t:'Résidence Les Palmiers', intro:'Papa Tchinda est parti faire sa ronde. Tu as cinq minutes.', items:[
-    {n:'La poubelle du portail', s:'La poubelle', at:[47,90], d:'Des bouteilles de Top, des sachets de plantain. La vie des gens riches ressemble beaucoup à celle des autres, dans une poubelle.'},
-    {n:'Sous le balcon', s:'Sous le balcon', at:[68,30], d:'Entre deux pots de fleurs, un mégot fin. Pas une cigarette de quartier.', clue:'megot', more:'Regarder le filtre', moreD:'Une trace de rouge à lèvres. Bordeaux. Le genre de rouge qui coûte le prix d’un sac de riz.'},
-    {n:'Le cahier du gardien', s:'Le cahier', at:[36,62], d:'Des dates, des heures, des plaques d’immatriculation écrites avec soin.', clue:'plaque'},
-    {n:'La radio', s:'La radio', at:[15,80], d:'Elle capte encore Radio Tiémeni Siantou. Rien d’autre.'}
+    {n:'La poubelle du portail', s:'La poubelle', at:[34,84], d:'Des bouteilles de Top, des sachets de plantain. La vie des gens riches ressemble beaucoup à celle des autres, dans une poubelle.'},
+    {n:'Sous le balcon', s:'Sous le balcon', at:[56,30], d:'Entre deux pots de fleurs, un mégot fin. Pas une cigarette de quartier.', clue:'megot', more:'Regarder le filtre', moreD:'Une trace de rouge à lèvres. Bordeaux. Le genre de rouge qui coûte le prix d’un sac de riz.'},
+    {n:'Le cahier du gardien', s:'Le cahier', at:[18,78], d:'Des dates, des heures, des plaques d’immatriculation écrites avec soin.', clue:'plaque'},
+    {n:'La radio', s:'La radio', at:[25,52], d:'Elle capte encore Radio Tiémeni Siantou. Rien d’autre.'}
   ]},
   studio: {img:'lieu-studio', t:'Le studio de Christelle', intro:'Christelle est sortie remplir la bouilloire au robinet de la cour. Tu as deux minutes.', items:[
-    {n:'La valise', s:'La valise', at:[62,40], d:'Des pagnes pliés, des chaussures, une photo de vous trois. Et sous un pagne, le coin d’une enveloppe de banque.', clue:'banque'},
-    {n:'La poubelle', s:'La poubelle', at:[20,88], d:'Des épluchures, un sachet de lait, et un ticket de car froissé.', clue:'ticket', more:'Déplier le ticket', moreD:'Le papier est épais. Il y en a deux, collés l’un à l’autre par le jus de foléré. Le deuxième porte un autre nom : Penalty.', moreClue:'tickets2'},
-    {n:'Le miroir', s:'Le miroir', at:[80,16], d:'Une photo coincée dans le cadre : un dimanche, du soya, trois sourires. Lui, elle, et toi.'},
-    {n:'Le réchaud', s:'Le réchaud', at:[20,30], d:'Une marmite de riz froid. Pour une personne.'}
+    {n:'La valise', s:'La valise', at:[54,50], d:'Des pagnes pliés, des chaussures, une photo de vous trois. Et sous un pagne, le coin d’une enveloppe de banque.', clue:'banque'},
+    {n:'La poubelle', s:'La poubelle', at:[16,90], d:'Des épluchures, un sachet de lait, et un ticket de car froissé.', clue:'ticket', more:'Déplier le ticket', moreD:'Le papier est épais. Il y en a deux, collés l’un à l’autre par le jus de foléré. Le deuxième porte un autre nom : Penalty.', moreClue:'tickets2'},
+    {n:'Le miroir', s:'Le miroir', at:[32,18], d:'Une photo coincée dans le cadre : un dimanche, du soya, trois sourires. Lui, elle, et toi.'},
+    {n:'Le réchaud', s:'Le réchaud', at:[84,84], d:'Une marmite de riz froid. Pour une personne.'}
   ]}
 },
 // the interrogations. say = the answer; tell = what Stéphane notices; ans = croire | douter | accuser (proof = the clues that work)
