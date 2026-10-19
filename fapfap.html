@@ -924,6 +924,29 @@
     background: radial-gradient(120% 90% at 0% 0%, rgba(244,184,96,0.22), transparent 60%), linear-gradient(160deg, #2b1c0e, #140c06);
     box-shadow: 0 14px 30px rgba(0,0,0,0.45); }
   .acct-who{ min-width:0; }
+  .avatar img.av-photo{ object-fit:cover; object-position:50% 50%; transform:none; }
+  .acct-av-btn{ position:relative; flex-shrink:0; padding:0; border:0; background:none; border-radius:50%; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .acct-av-btn .acct-cam{ position:absolute; right:-3px; bottom:-3px; width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
+    background:#FFC93C; color:#1B120C; border:2px solid #1B120C; box-shadow:0 3px 8px rgba(0,0,0,.45); }
+  .acct-av-btn .acct-cam svg.i{ width:15px; height:15px; stroke-width:2.2; }
+  .acct-photo-row{ display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .acct-photo-row button{ flex:1 1 140px; min-height:42px; border-radius:14px; border:1px solid rgba(244,184,96,.35); background:rgba(255,255,255,.06); color:var(--cream);
+    font-weight:800; font-size:14px; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+  .acct-photo-row button svg.i{ width:18px; height:18px; }
+  .acct-photo-row button.hidden{ display:none; }
+  .ph-crop{ position:fixed; inset:0; z-index:90; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:20px 16px calc(20px + env(safe-area-inset-bottom));
+    background:rgba(8,5,3,.94); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); animation:phIn .22s ease-out; }
+  @keyframes phIn{ from{ opacity:0; } }
+  .ph-crop .ph-head{ position:absolute; top:calc(10px + env(safe-area-inset-top)); left:12px; right:12px; display:flex; align-items:center; gap:10px; color:var(--cream); }
+  .ph-crop .ph-head h3{ margin:0; font-family:var(--font-display); font-size:20px; }
+  .ph-crop .ph-stage{ position:relative; width:min(78vw, 300px); aspect-ratio:1; touch-action:none; cursor:grab; }
+  .ph-crop canvas{ width:100%; height:100%; border-radius:50%; display:block; box-shadow:0 0 0 4px #1B120C, 0 0 0 7px #FFC93C, 0 18px 40px rgba(0,0,0,.6); background:#2b1c0e; }
+  .ph-crop .ph-hint{ color:var(--dust); font-size:13px; text-align:center; margin:0; }
+  .ph-crop .ph-zoom{ width:min(78vw, 300px); accent-color:#FFC93C; }
+  .ph-crop .ph-btns{ display:flex; gap:10px; width:min(86vw, 340px); }
+  .ph-crop .ph-btns button{ flex:1; min-height:48px; border-radius:16px; font-weight:800; font-size:16px; border:2px solid #1B120C; }
+  .ph-crop .ph-cancel{ background:rgba(255,255,255,.08); color:var(--cream); border-color:rgba(255,255,255,.2) !important; }
+  .ph-crop .ph-ok{ background:#FFC93C; color:#1B120C; box-shadow:0 4px 0 #1B120C; }
   .acct-name{ font-family:var(--font-display); font-size:23px; font-weight:800; color:var(--cream); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .acct-state{ display:inline-flex; align-items:center; gap:7px; margin-top:4px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;
     background:rgba(255,255,255,0.07); color:var(--dust); max-width:100%; }
@@ -1060,7 +1083,7 @@
     .hand .card{ width:58px; height:82px; }
     .hand-zone{ padding-top:3px; }
     .hand-label{ margin-bottom:2px; }
-    .actions{ margin-top:4px; min-height:0; }
+    .actions{ margin-top:4px; min-height:42px; } /* the row of buttons keeps its place: when « Je suis en passe » or « Manche suivante » appears, nothing above moves */
     .sq-table{ min-height:240px; }
   }
   @media (max-height: 720px){
@@ -1075,6 +1098,7 @@
     .hand .card .c-rank{ font-size:15px; }
     .sq-table{ min-height:210px; }
     .card.sq-size{ width:42px; height:60px; }
+    .actions{ min-height:0; }
   }
 
   /* ---- automatic win: the announced hand, turned over for everyone to check ---- */
@@ -3365,7 +3389,8 @@
   body.ui-d:not(#z) :is(.sq-bubble){ background:#FFF7E6 !important; color:#1B120C !important; border:2px solid #1B120C; box-shadow:0 3px 0 #1B120C !important; font-style:normal !important; }
   /* your hand rests on the table: no box around it */
   body.ui-d:not(#z) .hand-zone{ background:none !important; border:none !important; box-shadow:none !important; animation:none !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
-  body.ui-d:not(#z) .hand-label{ font:800 12.5px var(--d-b) !important; color:#FFF7E6 !important; text-shadow:0 1px 0 #000 !important; }
+  /* same box in both states (the pill only colours in): the hand never grows, the table above never moves */
+  body.ui-d:not(#z) .hand-label{ font:800 12.5px var(--d-b) !important; color:#FFF7E6 !important; text-shadow:0 1px 0 #000 !important; display:table; margin:0 auto 6px; padding:3px 12px; border:2.5px solid transparent; border-radius:999px; }
   body.ui-d:not(#z) .hand-label.your-turn{ display:table; margin:0 auto 6px; padding:3px 12px; background:#FFC93C; color:#1B120C !important; border:2.5px solid #1B120C; border-radius:999px; text-shadow:none !important; box-shadow:0 3px 0 #1B120C; }
   body.ui-d:not(#z) :is(.my-bubble, .coach){ background:#FFF7E6 !important; color:#1B120C !important; border:2.5px solid #1B120C !important; box-shadow:0 3px 0 #1B120C !important; font-style:normal !important; }
   /* the buttons of the game */
@@ -3919,6 +3944,7 @@
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5.5 15H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 5 3.5h8.5A1.5 1.5 0 0 1 15 5v.5"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 0 1 12 0c0 5.5 2.5 7 2.5 7h-17S6 15 6 9.5zM10 20a2 2 0 0 0 4 0"/></symbol>
   <symbol id="i-belloff" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 0 1 12 0c0 5.5 2.5 7 2.5 7h-17S6 15 6 9.5zM10 20a2 2 0 0 0 4 0M3 3l18 18"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.2l1.6-2.2h5.4L16.3 7h2.2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.4"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11-11 11"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5.5 16-3-6.5L4 12zm7.5 1.5L20 4"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
@@ -4575,12 +4601,14 @@
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Mon compte</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
     <div class="acct-card" id="acctCard">
-      <span class="avatar acct-av" id="acctAvatar" style="--s:62px"></span>
+      <button type="button" class="acct-av-btn" id="btnAcctPhoto" aria-label="Changer ma photo"><span class="avatar acct-av" id="acctAvatar" style="--s:62px"></span><span class="acct-cam"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg></span></button>
       <div class="acct-who">
         <div class="acct-name" id="acctName">Toi</div>
         <div class="acct-state" id="acctState"><i></i><span>Connexion…</span></div>
       </div>
     </div>
+    <div class="acct-photo-row"><button type="button" id="btnPhotoPick"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg><span>Ajouter ma photo</span></button><button type="button" class="hidden" id="btnPhotoDel"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg><span>Retirer la photo</span></button></div>
+    <input type="file" id="photoFile" accept="image/*" hidden>
     <p class="acct-note" id="acctNote"></p>
 
     <div class="set-group" id="acctSaveBox">
@@ -7582,6 +7610,14 @@
     el.innerHTML = '<span class="av-ini"></span>' + (ART_FILE[charId] ? artImgTag(ART_FILE[charId]) : charId==='mbarga' ? maskMedal() : '');
     el.firstChild.textContent = initial; // names come from other players: always written as plain text
   }
+  // the player's own face: the photo he chose, otherwise his initial
+  function myPhoto(){ const p = prefs.photo; return (typeof p==='string' && /^data:image\/(jpeg|png|webp);base64,/.test(p) && p.length < 80000) ? p : ''; }
+  function fillMe(el, label){
+    if(!el) return; const ph = myPhoto();
+    if(!ph){ fillAvatar(el, null, label || (prefs.name||'').trim() || 'Toi'); return; }
+    if(el._rig && el._rig.destroy){ try{ el._rig.destroy(); }catch(e){} el._rig = null; }
+    el.classList.remove('has-rig'); el.innerHTML = '<img class="av-photo" alt="">'; el.firstChild.src = ph;
+  }
   function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
   // the opponent's hands holding their cards replace the row of face-down cards when the picture exists
   function showTableArt(charId){
@@ -9091,7 +9127,7 @@
     document.body.insertBefore(cv, document.body.firstChild);
     const ctx = cv.getContext('2d'), base = document.createElement('canvas'), bx = base.getContext('2d'), lm = document.createElement('canvas'), lx = lm.getContext('2d');
     const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let W = 0, H = 0, D = 1, F = null, TP = null, key = 'tripot', lkey = '', cut = false, torch = null, OFF = 0, running = false;
+    let lbase = '', lt = null, lpend = 0; let W = 0, H = 0, D = 1, F = null, TP = null, key = 'tripot', lkey = '', cut = false, torch = null, OFF = 0, running = false;
     let seed = 3; const rnd = ()=> (seed = (seed*9301 + 49297) % 233280)/233280;
     function rr(c, x, y, w, h, r){ r = Math.max(0, Math.min(r, w/2, h/2)); c.beginPath(); c.moveTo(x+r, y); c.arcTo(x+w, y, x+w, y+h, r); c.arcTo(x+w, y+h, x, y+h, r); c.arcTo(x, y+h, x, y, r); c.arcTo(x, y, x+w, y, r); c.closePath(); }
     const inset = (r, i)=> ({x:r.x+i, y:r.y+i, w:r.w-i*2, h:r.h-i*2});
@@ -9111,7 +9147,7 @@
       const hz = document.querySelector(sq ? '#squareScreen .hand-zone' : '#duoScreen .hand-zone'), hr = hz && hz.getBoundingClientRect();
       // (the drawn table wraps the whole card area, slots included, and stops before the hand)
       const bottom = Math.max(r.bottom + 14, hr && hr.height ? Math.min(hr.top - 8, r.bottom + 60) : r.bottom + 14);
-      return {top, bottom: Math.max(top + 220, Math.min(innerHeight - 8, bottom))};
+      return {sq, top, bottom: Math.max(top + 220, Math.min(innerHeight - 8, bottom))};
     }
     function grain(c,x,y,w,h,n,a,b){ for(let k=0;k<n;k++){ c.fillStyle=rnd()<.5?a:b; c.fillRect(x+rnd()*w,y+rnd()*h,1.4,1.4); } }
     function paintTripot(c){
@@ -9470,7 +9506,15 @@
     function layout(){
       D = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; OFF = W + 400;
       const t = tableRect(); if(!t) return false;
-      const k = [W, H, Math.round(t.top), Math.round(t.bottom), tid()].join('|'); if(k === lkey) return true; lkey = k; key = tid();
+      // the table holds still: a few pixels of drift (a card arriving, the hand growing, a screen shake) never redraw it;
+      // only a real change, held for half a second, moves it. Resizing or changing table redraws at once.
+      const bk = [W, H, tid(), t.sq ? 1 : 0].join('|');
+      if(lkey && bk === lbase){
+        const far = Math.abs(t.top - lt.top) > 12 || Math.abs(t.bottom - lt.bottom) > 12;
+        if(!far || document.body.classList.contains('shake')){ lpend = 0; return true; }
+        const now = performance.now(); if(!lpend){ lpend = now; return true; } if(now - lpend < 500) return true;
+      }
+      lpend = 0; lbase = bk; lt = t; lkey = bk + '|' + Math.round(t.top) + '|' + Math.round(t.bottom); key = tid();
       cv.width = Math.round(W*D); cv.height = Math.round(H*D); base.width = cv.width; base.height = cv.height; lm.width = Math.ceil(W/3); lm.height = Math.ceil(H/3);
       const vh = t.bottom - t.top;
       F = {x:8, y:t.top, w:W - 16, h:vh}; let ins = 19;
@@ -9545,7 +9589,6 @@
       const need = t.scrollHeight, have = t.clientHeight;
       const k = need > have + 1 ? Math.max(.55, (have - 4)/need) : 1;
       t.style.setProperty('--fit', k.toFixed(3));
-      if(old !== k.toFixed(3)) lkey = '';
     }
     function flicker(seq){ let k = 0; (function step(){ S.flick = seq[k++]; if(k < seq.length) setTimeout(step, 50 + Math.random()*90); else S.flick = 1; })(); }
     function frame(now){
@@ -10997,6 +11040,7 @@
     document.body.appendChild(ov);
     const cv = ov.querySelector('canvas'), c = cv.getContext('2d'), inp = ov.querySelector('input');
     inp.value = (prefs.name || '').trim();
+    const certPhoto = myPhoto() ? new Image() : null; if(certPhoto){ certPhoto.onload = ()=> draw(); certPhoto.src = myPhoto(); }
     function draw(){
       const name = (inp.value || '').trim() || 'Champion du quartier', Wd = 1080, Hd = 1350;
       // the paper: cold white-blue, a frame of ice
@@ -11015,7 +11059,13 @@
       const card = (x, y, rot, suit)=>{ c.save(); c.translate(x, y); c.rotate(rot); c.fillStyle = '#FFF7E6'; c.strokeStyle = '#1B120C'; c.lineWidth = 7; c.beginPath(); c.roundRect(-80, -112, 160, 224, 18); c.fill(); c.stroke();
         c.fillStyle = suit==='h' ? '#C0272D' : '#141210'; c.font = '700 70px Fredoka, sans-serif'; c.textAlign = 'left'; c.fillText('3', -62, -42); c.font = '700 110px Fredoka, sans-serif'; c.textAlign = 'center'; c.fillText(suit==='h' ? '♥' : '♠', 4, 62);
         c.fillStyle = 'rgba(170,220,255,.38)'; c.beginPath(); c.roundRect(-92, -124, 184, 248, 22); c.fill(); c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 4; c.stroke(); c.restore(); };
-      card(Wd/2 - 70, 520, -.14, 's'); card(Wd/2 + 70, 528, .12, 'h');
+      const ph = certPhoto && certPhoto.complete && certPhoto.naturalWidth ? certPhoto : null, dx = ph ? -110 : 0;
+      card(Wd/2 - 70 + dx, 520, -.14, 's'); card(Wd/2 + 70 + dx, 528, .12, 'h');
+      if(ph){ c.save(); c.translate(Wd/2 + 235, 520); c.rotate(.07); c.shadowColor = 'rgba(20,40,70,.35)'; c.shadowBlur = 24; c.shadowOffsetY = 10;
+        c.fillStyle = '#ffffff'; c.fillRect(-105, -120, 210, 246); c.shadowColor = 'transparent'; c.strokeStyle = '#1B120C'; c.lineWidth = 6; c.strokeRect(-105, -120, 210, 246);
+        c.drawImage(ph, -88, -103, 176, 176); c.lineWidth = 4; c.strokeRect(-88, -103, 176, 176);
+        c.fillStyle = 'rgba(170,220,255,.55)'; c.save(); c.rotate(-.2); c.fillRect(-48, -138, 96, 30); c.restore();
+        c.fillStyle = '#4a6a86'; c.font = '700 26px Nunito, sans-serif'; c.textAlign = 'center'; c.fillText('le champion', 0, 108); c.restore(); }
       c.fillStyle = '#4a6a86'; c.font = '700 36px Nunito, sans-serif'; c.fillText('Décerné à', Wd/2, 720);
       let fs = 104; c.font = '700 '+fs+'px Fredoka, sans-serif'; while(c.measureText(name).width > Wd - 220 && fs > 56){ fs -= 4; c.font = '700 '+fs+'px Fredoka, sans-serif'; }
       c.lineWidth = 16; c.strokeStyle = '#1B120C'; c.strokeText(name, Wd/2, 830); c.fillStyle = '#FFC93C'; c.fillText(name, Wd/2, 830);
@@ -11969,7 +12019,7 @@
       '</div>').join('');
     [...list.querySelectorAll('.rich-row')].forEach((row,i)=>{ row.querySelector('.rich-name').textContent = rows[i].name; });
     fillAllAvatars(list);
-    const me = list.querySelector('.rich-row.me .rich-av'); if(me) fillAvatar(me, null, prefs.name||'Toi');
+    const me = list.querySelector('.rich-row.me .rich-av'); if(me) fillMe(me, prefs.name||'Toi');
     document.getElementById('richBest').textContent = 'Ton record : '+fmtChips(profile.chipsBest||profile.chips)+' jetons · gagnés en tout : '+fmtChips(profile.chipsWon||0);
   }
   chipsInit();
@@ -13169,7 +13219,7 @@
       nameEl.innerHTML = '<span class="avatar" data-seat="'+id+'" style="--s:26px"></span><span class="sqn-t"></span>';
       nameEl.querySelector('.sqn-t').textContent = sqName(id);
       const av = nameEl.querySelector('.avatar');
-      if(sqIsAI(id) || sq.ctrl[id]==='absent') fillAvatar(av, sqChar(id)); else fillAvatar(av, null, sqName(id));
+      if(sqIsAI(id) || sq.ctrl[id]==='absent') fillAvatar(av, sqChar(id)); else if(id==='you') fillMe(av, sqName(id)); else fillAvatar(av, null, sqName(id));
     });
   }
 
@@ -13584,7 +13634,7 @@
         '<div><b>'+(liveDayStreak()||0)+'</b><span>jours de suite</span></div>'+
       '</div>';
     card.querySelector('.pc-name').textContent = prefs.name || 'Toi';
-    fillAvatar(card.querySelector('.pc-avatar'), null, prefs.name || 'Toi');
+    fillMe(card.querySelector('.pc-avatar'), prefs.name || 'Toi');
     applyMyFrame(card.querySelector('.pc-avatar'));
     const box = document.getElementById('statsContent');
     box.innerHTML =
@@ -13840,7 +13890,7 @@
       el.querySelector('.si-desc').textContent = item.desc || '';
       const t = el.querySelector('.si-title .my-title'); if(t) t.textContent = item.name;
       const rx = el.querySelector('.si-react'); if(rx) rx.textContent = item.text;
-      const av = el.querySelector('.si-av'); if(av) fillAvatar(av, null, (prefs.name||'Toi'));
+      const av = el.querySelector('.si-av'); if(av) fillMe(av, (prefs.name||'Toi'));
       el.addEventListener('click', ()=> shopPreview(item));
       el.querySelector('.si-btn').addEventListener('click', (e)=>{ e.stopPropagation(); if(!has) shopBuy(item); else if(!on && item.kind!=='react') { shopEquip(item); renderShop(true); } });
       grid.appendChild(el);
@@ -13864,7 +13914,7 @@
     else if(item.kind==='trail'){ view.innerHTML = '<span class="ss-trail">Glisse ton doigt sur l’écran</span>'; if(!quiet){ trailPreview = item.id==='table' ? null : item.id; if(item.id==='table') trailPreview = null; Trail.readColors(); } }
     else if(item.kind==='face'){ view.innerHTML = '<span class="ss-faces"></span>'; [[3,'Coubie'],[10,'Black'],[7,'Tchaka']].forEach(([r,s])=> view.firstChild.appendChild(cardEl({suit:s, rank:r}, {face:item.id}))); }
     else if(item.kind==='back'){ view.innerHTML = '<span class="ss-backs"><span class="facedown back-'+item.id+'"></span><span class="facedown back-'+item.id+'"></span><span class="facedown back-'+item.id+'"></span></span>'; }
-    else if(item.kind==='frame'){ view.innerHTML = '<span class="avatar '+(item.id ? 'frame-'+item.id : '')+'" style="--s:84px"></span>'; fillAvatar(view.firstChild, null, prefs.name||'Toi'); }
+    else if(item.kind==='frame'){ view.innerHTML = '<span class="avatar '+(item.id ? 'frame-'+item.id : '')+'" style="--s:84px"></span>'; fillMe(view.firstChild, prefs.name||'Toi'); }
     else if(item.kind==='title'){ view.innerHTML = '<span class="ss-who"><b></b>'+(item.id ? '<span class="my-title"></span>' : '')+'</span>'; view.querySelector('b').textContent = (prefs.name||'Toi'); const tt = view.querySelector('.my-title'); if(tt) tt.textContent = item.name; }
     else if(item.kind==='react'){ view.innerHTML = '<span class="ss-bubble"></span>'; view.firstChild.textContent = item.text; }
   }
@@ -16319,7 +16369,7 @@
   // pseudo, chips and réputation. Chips stay virtual: the phone computes them, so they are not cheat-proof.
   var Cloud = { user:null, initP:null, pullP:null, pushT:null, hold:false, error:null, providers:{}, mail:null, pending:null, forceGoogle:false };
   const CLOUD_ON = !!SUPABASE_URL && !MP_LOCAL;
-  const SYNC_PREFS = ['name','skin','quick','stake','alwaysShare','mpKind'];
+  const SYNC_PREFS = ['name','skin','quick','stake','alwaysShare','mpKind','photo'];
   const $id = id=> document.getElementById(id);
 
   function cloudInit(){
@@ -16435,7 +16485,8 @@
     const u = Cloud.user, guest = isGuest();
     const name = (prefs.name||'').trim() || 'Toi';
     $id('acctName').textContent = name;
-    fillAvatar($id('acctAvatar'), null, name);
+    fillMe($id('acctAvatar'), name);
+    $id('btnPhotoPick').querySelector('span').textContent = myPhoto() ? 'Changer ma photo' : 'Ajouter ma photo'; $id('btnPhotoDel').classList.toggle('hidden', !myPhoto());
     applyMyFrame($id('acctAvatar'));
     const st = $id('acctState');
     st.className = 'acct-state' + (u ? (guest ? ' guest' : ' saved') : '');
@@ -16576,6 +16627,57 @@
     finally{ acctBusy(btn, false); renderAccount(); }
   }
   $id('btnShowAccount').addEventListener('click', ()=> Nav.go('accountPage'));
+  // ---- my photo: chosen on the phone, framed in a circle (drag, zoom), kept small (192 px) ----
+  const pickPhoto = ()=>{ const f = $id('photoFile'); f.value = ''; f.click(); };
+  $id('btnAcctPhoto').addEventListener('click', pickPhoto);
+  $id('btnPhotoPick').addEventListener('click', pickPhoto);
+  $id('btnPhotoDel').addEventListener('click', ()=>{ delete prefs.photo; savePrefs(); renderAccount(); showToast('Photo retirée', 'Ton initiale revient.', {ms:1800}); vibrate(12); });
+  $id('photoFile').addEventListener('change', e=>{
+    const file = e.target.files && e.target.files[0]; if(!file) return;
+    if(!/^image\//.test(file.type || 'image/')){ showToast('Pas une image', 'Choisis une photo.', {ms:2000}); return; }
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = ()=> photoCrop(img, ()=> URL.revokeObjectURL(url));
+    img.onerror = ()=>{ URL.revokeObjectURL(url); showToast('Photo illisible', 'Essaie avec une autre photo.', {ms:2200}); };
+    img.src = url;
+  });
+  function photoCrop(img, after){
+    const ov = document.createElement('div'); ov.className = 'ph-crop'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', 'Cadrer ma photo');
+    ov.innerHTML = '<div class="ph-head"><button type="button" class="back-btn ph-back" aria-label="Retour">‹</button><h3>Cadre ta photo</h3></div>'+
+      '<div class="ph-stage"><canvas width="600" height="600"></canvas></div>'+
+      '<p class="ph-hint">Fais glisser pour placer ton visage, règle le zoom.</p>'+
+      '<input type="range" class="ph-zoom" min="1" max="4" step="0.01" value="1" aria-label="Zoom">'+
+      '<div class="ph-btns"><button type="button" class="ph-cancel">Annuler</button><button type="button" class="ph-ok">Valider</button></div>';
+    document.body.appendChild(ov);
+    const cv = ov.querySelector('canvas'), c = cv.getContext('2d'), zoom = ov.querySelector('.ph-zoom'), stage = ov.querySelector('.ph-stage');
+    const iw = img.naturalWidth, ih = img.naturalHeight, base = 600/Math.min(iw, ih);
+    let z = 1, cx = iw/2, cy = ih/2; // the point of the photo at the centre of the circle
+    const clamp = ()=>{ const half = 300/(base*z); cx = Math.min(iw - half, Math.max(half, cx)); cy = Math.min(ih - half, Math.max(half, cy)); };
+    const paint = (ctx, size)=>{ const k = base*z*size/600; ctx.fillStyle = '#2b1c0e'; ctx.fillRect(0, 0, size, size); ctx.imageSmoothingQuality = 'high'; ctx.drawImage(img, size/2 - cx*k, size/2 - cy*k, iw*k, ih*k); };
+    const draw = ()=>{ clamp(); paint(c, 600); };
+    draw();
+    const pts = new Map(); let pinch0 = 0, z0 = 1;
+    stage.addEventListener('pointerdown', e=>{ stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); if(pts.size===2){ const [a, b] = [...pts.values()]; pinch0 = Math.hypot(a.x - b.x, a.y - b.y); z0 = z; } });
+    stage.addEventListener('pointermove', e=>{ const p = pts.get(e.pointerId); if(!p) return;
+      if(pts.size===1){ const sc = stage.clientWidth/600*base*z; cx -= (e.clientX - p.x)/sc; cy -= (e.clientY - p.y)/sc; }
+      p.x = e.clientX; p.y = e.clientY;
+      if(pts.size===2 && pinch0){ const [a, b] = [...pts.values()]; z = Math.min(4, Math.max(1, z0*Math.hypot(a.x - b.x, a.y - b.y)/pinch0)); zoom.value = z; }
+      draw(); });
+    const up = e=>{ pts.delete(e.pointerId); if(pts.size < 2) pinch0 = 0; };
+    stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+    stage.addEventListener('wheel', e=>{ e.preventDefault(); z = Math.min(4, Math.max(1, z*(e.deltaY < 0 ? 1.08 : 1/1.08))); zoom.value = z; draw(); }, {passive:false});
+    zoom.addEventListener('input', ()=>{ z = +zoom.value; draw(); });
+    const close = ()=>{ ov.remove(); document.removeEventListener('keydown', key); if(after) after(); };
+    const key = e=>{ if(e.key==='Escape') close(); };
+    document.addEventListener('keydown', key);
+    ov.querySelector('.ph-back').onclick = close; ov.querySelector('.ph-cancel').onclick = close;
+    ov.querySelector('.ph-ok').onclick = ()=>{
+      const out = document.createElement('canvas'); out.width = out.height = 192; paint(out.getContext('2d'), 192);
+      let data = ''; try{ data = out.toDataURL('image/jpeg', .82); }catch(err){}
+      if(!data || data.length > 80000){ showToast('Photo trop lourde', 'Essaie avec une autre photo.', {ms:2200}); return; }
+      prefs.photo = data; savePrefs(); close(); renderAccount(); vibrate(15);
+      showToast('Belle photo', 'Elle est sur ton profil, au Carré, au classement et sur ton certificat.', {ms:2600});
+    };
+  }
   $id('btnAcctGoogle').addEventListener('click', acctGoogle);
   $id('btnAcctSendCode').addEventListener('click', acctSendCode);
   $id('acctEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') acctSendCode(); });
@@ -16586,7 +16688,7 @@
   $id('acctNameInput').addEventListener('input', e=>{
     prefs.name = e.target.value.replace(/\s+/g,' ').slice(0,16); savePrefs();
     $id('acctName').textContent = prefs.name.trim() || 'Toi';
-    fillAvatar($id('acctAvatar'), null, prefs.name.trim() || 'Toi');
+    fillMe($id('acctAvatar'), prefs.name.trim() || 'Toi');
   });
 
   // ---- worldwide leaderboard ----
