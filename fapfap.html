@@ -4508,9 +4508,9 @@
   <div class="page-body">
     <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Le dernier debout gagne tout.</p>
     <div class="cp-pick">
-      <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et Penalty</small></button>
-      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Avec Christelle et RALL</small></button>
-      <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>La table complète</small></button>
+      <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et un adversaire</small></button>
+      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Toi et deux adversaires</small></button>
+      <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>La table complète · tirés parmi ceux que tu as rencontrés</small></button>
     </div>
     <div class="stake-pick">
       <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
@@ -6581,6 +6581,33 @@
       }
     }
   };
+  // the characters of the book join the road as you meet them in the story
+  DUEL_PERSONAS.mami = {name:"Mami Ange", stars:1, brain:'easy', announce:[0.75, 0.92], repWin:60,
+      tagline:"Elle vend des beignets le jour et ramasse les jetons la nuit.", lockedHint:"Mode histoire · gagne le Carré du kiosque de Mami Ange", story:1,
+      lines:{"control":["Mon fils, je prends celui-là.","Doucement, les beignets refroidissent.","Merci mon enfant.","Mami voit tout, hein."],"win":["Hé hé ! Mami ne dort pas encore.","Va acheter un beignet, ça console.","Les jetons, c'est comme la pâte : ça se ramasse."],"cora":["CORA ! Comme une bonne sauce.","Le 3 de Mami, toujours chaud."],"glacee":["33 Glacée ! Mon cœur…","Deux 3. Je vais prier pour toi."],"surprise":["Ah ! Mon fils a grandi.","Tiens, tiens…","Tu as mangé quoi ce matin ?"],"lose":["Ah… mes yeux ne voient plus bien la nuit.","C'est la lampe, elle m'éblouit.","Bon, Mami te laisse celle-là."],"behind":["Mami prend son temps.","La marmite chauffe doucement.","Ne te réjouis pas trop vite."],"missed":["J'avais une victoire automatique ? J'ai oublié, je comptais mes beignets."]}};
+  DUEL_PERSONAS.caroline = {name:"Caroline", stars:2, brain:'pimc', pimcMs:260, pimcSamples:60, announce:[0.75, 0.92], repWin:100,
+      tagline:"Douce au premier regard, redoutable à la dernière carte.", lockedHint:"Mode histoire · bats Caroline", story:1,
+      lines:{"control":["Merci, chéri.","Tu croyais vraiment que j'allais te laisser ça ?","Doucement, tu vas te faire mal.","Je prends. Avec le sourire."],"win":["Je t'avais prévenu : jolie, mais pas gentille.","Merci pour la soirée, c'était charmant.","Tu as perdu, mais tu as bien regardé. Ça compte un peu."],"cora":["CORA, mon cœur.","Un 3 pour finir en beauté."],"glacee":["33 Glacée. Tu devrais t'asseoir.","Deux 3… je suis gâtée ce soir."],"surprise":["Oh ! Tu sais jouer, finalement.","Tiens… je ne l'avais pas vue venir.","Joli coup. Ne t'habitue pas."],"lose":["Je t'ai laissé gagner, tu étais si sérieux.","Bon. Tu m'offres un jus pour te faire pardonner ?","Ce n'est qu'une manche, chéri."],"behind":["Garde ton sourire, je n'ai pas encore commencé.","Profite, ça ne durera pas.","Je laisse toujours les hommes croire qu'ils mènent."],"missed":["J'avais une victoire automatique ? Zut, j'étais occupée à te regarder."]}};
+  DUEL_PERSONAS.cobra = {name:"Boris le Cobra", stars:2, brain:'pimc', pimcMs:300, pimcSamples:80, announce:[0.75, 0.92], repWin:120,
+      tagline:"Il joue lentement, il attend que tu craques. Et il ne rate jamais un pli facile.", lockedHint:"Mode histoire · bats le Cobra", story:1,
+      lines:{"control":["Doucement… le serpent ne se presse jamais.","Tu as vu ? Moi non plus. C'est ça le danger.","Je mords quand tu ne regardes pas.","Ssss… merci pour le pli."],"win":["Lentement, sûrement. Comme toujours.","Le Cobra a mangé. Il va dormir trois jours.","Tu as couru, moi j'ai attendu. Voilà la différence."],"cora":["CORA. Le venin était dans le 3.","Un 3 caché sous la langue. CORA."],"glacee":["33 Glacée. Le sang froid, mon frère.","Deux 3. Le serpent aime le froid."],"surprise":["Hm. Tu as des crocs, toi aussi.","Pas mal. Je note.","Tu m'as piqué. Ça arrive."],"lose":["Le serpent mue. Il revient plus fort.","Une manche. Je t'ai laissé la peau, je garde la viande.","Profite. Je reviens en rampant."],"behind":["Le score ? Je ne le regarde jamais avant la fin.","Continue de courir, je t'attends au virage.","Tu mènes. Le lapin aussi menait la course."],"missed":["J'avais une victoire automatique… le cure-dent m'a distrait."]}};
+  DUEL_PERSONAS.ismael = {name:"Ismaël", stars:2, brain:'pimc', pimcMs:300, pimcSamples:80, announce:[0.75, 0.92], repWin:120,
+      tagline:"Calme, une carte à la fois. Il ne s’énerve jamais… presque jamais.", lockedHint:"Mode histoire · bats Ismaël", story:1,
+      lines:{"control":["Une carte à la fois.","Calme. Le pli vient tout seul.","Je ne m'énerve pas, je prends.","Respire, ça va bien se passer. Pour moi."],"win":["Sans bruit, sans histoire.","La patience paie. Toujours.","Merci pour la partie, c'était instructif."],"cora":["CORA. Tranquillement.","Le 3 arrive quand il faut."],"glacee":["33 Glacée. Je reste calme. Vraiment.","Deux 3… même moi je souris."],"surprise":["Intéressant.","Tu m'as surpris. C'est rare.","Bien joué. Sincèrement."],"lose":["On apprend plus en perdant.","Pas grave. La nuit est longue.","Bien joué. On rejoue ?"],"behind":["Le score n'est qu'un chiffre.","Je ne cours pas après les points.","Rien ne presse."],"missed":["J'avais une victoire automatique. Tant pis, je reste calme."]}};
+  DUEL_PERSONAS.tchinda = {name:"Papa Tchinda", stars:3, brain:'pimc', pimcMs:420, pimcSamples:110, announce:[0.75, 0.92], repWin:150,
+      tagline:"Le vieux renard de Melen. Il a vu passer toutes les ruses.", lockedHint:"Mode histoire · bats Papa Tchinda", story:1,
+      lines:{"control":["Mon fils, j'ai joué avant ta naissance.","Le vieux bouc a toujours du sel dans la barbe.","Tu vois cette carte ? Elle a mon âge.","Hé hé. Encore un pour le vieux."],"win":["Les jeunes courent, les vieux arrivent.","Va dire à ton père que Tchinda t'a battu. Il comprendra.","Le vieux renard a encore des dents."],"cora":["CORA ! Comme en 1982.","Le 3 du vieux ne ment jamais."],"glacee":["33 Glacée. Mes genoux tremblent, pas mes cartes.","Deux 3. Le quartier va en parler longtemps."],"surprise":["Tiens, le petit a appris quelque chose.","Pas mal, mon fils. Pas mal.","Qui t'a montré ça ? Ton grand-père ?"],"lose":["Je t'ai laissé gagner, il faut encourager la jeunesse.","Mes lunettes… voilà, c'est mes lunettes.","Le vieux se repose un peu, c'est tout."],"behind":["La tortue arrive aussi au marché.","Patience. Le vieux réfléchit.","Tu mènes ? Profite, j'ai tout mon temps."],"missed":["J'avais une victoire automatique… à mon âge, on oublie."]}};
+  DUEL_PERSONAS.mballa = {name:"Adjudant Mballa", stars:3, brain:'pimc', pimcMs:450, pimcSamples:120, announce:[0.75, 0.92], repWin:160,
+      tagline:"Il contrôle tout, même ta façon de tenir tes cartes.", lockedHint:"Mode histoire · bats l’adjudant Mballa", story:1,
+      lines:{"control":["Contrôle ! Papiers… je veux dire, cartes.","Ici, c'est moi qui décide.","Circulez, il n'y a rien à voir.","Je confisque ce pli."],"win":["Affaire classée.","Tu es en état d'arrestation. Pour défaite.","Le règlement, c'est le règlement."],"cora":["CORA. Procès-verbal dressé.","Le 3 est sous ma protection."],"glacee":["33 Glacée. Garde à vue pour toi.","Deux 3. L'ordre règne."],"surprise":["Hé ! Qui t'a autorisé à faire ça ?","Infraction ! Je note.","Hm. Je vais enquêter sur ce coup."],"lose":["Vice de procédure. Je fais appel.","Ce pli était illégal, mais bon.","Tu as gagné cette fois. Je garde ton dossier."],"behind":["Le score est en garde à vue.","Je reprends le contrôle. Avancez.","Ne t'emballe pas, citoyen."],"missed":["J'avais une victoire automatique… le règlement m'a ralenti."]}};
+  DUEL_PERSONAS.stephane = {name:"Stéphane", stars:3, brain:'pimc', pimcMs:450, pimcSamples:120, announce:[0.75, 0.92], repWin:160,
+      tagline:"Le frère de Penalty. Il cherche la vérité… et il apprend vite.", lockedHint:"Mode histoire · termine le livre", story:1,
+      lines:{"control":["Je regarde tout. Je retiens tout.","Mon frère jouait cette carte.","Ce pli, je le prends.","Tu caches quelque chose."],"win":["Penalty m'a bien appris.","Une partie de plus, une vérité de plus.","Merci. Ça m'aide à réfléchir."],"cora":["CORA. Pour mon frère.","Un 3… comme lui."],"glacee":["33 Glacée. Il serait fier.","Deux 3. Le quartier va enfin m'écouter."],"surprise":["Tu joues comme un témoin qui ment.","Joli. Je note.","Tu as des secrets, toi."],"lose":["Je cherche encore. Je trouverai.","Tu as gagné. Pas la guerre.","Bien. Rejoue, je dois comprendre."],"behind":["Je n'ai pas fini mon enquête.","Le dernier pli dira la vérité.","Patience. Tout finit par sortir."],"missed":["J'avais une victoire automatique… j'étais ailleurs, dans l'enquête."]}};
+  // what opens each of them: a game won in the book (or the end of the book, for Stéphane)
+  const STORY_OPP = {mami:{game:'kiosque'}, caroline:{game:'caroline'}, cobra:{game:'cobra'}, ismael:{game:'ismael'}, tchinda:{game:'tchinda'}, mballa:{game:'mballa'}, stephane:{ended:1}};
+  function storyOppOpen(id, p){ const o = STORY_OPP[id], b = (p || profile).book || {}; if(!o) return true; return o.ended ? (b.ended || []).length > 0 : !!(b.won && b.won[o.game]); }
+  // when the book opens one of them: a medal says so, once
+  function announceStoryOpps(){ try{ const seen = profile.oppSeen = profile.oppSeen || {}; Object.keys(STORY_OPP).forEach(id=>{ if(!seen[id] && storyOppOpen(id)){ seen[id] = 1; saveProfile(); trophyPop({icon:'user', name:DUEL_PERSONAS[id].name, kind:'Nouvel adversaire · route du quartier et Carré'}); } }); }catch(e){} }
   const MASK_NAME = 'Le Ngonzormorrr';
   const maskOn = ()=> mode==='ai' && duelOpp==='mbarga' && !storyRun && !tuto && !daily;
   // one of his lines; who reminds you of your record
@@ -6623,7 +6650,7 @@
     const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Christelle n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
     gameTimeout(()=>{ if(state && !state.handOver) penaltySay([ (showStrong ? STRONG : WEAK)[Math.floor(Math.random()*4)] ]); }, 1500 + lastDealMs);
   }
-  const DUEL_ORDER = ['gervais','aristide','penalty','mbarga'];
+  const DUEL_ORDER = ['gervais','mami','aristide','caroline','cobra','ismael','tchinda','mballa','stephane','penalty','mbarga'];
 
   // ===================== LES RÉPLIQUES PIQUANTES =====================
   // Each opponent's voice for the moments of a match that the game really sees (see quip()):
@@ -6730,7 +6757,8 @@
   //                                                                       cards, seen from across the table
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
-  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque'};
+  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque',
+    mami:'livre/perso-mami-ange', caroline:'livre/perso-caroline', cobra:'livre/perso-cobra', ismael:'livre/perso-ismael', tchinda:'livre/perso-tchinda', mballa:'livre/perso-mballa', stephane:'livre/perso-stephane'};
   // the characters are drawn now (art/d, one light SVG each); places stay in art/livre
   // the places of the novel: a comic panel when one exists (art/d/case-*.jpg, width/height), otherwise a drawing
   const CASES = {}; ['yaounde','veillee','coin','meuble','villa','palmiers','prestige','table-masque','kiosque','bastos','barrage','studio','bar-police'].forEach(n=> CASES[n] = [1408,768]);
@@ -7573,7 +7601,7 @@
   let storyRun = null; // the story-mode match being played, if any (see « La Nuit des 33 »)
   function oppPersona(){ return DUEL_PERSONAS[duelOpp] || DUEL_PERSONAS.penalty; }
   function L(kind){ const l = oppPersona().lines[kind]; return (l && l.length) ? l : DUEL_PERSONAS.penalty.lines[kind]; }
-  function isOppUnlocked(id){ return id!=='mbarga' || (profile.ladder.penalty.w>0); }
+  function isOppUnlocked(id){ if(STORY_OPP[id]) return storyOppOpen(id); return id!=='mbarga' || (profile.ladder.penalty.w>0); }
 
   let bubbleTimer = null;
   // the opponent speaks at the moments that matter; remarks during play are rare (at most one per hand,
@@ -8491,7 +8519,7 @@
   function pageShown(id){
     if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
-    if(id==='menuOverlay'){ migrateTables(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); }
+    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); }
     else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
@@ -8637,7 +8665,8 @@
   // every way into a game goes through here: no page stays on top of the table
   // the table stands somewhere in the novel: each opponent plays at home (with the default table only;
   // a table bought in « Décors » keeps its own look)
-  const OPP_PLACE = {gervais:['lieu-studio','Le studio · Biyem-Assi'], aristide:['lieu-veillee','La veillée · Mvog-Ada'], penalty:['lieu-villa','La villa · Santa Barbara'], mbarga:['lieu-table-masque','Le rideau rouge · Bastos']};
+  const OPP_PLACE = {gervais:['lieu-studio','Le studio · Biyem-Assi'], aristide:['lieu-veillee','La veillée · Mvog-Ada'], penalty:['lieu-villa','La villa · Santa Barbara'], mbarga:['lieu-table-masque','Le rideau rouge · Bastos'],
+    mami:['lieu-kiosque','Le kiosque · Mvog-Mbi'], caroline:['lieu-salon-the','Le salon de thé · Bastos'], cobra:['lieu-coin','Sous le manguier · Melen'], ismael:['lieu-bastos','La station · Bastos'], tchinda:['lieu-palmiers','Les Palmiers · Mvog-Ada'], mballa:['lieu-bar-police','Le bar du commissariat'], stephane:['lieu-yaounde','Yaoundé la nuit']};
   const BOOK_PLACE = {veillee:'lieu-veillee', cobra:'lieu-coin', tchinda:'lieu-palmiers', kiosque:'lieu-kiosque', ismael:'lieu-bastos', mballa:'lieu-bar-police', christelle:'lieu-studio', caroline:'lieu-salon-the', masque:'lieu-table-masque', villa:'lieu-villa', videur:'lieu-prestige', neuf:'lieu-coin'};
   // ---- the rooms (v41): the place in photo at the back, a real table in perspective (CC0 textures from Poly Haven,
   // art/tex), the things of the place in 3D renders (art/props), and the light of the place: where it comes from,
@@ -11768,6 +11797,7 @@
       });
       // the mask doesn't let a beginner sit at his table: he laughs at you instead
       else if(id==='mbarga') b.addEventListener('click', maskMockLocked);
+      else b.addEventListener('click', ()=> showToast('Pas encore', p.lockedHint || 'Avance dans le mode histoire', {ms:2600}));
       list.appendChild(b);
     });
     fillAllAvatars(list);
@@ -11778,13 +11808,14 @@
   const CHIP_START = 1000;
   const STAKES = [0, 100, 500, 1000, 5000, 10000];
   // what a win pays back for each opponent, stake included (the stronger the opponent, the bigger the odds)
-  const ODDS = {gervais:1.5, aristide:2, penalty:3, mbarga:5};
+  const ODDS = {gervais:1.5, aristide:2, penalty:3, mbarga:5, mami:1.5, caroline:2, cobra:2.2, ismael:2.2, tchinda:3, mballa:3, stephane:3};
   // the neighbourhood's fortunes: beat someone with a stake and they pay you; lose and they pocket it
-  const RICH_START = {gervais:2500, aristide:6000, penalty:25000, mbarga:80000};
+  const RICH_START = {gervais:2500, aristide:6000, penalty:25000, mbarga:80000, mami:4000, caroline:7000, cobra:9000, ismael:8000, tchinda:20000, mballa:18000, stephane:12000};
   let matchStake = 0, matchCoras = 0, matchGlacees = 0;
   function chipsInit(){
     if(profile.chips==null){ profile.chips = CHIP_START; profile.chipsBest = CHIP_START; profile.chipsWon = 0; }
     if(!profile.rich) profile.rich = Object.assign({}, RICH_START);
+    Object.keys(RICH_START).forEach(id=>{ if(profile.rich[id]==null) profile.rich[id] = RICH_START[id]; });
     saveProfile();
   }
   const fmtChips = n=> Math.round(n).toLocaleString('fr-FR');
@@ -12359,15 +12390,17 @@
   // 3-player game). Online, the creator's phone runs the game and every other phone just shows it.
   function sqSeatsFor(n){ return n===2 ? ['you','penalty'] : n===3 ? ['you','gervais','aristide'] : ['you','gervais','penalty','aristide']; }
   const sqCap = id=> id.charAt(0).toUpperCase()+id.slice(1);
+  const sqChar = id=> (sq && sq.cast && sq.cast[id]) || id;
   function sqName(id){
     if(id==='you') return 'Toi';
+    if(sq && sq.cast && sq.cast[id] && !(sq.names && sq.names[id])){ const c = sq.cast[id]; return (SQ_PERSONAS[c] || DUEL_PERSONAS[c] || {}).name || id; }
     if(sq && sq.names && sq.names[id]) return sq.names[id];
     return SQ_PERSONAS[id] ? SQ_PERSONAS[id].name : id;
   }
   function sqIsAI(id){ return !sq || !sq.ctrl || sq.ctrl[id]==='ai'; }
   function sqSay(id, category){
     if(id==='you' || !sqIsAI(id)) return;
-    const lines = SQ_PERSONAS[id] && SQ_PERSONAS[id][category];
+    const ch = sqChar(id), lines = (SQ_PERSONAS[ch] && SQ_PERSONAS[ch][category]) || (DUEL_PERSONAS[ch] && DUEL_PERSONAS[ch].lines && DUEL_PERSONAS[ch].lines[category]);
     if(!lines || lines.length===0) return;
     // at a full table, remarks during play are rare too: one in five, and never within 10 s of another
     if(category==='control'){
@@ -12420,6 +12453,8 @@
       SQ_SEAT_ORDER.forEach(id=> ctrl[id] = id==='you' ? 'local' : (seats.includes(id) ? 'ai' : 'absent'));
     }
     const seated = SQ_SEAT_ORDER.filter(id=> ctrl[id]!=='absent');
+    let cast = null;
+    if(!cfg.ctrl && !cfg.names && !storyRun){ const pool = DUEL_ORDER.filter(id=> id!=='mbarga' && isOppUnlocked(id)).sort(()=> Math.random() - .5); cast = {}; ['gervais','penalty','aristide'].forEach((seat, i)=> cast[seat] = pool[i] || seat); }
     sq = {
       gen: sq ? sq.gen+1000 : 0, // keeps counting, so a timer left by a restarted game can't match the new one
       config: cfg, ctrl, net: cfg.net || {}, names: cfg.names || {}, online: !!cfg.online,
@@ -12430,7 +12465,7 @@
       leader:null, leadSuit:null, leadCard:null, leadActor:null,
       trickWinners:[], trickQueue:[], trickBest:null, trickHadPasse:false,
       cardsPlayedThisHand:0, handOver:false, locked:false, passers:new Set(), trickNo:0,
-      fastForward:false
+      fastForward:false, cast
     };
     SQ_SEAT_ORDER.forEach(id=>{ sq.players[id] = {eliminated:false, hand:[], originalHand:[]}; sq.history[id] = []; sq.knownVoid[id] = new Set(); });
     // the stake: the survivor takes one stake per player at the table
@@ -13134,7 +13169,7 @@
       nameEl.innerHTML = '<span class="avatar" data-seat="'+id+'" style="--s:26px"></span><span class="sqn-t"></span>';
       nameEl.querySelector('.sqn-t').textContent = sqName(id);
       const av = nameEl.querySelector('.avatar');
-      if(sqIsAI(id) || sq.ctrl[id]==='absent') fillAvatar(av, id); else fillAvatar(av, null, sqName(id));
+      if(sqIsAI(id) || sq.ctrl[id]==='absent') fillAvatar(av, sqChar(id)); else fillAvatar(av, null, sqName(id));
     });
   }
 
@@ -15008,7 +15043,7 @@
     }
     function finish(){
       const S = st();
-      if(!S.ended.includes(S.ending)){ S.ended.push(S.ending); if(!S.hiddenRun){ chipsAdd(1000); showToast('Livre terminé', '+1 000 jetons · la fin cachée est débloquée', {ms:3200}); } }
+      if(!S.ended.includes(S.ending)){ S.ended.push(S.ending); setTimeout(announceStoryOpps, 1200); if(!S.hiddenRun){ chipsAdd(1000); showToast('Livre terminé', '+1 000 jetons · la fin cachée est débloquée', {ms:3200}); } }
       checkExploits();
       // the next reading is a new investigation (the endings read and the best report stay)
       if(!S.hiddenRun){ S.clues = {}; S.notes = {}; S.iv = {}; S.sx = {}; S.sxDone = {}; S.smsSeen = {}; S.trip = 0; S.choices = {}; }
@@ -15066,7 +15101,7 @@
       const S = st(), key = run.key, g = BK.games[key];
       if(run.press){ pressDone(run.press, won); return; }
       if(won){
-        if(!S.won[key]){ S.won[key] = true; const before = profile.chips; chipsAdd(200); renderChips(before); }
+        if(!S.won[key]){ S.won[key] = true; const before = profile.chips; chipsAdd(200); renderChips(before); setTimeout(announceStoryOpps, 600); }
         saveProfile(); checkExploits();
         goTo(i+1);
         return;
