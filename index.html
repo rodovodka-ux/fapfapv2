@@ -3584,6 +3584,53 @@
   body.ui-d:not(#z) #menuOverlay .home-tag{ color:#dcc6a2 !important; letter-spacing:.14em; }
   body.ui-d:not(#z) #menuOverlay .home-topbar > *{ order:3; } body.ui-d:not(#z) #menuOverlay .home-topbar .hb-space{ order:1; } body.ui-d:not(#z) #menuOverlay .home-topbar #chipsBar{ order:2; }
 
+  /* ===== la nuit noire (v64) : noir OLED, cartes anthracite éclairées par l'ampoule (--lit posé par la scène) ===== */
+  body.noir{ background:#000 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) :where(.gl, .set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .stats-block, .mode-card, .hcard, .hero-play, .menu-rank, .og-bubble, .pf-card, .back-btn, .stake-pick, .format-pick, .set-group, button:not(.tab):not(.ghost):not(.fmt):not(.sp-chip):not(.primary):not(.danger):not(.whatsapp)){
+    --tint:255,214,150; --tk:.1;
+    background: linear-gradient(180deg, rgba(var(--tint), calc(var(--lit, .55)*var(--tk))), transparent 60%), color-mix(in srgb, #34303a calc(var(--lit, .55)*100%), #0d0c10) !important;
+    border-color:#000 !important; box-shadow:0 5px 0 #000, inset 0 2px 0 color-mix(in srgb, #5a5262 calc(var(--lit, .55)*100%), #18161c) !important;
+    --d-txt: color-mix(in srgb, #FFF3DC calc(58% + var(--lit, .55)*42%), #6d6458); --d-mute: color-mix(in srgb, #c4b5a0 calc(55% + var(--lit, .55)*45%), #514940);
+    color:var(--d-txt) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) :is(.set-group, .stake-pick, .format-pick){ box-shadow:inset 0 2px 0 color-mix(in srgb, #5a5262 calc(var(--lit, .55)*100%), #18161c) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) .set-group .set-row{ box-shadow:none !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .back-btn{ color:#FFF3DC !important; }
+  /* les cartes de couleur gardent leur teinte, en reflet */
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .mode-card#modeAI, body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay #btnProfTrophies{ --tint:255,201,60; --tk:.32; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .mode-card.mode-online, body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay #btnProfFriends{ --tint:61,127,217; --tk:.36; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .mode-card.mode-carre, body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay #btnProfSkins{ --tint:240,107,168; --tk:.34; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page :is(.opp-card:last-child, .trophy.got, .rich-row.me, .skin-opt.on){ --tint:255,201,60; --tk:.3; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .shop-item.equipped{ --tint:47,179,107; --tk:.34; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page :is(.opp-card.locked, .trophy:not(.got)){ filter:saturate(.6); }
+  body.noir.ui-d:not(#z):not(#y):not(#x) #menuOverlay .hero-play{ background: linear-gradient(180deg, rgba(255,214,150, calc(var(--lit, .6)*.12)), transparent 60%), color-mix(in srgb, #1f8a50 calc(var(--lit, .6)*100%), #06160d) !important; --d-txt:#fff; color:#fff !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) #menuOverlay .hero-play small{ color:rgba(225,255,236,.85) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) :is(small, .rich-sub, .opp-rec, .opp-tag, .opp-place){ color:var(--d-mute) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) :is(b, h3, .opp-name, .set-row){ color:inherit; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page :is(.set-group h3, .rm-title, .sp-head > span:first-child, .skin-group h3, .stats-group h3){ color:rgba(255,236,210,.55) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .page-head h2{ color:#FFF3DC !important; -webkit-text-fill-color:#FFF3DC !important; text-shadow:0 0 22px rgba(255,214,150,.22) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page :is(.set-row > span:first-child svg.i){ color:#FFF3DC !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .switch{ background:#0b0a0d !important; border-color:#000; } body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .on > .switch{ background:var(--d-green) !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .switch::after{ background:#FFF3DC; border-color:#000; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) :is(.overlay.page, .overlay.modal) .mp-input{ background:#0b0a0d !important; color:#FFF3DC !important; border-color:#000 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .mp-code{ background:#0b0a0d; color:#FFF3DC; border-color:#5a5262; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .fmt b{ color:#FFF3DC !important; } body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .fmt small{ color:#b9ab98 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .fmt.on{ background:#3a3540 !important; box-shadow:inset 0 0 0 2.5px #000, 0 3px 0 #000 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .sp-chip:not(.on){ background:#1c1a20 !important; color:#FFF3DC !important; border-color:#000 !important; box-shadow:0 3px 0 #000 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .sp-chip.on{ border-color:#000 !important; box-shadow:0 3px 0 #000 !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .rules-box :is(p, b){ color:#FFF3DC !important; } body.noir.ui-d:not(#z):not(#y):not(#x) .overlay.page .rules-box h3{ color:#ff8f8b !important; }
+  /* le profil (v60) passe aussi dans la nuit */
+  body.noir #statsOverlay .pf-body{ --pc:#1a181e; --pt:#FFF3DC; --pm:#b9ab98; --pk:#000; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay .pf-card :is(.pf-h, .pf-tile b, .pf-mode-top, .pf-opp b, .pf-end.got, .pf-friends p, .pf-notif p, .pf-row){ color:#FFF3DC !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay .pf-card :is(.pf-h small, .pf-tile span, .pf-mode-top small, .pf-end:not(.got), .pf-friends small, .pf-notif small, .pf-row span), body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay .pf-actions small{ color:var(--d-mute) !important; }
+  body.noir #statsOverlay :is(.pf-tile, .pf-end, .pf-lg, .pf-opp span){ background:#0f0e12 !important; border-color:#000 !important; }
+  body.noir #statsOverlay .pf-tile.c1{ background:#2a2210 !important; } body.noir #statsOverlay .pf-tile.c2{ background:#0f2618 !important; } body.noir #statsOverlay .pf-tile.c3{ background:#2a1410 !important; }
+  body.noir #statsOverlay .pf-tile.c4{ background:#0f1a2c !important; } body.noir #statsOverlay .pf-tile.c5{ background:#1d1530 !important; } body.noir #statsOverlay .pf-tile.c6{ background:#2a1220 !important; }
+  body.noir #statsOverlay .pf-end.got{ background:#2a2210 !important; } body.noir #statsOverlay .pf-opp.beat span{ background:#1f6b42 !important; color:#fff !important; }
+  body.noir.ui-d:not(#z):not(#y):not(#x) #statsOverlay :is(.pf-lg span, .pf-lg small){ color:#FFF3DC !important; } body.noir #statsOverlay .pf-lg.w em{ color:#6fe0a0; } body.noir #statsOverlay .pf-lg.l em{ color:#ff8f8b; }
+  body.noir #statsOverlay .pf-mbar{ background:#0b0a0d; border-color:#000; } body.noir #statsOverlay .pf-row{ border-bottom-color:rgba(255,255,255,.08); }
+  /* la barre d'onglets : posée au fond, dans le noir */
+  body.noir.ui-d:not(#z):not(#y):not(#x) .tabbar, body.noir.ui-d:not(#z):not(#y):not(#x) .tab-bar{ background:#0c0b0f !important; border-color:#1d1a22 !important; box-shadow:inset 0 1px 0 #26222b !important; }
+
   /* ===== the new characters (Rig2) ===== */
   svg.rig2{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .rig2 .fg{ fill:none; stroke-linecap:round; }
@@ -4864,6 +4911,7 @@
       <button class="set-row hidden" id="btnTogglePush"><span><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Notifications de défi (jeu fermé)</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleQuips"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Répliques piquantes des adversaires</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleNoir"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Nuit noire (fond noir, éclairé par l’ampoule)</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Mode Or : le Ngonzormorrr à l’accueil</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleLamp"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Ampoule au-dessus de la table</span><span class="switch"></span></button>
@@ -8595,6 +8643,7 @@
     sw('btnToggleQuips', !prefs.noQuips);
     sw('btnToggleVibrate', !prefs.noVibrate);
     sw('btnToggleCalm', !!prefs.calm);
+    sw('btnToggleNoir', prefs.noir!==false);
     sw('btnToggleTrail', !prefs.noTrail);
     sw('btnToggleLamp', !prefs.noLamp);
     sw('btnToggleThemeOr', prefs.themeOr!==false);
@@ -8619,6 +8668,9 @@
   });
   // the drawn interface: the only look of the game now
   document.body.classList.add('ui-d');
+  // the black night (v64): an OLED-black background lit only by the bulb and the sign; can be switched off
+  document.body.classList.toggle('noir', prefs.noir!==false);
+  toggle('btnToggleNoir',    ()=>{ prefs.noir = (prefs.noir===false); document.body.classList.toggle('noir', prefs.noir!==false); dispatchEvent(new Event('resize')); });
   toggle('btnToggleQuips',   ()=>{ prefs.noQuips = !prefs.noQuips; });
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
@@ -9118,6 +9170,8 @@
   // The menus are a wall of a bar at night: plaster above, a painted dado below, a bare bulb hanging in the top
   // left corner that lights the whole screen (rays, dust, a rare flicker; touch it and it swings), and the sign
   // FAP FAP in glass with little bulbs inside the letters that light the wall under them.
+  // la nuit noire (v64) : fond noir OLED, seules l'ampoule et l'enseigne éclairent ; désactivable dans les Paramètres
+  function noirOn(){ return document.body.classList.contains('noir'); }
   const HomeScene = (()=>{
     const cv = document.createElement('canvas'); cv.id = 'homeScene'; cv.setAttribute('aria-hidden', 'true'); document.body.insertBefore(cv, document.body.firstChild);
     const logoEl = document.createElement('canvas'); logoEl.id = 'glassLogo'; logoEl.setAttribute('role', 'img'); logoEl.setAttribute('aria-label', 'Fap Fap');
@@ -9137,8 +9191,9 @@
       let s = 7; const r = ()=> (s = (s*9301+49297)%233280)/233280;
       // crépi ocre en haut, soubassement peint en vert-bleu en bas (comme dans les bars du quartier)
       const band = H*0.62;
-      wx.fillStyle = '#8a6a52'; wx.fillRect(0,0,W,H);
-      wx.fillStyle = '#3e6a66'; wx.fillRect(0,band,W,H-band);
+      const NO = noirOn(); // la nuit noire : le mur n'existe que là où la lumière tombe
+      wx.fillStyle = NO ? '#5a4536' : '#8a6a52'; wx.fillRect(0,0,W,H);
+      wx.fillStyle = NO ? '#26403d' : '#3e6a66'; wx.fillRect(0,band,W,H-band);
       for(let i=0;i<900;i++){ // grain du crépi
         const x=r()*W, y=r()*H, rr=1+r()*3.2, l=r();
         wx.fillStyle = l>.5 ? 'rgba(255,240,215,'+(.03+r()*.05)+')' : 'rgba(30,15,5,'+(.04+r()*.07)+')';
@@ -9150,7 +9205,7 @@
         wx.fillStyle=g; wx.fillRect(x-rr,y-rr,rr*2,rr*2);
       }
       // bord écaillé de la peinture
-      wx.fillStyle='#3e6a66'; wx.beginPath(); wx.moveTo(0,band);
+      wx.fillStyle = NO ? '#26403d' : '#3e6a66'; wx.beginPath(); wx.moveTo(0,band);
       for(let x=0;x<=W;x+=14){ wx.lineTo(x, band - (r()<.25 ? r()*10 : r()*2)); }
       wx.lineTo(W,band+4); wx.lineTo(0,band+4); wx.fill();
       wx.strokeStyle='rgba(18,11,8,.75)'; wx.lineWidth=2.5; wx.beginPath(); wx.moveTo(0,band+3); wx.lineTo(W,band+3); wx.stroke();
@@ -9172,19 +9227,22 @@
     const dust = Array.from({length: RM?0:70}, ()=>({x:Math.random(), y:Math.random(), z:.4+Math.random()*.9, ph:Math.random()*6.3}));
     const haze = Array.from({length: RM?0:5}, (_,i)=>({x:Math.random(), y:.1+Math.random()*.6, r:.25+Math.random()*.3, v:(Math.random()-.5)*.000012}));
 
-    function lightAt(x,y){ const p=bulbPos(); const d=Math.hypot(x-p.x,y-p.y); return Math.max(0, 1 - d/Math.max(W*1.25, 620)); }
+    // portée de la lumière : dans la nuit noire elle est courte, le bas de l'écran reste noir
+    const reach = ()=> noirOn() ? Math.max(380, Math.min(H*.95, 760)) : Math.max(W*1.3, 700);
+    function lightAt(x,y){ const p=bulbPos(); const d=Math.hypot(x-p.x,y-p.y); return Math.max(0, 1 - d/(noirOn() ? reach() : Math.max(W*1.25, 620))); }
 
     function drawScene(t){
       const p = bulbPos(), P = B.power, Lg = Logo.glow;
       // 1. carte de lumière (basse résolution) : nuit bleutée + ampoule chaude + lueurs du logo
       lx.setTransform(1,0,0,1,0,0); lx.globalCompositeOperation='source-over';
-      lx.fillStyle = 'rgb(16,15,30)'; lx.fillRect(0,0,lc.width,lc.height);
+      const NO = noirOn();
+      lx.fillStyle = NO ? '#000' : 'rgb(16,15,30)'; lx.fillRect(0,0,lc.width,lc.height);
       lx.setTransform(.25,0,0,.25,0,0); lx.globalCompositeOperation='lighter';
       if(P>0.01){
-        const R = Math.max(W*1.3, 700);
+        const R = reach();
         const g = lx.createRadialGradient(p.x,p.y,0,p.x,p.y,R);
-        g.addColorStop(0, `rgba(255,236,190,${P})`); g.addColorStop(.18, `rgba(255,214,150,${.86*P})`);
-        g.addColorStop(.5, `rgba(190,140,90,${.42*P})`); g.addColorStop(1,'rgba(60,40,30,0)');
+        g.addColorStop(0, `rgba(255,236,190,${P})`); g.addColorStop(NO ? .16 : .18, `rgba(255,214,150,${(NO ? .8 : .86)*P})`);
+        g.addColorStop(NO ? .48 : .5, NO ? `rgba(170,115,70,${.32*P})` : `rgba(190,140,90,${.42*P})`); g.addColorStop(1, NO ? 'rgba(0,0,0,0)' : 'rgba(60,40,30,0)');
         lx.fillStyle=g; lx.fillRect(0,0,W,H);
       }
       if(Lg.a>0.01){ // les ampoules du logo éclairent le mur : rose sous le premier FAP, bleu sous le second
@@ -9230,7 +9288,7 @@
       cx.globalCompositeOperation='source-over';
       // 4. vignette
       const v = cx.createRadialGradient(W*.3,H*.25,Math.min(W,H)*.3, W*.5,H*.5,Math.max(W,H)*.85);
-      v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(5,3,8,.55)'); cx.fillStyle=v; cx.fillRect(0,0,W,H);
+      v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1, NO ? 'rgba(0,0,0,.8)' : 'rgba(5,3,8,.55)'); cx.fillStyle=v; cx.fillRect(0,0,W,H);
       drawBulb(p,P);
     }
 
@@ -9358,7 +9416,27 @@
       acc += dt; if(acc < 1/30 && !RM) return; acc = 0;
       if(W !== innerWidth || H !== innerHeight) resize();
       if(logoEl.clientWidth && Logo.w !== logoEl.clientWidth) Logo.setup();
+      // dans la nuit noire, l'ampoule des pages pend dans le coin droit (les titres sont à gauche)
+      const pg = noirOn() ? curPage() : null, wantPx = pg && pg.id!=='menuOverlay' ? W - 46 : 46;
+      if(B.px !== wantPx){ B.px = wantPx; B.L = wantPx===46 ? 104 : 50; B.th = 0; B.om = 0; paintWall(); } // dans les pages, elle pend dans la bande du titre, au-dessus des cartes
       drawScene(t); if(Logo.w && Logo.pts) Logo.draw(t);
+      if(pg && ++litTick % 3 === 0) lightCards(pg, t);
+    }
+    // ---- chaque carte des menus reçoit sa part de lumière (--lit, 0 à 1) selon sa distance à l'ampoule ----
+    const LIT_SEL = '.gl, .set-row, .opp-card, .trophy, .rich-row, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .mode-card, .hcard, .hero-play, .menu-rank, .og-bubble, .hx-novel, .pf-card, .pf-hero, .back-btn, .stake-pick, .format-pick, .mp-input, .set-group, button:not(.tab):not(.ghost)';
+    let litTick = 0, litList = [], litPage = null, litAt = 0;
+    function curPage(){ const v = [...document.querySelectorAll('#menuOverlay:not(.hidden), .overlay.page:not(.hidden)')]; return v[v.length-1] || null; }
+    function lightCards(pg, t){
+      if(pg !== litPage || t - litAt > 1500){ litPage = pg; litAt = t; litList = [...pg.querySelectorAll(LIT_SEL)]; }
+      const p = bulbPos(), R = reach()*1.05, lr = Logo.glow.rect, home = pg.id==='menuOverlay', la = Logo.glow.a;
+      for(const el of litList){
+        const r = el.getBoundingClientRect(); if(!r.width || r.bottom < 0 || r.top > H) continue;
+        const x = r.left + r.width/2, y = r.top + Math.min(r.height/2, 50);
+        let l = Math.max(0, 1 - Math.hypot(x - p.x, y - p.y)/R);
+        if(home && la){ const d = Math.hypot(x - (lr.left + lr.width/2), y - (lr.top + lr.height*.6)); l = Math.max(l, Math.max(0, 1 - d/260)*.55*la); }
+        l = Math.min(1, l*1.25*B.power);
+        el.style.setProperty('--lit', l.toFixed(2));
+      }
     }
     addEventListener('resize', ()=>{ if(ready) resize(); });
     (document.fonts && document.fonts.load ? document.fonts.load('700 96px Fredoka') : Promise.resolve()).catch(()=>{}).then(()=>{ resize(); ready = true; requestAnimationFrame(frame); });
@@ -12276,6 +12354,7 @@
       });
     });
     if(document.getElementById('cpGain')) refreshCarrePick();
+    const cur = Math.min(prefs.stake||0, profile.chips); // the opponents' page shows the stake against the computer
     document.querySelectorAll('.opp-gain').forEach(el=>{
       const odds = ODDS[el.dataset.opp] || 2;
       el.innerHTML = cur>0 ? ico('coin')+' Mise '+fmtChips(cur)+' → tu gagnes '+fmtChips(Math.round(cur*odds))+' (×'+String(odds).replace('.',',')+')'
