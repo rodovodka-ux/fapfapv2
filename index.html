@@ -1770,6 +1770,18 @@
   body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h, .pf-tile b, .pf-mode-top, .pf-opp b, .pf-opp span, .pf-end.got, .pf-friends p, .pf-notif p, .pf-row){ color:var(--pt) !important; text-shadow:none !important; }
   body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h small, .pf-tile span, .pf-mode-top small, .pf-end:not(.got), .pf-friends small, .pf-notif small, .pf-row span), body.ui-d:not(#z) #statsOverlay .pf-actions small{ color:var(--pm) !important; text-shadow:none !important; }
   body.ui-d:not(#z) #statsOverlay .pf-hero :is(.pf-name, .pf-strip b){ color:#fff !important; } body.ui-d:not(#z) #statsOverlay .pf-hero .pf-tag{ color:var(--pk) !important; text-shadow:none !important; }
+  /* the stake offered online: shown big, so nobody plays for money without seeing it */
+  .so-pot{ margin:10px auto 6px; padding:12px 16px; max-width:300px; border-radius:20px; border:3px solid #1B120C; background:#FFE9A8; color:#2A1D12 !important; box-shadow:0 5px 0 #1B120C; text-align:center; }
+  .so-pot b{ display:block; font:700 30px/1.05 var(--d-t, var(--font-display)); color:#2A1D12 !important; }
+  .so-pot b svg.i{ width:24px; height:24px; vertical-align:-3px; }
+  .so-pot span{ display:block; margin-top:4px; font:800 13px var(--d-b, inherit); color:#7A6650 !important; }
+  .so-pot.amical{ background:#D7E8FF; }
+  .pf-log{ display:flex; flex-direction:column; gap:7px; }
+  .pf-lg{ display:flex; align-items:center; gap:10px; padding:8px 11px; border-radius:14px; border:2.5px solid #1B120C; background:#fff; font:800 13.5px var(--d-b, inherit); }
+  .pf-lg i{ font-style:normal; min-width:22px; height:22px; border-radius:7px; display:grid; place-items:center; border:2px solid #1B120C; font-size:11px; background:#FFD9CF; }
+  .pf-lg.w i{ background:#5BD68A; } .pf-lg span{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pf-lg em{ font-style:normal; font-family:var(--d-t, var(--font-display)); } .pf-lg.w em{ color:#1F6B42; } .pf-lg.l em{ color:#B3261E; }
+  body.ui-d:not(#z) #statsOverlay .pf-lg :is(span, small){ color:#2A1D12 !important; } body.ui-d:not(#z) #statsOverlay .pf-lg small{ color:#7A6650 !important; font-size:11px; }
   .pg-in-fwd .pf-card, .pg-in-fwd .pf-hero, .pg-in-fwd .pf-actions{ animation: heroIn .5s cubic-bezier(.25,1.5,.45,1) backwards; animation-delay: calc(var(--d,0) * 70ms + 60ms); }
 
   /* ---- settings ---- */
@@ -4337,6 +4349,19 @@
   </div>
 </div>
 
+<div class="overlay modal hidden" id="stakeOfferOverlay">
+  <div class="sheet ps-sheet">
+    <span class="avatar ps-av" id="soAvatar" style="--s:72px"></span>
+    <h2 id="soTitle">Une partie t’attend</h2>
+    <div class="so-pot" id="soPot"></div>
+    <p id="soText"></p>
+    <div class="btnrow ps-btns">
+      <button class="primary" id="soYes">J’accepte</button>
+      <button id="soNo">Refuser</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay modal hidden" id="confirmRestartOverlay">
   <div class="sheet">
     <h2 id="confirmTitle">Quitter la partie ?</h2>
@@ -4649,6 +4674,11 @@
     <h3 class="rm-title">À la table</h3>
     <div class="rm-list" id="rmPlayers"></div>
     <label class="pref-check"><input type="checkbox" id="rmFillAI"> Compléter avec l’ordinateur jusqu’à 4 joueurs</label>
+    <div class="stake-pick" data-scope="mp">
+      <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
+      <div class="sp-row"></div>
+    </div>
+    <p class="small-note" id="rmStakeNote"></p>
     <button class="primary big" id="btnRmStart">En attente d’un ami…</button>
   </div>
 </div>
@@ -4658,6 +4688,7 @@
   <div class="page-body center">
     <h3 class="page-big" id="rmWaitHost">Partie</h3>
     <p id="rmWaitStatus">Connexion à la table…</p>
+    <div class="so-pot hidden" id="rmWaitStake"></div>
     <div class="rm-list" id="rmWaitList"></div>
     <div class="riffle wait-riffle" aria-hidden="true"><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span><span class="facedown"></span></div>
   </div>
@@ -4874,11 +4905,11 @@
       <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
       <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
     </div>
-    <div class="stake-pick">
+    <div class="stake-pick" data-scope="mp">
       <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
       <div class="sp-row"></div>
     </div>
-    <p class="small-note" id="lobbyNote">Le format et la mise sont choisis par celui qui crée la partie. Le gagnant rafle les deux mises.</p>
+    <p class="small-note" id="lobbyNote">Celui qui crée la partie choisit la mise ; l’autre doit l’accepter avant de jouer. Chacun met la même somme, le gagnant rafle le pot. Quitter en cours de partie, c’est perdre par forfait.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
     <button class="big" id="btnMpFriends"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Défier un de mes amis</button>
@@ -4896,6 +4927,11 @@
       <button id="btnCopyCode"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg> Copier le lien</button>
     </div>
     <p class="small-note">Ton ami clique sur le lien et arrive directement dans la partie.</p>
+    <div class="stake-pick" data-scope="mp">
+      <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
+      <div class="sp-row"></div>
+    </div>
+    <p class="small-note">Ton ami verra la mise et devra l’accepter. S’il a moins de jetons, la mise baisse pour vous deux.</p>
     <button class="ghost" id="btnCancelHost">Annuler</button>
   </div>
 </div>
@@ -5587,7 +5623,7 @@
   // was in the background (sharing the code on WhatsApp...) or during a 4G blip is simply delivered late.
   let mpOutSeq = 0, mpInNext = 1, mpPeerId = null, mpResendTimer = null, mpLastPresence = [];
   const mpOutbox = new Map(), mpInBuffer = new Map();
-  let mpMatchStarted = false;
+  let mpMatchStarted = false, mpIgnoreUntil = 0;
 
   function mpSend(msg){
     if(!mpNet) return;
@@ -5604,6 +5640,7 @@
     if(!p || p.from===myNetId) return;
     if(mpPeerId && p.from!==mpPeerId) return; // a third phone typing the same code — ignored
     if(p.k==='a'){ mpOutbox.delete(p.s); return; }
+    if(mpIgnoreUntil && Date.now()<mpIgnoreUntil) return;
     if(p.k!=='d') return;
     if(!mpPeerId) mpPeerId = p.from; // lock onto the first opponent who actually talks
     mpNet.send({k:'a', s:p.s, from:myNetId});
@@ -5621,10 +5658,13 @@
     roomOnPresence(list);
     if(!mpMatchStarted) return;
     const here = list.some(m=>m && m.id===mpPeerId);
+    if(!mpMatchLive()) return;
     showNetBanner(here ? null : oppNameVal+' s’est déconnecté — en attente de son retour…');
+    mpGoneWatch(here);
     if(here) mpResendPending();
   }
   function mpOnStatus(up){
+    mpNetUp = !!up;
     if(!mpMatchStarted) return;
     showNetBanner(up ? null : 'Connexion perdue — reconnexion en cours…');
     if(up) mpResendPending();
@@ -5636,8 +5676,12 @@
     if(text) document.getElementById('netBannerText').textContent = text;
   }
 
-  function mpTeardown(){
-    try{ if(mpNet) mpNet.close(); }catch(e){}
+  function mpTeardown(late){
+    // late: the last message (a forfeit) still has to leave this phone before the line is cut
+    const net = mpNet;
+    if(net){ if(late) setTimeout(()=>{ try{ net.close(); }catch(e){} }, 900); else try{ net.close(); }catch(e){} }
+    clearInterval(mpGoneTimer); mpGoneTimer = null; mpGoneAt = 0; mpOffer = null;
+    hide('stakeOfferOverlay');
     mpNet = null; mpIsHost = false; mpMatchStarted = false; oppUid = null;
     clearInterval(mpResendTimer); mpResendTimer = null;
     mpOutSeq = 0; mpInNext = 1; mpPeerId = null; mpLastPresence = [];
@@ -5759,6 +5803,7 @@
   window.addEventListener('pagehide', ()=>{ try{ if(mpNet) mpNet.close(); }catch(e){} });
 
   async function hostGame(){
+    renderStakePicks();
     const status = document.getElementById('mpHostStatus');
     mpTeardown();
     mpIsHost = true;
@@ -5794,13 +5839,88 @@
     if(presentOthers().some(m=>m.role==='guest')){ status.textContent = 'Cette partie a déjà deux joueurs.'; mpTeardown(); return; }
     mpPeerId = host.id;
     status.textContent = 'Partie trouvée ! Lancement...';
-    mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null});
+    mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null, chips: profile.chips});
+  }
+
+  // ---- the stake, proposed by the host and accepted by the friend before a single card is dealt ----
+  let mpOffer = null, mpForfeit = false;
+  function mpOfferStake(oppChips){
+    const want = mpStakeChoice();
+    const stake = Math.max(0, Math.min(want, typeof oppChips==='number' ? oppChips : want));
+    if(stake<=0){
+      mpStake = 0;
+      if(want>0) showToast('Partie amicale', oppNameVal+' n’a pas de jetons : vous jouez pour l’honneur.', {ms:2600});
+      startMpMatch(); return;
+    }
+    mpOffer = {stake};
+    mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null, chips: profile.chips});
+    mpSend({t:'offer', stake, want, target: prefs.quick ? 1 : 5});
+    const st = $id('mpHostStatus');
+    if(st) st.textContent = oppNameVal+' est là. Il doit accepter la mise de '+fmtChips(stake)+' jetons'+(stake<want ? ' (il n’a pas plus)' : '')+'…';
+  }
+  function mpShowOffer(msg){
+    const stake = Math.max(0, msg.stake|0);
+    mpOffer = {stake};
+    $id('soTitle').textContent = oppNameVal+' te propose une partie';
+    $id('soPot').innerHTML = '<b>'+ico('coin')+' '+fmtChips(stake)+'</b><span>chacun · le gagnant rafle '+fmtChips(stake*2)+'</span>';
+    $id('soText').textContent = (msg.target===1 ? 'Partie rapide : une seule manche décide.' : 'Match en 5 points.')+
+      ((msg.want|0)>stake ? ' Il voulait jouer '+fmtChips(msg.want|0)+', la mise est baissée à ton solde.' : '')+' Tu as '+fmtChips(profile.chips)+' jetons.';
+    fillAvatar($id('soAvatar'), null, oppNameVal);
+    show('stakeOfferOverlay'); vibrate(30);
+  }
+  document.getElementById('soYes').addEventListener('click', ()=>{
+    hide('stakeOfferOverlay');
+    if(!mpNet || !mpOffer) return;
+    if(mpOffer.stake>profile.chips){ showToast('Pas assez de jetons', 'Ton solde a changé entre-temps.', {ms:2000}); mpSend({t:'refuse'}); return; }
+    mpSend({t:'accept'});
+    const st = $id('mpJoinStatus'); if(st) st.textContent = 'Mise acceptée. Lancement…';
+  });
+  document.getElementById('soNo').addEventListener('click', ()=>{
+    hide('stakeOfferOverlay');
+    mpSend({t:'refuse'}); mpOffer = null;
+    setTimeout(()=>{ mpTeardown(); if(Nav.cur()==='mpJoinOverlay') $id('mpJoinStatus').textContent = 'Tu as refusé la mise.'; }, 600);
+    showToast('Partie refusée', oppNameVal+' est prévenu.', {ms:1800});
+  });
+  // a refusal frees the table: the host can change the stake and the friend can come back with the same code
+  function mpOfferRefused(){
+    mpOffer = null; mpPeerId = null; mpInNext = 1; mpInBuffer.clear(); mpOutbox.clear(); mpOutSeq = 0;
+    mpIgnoreUntil = Date.now() + 1500; // late copies from the phone that just left must not land in the next exchange
+    const st = $id('mpHostStatus');
+    if(st) st.textContent = oppNameVal+' a refusé la mise. Choisis une autre mise ci-dessous : il peut revenir avec le même code.';
+    vibrate(40);
+  }
+  // the opponent left (quit, or gone for a minute): the remaining player wins the match and the pot
+  function mpMatchLive(){ return mode==='mp' && mpMatchStarted && !!mpNet && $id('matchOverOverlay').classList.contains('hidden'); }
+  function mpForfeitWin(why){
+    if(!mpMatchLive()) return;
+    clearInterval(mpGoneTimer); mpGoneTimer = null; mpGoneAt = 0;
+    mpForfeit = true;
+    gameGen++; resumeQueue.length = 0;
+    if(state) state.handOver = true;
+    locked = true;
+    ['choiceOverlay','stakeOfferOverlay','pauseOverlay','confirmRestartOverlay'].forEach(id=> hide(id));
+    showNetBanner(null);
+    showToast(why==='quit' ? oppNameVal+' a abandonné' : oppNameVal+' n’est pas revenu', 'Victoire par forfait : tu rafles le pot.', {big:true, ms:3000});
+    showMatchOver('you');
+  }
+  let mpGoneTimer = null, mpGoneAt = 0, mpNetUp = true;
+  function mpGoneWatch(here){
+    if(here || !mpMatchLive()){ clearInterval(mpGoneTimer); mpGoneTimer = null; mpGoneAt = 0; return; }
+    if(mpGoneTimer) return;
+    mpGoneAt = Date.now();
+    mpGoneTimer = setInterval(()=>{
+      if(!mpMatchLive()){ clearInterval(mpGoneTimer); mpGoneTimer = null; return; }
+      if(!mpNetUp){ mpGoneAt = Date.now(); return; } // it's our own network that is down: nobody wins by forfeit
+      const left = 60 - Math.floor((Date.now()-mpGoneAt)/1000);
+      if(left<=0){ mpForfeitWin('gone'); return; }
+      showNetBanner(oppNameVal+' s’est déconnecté — victoire par forfait dans '+left+' s s’il ne revient pas');
+    }, 1000);
   }
 
   function startMpMatch(){
     if(mpMatchStarted) return;
-    mpMatchStarted = true;
-    if(mpIsHost){ setMatchLength(!!prefs.quick); mpStake = Math.min(prefs.stake||0, profile.chips); } // the host's choices apply to both
+    mpMatchStarted = true; mpForfeit = false; mpOffer = null;
+    if(mpIsHost){ setMatchLength(!!prefs.quick); mpStake = Math.min(mpStake||0, profile.chips); } // the format and the accepted stake apply to both
     startMatchTracking();
     if(mpIsHost) takeMpStake();
     mode = 'mp';
@@ -5822,15 +5942,22 @@
 
   function handleMpMessage(msg){
     if(msg.t==='hello'){
-      oppNameVal = msg.name || 'Ton ami';
+      oppNameVal = String(msg.name || 'Ton ami').slice(0,16);
       oppUid = typeof msg.uid==='string' ? msg.uid : null;
       applyOppNameToUI();
-      if(mpIsHost) startMpMatch();
+      if(mpIsHost && !mpMatchStarted) mpOfferStake(msg.chips);
       return;
     }
+    if(msg.t==='offer'){ if(!mpIsHost && !mpMatchStarted) mpShowOffer(msg); return; }
+    if(msg.t==='accept'){
+      if(mpIsHost && !mpMatchStarted && mpOffer){ mpStake = mpOffer.stake; startMpMatch(); }
+      return;
+    }
+    if(msg.t==='refuse'){ if(mpIsHost && !mpMatchStarted) mpOfferRefused(); return; }
+    if(msg.t==='quit'){ mpForfeitWin('quit'); return; }
     if(msg.t==='start'){
       if(mpMatchStarted) return;
-      mpMatchStarted = true;
+      mpMatchStarted = true; mpForfeit = false;
       TARGET_SCORE = msg.target===1 ? 1 : 5; // the host chose the format
       mpStake = Math.max(0, msg.stake|0);   // …and the stake
       startMatchTracking();
@@ -5875,12 +6002,13 @@
     }
     if(msg.t==='rematch'){
       mpRematch.opp = true;
+      if(typeof msg.chips==='number') mpRematch.oppChips = msg.chips;
       refreshRematchUI();
       mpMaybeStartRematch();
       return;
     }
     if(msg.t==='newMatch'){
-      mpStartRematchLocal(msg.dealer);
+      mpStartRematchLocal(msg.dealer, msg.stake);
       return;
     }
     if(msg.t==='needCutChoice'){
@@ -8734,7 +8862,7 @@
   function askQuit(){
     const text =
       daily ? 'Le défi du jour comptera comme joué : tu ne pourras pas le recommencer aujourd’hui.'
-      : mode==='mp' ? 'Tu quitteras la partie en ligne : '+oppName()+' sera prévenu.'
+      : mode==='mp' ? 'Tu perds par forfait : '+oppName()+' est prévenu et rafle le pot.'
       : mode==='square' && sq && sq.remote ? 'Tu quitteras la table : l’ordinateur prendra ta place.'
       : mode==='square' && sq && sq.online ? 'C’est ton téléphone qui fait tourner la partie : la quitter l’arrête pour tout le monde.'
       : mode==='square' ? 'La partie de Carré la Pute en cours sera perdue.'
@@ -8771,7 +8899,16 @@
     }
     if(parting) setTimeout(()=> maskShout(parting), 450);
     if(storyRun) storyRestore();
-    if(mode==='mp' || mpNet || room.active) mpTeardown();
+    // leaving an online duel before the end is a forfeit: the friend is told at once and takes the pot
+    let quitLive = false;
+    if(mpMatchLive()){
+      quitLive = true;
+      mpSend({t:'quit'});
+      mpLogAdd({k:'duel', o:oppNameVal, s:matchStake, d:-matchStake, r:'D', f:2});
+      profile.onlineGames = (profile.onlineGames||0)+1; saveProfile();
+      matchStake = 0;
+    }
+    if(mode==='mp' || mpNet || room.active) mpTeardown(quitLive);
     daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
     tuto = null;
     gameGen++; resumeQueue.length = 0; setPaused(false);
@@ -12026,8 +12163,10 @@
   document.getElementById('btnRich').addEventListener('click', ()=> Nav.go('richPage'));
   // the stake picker (on the opponents page and in the online lobby)
   function renderStakePicks(){
-    const cur = Math.min(prefs.stake||0, profile.chips);
     document.querySelectorAll('.stake-pick').forEach(box=>{
+      // online games keep their own stake, so a bet chosen against the computer never slips into a game with a friend
+      const online = box.dataset.scope==='mp';
+      const cur = online ? mpStakeChoice() : Math.min(prefs.stake||0, profile.chips);
       box.querySelector('.sp-bal').textContent = fmtChips(profile.chips);
       const row = box.querySelector('.sp-row');
       row.innerHTML = '';
@@ -12038,7 +12177,10 @@
         b.innerHTML = s===0 ? 'Amical' : ico('coin')+fmtChips(s);
         b.addEventListener('click', ()=>{
           if(!can){ showToast('Pas assez de jetons', 'Il te faut '+fmtChips(s)+' jetons pour cette mise.', {ms:1600}); return; }
-          prefs.stake = s; savePrefs(); renderStakePicks();
+          if(online){ if(mpMatchStarted){ showToast('Trop tard', 'La partie est lancée avec la mise acceptée.', {ms:1600}); return; } prefs.mpStake = s; }
+          else prefs.stake = s;
+          savePrefs(); renderStakePicks();
+          if(online && room.active && room.host) renderRoomLobby();
         });
         row.appendChild(b);
       });
@@ -12060,8 +12202,17 @@
       mid.innerHTML = mid.textContent+' <span class="mid-stake">'+ico('coin')+fmtChips(matchStake)+'</span>';
     }
   }
-  // online: the agreed stake (chosen by the host); each player puts in what they can, up to it
+  // online: the agreed stake. The host proposes it, the friend accepts it, and it is lowered to what the poorer
+  // player can pay, so both put exactly the same amount in the pot
   var mpStake = 0;
+  function mpStakeChoice(){ const s = prefs.mpStake!=null ? prefs.mpStake : (prefs.stake||0); return Math.min(s||0, profile.chips); }
+  // the record of every online game played for chips (kept on the account, shown on the profile)
+  function mpLogAdd(e){
+    profile.mpLog = Array.isArray(profile.mpLog) ? profile.mpLog : [];
+    profile.mpLog.unshift(Object.assign({t:Date.now()}, e));
+    if(profile.mpLog.length>40) profile.mpLog.length = 40;
+    saveProfile();
+  }
   function takeMpStake(){
     matchCoras = 0; matchGlacees = 0;
     matchStake = Math.min(mpStake||0, profile.chips);
@@ -12088,9 +12239,10 @@
           profile.rich[duelOpp] = (profile.rich[duelOpp]||0) + matchStake;
         }
       }
-    } else if(mode==='mp' && matchStake>0){
+    } else if(mode==='mp'){
       // online: both players put the same stake in the pot, the winner takes it all
-      if(won){ chipsAdd(matchStake*2); res.delta = matchStake; } else res.delta = -matchStake;
+      if(matchStake>0){ if(won){ chipsAdd(matchStake*2); res.delta = matchStake; } else res.delta = -matchStake; }
+      mpLogAdd({k:'duel', o:oppNameVal, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
     }
     saveProfile();
     matchStake = 0;
@@ -12366,17 +12518,21 @@
   function mpRequestRematch(){
     if(mpRematch.me) return;
     mpRematch.me = true;
-    mpSend({t:'rematch'});
+    mpSend({t:'rematch', chips: profile.chips});
     refreshRematchUI();
     mpMaybeStartRematch();
   }
   function mpMaybeStartRematch(){
     if(!(mpRematch.me && mpRematch.opp) || !mpIsHost) return;
     const d = dealer; // the winner of the last hand deals the first hand of the rematch
-    mpSend({t:'newMatch', dealer: d==='you' ? 'ai' : 'you'});
+    // the same stake, lowered if one of the two can no longer pay it, so the pot stays fair
+    mpStake = Math.max(0, Math.min(mpStake||0, profile.chips, typeof mpRematch.oppChips==='number' ? mpRematch.oppChips : profile.chips));
+    mpSend({t:'newMatch', dealer: d==='you' ? 'ai' : 'you', stake: mpStake});
     mpStartRematchLocal(d);
   }
-  function mpStartRematchLocal(d){
+  function mpStartRematchLocal(d, stake){
+    if(typeof stake==='number') mpStake = Math.max(0, stake|0);
+    mpForfeit = false;
     startMatchTracking();
     takeMpStake(); // a rematch is played for the same stake
     mpRematch = {me:false, opp:false};
@@ -12392,9 +12548,11 @@
     const btn = document.getElementById('btnRematch');
     btn.disabled = false;
     if(mode!=='mp'){ info.textContent = ''; btn.innerHTML = ico('repeat')+' Revanche'; return; }
+    if(mpForfeit){ info.textContent = oppName()+' est parti : pas de revanche possible.'; btn.innerHTML = ico('repeat')+' Revanche'; btn.disabled = true; return; }
+    const stakeTxt = mpStake>0 ? ' pour '+fmtChips(Math.min(mpStake, profile.chips))+' jetons' : '';
     if(mpRematch.me && !mpRematch.opp){ info.textContent = 'En attente de '+oppName()+'…'; btn.innerHTML = ico('hourglass')+' Revanche demandée'; btn.disabled = true; }
-    else if(mpRematch.opp && !mpRematch.me){ info.textContent = oppName()+' veut sa revanche !'; btn.innerHTML = ico('flame')+' Accepter la revanche'; }
-    else { info.textContent = ''; btn.innerHTML = ico('repeat')+' Revanche'; }
+    else if(mpRematch.opp && !mpRematch.me){ info.textContent = oppName()+' veut sa revanche'+stakeTxt+' !'; btn.innerHTML = ico('flame')+' Accepter la revanche'; }
+    else { info.textContent = stakeTxt ? 'Revanche'+stakeTxt+' chacun' : ''; btn.innerHTML = ico('repeat')+' Revanche'; }
   }
 
   function showMatchOver(who){
@@ -12453,6 +12611,10 @@
       text += ' (Ton bilan contre '+oppName()+' : '+rec.w+' victoire'+(rec.w>1?'s':'')+', '+rec.l+' défaite'+(rec.l>1?'s':'')+'.)';
     }
     if(unlockedMbarga) text += ' Un masque d’or a entendu parler de toi… Le Ngonzormorrr t’attend.';
+    if(mode==='mp' && mpForfeit){
+      document.getElementById('matchOverTitle').textContent = 'Victoire par forfait !';
+      text = oppName()+' a quitté la partie ('+mine+' à '+theirs+'). Le pot est pour toi.';
+    }
     document.getElementById('matchOverText').textContent = text;
     document.getElementById('moKicker').textContent = won ? 'Victoire' : 'Défaite';
     track('match_end', {mode, opp: mode==='ai' ? duelOpp : null, won, score: mine+'-'+theirs});
@@ -13259,6 +13421,7 @@
       if(won){ chipsAdd(matchStake*nPlayers); res.delta += matchStake*(nPlayers-1); }
       else res.delta -= matchStake;
     }
+    if(sq && (sq.online || sq.remote)) mpLogAdd({k:'carre', o: won ? nPlayers+' joueurs' : champName, s:matchStake, d:res.delta - (won ? 50 : 0), r: won ? 'V' : 'D'});
     matchStake = 0;
     showChipsResult(res, won && res.stake ? 'Mise '+fmtChips(res.stake)+' × '+nPlayers+' joueurs' : null);
     refreshRematchUI(); refreshFriendBtnMo();
@@ -13445,6 +13608,7 @@
 
   // ---- host side ----
   async function roomHost(){
+    renderStakePicks();
     const status = document.getElementById('rmStatus');
     mpTeardown(); roomReset();
     mpIsHost = true;
@@ -13459,7 +13623,7 @@
     if(!mpNet) return;
     if(presentOthers().some(m=>m.role==='host')){ mpTeardown(); return roomHost(); }
     status.textContent = 'Partage ce code avec tes amis (jusqu’à 3) :';
-    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'lobby', host:myName, players:room.players.map(p=>({id:p.id, name:p.name}))}); });
+    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'lobby', host:myName, stake:roomStake(), players:room.players.map(p=>({id:p.id, name:p.name}))}); });
   }
   function renderRoomLobby(){
     const list = document.getElementById('rmPlayers');
@@ -13472,6 +13636,14 @@
     const btn = document.getElementById('btnRmStart');
     btn.textContent = n<2 ? 'En attente d’un ami…' : 'Lancer la partie à '+n+' joueurs';
     btn.classList.toggle('waiting', n<2);
+    const s = roomStake(), want = mpStakeChoice(), note = document.getElementById('rmStakeNote');
+    if(note) note.textContent = s>0 ? 'Chacun met '+fmtChips(s)+' jetons'+(s<want ? ' (baissé au solde du joueur le moins riche)' : '')+'. Le dernier survivant rafle le pot.' : 'Partie amicale : pas de jetons en jeu.';
+  }
+  // the same stake for everyone at the table: what the poorest human player can pay
+  function roomStake(humans){
+    let s = mpStakeChoice();
+    (humans || room.players.slice(0,3)).forEach(p=>{ if(typeof p.chips==='number') s = Math.min(s, p.chips); });
+    return Math.max(0, s);
   }
   document.getElementById('rmFillAI').addEventListener('change', renderRoomLobby);
   document.getElementById('btnRmStart').addEventListener('click', ()=>{
@@ -13485,7 +13657,7 @@
     SQ_SEAT_ORDER.forEach(id=> ctrl[id] = id==='you' ? 'local' : (seats.includes(id) ? 'ai' : 'absent'));
     seats.filter(id=> id!=='you').forEach((id,i)=>{ const h = humans[i]; if(h){ ctrl[id] = 'remote'; net[id] = h.id; names[id] = h.name; } });
     room.started = true;
-    room.stake = Math.min(prefs.stake||0, profile.chips);
+    room.stake = roomStake(humans);
     roomEvery(1500, ()=> roomBroadcast(true));
     roomEvery(5000, roomCheckDropouts);
     sqNewGame({ctrl, net, names, online:true, stake: room.stake});
@@ -13547,8 +13719,8 @@
     document.getElementById('rmWaitList').innerHTML = '';
     document.getElementById('rmWaitStatus').textContent = 'Connexion à la table…';
     Nav.go('carreWaitPage');
-    roomSend({k:'join', name: myName});
-    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'join', name: myName}); });
+    roomSend({k:'join', name: myName, chips: profile.chips});
+    roomEvery(1200, ()=>{ if(!room.started) roomSend({k:'join', name: myName, chips: profile.chips}); });
     roomEvery(1000, ()=>{ if(room.pending) roomSend({k:'act', seq: room.pending.seq, a: room.pending.a}); });
   }
   function roomSendAct(a){
@@ -13656,11 +13828,11 @@
       if(p.k==='join' && !room.started){
         if(!room.players.some(x=>x.id===p.from)){
           if(room.players.length>=3) return;
-          room.players.push({id:p.from, name:(p.name||'Ami').slice(0,16)});
+          room.players.push({id:p.from, name:(p.name||'Ami').slice(0,16), chips: typeof p.chips==='number' ? p.chips : null});
           sfxToggle(true);
           renderRoomLobby();
         }
-        roomSend({k:'lobby', host:myName, players:room.players.map(x=>({id:x.id, name:x.name}))});
+        roomSend({k:'lobby', host:myName, stake:roomStake(), players:room.players.map(x=>({id:x.id, name:x.name}))});
       } else if(p.k==='act' && room.started){
         const seat = roomSeatOf(p.from);
         if(!seat) return;
@@ -13676,6 +13848,11 @@
         const all = [{name:p.host+' (crée la partie)'}].concat(p.players.map(x=>({name: x.id===myNetId ? x.name+' (toi)' : x.name})));
         list.innerHTML = all.map(()=> '<div class="rm-player"><span class="avatar" style="--s:34px"></span><span class="rm-n"></span></div>').join('');
         [...list.children].forEach((row,i)=>{ row.querySelector('.rm-n').textContent = all[i].name; fillAvatar(row.querySelector('.avatar'), null, all[i].name); });
+        const pot = document.getElementById('rmWaitStake'), s = Math.max(0, p.stake|0);
+        if(pot && typeof p.stake==='number'){
+          pot.classList.remove('hidden'); pot.classList.toggle('amical', s===0);
+          pot.innerHTML = s>0 ? '<b>'+ico('coin')+' '+fmtChips(s)+'</b><span>chacun · le dernier survivant rafle le pot</span>' : '<b>Amical</b><span>pas de jetons en jeu</span>';
+        }
         const inside = p.players.some(x=>x.id===myNetId);
         document.getElementById('rmWaitStatus').textContent = inside ? 'Tu es à la table. En attente que '+p.host+' lance la partie…'
           : (p.players.length>=3 ? 'Cette table est complète (4 joueurs).' : 'Connexion à la table…');
@@ -13777,6 +13954,7 @@
         tile('c1', 'coin', fmtChips(p.chips||0), 'jetons aujourd’hui')+
         tile('c2', 'crown', fmtChips(p.chipsBest||0), 'record')+
       '</div><div class="pf-rows" style="margin-top:6px"><div class="pf-row"><span>Gagnés en tout</span><b>'+fmtChips(p.chipsWon||0)+'</b></div></div></section>'+
+      mpLogCard()+
       ends+
       cardH(8, 'users', 'Tes amis', fr.length ? fr.length+' ami'+(fr.length>1 ? 's' : '') : '')+'<div class="pf-friends"><div class="pf-stack">'+
         fr.slice(0, 5).map(f=> '<span class="avatar'+(isOnline(f.id) ? ' is-on' : '')+'" data-fname=""></span>').join('')+'</div>'+
@@ -13792,6 +13970,18 @@
     box.querySelectorAll('.pf-stack .avatar').forEach((el, i)=> fillAvatar(el, null, fr[i].name || 'J'));
     const pb = $id('pfPushOn');
     if(pb) pb.addEventListener('click', async ()=>{ await pushEnable(); if(window.pushSettingsRow) window.pushSettingsRow(); renderStats(); });
+  }
+  // the online bets: the net result, then the last games one by one (who, how, how much)
+  function mpLogCard(){
+    const log = Array.isArray(profile.mpLog) ? profile.mpLog : [];
+    const net = log.reduce((s, e)=> s + (e.d|0), 0);
+    const when = t=>{ const d = new Date(t), days = Math.floor((Date.now()-t)/864e5); return days<1 ? 'aujourd’hui' : days<2 ? 'hier' : d.getDate()+'/'+(d.getMonth()+1); };
+    const rows = log.slice(0, 8).map(e=>{
+      const win = e.r==='V', how = e.f===1 ? ' · forfait adverse' : e.f===2 ? ' · abandon' : '';
+      return '<div class="pf-lg '+(win ? 'w' : 'l')+'"><i>'+(win ? 'V' : 'D')+'</i><span>'+(e.k==='carre' ? 'Carré · ' : '')+String(e.o||'Ami').replace(/[<>&]/g,'')+'<small> · '+when(e.t)+how+'</small></span><em>'+((e.s|0)>0 ? (e.d>0 ? '+' : e.d<0 ? '−' : '')+fmtChips(Math.abs(e.d|0)) : 'amical')+'</em></div>';
+    }).join('');
+    return '<section class="pf-card" style="--d:7"><div class="pf-h"><span class="pf-ic">'+ico('globe')+'</span>Tes mises en ligne<small>'+(log.length ? (net>=0 ? '+' : '−')+fmtChips(Math.abs(net))+' au total' : '')+'</small></div>'+
+      (rows ? '<div class="pf-log">'+rows+'</div>' : '<div class="pf-row"><span>Aucune partie en ligne pour l’instant. Défie un ami !</span></div>')+'</section>';
   }
   document.getElementById('btnProfFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
   document.getElementById('btnShowStats').addEventListener('click', ()=> goTab('statsOverlay'));
@@ -17013,7 +17203,7 @@
       return;
     }
     Lobby.pending = {id:f.id, name:f.name, code};
-    const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code});
+    const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code, stake: mpStakeChoice()});
     send();
     st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
     let n = 0;
@@ -17037,7 +17227,7 @@
     if(inGame() || mpNet || storyRun){ lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'busy'}); return; }
     Lobby.incoming = p;
     $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+' te défie !';
-    $id('fiText').textContent = (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap. Tu acceptes ?';
+    $id('fiText').textContent = (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?';
     fillAvatar($id('fiAvatar'), null, p.name || 'J');
     show('friendInviteOverlay');
     vibrate([60,80,60]);
