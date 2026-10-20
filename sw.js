@@ -1,6 +1,6 @@
 // Fap Fap â€” service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v58';
+const CACHE = 'fapfap-v59';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
 self.addEventListener('install', (event)=>{
@@ -55,8 +55,9 @@ self.addEventListener('fetch', (event)=>{
   if(req.mode==='navigate'){
     event.respondWith(
       fetch(req)
-        .then(res=>{ const copy = res.clone(); caches.open(CACHE).then(c=> c.put('./index.html', copy)); return res; })
-        .catch(()=> caches.match('./index.html'))
+        // only the game itself is stored as index.html; other pages (the investigation, its portraits) keep their own entry
+        .then(res=>{ const copy = res.clone(), main = /\/(index\.html)?$/.test(url.pathname); caches.open(CACHE).then(c=> c.put(main ? './index.html' : req, copy)); return res; })
+        .catch(()=> caches.match(req).then(r=> r || caches.match('./index.html')))
     );
     return;
   }
