@@ -5865,7 +5865,9 @@
   let mpOffer = null, mpForfeit = false;
   function mpOfferStake(oppChips){
     const want = mpStakeChoice();
-    const stake = Math.max(0, Math.min(want, typeof oppChips==='number' ? oppChips : want));
+    // a phone still on an older version never answers an offer (it doesn't send its chips either): play as before
+    if(typeof oppChips!=='number'){ mpStake = want; startMpMatch(); return; }
+    const stake = Math.max(0, Math.min(want, oppChips));
     if(stake<=0){
       mpStake = 0;
       if(want>0) showToast('Partie amicale', oppNameVal+' n’a pas de jetons : vous jouez pour l’honneur.', {ms:2600});
