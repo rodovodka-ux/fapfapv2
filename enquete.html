@@ -298,7 +298,7 @@
   @keyframes bob{ 50%{ transform:translateY(5px); } }
 
   /* ---- le téléphone (dessiné en HTML pour un texte net) ---- */
-  .phone{ position:absolute; z-index:6; left:50%; top:15%; width:50%; aspect-ratio:9/17; max-width:100%; transform:translateX(-50%) rotate(-7deg);
+  .phone{ position:absolute; z-index:6; left:50%; top:20%; width:50%; aspect-ratio:9/17; max-width:100%; transform:translateX(-50%) rotate(-7deg);
     background:#050507; border:3px solid #000; border-radius:26px; padding:10px 8px; box-shadow:0 0 0 2px #2a2833, 0 30px 60px rgba(0,0,0,.7), 0 0 80px rgba(120,180,255,.35); }
   .phone.buzz{ animation:buzz .5s linear 2; }
   @keyframes buzz{ 10%,50%,90%{ transform:translateX(-52%) rotate(-8deg); } 30%,70%{ transform:translateX(-48%) rotate(-6deg); } }
@@ -417,6 +417,8 @@
   .act{ position:absolute; z-index:12; left:50%; bottom:7%; transform:translateX(-50%) rotate(-3deg); min-height:54px; padding:10px 26px; border:3px solid #000; border-radius:4px;
     background:#ffd23a; color:#000; font:400 22px/1 var(--f-title); text-transform:uppercase; letter-spacing:.03em; box-shadow:5px 5px 0 #000; cursor:pointer; touch-action:manipulation; }
   .act.pulse{ animation:actp 1.3s ease-in-out infinite; }
+  /* le bouton d'action et l'étiquette du témoin ne se superposent plus : l'étiquette s'efface le temps de l'action */
+  .pn:has(.act:not([hidden])) .tag{ opacity:0; transition:opacity .3s; }
   @keyframes actp{ 50%{ transform:translateX(-50%) rotate(-3deg) scale(1.07); } }
   .pk, .gm{ position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(5,4,8,.88); }
   .pk[hidden], .gm[hidden]{ display:none; }
@@ -446,11 +448,12 @@
   @keyframes sfx{ 15%{ opacity:1; transform:translate(-50%, -50%) scale(1.15) rotate(-8deg); } 70%{ opacity:1; transform:translate(-50%, -50%) scale(1) rotate(-6deg); } 100%{ opacity:0; } }
   .gmend{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,.6); }
   .gmend[hidden]{ display:none; }
+  .adult .resume{ color:#ffd23a; font-weight:700; }
 </style>
 
 <div class="prog" id="prog"></div>
 <header class="hud">
-  <button class="ibtn" id="back" type="button" aria-label="Retour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button class="ibtn" id="back" type="button" aria-label="Menu principal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
   <div class="ttl">Le dernier coup<small id="obj" aria-live="polite">Objectif : fais défiler</small></div>
   <div class="flair" id="flair" role="status"></div>
   <button class="ibtn" id="nb" type="button" aria-label="Ouvrir le carnet d'enquête"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z"/><path d="M6 3v18M10 8h6M10 12h6M10 16h3"/></svg><span class="count" id="cnt">0</span></button>
@@ -2648,8 +2651,9 @@
   $('#sheet').addEventListener('click', e=>{ if(e.target.id==='sheet') closeSheet(); });
   addEventListener('keydown', e=>{ if(e.key==='Escape' && !$('#sheet').hidden) closeSheet(); });
   // dans le jeu : en haut de la bande, la flèche ramène au menu du Fap Fap
-  $('#back').addEventListener('click', ()=>{ if(!$('#sheet').hidden) return closeSheet(); setAuto(false); if(scrollY < 60 && /enquete\.html$/.test(location.pathname)) return location.href = './'; window.scrollTo({top:0, behavior: RM ? 'auto' : 'smooth'}); });
-  $('#again').addEventListener('click', ()=>{ setAuto(false); window.scrollTo({top:0, behavior:'auto'}); location.reload(); });
+  // la flèche du haut ramène au menu principal du Fap Fap, après avoir tout enregistré (la reprise se fera à la même case)
+  $('#back').addEventListener('click', ()=>{ if(!$('#sheet').hidden) return closeSheet(); setAuto(false); if(window.nkSave) window.nkSave(); location.href = './'; });
+  $('#again').addEventListener('click', ()=>{ setAuto(false); if(window.nkClear) window.nkClear(); window.scrollTo({top:0, behavior:'auto'}); location.reload(); });
   PN.find(p=> p.S.id==='table').bg.addEventListener('click', tapTable);
   PN.find(p=> p.S.id==='plan').bg.addEventListener('click', tapPlan);
 
@@ -2664,7 +2668,7 @@
     if(b.dataset.n) ivNext(); else if(b.dataset.t) ivAsk(IV.cur.D.topics.find(t=> t.id===b.dataset.t)); else if(b.dataset.v) ivVerdict(b.dataset.v);
     else if(b.dataset.c && IV.cur.choice){ const f = IV.cur.choice[+b.dataset.c].fn; IV.cur.choice = null; f(); } });
   // l'avertissement à l'entrée : une enquête pour adultes
-  $('#adultGo').addEventListener('click', ()=>{ $('#adult').hidden = true; audio(); filmStart(); });
+  $('#adultGo').addEventListener('click', ()=>{ if(window.nkResume && window.nkResume()) return; $('#adult').hidden = true; audio(); filmStart(); });
 
   /* =============== le générique : le résumé de l'affaire, plan par plan, comme l'ouverture d'un film =============== */
   const FILM = [
@@ -2728,5 +2732,88 @@
   $('#eOut').addEventListener('click', closeExam);
   addEventListener('keydown', e=>{ if(e.key!=='Escape') return; if(!$('#exam').hidden) closeExam(); else if(!$('#fouille').hidden) closeScene(); else if(!$('#proof').hidden) closeProof(); });
   flairUI(); renderSheet(); endText(); layoutAll(); requestAnimationFrame(loop);
+
+  /* =============== les bulles ne se chevauchent plus : une bulle qui en recouvre une autre descend juste en dessous =============== */
+  // Les positions sont écrites en pourcentage pour un écran large ; sur un téléphone, le texte prend plus de lignes et les
+  // bulles se rentrent dedans. On les pousse dans l'ordre du récit (mesures de mise en page, pas les animations).
+  function unstack(pn){
+    const bubs = [...pn.querySelectorAll('.bub')];
+    bubs.forEach(b=> b.style.marginTop = '');
+    const placed = [];
+    bubs.filter(b=> b.classList.contains('on')).forEach(b=>{
+      let push = 0;
+      for(let guard = 0; guard < 6; guard++){
+        const top = b.offsetTop + push, bot = top + b.offsetHeight, l = b.offsetLeft, r = l + b.offsetWidth;
+        const hit = placed.find(p=> Math.min(r, p.r) - Math.max(l, p.l) > 18 && Math.min(bot, p.bot) - Math.max(top, p.top) > 2);
+        if(!hit) break;
+        push += hit.bot - top + 8;
+      }
+      if(push) b.style.marginTop = push + 'px';
+      placed.push({l:b.offsetLeft, r:b.offsetLeft + b.offsetWidth, top:b.offsetTop + push, bot:b.offsetTop + push + b.offsetHeight});
+    });
+  }
+  const unstackQ = new Set(); let unstackT = 0;
+  const unstackSoon = pn=>{ unstackQ.add(pn); clearTimeout(unstackT); unstackT = setTimeout(()=>{ unstackQ.forEach(unstack); unstackQ.clear(); }, 30); };
+  if('MutationObserver' in window) new MutationObserver(ms=> ms.forEach(m=>{ const t = m.target; if(t.classList && t.classList.contains('bub')){ const pn = t.closest('.pn'); if(pn) unstackSoon(pn); } }))
+    .observe(strip, {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+  addEventListener('resize', ()=> setTimeout(()=> PN.forEach(P=> unstack(P.el)), 200));
+
+  /* =============== la sauvegarde : tout l'état de l'enquête, gardé sur le téléphone, et la reprise là où on s'est arrêté =============== */
+  const SAVE_KEY = 'nk-save-v1';
+  function snapshot(){
+    return {v:1, at:Date.now(), y:Math.round(scrollY), obj:$('#obj').textContent, msgs:($('#msgs') || {}).innerHTML || '',
+      d:{CLUES, NOTES, TIME, KEYS:[...KEYS], JUDGED, ROOMS_DONE, conWon, heard, flair, CONS, COINS, DED, CORRUPT, ENDING, LEV, found,
+        WS:Object.fromEntries(Object.entries(WS).map(([k, w])=> [k, Object.assign({}, w, {shot:null})])),   // les photos sont refaites à la rencontre
+        CONF:CONF.map(c=> ({i:PN.indexOf(c.P), t:c.t, done:!!c.done}))},
+      pn:PN.map(P=> ({d:[...P.done], a:!!P.actDone, iv:!!P.ivDone, as:!!P.asked, ju:!!P.judged, me:!!P.met, f:!!P.found,
+        it:P.it && P.S.ask ? P.S.ask.qs.indexOf(P.it) : -1, pl:P.PL ? {seen:P.PL.rooms.map(r=> !!r.seen), used:P.PL.used} : null,
+        on:[...P.el.querySelectorAll('[id].on')].map(e=> [e.id, e.innerHTML])}))};
+  }
+  let lastSave = '';
+  function save(){ if(!started) return; try{ const s = JSON.stringify(snapshot()); if(s!==lastSave){ localStorage.setItem(SAVE_KEY, s); lastSave = s; } }catch(e){} }
+  function readSave(){ try{ const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return s && s.v===1 && Array.isArray(s.pn) ? s : null; }catch(e){ return null; } }
+  function clearSave(){ started = false; try{ localStorage.removeItem(SAVE_KEY); }catch(e){} lastSave = ''; }
+  function restore(s){
+    const d = s.d, put = (arr, src)=>{ arr.length = 0; (src || []).forEach(x=> arr.push(x)); };
+    put(CLUES, d.CLUES); put(NOTES, d.NOTES); put(TIME, d.TIME); put(JUDGED, d.JUDGED); put(ROOMS_DONE, d.ROOMS_DONE);
+    KEYS.clear(); (d.KEYS || []).forEach(k=> KEYS.add(k));
+    conWon = d.conWon || 0; heard = d.heard || 0; flair = d.flair!=null ? d.flair : 3; CONS = d.CONS!=null ? d.CONS : 70; COINS = d.COINS!=null ? d.COINS : 1000;
+    DED = d.DED || 0; CORRUPT = d.CORRUPT || 0; ENDING = d.ENDING || null; found = !!d.found;
+    Object.assign(LEV, d.LEV || {}); Object.keys(d.WS || {}).forEach(k=> Object.assign(ws(k), d.WS[k]));
+    CONF.length = 0; (d.CONF || []).forEach(c=>{ if(PN[c.i]) CONF.push({P:PN[c.i], t:c.t, done:c.done}); });
+    PN.forEach((P, i)=>{ const q = s.pn[i]; if(!q) return;
+      P.done = new Set(q.d || []); P.actDone = q.a; P.ivDone = q.iv; P.asked = q.as; P.judged = q.ju; P.met = q.me; P.found = q.f;
+      if(q.it >= 0 && P.S.ask) P.it = P.S.ask.qs[q.it];
+      if(q.pl && P.S.bg==='plan'){ P.PL = planLayout(null); q.pl.seen.forEach((v, j)=>{ if(P.PL.rooms[j]) P.PL.rooms[j].seen = v; }); P.PL.used = q.pl.used; }
+      (q.on || []).forEach(([id, html])=>{ const e = document.getElementById(id); if(e){ e.innerHTML = html; e.classList.add('on'); } });
+      if(P.done.size) P.el.classList.add('in');
+      // une question posée mais pas encore jugée : le verdict attend ; une question pas encore choisie : le choix revient
+      if(P.S.ask){ const askEv = (P.S.ev || []).findIndex(e=> e.ask);
+        if(P.asked && !P.judged){ const j = $('#' + P.S.id + '-judge'); if(j) j.hidden = false; }
+        else if(!P.asked && askEv >= 0 && P.done.has(askEv)){ const a = $('#' + P.S.id + '-ask'); if(a) a.hidden = false; } }
+      if(needAct(P) && P.done.size) showAct(P);
+    });
+    if(s.obj) $('#obj').textContent = s.obj;
+    if(s.msgs && $('#msgs')) $('#msgs').innerHTML = s.msgs;
+    flairUI(); renderSheet(); endText(); layoutAll();
+    // la page doit être à sa vraie hauteur avant de défiler : on attend deux images, on mesure, puis on vérifie
+    const go = (n)=>{ measure(); window.scrollTo(0, s.y || 0); lastY = scrollY; if(Math.abs(scrollY - (s.y || 0)) > 4 && n < 20) return setTimeout(()=> go(n + 1), 120); started = true; };
+    setTimeout(()=> go(0), 80);
+  }
+  let started = false;
+  const saved = readSave();
+  if(saved && saved.y > 40){
+    // une enquête en cours : on propose de la reprendre (ou de tout recommencer)
+    const box = $('#adult .abox'), go = $('#adultGo');
+    go.textContent = 'Reprendre l’enquête';
+    box.querySelector('p').insertAdjacentHTML('afterend', '<p class="resume">Ton enquête t’attend là où tu l’as laissée' + (saved.d && saved.d.CLUES && saved.d.CLUES.length ? ' (' + saved.d.CLUES.length + ' piste' + (saved.d.CLUES.length > 1 ? 's' : '') + ' au carnet)' : '') + '.</p>');
+    go.insertAdjacentHTML('afterend', '<button type="button" class="b" id="adultNew">Recommencer depuis le début</button>');
+    $('#adultNew').addEventListener('click', ()=>{ clearSave(); location.reload(); });
+  }
+  window.nkResume = ()=>{ if(!(saved && saved.y > 40)) started = true; if(saved && saved.y > 40){ $('#adult').hidden = true; audio(); document.documentElement.classList.remove('locked'); restore(saved); return true; } return false; };
+  window.nkSave = save; window.nkClear = clearSave;
+  setInterval(save, 4000);
+  addEventListener('pagehide', save);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
 })();
 </script>
