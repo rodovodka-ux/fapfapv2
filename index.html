@@ -1770,6 +1770,21 @@
   body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h, .pf-tile b, .pf-mode-top, .pf-opp b, .pf-opp span, .pf-end.got, .pf-friends p, .pf-notif p, .pf-row){ color:var(--pt) !important; text-shadow:none !important; }
   body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h small, .pf-tile span, .pf-mode-top small, .pf-end:not(.got), .pf-friends small, .pf-notif small, .pf-row span), body.ui-d:not(#z) #statsOverlay .pf-actions small{ color:var(--pm) !important; text-shadow:none !important; }
   body.ui-d:not(#z) #statsOverlay .pf-hero :is(.pf-name, .pf-strip b){ color:#fff !important; } body.ui-d:not(#z) #statsOverlay .pf-hero .pf-tag{ color:var(--pk) !important; text-shadow:none !important; }
+  /* the genjutsu: a red eye turns, the sacrificed card comes back over the card that thought it had won */
+  .gj-ov{ position:fixed; inset:0; z-index:9000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; pointer-events:none;
+    background: radial-gradient(circle at 50% 42%, rgba(160,0,20,.55), rgba(20,0,6,.92) 62%); animation: gjIn .35s ease-out both; }
+  .gj-ov.out{ animation: gjOut .4s ease-in forwards; }
+  @keyframes gjIn{ from{ opacity:0; } to{ opacity:1; } } @keyframes gjOut{ to{ opacity:0; } }
+  .gj-eye{ position:relative; width:96px; height:96px; border-radius:50%; background:radial-gradient(circle, #1a0004 0 14%, #d4001c 15% 62%, #1a0004 63% 68%, #d4001c 69%); border:4px solid #1a0004; box-shadow:0 0 40px rgba(255,30,50,.7); animation: gjSpin 1.6s cubic-bezier(.5,0,.3,1) both; }
+  .gj-eye i{ position:absolute; left:50%; top:50%; width:16px; height:16px; margin:-8px; border-radius:50% 50% 50% 0; background:#1a0004; }
+  .gj-eye i:nth-child(1){ transform:rotate(0deg) translateY(-27px) rotate(45deg); } .gj-eye i:nth-child(2){ transform:rotate(120deg) translateY(-27px) rotate(45deg); } .gj-eye i:nth-child(3){ transform:rotate(240deg) translateY(-27px) rotate(45deg); }
+  @keyframes gjSpin{ from{ transform:scale(.2) rotate(0); } 60%{ transform:scale(1.1) rotate(540deg); } to{ transform:scale(1) rotate(720deg); } }
+  .gj-t{ font:700 44px/1 var(--d-t, var(--font-display)); color:#fff; letter-spacing:.04em; text-shadow:0 4px 0 #5a000c, 0 0 24px rgba(255,40,60,.8); animation: gjPop .5s .25s cubic-bezier(.25,1.6,.45,1) both; }
+  @keyframes gjPop{ from{ transform:scale(.3); opacity:0; } to{ transform:none; opacity:1; } }
+  .gj-cards{ display:flex; align-items:center; gap:14px; animation: gjPop .5s .55s cubic-bezier(.25,1.6,.45,1) both; }
+  .gj-cards b{ color:#ffb3bd; font:800 14px var(--d-b, inherit); text-transform:uppercase; letter-spacing:.1em; }
+  .gj-x{ transform:rotate(-6deg) scale(1.08); filter:drop-shadow(0 0 14px rgba(255,60,80,.9)); } .gj-w{ transform:rotate(5deg); filter:grayscale(.6) brightness(.75); }
+  .gj-s{ max-width:320px; text-align:center; color:#ffe3e7; font:800 14px/1.4 var(--d-b, inherit); animation: gjPop .5s .8s ease-out both; }
   /* the stake offered online: shown big, so nobody plays for money without seeing it */
   .so-pot{ margin:10px auto 6px; padding:12px 16px; max-width:300px; border-radius:20px; border:3px solid #1B120C; background:#FFE9A8; color:#2A1D12 !important; box-shadow:0 5px 0 #1B120C; text-align:center; }
   .so-pot b{ display:block; font:700 30px/1.05 var(--d-t, var(--font-display)); color:#2A1D12 !important; }
@@ -4823,6 +4838,10 @@
       <p>Avec 2 cartes en main, sans la couleur demandée : soit 2 cartes de même couleur, soit 2 couleurs différentes dont un 3. Tu peux passer : tu ne joues pas ce tour, puis tu poses <b>tes 2 cartes d'un coup</b> au dernier tour.</p>
       <h3>Victoires automatiques</h3>
       <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → +1.</p>
+      <h3>Claquer</h3>
+      <p>Quand plus personne ne peut te battre, tu <b>claques</b> : toutes tes cartes d'un coup, la manche est pour toi (un 3 dedans : CORA). Ça marche en commandant <b>et en répondant</b> : il commande le 7 Coubie, tu as le 9 Coubie, le 9 Black et le 10 Zing → tu claques tout de suite.</p>
+      <h3>La feinte (genjutsu)</h3>
+      <p>Il te reste une grosse carte et un 3, et l'adversaire commande une couleur que tu n'as pas. Tu jettes <b>exprès la grosse carte</b> et tu gardes le 3. Au dernier tour, si la carte qui gagne est de la couleur que tu as sacrifiée et plus faible qu'elle, ta carte l'aurait battue : <b>la manche est pour toi</b> (+1).</p>
     </div>
     <button class="primary" id="btnCloseRules">J'ai compris</button>
   </div>
@@ -5996,7 +6015,7 @@
       const who = msg.who==='you' ? 'you' : 'ai';
       state.claque = who; locked = true;
       if(who==='you') state.playerHand.length = 0; else state.aiHand.length = 0;
-      slamVisual(who, msg.cards);
+      slamVisual(who, msg.cards, !!msg.answering);
       renderAll();
       return;
     }
@@ -6080,6 +6099,7 @@
             label, autoMs: 25000, onConfirm: ()=> awardPoints(msg.winner, msg.pts, msg.label)});
           return;
         }
+        if(msg.gj && msg.gj.x && msg.gj.w){ genjutsuFx(msg.winner==='you', oppName(), msg.gj.x, msg.gj.w, ()=> awardPoints(msg.winner, msg.pts, msg.label)); return; }
         awardPoints(msg.winner, msg.pts, msg.label);
       }
       return;
@@ -10547,21 +10567,34 @@
   // you hold control, and each card left in your hand is either in a suit the opponent has shown he no longer has,
   // or the strongest card still out in its suit. The rest of the hand is then played out at speed, by both sides;
   // the game keeps the 3s for the end (CORA, 33 Glacée).
+  // Claquer is allowed when commanding AND when answering: the answer must take the trick (a higher card of the
+  // commanded suit), and every card left after it must be unbeatable. E.g. he commands the 7 Coubie, you hold the
+  // 9 Coubie, the 9 Black and the 10 Zing: you slam all three at once. Only when it is certain (no claque "au culot").
   function claqueOrder(actor){
-    if(!state || tuto || state.handOver || state.leadSuit || state.leader!==actor || state.passer===actor) return null;
+    if(!state || tuto || state.handOver || state.passer===actor) return null;
     const hand = actor==='you' ? state.playerHand : state.aiHand;
     if(hand.length<2) return null;
     const opp = actor==='you' ? 'ai' : 'you';
+    const answering = !!state.leadSuit;
+    if(answering ? (state._leadActor!==opp || state.passer) : state.leader!==actor) return null;
     const key = c=> c.suit+'-'+c.rank;
     const known = new Set(hand.map(key));
     state.history.forEach(e=>{ if(e.type==='card') known.add(key(e.card)); });
     const unseen = buildDeck().filter(c=> !known.has(key(c)));
     const voids = state.knownVoid ? state.knownVoid[opp] : new Set();
     const sure = c=> voids.has(c.suit) || !unseen.some(u=> u.suit===c.suit && u.rank>c.rank);
-    if(!hand.every(sure)) return null;
-    const threes = hand.filter(c=> c.rank===3);
-    const others = hand.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank); // the big cards first, the 3s last
-    return others.concat(threes);
+    const order = cards=>{
+      const threes = cards.filter(c=> c.rank===3);
+      return cards.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank).concat(threes); // the big cards first, the 3s last
+    };
+    if(!answering) return hand.every(sure) ? order(hand) : null;
+    const lead = state._leadCard;
+    const takers = hand.filter(c=> c.suit===lead.suit && c.rank>lead.rank).sort((a,b)=> a.rank-b.rank);
+    for(const t of takers){
+      const rest = hand.filter(c=> c!==t);
+      if(rest.every(sure)) return [t].concat(order(rest)); // the card that takes his trick first
+    }
+    return null;
   }
   function pace(ms){ return state && state.claque ? Math.round(ms*0.24) : ms; }
   const CLAQUE_LINES = ['Clac ! Ramasse tes cartes.', 'Je claque. C’est plié.', 'Pose tout, c’est fini pour toi.', 'Plus rien ne m’arrête. Clac !'];
@@ -10579,8 +10612,9 @@
     return {pts:1, label:'Claque — manche remportée', level:2};
   }
   // the picture only: the cards fall together into the claquer's slot, then one hard hit
-  function slamVisual(actor, cards){
-    archiveTrick();
+  // answering: the card he commanded stays on the table, facing the slam
+  function slamVisual(actor, cards, answering){
+    if(!answering) archiveTrick();
     const slot = document.getElementById(slotIds(actor)[0]);
     slot.innerHTML = ''; slot.classList.remove('two'); slot.classList.add('fan');
     const order = cards.filter(c=> c.rank!==3).concat(cards.filter(c=> c.rank===3)); // the 3s on top
@@ -10620,14 +10654,16 @@
   function slamAll(actor){
     if(!state || state.handOver) return;
     const hand = actor==='you' ? state.playerHand : state.aiHand;
-    const cards = [...hand];
+    const ord = claqueOrder(actor);
+    const cards = ord ? ord.map(c=> hand.find(h=> h.suit===c.suit && h.rank===c.rank) || c) : [...hand];
+    const answering = !!state.leadSuit;
     hand.length = 0;
     state.claque = actor; state.handOver = true; locked = true;
     state.leadSuit = null;
     cards.forEach(c=> state.history.push({type:'card', actor, card:c, claque:true}));
     const res = claqueResult(cards);
-    if(mode==='mp' && mpIsHost) mpSend({t:'slam', who: actor==='you' ? 'ai' : 'you', cards});
-    const hitMs = slamVisual(actor, cards);
+    if(mode==='mp' && mpIsHost) mpSend({t:'slam', who: actor==='you' ? 'ai' : 'you', cards, answering});
+    const hitMs = slamVisual(actor, cards, answering);
     renderAll();
     // a moment to see the cards on the cracked table before the points (and the CORA meteor) come
     gameTimeout(()=>{
@@ -10747,10 +10783,10 @@
       logMsg((actor==='you'?'Toi':'Penalty')+' prend le contrôle avec le '+card.rank+'.');
     } else {
       winner = leadActor; winningCard = leadCard;
-      if(card.suit!==leadCard.suit) markVoid(actor, leadCard.suit);
+      if(card.suit!==leadCard.suit){ markVoid(actor, leadCard.suit); noteFeint(actor, card, leadCard.suit, actor==='you' ? state.playerHand : state.aiHand); }
       logMsg((actor==='you'?'Toi':'Penalty')+(card.suit!==leadCard.suit?' joue libre — pas de contrôle.':' suit mais reste plus faible.'));
     }
-    state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA/glacée
+    state.trickWinners.push({rank:winningCard.rank, winner, card:winningCard}); // contested — eligible for CORA/glacée
     rigTrick(winner);
     if(state.youSlept && winner==='ai' && !QS.sleptSaid){ QS.sleptSaid = true; quip('mistake', 700); }
     state.leader = winner;
@@ -11418,7 +11454,7 @@
       if(defHand.length===0){
         showEmptyMarker(defenderActor);
         logMsg((defenderActor==='you'?'Toi':'Penalty')+" n'a plus de cartes — "+(state._leadActor==='you'?'tu gardes':'Penalty garde')+' le contrôle.');
-        state.trickWinners.push({rank: state._leadCard.rank, winner: state._leadActor, viaPasse:false});
+        state.trickWinners.push({rank: state._leadCard.rank, winner: state._leadActor, viaPasse:false, card: state._leadCard});
         state.leader = state._leadActor;
         state.leadSuit = null; state._leadCard=null; state._leadActor=null;
         renderAll();
@@ -11487,9 +11523,13 @@
       state.aiHand.length = 0;
       resolveDump('ai', cards);
     } else {
+      // he takes your trick and nothing can stop him afterwards: he slams while answering
+      if(!state.claque && mode==='ai' && claqueOrder('ai')){ slamAll('ai'); return; }
       const leadInfo = {suit:state.leadSuit, rank:state._leadCard.rank, actor:state._leadActor};
       const brain = oppPersona().brain;
       const opt = brain==='pimc' ? pimcBestDefend(leadInfo) : brain==='easy' ? easyDefend(state.aiHand, leadInfo) : heuristicDefend(state.aiHand, leadInfo);
+      // the genjutsu: with a big card and a 3 left and nothing in the commanded suit, some characters throw the big one on purpose
+      if(opt.type==='card' && !tuto) feintChoice(state.aiHand, leadInfo.suit, duelOpp, c=> opt.card = c);
       if(opt.type==='card' && opt.card.suit===leadInfo.suit && opt.card.rank<leadInfo.rank){
         const hadWinner = state.aiHand.some(c=>c.suit===leadInfo.suit && c.rank>leadInfo.rank);
         if(hadWinner) state.sandbaggedThisHand = true;
@@ -11504,12 +11544,60 @@
     }
   }
 
+  // ===================== LA FEINTE (le genjutsu) =====================
+  // A house rule: with two cards left — a big one and a 3 — and nothing in the commanded suit, a player throws the BIG
+  // card on purpose and keeps the 3 (normally nobody would). If the card that wins the last trick is of the suit he
+  // sacrificed and weaker than it, the card he threw would have won: the hand is his, for 1 point.
+  const FEINT_RATE = {gervais:.35, mami:.1, aristide:.3, caroline:.2, cobra:.45, ismael:.25, tchinda:.2, mballa:.3, stephane:.35, penalty:.4, mbarga:.5};
+  function feintSetup(hand, leadSuit){
+    if(hand.length!==2 || hand.some(c=> c.suit===leadSuit)) return null;
+    const three = hand.find(c=> c.rank===3), big = hand.find(c=> c.rank>3);
+    return three && big ? big : null;
+  }
+  // the computer's choice: some characters like the trick more than others
+  function feintChoice(hand, leadSuit, who, use){
+    const big = feintSetup(hand, leadSuit);
+    if(big && Math.random() < (FEINT_RATE[who]!=null ? FEINT_RATE[who] : .25)) use(big);
+  }
+  // remembered when the big card is thrown (the 3 is then the only card left)
+  function noteFeint(actor, card, leadSuit, handAfter){
+    if(!state || state.passer || card.suit===leadSuit || card.rank<=3 || handAfter.length!==1 || handAfter[0].rank!==3) return;
+    state.feint = state.feint || {};
+    state.feint[actor] = card;
+  }
+  function feintWinner(last){
+    if(!state || !state.feint || !last || !last.card || last.viaPasse) return null;
+    const f = last.winner==='you' ? 'ai' : 'you', x = state.feint[f];
+    return x && x.suit===last.card.suit && last.card.rank<x.rank ? {who:f, x, w:last.card} : null;
+  }
+  // the picture: a red eye opens, the sacrificed card comes back and crushes the card that thought it had won
+  function genjutsuFx(mine, name, x, w, done){
+    const ov = document.createElement('div');
+    ov.className = 'gj-ov';
+    ov.innerHTML = '<div class="gj-eye"><i></i><i></i><i></i></div><div class="gj-t">GENJUTSU !</div><div class="gj-cards"><div class="gj-x"></div><b>bat</b><div class="gj-w"></div></div><div class="gj-s"></div>';
+    ov.querySelector('.gj-x').appendChild(cardEl(x, {}));
+    ov.querySelector('.gj-w').appendChild(cardEl(w, {}));
+    ov.querySelector('.gj-s').textContent = (mine ? 'Ta feinte' : 'La feinte de '+name)+' : le '+x.rank+' '+x.suit+' sacrifié aurait gagné. Manche '+(mine ? 'pour toi' : 'pour '+name)+'.';
+    document.body.appendChild(ov);
+    try{ sfxSlam(false); }catch(e){}
+    shock(2); vibrate(mine ? [40,60,90] : [70]);
+    if(mine){ stat('feintes'); try{ burstConfetti(18); }catch(e){} }
+    setTimeout(()=>{ ov.classList.add('out'); setTimeout(()=> ov.remove(), 400); if(done) done(); }, calmOn() ? 1400 : 2600);
+  }
+
   // ---- end of hand ----
   function finishHandNormal(){
     state.handOver = true;
     const n = state.trickWinners.length;
     const last = state.trickWinners[n-1];
     const prev = state.trickWinners[n-2];
+    const gj = feintWinner(last);
+    if(gj){
+      const label = 'GENJUTSU ! Feinte réussie';
+      if(mode==='mp' && mpIsHost) mpSend({t:'handOver', winner: gj.who==='you'?'ai':'you', pts:1, label, gj:{x:gj.x, w:gj.w}});
+      genjutsuFx(gj.who==='you', oppName(), gj.x, gj.w, ()=> awardPoints(gj.who, 1, label));
+      return;
+    }
     const cora = last && last.rank===3 && !last.viaPasse;
     const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
     const winner = last.winner;
@@ -12959,18 +13047,30 @@
     const seen = sqAllSeenCards(myId);
     const disposable = hand.filter(c=>!sqIsSureWinner(myId,c,seen));
     const pool = disposable.length>0 ? disposable : hand;
-    return {type:'card', card:[...pool].sort((a,b)=>a.rank-b.rank)[0]};
+    let pick = [...pool].sort((a,b)=>a.rank-b.rank)[0];
+    feintChoice(hand, lead.suit, myId, c=> pick = c); // the genjutsu, by character
+    return {type:'card', card: pick};
   }
 
   // Claquer in Carré la Pute: same rule as the duel, against every player still in the game
+  // (also while answering, on your turn in the trick: your card must take the trick for sure, and all the rest too)
   function sqClaqueOrder(seat){
-    if(!sq || sq.remote || sq.handOver || sq.leadSuit || sq.leader!==seat || sq.passers.has(seat)) return null;
+    if(!sq || sq.remote || sq.handOver || sq.passers.has(seat)) return null;
+    const answering = !!sq.leadSuit;
+    if(answering ? (sq.trickQueue[0]!==seat || sq.passers.size>0) : sq.leader!==seat) return null;
     const hand = sq.players[seat].hand;
     if(hand.length<2) return null;
     const seen = sqAllSeenCards(seat);
-    if(!hand.every(c=> sqIsSureWinner(seat, c, seen))) return null;
-    const threes = hand.filter(c=> c.rank===3), others = hand.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank);
-    return others.concat(threes);
+    const sure = c=> sqIsSureWinner(seat, c, seen);
+    const order = cards=>{ const threes = cards.filter(c=> c.rank===3); return cards.filter(c=> c.rank!==3).sort((a,b)=> b.rank-a.rank).concat(threes); };
+    if(!answering) return hand.every(sure) ? order(hand) : null;
+    const best = sq.trickBest && sq.trickBest.card;
+    const takers = hand.filter(c=> c.suit===sq.leadSuit && best && c.rank>best.rank && sure(c)).sort((a,b)=> a.rank-b.rank);
+    for(const t of takers){
+      const rest = hand.filter(c=> c!==t);
+      if(rest.every(sure)) return [t].concat(order(rest));
+    }
+    return null;
   }
   // the slam itself, on this phone: the fanned cards drop onto the table in front of the seat, one hit, the wood cracks
   function sqClaqueFx(seat, level){
@@ -12997,12 +13097,13 @@
   // (a 3 among them: CORA, two 3s: 33 Glacée — both let the winner knock out two players)
   function sqStartClaque(seat){
     if(sq.handOver) return;
+    const planned = sqClaqueOrder(seat);
     const cards = [...sq.players[seat].hand];
     sq.players[seat].hand.length = 0;
     sq.claque = seat; sq.handOver = true; sq.locked = true;
     sq.leadSuit = null; sq.trickQueue = [];
     sq.trickNo++;
-    const order = cards.filter(c=> c.rank!==3).concat(cards.filter(c=> c.rank===3));
+    const order = planned || cards.filter(c=> c.rank!==3).concat(cards.filter(c=> c.rank===3));
     order.forEach(c=> sqPushHistory(seat, {type:'card', card:c, claque:true}));
     sq.cardsPlayedThisHand += cards.length;
     const threes = cards.filter(c=> c.rank===3).length;
@@ -13125,6 +13226,7 @@
       const hand = sq.players[nextId].hand;
       if(hand.length===0) return; // stale
       if(sq.passers.has(nextId)){ sqApplyResponse(nextId, {type:'dump'}); return; }
+      if(!sq.claque && sqIsAI(nextId)){ const ord = sqClaqueOrder(nextId); if(ord){ sqStartClaque(nextId, ord); return; } } // he takes the trick and nothing can stop him: he slams while answering
       const leadInfo = {suit:sq.leadSuit, rank:sq.leadCard.rank, actor:sq.leadActor};
       if(sq.claque && !sqIsAI(nextId)){ // a human's answer to a claque is played for them: the lowest card allowed
         const follow = hand.filter(c=> c.suit===sq.leadSuit).sort((a,b)=> a.rank-b.rank);
@@ -13171,6 +13273,12 @@
         sq.trickBest = {card, actorId};
       } else if(card.suit!==sq.leadSuit){
         markSquareVoid(actorId, sq.leadSuit);
+        // the genjutsu: the big card thrown on purpose, a lone 3 kept for the last trick
+        const left = sq.players[actorId].hand;
+        if(!sq.passers.size && card.rank>3 && left.length===1 && left[0].rank===3){
+          if(!sq.feint || sq.feint.hand!==sq.handNo) sq.feint = {hand:sq.handNo, by:{}};
+          sq.feint.by[actorId] = card;
+        }
       }
     }
     renderSquare();
@@ -13201,7 +13309,7 @@
     if(a.type==='bank') return sqBank(seat);
     if(sq.banked && sq.banked.has(seat)) return false;
     if(a.type==='claque'){
-      if(sq.leadSuit || sq.leader!==seat || sq.claque) return false;
+      if(sq.claque) return false;
       const ord = sqClaqueOrder(seat); if(!ord) return false;
       sqStartClaque(seat, ord);
       return true;
@@ -13240,7 +13348,7 @@
   function sqFinishTrick(){
     const winner = sq.trickBest.actorId;
     const winCard = sq.trickBest.card;
-    sq.trickWinners.push({rank:winCard.rank, winner, viaPasse: sq.trickHadPasse});
+    sq.trickWinners.push({rank:winCard.rank, winner, viaPasse: sq.trickHadPasse, card: winCard});
     sq.leader = winner;
     sq.leadSuit=null; sq.leadCard=null; sq.leadActor=null;
     renderSquare();
@@ -13271,6 +13379,24 @@
     const n = sq.trickWinners.length;
     const last = sq.trickWinners[n-1];
     const prev = sq.trickWinners[n-2];
+    // a feint that worked takes the hand from the last trick's winner (the best sacrificed card if several)
+    let gj = null;
+    if(last && last.card && !last.viaPasse && sq.feint && sq.feint.hand===sq.handNo){
+      Object.keys(sq.feint.by).forEach(id=>{
+        const x = sq.feint.by[id];
+        if(id===last.winner || sq.players[id].eliminated || x.suit!==last.card.suit || last.card.rank>=x.rank) return;
+        if(!gj || x.rank>gj.x.rank) gj = {who:id, x, w:last.card};
+      });
+    }
+    if(gj){
+      const myGen = sq.gen, label = 'GENJUTSU ! Feinte réussie';
+      if(gj.who==='you') sqHandWonRewards(false, false, false);
+      sqEvent('genjutsu', {seat:gj.who, x:gj.x, w:gj.w});
+      sqSay(gj.who, 'win');
+      renderSquare();
+      genjutsuFx(gj.who==='you', sqName(gj.who), gj.x, gj.w, ()=>{ if(sq.gen===myGen) sqShowEliminationChoice(gj.who, label, 1); });
+      return;
+    }
     const cora = last && last.rank===3 && !last.viaPasse;
     const glacee = cora && prev && prev.rank===3 && !prev.viaPasse && prev.winner===last.winner;
     const winner = last.winner;
@@ -13570,7 +13696,8 @@
     const passeEligible = myTurn && !sq.handOver && sq.leadSuit && !sq.passers.has('you') && canPasse(sq.players.you.hand, sq.leadSuit);
     passeBtn.classList.toggle('hidden', !passeEligible);
     document.getElementById('sqBtnDump').classList.toggle('hidden', !dumping);
-    const canClaque = !sq.handOver && !sq.claque && !sq.leadSuit && sq.leader==='you' && !sq.players.you.eliminated
+    const myClaqueTurn = sq.leadSuit ? (sq.trickQueue[0]==='you') : (sq.leader==='you');
+    const canClaque = !sq.handOver && !sq.claque && myClaqueTurn && !sq.players.you.eliminated
       && (sq.remote ? !!sq.canClaque : (!sq.locked && !!sqClaqueOrder('you')));
     document.getElementById('sqBtnClaque').classList.toggle('hidden', !canClaque);
     document.getElementById('sqBtnBanque').classList.toggle('hidden', !(sq.remote ? !!sq.canBank : sqCanBank('you')));
@@ -13687,7 +13814,7 @@
       handOver: sq.handOver, cardsPlayed: sq.cardsPlayedThisHand, handNo: sq.handNo,
       ev: sq.events.slice(-12), elim: sq.pendingElim, champion: sq.championSeat, stake: sq.stake,
       tricksWon: sq.trickWinners.length, ack: room.acks[netId]||0,
-      cq: (!sq.handOver && !sq.leadSuit && !sq.claque && sq.leader===seat) ? !!sqClaqueOrder(seat) : false, claque: sq.claque || null,
+      cq: (!sq.handOver && !sq.claque) ? !!sqClaqueOrder(seat) : false, claque: sq.claque || null,
       bk: sq.banked ? [...sq.banked] : [], cb: sqCanBank(seat)
     };
   }
@@ -13814,6 +13941,8 @@
       sqBubble(V(ev.seat), ev.text); avatarFx(V(ev.seat), 'speaking');
     } else if(ev.kind==='claque'){
       sqClaqueFx(V(ev.seat), ev.level||2);
+    } else if(ev.kind==='genjutsu'){
+      if(ev.x && ev.w) genjutsuFx(V(ev.seat)==='you', sqName(V(ev.seat)), ev.x, ev.w);
     } else if(ev.kind==='bank'){
       showToast(me ? 'Tu te banques' : sqName(V(ev.seat))+' se banque', 'Spectateur pour cette manche', {ms:2200}); sfxPasse();
     } else if(ev.kind==='champion'){
@@ -17371,7 +17500,8 @@
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, FX2, glaceeCertificate, awardPoints, Rig, Rig2, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
-      lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect, Book };
+      lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect, Book,
+      playerPlays, genjutsuFx, feintWinner, sqClaqueOrder, setLocked: v=>{ locked = v; } };
   }
 
 })();
