@@ -3584,6 +3584,16 @@
   body.ui-d:not(#z) #menuOverlay .home-tag{ color:#dcc6a2 !important; letter-spacing:.14em; }
   body.ui-d:not(#z) #menuOverlay .home-topbar > *{ order:3; } body.ui-d:not(#z) #menuOverlay .home-topbar .hb-space{ order:1; } body.ui-d:not(#z) #menuOverlay .home-topbar #chipsBar{ order:2; }
 
+  /* ===== v65 : le livre et le Ngonzormorrr ont quitté le jeu ; l'invité du Carré ===== */
+  #btnStory, #ogKing{ display:none !important; }
+  .cp-third{ display:flex; flex-direction:column; gap:6px; margin:4px 0 2px; }
+  .cp-third.dim{ opacity:.45; }
+  .cp-third-row{ display:flex; gap:10px; overflow-x:auto; padding:4px 2px 10px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .cp-third-row::-webkit-scrollbar{ display:none; }
+  body.ui-d:not(#z) .overlay.page button.cp-guest{ flex:0 0 78px; display:flex; flex-direction:column; align-items:center; gap:5px; padding:9px 4px 8px; border-radius:16px; }
+  .cp-guest b{ font:800 11.5px var(--d-b, inherit); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  body.ui-d:not(#z) .overlay.page button.cp-guest.on{ outline:3px solid var(--d-mango, #FFC93C); outline-offset:2px; }
+
   /* ===== la nuit noire (v64) : noir OLED, cartes anthracite éclairées par l'ampoule (--lit posé par la scène) ===== */
   body.noir{ background:#000 !important; }
   body.noir.ui-d:not(#z):not(#y):not(#x) :is(#menuOverlay, .overlay.page) :where(.gl, .set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .stats-block, .mode-card, .hcard, .hero-play, .menu-rank, .og-bubble, .pf-card, .back-btn, .stake-pick, .format-pick, .set-group, button:not(.tab):not(.ghost):not(.fmt):not(.sp-chip):not(.primary):not(.danger):not(.whatsapp)){
@@ -4512,7 +4522,7 @@
     <div class="gl solid gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
 
     <button class="lg gl hero-play press" id="btnGoPlay" style="--d:1">
-      <span class="hero-faces"><span class="avatar" data-char="gervais" style="--s:44px"></span><span class="avatar" data-char="aristide" style="--s:44px"></span><span class="avatar" data-char="penalty" style="--s:44px"></span></span>
+      <span class="hero-faces"><span class="avatar" data-char="aristide" style="--s:44px"></span><span class="avatar" data-char="penalty" style="--s:44px"></span></span>
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
@@ -4523,7 +4533,7 @@
     </button>
 
     <a class="hx-novel nk press" id="btnEnquete" href="enquete.html" style="--d:2;text-decoration:none">
-      <span class="hx-home-txt"><small>Nouvelle enquête · 18+</small><b><em>Les Dossiers de</em>Nkolbisson</b><span>Un polar en BD : interroge, joue au Fap Fap, accuse.</span>
+      <span class="hx-home-txt"><small>L’histoire · 18+</small><b><em>Les Dossiers de</em>Nkolbisson</b><span>Un polar en BD : interroge, joue au Fap Fap, accuse.</span>
         <span class="hx-cta">Ouvrir le dossier</span></span>
     </a>
 
@@ -4649,9 +4659,9 @@
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Jouer</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
     <button class="mode-card" id="modeAI" style="--d:0">
-      <span class="mode-faces"><span class="avatar" data-char="gervais" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="mbarga" style="--s:38px"></span></span>
+      <span class="mode-faces"><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="penalty" style="--s:38px"></span></span>
       <b>La route du quartier</b>
-      <small>Affronte Christelle, RALL, Penalty… puis le Ngonzormorrr, le masque d’or.</small>
+      <small>Affronte RALL, le roi du bluff, puis Penalty, le maître du quartier.</small>
     </button>
     <button class="mode-card mode-online" id="modeMP" style="--d:1">
       <span class="mode-ico"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg></span>
@@ -4661,7 +4671,7 @@
     <button class="mode-card mode-carre" id="modeSquare" style="--d:2">
       <span class="mode-faces"><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="gervais" style="--s:38px"></span></span>
       <b>Carré la Pute</b>
-      <small>4 joueurs : Penalty, RALL, Christelle et toi. Le vainqueur de chaque manche élimine qui il veut.</small>
+      <small>Toi, RALL, Penalty et un invité de ton choix. Le vainqueur de chaque manche élimine qui il veut.</small>
     </button>
   </div>
 </div>
@@ -4713,9 +4723,10 @@
     <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Le dernier debout gagne tout.</p>
     <div class="cp-pick">
       <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et un adversaire</small></button>
-      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Toi et deux adversaires</small></button>
-      <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>La table complète · tirés parmi ceux que tu as rencontrés</small></button>
+      <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Toi, RALL et Penalty</small></button>
+      <button class="cp-n" data-n="4"><span class="cp-faces"><span class="avatar" id="cpThirdFace" data-char="gervais" style="--s:34px"></span><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>4 joueurs</b><small>RALL, Penalty et ton invité</small></button>
     </div>
+    <div class="cp-third" id="cpThirdBox"><div class="sp-head"><span>Ton invité à la table (à 4 joueurs)</span></div><div class="cp-third-row" id="cpThird"></div></div>
     <div class="stake-pick">
       <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
       <div class="sp-row"></div>
@@ -6967,7 +6978,10 @@
     const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Christelle n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
     gameTimeout(()=>{ if(state && !state.handOver) penaltySay([ (showStrong ? STRONG : WEAK)[Math.floor(Math.random()*4)] ]); }, 1500 + lastDealMs);
   }
-  const DUEL_ORDER = ['gervais','mami','aristide','caroline','cobra','ismael','tchinda','mballa','stephane','penalty','mbarga'];
+  // v65: the novel is gone; the road of the quarter keeps only RALL and Penalty (the others live on in the investigation)
+  const DUEL_ORDER = ['aristide','penalty'];
+  // who can sit as the guest at a Carré of 4: the people of the investigation who have a face in the game
+  const CARRE_GUESTS = ['gervais','cobra','mami','caroline','ismael','tchinda','mballa','stephane'];
 
   // ===================== LES RÉPLIQUES PIQUANTES =====================
   // Each opponent's voice for the moments of a match that the game really sees (see quip()):
@@ -7863,7 +7877,7 @@
     chapeau:{how:'Réussir 5 CORA', ok:p=> st_(p, 'coras') >= 5, n:p=> Math.min(5, st_(p, 'coras'))+' / 5'},
     diamant:{how:'Battre le Ngonzormorrr', ok:p=> lw(p, 'mbarga') >= 1},
     casquette:{how:'Gagner 10 parties', ok:p=> totalWins(p) >= 10, n:p=> Math.min(10, totalWins(p))+' / 10'},
-    curedent:{how:'Atteindre le chapitre 8 du livre', ok:p=> ((p.book && p.book.ch) || 0) >= 7 || ((p.book && p.book.ended) || []).length > 0}
+    curedent:{how:'Battre Penalty 3 fois', ok:p=> ((p.book && p.book.ended) || []).length > 0 || ((p.ladder && p.ladder.penalty && p.ladder.penalty.w) || 0) >= 3}
   };
   const VS_CAST = [['penalty','Penalty'],['christelle','Christelle'],['rall','RALL'],['caroline','Caroline'],['stephane','Stéphane'],['cobra','Le Cobra'],['tchinda','Papa Tchinda'],['ismael','Ismaël'],['mballa','Mballa'],['mami','Mami Ange'],['kappo','Kappo']];
   let vsWho = 'penalty';
@@ -8193,10 +8207,8 @@
     {id:'remontada',    icon:'flame', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
     {id:'serie3',       icon:'trend', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
     {id:'revanche',     icon:'repeat', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
-    {id:'beat_gervais', icon:'smile', name:'Christelle consolée',             desc:'Battre Christelle.'},
     {id:'beat_aristide',icon:'hush', name:'RALL se tait',              desc:'Battre RALL.'},
     {id:'beat_penalty', icon:'book', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
-    {id:'beat_mbarga',  icon:'crown', name:'Le masque est tombé',      desc:'Battre le Ngonzormorrr.'},
     {id:'survivant',    icon:'home', name:'Dernier survivant',         desc:'Gagner une partie de Carré la Pute.'},
     {id:'double',       icon:'users', name:'Coup double',               desc:'Éliminer deux joueurs d’un coup en Carré.'},
     {id:'en_ligne',     icon:'globe', name:'Roi du quartier en ligne',  desc:'Gagner un match contre un ami en ligne.'},
@@ -8223,11 +8235,8 @@
     {id:'x_chips10k',icon:'coin',    name:'Poches pleines',           desc:'Avoir 10 000 jetons.',                    test:p=> (p.chipsBest||0)>=10000},
     {id:'x_chips100k',icon:'coin',   name:'Petit patron',             desc:'Avoir 100 000 jetons.',                   test:p=> (p.chipsBest||0)>=100000},
     {id:'x_chips1m', icon:'crown',   name:'Millionnaire du quartier', desc:'Avoir 1 000 000 de jetons.',              test:p=> (p.chipsBest||0)>=1000000},
-    {id:'x_chris10', icon:'repeat',  name:'Le dimanche, c’est toi',   desc:'Battre Christelle 10 fois.',              test:p=> lw(p,'gervais')>=10},
     {id:'x_rall10',  icon:'repeat',  name:'Bluff démasqué',           desc:'Battre RALL 10 fois.',                    test:p=> lw(p,'aristide')>=10},
     {id:'x_pen10',   icon:'book',    name:'L’élève devenu maître',    desc:'Battre Penalty 10 fois.',                 test:p=> lw(p,'penalty')>=10},
-    {id:'x_mask5',   icon:'crown',   name:'Cinq fois sans masque',    desc:'Battre le Ngonzormorrr 5 fois.',          test:p=> lw(p,'mbarga')>=5},
-    {id:'x_mask20',  icon:'crown',   name:'Le nouveau Ngonzormorrr',  desc:'Battre le Ngonzormorrr 20 fois.',         test:p=> lw(p,'mbarga')>=20},
     {id:'x_carre10', icon:'home',    name:'Roi du Carré',             desc:'Gagner 10 parties de Carré.',             test:p=> (p.squareWins||0)>=10},
     {id:'x_carre50', icon:'home',    name:'Le Carré, c’est chez moi', desc:'Gagner 50 parties de Carré.',             test:p=> (p.squareWins||0)>=50},
     {id:'x_online10',icon:'globe',   name:'Star en ligne',            desc:'Gagner 10 matchs contre des amis.',       test:p=> (p.onlineWins||0)>=10},
@@ -8236,23 +8245,11 @@
     {id:'x_legend',  icon:'star',    name:'Légende de Melen',         desc:'Atteindre le plus haut rang.',            test:p=> rankIndex(p.rep||0)>=RANKS.length-1},
     {id:'x_shop5',   icon:'bag',     name:'Collectionneur',           desc:'Posséder 5 objets de la boutique.',       test:p=> ownedCount(p)>=5},
     {id:'x_shop15',  icon:'palette', name:'Grand collectionneur',     desc:'Posséder 15 objets de la boutique.',      test:p=> ownedCount(p)>=15},
-    // the novel « Pourquoi je suis mort ? »
-    {id:'b_first',   icon:'book',    name:'Premier témoin',           desc:'Gagner la première partie du livre.',     test:p=> bk(p).won && Object.keys(bk(p).won).length>=1},
-    {id:'b_penalty', icon:'cards',   name:'Dans la peau de Penalty',  desc:'Gagner à la villa de Santa Barbara.',     test:p=> !!(bk(p).won && bk(p).won.villa)},
-    {id:'b_fog',     icon:'flame',   name:'Les yeux rouges',          desc:'Battre le Cobra après avoir fumé.',       test:p=> !!(bk(p).won && bk(p).won.cobra) && String((bk(p).choices||{}).joint)==='1'},
-    {id:'b_mirror',  icon:'target',  name:'Dos au miroir',            desc:'Battre le masque sans tourner ta chaise.',test:p=> !!(bk(p).won && bk(p).won.masque) && String((bk(p).choices||{}).chaise)==='1'},
-    {id:'b_read',    icon:'hand',    name:'Lecteur de visages',       desc:'Réussir toutes les questions d’un interrogatoire.', test:p=> Object.values(bk(p).iv||{}).some(r=> r.done && r.res && r.res.length && r.res.every(x=> x==='ok'))},
-    {id:'b_press',   icon:'zap',     name:'Il a parlé',               desc:'Faire parler un témoin en gagnant une manche.', test:p=> !!bk(p).pressWon},
-    {id:'b_clues',   icon:'sparkle', name:'Rien ne m’échappe',        desc:'Trouver tous les indices du livre.',      test:p=> Object.keys(bk(p).clues||{}).length>=27},
-    {id:'b_truth',   icon:'check',   name:'La vérité, prouvée',       desc:'Donner le bon nom, avec la bonne preuve.',test:p=> (bk(p).choices||{}).acc==='caroline2' || !!bk(p).accTrue},
-    {id:'b_trap',    icon:'repeat',  name:'Fausse piste',             desc:'Tomber dans le piège de Christelle.',     test:p=> (bk(p).choices||{}).acc==='christelle' || !!bk(p).accTrap},
-    {id:'b_end',     icon:'book',    name:'Pourquoi je suis mort ?',  desc:'Finir le livre.',                         test:p=> (bk(p).ended||[]).some(e=> e!=='cachee')},
-    {id:'b_all',     icon:'medal',   name:'Toutes les vérités',       desc:'Lire les trois fins du livre.',           test:p=> ['0','1','2'].every(e=> (bk(p).ended||[]).includes(e))},
-    {id:'b_hidden',  icon:'sparkle', name:'Et si j’étais parti ?',    desc:'Lire la fin cachée.',                     test:p=> (bk(p).ended||[]).includes('cachee')},
-    {id:'b_star5',   icon:'star',    name:'Inspecteur',               desc:'Finir l’enquête avec 5 étoiles.',         test:p=> (bk(p).best||0)>=5}
   ];
   // helpers for the exploits
   const st_ = (p, k)=> (p.stats && p.stats[k]) || 0;
+  // only the trophies that still exist count (those of the novel and of the opponents who left are gone)
+  function trophyCount(p){ return TROPHIES.filter(t=> p.trophies && p.trophies[t.id]).length; }
   const lw = (p, id)=> (p.ladder && p.ladder[id] && p.ladder[id].w) || 0;
   const totalWins = p=> ['gervais','aristide','penalty','mbarga'].reduce((s, id)=> s + lw(p, id), 0) + (p.squareWins||0) + (p.onlineWins||0);
   const ownedCount = p=> Object.values(p.owned||{}).reduce((s, l)=> s + (Array.isArray(l) ? l.length : 0), 0);
@@ -8495,7 +8492,7 @@
     const el = document.getElementById('menuRank');
     if(!el) return;
     const i = rankIndex(profile.rep);
-    const nTroph = Object.keys(profile.trophies).length;
+    const nTroph = trophyCount(profile);
     const streak = liveDayStreak();
     // newcomers get the guided game as the first, highlighted choice; afterwards it shrinks to a small link
     document.getElementById('modeTuto').classList.toggle('hidden', !!profile.tutoDone);
@@ -12418,7 +12415,7 @@
     return res;
   }
   function renderRich(){
-    const rows = Object.keys(RICH_START).map(id=>({id, name:DUEL_PERSONAS[id].name, chips:profile.rich[id]||0}));
+    const rows = Object.keys(RICH_START).filter(id=> DUEL_ORDER.includes(id)).map(id=>({id, name:DUEL_PERSONAS[id].name, chips:profile.rich[id]||0}));
     rows.push({id:'you', name:(prefs.name||'Toi')+' (toi)', chips:profile.chips});
     rows.sort((a,b)=> b.chips-a.chips);
     const list = document.getElementById('richList');
@@ -12456,7 +12453,7 @@
 
   // ---- Trophies screen ----
   function renderTrophies(){
-    const n = Object.keys(profile.trophies).length;
+    const n = trophyCount(profile);
     document.getElementById('trophiesCount').textContent = n+' sur '+TROPHIES.length+' · chaque trophée rapporte '+TROPHY_REP+' de réputation';
     document.getElementById('trophyGrid').innerHTML = TROPHIES.map(t=>{
       const got = !!profile.trophies[t.id];
@@ -12779,7 +12776,6 @@
       const rec = profile.ladder[duelOpp];
       text += ' (Ton bilan contre '+oppName()+' : '+rec.w+' victoire'+(rec.w>1?'s':'')+', '+rec.l+' défaite'+(rec.l>1?'s':'')+'.)';
     }
-    if(unlockedMbarga) text += ' Un masque d’or a entendu parler de toi… Le Ngonzormorrr t’attend.';
     if(mode==='mp' && mpForfeit){
       document.getElementById('matchOverTitle').textContent = 'Victoire par forfait !';
       text = oppName()+' a quitté la partie ('+mine+' à '+theirs+'). Le pot est pour toi.';
@@ -12926,7 +12922,8 @@
     }
     const seated = SQ_SEAT_ORDER.filter(id=> ctrl[id]!=='absent');
     let cast = null;
-    if(!cfg.ctrl && !cfg.names && !storyRun){ const pool = DUEL_ORDER.filter(id=> id!=='mbarga' && isOppUnlocked(id)).sort(()=> Math.random() - .5); cast = {}; ['gervais','penalty','aristide'].forEach((seat, i)=> cast[seat] = pool[i] || seat); }
+    // against the computer: RALL and Penalty always sit; at 4, the guest the player chose takes the third chair
+    if(!cfg.ctrl && !cfg.names && !storyRun){ const g = CARRE_GUESTS.includes(prefs.sqGuest) ? prefs.sqGuest : 'gervais'; cast = seated.length===3 ? {gervais:'penalty', aristide:'aristide'} : {gervais:g, penalty:'penalty', aristide:'aristide'}; }
     sq = {
       gen: sq ? sq.gen+1000 : 0, // keeps counting, so a timer left by a restarted game can't match the new one
       config: cfg, ctrl, net: cfg.net || {}, names: cfg.names || {}, online: !!cfg.online,
@@ -14100,7 +14097,7 @@
     const won = (p.gamesLost||0) + (p.onlineWins||0) + (p.squareWins||0);
     const played = (p.gamesPlayed||0) + (p.onlineGames||0) + (p.squareGamesPlayed||0);
     const pct = (a, b)=> b>0 ? Math.round(100*a/b) : 0;
-    const nTroph = Object.keys(p.trophies).length, st = p.stats || {};
+    const nTroph = trophyCount(p), st = p.stats || {};
     const signed = typeof myUid==='function' && !!myUid();
     // the hero: face, name, rank and the three numbers people look at first
     const card = document.getElementById('profileCard');
@@ -14165,7 +14162,7 @@
         tile('c2', 'crown', fmtChips(p.chipsBest||0), 'record')+
       '</div><div class="pf-rows" style="margin-top:6px"><div class="pf-row"><span>Gagnés en tout</span><b>'+fmtChips(p.chipsWon||0)+'</b></div></div></section>'+
       mpLogCard()+
-      ends+
+      ''+
       cardH(8, 'users', 'Tes amis', fr.length ? fr.length+' ami'+(fr.length>1 ? 's' : '') : '')+'<div class="pf-friends"><div class="pf-stack">'+
         fr.slice(0, 5).map(f=> '<span class="avatar'+(isOnline(f.id) ? ' is-on' : '')+'" data-fname=""></span>').join('')+'</div>'+
         '<p>'+(fr.length ? (frOn ? frOn+' en ligne maintenant' : 'Personne en ligne pour l’instant') : 'Pas encore d’amis')+'<small>'+(fr.length ? 'Touche « Amis » pour les défier.' : 'Ajoute un adversaire en ligne après une partie.')+'</small></p></div></section>'+
@@ -14201,6 +14198,18 @@
   function refreshCarrePick(){
     const n = prefs.sqPlayers || 4;
     document.querySelectorAll('#carrePage .cp-n').forEach(b=> b.classList.toggle('on', Number(b.dataset.n)===n));
+    // the guest of the fourth chair, chosen among the people of the investigation
+    const row = document.getElementById('cpThird'), g = CARRE_GUESTS.includes(prefs.sqGuest) ? prefs.sqGuest : 'gervais';
+    if(row && !row.children.length){
+      row.innerHTML = CARRE_GUESTS.map(id=> '<button class="cp-guest" type="button" data-g="'+id+'"><span class="avatar" style="--s:46px"></span><b></b></button>').join('');
+      [...row.children].forEach(b=>{
+        const id = b.dataset.g; fillAvatar(b.querySelector('.avatar'), id); b.querySelector('b').textContent = DUEL_PERSONAS[id] ? DUEL_PERSONAS[id].name : id;
+        b.addEventListener('click', ()=>{ prefs.sqGuest = id; prefs.sqPlayers = 4; savePrefs(); refreshCarrePick(); });
+      });
+    }
+    if(row) [...row.children].forEach(b=> b.classList.toggle('on', b.dataset.g===g));
+    const face = document.getElementById('cpThirdFace'); if(face && face.dataset.char!==g){ face.dataset.char = g; fillAvatar(face, g); }
+    document.getElementById('cpThirdBox').classList.toggle('dim', n!==4);
     const st = Math.min(prefs.stake||0, profile.chips);
     document.getElementById('cpGain').innerHTML = st>0 ? ico('coin')+' Mise '+fmtChips(st)+' → le survivant gagne '+fmtChips(st*n)+' (×'+n+')' : ico('coin')+' Partie amicale · le survivant gagne une mise par joueur';
   }
