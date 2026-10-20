@@ -1695,6 +1695,82 @@
   .profile-links{ justify-content:stretch !important; }
   .profile-links button{ flex:1; padding:12px; border-radius:12px; }
   .stats-block{ padding:4px 2px; }
+  /* ---- the profile page (v60): a player card, then every number that matters, in the cartoon style ---- */
+  #statsOverlay .pf-body{ display:flex; flex-direction:column; gap:16px; --pk:var(--d-ink,#1B120C); --pc:var(--d-card,#FFF8E7); --pt:#2A1D12; --pm:#7A6650; --pfd:var(--d-t,var(--font-display)); --pfb:var(--d-b,inherit); }
+  #statsOverlay .pf-hero{ position:relative; overflow:hidden; padding:18px 16px 16px; border-radius:26px; border:3px solid var(--pk); box-shadow:0 6px 0 var(--pk);
+    background: radial-gradient(90% 70% at 18% 0%, rgba(255,196,77,.38), transparent 62%), radial-gradient(70% 60% at 100% 100%, rgba(232,74,95,.30), transparent 65%), linear-gradient(165deg, #2a1e4a, #120d24 70%); color:#fff; }
+  #statsOverlay .pf-hero::after{ content:''; position:absolute; inset:0; pointer-events:none; background: repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 2px, transparent 2px 14px); }
+  .pf-top{ position:relative; z-index:1; display:flex; align-items:center; gap:14px; }
+  .pf-av-wrap{ position:relative; flex-shrink:0; }
+  .pf-av-wrap .avatar{ --s:84px; border:3px solid var(--pk); box-shadow:0 0 0 3px #FFC44D, 0 0 24px rgba(255,196,77,.55); }
+  .pf-lvl{ position:absolute; right:-6px; bottom:-4px; min-width:30px; height:30px; padding:0 6px; border-radius:99px; display:grid; place-items:center; background:#FFC44D; color:var(--pk); border:3px solid var(--pk); font:800 14px var(--pfd); }
+  .pf-id{ min-width:0; flex:1; }
+  .pf-name{ font:700 27px/1.05 var(--pfd); color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 3px 0 rgba(0,0,0,.45); }
+  .pf-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+  .pf-tag{ display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:99px; font:800 11.5px var(--pfb); letter-spacing:.02em; border:2px solid var(--pk); background:#FFC44D; color:var(--pk); }
+  .pf-tag.t2{ background:#fff; } .pf-tag.on{ background:#5BD68A; } .pf-tag.off{ background:#FFD9CF; }
+  .pf-tag svg.i{ width:13px; height:13px; }
+  .pf-rank{ position:relative; z-index:1; margin-top:16px; }
+  .pf-rank-row{ display:flex; justify-content:space-between; align-items:baseline; font:800 12.5px var(--pfb); color:rgba(255,255,255,.75); margin-bottom:6px; }
+  .pf-rank-row b{ color:#FFC44D; font:700 15px var(--pfd); }
+  .pf-bar{ height:14px; border-radius:99px; background:rgba(255,255,255,.12); border:2.5px solid var(--pk); overflow:hidden; }
+  .pf-bar i{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg, #FFC44D, #FF8A3D); box-shadow:inset 0 -3px 0 rgba(0,0,0,.18); animation: barGrow .9s cubic-bezier(.2,.8,.3,1) .15s backwards; }
+  .pf-strip{ position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; }
+  .pf-strip div{ text-align:center; padding:9px 4px 8px; border-radius:16px; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.14); }
+  .pf-strip b{ display:block; font:700 21px/1.1 var(--pfd); color:#fff; }
+  .pf-strip b svg.i{ width:16px; height:16px; color:#FFC44D; vertical-align:-1px; }
+  .pf-strip span{ font:800 10.5px var(--pfb); color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.06em; }
+  body.ui-d:not(#z) #statsOverlay .pf-actions{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  body.ui-d:not(#z) #statsOverlay .pf-actions button{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 4px 10px; border-radius:20px; }
+  .pf-actions button svg.i{ width:24px; height:24px; margin-bottom:2px; }
+  .pf-actions button b{ font:700 15px var(--pfd); }
+  .pf-actions button small{ font:800 10.5px var(--pfb); color:var(--pm); }
+  body.ui-d:not(#z) #statsOverlay #btnProfTrophies{ background:#FFE9A8 !important; } body.ui-d:not(#z) #statsOverlay #btnProfFriends{ background:#D7E8FF !important; } body.ui-d:not(#z) #statsOverlay #btnProfSkins{ background:#FFD9E8 !important; }
+  .pf-card{ background:var(--pc); color:var(--pt); border:3px solid var(--pk); box-shadow:0 5px 0 var(--pk); border-radius:22px; padding:14px; }
+  .pf-h{ display:flex; align-items:center; gap:8px; margin-bottom:12px; font:700 18px var(--pfd); color:var(--pt); }
+  .pf-h .pf-ic{ width:30px; height:30px; flex-shrink:0; border-radius:10px; display:grid; place-items:center; border:2.5px solid var(--pk); background:#FFC44D; color:var(--pk); }
+  .pf-h .pf-ic svg.i{ width:16px; height:16px; }
+  .pf-h small{ margin-left:auto; font:800 12px var(--pfb); color:var(--pm); }
+  .pf-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .pf-tile{ position:relative; padding:12px; border-radius:16px; border:2.5px solid var(--pk); background:#fff; min-height:74px; }
+  .pf-tile b{ display:block; font:700 26px/1 var(--pfd); color:var(--pt); }
+  .pf-tile span{ display:block; margin-top:5px; font:800 12px var(--pfb); color:var(--pm); }
+  .pf-tile svg.i{ position:absolute; top:10px; right:10px; width:20px; height:20px; color:var(--pk); opacity:.8; }
+  .pf-tile.c1{ background:#FFF0C4; } .pf-tile.c2{ background:#CFF2DE; } .pf-tile.c3{ background:#FFD9CF; } .pf-tile.c4{ background:#D7E8FF; } .pf-tile.c5{ background:#E9DDFF; } .pf-tile.c6{ background:#FFD9E8; }
+  .pf-modes{ display:flex; flex-direction:column; gap:12px; }
+  .pf-mode-top{ display:flex; justify-content:space-between; align-items:baseline; font:800 14px var(--pfb); color:var(--pt); margin-bottom:5px; }
+  .pf-mode-top small{ font:800 12px var(--pfb); color:var(--pm); }
+  .pf-mbar{ height:12px; border-radius:99px; background:#EFE6CF; border:2px solid var(--pk); overflow:hidden; }
+  .pf-mbar i{ display:block; height:100%; border-radius:99px; background:var(--d-green,#2FA866); animation: barGrow .9s cubic-bezier(.2,.8,.3,1) .2s backwards; }
+  .pf-mbar.b2 i{ background:var(--d-blue,#3B7BE0); } .pf-mbar.b3 i{ background:var(--d-red,#E2483D); } .pf-mbar.b4 i{ background:#FFC44D; }
+  .pf-road{ display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px; margin:0 -4px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .pf-road::-webkit-scrollbar{ display:none; }
+  .pf-opp{ flex:0 0 82px; scroll-snap-align:start; text-align:center; }
+  .pf-opp .avatar{ --s:62px; margin:0 auto; border:2.5px solid var(--pk); }
+  .pf-opp.lock .avatar{ filter:grayscale(1) brightness(.55); }
+  .pf-opp b{ display:block; margin-top:5px; font:800 11.5px var(--pfb); color:var(--pt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pf-opp span{ display:inline-block; margin-top:3px; padding:1px 7px; border-radius:99px; border:2px solid var(--pk); font:800 11px var(--pfb); background:#fff; color:var(--pt); }
+  .pf-opp.beat span{ background:#5BD68A; }
+  .pf-ends{ display:flex; flex-direction:column; gap:7px; }
+  .pf-end{ display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:14px; border:2.5px solid var(--pk); background:#fff; font:800 14px var(--pfb); color:var(--pt); }
+  .pf-end svg.i{ width:18px; height:18px; flex-shrink:0; }
+  .pf-end.got{ background:#FFF0C4; } .pf-end:not(.got){ color:var(--pm); border-style:dashed; }
+  .pf-friends{ display:flex; align-items:center; gap:12px; }
+  .pf-stack{ display:flex; } .pf-stack .avatar{ --s:42px; border:2.5px solid var(--pk); margin-left:-10px; position:relative; }
+  .pf-stack .avatar:first-child{ margin-left:0; }
+  .pf-stack .avatar.is-on::after{ content:''; position:absolute; right:-1px; bottom:-1px; width:11px; height:11px; border-radius:50%; background:#5BD68A; border:2px solid var(--pk); }
+  .pf-friends p{ margin:0; font:800 13.5px/1.35 var(--pfb); color:var(--pt); } .pf-friends p small{ display:block; color:var(--pm); font-size:12px; }
+  .pf-notif{ display:flex; align-items:center; gap:12px; }
+  .pf-notif p{ flex:1; margin:0; font:800 13.5px/1.35 var(--pfb); color:var(--pt); } .pf-notif p small{ display:block; color:var(--pm); font-size:12px; font-weight:700; }
+  body.ui-d:not(#z) #statsOverlay .pf-notif button{ flex-shrink:0; padding:10px 14px; border-radius:14px; font-size:14px; background:var(--d-green,#2FA866) !important; color:#fff !important; }
+  .pf-card.notif-on{ background:#E3F7EA; }
+  .pf-rows{ display:flex; flex-direction:column; }
+  .pf-row{ display:flex; justify-content:space-between; gap:10px; padding:9px 2px; border-bottom:2px dashed rgba(0,0,0,.12); font:800 14px var(--pfb); color:var(--pt); }
+  .pf-row:last-child{ border-bottom:0; } .pf-row span{ color:var(--pm); font-weight:700; } .pf-row b{ font-family:var(--pfd); font-weight:700; }
+  body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h, .pf-tile b, .pf-mode-top, .pf-opp b, .pf-opp span, .pf-end.got, .pf-friends p, .pf-notif p, .pf-row){ color:var(--pt) !important; text-shadow:none !important; }
+  body.ui-d:not(#z) #statsOverlay .pf-card :is(.pf-h small, .pf-tile span, .pf-mode-top small, .pf-end:not(.got), .pf-friends small, .pf-notif small, .pf-row span), body.ui-d:not(#z) #statsOverlay .pf-actions small{ color:var(--pm) !important; text-shadow:none !important; }
+  body.ui-d:not(#z) #statsOverlay .pf-hero :is(.pf-name, .pf-strip b){ color:#fff !important; } body.ui-d:not(#z) #statsOverlay .pf-hero .pf-tag{ color:var(--pk) !important; text-shadow:none !important; }
+  .pg-in-fwd .pf-card, .pg-in-fwd .pf-hero, .pg-in-fwd .pf-actions{ animation: heroIn .5s cubic-bezier(.25,1.5,.45,1) backwards; animation-delay: calc(var(--d,0) * 70ms + 60ms); }
 
   /* ---- settings ---- */
   .set-group{ display:flex; flex-direction:column; gap:8px; }
@@ -4533,13 +4609,14 @@
 
 <div class="overlay page hidden" id="statsOverlay">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Ton profil</h2><span class="ph-spacer"></span></header>
-  <div class="page-body">
-    <div class="profile-card" id="profileCard"></div>
-    <div class="btnrow profile-links">
-      <button id="btnProfTrophies"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg> Trophées</button>
-      <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg> Décors</button>
+  <div class="page-body pf-body">
+    <div class="pf-hero" id="profileCard"></div>
+    <div class="pf-actions">
+      <button id="btnProfTrophies"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg><b>Trophées</b><small id="pfTrophSub"></small></button>
+      <button id="btnProfFriends"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><b>Amis</b><small id="pfFriendSub"></small></button>
+      <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg><b>Décors</b><small id="pfSkinSub">Ton style</small></button>
     </div>
-    <div class="stats-block" id="statsContent"></div>
+    <div id="statsContent"></div>
   </div>
 </div>
 
@@ -13635,53 +13712,88 @@
     const next = RANKS[ri+1];
     const won = (p.gamesLost||0) + (p.onlineWins||0) + (p.squareWins||0);
     const played = (p.gamesPlayed||0) + (p.onlineGames||0) + (p.squareGamesPlayed||0);
+    const pct = (a, b)=> b>0 ? Math.round(100*a/b) : 0;
+    const nTroph = Object.keys(p.trophies).length, st = p.stats || {};
+    const signed = typeof myUid==='function' && !!myUid();
+    // the hero: face, name, rank and the three numbers people look at first
     const card = document.getElementById('profileCard');
+    card.style.setProperty('--d', 0);
     card.innerHTML =
-      '<div class="pc-top"><div class="avatar pc-avatar" data-who="you"></div>'+
-      '<div class="pc-id"><div class="pc-name"></div><div class="pc-rank">'+RANKS[ri].name+'</div>'+(myTitle() ? '<span class="my-title">'+myTitle()+'</span>' : '')+'</div></div>'+
-      '<div class="pc-bar"><i style="width:'+Math.round(rankProgress(p.rep)*100)+'%"></i></div>'+
-      '<div class="pc-next">'+(next ? p.rep+' / '+next.at+' rép. pour « '+next.name+' »' : p.rep+' rép. · rang maximum')+'</div>'+
-      '<div class="pc-nums">'+
-        '<div><b>'+played+'</b><span>parties</span></div>'+
+      '<div class="pf-top"><div class="pf-av-wrap"><div class="avatar" data-who="you"></div><span class="pf-lvl">'+(ri+1)+'</span></div>'+
+      '<div class="pf-id"><div class="pf-name"></div><div class="pf-tags"><span class="pf-tag">'+ico('crown')+' '+RANKS[ri].name+'</span>'+
+        (myTitle() ? '<span class="pf-tag t2">'+myTitle()+'</span>' : '')+
+        (CLOUD_ON ? (signed ? '<span class="pf-tag on">'+ico('cloud')+' Compte sauvegardé</span>' : '<span class="pf-tag off">'+ico('cloud')+' Invité</span>') : '')+
+      '</div></div></div>'+
+      '<div class="pf-rank"><div class="pf-rank-row"><span>'+(next ? 'Prochain rang : <b>'+next.name+'</b>' : '<b>Rang maximum</b>')+'</span><span>'+p.rep+(next ? ' / '+next.at : '')+' rép.</span></div>'+
+        '<div class="pf-bar"><i style="width:'+Math.round(rankProgress(p.rep)*100)+'%"></i></div></div>'+
+      '<div class="pf-strip">'+
+        '<div><b>'+ico('coin')+' '+fmtChips(p.chips||0)+'</b><span>jetons</span></div>'+
         '<div><b>'+won+'</b><span>victoires</span></div>'+
-        '<div><b>'+Object.keys(p.trophies).length+'</b><span>trophées</span></div>'+
-        '<div><b>'+(liveDayStreak()||0)+'</b><span>jours de suite</span></div>'+
+        '<div><b>'+pct(won, played)+'%</b><span>réussite</span></div>'+
       '</div>';
-    card.querySelector('.pc-name').textContent = prefs.name || 'Toi';
-    fillMe(card.querySelector('.pc-avatar'), prefs.name || 'Toi');
-    applyMyFrame(card.querySelector('.pc-avatar'));
+    card.querySelector('.pf-name').textContent = prefs.name || 'Toi';
+    fillMe(card.querySelector('.avatar'), prefs.name || 'Toi');
+    applyMyFrame(card.querySelector('.avatar'));
+    document.querySelector('#statsOverlay .pf-actions').style.setProperty('--d', 1);
+    $id('pfTrophSub').textContent = nTroph+' / '+TROPHIES.length;
+    const fr = friendList(), frOn = fr.filter(f=> isOnline(f.id)).length;
+    $id('pfFriendSub').textContent = fr.length ? (frOn ? frOn+' en ligne' : fr.length+' ami'+(fr.length>1 ? 's' : '')) : 'Ajoute-en';
+
+    const tile = (c, icon, n, label)=> '<div class="pf-tile '+c+'">'+ico(icon)+'<b>'+n+'</b><span>'+label+'</span></div>';
+    const bar = (cls, label, w, n, sub)=> '<div><div class="pf-mode-top"><span>'+label+'</span><small>'+sub+'</small></div><div class="pf-mbar '+cls+'"><i style="width:'+Math.max(n>0 ? 3 : 0, w)+'%"></i></div></div>';
+    const cardH = (d, icon, title, right)=> '<section class="pf-card" style="--d:'+d+'"><div class="pf-h"><span class="pf-ic">'+ico(icon)+'</span>'+title+(right ? '<small>'+right+'</small>' : '')+'</div>';
+    // the book: which of the five endings were found
+    let ends = '';
+    try{ if(typeof ENDING_GROUPS!=='undefined' && typeof stGet==='function'){ const P = stGet(), E = P.endings || [];
+      const got = ENDING_GROUPS.map(g=> E.some(e=> ENDINGS[e] && ENDINGS[e].group===g[0]));
+      ends = cardH(7, 'book', 'Pourquoi je suis mort ?', got.filter(Boolean).length+' / 5 fins')+'<div class="pf-ends">'+
+        ENDING_GROUPS.map((g,i)=> '<div class="pf-end'+(got[i] ? ' got' : '')+'">'+ico(got[i] ? 'check' : 'lock')+(got[i] ? g[1] : 'Fin encore cachée')+'</div>').join('')+'</div></section>'; } }catch(e){}
+    const pushOn = !!prefs.push && 'Notification' in window && Notification.permission==='granted';
     const box = document.getElementById('statsContent');
+    box.style.display = 'contents';
     box.innerHTML =
-      '<div class="stats-group"><h3>Ta réputation</h3>'+
-        '<div class="stats-row"><span class="label">Rang</span><span class="value">'+RANKS[rankIndex(p.rep)].name+'</span></div>'+
-        '<div class="stats-row"><span class="label">Réputation</span><span class="value">'+p.rep+'</span></div>'+
-        '<div class="stats-row"><span class="label">Trophées</span><span class="value">'+Object.keys(p.trophies).length+' / '+TROPHIES.length+'</span></div>'+
-        '<div class="stats-row"><span class="label">Série de victoires en cours</span><span class="value">'+(p.winStreak||0)+'</span></div>'+
-      '</div>'+
-      '<div class="stats-group"><h3>La route du quartier</h3>'+
-        DUEL_ORDER.map(id=>{ const r=p.ladder[id]; return '<div class="stats-row"><span class="label">Contre '+DUEL_PERSONAS[id].name+'</span><span class="value">'+r.w+'V – '+r.l+'D</span></div>'; }).join('')+
-        '<div class="stats-row"><span class="label">Taux de victoire (tous)</span><span class="value">'+(p.gamesPlayed>0 ? Math.round(100*p.gamesLost/p.gamesPlayed) : 0)+'%</span></div>'+
-      '</div>'+
-      '<div class="stats-group"><h3>Jetons</h3>'+
-        '<div class="stats-row"><span class="label">Solde</span><span class="value">'+fmtChips(p.chips||0)+'</span></div>'+
-        '<div class="stats-row"><span class="label">Record</span><span class="value">'+fmtChips(p.chipsBest||0)+'</span></div>'+
-        '<div class="stats-row"><span class="label">Gagnés en tout</span><span class="value">'+fmtChips(p.chipsWon||0)+'</span></div>'+
-      '</div>'+
-      '<div class="stats-group"><h3>En ligne</h3>'+
-        '<div class="stats-row"><span class="label">Matchs joués</span><span class="value">'+(p.onlineGames||0)+'</span></div>'+
-        '<div class="stats-row"><span class="label">Victoires</span><span class="value">'+(p.onlineWins||0)+'</span></div>'+
-      '</div>'+
-      '<div class="stats-group"><h3>Carré la Pute</h3>'+
-        '<div class="stats-row"><span class="label">Parties jouées</span><span class="value">'+p.squareGamesPlayed+'</span></div>'+
-        '<div class="stats-row"><span class="label">Dernier survivant</span><span class="value">'+p.squareWins+'</span></div>'+
-        '<div class="stats-row"><span class="label">Taux de victoire</span><span class="value">'+sqWinRate+'%</span></div>'+
-      '</div>'+
-      '<div class="stats-group"><h3>Ton style de jeu</h3>'+
-        '<div class="stats-row"><span class="label">Occasions de Passe</span><span class="value">'+p.passeOpportunities+'</span></div>'+
-        '<div class="stats-row"><span class="label">Passe utilisée</span><span class="value">'+passeRate+'%</span></div>'+
-        '<div class="stats-row"><span class="label">Taux de bluff des adversaires (contre toi)</span><span class="value">'+Math.round(p.sandbagBaseRate*100)+'%</span></div>'+
-      '</div>';
+      cardH(2, 'chart', 'Tes chiffres')+'<div class="pf-grid">'+
+        tile('c1', 'cards', played, 'parties jouées')+
+        tile('c2', 'medal', won, 'victoires')+
+        tile('c3', 'flame', liveDayStreak()||0, 'jours de suite')+
+        tile('c4', 'trend', p.winStreak||0, 'victoires d’affilée')+
+      '</div></section>'+
+      cardH(3, 'zap', 'Tes coups d’éclat')+'<div class="pf-grid">'+
+        tile('c5', 'three', st.coras||0, 'CORA réussis')+
+        tile('c4', 'snow', st.glacees||0, '33 Glacées')+
+        tile('c1', 'star', st.autos||0, 'Autos')+
+        tile('c6', 'hand', st.claques||0, 'claques données')+
+      '</div></section>'+
+      cardH(4, 'target', 'Par mode de jeu')+'<div class="pf-modes">'+
+        bar('', 'Route du quartier', pct(p.gamesLost||0, p.gamesPlayed||0), p.gamesLost||0, (p.gamesLost||0)+' V / '+(p.gamesPlayed||0)+' · '+pct(p.gamesLost||0, p.gamesPlayed||0)+'%')+
+        bar('b2', 'En ligne', pct(p.onlineWins||0, p.onlineGames||0), p.onlineWins||0, (p.onlineWins||0)+' V / '+(p.onlineGames||0)+' · '+pct(p.onlineWins||0, p.onlineGames||0)+'%')+
+        bar('b3', 'Carré la Pute', sqWinRate, p.squareWins||0, (p.squareWins||0)+' V / '+(p.squareGamesPlayed||0)+' · '+sqWinRate+'%')+
+      '</div></section>'+
+      cardH(5, 'users', 'La route du quartier', DUEL_ORDER.filter(id=> p.ladder[id] && p.ladder[id].w>0).length+' / '+DUEL_ORDER.length+' battus')+'<div class="pf-road">'+
+        DUEL_ORDER.map(id=>{ const r = p.ladder[id] || {w:0,l:0}, open = isOppUnlocked(id);
+          return '<div class="pf-opp'+(open ? '' : ' lock')+(r.w>0 ? ' beat' : '')+'"><div class="avatar" data-opp="'+id+'"></div><b>'+(open ? DUEL_PERSONAS[id].name : '???')+'</b><span>'+r.w+'V – '+r.l+'D</span></div>'; }).join('')+
+      '</div></section>'+
+      cardH(6, 'coin', 'Ton coffre')+'<div class="pf-grid">'+
+        tile('c1', 'coin', fmtChips(p.chips||0), 'jetons aujourd’hui')+
+        tile('c2', 'crown', fmtChips(p.chipsBest||0), 'record')+
+      '</div><div class="pf-rows" style="margin-top:6px"><div class="pf-row"><span>Gagnés en tout</span><b>'+fmtChips(p.chipsWon||0)+'</b></div></div></section>'+
+      ends+
+      cardH(8, 'users', 'Tes amis', fr.length ? fr.length+' ami'+(fr.length>1 ? 's' : '') : '')+'<div class="pf-friends"><div class="pf-stack">'+
+        fr.slice(0, 5).map(f=> '<span class="avatar'+(isOnline(f.id) ? ' is-on' : '')+'" data-fname=""></span>').join('')+'</div>'+
+        '<p>'+(fr.length ? (frOn ? frOn+' en ligne maintenant' : 'Personne en ligne pour l’instant') : 'Pas encore d’amis')+'<small>'+(fr.length ? 'Touche « Amis » pour les défier.' : 'Ajoute un adversaire en ligne après une partie.')+'</small></p></div></section>'+
+      (CLOUD_ON && VAPID_PUBLIC ? '<section class="pf-card'+(pushOn ? ' notif-on' : '')+'" style="--d:9"><div class="pf-h"><span class="pf-ic">'+ico(pushOn ? 'bell' : 'belloff')+'</span>Notifications de défi</div><div class="pf-notif"><p>'+
+        (pushOn ? 'Activées sur ce téléphone<small>Ton téléphone sonne quand un ami te défie, même jeu fermé.</small>' : 'Désactivées<small>Sans elles, tu ne sais pas qu’un ami te défie quand le jeu est fermé.</small>')+
+        '</p>'+(pushOn ? '' : '<button id="pfPushOn">'+ico('bell')+' Activer</button>')+'</div></section>' : '')+
+      cardH(10, 'cap', 'Ton style de jeu')+'<div class="pf-modes">'+
+        bar('b4', 'Passe utilisée', passeRate, p.passeTaken||0, passeRate+'% · '+(p.passeOpportunities||0)+' occasions')+
+        bar('b3', 'Bluff des adversaires contre toi', Math.round(p.sandbagBaseRate*100), 1, Math.round(p.sandbagBaseRate*100)+'%')+
+      '</div></section>';
+    box.querySelectorAll('.pf-opp .avatar').forEach(el=> fillAvatar(el, el.dataset.opp));
+    box.querySelectorAll('.pf-stack .avatar').forEach((el, i)=> fillAvatar(el, null, fr[i].name || 'J'));
+    const pb = $id('pfPushOn');
+    if(pb) pb.addEventListener('click', async ()=>{ await pushEnable(); if(window.pushSettingsRow) window.pushSettingsRow(); renderStats(); });
   }
+  document.getElementById('btnProfFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
   document.getElementById('btnShowStats').addEventListener('click', ()=> goTab('statsOverlay'));
 
   // Carré la Pute: choose 2, 3 or 4 players (and the stake), or open a table online with friends
@@ -16789,7 +16901,7 @@
     friendList().unshift({id, name:String(name||'Joueur').slice(0,16)});
     if(profile.friends.length>60) profile.friends.length = 60;
     saveProfile();
-    if(!quiet) showToast('Ami ajouté', String(name||'Ce joueur')+' est dans tes amis.', {ms:1800});
+    if(!quiet){ showToast('Ami ajouté', String(name||'Ce joueur')+' est dans tes amis.', {ms:1800}); setTimeout(pushNudge, 2000); }
   }
   function removeFriend(id){ profile.friends = friendList().filter(f=> f.id!==id); saveProfile(); }
 
@@ -16827,6 +16939,7 @@
       list.innerHTML = '<div class="rich-empty">Tu n’as pas encore d’amis ici.<br>Va dans « Tout le quartier » et touche un joueur pour l’ajouter. Après une partie en ligne, tu peux aussi ajouter ton adversaire.</div>';
       return;
     }
+    if(!quick) setTimeout(pushNudge, 900);
     const rows = fl.slice().sort((a,b)=> (isOnline(b.id)?1:0) - (isOnline(a.id)?1:0));
     list.innerHTML = rows.map((f,i)=> '<div class="rich-row tappable" style="--d:'+Math.min(i,12)+'"><span class="avatar rich-av'+(isOnline(f.id) ? ' is-online' : '')+'" style="--s:42px"></span>'+
       '<span class="rich-name"><span class="rn"></span><span class="rich-sub"></span></span>'+
@@ -17007,9 +17120,26 @@
     }catch(e){}
   }
   // after a sign-in or an account switch, the phone's subscription follows the account that is now open
+  // (also at every launch: a phone that already said yes is re-subscribed if iOS dropped the subscription, and the
+  // server always holds its current address; only an explicit "off" in Réglages keeps it quiet)
   async function pushRefresh(){
-    if(!prefs.push || !pushReady() || Notification.permission!=='granted') return;
-    try{ const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if(sub) await pushSave(sub); }catch(e){}
+    if(prefs.push===false || !pushReady() || Notification.permission!=='granted') return;
+    try{
+      const reg = await navigator.serviceWorker.ready;
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: b64urlBytes(VAPID_PUBLIC) });
+      if(sub && await pushSave(sub) && !prefs.push){ prefs.push = true; savePrefs(); }
+    }catch(e){}
+  }
+  // nobody finds a switch hidden in Réglages: the game offers it itself, at the moment it matters (a new friend,
+  // the friends list), at most once every three days, and never once it has been answered
+  function pushNudge(){
+    try{
+      if(!CLOUD_ON || prefs.push || !pushReady() || Notification.permission!=='default' || !myUid()) return;
+      if(isIOS && !isStandalone()) return;
+      if(inGame() || mpNet || Date.now() - (prefs.pushAsked||0) < 3*864e5) return;
+      prefs.pushAsked = Date.now(); savePrefs();
+      askConfirm('Être prévenu des défis ?', 'Active les notifications : ton téléphone sonnera quand un ami te défie, même jeu fermé.', 'Activer', ()=>{ pushEnable().then(()=>{ if(window.pushSettingsRow) window.pushSettingsRow(); }); });
+    }catch(e){}
   }
   // wakes the friend's phone; true when at least one of their phones was reached
   async function pushChallenge(f, code){
