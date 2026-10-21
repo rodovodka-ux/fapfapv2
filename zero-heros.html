@@ -1,0 +1,1563 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Zéro à Héros</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+  /* Layout: one phone screen, full-bleed on a phone, framed in the middle of the night on a computer. The game's drawn style: ink outlines, hard shadows, mango. */
+  :root{
+    --night:#0b0807; --ink:#1B120C; --cream:#FFF6DC; --paper:#FFF8E7; --mango:#FFC93C; --mango-d:#E8A817;
+    --red:#E24B4A; --green:#2FB36B; --blue:#3D7FD9; --pink:#F06BA8; --mute:#a99a86; --txt:#2A1D12;
+    --screen:#120d0a; --glass:rgba(255,246,220,.07); --line:rgba(255,246,220,.14);
+    --f-t:'Fredoka','Trebuchet MS',system-ui,sans-serif; --f-b:'Nunito','Segoe UI',system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  [hidden]{ display:none !important; }
+  html,body{ height:100%; }
+  body{ margin:0; background:var(--night); color:var(--cream); font:600 15px/1.4 var(--f-b); -webkit-tap-highlight-color:transparent; overflow:hidden; }
+  button{ font:inherit; color:inherit; cursor:pointer; }
+  :focus-visible{ outline:3px solid var(--mango); outline-offset:2px; }
+  .stage{ height:100%; display:grid; place-items:center; padding-left:max(0px, env(safe-area-inset-left,0px)); padding-right:max(0px, env(safe-area-inset-right,0px)); }
+  .phone{ position:relative; width:100%; height:100%; background:var(--screen); overflow:hidden; display:flex; flex-direction:column; }
+  @media (min-width:560px){ .phone{ width:400px; height:min(840px, calc(100% - 40px)); border-radius:46px; border:10px solid #050403; box-shadow:0 0 0 3px #2a211b, 0 40px 120px rgba(255,201,60,.08); } }
+
+  /* ---------- the status bar ---------- */
+  .sb{ display:flex; align-items:center; gap:8px; padding:10px max(18px, env(safe-area-inset-left,0px)) 6px; font:700 13px var(--f-b); font-variant-numeric:tabular-nums; color:var(--cream); flex:none; z-index:6; }
+  .sb .when{ color:var(--mango); }
+  .sb .sp{ flex:1; }
+  .sb .bat{ display:inline-flex; align-items:center; gap:4px; }
+  .sb .bat i{ width:22px; height:11px; border:2px solid var(--cream); border-radius:3px; position:relative; }
+  .sb .bat i::after{ content:""; position:absolute; inset:1px; right:40%; background:var(--cream); border-radius:1px; }
+
+  /* ---------- scenes (title, hero, call, home, app) ---------- */
+  .scene{ position:absolute; inset:0; display:flex; flex-direction:column; }
+  .scene[hidden]{ display:none !important; }
+  .rain{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; opacity:.5; }
+
+  .btn{ border:3px solid var(--ink); background:var(--mango); color:var(--ink); border-radius:18px; padding:13px 20px; font:700 17px var(--f-t); box-shadow:0 5px 0 var(--ink); }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--ink); }
+  .btn.ghost{ background:var(--paper); }
+  .btn.red{ background:var(--red); color:#fff; }
+  .btn.green{ background:var(--green); color:#fff; }
+  .btn[disabled]{ opacity:.45; }
+
+  /* title */
+  .title{ align-items:center; justify-content:center; text-align:center; gap:22px; padding:24px; background:radial-gradient(120% 70% at 50% 10%, rgba(255,201,60,.18), transparent 60%), var(--night); }
+  .logo{ position:relative; font:700 64px/0.9 var(--f-t); color:var(--mango); -webkit-text-stroke:3px var(--ink); paint-order:stroke fill; text-shadow:0 6px 0 var(--ink), 0 0 40px rgba(255,201,60,.35); letter-spacing:.01em; }
+  .logo small{ display:block; font:600 20px var(--f-t); color:var(--cream); -webkit-text-stroke:0; text-shadow:none; letter-spacing:.3em; margin-bottom:8px; }
+  .title p{ max-width:300px; color:var(--mute); margin:0; }
+  .title .adult{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:var(--red); border:2px solid var(--red); border-radius:99px; padding:4px 10px; }
+
+  /* hero */
+  .hero{ padding:18px max(18px, env(safe-area-inset-left,0px)) 22px; gap:14px; overflow-y:auto; background:var(--night); }
+  .hero h2{ font:700 26px var(--f-t); margin:6px 0 0; text-wrap:balance; }
+  .hero .lab{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:var(--mute); }
+  .seg{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .seg button{ border:3px solid var(--ink); border-radius:16px; background:var(--paper); color:var(--ink); padding:12px; font:700 16px var(--f-t); box-shadow:0 4px 0 var(--ink); }
+  .seg button[aria-pressed="true"]{ background:var(--mango); }
+  .faces{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+  .faces button{ border:3px solid var(--ink); border-radius:20px; background:#2b211a; padding:6px; box-shadow:0 4px 0 var(--ink); aspect-ratio:1; }
+  .faces button[aria-pressed="true"]{ background:var(--mango); }
+  .faces svg{ width:100%; height:100%; display:block; }
+  .ph-me{ width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field input{ border:3px solid var(--ink); border-radius:14px; padding:12px 14px; font:700 17px var(--f-b); background:var(--paper); color:var(--ink); }
+
+  /* the call */
+  .call{ align-items:center; padding:30px 22px 26px; gap:10px; background:linear-gradient(180deg, #1f2b3a, #0b0d12 70%); text-align:center; }
+  .call .who{ font:700 28px var(--f-t); margin-top:24px; }
+  .call .sub{ color:var(--mute); font-weight:700; }
+  .call .ava{ width:116px; height:116px; border-radius:50%; border:4px solid var(--ink); background:#d9e6f2; box-shadow:0 0 0 6px rgba(255,255,255,.08); display:grid; place-items:center; color:var(--ink); }
+  .call .ava.ringing{ animation:ring 1.2s ease-in-out infinite; }
+  @keyframes ring{ 0%,100%{ box-shadow:0 0 0 6px rgba(255,255,255,.08); } 50%{ box-shadow:0 0 0 22px rgba(255,255,255,0); } }
+  .call .lines{ flex:1; width:100%; display:flex; flex-direction:column; justify-content:flex-end; gap:8px; overflow:hidden; }
+  .call .ln{ text-align:left; background:var(--glass); border:1px solid var(--line); border-radius:16px; padding:10px 13px; animation:up .35s ease-out both; }
+  .call .ln b{ display:block; font:800 11px var(--f-b); letter-spacing:.12em; text-transform:uppercase; color:var(--mango); margin-bottom:2px; }
+  .call .ln.me{ background:rgba(255,201,60,.12); border-color:rgba(255,201,60,.3); }
+  .call .ln.big{ font:700 22px var(--f-t); text-align:center; color:var(--mango); }
+  .call .acts{ display:flex; gap:36px; justify-content:center; padding-top:8px; }
+  .round{ width:72px; height:72px; border-radius:50%; border:3px solid var(--ink); box-shadow:0 5px 0 var(--ink); display:grid; place-items:center; }
+  .round svg{ width:30px; height:30px; }
+  .timer{ font:700 14px var(--f-b); font-variant-numeric:tabular-nums; color:var(--mute); }
+  @keyframes up{ from{ opacity:0; transform:translateY(10px); } }
+
+  /* home */
+  .home{ background:radial-gradient(90% 50% at 80% 0%, rgba(240,107,168,.14), transparent 60%), radial-gradient(90% 50% at 0% 30%, rgba(255,201,60,.10), transparent 60%), var(--screen); }
+  .home-body{ flex:1; overflow-y:auto; padding:6px max(16px, env(safe-area-inset-left,0px)) 16px; display:flex; flex-direction:column; gap:12px; }
+  .w{ border:3px solid var(--ink); border-radius:22px; background:var(--paper); color:var(--txt); box-shadow:0 5px 0 var(--ink); padding:12px 14px; }
+  .w .k{ font:800 11px var(--f-b); letter-spacing:.12em; text-transform:uppercase; color:#7A6650; }
+  .w-million .big{ font:700 30px var(--f-t); font-variant-numeric:tabular-nums; line-height:1.1; }
+  .w-million .big small{ font:700 15px var(--f-t); color:#7A6650; }
+  .bar{ height:14px; border-radius:99px; border:2.5px solid var(--ink); background:#f1e3c4; overflow:hidden; margin-top:8px; }
+  .bar i{ display:block; height:100%; background:var(--mango); border-right:2.5px solid var(--ink); min-width:4px; transition:width .6s; }
+  .w-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .w-sis{ display:flex; gap:10px; align-items:center; }
+  .w-sis .pic{ width:52px; height:52px; flex:none; }
+  .mini{ display:flex; flex-direction:column; gap:5px; flex:1; min-width:0; }
+  .mini span{ display:flex; justify-content:space-between; font:800 11px var(--f-b); color:#7A6650; }
+  .mini .bar{ height:9px; margin:0; border-width:2px; }
+  .mini .bar.h i{ background:var(--red); } .mini .bar.r i{ background:var(--pink); }
+  .w-next{ display:flex; flex-direction:column; gap:3px; }
+  .w-next b{ font:700 16px var(--f-t); line-height:1.15; }
+  .w-next small{ color:#7A6650; font-weight:700; }
+  .apps{ display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 8px; padding:4px 2px; }
+  .app{ background:none; border:0; display:flex; flex-direction:column; align-items:center; gap:6px; padding:0; position:relative; }
+  .app .ic{ width:58px; height:58px; border-radius:18px; border:3px solid var(--ink); box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; }
+  .app .ic svg{ width:28px; height:28px; }
+  .app:active .ic{ transform:translateY(3px); box-shadow:0 1px 0 var(--ink); }
+  .app span{ font:700 11.5px var(--f-b); color:var(--cream); }
+  .badge{ position:absolute; top:-6px; right:calc(50% - 38px); min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--red); color:#fff; border:2.5px solid var(--ink); font:800 12px/17px var(--f-b); text-align:center; }
+  .dock{ flex:none; padding:10px max(16px, env(safe-area-inset-left,0px)) max(14px, env(safe-area-inset-bottom,0px)); display:flex; gap:10px; align-items:center; border-top:1px solid var(--line); background:rgba(0,0,0,.35); }
+  .dock .btn{ flex:1; font-size:16px; padding:12px 14px; }
+  .dock .menu{ width:48px; height:48px; border-radius:16px; border:3px solid var(--ink); background:var(--paper); color:var(--ink); box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; flex:none; }
+
+  /* app pages */
+  .page{ background:var(--screen); }
+  .ph{ flex:none; display:flex; align-items:center; gap:10px; padding:6px max(14px, env(safe-area-inset-left,0px)) 10px; }
+  .ph .back{ width:44px; height:44px; border-radius:50%; border:3px solid var(--ink); background:var(--paper); color:var(--ink); box-shadow:0 4px 0 var(--ink); font:700 26px/1 var(--f-t); display:grid; place-items:center; padding-bottom:3px; flex:none; }
+  .ph h2{ margin:0; font:700 22px var(--f-t); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ph .pic{ width:40px; height:40px; flex:none; }
+  .pb{ flex:1; overflow-y:auto; padding:4px max(14px, env(safe-area-inset-left,0px)) 18px; display:flex; flex-direction:column; gap:10px; }
+  .row{ display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:18px; background:var(--glass); border:1px solid var(--line); text-align:left; width:100%; }
+  .row .pic{ width:46px; height:46px; flex:none; }
+  .row .t{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .row .t b{ font:700 16px var(--f-t); }
+  .row .t small{ color:var(--mute); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; }
+  .row .n{ min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--red); color:#fff; font:800 12px/22px var(--f-b); text-align:center; }
+  .row.new{ border-color:rgba(255,201,60,.45); background:rgba(255,201,60,.08); }
+  .empty{ margin:auto; text-align:center; color:var(--mute); max-width:260px; padding:24px 0; }
+  .h3{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin:8px 2px 0; }
+
+  /* the conversation */
+  .msgs{ flex:1; overflow-y:auto; padding:8px max(14px, env(safe-area-inset-left,0px)) 10px; display:flex; flex-direction:column; gap:6px; }
+  .m{ max-width:80%; padding:9px 13px; border-radius:20px; border-bottom-left-radius:6px; background:#2b211a; align-self:flex-start; white-space:pre-wrap; word-wrap:break-word; animation:up .25s ease-out both; }
+  .m.me{ align-self:flex-end; background:var(--mango); color:var(--ink); border-bottom-left-radius:20px; border-bottom-right-radius:6px; font-weight:700; }
+  .m.sys{ align-self:center; background:none; color:var(--mute); font-size:12px; font-weight:800; padding:4px; }
+  .typing{ align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:#2b211a; border-radius:20px; }
+  .typing i{ width:7px; height:7px; border-radius:50%; background:var(--mute); animation:blink 1s infinite; } .typing i:nth-child(2){ animation-delay:.15s; } .typing i:nth-child(3){ animation-delay:.3s; }
+  @keyframes blink{ 50%{ opacity:.25; } }
+  .choices{ flex:none; display:flex; flex-direction:column; gap:8px; padding:10px max(14px, env(safe-area-inset-left,0px)) max(14px, env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line); }
+  .choices .lab{ font:800 11px var(--f-b); letter-spacing:.12em; text-transform:uppercase; color:var(--mute); }
+  .choices button{ text-align:left; border:3px solid var(--ink); background:var(--paper); color:var(--ink); border-radius:16px; padding:11px 14px; font:700 15px var(--f-b); box-shadow:0 4px 0 var(--ink); }
+  .choices button:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ink); }
+  .free{ flex:none; display:flex; gap:8px; padding:8px max(14px, env(safe-area-inset-left,0px)) max(12px, env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line); }
+  .choices:not([hidden]) + .free{ border-top:0; padding-top:0; }
+  .free input{ flex:1; min-width:0; height:46px; padding:0 16px; border-radius:23px; border:2px solid #3a2e25; background:#1c1511; color:var(--cream); font:700 16px var(--f-b); }
+  .free input:focus{ border-color:var(--mango); outline:none; }
+  .free .btn{ width:46px; height:46px; padding:0; border-radius:50%; font-size:18px; flex:none; box-shadow:0 3px 0 var(--ink); }
+
+  /* bank */
+  .solde{ text-align:center; padding:8px 0 4px; }
+  .solde .big{ font:700 44px var(--f-t); color:var(--mango); font-variant-numeric:tabular-nums; -webkit-text-stroke:2px var(--ink); paint-order:stroke fill; text-shadow:0 4px 0 var(--ink); }
+  .solde small{ color:var(--mute); font-weight:800; }
+  .tx{ display:grid; grid-template-columns:1fr auto; gap:2px 10px; padding:10px 12px; border-bottom:1px solid var(--line); }
+  .tx b{ font:700 15px var(--f-b); } .tx small{ color:var(--mute); font-weight:700; grid-column:1; }
+  .tx em{ font-style:normal; font:800 15px var(--f-b); font-variant-numeric:tabular-nums; grid-row:1 / span 2; align-self:center; }
+  .tx em.p{ color:var(--green); } .tx em.n{ color:var(--red); }
+  .card{ border:3px solid var(--ink); border-radius:20px; background:var(--paper); color:var(--txt); box-shadow:0 5px 0 var(--ink); padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
+  .card .k{ font:800 11px var(--f-b); letter-spacing:.12em; text-transform:uppercase; color:#7A6650; }
+  .bill{ display:grid; grid-template-columns:1fr auto; gap:6px 10px; font-weight:700; }
+  .bill em{ font-style:normal; font-variant-numeric:tabular-nums; font-weight:800; text-align:right; }
+  .bill .due{ color:var(--red); font-size:12px; grid-column:1 / -1; margin-top:-4px; }
+  .gauge{ display:flex; flex-direction:column; gap:4px; }
+  .gauge span{ display:flex; justify-content:space-between; font:800 13px var(--f-b); }
+  .gauge .bar.h i{ background:var(--red); } .gauge .bar.r i{ background:var(--pink); }
+
+  /* map */
+  .map{ position:relative; border:3px solid var(--ink); border-radius:22px; overflow:hidden; box-shadow:0 5px 0 var(--ink); background:#d9c9a3; }
+  .map svg{ display:block; width:100%; height:auto; }
+  .pin{ cursor:pointer; }
+
+  /* the notification banner and the sheet */
+  .notif{ position:absolute; left:10px; right:10px; top:calc(8px + env(safe-area-inset-top,0px)); z-index:20; display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:20px; background:rgba(40,32,26,.96); border:1px solid var(--line); box-shadow:0 12px 30px rgba(0,0,0,.5); transform:translateY(-140%); transition:transform .35s cubic-bezier(.2,.9,.3,1.2); text-align:left; }
+  .notif.on{ transform:none; }
+  .notif .pic{ width:40px; height:40px; flex:none; }
+  .notif .t{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .notif .t b{ font:700 14px var(--f-t); } .notif .t small{ color:var(--cream); opacity:.85; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:700; }
+  .sheet{ position:absolute; inset:0; z-index:30; display:flex; align-items:flex-end; background:rgba(0,0,0,.55); }
+  .sheet[hidden]{ display:none !important; }
+  .sheet .in{ width:100%; background:var(--paper); color:var(--txt); border-top:3px solid var(--ink); border-radius:26px 26px 0 0; padding:18px max(18px, env(safe-area-inset-left,0px)) max(18px, env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:12px; animation:up .3s ease-out both; }
+  .sheet h3{ margin:0; font:700 22px var(--f-t); }
+  .sheet p{ margin:0; }
+  .sheet .story{ font-style:italic; color:#4a3a2a; }
+  .sheet .btns{ display:flex; flex-direction:column; gap:10px; }
+  .delta{ display:flex; gap:8px; flex-wrap:wrap; }
+  .delta span{ font:800 12px var(--f-b); padding:4px 10px; border-radius:99px; border:2px solid var(--ink); background:#fff; }
+  .delta .up{ background:#d9f4e4; } .delta .dn{ background:#fbdcdc; }
+
+  .blackout{ position:absolute; inset:0; z-index:40; background:#000; display:grid; place-items:center; text-align:center; padding:24px; font:700 22px var(--f-t); color:var(--cream); opacity:0; pointer-events:none; transition:opacity .6s; }
+  .blackout.on{ opacity:1; pointer-events:auto; }
+  .blackout small{ display:block; font:700 13px var(--f-b); color:var(--mango); letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px; }
+
+  /* ---------- the entrance exam (Duolingo style) ---------- */
+  .exam{ background:radial-gradient(100% 50% at 50% 0%, rgba(255,201,60,.12), transparent 60%), var(--night); }
+  .ex-top{ flex:none; display:flex; align-items:center; gap:12px; padding:12px max(16px, env(safe-area-inset-left,0px)) 6px; }
+  .ex-x{ width:40px; height:40px; border-radius:50%; border:0; background:none; color:var(--mute); font:700 26px/1 var(--f-t); flex:none; }
+  .ex-prog{ flex:1; height:16px; border-radius:99px; background:#2b211a; overflow:hidden; border:2px solid #000; }
+  .ex-prog i{ display:block; height:100%; width:0; background:var(--green); border-radius:99px; transition:width .45s cubic-bezier(.3,1.4,.5,1); box-shadow:inset 0 -4px 0 rgba(0,0,0,.18), inset 0 4px 0 rgba(255,255,255,.25); }
+  .ex-streak{ display:flex; align-items:center; gap:4px; font:700 16px var(--f-t); color:var(--mango); min-width:44px; justify-content:flex-end; font-variant-numeric:tabular-nums; }
+  .ex-streak.hot{ animation:pop .4s ease-out; }
+  @keyframes pop{ 50%{ transform:scale(1.35); } }
+  .ex-body{ flex:1; overflow-y:auto; padding:8px max(16px, env(safe-area-inset-left,0px)) 12px; display:flex; flex-direction:column; gap:14px; }
+  .ex-lvl{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:var(--mango); }
+  .ex-judge{ display:flex; gap:10px; align-items:flex-end; }
+  .ex-judge .pic{ width:58px; height:58px; flex:none; }
+  .ex-judge .bub{ position:relative; background:var(--paper); color:var(--ink); border:3px solid var(--ink); border-radius:18px; border-bottom-left-radius:4px; padding:10px 13px; font:700 17px/1.3 var(--f-t); box-shadow:0 4px 0 var(--ink); }
+  .ex-cards{ display:flex; gap:10px; justify-content:center; align-items:flex-end; flex-wrap:wrap; padding:6px 0; }
+  .ex-cards .lab{ width:100%; text-align:center; font:800 11px var(--f-b); letter-spacing:.12em; text-transform:uppercase; color:var(--mute); }
+  .pc{ width:52px; height:74px; border-radius:9px; background:#fffdf6; border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); display:flex; flex-direction:column; justify-content:space-between; padding:4px 5px; color:var(--ink); font:700 17px/1 var(--f-t); }
+  .pc.r{ color:#C6282B; }
+  .pc .s{ font-size:24px; align-self:center; }
+  .pc .b{ align-self:flex-end; } /* upright: an upside-down 6 reads as a 9 */
+  .ex-opts{ display:flex; flex-direction:column; gap:10px; }
+  .ex-opts.cardpick{ flex-direction:row; justify-content:center; gap:14px; }
+  .opt{ text-align:left; border:3px solid #3a2e25; background:#1c1511; color:var(--cream); border-radius:18px; padding:14px 16px; font:700 16px var(--f-b); box-shadow:0 4px 0 #3a2e25; }
+  .opt[aria-pressed="true"]{ border-color:var(--blue); background:rgba(61,127,217,.18); box-shadow:0 4px 0 var(--blue); }
+  .opt.ok{ border-color:var(--green); background:rgba(47,179,107,.2); box-shadow:0 4px 0 var(--green); }
+  .opt.ko{ border-color:var(--red); background:rgba(226,75,74,.18); box-shadow:0 4px 0 var(--red); }
+  .opt.card{ padding:8px; border-radius:16px; }
+  .ex-foot{ flex:none; padding:12px max(16px, env(safe-area-inset-left,0px)) max(16px, env(safe-area-inset-bottom,0px)); border-top:2px solid #241b15; display:flex; flex-direction:column; gap:10px; transition:background .2s; }
+  .ex-foot.ok{ background:#12301f; border-color:#1f6b40; } .ex-foot.ko{ background:#3a1514; border-color:#7a2625; }
+  .ex-fb{ display:flex; flex-direction:column; gap:4px; }
+  .ex-fb b{ font:700 20px var(--f-t); } .ex-foot.ok .ex-fb b{ color:#7ee0a0; } .ex-foot.ko .ex-fb b{ color:#ff8a7a; }
+  .ex-fb span{ font-weight:700; color:var(--cream); opacity:.9; }
+  .ex-foot .btn{ width:100%; }
+  .ex-foot.ok .btn{ background:var(--green); color:#fff; } .ex-foot.ko .btn{ background:var(--red); color:#fff; }
+  .ex-judge .bub.talk{ animation:talk .35s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes talk{ 0%{ transform:scale(.85); opacity:.4; } 100%{ transform:none; opacity:1; } }
+  .ex-why{ border-radius:18px; padding:12px 14px; display:flex; flex-direction:column; gap:10px; animation:up .3s ease-out both; }
+  .ex-why.ok{ background:rgba(47,179,107,.12); border:2px solid rgba(47,179,107,.5); }
+  .ex-why.ko{ background:rgba(226,75,74,.1); border:2px solid rgba(226,75,74,.5); }
+  .ex-why b{ font:700 17px var(--f-t); } .ex-why.ok b{ color:#7ee0a0; } .ex-why.ko b{ color:#ff9a8c; }
+  .ex-why p{ margin:0; font-weight:700; line-height:1.45; }
+  .ill{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .ill .it{ display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .ill .it small{ font:800 10.5px var(--f-b); color:var(--mute); text-align:center; max-width:68px; line-height:1.2; }
+  .ill .pcw{ position:relative; }
+  .ill .pc{ width:46px; height:66px; font-size:15px; } .ill .pc .s{ font-size:21px; }
+  .mk{ position:absolute; top:-8px; right:-8px; width:24px; height:24px; border-radius:50%; border:2.5px solid var(--ink); display:grid; place-items:center; font:900 13px/1 var(--f-b); font-style:normal; color:#fff; }
+  .mk.win{ background:var(--green); } .mk.x{ background:var(--red); }
+  .ill-note{ text-align:center; font:700 15px var(--f-t); color:var(--mango); font-variant-numeric:tabular-nums; }
+  .conf{ position:absolute; z-index:25; width:9px; height:13px; border-radius:2px; pointer-events:none; }
+  .conf.coin{ width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #fff3b0, #FFC93C 55%, #c98a10); border:2px solid var(--ink); }
+  .plus1{ position:absolute; z-index:26; pointer-events:none; font:700 22px var(--f-t); color:var(--mango); -webkit-text-stroke:2px var(--ink); paint-order:stroke fill; text-shadow:0 3px 0 var(--ink); white-space:nowrap; }
+  .opt{ position:relative; overflow:hidden; isolation:isolate; }
+  .opt.fill::before{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg, rgba(47,179,107,.45), rgba(126,224,160,.25)); transform-origin:left; animation:fillIn .55s cubic-bezier(.25,.8,.35,1) both; }
+  .opt.fill > *{ position:relative; }
+  @keyframes fillIn{ from{ transform:scaleX(0); } to{ transform:scaleX(1); } }
+  .ring{ position:absolute; z-index:24; border:3px solid #7ee0a0; border-radius:18px; pointer-events:none; }
+  .spark{ position:absolute; z-index:25; width:10px; height:10px; pointer-events:none; background:#bff3d2; clip-path:polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+  .spark.gold{ background:#FFE08A; width:12px; height:12px; }
+  .opt.shake{ animation:shake .45s ease-in-out; }
+  @keyframes shake{ 20%{ transform:translateX(-8px); } 40%{ transform:translateX(7px); } 60%{ transform:translateX(-5px); } 80%{ transform:translateX(3px); } }
+  .ex-prog i.glow{ animation:glow .8s ease-out; }
+  @keyframes glow{ 0%{ box-shadow:0 0 0 0 rgba(126,224,160,.9); filter:brightness(1.6); } 100%{ box-shadow:0 0 0 10px rgba(126,224,160,0); filter:none; } }
+  .ex-res{ align-items:center; text-align:center; gap:14px; justify-content:center; }
+  .ex-score{ font:700 76px/1 var(--f-t); color:var(--mango); -webkit-text-stroke:3px var(--ink); paint-order:stroke fill; text-shadow:0 6px 0 var(--ink); font-variant-numeric:tabular-nums; }
+  .ex-score small{ font-size:32px; color:var(--cream); }
+  .badge-big{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 18px; border:3px solid var(--ink); border-radius:22px; background:var(--paper); color:var(--ink); box-shadow:0 5px 0 var(--ink); }
+  .badge-big b{ font:700 20px var(--f-t); }
+  .medal{ width:70px; height:70px; }
+  .ex-lv{ display:grid; grid-template-columns:1fr auto; gap:6px 14px; width:100%; max-width:320px; font-weight:700; text-align:left; }
+  .ex-lv em{ font-style:normal; font-variant-numeric:tabular-nums; color:var(--mango); }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+
+<div class="stage">
+<div class="phone" id="phone">
+  <canvas class="rain" id="rain" aria-hidden="true"></canvas>
+
+  <!-- title -->
+  <section class="scene title" id="scTitle">
+    <span class="adult">Réservé aux adultes · 18+</span>
+    <h1 class="logo"><small>FAP FAP</small>ZÉRO<br>À HÉROS</h1>
+    <p>Ta petite sœur est à l'hôpital. Il faut un million. Tu as 3 500. La seule porte, c'est la Maison.</p>
+    <button class="btn" id="goStart">Commencer</button>
+    <button class="btn ghost" id="goResume" hidden>Reprendre ma partie</button>
+    <button class="btn ghost" id="goDev" style="font-size:14px;padding:9px 16px">🛠 Mode développeur</button>
+    <button class="btn ghost" id="goBackTitle" hidden style="font-size:14px;padding:9px 16px">‹ Retour au jeu</button>
+  </section>
+
+  <!-- hero -->
+  <section class="scene hero" id="scHero" hidden>
+    <h2>Qui es-tu ?</h2>
+    <div class="field"><label class="lab" for="heroName">Ton nom</label><input id="heroName" maxlength="16" autocomplete="off" value="Junior"></div>
+    <div class="lab">Tu es</div>
+    <div class="seg" id="heroSex"><button type="button" data-f="0" aria-pressed="true">Un homme</button><button type="button" data-f="1" aria-pressed="false">Une femme</button></div>
+    <div class="lab">Ton visage (ou ta photo de profil dans le jeu)</div>
+    <div class="faces" id="heroFaces"></div>
+    <button class="btn" id="goHero">C'est moi</button>
+  </section>
+
+  <!-- the call -->
+  <section class="scene call" id="scCall" hidden>
+    <div class="sb" style="width:100%;padding:0"><span class="when" id="callWhen"></span><span class="sp"></span></div>
+    <div class="who" id="callWho">Hôpital Central</div>
+    <div class="sub" id="callSub">Appel entrant…</div>
+    <div class="ava ringing" id="callAva"><svg viewBox="0 0 24 24" width="54" height="54" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><rect x="6" y="6" width="12" height="12" rx="2"/></svg></div>
+    <div class="lines" id="callLines" aria-live="polite"></div>
+    <div class="acts" id="callActs">
+      <button class="round" style="background:var(--red)" id="callNo" aria-label="Refuser"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M5 15c4-4 10-4 14 0l-2 3-3-1v-3c-1.3-.4-2.7-.4-4 0v3l-3 1z" fill="#fff"/></svg></button>
+      <button class="round" style="background:var(--green)" id="callYes" aria-label="Décrocher"><svg viewBox="0 0 24 24" fill="#fff"><path d="M6.6 3.5l2.6-.4 1.5 4.4-2 1.6a12 12 0 0 0 6.2 6.2l1.6-2 4.4 1.5-.4 2.6c-.2 1-1 1.6-2 1.6C10.6 19 5 13.4 5 5.5c0-1 .6-1.8 1.6-2z"/></svg></button>
+    </div>
+  </section>
+
+  <!-- home -->
+  <section class="scene home" id="scHome" hidden>
+    <div class="sb"><span class="when" id="sbWhen"></span><span id="sbTime"></span><span class="sp"></span><span>MTN</span><span class="bat"><i></i></span></div>
+    <div class="home-body">
+      <div class="w w-million">
+        <div class="k">Pour Princesse · objectif 1 000 000</div>
+        <div class="big" id="wCash"></div>
+        <div class="bar"><i id="wCashBar"></i></div>
+      </div>
+      <div class="w-row">
+        <button class="w w-sis" id="wSis" style="text-align:left"><span class="pic" id="wSisPic"></span><span class="mini"><span>Santé <b id="wHp"></b></span><span class="bar h"><i id="wHpBar"></i></span><span>Relation <b id="wRel"></b></span><span class="bar r"><i id="wRelBar"></i></span></span></button>
+        <button class="w w-next" id="wNext" style="text-align:left"><span class="k">Prochain rendez-vous</span><b id="wNextT"></b><small id="wNextW"></small></button>
+      </div>
+      <div class="apps" id="apps"></div>
+    </div>
+    <div class="dock">
+      <button class="menu" id="goMenu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="btn" id="goNext"></button>
+    </div>
+  </section>
+
+  <!-- an app -->
+  <section class="scene page" id="scApp" hidden>
+    <div class="sb"><span class="when" id="sbWhen2"></span><span id="sbTime2"></span><span class="sp"></span><span>MTN</span><span class="bat"><i></i></span></div>
+    <div class="ph"><button class="back" id="appBack" aria-label="Retour">‹</button><span class="pic" id="appPic" hidden></span><h2 id="appTitle"></h2></div>
+    <div class="pb" id="appBody"></div>
+    <div class="choices" id="appChoices" hidden></div>
+    <form class="free" id="appFree" hidden autocomplete="off"><input id="freeIn" maxlength="200" placeholder="Écris ce que tu veux…" aria-label="Ton message"><button class="btn" id="freeGo" aria-label="Envoyer">➤</button></form>
+  </section>
+
+  <!-- the entrance exam -->
+  <section class="scene exam" id="scExam" hidden>
+    <div class="ex-top"><button class="ex-x" id="exQuit" aria-label="Quitter l’examen">×</button><div class="ex-prog" role="progressbar" aria-label="Progression"><i id="exBar"></i></div><span class="ex-streak" id="exStreak" aria-label="Série de bonnes réponses"></span></div>
+    <div class="ex-body" id="exBody"></div>
+    <div class="ex-foot" id="exFoot"><div class="ex-fb" id="exFb" hidden><b></b><span></span></div><button class="btn" id="exGo" disabled>Valider</button></div>
+  </section>
+
+  <button class="notif" id="notif" type="button"><span class="pic" id="nPic"></span><span class="t"><b id="nWho"></b><small id="nTxt"></small></span></button>
+  <div class="sheet" id="sheet" hidden><div class="in" id="sheetIn"></div></div>
+  <div class="blackout" id="black"></div>
+</div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const $ = s=> document.querySelector(s);
+const esc = s=> String(s).replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n=> Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
+const wait = ms=> new Promise(r=> setTimeout(r, ms));
+const MOMENTS = ['Matin', 'Après-midi', 'Soir', 'Nuit'];
+const CLOCK = ['08:15', '14:30', '19:05', '23:20'];
+const GOAL = 1000000;
+
+// ===================== the faces (drawn, ink outline, the game's style) =====================
+const SKIN = ['#8D5524', '#6B3E1E', '#A0612F', '#5A3215', '#C68642', '#7B4A26'];
+function face(o){
+  // a painted portrait (art/zh, drawn in the atelier) wins over the simple drawn face
+  if(o.img) return '<img class="ph-me" src="'+o.img+'" alt="" style="background:'+(o.bg||'#3a2c22')+'">';
+  const s = o.skin, ink = '#1B120C';
+  let hair = '', extra = '';
+  if(o.hair==='short') hair = '<path d="M22 44c0-20 14-30 28-30s28 10 28 30c-6-8-14-12-28-12s-22 4-28 12z" fill="'+ink+'"/>';
+  if(o.hair==='afro') hair = '<circle cx="50" cy="34" r="30" fill="'+ink+'"/>';
+  if(o.hair==='bald') extra = '<path d="M30 70c6 10 34 10 40 0-2 12-10 18-20 18s-18-6-20-18z" fill="'+ink+'"/>';
+  if(o.hair==='braids') hair = '<path d="M20 50c0-24 14-36 30-36s30 12 30 36v34h-8V52H28v32h-8z" fill="'+ink+'"/>';
+  if(o.hair==='bun') hair = '<circle cx="50" cy="12" r="11" fill="'+ink+'"/><path d="M22 46c0-20 12-30 28-30s28 10 28 30c-8-9-17-13-28-13s-20 4-28 13z" fill="'+ink+'"/>';
+  if(o.hair==='wrap') hair = '<path d="M18 44c0-22 14-32 32-32s32 10 32 32c-8-6-20-9-32-9s-24 3-32 9z" fill="'+(o.wrap||'#F06BA8')+'" stroke="'+ink+'" stroke-width="3"/><path d="M62 14c10-6 22 0 20 10-6-6-12-6-20-4z" fill="'+(o.wrap||'#F06BA8')+'" stroke="'+ink+'" stroke-width="3"/>';
+  const lips = o.fem ? '#B83333' : ink;
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">'+
+    '<circle cx="50" cy="50" r="48" fill="'+(o.bg||'#3a2c22')+'"/>'+
+    (o.hair==='braids' || o.hair==='afro' ? hair : '')+
+    '<ellipse cx="22" cy="54" rx="6" ry="8" fill="'+s+'" stroke="'+ink+'" stroke-width="3"/><ellipse cx="78" cy="54" rx="6" ry="8" fill="'+s+'" stroke="'+ink+'" stroke-width="3"/>'+
+    '<path d="M50 20c17 0 28 13 28 33 0 20-12 34-28 34S22 73 22 53c0-20 11-33 28-33z" fill="'+s+'" stroke="'+ink+'" stroke-width="3.2"/>'+
+    (o.hair==='braids' || o.hair==='afro' ? '' : hair)+ extra +
+    '<ellipse cx="39" cy="52" rx="5.5" ry="6.5" fill="#fff" stroke="'+ink+'" stroke-width="2.2"/><ellipse cx="61" cy="52" rx="5.5" ry="6.5" fill="#fff" stroke="'+ink+'" stroke-width="2.2"/>'+
+    '<circle cx="40" cy="53.5" r="3" fill="'+ink+'"/><circle cx="62" cy="53.5" r="3" fill="'+ink+'"/>'+
+    '<path d="M33 43q6-4 11-1M56 42q5-3 11 1" stroke="'+ink+'" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+
+    '<path d="M48 58q2 6 4 0" stroke="'+ink+'" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+    (o.sad ? '<path d="M41 73q9-6 18 0" stroke="'+lips+'" stroke-width="3" fill="none" stroke-linecap="round"/>'
+           : '<path d="M40 69q10 9 20 0" stroke="'+lips+'" stroke-width="3" fill="'+(o.fem ? '#7a1f1f' : 'none')+'" stroke-linecap="round"/>')+
+    '</svg>';
+}
+const HEROES = [
+  {skin:SKIN[0], hair:'short', bg:'#3D7FD9'}, {skin:SKIN[1], hair:'afro', bg:'#2FB36B'}, {skin:SKIN[3], hair:'bald', bg:'#E8A817'},
+  {skin:SKIN[2], hair:'braids', fem:1, bg:'#F06BA8'}, {skin:SKIN[4], hair:'bun', fem:1, bg:'#E24B4A'}, {skin:SKIN[5], hair:'wrap', wrap:'#FFC93C', fem:1, bg:'#1d1940'},
+];
+// the portraits are the painted faces of the atelier (Nkolbisson cast for the roles it already covers), RALL keeps his game portrait
+const ZH_ART = 'art/zh/';
+const PEOPLE = {
+  princesse:{name:'Princesse', role:'Ta petite sœur, 19 ans', face:{img:ZH_ART+'princesse.webp', bg:'#FFE1EC'}},
+  rall:{name:'RALL', role:'Ton ami d’enfance · Mvog-Ada', face:{img:'art/rall.jpg', bg:'#FFC93C'}},
+  christelle:{name:'Christelle', role:'La voisine, toujours là', face:{img:ZH_ART+'christelle.webp', bg:'#2FB36B'}},
+  mengue:{name:'Dr Mengue', role:'Médecin · Hôpital Central', face:{img:ZH_ART+'mengue.webp', bg:'#d9e6f2'}},
+  anonyme:{name:'Numéro masqué', role:'Inconnu', face:null},
+  pamela:{name:'Pamela ❤️', role:'Ta copine · inspectrice de police · fille d’Hubert Ondoua', face:{img:ZH_ART+'pamela.webp', bg:'#B83333'}},
+  yowale:{name:'Yowalé', role:'Ton copain · flambeur, toujours une blague', face:{img:ZH_ART+'yowale.webp', bg:'#3D7FD9'}},
+  grosventre:{name:'Papa Gros-Ventre', role:'Prête de l’argent. Toujours souriant.', face:{img:ZH_ART+'grosventre.webp', bg:'#8a6a2a'}},
+  clarisse:{name:'Clarisse Ebodé', role:'Trésorière de la tontine du quartier', face:{img:ZH_ART+'clarisse.webp', bg:'#3D7FD9'}},
+  bosco:{name:'Bosco Tchana', role:'Patron du bar Le Bon Coin', face:{img:ZH_ART+'bosco.webp', bg:'#2FB36B'}},
+};
+const anonFace = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2b211a"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="46" fill="#a99a86">?</text></svg>';
+const pic = id=> id==='me' ? (S.hero.av===-1 && S.hero.photo ? '<img class="ph-me" src="'+S.hero.photo+'" alt="">' : face(HEROES[Math.max(0, S.hero.av)])) : (PEOPLE[id] && PEOPLE[id].face ? face(PEOPLE[id].face) : anonFace);
+
+// ===================== the state: one save, one ledger =====================
+// Every token enters or leaves through tx(); nothing else touches the money. The same rule holds in the real game.
+const KEY = 'zero-heros-maquette-v1';
+let S = null;
+function fresh(){
+  return { v:1, started:false, hero:{name:'Junior', fem:0, av:0},
+    day:1, m:2, cash:0, ledger:[], hosp:{advance:50000, advDue:3, daily:3000, owed:0, paid:0},
+    sis:{hp:64, rel:70}, pam:{love:70, storm:30}, mem:{}, threads:{}, order:[], agenda:[], news:[], contacts:['princesse','mengue'], flags:{}, beats:{} };
+}
+// ---- the partner (Pamela, or Yowalé for a heroine): two hidden gauges and a memory of what you said ----
+const PART = ()=> S.hero.fem ? 'yowale' : 'pamela';
+const clamp = v=> Math.max(0, Math.min(100, v));
+function pam(dLove, dStorm){ S.pam.love = clamp(S.pam.love + dLove); S.pam.storm = clamp(S.pam.storm + dStorm); save(); }
+const calm = ()=> S.pam.storm < 45, hot = ()=> S.pam.storm >= 65;
+// the game remembers: a lie, a promise, an insult can come back days later
+const remember = k=>{ S.mem[k] = {d:S.day, m:S.m}; save(); };
+const knows = k=> !!S.mem[k];
+const MEM_LABEL = {told_hosp:'tu lui as dit pour l’hôpital', lie_hosp:'tu lui as menti sur l’hôpital', insult_father:'tu as insulté son père', promised_resto:'tu lui as promis un resto',
+  pam_threat:'elle t’a menacé', pam_knows:'elle sait pour ta sœur', pam_suspicious:'elle soupçonne Christelle', pam_intel:'elle t’a donné une info de police',
+  lie_evening:'tu lui as menti sur ta soirée', ghosted:'tu l’as laissé(e) en « Vu »', yo_promised:'Yowalé a promis de venir',
+  insulted:'tu l’as insultée', breakup_talk:'tu as parlé de rupture', promised_money:'tu lui as promis de l’argent', loan_gv:'tu dois de l’argent à Papa Gros-Ventre',
+  tontine:'tu es dans la tontine', match_fixed:'tu as accepté un match arrangé', pam_paid:'Pamela a payé ton inscription', member:'tu es membre de la Maison'};
+// a burst: short messages one after the other, each with its banner
+async function burst(id, lines, choices){ await say(id, lines, choices, 380); }
+
+// ---- debts: every loan is written down with its rate and its due day, and what you owe grows on its own ----
+// The moneylender: +10 % per started week, then +5 % per day of delay. A friend: 0 %. The money goes through tx() like the rest.
+function borrow(who, label, amount, rate, days){
+  S.debts = S.debts || [];
+  S.debts.push({id:who+'-'+S.day+'-'+S.m, who, label, principal:amount, paid:0, day:S.day, rate, due:S.day + days});
+  tx(+amount, label);
+}
+function owed(d){
+  const weeks = Math.floor((S.day - d.day)/7) + 1;
+  let o = d.principal * (d.rate ? Math.pow(1 + d.rate, weeks) : 1);
+  const late = Math.max(0, S.day - d.due); if(late && d.rate) o *= Math.pow(1.05, late);
+  return Math.max(0, Math.round(o - d.paid));
+}
+function repay(d){ const amt = Math.min(S.cash, owed(d)); if(amt<1) return; d.paid += amt; tx(-amt, 'Remboursement · '+PEOPLE[d.who].name); }
+const debtsLeft = ()=> (S.debts||[]).filter(d=> owed(d)>0);
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===1){ s.pam = s.pam || {love:70, storm:30}; s.mem = s.mem || {}; return s; } return null; }catch(e){ return null; } }
+// ---- inside the real game (zero-heros.html?in=game, in a frame of the game): the game keeps the chips — one single
+// currency — and plays the tables for real. On its own (the mockup), the phone keeps its own purse and simulates the tables.
+const HOST = (window.parent!==window && /[?&]in=game\b/.test(location.search)) ? window.parent : null;
+const hostPost = m=>{ try{ HOST.postMessage(m, location.origin); }catch(e){} };
+const PLAYS = {};
+let hostChips = null, hostPhoto = '', hostName = '';
+function tx(amount, label){
+  S.cash += amount;
+  S.ledger.unshift({a:amount, l:label, d:S.day, m:S.m});
+  if(HOST) hostPost({zh:'tx', amount:Math.round(amount)});
+  save(); renderHome();
+}
+// a table: in the game, a real game of Fap Fap; alone, a simulated result. Resolves {won}.
+function playTable(spec){
+  return new Promise(done=>{
+    if(HOST){ const id = 'p'+Date.now(); PLAYS[id] = done; closeSheet(); hostPost(Object.assign({zh:'play', id}, spec)); return; }
+    sheet('<h3>'+esc(spec.title)+'</h3><p style="font-weight:800">Dans le jeu, c’est une vraie partie de Fap Fap contre '+esc(spec.name)+'. Ici, dans la maquette, on simule le résultat.</p>'+
+      '<div class="btns"><button class="btn green" id="simW">Simuler une victoire</button><button class="btn red" id="simL">Simuler une défaite</button></div>');
+    $('#simW').onclick = ()=> done({won:true}); $('#simL').onclick = ()=> done({won:false});
+  });
+}
+if(HOST) addEventListener('message', e=>{
+  if(e.source!==HOST || e.origin!==location.origin) return;
+  const d = e.data || {};
+  if(d.zh==='chips'){ hostChips = d.chips; if(d.photo) hostPhoto = d.photo; if(d.name) hostName = d.name; if(S && S.started){ S.cash = d.chips; save(); renderHome(); if(curApp && curApp.id==='banque') openApp('banque'); } }
+  if(d.zh==='result' && PLAYS[d.id]){ const f = PLAYS[d.id]; delete PLAYS[d.id]; f(d); }
+});
+const G = ()=> S.hero.fem ? {gf:'grande sœur', frere:'ma sœur', mola:'ma go', il:'elle', e:'e'} : {gf:'grand frère', frere:'mon frère', mola:'mola', il:'il', e:''};
+function nudge(k, d){ S.sis[k] = Math.max(0, Math.min(100, S.sis[k] + d)); save(); renderHome(); }
+
+// ===================== messages =====================
+function thread(id){ if(!S.threads[id]) S.threads[id] = {msgs:[], unread:0, choices:null}; return S.threads[id]; }
+function bump(id){ S.order = [id].concat(S.order.filter(x=> x!==id)); if(!S.contacts.includes(id)) S.contacts.push(id); }
+let openThread = null, busy = 0;
+// RUN changes when the developer mode jumps to another scene: messages still on their way from the old scene stop there
+let RUN = 0;
+// someone writes: typing dots when the thread is open, a banner when it isn't
+async function say(id, lines, choices, gap){
+  const run = RUN, th = thread(id); bump(id);
+  for(const txt of lines){
+    if(openThread===id){ showTyping(true); await wait(gap ? gap + txt.length*8 : 700 + Math.min(1600, txt.length*22)); showTyping(false); }
+    else await wait(gap || 900);
+    if(run!==RUN) return;
+    th.msgs.push({who:'them', txt, d:S.day, m:S.m});
+    if(openThread!==id){ th.unread++; banner(id, txt); }
+    save(); if(openThread===id) drawThread(); renderHome();
+  }
+  if(choices){ th.choices = choices; save(); if(openThread===id) drawThread(); }
+}
+function banner(id, txt){
+  const n = $('#notif');
+  $('#nPic').innerHTML = pic(id); $('#nWho').textContent = PEOPLE[id] ? PEOPLE[id].name : id; $('#nTxt').textContent = txt;
+  n.onclick = ()=>{ n.classList.remove('on'); openApp('thread', id); };
+  n.classList.add('on'); buzz();
+  clearTimeout(banner.t); banner.t = setTimeout(()=> n.classList.remove('on'), 3600);
+}
+// what each answer does: messages first, then the effects
+const ANSWERS = {
+  sis1a: async()=>{ nudge('rel', +6); await say('princesse', ['Promis promis ?', 'Je te crois. Mais ne fais pas de bêtises hein. Je te connais.']); beat('rall1'); },
+  sis1b: async()=>{ nudge('rel', +2); await say('princesse', ['Ok… Bonne nuit '+G().gf+'.']); beat('rall1'); },
+  rall1a: async()=>{ S.flags.honest = 1; await say('rall', ['3 500 ?! Eish.', 'Ok écoute. Demain soir, veillée chez moi à Mvog-Ada, 19 h. Petites mises, 200 à 1 000. On va faire monter ton argent.', 'Après on verra pour la Maison. Mais là-bas on ne rigole pas.']); meet(); },
+  rall1b: async()=>{ S.flags.proud = 1; await say('rall', ['Ahan, '+G().mola+' fait le dur 😂', 'Je te connais, tu n’as rien. Demain soir, veillée chez moi, Mvog-Ada, 19 h. On commence petit.', 'Et la Maison, ce n’est pas pour les orgueilleux.']); meet(); },
+  sis2a: async()=>{ S.flags.promisedMorning = 1; nudge('rel', +3); await say('princesse', ['Vrai ?? Apporte-moi un yaourt stp 🙏']); },
+  sis2b: async()=>{ nudge('rel', -4); await say('princesse', ['Ok.', 'La veillée de RALL hein… Fais attention.']); },
+  chr1a: async()=>{ S.flags.chrWarm = 1; await say('christelle', ['Tu sais où me trouver. Même tard. 🙂']); },
+  chr1b: async()=>{ await say('christelle', ['Comme tu veux. Courage quand même.']); },
+
+  // ---- Pamela, night 1: her colleague saw you at the hospital ----
+  p1true: async()=>{ pam(+6, -8); remember('told_hosp');
+    await say('pamela', ['Oh… 😟', 'Ta sœur encore.', 'Bon. Courage mon bébé. Tu m’appelles demain hein. Pas après-demain. DEMAIN.']); },
+  p1vague: async()=>{ pam(-2, +10);
+    await say('pamela', ['« Rien de grave » à l’hôpital à 22 h ?', 'Tu m’expliqueras. Et j’ai intérêt à aimer l’explication.']); },
+  p1lie: async()=>{ pam(0, -2); remember('lie_hosp');
+    await say('pamela', ['Mmm.', 'Ok. Dors bien alors 😘']); },
+  // ---- day 2 morning: the nails ----
+  p2full: async()=>{ tx(-15000, 'Pamela · ongles'); pam(+12, -15);
+    await burst('pamela', ['TU ES LE MEILLEUR 😍😍', 'Je t’aime. Vraiment.', 'Ne dis rien à ta sœur 🤫']); },
+  p2part: async()=>{ tx(-2000, 'Pamela · « pour les ongles »'); pam(+2, +5);
+    await say('pamela', calm() ? ['2 000… 😒', 'Bon. C’est le geste qui compte, il paraît.'] : ['2 000 ?!', 'Je te demande des ongles, pas un beignet.', 'Garde ton argent la prochaine fois.']); },
+  p2no: async()=>{
+    if(knows('told_hosp') || knows('pam_knows')){ pam(-2, +6); await say('pamela', ['Toujours l’hôpital…', 'Je comprends. Mais j’aime pas.']); }
+    else { pam(-6, +14); await burst('pamela', ['L’hôpital ??', 'Quel hôpital ?', 'Tu me caches quoi encore ?']); } },
+  p2dad: async()=>{ pam(-15, +30); remember('insult_father'); S.flags.raidRisk = 1;
+    await burst('pamela', ['PARDON ??', 'Tu oses parler de mon père ?', 'Tu sais quoi. Va jouer tes cartes ce soir.', 'Et prie pour qu’il n’y ait pas de contrôle à Mvog-Ada.']); },
+  p2flirt: async()=>{
+    if(calm()){ pam(+6, -6); await say('pamela', ['Arrête… 🙈', 'Ok tu as gagné. Mais tu m’invites au resto samedi. Je choisis le resto.']); remember('promised_resto'); }
+    else { pam(-4, +12); await say('pamela', ['Ne fais pas le malin.', '15 000. Ou rien.']); } },
+  // ---- day 2 afternoon: the lie comes back ----
+  p3sorry: async()=>{ pam(-5, +5); await say('pamela', ['Tu « ne voulais pas m’inquiéter ».', 'La prochaine fois, inquiète-moi. Mais ne me mens pas.']); },
+  p3angry: async()=>{ pam(-10, +25); remember('pam_threat'); await burst('pamela', ['Je surveille ce qui m’appartient.', 'Et toi, tu m’appartiens.', 'N’oublie jamais ça.']); },
+  p3truth: async()=>{ pam(+4, -10); remember('pam_knows'); await say('pamela', ['Honte de quoi, idiot… 🥺', 'Envoie-moi le nom du service.', 'Je ne promets rien. Mais envoie.']); },
+  // ---- day 2 afternoon: jealous, or tender ----
+  p4come: async()=>{ pam(+4, -10); await say('pamela', ['Bien.', 'J’aime quand tu n’as rien à cacher. 😌']); },
+  p4no: async()=>{ pam(-3, +12); remember('pam_suspicious'); await burst('pamela', ['Ah bon ?', 'Pourquoi je ne dois pas venir ?', 'Elle sera là, c’est ça ? Ta Christelle ?']); },
+  p4thanks: async()=>{ pam(+6, -5); remember('pam_intel'); await say('pamela', ['Je ne t’ai rien dit hein. 🤐']); },
+  p4risk: async()=>{ pam(+10, -8); remember('pam_intel'); await say('pamela', ['Pour toi, oui.', 'Pas pour ton RALL.']); },
+  p4veillee: async()=>{ pam(-2, +6); await say('pamela', ['Encore les cartes…', 'Un jour tu choisiras : moi ou tes cartes.']); },
+  p4rest: async()=>{ pam(0, -2); remember('lie_evening'); await say('pamela', ['Repose-toi mon cœur 😘']); },
+
+  // ---- day 3: everyone has money for you, each with his own price ----
+  gv1yes: async()=>{ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv');
+    await say('grosventre', ['Voilà mon fils 😊', '10 000. Tu me rends 11 000 dans 7 jours.', 'Et si tu es en retard… on discute. 😊']); },
+  gv1no: async()=>{ await say('grosventre', ['Comme tu veux 😊', 'Mon numéro ne change pas. Les besoins, eux, reviennent toujours.']); },
+  rall2yes: async()=>{ borrow('rall', 'Prêt de RALL', 1000, 0, 5); await say('rall', ['Tiens. Et ne dis pas merci, rends seulement 😂']); },
+  rall2no: async()=>{ await say('rall', ['Fier hein 😂 ok.']); },
+  cla1join: async()=>{ S.tontine = {daily:1000, turn:10, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
+    await say('clarisse', ['Bienvenue dans la famille 🙏', 'Tu es au tour 10 sur 10. Tu toucheras 10 000 le jour '+(S.day+10)+'.', 'Si tu veux passer au tour 2, la place coûte 2 000. C’est comme ça pour tout le monde.']); },
+  cla1buy: async()=>{ tx(-2000, 'Tontine · achat du tour 2'); S.tontine = {daily:1000, turn:2, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
+    await say('clarisse', ['Tour 2, c’est noté ✍️', 'Tu touches 10 000 le jour '+(S.day+2)+'. Ne rate aucune cotisation.', 'Ceux qui ratent… perdent leur tour.']); },
+  cla1no: async()=>{ await say('clarisse', ['Dommage.', 'La tontine, c’est la seule banque qui ne demande pas de papiers.']); },
+  bos1yes: async()=>{ tx(3000, 'Bosco · « service rendu »'); remember('match_fixed');
+    S.agenda.push({id:'bosco', day:S.day+1, m:2, place:'bosco', title:'Perdre contre Mado (arrangé)', who:'bosco', stake:'Bosco t’a déjà payé 3 000'}); save();
+    await say('bosco', ['Bien. Demain soir, au bar, tu perds contre Mado. Proprement.', 'Personne ne doit savoir. Personne.']); },
+  bos1no: async()=>{ await say('bosco', ['Tu es honnête. C’est rare.', 'Et ça ne paie pas.']); },
+  pam5yes: async()=>{ tx(5000, 'Pamela · « pour ton inscription »'); pam(+6, -4); remember('pam_paid');
+    await say('pamela', ['Voilà. 5 000.', 'Maintenant tu me dois quelque chose.', 'Et c’est moi qui choisirai quoi. 😏']); },
+  pam5no: async()=>{ pam(-3, +8); await say('pamela', ['Trop fier pour mon argent ?', 'Ok. Mais ne viens pas pleurer.']); },
+
+  // ---- Yowalé (for a heroine): never there, always a joke, helps anyway ----
+  y1need: async()=>{ pam(+4, 0); remember('yo_promised'); await say('yowale', ['Aïe… 😕', 'Je passe demain. Promis promis.']); },
+  y1free: async()=>{ pam(+1, 0); await say('yowale', ['😂😂 tu me connais trop', 'Bisous ma belle, courage pour ta sœur']); },
+  y2hurt: async()=>{ pam(-3, 0); await say('yowale', ['Je sais… 🙏', 'Tu me pardonnes ? Regarde ma tête de chien battu 🐶']); },
+  y2thanks: async()=>{ pam(+3, 0); await say('yowale', ['C’est rien ma belle 😘', 'Bon je file, les gars m’attendent']); },
+};
+// ===================== free conversation, with no AI and nothing to pay =====================
+// The game reads what you mean (an excuse, a lie, love, money, an insult, Christelle…), then the character answers with
+// written lines chosen by that meaning AND her mood of the moment (calm / tense / storm). Each meaning moves her gauges,
+// some leave a memory, and what she already knows about you colours the answer.
+// lower case, no accents, no apostrophes ("j ai", "j'ai" and "jai" read the same), stretched letters shortened ("bebeee")
+const norm = s=> String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/['’`]/g, ' ')
+  .replace(/\b([jtlmdcsnq]) (?=[aeiouyh])/g, '$1').replace(/(.)\1{2,}/g, '$1$1').replace(/\s+/g, ' ').trim();
+// [meaning, pattern on the normalised text]; the first that matches wins, so the strongest meanings come first
+const INTENTS = [
+  ['breakup', /(je te quitte|c'?est fini|on arrete|on se separe|je romps|laisse[- ]moi tranquille|fous[- ]moi la paix|je ne veux plus de toi|adieu)/],
+  ['insult', /(folle|tare|hysterique|idiote|conne|connasse|salope|pute|malade mentale|chiante|garce|sorciere|imbecile|gourde|betise de femme|ferme[- ]la|ta gueule)/],
+  ['christelle', /christelle/],
+  ['father', /(ton pere|ton papa|hubert|ton vieux|ton daron)/],
+  ['sorry', /(pardon|desole|excuse|pardonne|j'?ai eu tort|je regrette|c'?est ma faute)/],
+  ['deny', /(je (te |vous )?(le )?jure|c'?est pas vrai|c'?est faux|je n'?ai rien fait|j'?ai rien fait|tu (te )?trompes|tu exageres|je mens pas|je ne mens pas|n'?importe quoi)/],
+  ['noMoney', /(pas d'?argent|pas (un )?rond|fauche|a sec|je n'?ai rien|j'?ai rien|pas de dos|pas les moyens|pas de sous|pas de do\b|je suis cass)/],
+  ['offer', /(je (t'?|te )?(envoie|envoies|paie|paye|offre|donne)|je vais (t'?|te )?(envoyer|payer|offrir|donner)|cadeau|resto|restaurant|je t'?invite|on sort)/],
+  ['night', /(viens (chez moi|dormir)|dormir (chez|ensemble)|passer la nuit|cette nuit ensemble|j'?ai envie de toi|calin|bisous partout)/],
+  ['sister', /(princesse|ma soeur|ma petite soeur|hopital|operation|docteur|malade|clinique|soins)/],
+  ['love', /(je t'?aime|t'?aime|tu me manques|mon coeur|ma cherie|cherie|ma reine|bebe|mon amour|❤|😘|🥰|😍|💕)/],
+  ['greet', /^(salut|bonjour|bonsoir|cc|coucou|yo|hello|on dit quoi|on dit comment|mola|ma go|wesh|wey|weh|eh)\b/],
+  ['compliment', /(belle|jolie|magnifique|canon|sexy|bombe|mignonne|ravissante|trop bien)/],
+  ['where', /(tu es ou|t'?es ou|tu fais quoi|tu es avec qui|t'?es avec qui|ou es[- ]tu)/],
+  ['cards', /\b(cartes?|fap|rall|veillee|la maison|tournoi|jouer|partie|tables?|mises?)\b/],
+  ['police', /(police|boulot|travail|bureau|commissariat|collegue|enquete|rafle|controle)/],
+  ['joke', /(😂|🤣|mdr|lol|haha|hihi|je rigole|je blague|c'?est une blague)/],
+  ['ok', /^(ok|okay|d'?accord|dac|oui|non|mmm+|hmm+|si|ouais|bon)\W*$/],
+];
+const detect = text=>{ const t = norm(text);
+  // a short "salut bébé" is a hello, not a declaration
+  if(t.split(' ').length<=3 && INTENTS.find(x=> x[0]==='greet')[1].test(t)) return 'greet';
+  for(const [k, re] of INTENTS) if(re.test(t)) return k; return /\?\s*$/.test(t) ? 'question' : 'unknown'; };
+// Pamela: [calm, tense, storm] lines, the effect [love, storm], a memory, and lines that only come when she knows something
+const CHAT = {
+  pamela:{
+    greet:{c:['Coucou toi 😘', 'Enfin tu te souviens que j’existe 🙄😘'], t:['Ah. C’est maintenant tu dis bonjour ?'], s:['Bonjour ? BONJOUR ?', 'Après ce que tu as fait ?'], fx:[+1, -2]},
+    love:{c:['Moi aussi je t’aime… même si tu m’énerves 🥺', 'Répète. Je veux l’entendre encore.', 'Tu es à moi, tu sais ça ? 😌'], t:['Tu dis ça pour que je me calme.', 'Les mots c’est gratuit, bébé.'], s:['Garde tes « je t’aime ».', 'Tu crois que ça répare tout ?'], fx:[+5, -6]},
+    sorry:{c:['C’est bon… mais ne recommence pas.', 'Pardonné. Pour cette fois.'], t:['Pardon, pardon… tu dis toujours pardon.', 'J’accepte. Mais je note.'], s:['« Pardon » ?? Ça ne suffit pas.', 'Viens me le dire en face, si tu es un homme.'], fx:[+3, -8]},
+    deny:{c:['Je te crois… pour l’instant.'], t:['Hmm. Tu jures sur quoi ?', 'Tu jures trop. Ça sent le mensonge.'], s:['Je suis policière. Je sais quand on me ment.', 'Ne jure pas. Je vais vérifier, et tu le sais.'], fx:[0, +4],
+      know:{lie_hosp:'Comme hier, quand tu étais « chez toi » ? 📷'}},
+    noMoney:{c:['Toujours fauché… Heureusement que tu es beau 😏', 'Ok. Mais samedi c’est toi qui invites.'], t:['Tu n’as jamais rien pour moi.', 'Pour RALL tu trouves, pour moi rien.'], s:['Pas d’argent pour moi, mais pour les cartes oui ?', 'Un homme qui ne peut pas payer des ongles…'], fx:[-3, +6],
+      know:{pam_knows:'Je sais, l’hôpital… Garde ton argent pour elle.'}},
+    offer:{c:['Vrai ?? 😍 Tu es le meilleur.', 'Je savais que tu m’aimais.'], t:['On verra. Tes promesses…'], s:['Tu crois que l’argent achète tout ?', '… Bon. Envoie quand même.'], fx:[+4, -4], mem:'promised_money'},
+    insult:{c:['Pardon ?? Répète ça.', 'Ok. Je note. Tu vas le regretter.'], t:['Folle ? Tu vas voir ce que c’est, une folle.'], s:['Continue. Continue seulement.', 'Je vais te montrer.', 'Ce soir, fais attention à ta table.'], fx:[-10, +20], mem:'insulted'},
+    sister:{c:['Comment elle va, ta sœur ?', 'Dis-lui que je pense à elle. Même si elle me déteste.'], t:['Toujours ta sœur…', 'Je sais qu’elle est malade. Mais moi aussi j’existe.'], s:['Ne te cache pas derrière ta sœur.', 'Ta sœur, ta sœur… Et moi ?'], fx:[+1, +2],
+      know:{lie_hosp:'Ah, maintenant tu me parles de l’hôpital ? Hier tu étais « chez toi ».', pam_knows:'J’ai appelé le service. Elle est entre de bonnes mains. Ne dis rien.'}},
+    christelle:{c:['Christelle ? Pourquoi tu me parles d’elle ?'], t:['Encore Christelle. Elle te plaît, c’est ça ?'], s:['Si je la vois encore près de toi, je l’embarque.', 'Un contrôle, c’est vite arrivé.'], fx:[-4, +12], mem:'pam_suspicious'},
+    father:{c:['Laisse mon père en dehors de ça.', 'Mon père ne t’aime pas. Ne lui donne pas raison.'], t:['Pourquoi tu parles de mon père ?'], s:['Encore mon père ? Tu cherches vraiment les problèmes.'], fx:[-2, +8],
+      know:{insult_father:'Tu as déjà insulté mon père une fois. Une fois de trop.'}},
+    where:{c:['Au bureau. Je pense à toi 😘'], t:['Pourquoi ? Tu veux savoir si je te surveille ? 😏'], s:['Là où il faut pour te voir.'], fx:[0, 0]},
+    cards:{c:['Fais attention à toi à la Maison. Mon père y est souvent.'], t:['Toujours les cartes.'], s:['Un jour tu choisiras : moi ou tes cartes.'], fx:[-1, +4]},
+    police:{c:['Le boulot ça va. Les voyous sont fatigants. Toi aussi parfois 😂'], t:['Ne parle pas de mon travail.'], s:['Tu veux que je te montre comment je travaille ?'], fx:[0, 0]},
+    breakup:{c:['Quoi ?? Tu plaisantes ?', 'Ne dis jamais ça. Jamais.'], t:['Tu me quittes ? Toi ? Tu ne vas pas tenir deux jours.'], s:['Vas-y. Quitte-moi.', 'Et regarde ce qui arrive à tes tables.', 'Personne ne me quitte.'], fx:[-15, +25], mem:'breakup_talk'},
+    joke:{c:['😂😂 Idiot.', 'Tu es bête… mais je t’aime bien.'], t:['Tu trouves ça drôle ?'], s:['Ça ne me fait pas rire.'], fx:[+2, -3]},
+    compliment:{c:['Je sais 😌', 'Arrête… 🙈 Non, continue.'], t:['Flatteur.'], s:['Belle et énervée. Fais attention.'], fx:[+3, -4]},
+    night:{c:['Viens. La porte sera ouverte… 😏'], t:['Après ce que tu m’as fait ? On verra.'], s:['Tu rêves.'], fx:[+3, -3]},
+    ok:{c:['Juste « ok » ? 🙄', 'Tu es bavard aujourd’hui hein.'], t:['« Ok ». C’est tout ?'], s:['Encore un « ok » et je viens te voir.'], fx:[-1, +3]},
+    question:{c:['Pourquoi tu demandes ? 😏', 'Tu poses trop de questions, toi.'], t:['C’est un interrogatoire ? C’est mon métier, pas le tien.'], s:['Les questions, c’est moi qui les pose.'], fx:[0, +1]},
+    unknown:{c:['Hein ? 😂 Explique-toi.', 'Tu dis n’importe quoi, toi.', 'Mmm. Et ?'], t:['Je ne comprends rien à ce que tu racontes.', 'Parle bien.'], s:['Tu te moques de moi ?', '…'], fx:[0, +2]},
+  },
+  yowale:{
+    greet:{c:['Ma belle 😂 on dit quoi ?'], t:['Yo ma belle'], s:['Yo'], fx:[+1, 0]},
+    love:{c:['Moi aussi ma belle 😘 bon je file hein'], t:['Ahan, toi aussi ? 😂'], s:['Ok ok 😅'], fx:[+3, 0]},
+    sorry:{c:['Laisse ça, on est ensemble 😂'], t:['C’est rien'], s:['Ok'], fx:[+2, 0]},
+    noMoney:{c:['Moi aussi je suis à sec 😂 on est deux'], t:['Ahan, toi aussi ?'], s:['Wahala'], fx:[0, 0]},
+    sister:{c:['Courage pour Princesse 🙏 je passe demain promis'], t:['Elle va mieux ?'], s:['Courage'], fx:[+1, 0], mem:'yo_promised'},
+    breakup:{c:['😂 tu dis ça chaque semaine'], t:['Ok… tu es sérieuse ?'], s:['Ok. Comme tu veux.'], fx:[-5, 0]},
+    joke:{c:['😂😂😂 tu es folle', 'Ahahah toi là'], t:['😂'], s:['lol'], fx:[+2, 0]},
+    unknown:{c:['😂 tu parles chinois ma belle ?', 'Mdr ok', 'Je t’écris après, le match commence'], t:['Hein ?'], s:['…'], fx:[0, 0]},
+  },
+};
+async function freeSend(pid, text){
+  text = String(text||'').replace(/\s+/g, ' ').trim().slice(0, 200); if(!text) return;
+  const th = thread(pid);
+  // writing freely while she waits for an answer counts as your answer
+  if(th.choices){ th.choices = null; th.pressed = 0; clearTimeout(drawThread.t); }
+  th.msgs.push({who:'me', txt:text, d:S.day, m:S.m}); save(); drawThread(); renderHome();
+  const book = CHAT[pid], k = detect(text), e = book[k] || book.unknown;
+  const mood = S.pam.storm>=65 ? 's' : S.pam.storm>=45 ? 't' : 'c';
+  // what she already knows about you comes first, once per memory
+  const known = e.know ? Object.keys(e.know).find(m=> knows(m) && !(S.flags.said||{})[pid+k+m]) : null;
+  let lines;
+  if(known){ S.flags.said = S.flags.said || {}; S.flags.said[pid+k+known] = 1; lines = [e.know[known]]; }
+  else {
+    const pool = e[mood] || e.c; S.flags.turn = S.flags.turn || {};
+    const i = S.flags.turn[pid+k+mood] = ((S.flags.turn[pid+k+mood] ?? -1) + 1) % pool.length;
+    // in a storm she fires two or three lines in a row
+    lines = mood==='s' && pool.length>1 ? pool.slice(i).concat(pool.slice(0, i)).slice(0, 2) : [pool[i]];
+  }
+  pam(e.fx[0], e.fx[1]); if(e.mem) remember(e.mem);
+  await wait(500);
+  if(mood==='s') await burst(pid, lines); else await say(pid, lines);
+}
+function meet(){
+  if(!S.agenda.some(a=> a.id==='veillee')){
+    S.agenda.push({id:'veillee', day:2, m:2, place:'mvogada', title:'Veillée chez RALL', who:'rall', stake:'Mises de 200 à 1 000'});
+    S.contacts.includes('rall') || S.contacts.push('rall'); save(); renderHome();
+  }
+}
+
+// ===================== the story beats of the two days =====================
+async function beat(name){ const run = RUN; try{ await beatBody(name, run); }catch(e){ if(e!=='stale') throw e; } }
+async function beatBody(name, run){
+  // inside a scene, every pause ends the scene if the developer mode has jumped elsewhere meanwhile
+  const wait = ms=> new Promise((ok, stop)=> setTimeout(()=> run===RUN ? ok() : stop('stale'), ms));
+  if(S.beats[name]) return; S.beats[name] = 1; save();
+  const g = G();
+  if(name==='sis1'){ await wait(1200); await say('princesse', [g.gf.charAt(0).toUpperCase()+g.gf.slice(1)+'… le docteur t’a appelé ?', 'Il a dit un million. UN MILLION.', 'On n’a même pas 10 000 à la maison 😭'],
+    [{t:'Je vais trouver l’argent. Promis.', a:'sis1a'}, {t:'Dors. On gère ça demain.', a:'sis1b'}]); }
+  if(name==='rall1'){ await wait(2500); await say('rall', ['Wêh '+g.mola+', j’ai appris pour Princesse. Courage.', 'Écoute bien. Il y a une Maison à Nkolbisson. On joue le Fap Fap là-bas, les mises sont lourdes. Des gars sortent avec 100 000 en une nuit.', 'L’entrée c’est 5 000. Toi tu as combien ?'],
+    [{t:'3 500. C’est tout ce que j’ai.', a:'rall1a'}, {t:'Assez. Dis-moi où c’est.', a:'rall1b'}]); }
+  if(name==='day2am'){
+    S.news.unshift({d:2, t:'Rafle au bar Le Bon Coin cette nuit : 12 personnes embarquées, dont deux joueurs de cartes.'});
+    S.news.unshift({d:2, t:'Hôpital Central : les familles se plaignent des factures « surprise ».'});
+    await wait(1200); await say('princesse', ['Bonjour… la nuit était longue.', 'Tu passes me voir aujourd’hui ?'], [{t:'J’arrive ce matin.', a:'sis2a'}, {t:'Ce soir, après la veillée.', a:'sis2b'}]);
+    await wait(2500); await say('christelle', ['J’ai appris pour ta sœur…', 'Si tu as besoin de quoi que ce soit, je suis là. Vraiment.'], [{t:'Merci Christelle. Ça me touche.', a:'chr1a'}, {t:'Ça va aller, merci.', a:'chr1b'}]);
+    await wait(2500); beat('part2');
+  }
+  if(name==='day2pm'){ await wait(1500); await say('anonyme', ['Ce soir, ne garde pas tout ton argent sur toi.']); await wait(2000); beat('part3'); }
+
+  // ---- day 3: the registration costs 5 000 and you don't have it; the offers come one after the other ----
+  if(name==='day3money'){
+    await wait(1500);
+    await burst('grosventre', ['Bonjour mon fils 😊', 'On m’a dit que tu as besoin d’un petit coup de main pour la Maison.', '10 000 tout de suite. Tu rembourses quand tu peux. 😊'],
+      [{t:'Accepter les 10 000', a:'gv1yes'}, {t:'Non merci.', a:'gv1no'}]);
+    await wait(2500);
+    await say('rall', ['Alors l’examen ? 🔥', 'Il te manque combien pour l’inscription ?', 'Je peux te passer 1 000. Pas plus, je suis serré aussi.'],
+      [{t:'Je prends, merci frère.', a:'rall2yes'}, {t:'Garde, je vais me débrouiller.', a:'rall2no'}]);
+    await wait(2500);
+    await say('clarisse', ['Bonjour, c’est Clarisse, la trésorière de la tontine du quartier 🙏', 'Christelle m’a parlé de toi.', '1 000 par jour, et à ton tour tu touches 10 000 d’un coup.'],
+      [{t:'J’entre dans la tontine.', a:'cla1join'}, {t:'J’entre, et j’achète le tour 2 (2 000).', a:'cla1buy', need:2000}, {t:'Non merci.', a:'cla1no'}]);
+    await wait(2500);
+    await say('bosco', ['C’est Bosco, du Bon Coin.', 'RALL dit que tu joues bien.', 'Demain soir, partie contre Mado au bar. Tu perds, je te donne 3 000. Tout de suite.'],
+      [{t:'D’accord.', a:'bos1yes'}, {t:'Je ne perds pas exprès.', a:'bos1no'}]);
+    await wait(2500);
+    if(PART()==='pamela'){
+      if(S.pam.love>=60 && S.pam.storm<55) await say('pamela', ['Tu as réussi ton examen ? 😍', 'Mon bébé est intelligent.', 'Il te manque combien pour l’inscription ? Je peux payer.'],
+        [{t:'Oui, si tu peux… 5 000.', a:'pam5yes'}, {t:'Non, je ne veux pas de ton argent.', a:'pam5no'}]);
+      else await say('pamela', ['J’ai appris pour ton examen.', 'Tu as besoin d’argent ? Demande à tes cartes.']);
+    } else await say('yowale', ['Bravo ma belle 😂🔥', 'Je t’aurais bien prêté mais je suis à sec']);
+  }
+
+  // ---- the partner ----
+  if(name==='part1'){
+    if(PART()==='pamela'){ await wait(800);
+      await burst('pamela', ['Bébé ?', 'Tu es où ?', 'Pourquoi tu ne réponds pas 😤', 'Mon collègue dit qu’il t’a vu à l’Hôpital Central ce soir.', 'C’est quoi ça ?'],
+        [{t:'Princesse a fait un malaise. Je suis avec elle.', a:'p1true'}, {t:'Rien de grave, je t’expliquerai.', a:'p1vague'}, {t:'Ton collègue se trompe. Je suis chez moi.', a:'p1lie'}]); }
+    else { await wait(800);
+      await say('yowale', ['Wêh ma belle 😂', 'J’ai vu ton statut, c’est grave ?', 'Je suis au match avec les gars, je t’appelle après promis'],
+        [{t:'Princesse est à l’hôpital. J’ai besoin de toi.', a:'y1need'}, {t:'Profite de ton match.', a:'y1free'}]); }
+  }
+  if(name==='part2'){
+    if(PART()==='pamela'){
+      await burst('pamela', hot() ? ['Tu ne m’as pas appelée.', 'Bref.', 'Mes ongles sont cassés.', 'L’institut c’est 15 000. Tu m’envoies.'] : ['Bébé 💅', 'Mes ongles sont cassés, regarde 😭', 'Mon institut c’est 15 000. Tu m’envoies ? 🥺'],
+        [{t:'Envoyer 15 000', a:'p2full', need:15000}, {t:'Envoyer 2 000, c’est tout ce que je peux', a:'p2part', need:2000}, {t:'Je n’ai rien, tout va à l’hôpital.', a:'p2no'}, {t:'Tu es déjà belle sans ça 😘', a:'p2flirt'}, {t:'Demande à ton père, il est riche.', a:'p2dad'}]); }
+    else if(knows('yo_promised')){
+      await say('yowale', ['Ma belle désolé 🙏', 'J’ai dormi chez un pote, mon téléphone était mort', 'Mais regarde, je t’ai envoyé 3 000 pour Princesse 😘']);
+      tx(3000, 'Yowalé · « pour Princesse »');
+      await say('yowale', ['Tu me pardonnes ?'], [{t:'Tu avais promis, Yowalé.', a:'y2hurt'}, {t:'Merci. Ça aide vraiment.', a:'y2thanks'}]); }
+    else await say('yowale', ['Bien dormi ma belle ? 😂', 'Moi non, on a fêté la victoire jusqu’à 5 h']);
+  }
+  if(name==='part3' && PART()==='pamela'){
+    if(knows('lie_hosp')){
+      await burst('pamela', ['« Chez toi » hier soir hein ?', '📷 Toi. Couloir de l’Hôpital Central. 22 h 14.', 'Caméra de surveillance.', 'Je suis POLICIÈRE, bébé.'],
+        [{t:'Pardon, je ne voulais pas t’inquiéter.', a:'p3sorry'}, {t:'Tu me fais surveiller maintenant ?!', a:'p3angry'}, {t:'Tu as raison. Ma sœur est malade, j’avais honte.', a:'p3truth'}]); }
+    else if(hot()){
+      await burst('pamela', ['Ce soir je passe à la veillée de RALL.', 'Je veux voir avec qui tu joues.', 'Et si je vois Christelle là-bas…'],
+        [{t:'Viens, je n’ai rien à cacher.', a:'p4come'}, {t:'Ne viens pas, s’il te plaît.', a:'p4no'}]); }
+    else if(S.pam.love>=70){
+      await say('pamela', ['Je pensais à toi 🥺', 'Désolée pour ce matin. Je suis comme ça, tu sais.', 'Info du bureau, ne le répète pas : contrôle prévu à Mvog-Ada cette semaine. Ce soir, garde le minimum sur toi.'],
+        [{t:'Merci bébé, tu me sauves.', a:'p4thanks'}, {t:'Tu fais ça pour moi ? Tu risques ton poste.', a:'p4risk'}]); }
+    else await say('pamela', ['Tu fais quoi ce soir ?'], [{t:'Veillée chez RALL.', a:'p4veillee'}, {t:'Rien, je me repose.', a:'p4rest'}]);
+  }
+}
+
+// ===================== screens =====================
+function show(id){ document.querySelectorAll('.scene').forEach(s=> s.hidden = s.id!==id); }
+function renderClock(){
+  const w = 'Jour '+S.day+' · '+MOMENTS[S.m];
+  ['#sbWhen', '#sbWhen2'].forEach(s=> $(s).textContent = w); ['#sbTime', '#sbTime2'].forEach(s=> $(s).textContent = CLOCK[S.m]);
+}
+const APPS = [
+  {id:'messages', name:'Messages', bg:'#2FB36B', svg:'<path d="M4 5h16v11H9l-5 4z" fill="#fff" stroke="#1B120C" stroke-width="2.4" stroke-linejoin="round"/>'},
+  {id:'banque', name:'Banque', bg:'#FFC93C', svg:'<rect x="3" y="6" width="18" height="12" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><circle cx="12" cy="12" r="3" fill="#FFC93C" stroke="#1B120C" stroke-width="2"/>'},
+  {id:'sante', name:'Santé', bg:'#E24B4A', svg:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z" fill="#fff" stroke="#1B120C" stroke-width="2.4" stroke-linejoin="round"/>'},
+  {id:'agenda', name:'Agenda', bg:'#3D7FD9', svg:'<rect x="4" y="5" width="16" height="15" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M4 10h16M9 3v4M15 3v4" stroke="#1B120C" stroke-width="2.4" stroke-linecap="round"/>'},
+  {id:'carte', name:'Carte', bg:'#9BD07A', svg:'<path d="M12 21s-6-6.5-6-11a6 6 0 0 1 12 0c0 4.5-6 11-6 11z" fill="#E24B4A" stroke="#1B120C" stroke-width="2.4"/><circle cx="12" cy="10" r="2.2" fill="#fff" stroke="#1B120C" stroke-width="1.8"/>'},
+  {id:'affaires', name:'Affaires', bg:'#F06BA8', svg:'<rect x="4" y="8" width="16" height="11" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#1B120C" stroke-width="2.4" fill="none"/>'},
+  {id:'contacts', name:'Contacts', bg:'#FFF6DC', svg:'<circle cx="12" cy="9" r="4" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6" fill="#fff" stroke="#1B120C" stroke-width="2.4" stroke-linecap="round"/>'},
+  {id:'infos', name:'Infos', bg:'#1d1940', svg:'<rect x="4" y="5" width="16" height="14" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M8 9h8M8 13h8M8 16h5" stroke="#1B120C" stroke-width="2.2" stroke-linecap="round"/>'},
+];
+function badges(){
+  const unread = Object.values(S.threads).reduce((s, t)=> s + t.unread, 0);
+  const next = S.agenda.filter(a=> !a.done && (a.day>S.day || (a.day===S.day && a.m>=S.m))).length;
+  return {messages:unread, infos:S.news.filter(n=> !n.seen).length, agenda:next, sante: S.day>=S.hosp.advDue-1 && S.hosp.paid < S.hosp.advance ? 1 : 0};
+}
+function renderHome(){
+  if(!S) return;
+  renderClock();
+  $('#wCash').innerHTML = fmt(S.cash)+' <small>/ 1 000 000</small>';
+  $('#wCashBar').style.width = Math.max(0.5, S.cash/GOAL*100)+'%';
+  $('#wSisPic').innerHTML = face(PEOPLE.princesse.face);
+  $('#wHp').textContent = S.sis.hp; $('#wRel').textContent = S.sis.rel;
+  $('#wHpBar').style.width = S.sis.hp+'%'; $('#wRelBar').style.width = S.sis.rel+'%';
+  const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0];
+  $('#wNextT').textContent = nx ? nx.title : 'Rien de prévu';
+  $('#wNextW').textContent = nx ? 'Jour '+nx.day+' · '+CLOCK[nx.m] : 'Attends des nouvelles';
+  const b = badges();
+  $('#apps').innerHTML = APPS.map(a=> '<button class="app" data-app="'+a.id+'"><span class="ic" style="background:'+a.bg+'"><svg viewBox="0 0 24 24">'+a.svg+'</svg></span><span>'+a.name+'</span>'+(b[a.id] ? '<i class="badge">'+b[a.id]+'</i>' : '')+'</button>').join('');
+  $('#goNext').textContent = '⏩ '+(S.m===3 ? 'Dormir · Jour '+(S.day+1) : 'Avancer '+['à l’après-midi', 'au soir', 'à la nuit'][S.m]);
+}
+
+// ===================== the apps =====================
+let curApp = null;
+function openApp(id, arg){
+  curApp = {id, arg}; openThread = null;
+  $('#appChoices').hidden = true; $('#appFree').hidden = true; $('#appPic').hidden = true;
+  const body = $('#appBody'); body.className = 'pb'; body.innerHTML = '';
+  const T = (t)=> $('#appTitle').textContent = t;
+  if(id==='messages'){
+    T('Messages');
+    if(!S.order.length) body.innerHTML = '<div class="empty">Aucun message pour l’instant.</div>';
+    S.order.forEach(pid=>{
+      const th = thread(pid), last = th.msgs[th.msgs.length-1];
+      const r = document.createElement('button'); r.className = 'row'+(th.unread ? ' new' : '');
+      r.innerHTML = '<span class="pic">'+pic(pid)+'</span><span class="t"><b></b><small></small></span>'+(th.unread ? '<span class="n">'+th.unread+'</span>' : '');
+      r.querySelector('b').textContent = PEOPLE[pid].name; r.querySelector('small').textContent = last ? (last.who==='me' ? 'Toi : ' : '')+last.txt : '';
+      r.onclick = ()=> openApp('thread', pid); body.appendChild(r);
+    });
+  }
+  if(id==='thread'){
+    const pid = arg; openThread = pid; T(PEOPLE[pid].name);
+    $('#appPic').hidden = false; $('#appPic').innerHTML = pic(pid);
+    body.className = 'msgs'; drawThread();
+  }
+  if(id==='banque'){
+    T('Banque');
+    body.innerHTML = '<div class="solde"><small>Ton solde</small><div class="big">'+fmt(S.cash)+'</div><small>jetons, ta seule monnaie</small></div>'+
+      '<div class="card"><span class="k">Pour Princesse</span><b style="font:700 18px var(--f-t)">'+fmt(S.cash)+' sur 1 000 000</b><div class="bar"><i style="width:'+Math.max(0.5, S.cash/GOAL*100)+'%"></i></div><small style="color:#7A6650;font-weight:700">Il manque '+fmt(GOAL - S.cash)+'</small></div>'+
+      '<div id="debts"></div><div class="h3">Historique</div><div id="txs"></div>';
+    // what you owe, and the tontine: the two things that move your money without asking
+    const ds = debtsLeft(), t = S.tontine;
+    let h = '';
+    if(ds.length) h += '<div class="card"><span class="k">Tes dettes</span>'+ds.map(d=>{ const late = S.day > d.due;
+      return '<div class="bill"><span>'+esc(PEOPLE[d.who].name)+(d.rate ? ' · '+Math.round(d.rate*100)+' % par semaine' : ' · sans intérêt')+'</span><em>'+fmt(owed(d))+'</em><span class="due">'+(late ? 'EN RETARD de '+(S.day - d.due)+' jour(s) · +5 % par jour' : 'À rendre avant le jour '+d.due)+'</span></div>'+
+        '<button class="btn ghost" data-repay="'+d.id+'"'+(S.cash<1 ? ' disabled' : '')+'>Rembourser '+fmt(Math.min(S.cash, owed(d)))+'</button>'; }).join('')+'</div>';
+    if(t && t.active) h += '<div class="card"><span class="k">Tontine de Clarisse</span><div class="bill"><span>Cotisation</span><em>'+fmt(t.daily)+' / jour</em><span>Ton tour</span><em>'+t.turn+' sur '+t.of+'</em><span>Tu toucheras</span><em>'+fmt(t.daily*t.of)+'</em><span class="due">'+(t.got ? 'Touché ! Tu cotises jusqu’au jour '+(t.joined + t.of) : 'Le jour '+(t.joined + t.turn))+' · cotisations payées : '+t.paid+'</span></div></div>';
+    $('#debts').innerHTML = h;
+    $('#debts').querySelectorAll('[data-repay]').forEach(b=> b.onclick = ()=>{ const d = S.debts.find(x=> x.id===b.dataset.repay); repay(d); openApp('banque'); });
+    $('#txs').innerHTML = S.ledger.map(t=> '<div class="tx"><b>'+esc(t.l)+'</b><small>Jour '+t.d+' · '+MOMENTS[t.m]+'</small><em class="'+(t.a>=0 ? 'p' : 'n')+'">'+(t.a>=0 ? '+' : '−')+fmt(Math.abs(t.a))+'</em></div>').join('');
+  }
+  if(id==='sante'){
+    T('Santé · Princesse');
+    const h = S.hosp, left = Math.max(0, h.advance - h.paid);
+    body.innerHTML = '<div class="card" style="flex-direction:row;align-items:center;gap:12px"><span style="width:64px;height:64px;flex:none">'+face(PEOPLE.princesse.face)+'</span><div style="flex:1;display:flex;flex-direction:column;gap:8px">'+
+      '<div class="gauge"><span>Santé <b>'+S.sis.hp+' / 100</b></span><div class="bar h"><i style="width:'+S.sis.hp+'%"></i></div></div>'+
+      '<div class="gauge"><span>Votre relation <b>'+S.sis.rel+' / 100</b></span><div class="bar r"><i style="width:'+S.sis.rel+'%"></i></div></div></div></div>'+
+      '<div class="card"><span class="k">Facture · Hôpital Central</span><div class="bill">'+
+        '<span>Avance d’admission</span><em>'+fmt(left)+'</em><span class="due">À payer avant le jour '+h.advDue+(S.day>=h.advDue ? ' · AUJOURD’HUI' : '')+'</span>'+
+        '<span>Lit et repas (3 000 par jour)</span><em>'+fmt(h.owed)+'</em>'+
+        '<span>Opération</span><em>1 000 000</em></div></div>'+
+      '<div class="card"><span class="k">Service · Dr Mengue</span><span>« Son état est stable. Ce qui l’aide le plus, c’est de vous voir. »</span></div>'+
+      '<button class="btn" id="visit">Aller la voir · prend le moment</button>'+
+      '<button class="btn ghost" id="payAdv"'+(S.cash<1 || left<1 ? ' disabled' : '')+'>Verser sur l’avance ('+fmt(Math.min(S.cash, left))+')</button>';
+    $('#visit').onclick = visit; $('#payAdv').onclick = payAdvance;
+  }
+  if(id==='agenda'){
+    T('Agenda');
+    const items = S.agenda.slice().sort((a,b)=> a.day-b.day || a.m-b.m);
+    body.innerHTML = items.length ? items.map(a=> '<button class="row" data-pin="'+a.id+'"><span class="pic">'+pic(a.who)+'</span><span class="t"><b>'+esc(a.title)+'</b><small>Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(a.stake)+'</small></span></button>').join('')
+      : '<div class="empty">Ton agenda est vide. Les rendez-vous arrivent par message.</div>';
+    body.insertAdjacentHTML('beforeend', '<div class="card"><span class="k">Hôpital</span><span>Avance de 50 000 à verser avant le jour 3.</span></div>');
+    body.querySelectorAll('[data-pin]').forEach(b=> b.onclick = ()=> openApp('carte', b.dataset.pin));
+  }
+  if(id==='carte'){ T('Carte · Yaoundé'); drawMap(body, arg); }
+  if(id==='affaires'){ T('Affaires'); body.innerHTML = '<div class="empty"><b style="font:700 18px var(--f-t);color:var(--cream)">Aucune affaire</b><br>Les propositions arriveront à la Maison, après tes premières parties. Certaines rapportent. D’autres te ruinent.</div>'; }
+  if(id==='contacts'){
+    T('Contacts');
+    S.contacts.forEach(pid=>{ const p = PEOPLE[pid]; if(!p) return;
+      const r = document.createElement('button'); r.className = 'row';
+      r.innerHTML = '<span class="pic">'+pic(pid)+'</span><span class="t"><b></b><small></small></span>';
+      r.querySelector('b').textContent = p.name; r.querySelector('small').textContent = p.role;
+      r.onclick = ()=> openApp('thread', pid); body.appendChild(r); });
+  }
+  if(id==='infos'){
+    T('Infos du quartier');
+    body.innerHTML = S.news.length ? S.news.map(n=> '<div class="card"><span class="k">Jour '+n.d+'</span><span>'+esc(n.t)+'</span></div>').join('') : '<div class="empty">Rien de neuf. Le quartier dort… pour l’instant.</div>';
+    S.news.forEach(n=> n.seen = 1); save();
+  }
+  show('scApp');
+}
+function drawThread(){
+  const pid = openThread; if(!pid) return;
+  const th = thread(pid), box = $('#appBody');
+  th.unread = 0; save();
+  box.innerHTML = th.msgs.map(m=> '<div class="m'+(m.who==='me' ? ' me' : '')+'">'+esc(m.txt)+'</div>').join('') || '<div class="empty">Pas encore de message.</div>';
+  box.scrollTop = box.scrollHeight;
+  const c = $('#appChoices');
+  if(th.choices && th.choices.length){
+    c.hidden = false; c.innerHTML = '<span class="lab">Ta réponse</span>';
+    th.choices.forEach(ch=>{ const b = document.createElement('button'); b.textContent = ch.t;
+      // an answer that costs money stays visible but locked when you can't pay: you see what you can't afford
+      if(ch.need && S.cash < ch.need){ b.disabled = true; b.style.opacity = '.5'; b.textContent += ' · il te manque '+fmt(ch.need - S.cash); }
+      else b.onclick = ()=> answer(pid, ch);
+      c.appendChild(b); });
+    // Pamela hates waiting: an open conversation left unanswered for 20 s gets a jab, once per question
+    clearTimeout(drawThread.t);
+    if(pid==='pamela' && !th.pressed){ drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [hot() ? 'Tu écris la Bible ou quoi ?? 😤' : 'Tu écris un roman ? 🙄']); } }, 20000); }
+  } else c.hidden = true;
+  // the free-writing bar lives outside the redrawn part, so what you are typing is never wiped by her next message
+  $('#appFree').hidden = !CHAT[pid];
+  if(CHAT[pid] && th.choices) c.querySelector('.lab').textContent = 'Ta réponse · ou écris ce que tu veux en bas';
+}
+async function answer(pid, ch){
+  const th = thread(pid); th.choices = null; th.pressed = 0; clearTimeout(drawThread.t); th.msgs.push({who:'me', txt:ch.t, d:S.day, m:S.m}); save(); drawThread(); renderHome();
+  await ANSWERS[ch.a]();
+}
+let typingEl = null;
+function showTyping(on){
+  const box = $('#appBody');
+  if(on && !typingEl){ typingEl = document.createElement('div'); typingEl.className = 'typing'; typingEl.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(typingEl); box.scrollTop = box.scrollHeight; }
+  if(!on && typingEl){ typingEl.remove(); typingEl = null; }
+}
+
+// ===================== the map =====================
+const PLACES = {
+  mvogada:{x:250, y:250, name:'Mvog-Ada', open:true},
+  hopital:{x:150, y:150, name:'Hôpital Central', open:true},
+  maison:{x:100, y:300, name:'La Maison · Nkolbisson', open:false},
+  bosco:{x:270, y:120, name:'Bar de Bosco', open:false},
+  mokolo:{x:110, y:220, name:'Marché Mokolo', open:false},
+  bastos:{x:180, y:60, name:'Bastos', open:false},
+  santa:{x:300, y:340, name:'Santa Barbara', open:false},
+};
+function drawMap(body, focus){
+  const pins = S.agenda.filter(a=> !a.done);
+  let svg = '<svg viewBox="0 0 360 400" role="img" aria-label="Carte du quartier">'+
+    '<defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#bfae86"/><line x1="0" y1="0" x2="0" y2="8" stroke="#a8966c" stroke-width="3"/></pattern></defs>'+
+    '<rect width="360" height="400" fill="#d9c9a3"/>'+
+    '<path d="M0 190 C80 170 140 210 200 190 S320 150 360 175" stroke="#7fb6d6" stroke-width="14" fill="none"/>'+
+    '<path d="M30 0 L120 400 M0 270 L360 230 M220 0 L300 400 M0 90 L360 110" stroke="#f2e6c7" stroke-width="9" fill="none"/>'+
+    '<path d="M30 0 L120 400 M0 270 L360 230 M220 0 L300 400 M0 90 L360 110" stroke="#1B120C" stroke-width="1.5" stroke-dasharray="6 7" fill="none" opacity=".35"/>';
+  Object.entries(PLACES).forEach(([k, p0])=>{
+    const p = Object.assign({}, p0, {open: p0.open || pins.some(a=> a.place===k) || (k==='maison' && S.flags.examPassed)});
+    svg += '<g class="pin" data-place="'+k+'">'+
+      (p.open ? '' : '<circle cx="'+p.x+'" cy="'+p.y+'" r="30" fill="url(#hatch)" opacity=".8"/>')+
+      '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(p.open ? 9 : 7)+'" fill="'+(p.open ? '#FFF8E7' : '#8a7a5c')+'" stroke="#1B120C" stroke-width="3"/>'+
+      '<text x="'+p.x+'" y="'+(p.y+26)+'" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#1B120C">'+esc(p.name)+(p.open ? '' : ' 🔒')+'</text></g>';
+  });
+  pins.forEach(a=>{ const p = PLACES[a.place];
+    svg += '<g class="pin" data-ag="'+a.id+'"><path d="M'+p.x+' '+(p.y-12)+' c-12 -14 -16 -22 -16 -30 a16 16 0 0 1 32 0 c0 8 -4 16 -16 30z" fill="#E24B4A" stroke="#1B120C" stroke-width="3"/><text x="'+p.x+'" y="'+(p.y-37)+'" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="13" fill="#fff">'+CLOCK[a.m].slice(0,2)+'h</text></g>'; });
+  svg += '<g><circle cx="200" cy="300" r="10" fill="#3D7FD9" stroke="#1B120C" stroke-width="3"/><text x="200" y="322" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#1B120C">Toi</text></g></svg>';
+  body.innerHTML = '<div class="map">'+svg+'</div><div id="mapInfo"></div>';
+  body.querySelectorAll('[data-ag]').forEach(g=> g.addEventListener('click', ()=> agCard(g.dataset.ag)));
+  body.querySelectorAll('[data-place]').forEach(g=> g.addEventListener('click', ()=> placeCard(g.dataset.place)));
+  if(focus) agCard(focus); else $('#mapInfo').innerHTML = '<div class="card"><span class="k">Comment ça marche</span><span>Touche une épingle rouge pour voir un rendez-vous. Les zones hachurées s’ouvriront au fil de l’histoire.</span></div>';
+}
+function placeCard(k){
+  const p = PLACES[k];
+  $('#mapInfo').innerHTML = '<div class="card"><span class="k">'+esc(p.name)+'</span><span>'+(p.open ? (k==='hopital' ? 'Princesse est ici. Tu peux aller la voir depuis l’appli Santé.' : 'Ton quartier.') : 'Fermé pour toi. Il faudra qu’on t’y invite.')+'</span></div>';
+}
+function agCard(id){
+  const a = S.agenda.find(x=> x.id===id); if(!a) return;
+  const now = a.day===S.day && a.m===S.m, late = a.day<S.day || (a.day===S.day && a.m<S.m);
+  $('#mapInfo').innerHTML = '<div class="card"><span class="k">Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(PLACES[a.place].name)+'</span><b style="font:700 18px var(--f-t)">'+esc(a.title)+'</b><span>'+esc(a.stake)+'</span>'+
+    (now ? '<button class="btn green" id="goAg">Y aller maintenant</button>' : late ? '<span style="color:var(--red);font-weight:800">Trop tard.</span>'
+      : '<span style="color:#7A6650;font-weight:800">Pas encore l’heure : jour '+a.day+', '+MOMENTS[a.m].toLowerCase()+'.</span><button class="btn" id="skipAg">⏩ Avancer jusqu’au rendez-vous</button>')+'</div>';
+  if(now) $('#goAg').onclick = ()=> a.id==='examen' ? examStart() : a.id==='inscription' ? inscription(a) : a.id==='bosco' ? fixedMatch(a) : veillee(a);
+  if($('#skipAg')) $('#skipAg').onclick = async ()=>{ await skipTo(a.day, a.m); openApp('carte', a.id); };
+}
+
+// ===================== actions =====================
+function sheet(html){ $('#sheetIn').innerHTML = html; $('#sheet').hidden = false; }
+function closeSheet(){ $('#sheet').hidden = true; }
+$('#sheet').addEventListener('click', e=>{ if(e.target.id==='sheet') closeSheet(); });
+function visit(){
+  if(S.flags['visit'+S.day+'_'+S.m]) return;
+  S.flags['visit'+S.day+'_'+S.m] = 1;
+  const kept = S.flags.promisedMorning && S.day===2 && S.m===0;
+  const rel = kept ? 10 : 6, hp = 2;
+  nudge('rel', rel); nudge('hp', hp);
+  sheet('<h3>Au chevet de Princesse</h3><p class="story">'+(kept ? 'Elle voit le yaourt et rit malgré la perfusion. « Tu as tenu parole. »' : 'Elle dort. Tu poses ta main sur la sienne. Elle ouvre un œil : « Tu es venu'+G().e+'. »')+'</p>'+
+    '<div class="delta"><span class="up">Relation +'+rel+'</span><span class="up">Santé +'+hp+'</span><span>Le moment est passé</span></div><div class="btns"><button class="btn" id="okV">Continuer</button></div>');
+  $('#okV').onclick = ()=>{ closeSheet(); advance();
+    // she does not share you, not even with your sister
+    if(PART()==='pamela' && S.pam.storm>40){ pam(0, +5); setTimeout(()=> say('pamela', ['Encore à l’hôpital ?', 'Tu passes plus de temps avec ta sœur qu’avec moi.']), 2600); } };
+}
+function payAdvance(){
+  const left = S.hosp.advance - S.hosp.paid, amt = Math.min(S.cash, left);
+  if(amt<1) return;
+  sheet('<h3>Verser '+fmt(amt)+' ?</h3><p>Il te restera <b>'+fmt(S.cash - amt)+'</b> jetons. L’avance sera payée à '+Math.round((S.hosp.paid+amt)/S.hosp.advance*100)+' %.</p><div class="btns"><button class="btn" id="okP">Verser</button><button class="btn ghost" id="noP">Garder mon argent</button></div>');
+  $('#okP').onclick = ()=>{ S.hosp.paid += amt; tx(-amt, 'Hôpital · avance d’admission'); closeSheet(); openApp('sante'); };
+  $('#noP').onclick = closeSheet;
+}
+// the Maison: 5 000 to register, then the first real table, where the house keeps 10 % of every pot
+function inscription(a){
+  const need = 5000;
+  if(S.cash < need){
+    sheet('<h3>Inscription à la Maison</h3><p class="story">Maître Tsala tend la main sans lever les yeux : « 5 000. »</p>'+
+      '<p style="font-weight:800;color:var(--red)">Il te manque '+fmt(need - S.cash)+'.</p><p>Regarde tes messages : des gens te proposent de l’argent… à leurs conditions.</p>'+
+      '<div class="btns"><button class="btn" id="okI">Voir mes messages</button></div>');
+    $('#okI').onclick = ()=>{ closeSheet(); openApp('messages'); };
+    return;
+  }
+  const remark = knows('pam_paid') ? '<p class="story">« La fille d’Hubert paie pour toi ? Intéressant… Très intéressant. »</p>' : knows('loan_gv') ? '<p class="story">« Je reconnais ces billets. Papa Gros-Ventre. Tu commences bien, toi. »</p>' : '';
+  sheet('<h3>Inscription à la Maison</h3><p class="story">La porte en fer s’ouvre. Fumée, néons, le bruit des cartes. Maître Tsala compte tes billets un par un.</p>'+remark+
+    '<div class="delta"><span class="dn">Tu paies 5 000</span><span>Il te restera '+fmt(S.cash - need)+'</span></div>'+
+    '<div class="btns"><button class="btn" id="payI">Payer et m’inscrire</button><button class="btn ghost" id="laterI">Pas maintenant</button></div>');
+  $('#laterI').onclick = closeSheet;
+  $('#payI').onclick = ()=>{
+    tx(-need, 'Maison · inscription'); a.done = 1; remember('member'); save();
+    const stake = 2000, pot = stake*2, cut = pot*0.10;
+    if(S.cash < stake){
+      sheet('<h3>Bienvenue à la Maison</h3><p class="story">Te voilà membre. Mais avec '+fmt(S.cash)+' en poche, tu ne peux même pas t’asseoir à une table.</p><div class="btns"><button class="btn" id="okW">Retour au téléphone</button></div>');
+      $('#okW').onclick = ()=>{ closeSheet(); openApp('banque'); }; return;
+    }
+    sheet('<h3>Ta première table</h3><p class="story">Salle commune. Un inconnu en costume pose 2 000. « On joue ? »</p>'+
+      '<div class="card"><span class="k">Comment la Maison gagne</span><div class="bill"><span>Ta mise</span><em>2 000</em><span>Sa mise</span><em>2 000</em><span>Pot</span><em>'+fmt(pot)+'</em><span>La Maison prend 10 %</span><em>−'+fmt(cut)+'</em><span>Le gagnant touche</span><em>'+fmt(pot - cut)+'</em></div></div>'+
+      '<div class="btns"><button class="btn green" id="tw">Jouer · mise 2 000</button></div>');
+    $('#tw').onclick = async ()=>{
+      tx(-stake, 'Maison · mise de la première table');
+      const r = await playTable({opp:'costume', name:'L’homme en costume', stake, target:3, table:'tripot', title:'Maison · salle commune'});
+      if(r.won) tx(pot - cut, 'Maison · pot gagné (après les 10 % de la Maison)');
+      end(r.won);
+    };
+    const end = won=>{
+      const d = debtsLeft();
+      sheet('<h3>'+(won ? 'Première victoire' : 'Première défaite')+'</h3><p class="story">'+(won ? 'L’inconnu sourit. « On se reverra. » Tu remarques qu’il salue Hubert Ondoua en sortant.' : 'L’inconnu ramasse le pot sans un mot. Maître Tsala, au fond, ricane.')+'</p>'+
+        '<div class="delta"><span class="'+(won ? 'up' : 'dn')+'">'+(won ? '+'+fmt(pot - cut - stake)+' net' : '−'+fmt(stake))+'</span><span>Solde : '+fmt(S.cash)+'</span>'+(d.length ? '<span class="dn">Dettes : '+fmt(d.reduce((s, x)=> s + owed(x), 0))+'</span>' : '')+'</div>'+
+        (knows('match_fixed') ? '<p style="font-weight:800">Demain soir : le match arrangé de Bosco, au Bon Coin.</p>' : '')+
+        '<div class="btns"><button class="btn" id="okT">Voir ma banque</button></div>');
+      $('#okT').onclick = ()=>{ closeSheet(); openApp('banque'); };
+    };
+  };
+}
+// Bosco paid you to lose against Mado: keep your word (and your shame), or play to win and betray him
+function fixedMatch(a){
+  sheet('<h3>Le Bon Coin</h3><p class="story">Bosco essuie un verre et te fait un clin d’œil. En face, Mado bat les cartes. Elle ne sait rien. Mise : 1 000.</p>'+
+    '<div class="btns"><button class="btn" id="fxLose">Perdre exprès, comme promis</button><button class="btn red" id="fxWin">Jouer pour gagner (trahir Bosco)</button></div>');
+  $('#fxLose').onclick = ()=>{
+    a.done = 1; tx(-1000, 'Bon Coin · mise perdue exprès contre Mado'); remember('kept_deal'); save();
+    sheet('<h3>Tu as perdu exprès</h3><p class="story">Tu joues le 9 au lieu du 3. Mado ramasse le pot en riant. Au comptoir, Bosco lève son verre vers toi. Mado, elle, te regarde un peu trop longtemps.</p>'+
+      '<div class="delta"><span class="dn">−1 000 de mise</span><span class="up">Bosco t’avait donné 3 000</span></div><div class="btns"><button class="btn" id="okFx">Retour au téléphone</button></div>');
+    $('#okFx').onclick = closeSheet;
+    setTimeout(()=> say('bosco', ['Propre. Très propre. 😏', 'Je t’appellerai pour d’autres « services ».']), 2500);
+  };
+  $('#fxWin').onclick = async ()=>{
+    tx(-1000, 'Bon Coin · mise contre Mado');
+    const r = await playTable({opp:'mado', name:'Mado', stake:1000, target:3, table:'zinc', title:'Le Bon Coin · contre Mado'});
+    a.done = 1; remember('betrayed_bosco'); save();
+    if(r.won) tx(2000, 'Bon Coin · pot gagné contre Mado');
+    sheet('<h3>'+(r.won ? 'Tu as gagné… et trahi Bosco' : 'Tu as perdu pour de vrai')+'</h3><p class="story">'+(r.won ? 'Mado jette ses cartes. Au comptoir, Bosco pose son verre si fort qu’il se fend.' : 'Tu as voulu gagner et Mado t’a battu. Bosco sourit : pour lui, le contrat est rempli. Toi, tu as tout perdu sauf ton honneur.')+'</p>'+
+      '<div class="btns"><button class="btn" id="okFx">Retour au téléphone</button></div>');
+    $('#okFx').onclick = closeSheet;
+    if(r.won){
+      // betraying him is a debt too: 6 000 tomorrow, written down like any other
+      S.debts = S.debts || []; S.debts.push({id:'bosco-'+S.day, who:'bosco', label:'Bosco · trahison', principal:6000, paid:0, day:S.day, rate:0, due:S.day + 1}); save();
+      setTimeout(()=> burst('bosco', ['Tu crois que je suis un enfant ?', 'Mes 3 000. Demain. Plus 3 000 pour l’humiliation.', 'Sinon on va causer autrement.']), 2500);
+    }
+  };
+}
+function veillee(a){
+  // what you said to Pamela shows up here
+  const echo = PART()!=='pamela' ? '' : S.flags.raidRisk ? '<p class="story">Une voiture de police passe lentement. Tout le monde se tait. RALL te regarde : « Toi, tu as fâché quelqu’un. »</p>'
+    : (knows('pam_suspicious') || hot()) ? '<p class="story">Une Toyota noire est garée en face. Pamela. Elle te regarde jouer, sans sortir de la voiture.</p>'
+    : knows('pam_intel') ? '<p class="story">Grâce au conseil de Pamela, tu n’as pris que le strict minimum sur toi.</p>' : '';
+  sheet('<h3>La veillée chez RALL</h3><p class="story">Une bâche, deux ampoules, l’odeur du soya. RALL t’accueille : « Mise de 500. On joue au Fap Fap, premier à 3. »</p>'+echo+
+    '<div class="delta"><span>Tu risques 500</span><span>Tu peux gagner 500</span><span>Si tu perds, il te reste&nbsp;'+fmt(S.cash-500)+'</span></div>'+
+    '<div class="btns"><button class="btn green" id="w">Jouer contre RALL</button><button class="btn ghost" id="l">Pas ce soir</button></div>');
+  $('#l').onclick = closeSheet;
+  $('#w').onclick = async ()=>{
+    tx(-500, 'Veillée chez RALL · mise');
+    const r = await playTable({opp:'rall', name:'RALL', stake:500, target:3, table:'auvent', title:'La veillée chez RALL'});
+    a.done = 1; if(r.won) tx(+1000, 'Veillée chez RALL · pot gagné'); save(); end(r.won);
+  };
+  function end(won){
+    sheet('<h3>'+(won ? 'RALL rit jaune' : 'RALL ramasse')+'</h3><p class="story">'+(won ? '« Ahan ! Tu n’as pas perdu la main. Avec ça, la Maison peut t’écouter. »' : '« Eh, tu joues comme un enfant ce soir. Reviens demain, on recommence. »')+'</p>'+
+      '<p>RALL te glisse une carte : « Demain matin, la Maison, à Nkolbisson. Le jury te fait passer l’examen. Révise. »</p><div class="btns"><button class="btn" id="okE">Retour au téléphone</button></div>');
+    $('#okE').onclick = ()=>{
+      closeSheet();
+      if(!S.agenda.some(x=> x.id==='examen')){ S.agenda.push({id:'examen', day:3, m:0, place:'maison', title:'Examen d’entrée de la Maison', who:'tsala', stake:'20 questions · 14 pour entrer'}); save(); }
+      openApp('agenda');
+    };
+  }
+}
+// every morning the money moves on its own: the tontine takes its share (or pays you on your turn), debts grow and remind you
+function morning(){
+  const t = S.tontine;
+  if(t && t.active){
+    // your turn pays the whole pot… but you keep paying every day until everyone has had theirs
+    if(S.day === t.joined + t.turn && !t.got){ t.got = 1; tx(t.daily*t.of, 'Tontine · c’est ton tour !'); setTimeout(()=> say('clarisse', ['C’est ton tour 🎉', fmt(t.daily*t.of)+' versés.', 'N’oublie pas : tu cotises jusqu’au jour '+(t.joined + t.of)+', comme tout le monde 🙏']), 1800); }
+    else if(S.day > t.joined + t.of){ t.active = 0; }
+    else if(S.cash >= t.daily){ t.paid++; tx(-t.daily, 'Tontine de Clarisse · cotisation'); }
+    else { t.missed = (t.missed||0) + 1; remember('tontine_missed');
+      setTimeout(()=> say('clarisse', t.got ? ['Tu as touché ta part et tu ne cotises plus ?', 'Tout le quartier va le savoir. Ton nom, c’est tout ce que tu as.'] : ['Tu n’as pas cotisé ce matin.', 'Encore une fois et tu perds ton tour. Les règles, c’est les règles.']), 1800); }
+  }
+  debtsLeft().forEach(d=>{
+    if(!d.rate) return;
+    if(S.day === d.due - 1) setTimeout(()=> say('grosventre', ['Bonjour mon fils 😊', 'Demain, c’est le jour. '+fmt(owed(d))+'. Je sais que tu n’as pas oublié.']), 2400);
+    if(S.day > d.due) setTimeout(()=> burst('grosventre', ['Mon fils 😊', 'Tu as oublié quelque chose ?', 'Aujourd’hui c’est '+fmt(owed(d))+'.', 'Les intérêts, eux, n’oublient jamais.']), 2400);
+  });
+  save();
+}
+// the time is the player's: one moment at a time, or straight to the next meeting (nothing is skipped: each moment's news still arrives)
+async function skipTo(day, m){
+  while(S.day<day || (S.day===day && S.m<m)) await advance(true);
+}
+async function advance(fast){
+  if(busy) return; busy = 1;
+  // leaving the partner on "Vu": the moment passes without your answer, and that is an answer too
+  const pt = S.threads[PART()], ghosted = !!(pt && pt.choices);
+  if(ghosted){ pt.choices = null; pt.pressed = 0; remember('ghosted'); if(PART()==='pamela') pam(-4, +15); else pam(-1, 0); }
+  const last = S.m===3;
+  S.m = last ? 0 : S.m + 1; if(last){ S.day++; S.hosp.owed += S.hosp.daily; }
+  save();
+  const bl = $('#black'); bl.innerHTML = '<div><small>Jour '+S.day+'</small>'+MOMENTS[S.m]+'</div>'; bl.classList.add('on');
+  await wait(fast ? 650 : 1100); bl.classList.remove('on');
+  renderHome(); show('scHome'); busy = 0;
+  if(ghosted) PART()==='pamela' ? burst('pamela', hot() ? ['Vu.', 'Tu as vu et tu ne réponds pas ?', 'Ok.', 'Tu vas voir.'] : ['Vu…', 'Bon. Ok. 😒']) : say('yowale', ['lol ok 😂']);
+  if(last) morning();
+  if(S.day===1 && S.m===3) beat('part1');
+  if(S.day===2 && S.m===0) beat('day2am');
+  if(S.day===2 && S.m===1) beat('day2pm');
+}
+
+// ===================== the opening =====================
+async function opening(){
+  show('scCall'); $('#callWhen').textContent = 'Jour 1 · Soir · 21:40';
+  ring(true);
+  $('#callYes').onclick = async ()=>{
+    ring(false); $('#callAva').classList.remove('ringing'); $('#callAva').innerHTML = face(PEOPLE.mengue.face);
+    $('#callWho').textContent = 'Dr Mengue'; $('#callActs').innerHTML = '<button class="round" style="background:var(--red)" disabled aria-label="Raccrocher"><svg viewBox="0 0 24 24"><path d="M5 15c4-4 10-4 14 0l-2 3-3-1v-3c-1.3-.4-2.7-.4-4 0v3l-3 1z" fill="#fff"/></svg></button>';
+    let sec = 0; const tick = setInterval(()=> $('#callSub').textContent = '0'+Math.floor(sec/60)+':'+String(sec++%60).padStart(2,'0'), 1000);
+    const L = $('#callLines'), g = G();
+    const line = async (who, txt, cls)=>{ const d = document.createElement('div'); d.className = 'ln'+(cls ? ' '+cls : ''); d.innerHTML = (who ? '<b>'+esc(who)+'</b>' : '')+esc(txt); L.appendChild(d); while(L.children.length>4) L.firstChild.remove(); await wait(cls==='big' ? 2200 : 1300 + txt.length*28); };
+    await line('Dr Mengue', 'Bonsoir. Vous êtes bien '+(S.hero.fem ? 'la sœur' : 'le frère')+' de Princesse ?');
+    await line(S.hero.name, 'Oui… c’est moi. Qu’est-ce qui se passe ?', 'me');
+    await line('Dr Mengue', 'Votre sœur a fait un malaise ce soir. Elle est chez nous, en observation. Elle va bien pour l’instant.');
+    await line('Dr Mengue', 'Mais son cœur… Il faudra opérer. Et vite.');
+    await line(S.hero.name, 'Opérer ? Ça coûte combien, docteur ?', 'me');
+    await line('', '1 000 000 F', 'big');
+    await line('Dr Mengue', 'Il me faut une avance de 50 000 d’ici trois jours pour la garder en soins. Je suis désolé.');
+    await line('Dr Mengue', 'Passez la voir. Elle vous réclame.');
+    clearInterval(tick);
+    $('#callActs').innerHTML = '<button class="btn" id="hang">Raccrocher</button>';
+    $('#hang').onclick = ()=>{
+      // the story starts everyone at 3 500: in the game, the real chips are set to that (the player agreed on the title screen)
+      S.started = true; S.cash = 0; if(HOST) hostPost({zh:'set', chips:0}); tx(3500, 'Ce qu’il te reste'); save();
+      const bl = $('#black'); bl.innerHTML = '<div><small>Tu as</small>3 500</div>'; bl.classList.add('on');
+      setTimeout(()=>{ bl.classList.remove('on'); show('scHome'); renderHome(); beat('sis1'); }, 1700);
+    };
+  };
+  $('#callNo').onclick = ()=>{ ring(false); $('#callSub').textContent = 'Appel manqué… ça rappelle.'; setTimeout(()=>{ $('#callSub').textContent = 'Appel entrant…'; ring(true); }, 1600); };
+}
+
+// ===================== the entrance exam of the Maison (Duolingo style) =====================
+// 32 questions in 5 levels, 4 drawn from each level, so 20 a sitting, easy to sharp. 14/20 to enter.
+// Cards are written 'rank+suit': B = Black ♠, T = Tchaka ♣, C = Coubie ♥, Z = Zing ♦.
+const SUIT = {B:['♠', 'Black', 0], T:['♣', 'Tchaka', 0], C:['♥', 'Coubie', 1], Z:['♦', 'Zing', 1]};
+const cardHtml = c=>{ const r = c.slice(0, -1), s = SUIT[c.slice(-1)]; return '<span class="pc'+(s[2] ? ' r' : '')+'" aria-label="'+r+' '+s[1]+'"><span>'+r+'</span><span class="s">'+s[0]+'</span><span class="b">'+r+'</span></span>'; };
+const LEVELS = ['Les bases', 'Commande et contrôle', 'Les points', 'Les manœuvres', 'Les coups de maître'];
+const QB = [
+  // 1 · les bases
+  {l:0, q:'Combien de cartes compte un jeu de Fap Fap ?', o:['32', '31', '36', '52'], a:1, w:'Du 3 au 9 dans les 4 couleurs (28 cartes), plus trois 10 : 31.'},
+  {l:0, q:'Combien de cartes reçoit chaque joueur ?', o:['3', '4', '5', '7'], a:2, w:'5 cartes chacun.'},
+  {l:0, q:'Vrai ou faux : le 10 Black existe.', o:['Vrai', 'Faux'], a:1, w:'Pas de 10 Black. Les 10 existent seulement en Tchaka, Coubie et Zing.'},
+  {l:0, q:'Le Coubie, c’est quelle couleur ?', o:['♠ Pique', '♣ Trèfle', '♥ Cœur', '♦ Carreau'], a:2, w:'Black ♠, Tchaka ♣, Coubie ♥, Zing ♦.'},
+  {l:0, q:'Combien de points faut-il pour gagner un match ?', o:['3', '5', '7', '10'], a:1, w:'Le premier à 5 points gagne.'},
+  {l:0, q:'Quelle est la plus petite carte du jeu ?', o:['Le 2', 'Le 3', 'Le 4', 'L’as'], a:1, w:'Les cartes vont du 3 au 10. Le 3 est petit… mais c’est lui qui fait le CORA.'},
+  // 2 · commande et contrôle
+  {l:1, q:'Vrai ou faux : si tu as la couleur demandée, tu es obligé de la jouer.', o:['Vrai', 'Faux'], a:0, w:'On suit toujours la couleur quand on l’a.'},
+  {l:1, q:'Tu n’as pas la couleur demandée. Que se passe-t-il ?', o:['Tu joues ce que tu veux, mais tu ne peux pas prendre le contrôle', 'Tu passes ton tour', 'Tu prends le contrôle avec ta plus grosse carte', 'Tu perds la manche'], a:0, w:'Tu joues libre, mais une carte d’une autre couleur ne prend jamais le contrôle.'},
+  {l:1, q:'Qui a le contrôle après ce tour ?', cards:{lab:'Il commande, tu réponds', c:['7C', '9B']}, o:['Celui qui a commandé le 7 Coubie', 'Celui qui a joué le 9 Black'], a:0, w:'Le 9 Black n’est pas dans la couleur : le 7 Coubie garde le contrôle.'},
+  {l:1, q:'Qui a le contrôle après ce tour ?', cards:{lab:'Il commande, tu réponds', c:['6T', '8T']}, o:['Le 6 Tchaka', 'Le 8 Tchaka'], a:1, w:'Même couleur, plus forte : le 8 Tchaka prend le contrôle.'},
+  {l:1, q:'Qui gagne la manche ?', o:['Celui qui a gagné le plus de tours', 'Celui qui a le contrôle sur la dernière carte', 'Celui qui a la plus grosse carte en main', 'Celui qui a commandé en premier'], a:1, w:'Tout se joue sur la dernière carte : celui qui a le contrôle à ce moment gagne.'},
+  {l:1, q:'Il commande le 5 Zing. Tu veux prendre le contrôle. Quelle carte joues-tu ?', cards:{lab:'Sur la table', c:['5Z']}, pick:['8Z', '3Z', '9B'], a:0, w:'Il faut suivre en Zing, et seul le 8 Zing bat le 5. Le 9 Black ne prend jamais le contrôle.'},
+  // 3 · les points
+  {l:2, q:'Le CORA, c’est…', o:['Gagner la dernière carte avec un 3', 'Avoir trois 3 en main', 'Gagner tous les tours', 'Commander avec un 10'], a:0, w:'La dernière carte gagnante est un 3 : c’est le CORA.'},
+  {l:2, q:'Combien rapporte un CORA ?', o:['1 point', '2 points', '3 points', '5 points'], a:1, w:'Le CORA vaut 2 points.'},
+  {l:2, q:'La 33 Glacée, c’est…', o:['Les deux dernières cartes gagnantes sont des 3', 'Deux 3 dans ta main de départ', 'Un 3 sur un 3 de même couleur', 'Gagner avec le 3 Black'], a:0, w:'Deux 3 gagnants de suite à la fin : 33 Glacée, 3 points.'},
+  {l:2, q:'Vrai ou faux : trois 5 en main donnent une victoire automatique.', o:['Vrai', 'Faux'], a:1, w:'Seuls trois 3 ou trois 7 gagnent automatiquement.'},
+  {l:2, q:'Laquelle de ces mains gagne automatiquement ?', o:['3♠ 4♥ 5♦ 4♣ 5♠', '9♠ 9♥ 8♦ 7♣ 6♠', '5♥ 5♦ 5♣ 9♠ 10♦', '6♣ 7♥ 8♦ 9♠ 10♥'], a:0, w:'3 + 4 + 5 + 4 + 5 = 21. Un total de 21 ou moins gagne automatiquement.'},
+  {l:2, q:'Quand faut-il annoncer une victoire automatique ?', o:['Avant la 2ᵉ carte jouée', 'À la fin de la manche', 'Quand on veut', 'Après le premier tour'], a:0, w:'Il faut l’annoncer avant que la 2ᵉ carte soit jouée.'},
+  // 4 · les manœuvres
+  {l:3, q:'La Passe est possible quand…', o:['Il te reste 2 cartes sans la couleur demandée, de même couleur ou avec un 3', 'Tu n’aimes pas ta main', 'Tu as 5 cartes de même couleur', 'L’adversaire commande un 10'], a:0, w:'2 cartes en main, pas la couleur demandée : soit de même couleur, soit de couleurs différentes dont un 3.'},
+  {l:3, q:'Tu as fait la Passe. Au dernier tour…', o:['Tu poses tes 2 cartes d’un coup', 'Tu repioches une carte', 'Tu joues une seule carte', 'Tu perds un point'], a:0, w:'Tu ne joues pas ce tour-là, puis tu poses tes 2 cartes d’un coup.'},
+  {l:3, q:'On peut se banquer avec un total de…', o:['22, 23 ou 24 points', '21 ou moins', 'Plus de 30', 'Exactement 31'], a:0, w:'Avec 22, 23 ou 24 dans tes 5 cartes, tu peux abandonner la manche avant de jouer.'},
+  {l:3, q:'Tu te banques en duel. Ton adversaire a un 3 en main. Il marque…', o:['1 point', '2 points (CORA)', '3 points', 'Rien'], a:1, w:'Il prend la manche, et avec un 3 en main c’est un CORA : 2 points.'},
+  {l:3, q:'Vrai ou faux : le Sommeil, c’est jouer petit dans la couleur alors que tu avais la carte qui prenait le contrôle.', o:['Vrai', 'Faux'], a:0, w:'Le Sommeil : tu avais la carte qui prenait le contrôle et tu as joué petit. Une faute grave.'},
+  {l:3, q:'Ta main de départ. Que fais-tu ?', cards:{lab:'Ta main', c:['3C', '4B', '5T', '4Z', '4C']}, o:['J’annonce une victoire automatique', 'Je me banque', 'Je joue normalement', 'Je fais la Passe'], a:0, w:'3 + 4 + 5 + 4 + 4 = 20 : 21 ou moins, c’est une victoire automatique.'},
+  // 5 · les coups de maître
+  {l:4, q:'Vrai ou faux : on ne peut claquer que quand on commande.', o:['Vrai', 'Faux'], a:1, w:'On peut aussi claquer en répondant.'},
+  {l:4, q:'Claquer, c’est…', o:['Poser toutes tes cartes quand plus personne ne peut te battre', 'Taper la table pour faire peur', 'Jouer deux cartes d’un coup', 'Abandonner la manche'], a:0, w:'Quand plus personne ne peut te battre, tu poses tout : la manche est pour toi.'},
+  {l:4, q:'Il commande le 7 Coubie. Voici ta main. Que fais-tu ?', cards:{lab:'Ta main', c:['9C', '9B', '10Z']}, o:['Je claque tout de suite', 'Je joue le 9 Coubie et j’attends', 'Je joue le 10 Zing', 'Je fais la Passe'], a:0, w:'Le 9 Coubie prend le contrôle et personne ne peut battre la suite : tu claques.'},
+  {l:4, q:'Tu claques avec un 3 parmi tes cartes. Tu marques…', o:['1 point', '2 points (CORA)', '3 points', 'Rien'], a:1, w:'Un 3 dans une claque, c’est un CORA : 2 points.'},
+  {l:4, q:'Il te reste une grosse carte et un 3. Il commande une couleur que tu n’as pas. Pour la feinte, que jettes-tu ?', o:['La grosse carte, je garde le 3', 'Le 3, je garde la grosse carte', 'Je me banque', 'Je fais la Passe'], a:0, w:'Le genjutsu : tu sacrifies exprès la grosse carte et tu gardes le 3.'},
+  {l:4, q:'Feinte au dernier tour : la carte gagnante est de la couleur de ta grosse carte sacrifiée, et plus faible qu’elle. Résultat ?', o:['La manche est pour toi (+1)', 'Il gagne quand même', 'CORA pour toi', 'Égalité'], a:0, w:'Ta carte sacrifiée l’aurait battue : la manche est pour toi, 1 point.'},
+  {l:4, q:'Vrai ou faux : si la carte gagnante est plus forte que ta carte sacrifiée, la feinte marche quand même.', o:['Vrai', 'Faux'], a:1, w:'Plus forte que ta carte sacrifiée : il gagne normalement.'},
+  {l:4, q:'Qui a le contrôle après ce tour ?', cards:{lab:'Il commande, puis deux réponses', c:['9T', '10T', '3T']}, o:['Le 9 Tchaka', 'Le 10 Tchaka', 'Le 3 Tchaka'], a:1, w:'Même couleur, le 10 est le plus fort.'},
+];
+PEOPLE.tsala = {name:'Maître Tsala', role:'Le jury de la Maison', face:{img:ZH_ART+'tsala.webp', bg:'#E24B4A'}};
+// ---- Maître Tsala: annoying, mocking, funny. He talks at every question. ----
+const TS = {
+  intro:['Encore un qui croit savoir jouer parce qu’il a battu sa tante à Noël. 20 questions, 14 bonnes. Vas-y, amuse-moi.',
+    'RALL m’envoie encore quelqu’un ? La dernière fois c’était un mouton. 20 questions, il en faut 14.',
+    'Assieds-toi. Non, pas là, c’est ma chaise. 20 questions, 14 pour entrer. Je chronomètre ta honte.'],
+  lvl:['', 'Commande et contrôle. Là, les enfants pleurent.', 'Les points. Ici on compte. Tu sais compter jusqu’à 21 ?', 'Les manœuvres. Les vrais joueurs. Pas les touristes.', 'Les coups de maître. Je te préviens : même RALL a raté ici.'],
+  ask:['Facile. Même mon chat répond à ça.', 'Réfléchis. Ah pardon, j’oubliais.', 'Celle-là, tout Mvog-Ada la connaît.', 'Prends ton temps. Moi j’ai toute la nuit… non, je mens.', 'Tu transpires ? On voit d’ici.',
+    'Montre-moi que RALL ne m’a pas envoyé un mouton.', 'Si tu rates ça, je raconte à tout le quartier.', 'Allez, épate-moi. Ça n’arrivera pas, mais essaie.', 'Lis bien. Je sais que lire, c’est dur.', 'Question piège. Ou pas. Débrouille-toi.'],
+  idle:['Tu dors ? C’est le Sommeil, chapitre huit.', 'On n’a pas toute la nuit, hein.', 'Je vois tes yeux qui tournent.', 'Tic tac. Ta sœur attend.'],
+  ok:['Même une montre cassée a raison deux fois par jour.', 'Coup de chance.', 'Hmm. Tu as triché ? Montre tes mains.', 'Bon. Ça passe.', 'Ah, le petit a des neurones.', 'Correct. Ne souris pas, ça m’énerve.', 'Pas mal… pour un débutant.'],
+  streak:{3:'Trois de suite ? Tu as payé quelqu’un ?', 5:'Cinq ! Bon… tu chauffes. Je déteste ça.', 8:'Huit. Arrête, tu me fais peur.', 12:'Douze… Qui t’a appris ? Je veux son numéro.'},
+  ko:['Eish ! Même ma grand-mère aveugle sait ça.', 'Tu joues au Fap Fap ou au ludo ?', 'Je note : « mouton ».', 'Ahan ! C’est ça que RALL m’envoie ?', 'Rentre lire le manuel.', 'Ma tête… tu me donnes la migraine.', 'Hein ?! Répète ça devant ta mère.'],
+  ko2:['Deux d’affilée. Tu es venu pour moi ou pour l’argent ?', 'Encore ?! Je vais appeler ta sœur.', 'Continue comme ça, je t’offre un ballon pour jouer dehors.'],
+};
+const rnd = a=> a[Math.floor(Math.random()*a.length)];
+let EX = null;
+const pickRand = (a, n)=> a.slice().sort(()=> Math.random() - .5).slice(0, n);
+
+// ---- the cards: a card is 'rank+suit' ----
+const DECK = []; ['B','T','C','Z'].forEach(s=>{ for(let r = 3; r <= 9; r++) DECK.push(r+s); if(s!=='B') DECK.push('10'+s); });
+const rk = c=> +c.slice(0, -1), su = c=> c.slice(-1);
+const cname = c=> rk(c)+' '+SUIT[su(c)][1];
+const draw = (n, not)=> pickRand(DECK.filter(c=> !(not||[]).includes(c)), n);
+const total = h=> h.reduce((s, c)=> s + rk(c), 0);
+function autoWin(h){
+  const by = {}; h.forEach(c=> by[rk(c)] = (by[rk(c)]||0) + 1);
+  if(total(h)<=21) return 'le total fait '+total(h)+', 21 ou moins';
+  if(by[3]>=3) return 'trois 3';
+  if(by[7]>=3) return 'trois 7';
+  if(h.every(c=> su(c)===su(h[0]))) return '5 cartes de la même couleur';
+  if(Object.values(by).some(n=> n>=4)) return 'la même valeur dans les 4 couleurs';
+  return '';
+}
+const sumText = h=> h.map(rk).join(' + ')+' = '+total(h);
+
+// ---- generated questions: always new cards, so a second sitting is never the same ----
+const GEN = {
+  suit:()=>{ const s = rnd(['B','T','C','Z']), byName = Math.random()<.5;
+    const names = ['B','T','C','Z'];
+    return byName ? {l:0, q:'Le symbole '+SUIT[s][0]+', c’est quelle couleur au Fap Fap ?', o:names.map(x=> SUIT[x][1]), a:names.indexOf(s), w:'Black ♠, Tchaka ♣, Coubie ♥, Zing ♦. Retiens-le une fois pour toutes.', ill:{c:names.map(x=> '9'+x), m:names.map(x=> x===s ? 'win' : ''), cap:names.map(x=> SUIT[x][1])}}
+      : {l:0, q:'Le '+SUIT[s][1]+', c’est quel symbole ?', o:names.map(x=> SUIT[x][0]), a:names.indexOf(s), w:'Black ♠, Tchaka ♣, Coubie ♥, Zing ♦.', ill:{c:names.map(x=> '9'+x), m:names.map(x=> x===s ? 'win' : ''), cap:names.map(x=> SUIT[x][1])}}; },
+  exists:()=>{ const fake = Math.random()<.5, c = fake ? rnd(['10B', '2C', '2Z', '11T', '2B']) : rnd(DECK);
+    const label = fake ? (c==='10B' ? '10 Black' : c.slice(0, -1)+' '+SUIT[c.slice(-1)][1]) : cname(c);
+    return {l:0, q:'Cette carte existe-t-elle au Fap Fap : le '+label+' ?', o:['Oui', 'Non'], a:fake ? 1 : 0,
+      w:fake ? (c==='10B' ? 'Il n’y a pas de 10 Black. Les 10 existent seulement en Tchaka, Coubie et Zing.' : 'Les cartes vont du 3 au 9 dans les 4 couleurs, plus le 10 en Tchaka, Coubie et Zing.') : 'Oui : du 3 au 9 dans les 4 couleurs, plus trois 10.'}; },
+  control:()=>{ const led = rnd(DECK); let rep;
+    if(Math.random()<.55){ rep = rnd(DECK.filter(c=> su(c)===su(led) && c!==led)); }
+    else { const off = DECK.filter(c=> su(c)!==su(led)), big = off.filter(c=> rk(c)>rk(led)); rep = rnd(big.length ? big : off); }
+    const same = su(rep)===su(led), a = same && rk(rep)>rk(led) ? 1 : 0;
+    return {l:1, q:'Il commande le '+cname(led)+'. Tu réponds le '+cname(rep)+'. Qui a le contrôle maintenant ?', cards:{lab:'Il commande, tu réponds', c:[led, rep]}, o:['Lui, avec le '+cname(led), 'Toi, avec le '+cname(rep)], a,
+      w: !same ? 'Le '+cname(rep)+' n’est pas en '+SUIT[su(led)][1]+' : même plus gros, il ne prend jamais le contrôle.' : a ? 'Même couleur et plus fort : le '+cname(rep)+' prend le contrôle.' : 'Même couleur, mais plus petit : il garde le contrôle.',
+      ill:{c:[led, rep], m: a ? ['', 'win'] : ['win', same ? '' : 'x'], cap:['il commande', same ? (a ? 'plus fort' : 'plus petit') : 'pas la couleur']}}; },
+  pick:()=>{ const s = rnd(['T','C','Z']), r = 4 + Math.floor(Math.random()*4), led = r+s;
+    const hi = rnd(DECK.filter(c=> su(c)===s && rk(c)>r)), lo = rnd(DECK.filter(c=> su(c)===s && rk(c)<r)), off = rnd(DECK.filter(c=> su(c)!==s && rk(c)>=9));
+    return {l:1, q:'Il commande le '+cname(led)+'. Tu veux prendre le contrôle. Quelle carte joues-tu ?', cards:{lab:'Sur la table', c:[led]}, pick:[hi, lo, off], a:0,
+      w:'Il faut suivre en '+SUIT[s][1]+' et battre le '+r+' : seul le '+cname(hi)+' le fait. Le '+cname(off)+' n’est pas dans la couleur.',
+      ill:{c:[led, hi, lo, off], m:['', 'win', '', 'x'], cap:['sur la table', 'le bon', 'trop petit', 'pas la couleur']}}; },
+  auto:()=>{ const want = Math.random()<.5; let h, why, n = 0;
+    do{ h = draw(5); why = autoWin(h); n++; } while(((!!why)!==want) && n<400);
+    if(want && !why){ h = ['3B', '4C', '5Z', '4T', '3T']; why = autoWin(h); }
+    return {l:2, q:'Ta main de départ. Gagne-t-elle automatiquement ?', cards:{lab:'Ta main', c:h}, o:['Oui', 'Non'], a:why ? 0 : 1,
+      w: why ? 'Oui : '+why+'. Il faut l’annoncer avant la 2ᵉ carte jouée.' : 'Non. Total : '+sumText(h)+', plus de 21, et pas de trois 3, trois 7, 4 symboles ni 5 cartes de même couleur.',
+      ill:{c:h, m:h.map(()=> ''), cap:h.map(()=> ''), note:sumText(h)}}; },
+  points:()=>{ const last3 = Math.random()<.6, prev3 = last3 && Math.random()<.45;
+    const last = last3 ? rnd(['3T', '3C', '3Z', '3B']) : rnd(DECK.filter(c=> rk(c)>3)), prev = prev3 ? rnd(['3T', '3C', '3Z', '3B'].filter(c=> c!==last)) : rnd(DECK.filter(c=> rk(c)>3 && c!==last));
+    const pts = last3 ? (prev3 ? 3 : 2) : 1;
+    return {l:2, keep:1, q:'Fin de manche. L’avant-dernière carte gagnante : le '+cname(prev)+'. La dernière : le '+cname(last)+'. Combien de points ?', cards:{lab:'Les deux dernières cartes gagnantes', c:[prev, last]}, o:['1 point', '2 points', '3 points'], a:pts-1,
+      w: pts===3 ? 'Deux 3 gagnants à la fin : 33 Glacée, 3 points.' : pts===2 ? 'La dernière carte gagnante est un 3 : CORA, 2 points.' : 'La dernière carte gagnante n’est pas un 3 : 1 point.',
+      ill:{c:[prev, last], m:[prev3 ? 'win' : '', last3 ? 'win' : ''], cap:['avant-dernière', 'dernière']}}; },
+  bank:()=>{ const want = Math.random()<.5; let h, n = 0;
+    do{ h = draw(5); n++; } while((([22, 23, 24].includes(total(h)))!==want || autoWin(h)) && n<600);
+    const ok = [22, 23, 24].includes(total(h));
+    return {l:3, q:'Ta main de départ, avant de jouer. Peux-tu te banquer ?', cards:{lab:'Ta main', c:h}, o:['Oui', 'Non'], a:ok ? 0 : 1,
+      w:(ok ? 'Oui : ' : 'Non : ')+sumText(h)+'. On se banque seulement avec 22, 23 ou 24.', ill:{c:h, m:h.map(()=> ''), cap:h.map(()=> ''), note:sumText(h)}}; },
+  passe:()=>{ const led = rnd(['T', 'C', 'Z', 'B']); const pool = DECK.filter(c=> su(c)!==led); const h = pickRand(pool, 2);
+    const ok = su(h[0])===su(h[1]) || h.some(c=> rk(c)===3);
+    return {l:3, q:'Il te reste ces 2 cartes. Il commande en '+SUIT[led][1]+' et tu n’en as pas. Peux-tu faire la Passe ?', cards:{lab:'Tes 2 cartes', c:h}, o:['Oui', 'Non'], a:ok ? 0 : 1,
+      w: ok ? (su(h[0])===su(h[1]) ? 'Oui : deux cartes de la même couleur.' : 'Oui : deux couleurs différentes, mais avec un 3.') : 'Non : deux couleurs différentes et pas de 3.',
+      ill:{c:h, m:h.map(c=> rk(c)===3 ? 'win' : ''), cap:h.map(c=> rk(c)===3 ? 'un 3' : SUIT[su(c)][1])}}; },
+  genjutsu:()=>{ const big = rnd(DECK.filter(c=> rk(c)>=8)), sameSuit = Math.random()<.7, lower = Math.random()<.6;
+    let win = sameSuit ? rnd(DECK.filter(c=> su(c)===su(big) && (lower ? rk(c)<rk(big) : rk(c)>rk(big)))) : null;
+    if(!win) win = rnd(DECK.filter(c=> su(c)!==su(big)));
+    const you = su(win)===su(big) && rk(win)<rk(big);
+    return {l:4, q:'Feinte : tu as sacrifié le '+cname(big)+' et gardé ton 3. Au dernier tour, la carte qui gagne est le '+cname(win)+'. Qui gagne la manche ?', cards:{lab:'Ta carte sacrifiée, puis la carte gagnante', c:[big, win]}, o:['Toi, grâce à la feinte', 'Lui'], a:you ? 0 : 1,
+      w: you ? 'Même couleur que ta carte sacrifiée et plus faible : ton '+cname(big)+' l’aurait battue. Genjutsu, +1.' : su(win)!==su(big) ? 'Pas la couleur de ta carte sacrifiée : la feinte ne marche pas.' : 'Plus forte que ta carte sacrifiée : il gagne normalement.',
+      ill:{c:[big, win], m: you ? ['win', 'x'] : ['x', 'win'], cap:['sacrifiée', 'gagnante']}}; },
+};
+const GEN_BY_LVL = [['suit', 'exists'], ['control', 'pick'], ['auto', 'points'], ['bank', 'passe'], ['genjutsu']];
+// illustrations for the written questions (found by the start of their text)
+const ILL = [
+  ['Qui a le contrôle après ce tour ?', null],
+  ['Le CORA, c’est', {c:['3C', '9B'], m:['win', 'x'], cap:['ta dernière carte', 'pas la couleur'], note:'Ton 3 gagne la dernière carte : CORA, 2 points.'}],
+  ['La 33 Glacée', {c:['3T', '3C'], m:['win', 'win'], cap:['avant-dernière', 'dernière'], note:'Deux 3 gagnants de suite : 3 points.'}],
+  ['Laquelle de ces mains', {c:['3B', '4C', '5Z', '4T', '5B'], m:['', '', '', '', ''], cap:['', '', '', '', ''], note:'3 + 4 + 5 + 4 + 5 = 21'}],
+  ['Vrai ou faux : le Sommeil', {c:['6C', '4C', '9C'], m:['', 'x', 'win'], cap:['il commande', 'tu joues ça…', '…tu avais ça']}],
+  ['Il commande le 7 Coubie', {c:['7C', '9C', '9B', '10Z'], m:['', 'win', 'win', 'win'], cap:['il commande', 'contrôle', 'imbattable', 'imbattable']}],
+  ['Il te reste une grosse carte et un 3', {c:['10Z', '3T'], m:['x', 'win'], cap:['tu la jettes', 'tu la gardes']}],
+  ['La Passe est possible', {c:['8B', '3C'], m:['', 'win'], cap:['autre couleur', 'un 3']}],
+];
+function fixedIll(q){
+  if(q.cards && /contrôle après ce tour/.test(q.q)){ const c = q.cards.c, s = su(c[0]); let w = 0; c.forEach((x, i)=>{ if(su(x)===s && rk(x)>rk(c[w])) w = i; }); return {c, m:c.map((x, i)=> i===w ? 'win' : su(x)!==s ? 'x' : ''), cap:c.map((x, i)=> i===0 ? 'commande' : su(x)!==s ? 'pas la couleur' : '')}; }
+  const f = ILL.find(([t, v])=> v && q.q.startsWith(t)); return f ? f[1] : null;
+}
+const illHtml = ill=> '<div class="ill">'+ill.c.map((c, i)=> '<span class="it"><span class="pcw">'+cardHtml(c)+(ill.m[i]==='win' ? '<i class="mk win">✓</i>' : ill.m[i]==='x' ? '<i class="mk x">✕</i>' : '')+'</span>'+(ill.cap[i] ? '<small>'+esc(ill.cap[i])+'</small>' : '')+'</span>').join('')+'</div>'+(ill.note ? '<div class="ill-note">'+esc(ill.note)+'</div>' : '');
+// the written questions already seen on this phone come back last
+const SEEN_KEY = 'zero-heros-exam-seen';
+const seenGet = ()=>{ try{ return JSON.parse(localStorage.getItem(SEEN_KEY) || '[]'); }catch(e){ return []; } };
+const seenAdd = ids=>{ try{ localStorage.setItem(SEEN_KEY, JSON.stringify(seenGet().concat(ids).slice(-200))); }catch(e){} };
+QB.forEach((q, i)=> q.id = 'f'+i);
+function examStart(){
+  EX = {qs:[], i:0, score:0, streak:0, best:0, byLvl:[0,0,0,0,0], sel:null, done:false};
+  // the answers are shuffled every sitting (true / false stays in that order), so the right one is never always in the same place
+  const mix = q=>{
+    const key = q.pick ? 'pick' : 'o', list = q[key];
+    if(q.keep || (!q.pick && list.length===2)) return q;
+    const order = pickRand(list.map((_, i)=> i), list.length);
+    return Object.assign({}, q, {[key]: order.map(i=> list[i]), a: order.indexOf(q.a)});
+  };
+  // each level: 2 questions made from fresh cards + 2 written ones, those not yet seen first
+  const seen = seenGet();
+  for(let l = 0; l < 5; l++){
+    const gens = GEN_BY_LVL[l], nGen = 2;
+    const made = Array.from({length:nGen}, (_, k)=> GEN[gens[k % gens.length]]());
+    const fixed = QB.filter(q=> q.l===l), fresh = pickRand(fixed.filter(q=> !seen.includes(q.id)), 4 - nGen);
+    const fill = fresh.length < 4 - nGen ? pickRand(fixed.filter(q=> !fresh.includes(q)), 4 - nGen - fresh.length) : [];
+    EX.qs.push(...pickRand(made.concat(fresh, fill), 4).map(mix));
+  }
+  seenAdd(EX.qs.filter(q=> q.id).map(q=> q.id));
+  show('scExam'); examDraw();
+}
+function examDraw(){
+  const q = EX.qs[EX.i]; EX.sel = null; EX.done = false;
+  $('#exBar').style.width = (EX.i/EX.qs.length*100)+'%';
+  $('#exStreak').textContent = EX.streak>=2 ? '🔥 '+EX.streak : '';
+  const intro = EX.i===0 ? rnd(TS.intro) : (q.l!==EX.qs[EX.i-1].l ? TS.lvl[q.l] : rnd(TS.ask));
+  let h = '<div class="ex-lvl">Niveau '+(q.l+1)+' · '+LEVELS[q.l]+' · question '+(EX.i+1)+'/20</div>';
+  h += '<div class="ex-judge"><span class="pic">'+face(PEOPLE.tsala.face)+'</span><div class="bub" id="exBub">'+esc(intro)+'</div></div>';
+  // he gets impatient when you hesitate
+  clearTimeout(EX.idleT); EX.idleT = setTimeout(()=>{ if(!EX.done && EX.sel===null && $('#exBub')){ $('#exBub').textContent = rnd(TS.idle); $('#exBub').classList.remove('talk'); void $('#exBub').offsetWidth; $('#exBub').classList.add('talk'); } }, 12000);
+  h += '<h2 style="margin:0;font:700 22px/1.25 var(--f-t);text-wrap:balance">'+esc(q.q)+'</h2>';
+  if(q.cards) h += '<div class="ex-cards"><span class="lab">'+esc(q.cards.lab)+'</span>'+q.cards.c.map(cardHtml).join('')+'</div>';
+  if(q.pick) h += '<div class="ex-opts cardpick">'+q.pick.map((c, i)=> '<button class="opt card" data-i="'+i+'" aria-pressed="false">'+cardHtml(c)+'</button>').join('')+'</div>';
+  else h += '<div class="ex-opts">'+q.o.map((o, i)=> '<button class="opt" data-i="'+i+'" aria-pressed="false">'+esc(o)+'</button>').join('')+'</div>';
+  $('#exBody').innerHTML = h; $('#exBody').scrollTop = 0;
+  $('#exFoot').className = 'ex-foot'; $('#exFb').hidden = true;
+  const go = $('#exGo'); go.textContent = 'Valider'; go.disabled = true;
+  $('#exBody').querySelectorAll('.opt').forEach(b=> b.onclick = ()=>{ if(EX.done) return; EX.sel = +b.dataset.i; $('#exBody').querySelectorAll('.opt').forEach(x=> x.setAttribute('aria-pressed', String(x===b))); go.disabled = false; tone(990, 0, .05, .03); });
+}
+function examCheck(){
+  const q = EX.qs[EX.i], ok = EX.sel===q.a; EX.done = true; clearTimeout(EX.idleT);
+  const opts = $('#exBody').querySelectorAll('.opt');
+  opts.forEach((b, i)=>{ b.setAttribute('aria-pressed', 'false'); if(i===q.a) b.classList.add('ok'); else if(i===EX.sel) b.classList.add('ko'); });
+  const chosen = opts[EX.sel];
+  if(ok){
+    EX.score++; EX.byLvl[q.l]++; EX.streak++; EX.miss = 0; EX.best = Math.max(EX.best, EX.streak);
+    [0, .07, .14, .22].forEach((t, k)=> tone([1047, 1319, 1568, 2093][k], t, .2, .06));
+    celebrate(chosen, EX.streak);
+  } else {
+    EX.streak = 0; EX.miss = (EX.miss||0) + 1;
+    tone(220, 0, .3, .08); tone(185, .12, .3, .07); buzz();
+    if(chosen){ chosen.classList.add('shake'); }
+  }
+  const st = $('#exStreak'); st.textContent = EX.streak>=2 ? '🔥 '+EX.streak : ''; if(ok && EX.streak>=2){ st.classList.remove('hot'); void st.offsetWidth; st.classList.add('hot'); }
+  // what he says
+  const quip = ok ? (TS.streak[EX.streak] || rnd(TS.ok)) : (EX.miss>=2 ? rnd(TS.ko2) : rnd(TS.ko));
+  const bub = $('#exBub'); if(bub){ bub.textContent = quip; bub.classList.remove('talk'); void bub.offsetWidth; bub.classList.add('talk'); }
+  // why: in plain words, with the cards drawn when it helps
+  const good = q.pick ? cname(q.pick[q.a]) : q.o[q.a];
+  const ill = q.ill || fixedIll(q);
+  const why = document.createElement('div'); why.className = 'ex-why '+(ok ? 'ok' : 'ko');
+  why.innerHTML = '<b>'+(ok ? 'Exactement.' : 'La bonne réponse : '+esc(good))+'</b>'+(ill ? illHtml(ill) : '')+'<p>'+esc(q.w)+'</p>';
+  $('#exBody').appendChild(why);
+  setTimeout(()=> why.scrollIntoView({behavior:'smooth', block:'nearest'}), ok ? 450 : 150);
+  const fb = $('#exFb'); fb.hidden = false;
+  fb.querySelector('b').textContent = ok ? (EX.streak>=3 ? 'Série de '+EX.streak+' !' : 'Bonne réponse !') : 'Raté…';
+  fb.querySelector('span').textContent = ok ? '+1 point' : 'Lis l’explication, elle reviendra.';
+  $('#exFoot').className = 'ex-foot '+(ok ? 'ok' : 'ko');
+  $('#exGo').textContent = EX.i===EX.qs.length-1 ? 'Voir mon résultat' : 'Continuer';
+}
+// the reward: the answer jumps, confetti and coins fly out, "+1" rises; bigger on a streak
+function celebrate(el, streak){
+  if(!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // soft, not a firework: the answer fills with green, a ring breathes out, a few sparks drift up, "+1" floats away
+  el.classList.add('fill');
+  const host = $('#scExam'), hr = host.getBoundingClientRect(), r = el.getBoundingClientRect();
+  const cx = r.left - hr.left + r.width/2;
+  const ring = document.createElement('i'); ring.className = 'ring';
+  ring.style.left = (r.left - hr.left)+'px'; ring.style.top = (r.top - hr.top)+'px'; ring.style.width = r.width+'px'; ring.style.height = r.height+'px';
+  host.appendChild(ring);
+  ring.animate([{transform:'scale(1)', opacity:.7}, {transform:'scale(1.06, 1.35)', opacity:0}], {duration:750, easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish = ()=> ring.remove();
+  const n = streak>=5 ? 12 : streak>=3 ? 9 : 6, gold = streak>=3;
+  for(let i = 0; i < n; i++){
+    const p = document.createElement('i'); p.className = 'spark'+(gold ? ' gold' : '');
+    p.style.left = ((r.left - hr.left) + r.width*(.15 + .7*Math.random()))+'px'; p.style.top = (r.top - hr.top + 6)+'px'; host.appendChild(p);
+    const dx = (Math.random() - .5)*40, dy = -(40 + Math.random()*50);
+    p.animate([{transform:'translate(-50%,-50%) scale(.2) rotate(0)', opacity:0}, {transform:'translate(calc(-50% + '+dx*.4+'px), calc(-50% + '+dy*.4+'px)) scale(1) rotate(45deg)', opacity:1, offset:.35},
+      {transform:'translate(calc(-50% + '+dx+'px), calc(-50% + '+dy+'px)) scale(.4) rotate(90deg)', opacity:0}], {duration:1100 + Math.random()*400, delay:i*45, easing:'cubic-bezier(.25,.8,.35,1)', fill:'backwards'}).onfinish = ()=> p.remove();
+  }
+  const plus = document.createElement('b'); plus.className = 'plus1'; plus.textContent = streak>=3 ? '+1 · série '+streak : '+1';
+  plus.style.left = cx+'px'; plus.style.top = (r.top - hr.top - 4)+'px'; host.appendChild(plus);
+  plus.animate([{transform:'translate(-50%,6px)', opacity:0}, {transform:'translate(-50%,-10px)', opacity:1, offset:.3}, {transform:'translate(-50%,-34px)', opacity:0}], {duration:1400, easing:'cubic-bezier(.25,.8,.35,1)'}).onfinish = ()=> plus.remove();
+  const bar = $('#exBar'); bar.classList.remove('glow'); void bar.offsetWidth; bar.classList.add('glow');
+}
+function examResult(){
+  $('#exBar').style.width = '100%'; $('#exStreak').textContent = '';
+  const s = EX.score, pass = s>=14;
+  const title = s===20 ? 'Prodige du Fap Fap' : s>=18 ? 'Bon élève' : '';
+  const medal = '<svg class="medal" viewBox="0 0 70 70" aria-hidden="true"><path d="M22 2h10l6 20h-10zM48 2H38l-6 20h10z" fill="#E24B4A" stroke="#1B120C" stroke-width="3"/><circle cx="35" cy="44" r="22" fill="'+(s===20 ? '#FFC93C' : '#d9dde3')+'" stroke="#1B120C" stroke-width="3.5"/><text x="35" y="52" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="22" fill="#1B120C">'+s+'</text></svg>';
+  const say = s===20 ? 'Vingt sur vingt ?! En trente ans, j’en ai vu trois. Et les deux autres trichaient. Salle 2, directement. Ne me regarde pas comme ça.'
+    : s>=18 ? 'Bon élève. Ça me fait mal de le dire. Prends ta prime et disparais de ma vue.'
+    : pass ? rnd(['Ça passe… de justesse. Comme un moto-taxi entre deux camions. Bienvenue, je suppose.', 'Tu entres. Mais je te surveille. Toi et ta tête de mouton.'])
+    : s>=10 ? rnd(['Presque. Et « presque », ça ne paie pas l’hôpital. Reviens.', 'Tu as raté de peu. C’est encore plus humiliant, non ?'])
+    : rnd(['Non. Même RALL a fait mieux, et RALL compte sur ses doigts.', 'Je vais encadrer cette copie. Pour faire rire les autres.']);
+  $('#exBody').innerHTML = '<div class="scene ex-res" style="position:static;flex:1">'+
+    '<div class="ex-judge" style="align-self:stretch"><span class="pic">'+face(PEOPLE.tsala.face)+'</span><div class="bub">'+esc(say)+'</div></div>'+
+    '<div class="ex-score">'+s+'<small>/20</small></div>'+
+    (title ? '<div class="badge-big">'+medal+'<b>'+title+'</b><span>'+(s===20 ? 'Invitation directe en salle 2' : '+2 000 de prime')+'</span></div>' : '')+
+    '<div class="ex-lv">'+LEVELS.map((L, i)=> '<span>'+L+'</span><em>'+EX.byLvl[i]+' / 4</em>').join('')+'<span>Meilleure série</span><em>🔥 '+EX.best+'</em></div>'+
+    (pass ? '<p style="margin:0;color:var(--mute);font-weight:700">Inscription à la Maison : 5 000 à payer avant ta première table.</p>' : '<p style="margin:0;color:var(--mute);font-weight:700">Il fallait 14. Repasser l’examen coûte 1 000 et une journée.</p>')+'</div>';
+  $('#exFoot').className = 'ex-foot'; $('#exFb').hidden = true;
+  const go = $('#exGo'); go.disabled = false; go.textContent = pass ? 'Retour au téléphone' : 'Repasser l’examen (1 000)';
+  EX.end = true;
+  if(S.started){
+    S.badges = S.badges || {};
+    if(s>=18 && !S.badges.eleve){ S.badges.eleve = 1; tx(2000, 'Prime de la Maison · examen '+s+'/20'); }
+    if(s===20) S.badges.prodige = 1;
+    if(pass){ S.flags.examPassed = s; PLACES.maison.open = true; }
+    const ag = S.agenda.find(a=> a.id==='examen'); if(ag && pass) ag.done = 1;
+    // passing opens the next problem: 5 000 to register, this evening
+    if(pass && !S.agenda.some(a=> a.id==='inscription')){
+      S.agenda.push({id:'inscription', day:S.day + (S.m>2 ? 1 : 0), m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:'5 000 à payer · puis ta première table'});
+      setTimeout(()=> beat('day3money'), 1500);
+    }
+    save();
+  }
+}
+$('#exGo').onclick = ()=>{
+  if(EX.end){
+    if(EX.score>=14){ show('scHome'); renderHome(); }
+    else if(!S.started || S.cash>=1000){ if(S.started) tx(-1000, 'Maison · frais pour repasser l’examen'); examStart(); }
+    else { show('scHome'); renderHome(); }
+    return;
+  }
+  if(!EX.done) return examCheck();
+  EX.i++; if(EX.i>=EX.qs.length) examResult(); else examDraw();
+};
+$('#exQuit').onclick = ()=>{ sheet('<h3>Quitter l’examen ?</h3><p>Ta progression sera perdue. Maître Tsala n’aime pas qu’on parte.</p><div class="btns"><button class="btn red" id="qY">Quitter</button><button class="btn ghost" id="qN">Continuer l’examen</button></div>');
+  $('#qY').onclick = ()=>{ closeSheet(); show('scHome'); renderHome(); }; $('#qN').onclick = closeSheet; };
+
+// ===================== sound and touch =====================
+let AC = null, ringT = 0;
+function audio(){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; }
+function tone(f, t0, d, v){ const a = audio(); if(!a) return; const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o.type = 'sine'; g.gain.setValueAtTime(0, a.currentTime+t0); g.gain.linearRampToValueAtTime(v, a.currentTime+t0+.02); g.gain.exponentialRampToValueAtTime(.001, a.currentTime+t0+d); o.connect(g); g.connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+d+.05); }
+function ring(on){ clearInterval(ringT); if(!on) return; const r = ()=>{ [0, .18].forEach(t=>{ tone(880, t, .16, .08); tone(660, t+.09, .14, .06); }); buzz(); }; r(); ringT = setInterval(r, 1600); }
+function buzz(){ try{ navigator.vibrate && navigator.vibrate([60, 40, 60]); }catch(e){} tone(1320, 0, .12, .05); tone(1760, .1, .14, .04); }
+
+// ===================== the rain =====================
+(function rain(){
+  const c = $('#rain'), x = c.getContext('2d'); let W = 0, H = 0, drops = [];
+  const size = ()=>{ W = c.width = c.offsetWidth; H = c.height = c.offsetHeight; drops = Array.from({length:70}, ()=> ({x:Math.random()*W, y:Math.random()*H, v:6+Math.random()*6, l:8+Math.random()*12})); };
+  size(); addEventListener('resize', size);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  (function f(){ x.clearRect(0, 0, W, H); x.strokeStyle = 'rgba(200,215,235,.35)'; x.lineWidth = 1.2; x.beginPath();
+    drops.forEach(d=>{ x.moveTo(d.x, d.y); x.lineTo(d.x-2, d.y+d.l); d.y += d.v; d.x -= .6; if(d.y>H){ d.y = -20; d.x = Math.random()*W; } }); x.stroke(); requestAnimationFrame(f); })();
+})();
+
+// ===================== wiring =====================
+function heroScreen(){
+  show('scHero');
+  if(hostName) $('#heroName').value = hostName;
+  // in the game, your own profile photo comes first
+  const draw = ()=>{ $('#heroFaces').innerHTML = (hostPhoto ? '<button type="button" data-i="-1" aria-label="Ma photo de profil" aria-pressed="'+(S.hero.av===-1)+'"><img class="ph-me" src="'+hostPhoto+'" alt=""></button>' : '')+
+    HEROES.map((h, i)=> '<button type="button" data-i="'+i+'" aria-label="Visage '+(i+1)+'" aria-pressed="'+(S.hero.av===i)+'">'+face(h)+'</button>').join(''); };
+  if(hostPhoto && S.hero.av===0){ S.hero.av = -1; S.hero.photo = hostPhoto; }
+  draw();
+  $('#heroFaces').onclick = e=>{ const b = e.target.closest('[data-i]'); if(!b) return; S.hero.av = +b.dataset.i;
+    if(S.hero.av===-1){ S.hero.photo = hostPhoto; draw(); return; }
+    if(S.hero.av>=3 && !S.hero.fem) setSex(1); if(S.hero.av<3 && S.hero.fem) setSex(0); draw(); };
+  const setSex = f=>{ S.hero.fem = f; $('#heroSex').querySelectorAll('button').forEach(b=> b.setAttribute('aria-pressed', String(+b.dataset.f===f))); };
+  $('#heroSex').onclick = e=>{ const b = e.target.closest('[data-f]'); if(!b) return; setSex(+b.dataset.f); if(S.hero.av>=0){ if(S.hero.fem && S.hero.av<3) S.hero.av = 3; if(!S.hero.fem && S.hero.av>=3) S.hero.av = 0; } draw(); };
+  $('#goHero').onclick = ()=>{ S.hero.name = ($('#heroName').value || '').trim().slice(0, 16) || (S.hero.fem ? 'Nadia' : 'Junior'); S.contacts.push(PART()); save(); opening(); };
+}
+// in the game, starting the story puts the real chips back to 3 500: the player is told first and decides
+$('#goStart').onclick = ()=>{
+  audio();
+  const begin = ()=>{ closeSheet(); S = fresh(); save(); heroScreen(); };
+  if(HOST && hostChips!=null && hostChips!==3500){
+    sheet('<h3>Tout recommence à 3 500</h3><p>Dans Zéro à Héros, il n’y a qu’une seule monnaie : tes jetons. Commencer l’histoire remet ton compte à <b>3 500</b>.</p>'+
+      '<p>Tu as aujourd’hui <b>'+fmt(hostChips)+'</b> jetons. Tes trophées, ta réputation et tes décors restent.</p>'+
+      '<div class="btns"><button class="btn red" id="okReset">Je recommence à 3 500</button><button class="btn ghost" id="noReset">Pas maintenant</button></div>');
+    $('#okReset').onclick = begin; $('#noReset').onclick = closeSheet;
+  } else begin();
+};
+// developer mode: always on the mockup and on this computer; in the real game only after tapping the title 5 times
+const DEV = ()=>{ if(!HOST || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return true; try{ return localStorage.getItem('zh-dev')==='1'; }catch(e){ return false; } };
+let logoTaps = 0, logoT = 0;
+$('.logo').addEventListener('click', ()=>{
+  clearTimeout(logoT); logoT = setTimeout(()=> logoTaps = 0, 1500);
+  if(++logoTaps < 5) return; logoTaps = 0;
+  const on = !(localStorage.getItem('zh-dev')==='1'); try{ localStorage.setItem('zh-dev', on ? '1' : '0'); }catch(e){}
+  $('#goDev').hidden = !DEV(); buzz();
+});
+$('#goBackTitle').onclick = ()=> hostPost({zh:'close'});
+$('#goResume').onclick = ()=>{ audio(); show('scHome'); renderHome(); };
+$('#apps').addEventListener('click', e=>{ const b = e.target.closest('[data-app]'); if(b) openApp(b.dataset.app); });
+$('#appBack').onclick = ()=>{ if(curApp && curApp.id==='thread'){ openThread = null; openApp('messages'); } else { openThread = null; curApp = null; show('scHome'); renderHome(); } };
+$('#goNext').onclick = ()=> advance();
+$('#appFree').addEventListener('submit', e=>{ e.preventDefault(); const i = $('#freeIn'), t = i.value; if(!t.trim() || !openThread) return; i.value = ''; freeSend(openThread, t); });
+$('#wSis').onclick = ()=> openApp('sante');
+$('#wNext').onclick = ()=>{ const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0]; openApp(nx ? 'carte' : 'agenda', nx ? nx.id : undefined); };
+$('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce que tu testes : le téléphone, l’appel de l’hôpital, les messages à choix, la banque, la santé de Princesse, l’agenda et la carte, sur les jours 1 et 2.</p>'+
+  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Pamela' : 'Yowalé')+' (caché dans le vrai jeu) : amour '+S.pam.love+' · orage '+S.pam.storm+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
+  if($('#tryExam')) $('#tryExam').onclick = ()=>{ closeSheet(); examStart(); };
+  if($('#openDev')) $('#openDev').onclick = devPanel;
+  if($('#backGame')) $('#backGame').onclick = ()=>{ closeSheet(); hostPost({zh:'close'}); };
+  $('#restart').onclick = ()=>{ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }; $('#closeM').onclick = closeSheet; };
+
+// ===================== developer mode: jump straight to any scene, without replaying the days =====================
+const DEV_JUMPS = [
+  ['call', 'Jour 1 · l’appel de l’hôpital'],
+  ['night1', 'Jour 1 · nuit · Pamela (mensonge)'],
+  ['day2am', 'Jour 2 · matin · les ongles à 15 000'],
+  ['day2pm', 'Jour 2 · après-midi · le mensonge revient'],
+  ['veillee', 'Jour 2 · soir · la veillée chez RALL'],
+  ['exam', 'L’examen de la Maison'],
+  ['day3', 'Jour 3 · les 5 offres d’argent'],
+  ['inscription', 'Jour 3 · soir · l’inscription et la 1ʳᵉ table'],
+  ['debt', 'Jour 11 · la dette en retard'],
+];
+function devState(day, m, extra){
+  RUN++;
+  const fem = S && S.hero ? S.hero.fem : 0, pamS = S && S.pam ? S.pam : {love:70, storm:30};
+  S = fresh(); S.started = true; S.hero.fem = fem; S.hero.av = fem ? 3 : 0; S.hero.name = fem ? 'Nadia' : 'Junior';
+  S.contacts.push('rall', PART()); S.day = day; S.m = m; S.pam = Object.assign({}, pamS);
+  S.cash = 3500; S.ledger = [{a:3500, l:'Ce qu’il te reste', d:1, m:2}];
+  if(day>=2 || m>=2) S.agenda.push({id:'veillee', day:2, m:2, place:'mvogada', title:'Veillée chez RALL', who:'rall', stake:'Mises de 200 à 1 000'});
+  Object.assign(S, extra||{}); save();
+  if(HOST) hostPost({zh:'set', chips:S.cash}); // in the game, the real chips follow the scene
+  openThread = null; busy = 0; closeSheet(); show('scHome'); renderHome();
+}
+const BEATS = list=> Object.fromEntries(list.map(b=> [b, 1]));
+function devJump(k){
+  if(k==='call'){ devState(1, 2); S.started = false; S.cash = 0; S.ledger = []; S.agenda = []; save(); opening(); return; }
+  if(k==='night1'){ devState(1, 3, {beats:BEATS(['sis1', 'rall1'])}); beat('part1'); }
+  if(k==='day2am'){ devState(2, 0, {beats:BEATS(['sis1', 'rall1', 'part1'])}); beat('day2am'); }
+  if(k==='day2pm'){ devState(2, 1, {mem:{lie_hosp:{d:1, m:3}}, beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2'])}); beat('day2pm'); }
+  if(k==='veillee'){ devState(2, 2, {beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'])}); openApp('carte', 'veillee'); }
+  if(k==='exam'){ devState(3, 0, {beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'])}); examStart(); }
+  if(k==='day3' || k==='inscription' || k==='debt'){
+    devState(3, k==='day3' ? 0 : 2, {cash:4000, ledger:[{a:4000, l:'Départ (mode développeur)', d:3, m:0}], flags:{examPassed:17},
+      agenda:[{id:'inscription', day:3, m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:'5 000 à payer · puis ta première table'}],
+      beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'].concat(k==='day3' ? [] : ['day3money']))});
+    if(k==='day3') beat('day3money');
+    if(k==='inscription'){ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv'); openApp('carte', 'inscription'); }
+    if(k==='debt'){ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv'); S.agenda[0].done = 1; S.day = 10; S.m = 3; save(); advance(); }
+  }
+}
+function devPanel(){
+  sheet('<h3>🛠 Mode développeur</h3><p>Va directement à une scène. La partie en cours est remplacée.</p>'+
+    '<div class="seg" id="devSex"><button type="button" data-f="0" aria-pressed="'+(!S.hero.fem)+'">Héros homme (Pamela)</button><button type="button" data-f="1" aria-pressed="'+(!!S.hero.fem)+'">Héroïne (Yowalé)</button></div>'+
+    '<div class="seg" id="devMood"><button type="button" data-s="30" aria-pressed="'+(S.pam.storm<45)+'">Pamela calme</button><button type="button" data-s="75" aria-pressed="'+(S.pam.storm>=65)+'">Pamela en orage</button></div>'+
+    '<div class="btns" style="max-height:46vh;overflow-y:auto">'+DEV_JUMPS.map(([k, l])=> '<button class="btn ghost" data-j="'+k+'" style="text-align:left">'+esc(l)+'</button>').join('')+
+    '<button class="btn" id="devCash">+10 000 jetons</button><button class="btn ghost" id="devClose">Fermer</button></div>');
+  $('#devSex').onclick = e=>{ const b = e.target.closest('[data-f]'); if(!b) return; S.hero.fem = +b.dataset.f; save(); devPanel(); };
+  $('#devMood').onclick = e=>{ const b = e.target.closest('[data-s]'); if(!b) return; S.pam.storm = +b.dataset.s; S.pam.love = +b.dataset.s<45 ? 75 : 55; save(); devPanel(); };
+  $('#sheetIn').querySelectorAll('[data-j]').forEach(b=> b.onclick = ()=>{ audio(); devJump(b.dataset.j); });
+  $('#devCash').onclick = ()=>{ tx(10000, 'Mode développeur · +10 000'); closeSheet(); };
+  $('#devClose').onclick = closeSheet;
+}
+$('#goDev').onclick = ()=>{ if(!S) S = fresh(); devPanel(); };
+
+S = load();
+// test hook, only on this computer (never on the published page): lets the checks jump to a scene
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, get S(){ return S; }};
+if(S && S.started){ $('#goResume').hidden = false; }
+if(!S) S = fresh();
+$('#goDev').hidden = !DEV();
+$('#goBackTitle').hidden = !HOST;
+// in the game: ask for the real chips, the player's name and photo
+if(HOST) hostPost({zh:'hello'});
+})();
+</script>
+
+</html>
