@@ -399,10 +399,10 @@ const PEOPLE = {
   princesse:{name:'Princesse', role:'Ta petite sœur, 19 ans', face:{img:ZH_ART+'princesse.webp', bg:'#FFE1EC'}},
   rall:{name:'RALL', role:'Ton ami d’enfance · Mvog-Ada', face:{img:'art/rall.jpg', bg:'#FFC93C'}},
   christelle:{name:'Christelle', role:'La voisine, toujours là', face:{img:ZH_ART+'christelle.webp', bg:'#2FB36B'}},
-  mengue:{name:'Dr Mengue', role:'Médecin · Hôpital Central', face:{img:ZH_ART+'mengue.webp', bg:'#d9e6f2'}},
+  mengue:{name:'Docteur Nitcheu', role:'Médecin · Hôpital Central', face:{img:ZH_ART+'mengue.webp', bg:'#d9e6f2'}},
   anonyme:{name:'Numéro masqué', role:'Inconnu', face:null},
-  pamela:{name:'Pamela ❤️', role:'Ta copine · inspectrice de police · fille d’Hubert Ondoua', face:{img:ZH_ART+'pamela.webp', bg:'#B83333'}},
-  yowale:{name:'Yowalé', role:'Ton copain · flambeur, toujours une blague', face:{img:ZH_ART+'yowale.webp', bg:'#3D7FD9'}},
+  pamela:{name:'Amour ❤️', role:'Ta copine · inspectrice de police · fille d’Hubert Ondoua', face:{img:ZH_ART+'pamela.webp', bg:'#B83333'}},
+  yowale:{name:'Daryl Bleu Magic', role:'Ton copain · flambeur, toujours une blague', face:{img:ZH_ART+'yowale.webp', bg:'#3D7FD9'}},
   grosventre:{name:'Papa Gros-Ventre', role:'Prête de l’argent. Toujours souriant.', face:{img:ZH_ART+'grosventre.webp', bg:'#8a6a2a'}},
   clarisse:{name:'Clarisse Ebodé', role:'Trésorière de la tontine du quartier', face:{img:ZH_ART+'clarisse.webp', bg:'#3D7FD9'}},
   bosco:{name:'Bosco Tchana', role:'Patron du bar Le Bon Coin', face:{img:ZH_ART+'bosco.webp', bg:'#2FB36B'}},
@@ -419,7 +419,7 @@ function fresh(){
     day:1, m:2, cash:0, ledger:[], hosp:{advance:50000, advDue:3, daily:3000, owed:0, paid:0},
     sis:{hp:64, rel:70}, pam:{love:70, storm:30}, mem:{}, threads:{}, order:[], agenda:[], news:[], contacts:['princesse','mengue'], flags:{}, beats:{} };
 }
-// ---- the partner (Pamela, or Yowalé for a heroine): two hidden gauges and a memory of what you said ----
+// ---- the partner (Amour, or Daryl Bleu Magic for a heroine): two hidden gauges and a memory of what you said ----
 const PART = ()=> S.hero.fem ? 'yowale' : 'pamela';
 const clamp = v=> Math.max(0, Math.min(100, v));
 function pam(dLove, dStorm){ S.pam.love = clamp(S.pam.love + dLove); S.pam.storm = clamp(S.pam.storm + dStorm); save(); }
@@ -429,9 +429,9 @@ const remember = k=>{ S.mem[k] = {d:S.day, m:S.m}; save(); };
 const knows = k=> !!S.mem[k];
 const MEM_LABEL = {told_hosp:'tu lui as dit pour l’hôpital', lie_hosp:'tu lui as menti sur l’hôpital', insult_father:'tu as insulté son père', promised_resto:'tu lui as promis un resto',
   pam_threat:'elle t’a menacé', pam_knows:'elle sait pour ta sœur', pam_suspicious:'elle soupçonne Christelle', pam_intel:'elle t’a donné une info de police',
-  lie_evening:'tu lui as menti sur ta soirée', ghosted:'tu l’as laissé(e) en « Vu »', yo_promised:'Yowalé a promis de venir',
+  lie_evening:'tu lui as menti sur ta soirée', ghosted:'tu l’as laissé(e) en « Vu »', yo_promised:'Daryl Bleu Magic a promis de venir',
   insulted:'tu l’as insultée', breakup_talk:'tu as parlé de rupture', promised_money:'tu lui as promis de l’argent', loan_gv:'tu dois de l’argent à Papa Gros-Ventre',
-  tontine:'tu es dans la tontine', match_fixed:'tu as accepté un match arrangé', pam_paid:'Pamela a payé ton inscription', member:'tu es membre de la Maison'};
+  tontine:'tu es dans la tontine', match_fixed:'tu as accepté un match arrangé', pam_paid:'Amour a payé ton inscription', member:'tu es membre de la Maison'};
 // a burst: short messages one after the other, each with its banner
 async function burst(id, lines, choices){ await say(id, lines, choices, 380); }
 
@@ -519,7 +519,7 @@ const ANSWERS = {
   chr1a: async()=>{ S.flags.chrWarm = 1; await say('christelle', ['Tu sais où me trouver. Même tard. 🙂']); },
   chr1b: async()=>{ await say('christelle', ['Comme tu veux. Courage quand même.']); },
 
-  // ---- Pamela, night 1: her colleague saw you at the hospital ----
+  // ---- Amour, night 1: her colleague saw you at the hospital ----
   p1true: async()=>{ pam(+6, -8); remember('told_hosp');
     await say('pamela', ['Oh… 😟', 'Ta sœur encore.', 'Bon. Courage mon bébé. Tu m’appelles demain hein. Pas après-demain. DEMAIN.']); },
   p1vague: async()=>{ pam(-2, +10);
@@ -527,9 +527,9 @@ const ANSWERS = {
   p1lie: async()=>{ pam(0, -2); remember('lie_hosp');
     await say('pamela', ['Mmm.', 'Ok. Dors bien alors 😘']); },
   // ---- day 2 morning: the nails ----
-  p2full: async()=>{ tx(-15000, 'Pamela · ongles'); pam(+12, -15);
+  p2full: async()=>{ tx(-15000, 'Amour · ongles'); pam(+12, -15);
     await burst('pamela', ['TU ES LE MEILLEUR 😍😍', 'Je t’aime. Vraiment.', 'Ne dis rien à ta sœur 🤫']); },
-  p2part: async()=>{ tx(-2000, 'Pamela · « pour les ongles »'); pam(+2, +5);
+  p2part: async()=>{ tx(-2000, 'Amour · « pour les ongles »'); pam(+2, +5);
     await say('pamela', calm() ? ['2 000… 😒', 'Bon. C’est le geste qui compte, il paraît.'] : ['2 000 ?!', 'Je te demande des ongles, pas un beignet.', 'Garde ton argent la prochaine fois.']); },
   p2no: async()=>{
     if(knows('told_hosp') || knows('pam_knows')){ pam(-2, +6); await say('pamela', ['Toujours l’hôpital…', 'Je comprends. Mais j’aime pas.']); }
@@ -566,11 +566,11 @@ const ANSWERS = {
     S.agenda.push({id:'bosco', day:S.day+1, m:2, place:'bosco', title:'Perdre contre Mado (arrangé)', who:'bosco', stake:'Bosco t’a déjà payé 3 000'}); save();
     await say('bosco', ['Bien. Demain soir, au bar, tu perds contre Mado. Proprement.', 'Personne ne doit savoir. Personne.']); },
   bos1no: async()=>{ await say('bosco', ['Tu es honnête. C’est rare.', 'Et ça ne paie pas.']); },
-  pam5yes: async()=>{ tx(5000, 'Pamela · « pour ton inscription »'); pam(+6, -4); remember('pam_paid');
+  pam5yes: async()=>{ tx(5000, 'Amour · « pour ton inscription »'); pam(+6, -4); remember('pam_paid');
     await say('pamela', ['Voilà. 5 000.', 'Maintenant tu me dois quelque chose.', 'Et c’est moi qui choisirai quoi. 😏']); },
   pam5no: async()=>{ pam(-3, +8); await say('pamela', ['Trop fier pour mon argent ?', 'Ok. Mais ne viens pas pleurer.']); },
 
-  // ---- Yowalé (for a heroine): never there, always a joke, helps anyway ----
+  // ---- Daryl Bleu Magic (for a heroine): never there, always a joke, helps anyway ----
   y1need: async()=>{ pam(+4, 0); remember('yo_promised'); await say('yowale', ['Aïe… 😕', 'Je passe demain. Promis promis.']); },
   y1free: async()=>{ pam(+1, 0); await say('yowale', ['😂😂 tu me connais trop', 'Bisous ma belle, courage pour ta sœur']); },
   y2hurt: async()=>{ pam(-3, 0); await say('yowale', ['Je sais… 🙏', 'Tu me pardonnes ? Regarde ma tête de chien battu 🐶']); },
@@ -608,7 +608,7 @@ const detect = text=>{ const t = norm(text);
   // a short "salut bébé" is a hello, not a declaration
   if(t.split(' ').length<=3 && INTENTS.find(x=> x[0]==='greet')[1].test(t)) return 'greet';
   for(const [k, re] of INTENTS) if(re.test(t)) return k; return /\?\s*$/.test(t) ? 'question' : 'unknown'; };
-// Pamela: [calm, tense, storm] lines, the effect [love, storm], a memory, and lines that only come when she knows something
+// Amour: [calm, tense, storm] lines, the effect [love, storm], a memory, and lines that only come when she knows something
 const CHAT = {
   pamela:{
     greet:{c:['Coucou toi 😘', 'Enfin tu te souviens que j’existe 🙄😘'], t:['Ah. C’est maintenant tu dis bonjour ?'], s:['Bonjour ? BONJOUR ?', 'Après ce que tu as fait ?'], fx:[+1, -2]},
@@ -733,8 +733,8 @@ async function beatBody(name, run){
         [{t:'Envoyer 15 000', a:'p2full', need:15000}, {t:'Envoyer 2 000, c’est tout ce que je peux', a:'p2part', need:2000}, {t:'Je n’ai rien, tout va à l’hôpital.', a:'p2no'}, {t:'Tu es déjà belle sans ça 😘', a:'p2flirt'}, {t:'Demande à ton père, il est riche.', a:'p2dad'}]); }
     else if(knows('yo_promised')){
       await say('yowale', ['Ma belle désolé 🙏', 'J’ai dormi chez un pote, mon téléphone était mort', 'Mais regarde, je t’ai envoyé 3 000 pour Princesse 😘']);
-      tx(3000, 'Yowalé · « pour Princesse »');
-      await say('yowale', ['Tu me pardonnes ?'], [{t:'Tu avais promis, Yowalé.', a:'y2hurt'}, {t:'Merci. Ça aide vraiment.', a:'y2thanks'}]); }
+      tx(3000, 'Daryl Bleu Magic · « pour Princesse »');
+      await say('yowale', ['Tu me pardonnes ?'], [{t:'Tu avais promis, Daryl.', a:'y2hurt'}, {t:'Merci. Ça aide vraiment.', a:'y2thanks'}]); }
     else await say('yowale', ['Bien dormi ma belle ? 😂', 'Moi non, on a fêté la victoire jusqu’à 5 h']);
   }
   if(name==='part3' && PART()==='pamela'){
@@ -837,7 +837,7 @@ function openApp(id, arg){
         '<span>Avance d’admission</span><em>'+fmt(left)+'</em><span class="due">À payer avant le jour '+h.advDue+(S.day>=h.advDue ? ' · AUJOURD’HUI' : '')+'</span>'+
         '<span>Lit et repas (3 000 par jour)</span><em>'+fmt(h.owed)+'</em>'+
         '<span>Opération</span><em>1 000 000</em></div></div>'+
-      '<div class="card"><span class="k">Service · Dr Mengue</span><span>« Son état est stable. Ce qui l’aide le plus, c’est de vous voir. »</span></div>'+
+      '<div class="card"><span class="k">Service · Docteur Nitcheu</span><span>« Son état est stable. Ce qui l’aide le plus, c’est de vous voir. »</span></div>'+
       '<button class="btn" id="visit">Aller la voir · prend le moment</button>'+
       '<button class="btn ghost" id="payAdv"'+(S.cash<1 || left<1 ? ' disabled' : '')+'>Verser sur l’avance ('+fmt(Math.min(S.cash, left))+')</button>';
     $('#visit').onclick = visit; $('#payAdv').onclick = payAdvance;
@@ -881,7 +881,7 @@ function drawThread(){
       if(ch.need && S.cash < ch.need){ b.disabled = true; b.style.opacity = '.5'; b.textContent += ' · il te manque '+fmt(ch.need - S.cash); }
       else b.onclick = ()=> answer(pid, ch);
       c.appendChild(b); });
-    // Pamela hates waiting: an open conversation left unanswered for 20 s gets a jab, once per question
+    // Amour hates waiting: an open conversation left unanswered for 20 s gets a jab, once per question
     clearTimeout(drawThread.t);
     if(pid==='pamela' && !th.pressed){ drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [hot() ? 'Tu écris la Bible ou quoi ?? 😤' : 'Tu écris un roman ? 🙄']); } }, 20000); }
   } else c.hidden = true;
@@ -1038,10 +1038,10 @@ function fixedMatch(a){
   };
 }
 function veillee(a){
-  // what you said to Pamela shows up here
+  // what you said to Amour shows up here
   const echo = PART()!=='pamela' ? '' : S.flags.raidRisk ? '<p class="story">Une voiture de police passe lentement. Tout le monde se tait. RALL te regarde : « Toi, tu as fâché quelqu’un. »</p>'
-    : (knows('pam_suspicious') || hot()) ? '<p class="story">Une Toyota noire est garée en face. Pamela. Elle te regarde jouer, sans sortir de la voiture.</p>'
-    : knows('pam_intel') ? '<p class="story">Grâce au conseil de Pamela, tu n’as pris que le strict minimum sur toi.</p>' : '';
+    : (knows('pam_suspicious') || hot()) ? '<p class="story">Une Toyota noire est garée en face. Amour. Elle te regarde jouer, sans sortir de la voiture.</p>'
+    : knows('pam_intel') ? '<p class="story">Grâce au conseil d’Amour, tu n’as pris que le strict minimum sur toi.</p>' : '';
   sheet('<h3>La veillée chez RALL</h3><p class="story">Une bâche, deux ampoules, l’odeur du soya. RALL t’accueille : « Mise de 500. On joue au Fap Fap, premier à 3. »</p>'+echo+
     '<div class="delta"><span>Tu risques 500</span><span>Tu peux gagner 500</span><span>Si tu perds, il te reste&nbsp;'+fmt(S.cash-500)+'</span></div>'+
     '<div class="btns"><button class="btn green" id="w">Jouer contre RALL</button><button class="btn ghost" id="l">Pas ce soir</button></div>');
@@ -1107,18 +1107,18 @@ async function opening(){
   ring(true);
   $('#callYes').onclick = async ()=>{
     ring(false); $('#callAva').classList.remove('ringing'); $('#callAva').innerHTML = face(PEOPLE.mengue.face);
-    $('#callWho').textContent = 'Dr Mengue'; $('#callActs').innerHTML = '<button class="round" style="background:var(--red)" disabled aria-label="Raccrocher"><svg viewBox="0 0 24 24"><path d="M5 15c4-4 10-4 14 0l-2 3-3-1v-3c-1.3-.4-2.7-.4-4 0v3l-3 1z" fill="#fff"/></svg></button>';
+    $('#callWho').textContent = 'Docteur Nitcheu'; $('#callActs').innerHTML = '<button class="round" style="background:var(--red)" disabled aria-label="Raccrocher"><svg viewBox="0 0 24 24"><path d="M5 15c4-4 10-4 14 0l-2 3-3-1v-3c-1.3-.4-2.7-.4-4 0v3l-3 1z" fill="#fff"/></svg></button>';
     let sec = 0; const tick = setInterval(()=> $('#callSub').textContent = '0'+Math.floor(sec/60)+':'+String(sec++%60).padStart(2,'0'), 1000);
     const L = $('#callLines'), g = G();
     const line = async (who, txt, cls)=>{ const d = document.createElement('div'); d.className = 'ln'+(cls ? ' '+cls : ''); d.innerHTML = (who ? '<b>'+esc(who)+'</b>' : '')+esc(txt); L.appendChild(d); while(L.children.length>4) L.firstChild.remove(); await wait(cls==='big' ? 2200 : 1300 + txt.length*28); };
-    await line('Dr Mengue', 'Bonsoir. Vous êtes bien '+(S.hero.fem ? 'la sœur' : 'le frère')+' de Princesse ?');
+    await line('Docteur Nitcheu', 'Bonsoir. Vous êtes bien '+(S.hero.fem ? 'la sœur' : 'le frère')+' de Princesse ?');
     await line(S.hero.name, 'Oui… c’est moi. Qu’est-ce qui se passe ?', 'me');
-    await line('Dr Mengue', 'Votre sœur a fait un malaise ce soir. Elle est chez nous, en observation. Elle va bien pour l’instant.');
-    await line('Dr Mengue', 'Mais son cœur… Il faudra opérer. Et vite.');
+    await line('Docteur Nitcheu', 'Votre sœur a fait un malaise ce soir. Elle est chez nous, en observation. Elle va bien pour l’instant.');
+    await line('Docteur Nitcheu', 'Mais son cœur… Il faudra opérer. Et vite.');
     await line(S.hero.name, 'Opérer ? Ça coûte combien, docteur ?', 'me');
     await line('', '1 000 000 F', 'big');
-    await line('Dr Mengue', 'Il me faut une avance de 50 000 d’ici trois jours pour la garder en soins. Je suis désolé.');
-    await line('Dr Mengue', 'Passez la voir. Elle vous réclame.');
+    await line('Docteur Nitcheu', 'Il me faut une avance de 50 000 d’ici trois jours pour la garder en soins. Je suis désolé.');
+    await line('Docteur Nitcheu', 'Passez la voir. Elle vous réclame.');
     clearInterval(tick);
     $('#callActs').innerHTML = '<button class="btn" id="hang">Raccrocher</button>';
     $('#hang').onclick = ()=>{
@@ -1488,7 +1488,7 @@ $('#appFree').addEventListener('submit', e=>{ e.preventDefault(); const i = $('#
 $('#wSis').onclick = ()=> openApp('sante');
 $('#wNext').onclick = ()=>{ const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0]; openApp(nx ? 'carte' : 'agenda', nx ? nx.id : undefined); };
 $('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce que tu testes : le téléphone, l’appel de l’hôpital, les messages à choix, la banque, la santé de Princesse, l’agenda et la carte, sur les jours 1 et 2.</p>'+
-  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Pamela' : 'Yowalé')+' (caché dans le vrai jeu) : amour '+S.pam.love+' · orage '+S.pam.storm+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
+  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Amour' : 'Daryl Bleu Magic')+' (caché dans le vrai jeu) : affection '+S.pam.love+' · orage '+S.pam.storm+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
   if($('#tryExam')) $('#tryExam').onclick = ()=>{ closeSheet(); examStart(); };
   if($('#openDev')) $('#openDev').onclick = devPanel;
   if($('#backGame')) $('#backGame').onclick = ()=>{ closeSheet(); hostPost({zh:'close'}); };
@@ -1497,7 +1497,7 @@ $('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce qu
 // ===================== developer mode: jump straight to any scene, without replaying the days =====================
 const DEV_JUMPS = [
   ['call', 'Jour 1 · l’appel de l’hôpital'],
-  ['night1', 'Jour 1 · nuit · Pamela (mensonge)'],
+  ['night1', 'Jour 1 · nuit · Amour ou Daryl (mensonge)'],
   ['day2am', 'Jour 2 · matin · les ongles à 15 000'],
   ['day2pm', 'Jour 2 · après-midi · le mensonge revient'],
   ['veillee', 'Jour 2 · soir · la veillée chez RALL'],
@@ -1536,8 +1536,8 @@ function devJump(k){
 }
 function devPanel(){
   sheet('<h3>🛠 Mode développeur</h3><p>Va directement à une scène. La partie en cours est remplacée.</p>'+
-    '<div class="seg" id="devSex"><button type="button" data-f="0" aria-pressed="'+(!S.hero.fem)+'">Héros homme (Pamela)</button><button type="button" data-f="1" aria-pressed="'+(!!S.hero.fem)+'">Héroïne (Yowalé)</button></div>'+
-    '<div class="seg" id="devMood"><button type="button" data-s="30" aria-pressed="'+(S.pam.storm<45)+'">Pamela calme</button><button type="button" data-s="75" aria-pressed="'+(S.pam.storm>=65)+'">Pamela en orage</button></div>'+
+    '<div class="seg" id="devSex"><button type="button" data-f="0" aria-pressed="'+(!S.hero.fem)+'">Héros homme (Amour)</button><button type="button" data-f="1" aria-pressed="'+(!!S.hero.fem)+'">Héroïne (Daryl Bleu Magic)</button></div>'+
+    '<div class="seg" id="devMood"><button type="button" data-s="30" aria-pressed="'+(S.pam.storm<45)+'">Amour calme</button><button type="button" data-s="75" aria-pressed="'+(S.pam.storm>=65)+'">Amour en orage</button></div>'+
     '<div class="btns" style="max-height:46vh;overflow-y:auto">'+DEV_JUMPS.map(([k, l])=> '<button class="btn ghost" data-j="'+k+'" style="text-align:left">'+esc(l)+'</button>').join('')+
     '<button class="btn" id="devCash">+10 000 jetons</button><button class="btn ghost" id="devClose">Fermer</button></div>');
   $('#devSex').onclick = e=>{ const b = e.target.closest('[data-f]'); if(!b) return; S.hero.fem = +b.dataset.f; save(); devPanel(); };
