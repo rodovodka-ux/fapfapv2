@@ -2633,6 +2633,52 @@
   .ps-btns{ width:100%; display:flex; gap:8px; } .ps-btns button{ flex:1; }
   #friendInviteOverlay .ps-sheet{ animation: hxIn .35s cubic-bezier(.2,.8,.2,1) both; }
   #friendInviteOverlay{ z-index:70; }
+  /* la fiche : bilan, retirer en discret */
+  .ps-rec{ margin:0 0 10px; font-size:13px; font-weight:800; padding:6px 12px; border-radius:12px; background:rgba(255,255,255,0.07); }
+  .ps-rec b.w{ color:#7ee0a0; } .ps-rec b.l{ color:#ff8a7a; }
+  .ps-friend{ width:100%; margin-top:8px; }
+  .ps-friend.quiet{ background:none !important; border-color:transparent !important; box-shadow:none !important; opacity:.6; font-size:13px; }
+  /* la cloche */
+  #btnBell{ position:relative; overflow:visible; }
+  .bell-n{ position:absolute; top:-4px; right:-4px; min-width:18px; height:18px; padding:0 5px; border-radius:9px; background:#ff5a3c; color:#fff;
+    font:800 11px/18px var(--f-ui, system-ui); font-style:normal; text-align:center; box-shadow:0 0 0 2px #0b0705, 0 0 10px rgba(255,90,60,.7); }
+  #btnBell.ring .i{ animation: bellRing 1.1s ease-in-out 2; transform-origin:50% 10%; }
+  @keyframes bellRing{ 0%,100%{ transform:rotate(0); } 15%{ transform:rotate(16deg); } 30%{ transform:rotate(-14deg); } 45%{ transform:rotate(9deg); } 60%{ transform:rotate(-6deg); } 75%{ transform:rotate(2deg); } }
+  .bell-sec{ display:flex; flex-direction:column; gap:8px; }
+  .bell-sec h3{ margin:6px 2px 0; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--dust); }
+  .bell-row{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px; padding:10px 12px; border-radius:16px;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); }
+  .bell-row.new{ border-color:rgba(255,140,90,.45); background:rgba(255,120,70,.08); }
+  .bell-row .bn{ display:flex; flex-direction:column; min-width:0; }
+  .bell-row .bn b{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bell-row .bn small{ font-size:12px; color:var(--dust); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bell-acts{ display:flex; gap:6px; }
+  .bell-acts button{ padding:8px 11px; border-radius:13px; font-size:12.5px; font-weight:800; }
+  .bell-acts .ok{ background:linear-gradient(180deg, #4fc27f, #1f7a46) !important; color:#fff !important; border-color:transparent !important; }
+  .unread-n{ min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:#ff5a3c; color:#fff; font-size:11.5px; font-weight:800; line-height:20px; text-align:center; }
+  .fr-pend{ font-size:11.5px; font-weight:800; color:var(--dust); padding:6px 10px; border-radius:12px; border:1px dashed rgba(255,255,255,.22); }
+  /* la conversation */
+  #chatPage{ overflow:hidden; }
+  .chat-head{ grid-template-columns:44px 1fr 44px; }
+  .chat-who{ display:flex; align-items:center; gap:10px; background:none !important; border:0 !important; box-shadow:none !important; padding:0 !important; min-height:0; text-align:left; color:inherit; width:auto; justify-self:start; }
+  .chat-who b{ display:block; font-size:16px; } .chat-who small{ display:block; font-size:11.5px; color:var(--dust); font-weight:600; }
+  .chat-defi{ width:40px; height:40px; padding:0 !important; border-radius:50%; display:grid; place-items:center; min-height:0; }
+  .chat-msgs{ flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; width:100%; max-width:440px; margin:0 auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:6px; }
+  .chat-day{ align-self:center; font-size:11px; color:var(--dust); margin:8px 0 2px; }
+  .msg{ max-width:78%; padding:9px 12px; border-radius:18px; font-size:14.5px; line-height:1.35; word-wrap:break-word; white-space:pre-wrap;
+    background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.08); align-self:flex-start; border-bottom-left-radius:6px; animation: msgIn .22s ease-out both; }
+  .msg.me{ align-self:flex-end; background:linear-gradient(180deg, #f2b55c, #d98f2f); color:#24150a; border-color:transparent; border-bottom-left-radius:18px; border-bottom-right-radius:6px; }
+  .msg time{ display:block; font-size:10px; opacity:.6; margin-top:3px; text-align:right; }
+  .msg.wait{ opacity:.55; }
+  @keyframes msgIn{ from{ opacity:0; transform:translateY(6px); } }
+  .chat-bar{ width:100%; max-width:440px; margin:0 auto; padding:6px 12px max(12px, env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:8px; }
+  .chat-quick{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .chat-quick::-webkit-scrollbar{ display:none; }
+  .chat-quick button{ flex:none; padding:7px 12px; border-radius:16px; font-size:12.5px; font-weight:700; min-height:0; white-space:nowrap; }
+  .chat-form{ display:flex; gap:8px; }
+  .chat-form input{ flex:1; min-width:0; height:46px; padding:0 16px; border-radius:23px; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.07); color:inherit; font-size:16px; }
+  .chat-form button{ width:46px; height:46px; padding:0 !important; border-radius:50%; display:grid; place-items:center; flex:none; min-height:0; }
+  .chat-empty{ margin:auto; text-align:center; color:var(--dust); font-size:13.5px; padding:20px; }
 
   /* =====================================================================================
      MODE HISTOIRE — « La Nuit des 33 »: a dark visual novel around the card table
@@ -4401,10 +4447,12 @@
     <h2 id="psName">Joueur</h2>
     <p class="ps-sub" id="psSub"></p>
     <p class="ps-status" id="psStatus"></p>
+    <p class="ps-rec hidden" id="psRec"></p>
     <div class="btnrow ps-btns">
       <button class="primary" id="psChallenge"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Défier</button>
-      <button id="psFriend"></button>
+      <button id="psWrite" class="hidden"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Écrire</button>
     </div>
+    <button id="psFriend" class="ps-friend"></button>
     <button class="ghost" id="psClose">Fermer</button>
   </div>
 </div>
@@ -4504,6 +4552,7 @@
       <span class="lg gl gl-pill chips-pill press og" id="chipsBar"><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span><b id="chipsVal">0</b><small>jetons</small></span>
       <span class="hb-space"></span>
       <button class="gl solid gl-pill tinted chips-claim hidden press og" id="btnChipsClaim"></button>
+      <button class="gl solid gl-round press og hidden" id="btnBell" aria-label="Notifications"><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg><i class="bell-n hidden" id="bellN"></i></button>
       <button class="gl solid gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
       <button class="gl solid gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
     </div>
@@ -4789,6 +4838,20 @@
     </div>
     <p class="small-note" id="richBest"></p>
     <p class="small-note">Les jetons se gagnent en jouant : bonus chaque jour, victoires, trophées, défi du jour. Ils ne s'achètent pas et ne s'échangent pas contre de l'argent.</p>
+  </div>
+</div>
+
+<div class="overlay page hidden" id="bellPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Notifications</h2><span class="ph-spacer"></span></header>
+  <div class="page-body" id="bellBody"></div>
+</div>
+
+<div class="overlay page hidden" id="chatPage">
+  <header class="page-head chat-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><button class="chat-who" id="chatWho"><span class="avatar" id="chatAv" style="--s:36px"></span><span><b id="chatName">Ami</b><small id="chatSt"></small></span></button><button class="chat-defi" id="chatDefi" aria-label="Défier"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg></button></header>
+  <div class="chat-msgs" id="chatMsgs" aria-live="polite"></div>
+  <div class="chat-bar">
+    <div class="chat-quick" id="chatQuick"></div>
+    <form class="chat-form" id="chatForm" autocomplete="off"><input id="chatInput" maxlength="300" placeholder="Écris à ton ami…" aria-label="Message"><button class="primary" id="chatSend" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></form>
   </div>
 </div>
 
@@ -8863,9 +8926,11 @@
   function pageShown(id){
     if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
-    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); }
+    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); }
     else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
+    else if(id==='bellPage'){ if(window.renderBell) window.renderBell(); }
+    else if(id==='chatPage'){ if(window.renderChat) window.renderChat(); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='shopPage') renderShop();
     else if(id==='carrePage'){ refreshCarrePick(); renderStakePicks(); fillAllAvatars(document.getElementById('carrePage')); }
@@ -8993,7 +9058,7 @@
     if(mpMatchLive()){
       quitLive = true;
       mpSend({t:'quit'});
-      mpLogAdd({k:'duel', o:oppNameVal, s:matchStake, d:-matchStake, r:'D', f:2});
+      mpLogAdd({k:'duel', o:oppNameVal, u:oppUid||undefined, s:matchStake, d:-matchStake, r:'D', f:2});
       profile.onlineGames = (profile.onlineGames||0)+1; saveProfile();
       matchStake = 0;
     }
@@ -12599,7 +12664,7 @@
     } else if(mode==='mp'){
       // online: both players put the same stake in the pot, the winner takes it all
       if(matchStake>0){ if(won){ chipsAdd(matchStake*2); res.delta = matchStake; } else res.delta = -matchStake; }
-      mpLogAdd({k:'duel', o:oppNameVal, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
+      mpLogAdd({k:'duel', o:oppNameVal, u:oppUid||undefined, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
     }
     saveProfile();
     matchStake = 0;
@@ -17494,16 +17559,314 @@
   // carrying a room code, and the friend's phone offers to join. Offline friends get the WhatsApp link instead.
   const Lobby = { ch:null, uid:null, online:new Set(), joining:false, pending:null, invT:null, incoming:null, sheet:null };
   const myUid = ()=> (Cloud.user && Cloud.user.id) || null;
+  const myNameNow = ()=> (prefs.name||'').trim().slice(0,16) || 'Un joueur';
+  // Since v68 the server decides who is a friend (friend_links): a request waits until the other one accepts it.
+  // profile.friends keeps the accepted ones, newest conversation first; Friends.req holds the requests in and out.
+  const Friends = { inbox:null, req:{inn:[], out:[]}, unread:{}, synced:0, syncing:null, chat:null, lastN:0 };
   function friendList(){ if(!Array.isArray(profile.friends)) profile.friends = []; return profile.friends; }
   function isFriend(id){ return friendList().some(f=> f.id===id); }
-  function addFriend(id, name, quiet){
-    if(!id || id===myUid() || isFriend(id)) return;
-    friendList().unshift({id, name:String(name||'Joueur').slice(0,16)});
-    if(profile.friends.length>60) profile.friends.length = 60;
-    saveProfile();
-    if(!quiet){ showToast('Ami ajouté', String(name||'Ce joueur')+' est dans tes amis.', {ms:1800}); setTimeout(pushNudge, 2000); }
+  const reqIn = id=> Friends.req.inn.some(f=> f.id===id);
+  const reqOut = id=> Friends.req.out.some(f=> f.id===id);
+  // the friends of the old versions (a list on the phone only) become requests, once
+  async function friendsMigrate(){
+    if(prefs.friendsV2) return;
+    for(const f of friendList().slice(0, 30)){ try{ await supaClient.rpc('fapfap_friend_request', {p_to:f.id}); }catch(e){} }
+    prefs.friendsV2 = 1; savePrefs();
   }
-  function removeFriend(id){ profile.friends = friendList().filter(f=> f.id!==id); saveProfile(); }
+  async function friendsSync(force){
+    if(!CLOUD_ON) return false;
+    if(Friends.syncing) return Friends.syncing;
+    if(!force && Date.now() - Friends.synced < 15000) return true;
+    Friends.syncing = (async ()=>{
+      try{
+        if(!(await cloudInit()) || !supaClient || !myUid()) return false;
+        await friendsMigrate();
+        const { data, error } = await supaClient.rpc('fapfap_friends');
+        if(error || !data) return false;
+        const old = friendList(), inn = [], out = [], acc = [];
+        Friends.unread = {};
+        data.forEach(r=>{
+          const prev = old.find(f=> f.id===r.pid) || {};
+          const f = {id:r.pid, name:String(r.name || prev.name || 'Joueur').slice(0,16), rep:r.rep, chips:r.chips, last: r.last_at ? Date.parse(r.last_at) : 0};
+          if(r.status==='friend'){ acc.push(f); if(r.unread) Friends.unread[r.pid] = r.unread; }
+          else (r.status==='in' ? inn : out).push(f);
+        });
+        acc.sort((a,b)=> (b.last||0) - (a.last||0));
+        profile.friends = acc; Friends.req = {inn, out};
+        saveProfile();
+        Friends.synced = Date.now();
+        return true;
+      }catch(e){ return false; }
+      finally{ setTimeout(()=>{ Friends.syncing = null; }, 0); }
+    })();
+    return Friends.syncing;
+  }
+  // everything that shows friends, redrawn after a change
+  function friendsUi(){
+    bellBadge();
+    if(Nav.cur()==='richPage' && prefs.richTab==='friends') renderRichFriends(true);
+    if(Nav.cur()==='bellPage') drawBell();
+    if(Lobby.sheet && !$id('playerSheet').classList.contains('hidden')) renderPlayerSheet();
+  }
+  async function addFriend(id, name, quiet){
+    if(!id || id===myUid() || isFriend(id)) return;
+    if(!(await cloudInit()) || !supaClient){ showToast('Pas de connexion', 'Réessaie quand tu as du réseau.', {ms:2400}); return; }
+    const nm = String(name||'Ce joueur').slice(0,16);
+    const { data, error } = await supaClient.rpc('fapfap_friend_request', {p_to:id});
+    if(error){ showToast('Demande impossible', /limit/.test(error.message||'') ? 'Trop de demandes aujourd’hui. Réessaie demain.' : 'Réessaie dans un moment.', {ms:2600}); return; }
+    if(data==='friends'){ showToast('Vous êtes amis', nm+' est dans tes amis.', {ms:2000}); lobbySend('fr', {to:id, from:myUid(), name:myNameNow(), what:'acc'}); }
+    else{
+      if(!quiet) showToast('Demande envoyée', nm+' doit l’accepter.', {ms:2000});
+      if(data==='sent'){ lobbySend('fr', {to:id, from:myUid(), name:myNameNow(), what:'req'}); if(!isOnline(id)) pushFriendReq(id); }
+    }
+    await friendsSync(true);
+    friendsUi();
+    if(!quiet) setTimeout(pushNudge, 2000);
+  }
+  async function answerFriend(id, ok){
+    if(!(await cloudInit()) || !supaClient) return;
+    const f = Friends.req.inn.find(x=> x.id===id);
+    Friends.req.inn = Friends.req.inn.filter(x=> x.id!==id);
+    if(Friends.inbox) Friends.inbox.requests = Math.max(0, (Friends.inbox.requests|0) - 1);
+    friendsUi();
+    const { data, error } = await supaClient.rpc('fapfap_friend_answer', {p_from:id, p_ok:!!ok});
+    if(!error && ok && data==='friends'){
+      lobbySend('fr', {to:id, from:myUid(), name:myNameNow(), what:'acc'});
+      showToast('Vous êtes amis', (f ? f.name : 'Ton ami')+' est dans tes amis.', {ms:2000});
+    }
+    await friendsSync(true);
+    friendsUi();
+  }
+  async function removeFriend(id){
+    profile.friends = friendList().filter(f=> f.id!==id);
+    Friends.req.out = Friends.req.out.filter(f=> f.id!==id);
+    saveProfile(); friendsUi();
+    try{ if((await cloudInit()) && supaClient){ await supaClient.rpc('fapfap_friend_remove', {p_other:id}); lobbySend('fr', {to:id, from:myUid(), what:'del'}); } }catch(e){}
+    await friendsSync(true);
+    friendsUi();
+  }
+  async function pushFriendReq(id){
+    try{ await supaClient.functions.invoke('fapfap-push', { body: { to:id, kind:'ami', name:myNameNow() } }); }catch(e){}
+  }
+  // a friend's news, heard live on the lobby channel
+  function lobbyOnFriend(p){
+    if(!p || p.to!==myUid() || !p.from) return;
+    const nm = String(p.name||'Un joueur').replace(/[<>]/g, '').slice(0,16);
+    friendsSync(true).then(()=>{ friendsUi(); bellRefresh(); });
+    if(inGame()) return;
+    if(p.what==='req'){ showToast(nm+' veut être ton ami', 'Touche la cloche pour accepter.', {ms:3200}); vibrate([40,60,40]); }
+    else if(p.what==='acc') showToast(nm+' a accepté', 'Vous êtes amis. Tu peux lui écrire ou le défier.', {ms:2800});
+  }
+  function lobbyOnMsg(p){
+    if(!p || p.to!==myUid() || !p.from) return;
+    const c = Friends.chat;
+    if(c && c.id===p.from && Nav.cur()==='chatPage' && !document.hidden){ chatLoad(); sfxTap(); return; }
+    Friends.unread[p.from] = (Friends.unread[p.from]|0) + 1;
+    if(Friends.inbox) Friends.inbox.unread = (Friends.inbox.unread|0) + 1; else bellRefresh();
+    friendsUi();
+    if(!inGame()) showToast(String(p.name||'Un ami').replace(/[<>]/g, '').slice(0,16), String(p.body||'Nouveau message').slice(0,80), {ms:2800});
+    vibrate([30]);
+  }
+
+  // ---- la cloche : demandes d'ami, messages non lus, défis manqués ----
+  async function bellRefresh(){
+    if(!CLOUD_ON) return;
+    try{
+      if(!(await cloudInit()) || !supaClient || !myUid()) return;
+      lobbyJoin();
+      await friendsSync();
+      const { data, error } = await supaClient.rpc('fapfap_inbox');
+      if(error || !data) return;
+      Friends.inbox = data;
+      friendsUi();
+    }catch(e){}
+  }
+  window.bellRefresh = bellRefresh;
+  const bellSeen = ()=> (Friends.inbox && Friends.inbox.seen_at) ? Date.parse(Friends.inbox.seen_at) : 0;
+  function bellCount(){
+    const ib = Friends.inbox; if(!ib) return 0;
+    return (ib.requests|0) + (ib.unread|0) + (ib.missed||[]).filter(m=> Date.parse(m.at) > bellSeen()).length;
+  }
+  function bellBadge(){
+    const b = $id('btnBell'); if(!b) return;
+    b.classList.toggle('hidden', !CLOUD_ON || !myUid());
+    const n = bellCount(), el = $id('bellN');
+    el.classList.toggle('hidden', !n); el.textContent = n>9 ? '9+' : String(n);
+    b.setAttribute('aria-label', n ? 'Notifications : '+n+' nouvelle'+(n>1 ? 's' : '') : 'Notifications');
+    if(n > Friends.lastN){ b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring'); }
+    Friends.lastN = n;
+  }
+  function agoText(t){
+    const s = (Date.now() - t)/1000, d = new Date(t);
+    if(s < 60) return 'à l’instant';
+    if(s < 3600) return 'il y a '+Math.floor(s/60)+' min';
+    if(s < 86400) return 'il y a '+Math.floor(s/3600)+' h';
+    if(s < 172800) return 'hier';
+    return 'le '+d.getDate()+'/'+(d.getMonth()+1);
+  }
+  // one line of the bell or the friends list: avatar, name, a small line, actions; names are set as text, never as HTML
+  function friendRow(f, sub, acts, cls){
+    const row = document.createElement('div');
+    row.className = 'bell-row'+(cls ? ' '+cls : '');
+    row.innerHTML = '<span class="avatar'+(isOnline(f.id) ? ' is-online' : '')+'" style="--s:42px"></span><span class="bn"><b></b><small></small></span><span class="bell-acts">'+(acts||'')+'</span>';
+    row.querySelector('b').textContent = f.name || 'Joueur';
+    row.querySelector('small').textContent = sub || '';
+    fillAvatar(row.querySelector('.avatar'), null, f.name || 'J');
+    return row;
+  }
+  function bellSection(box, title, rows){
+    if(!rows.length) return;
+    const s = document.createElement('section'); s.className = 'bell-sec';
+    const h = document.createElement('h3'); h.textContent = title; s.appendChild(h);
+    rows.forEach(r=> s.appendChild(r));
+    box.appendChild(s);
+  }
+  function drawBell(){
+    const box = $id('bellBody'); box.textContent = '';
+    const ib = Friends.inbox || {}, seen = Friends.bellSeenAt || bellSeen();
+    bellSection(box, 'Demandes d’ami', Friends.req.inn.map(f=>{
+      const r = friendRow(f, 'Veut être ton ami', '<button class="ok" data-a="yes">Accepter</button><button data-a="no">Refuser</button>', 'new');
+      r.querySelector('[data-a=yes]').addEventListener('click', ()=> answerFriend(f.id, true));
+      r.querySelector('[data-a=no]').addEventListener('click', ()=> answerFriend(f.id, false));
+      return r;
+    }));
+    bellSection(box, 'Messages', friendList().filter(f=> Friends.unread[f.id]).map(f=>{
+      const n = Friends.unread[f.id];
+      const r = friendRow(f, n+(n>1 ? ' nouveaux messages' : ' nouveau message'), '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>', 'new tappable');
+      r.addEventListener('click', ()=> openChat(f));
+      return r;
+    }));
+    bellSection(box, 'Défis manqués', (ib.missed||[]).map(m=>{
+      const t = Date.parse(m.at), f = {id:m.pid, name:String(m.name||'Un joueur').slice(0,16)};
+      const r = friendRow(f, 'T’a défié '+agoText(t), '<button data-a="defi">'+ico('cards')+' Défier</button>', t > seen ? 'new' : '');
+      r.querySelector('[data-a=defi]').addEventListener('click', ()=> challengeFriend(f));
+      return r;
+    }));
+    if(!box.children.length) box.innerHTML = '<div class="rich-empty">Rien de neuf pour le moment.<br>Les demandes d’ami, les messages et les défis manqués s’affichent ici.</div>';
+    const more = document.createElement('button');
+    more.className = 'ghost'; more.innerHTML = ico('users')+' Mes amis';
+    more.addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
+    box.appendChild(more);
+    if(Nav.cur()==='bellPage' && !document.hidden) bellMarkSeen();
+  }
+  async function renderBell(){
+    Friends.bellSeenAt = bellSeen();
+    drawBell();
+    await bellRefresh();
+    if(!Friends.bellSeenAt) Friends.bellSeenAt = bellSeen() || 1;
+    drawBell();
+  }
+  // missed challenges on the open bell are seen: the badge forgets them (they stay listed for a week)
+  async function bellMarkSeen(){
+    const ib = Friends.inbox;
+    if(!ib || !(ib.missed||[]).some(m=> Date.parse(m.at) > bellSeen()) || Friends.marking) return;
+    Friends.marking = true;
+    try{ const { error } = await supaClient.rpc('fapfap_inbox_seen'); if(!error){ ib.seen_at = new Date().toISOString(); bellBadge(); } }catch(e){}
+    Friends.marking = false;
+  }
+  window.renderBell = renderBell;
+  $id('btnBell').addEventListener('click', ()=> Nav.go('bellPage'));
+  setInterval(()=>{ if(!document.hidden && myUid() && (inHome() || Nav.cur()==='richPage')) bellRefresh(); }, 90000);
+  setTimeout(bellRefresh, 2500);
+  // a friend-request notification, or ?amis=1: straight to the bell
+  if(/[?&]amis=1\b/.test(location.search)){
+    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    setTimeout(()=>{ if(inHome()) Nav.go('bellPage'); }, 900);
+  }
+
+  // ---- la conversation : gardée sur le serveur, réponses rapides du quartier ----
+  const QUICK = ['On se tape une partie ?', 'J’arrive, attends-moi', 'Tu as peur ou bien ?', 'Donne-moi ma revanche !', 'Mola, c’est comment ?',
+    'Tu as eu la chance seulement', 'Ce soir tu vas voir ton ennemi', 'Pas maintenant, je suis occupé', 'On est ensemble !'];
+  $id('chatQuick').innerHTML = QUICK.map((q, i)=> '<button type="button" data-q="'+i+'">'+q+'</button>').join('');
+  $id('chatQuick').addEventListener('click', e=>{ const b = e.target.closest('[data-q]'); if(b) chatSend(QUICK[+b.dataset.q]); });
+  function openChat(f){
+    if(!f || !f.id) return;
+    if(!Friends.chat || Friends.chat.id!==f.id) Friends.chat = {id:f.id, name:f.name || 'Ami', msgs:[], loading:true};
+    hide('playerSheet'); Lobby.sheet = null;
+    if(Nav.cur()==='chatPage') renderChat(); else Nav.go('chatPage');
+  }
+  function chatStatus(){
+    const c = Friends.chat; if(!c) return;
+    $id('chatSt').textContent = isOnline(c.id) ? 'En ligne' : 'Hors ligne';
+    $id('chatAv').classList.toggle('is-online', isOnline(c.id));
+  }
+  function renderChat(){
+    const c = Friends.chat; if(!c) return;
+    $id('chatName').textContent = c.name;
+    fillAvatar($id('chatAv'), null, c.name);
+    chatStatus();
+    drawMsgs();
+    chatLoad();
+  }
+  window.renderChat = renderChat;
+  async function chatLoad(){
+    const c = Friends.chat; if(!c) return;
+    try{
+      if(!(await cloudInit()) || !supaClient) return;
+      const { data, error } = await supaClient.rpc('fapfap_msgs', {p_other:c.id});
+      if(Friends.chat!==c || error || !data) return;
+      const waiting = c.msgs.filter(m=> m.wait);
+      c.msgs = data.slice().reverse().map(m=> ({id:m.id, mine:m.mine, body:m.body, t:Date.parse(m.created_at)})).concat(waiting);
+      c.loading = false;
+      const n = Friends.unread[c.id]|0;
+      if(n){ delete Friends.unread[c.id]; if(Friends.inbox) Friends.inbox.unread = Math.max(0, (Friends.inbox.unread|0) - n); bellBadge(); }
+      drawMsgs();
+    }catch(e){}
+  }
+  function drawMsgs(){
+    const box = $id('chatMsgs'), c = Friends.chat; if(!c) return;
+    box.textContent = '';
+    if(!c.msgs.length){
+      box.innerHTML = '<div class="chat-empty">'+(c.loading ? 'Chargement…' : 'Pas encore de message.<br>Dis-lui bonjour, ou lance-lui un défi !')+'</div>';
+      return;
+    }
+    let day = '';
+    const today = new Date().toDateString(), yest = new Date(Date.now() - 864e5).toDateString();
+    c.msgs.forEach(m=>{
+      const d = new Date(m.t), dk = d.toDateString();
+      if(dk!==day){
+        day = dk;
+        const el = document.createElement('div'); el.className = 'chat-day';
+        el.textContent = dk===today ? 'Aujourd’hui' : dk===yest ? 'Hier' : d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+        box.appendChild(el);
+      }
+      const el = document.createElement('div'); el.className = 'msg'+(m.mine ? ' me' : '')+(m.wait ? ' wait' : '');
+      el.textContent = m.body;
+      const tm = document.createElement('time'); tm.textContent = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+      el.appendChild(tm);
+      box.appendChild(el);
+    });
+    box.scrollTop = box.scrollHeight;
+  }
+  async function chatSend(txt){
+    const c = Friends.chat;
+    txt = String(txt||'').replace(/\s+/g, ' ').trim().slice(0, 300);
+    if(!c || !txt) return;
+    const m = {mine:true, body:txt, t:Date.now(), wait:true};
+    c.msgs.push(m); drawMsgs();
+    try{
+      if(!(await cloudInit()) || !supaClient) throw new Error('offline');
+      const { data, error } = await supaClient.rpc('fapfap_msg_send', {p_to:c.id, p_body:txt});
+      if(error) throw error;
+      m.id = data; m.wait = false; drawMsgs();
+      lobbySend('fmsg', {to:c.id, from:myUid(), name:myNameNow(), body:txt.slice(0, 80)});
+    }catch(e){
+      c.msgs = c.msgs.filter(x=> x!==m); drawMsgs();
+      const why = (e && e.message) || '';
+      showToast('Message non envoyé', /not friends/.test(why) ? 'Vous n’êtes plus amis.' : /limit/.test(why) ? 'Doucement ! Attends une minute.' : 'Pas de connexion. Réessaie.', {ms:2400});
+      if(!/not friends|limit/.test(why) && !$id('chatInput').value) $id('chatInput').value = txt;
+    }
+  }
+  $id('chatForm').addEventListener('submit', e=>{ e.preventDefault(); const i = $id('chatInput'); const t = i.value; i.value = ''; chatSend(t); });
+  $id('chatWho').addEventListener('click', ()=>{ const c = Friends.chat; if(c) openPlayerSheet(friendList().find(f=> f.id===c.id) || {id:c.id, name:c.name}); });
+  $id('chatDefi').addEventListener('click', ()=>{ const c = Friends.chat; if(c) challengeFriend({id:c.id, name:c.name}); });
+  // the record between two players, from this phone's own history of online games
+  function headToHead(p){
+    const log = Array.isArray(profile.mpLog) ? profile.mpLog : [];
+    let w = 0, l = 0;
+    log.forEach(e=>{ if(e.k==='duel' && (e.u ? e.u===p.id : e.o===p.name)){ if(e.r==='V') w++; else l++; } });
+    return {w, l};
+  }
 
   async function lobbyJoin(){
     const uid = myUid();
@@ -17516,6 +17879,8 @@
       ch.on('presence', {event:'sync'}, ()=>{ Lobby.online = new Set(Object.keys(ch.presenceState())); lobbyRefreshUi(); });
       ch.on('broadcast', {event:'inv'}, ({payload})=> lobbyOnInvite(payload));
       ch.on('broadcast', {event:'inv-no'}, ({payload})=> lobbyOnDecline(payload));
+      ch.on('broadcast', {event:'fr'}, ({payload})=> lobbyOnFriend(payload));
+      ch.on('broadcast', {event:'fmsg'}, ({payload})=> lobbyOnMsg(payload));
       ch.subscribe(async st=>{ if(st==='SUBSCRIBED'){ try{ await ch.track({name:(prefs.name||'').trim().slice(0,16)}); }catch(e){} } });
       Lobby.ch = ch; Lobby.uid = uid;
     }catch(e){}
@@ -17526,43 +17891,44 @@
   function lobbyRefreshUi(){
     if(!$id('richFriendsBox').classList.contains('hidden') && Nav.cur()==='richPage') renderRichFriends(true);
     if(Lobby.sheet && !$id('playerSheet').classList.contains('hidden')) renderPlayerSheet();
+    if(Nav.cur()==='chatPage') chatStatus();
     const n = friendList().filter(f=> isOnline(f.id)).length;
     $id('richFriendsTabSub').textContent = n ? n+' en ligne' : 'Défie-les en un geste';
   }
 
   // the friends tab: online first, names refreshed from the server when it can
-  let friendsFetched = 0;
+  // the friends tab: requests to answer first, then friends (online first, then the latest conversations), then requests sent
   async function renderRichFriends(quick){
     const list = $id('richFriends');
     const fl = friendList();
-    if(!fl.length){
-      list.innerHTML = '<div class="rich-empty">Tu n’as pas encore d’amis ici.<br>Va dans « Tout le quartier » et touche un joueur pour l’ajouter. Après une partie en ligne, tu peux aussi ajouter ton adversaire.</div>';
-      return;
-    }
-    if(!quick) setTimeout(pushNudge, 900);
-    const rows = fl.slice().sort((a,b)=> (isOnline(b.id)?1:0) - (isOnline(a.id)?1:0));
-    list.innerHTML = rows.map((f,i)=> '<div class="rich-row tappable" style="--d:'+Math.min(i,12)+'"><span class="avatar rich-av'+(isOnline(f.id) ? ' is-online' : '')+'" style="--s:42px"></span>'+
-      '<span class="rich-name"><span class="rn"></span><span class="rich-sub"></span></span>'+
-      '<button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button></div>').join('');
-    [...list.querySelectorAll('.rich-row')].forEach((row, i)=>{
-      const f = rows[i];
-      row.querySelector('.rn').textContent = f.name;
-      row.querySelector('.rich-sub').textContent = isOnline(f.id) ? 'En ligne' : 'Hors ligne'+(f.rep!=null ? ' · '+RANKS[rankIndex(f.rep||0)].name : '');
-      fillAvatar(row.querySelector('.rich-av'), null, f.name);
-      row.addEventListener('click', ()=> openPlayerSheet(f));
-      row.querySelector('.rich-go').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
-    });
-    if(quick || Date.now()-friendsFetched < 30000) return;
-    friendsFetched = Date.now();
-    try{
-      if(!(await cloudInit()) || !supaClient) return;
-      lobbyJoin();
-      const { data, error } = await supaClient.rpc('fapfap_players', { ids: fl.map(f=> f.id) });
-      if(error || !data) return;
-      data.forEach(r=>{ const f = fl.find(x=> x.id===r.pid); if(f){ if(r.name) f.name = r.name; f.rep = r.rep; f.chips = r.chips; } });
-      saveProfile();
-      renderRichFriends(true);
-    }catch(e){}
+    list.textContent = '';
+    bellSection(list, 'Demandes reçues', Friends.req.inn.map(f=>{
+      const r = friendRow(f, 'Veut être ton ami', '<button class="ok" data-a="yes">Accepter</button><button data-a="no">Refuser</button>', 'new');
+      r.querySelector('[data-a=yes]').addEventListener('click', e=>{ e.stopPropagation(); answerFriend(f.id, true); });
+      r.querySelector('[data-a=no]').addEventListener('click', e=>{ e.stopPropagation(); answerFriend(f.id, false); });
+      return r;
+    }));
+    const rows = fl.slice().sort((a,b)=> ((isOnline(b.id)?1:0) - (isOnline(a.id)?1:0)) || ((b.last||0) - (a.last||0)));
+    bellSection(list, Friends.req.inn.length || Friends.req.out.length ? 'Mes amis' : '', rows.map(f=>{
+      const n = Friends.unread[f.id]|0;
+      const sub = (isOnline(f.id) ? 'En ligne' : 'Hors ligne')+(f.rep!=null ? ' · '+RANKS[rankIndex(f.rep||0)].name : '');
+      const r = friendRow(f, n ? n+(n>1 ? ' nouveaux messages' : ' nouveau message') : sub,
+        (n ? '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>' : '')+'<button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button>', 'tappable'+(n ? ' new' : ''));
+      r.addEventListener('click', ()=> openPlayerSheet(f));
+      r.querySelector('.rich-go').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
+      return r;
+    }));
+    bellSection(list, 'Demandes envoyées', Friends.req.out.map(f=>{
+      const r = friendRow(f, 'Attend sa réponse', '<span class="fr-pend">En attente</span>', 'tappable');
+      r.addEventListener('click', ()=> openPlayerSheet(f));
+      return r;
+    }));
+    const h = list.querySelector('.bell-sec h3'); if(h && !h.textContent) h.remove();
+    if(!list.children.length) list.innerHTML = '<div class="rich-empty">Tu n’as pas encore d’amis ici.<br>Va dans « Tout le quartier » et touche un joueur pour lui demander d’être ton ami. Après une partie en ligne, tu peux aussi l’envoyer à ton adversaire.</div>';
+    if(quick) return;
+    setTimeout(pushNudge, 900);
+    lobbyJoin();
+    if(await friendsSync()) renderRichFriends(true);
   }
 
   // the sheet of one player: challenge, add / remove
@@ -17578,15 +17944,23 @@
     $id('psAvatar').classList.toggle('is-online', isOnline(p.id));
     $id('psSub').textContent = (p.rep!=null ? RANKS[rankIndex(p.rep||0)].name : '')+(p.chips!=null ? ' · '+fmtChips(p.chips)+' jetons' : '');
     $id('psStatus').innerHTML = isOnline(p.id) ? '<i class="dot-on"></i> En ligne maintenant' : 'Hors ligne · tu pourras lui envoyer le lien par WhatsApp';
-    const fb = $id('psFriend');
-    fb.innerHTML = isFriend(p.id) ? ico('check')+' Ami · retirer' : ico('users')+' Ajouter en ami';
+    const fr = isFriend(p.id), fb = $id('psFriend'), rec = $id('psRec');
+    fb.classList.toggle('quiet', fr || reqOut(p.id));
+    fb.classList.toggle('primary', reqIn(p.id));
+    fb.innerHTML = fr ? 'Retirer de mes amis' : reqOut(p.id) ? ico('hourglass')+' Demande envoyée · annuler' : reqIn(p.id) ? ico('check')+' Accepter sa demande' : ico('users')+' Demander en ami';
+    $id('psWrite').classList.toggle('hidden', !fr);
+    const h = headToHead(p);
+    rec.classList.toggle('hidden', !fr && !(h.w + h.l));
+    rec.innerHTML = (h.w + h.l) ? 'Entre vous : <b class="w">'+h.w+' victoire'+(h.w>1 ? 's' : '')+'</b> · <b class="l">'+h.l+' défaite'+(h.l>1 ? 's' : '')+'</b>' : 'Pas encore de partie en ligne entre vous';
   }
   $id('psClose').addEventListener('click', ()=>{ hide('playerSheet'); Lobby.sheet = null; });
+  $id('psWrite').addEventListener('click', ()=>{ const p = Lobby.sheet; if(p) openChat(friendList().find(f=> f.id===p.id) || p); });
   $id('psFriend').addEventListener('click', ()=>{
     const p = Lobby.sheet; if(!p) return;
-    if(isFriend(p.id)) removeFriend(p.id); else addFriend(p.id, p.name);
-    renderPlayerSheet();
-    if(Nav.cur()==='richPage') (prefs.richTab==='friends' ? renderRichFriends(true) : renderRichWorld());
+    if(isFriend(p.id)) askConfirm('Retirer '+(p.name||'ce joueur')+' ?', 'Vous ne serez plus amis, et vous ne pourrez plus vous écrire tant que vous ne l’êtes pas à nouveau.', 'Retirer', ()=>{ hide('playerSheet'); Lobby.sheet = null; removeFriend(p.id); });
+    else if(reqOut(p.id)) removeFriend(p.id);
+    else if(reqIn(p.id)) answerFriend(p.id, true);
+    else addFriend(p.id, p.name);
   });
   $id('psChallenge').addEventListener('click', ()=>{ const p = Lobby.sheet; hide('playerSheet'); Lobby.sheet = null; if(p) challengeFriend(p); });
   $id('btnMpFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
@@ -17666,11 +18040,15 @@
     const show = mode==='mp' && !!oppUid && oppUid!==myUid();
     b.classList.toggle('hidden', !show);
     if(!show) return;
-    const f = isFriend(oppUid);
-    b.disabled = f;
-    b.querySelector('span').textContent = f ? oppNameVal+' est ton ami' : 'Ajouter '+oppNameVal+' en ami';
+    const f = isFriend(oppUid), out = reqOut(oppUid);
+    b.disabled = f || out;
+    b.querySelector('span').textContent = f ? oppNameVal+' est ton ami' : out ? 'Demande envoyée à '+oppNameVal : reqIn(oppUid) ? 'Accepter '+oppNameVal+' en ami' : 'Demander '+oppNameVal+' en ami';
   }
-  $id('btnAddFriendMo').addEventListener('click', ()=>{ if(oppUid){ addFriend(oppUid, oppNameVal); refreshFriendBtnMo(); } });
+  $id('btnAddFriendMo').addEventListener('click', async ()=>{
+    if(!oppUid) return;
+    if(reqIn(oppUid)) await answerFriend(oppUid, true); else await addFriend(oppUid, oppNameVal);
+    refreshFriendBtnMo();
+  });
 
   // ===================== Notifications de défi : le téléphone de l'ami sonne même jeu fermé (Web Push) =====================
   // The phone subscribes once (Réglages), the subscription is kept with the account in Supabase (push_subs), and a
@@ -17738,7 +18116,7 @@
       if(isIOS && !isStandalone()) return;
       if(inGame() || mpNet || Date.now() - (prefs.pushAsked||0) < 3*864e5) return;
       prefs.pushAsked = Date.now(); savePrefs();
-      askConfirm('Être prévenu des défis ?', 'Active les notifications : ton téléphone sonnera quand un ami te défie, même jeu fermé.', 'Activer', ()=>{ pushEnable().then(()=>{ if(window.pushSettingsRow) window.pushSettingsRow(); }); });
+      askConfirm('Être prévenu des défis ?', 'Active les notifications : ton téléphone sonnera quand un ami te défie ou te demande en ami, même jeu fermé.', 'Activer', ()=>{ pushEnable().then(()=>{ if(window.pushSettingsRow) window.pushSettingsRow(); }); });
     }catch(e){}
   }
   // wakes the friend's phone; true when at least one of their phones was reached
@@ -17763,6 +18141,7 @@
   if('serviceWorker' in navigator){
     navigator.serviceWorker.addEventListener('message', e=>{
       const d = e.data || {};
+      if(d.type==='amis'){ if(!inGame() && !mpNet) Nav.go('bellPage'); else bellRefresh(); }
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
     });
   }
@@ -17778,6 +18157,7 @@
     window.__ff = { DScene, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
+      myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openPlayerSheet, pushChallenge, pushFriendReq,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, FX2, glaceeCertificate, awardPoints, Rig, Rig2, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
