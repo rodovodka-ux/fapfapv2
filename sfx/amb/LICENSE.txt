@@ -1,0 +1,14 @@
+Sons d'ambiance de Fap Fap (dossier sfx/amb)
+
+Source : BigSoundBank (https://bigsoundbank.com), sons de Joseph Sardin et contributeurs,
+publiés sous licence CC0 1.0 (domaine public) : utilisation, modification et redistribution libres,
+y compris commerciales, sans obligation de citer l'auteur (cité ici par courtoisie).
+
+Fichiers d'origine (coupés, mis en mono, rééchantillonnés à 24 kHz, compressés en MP3 48 kb/s) :
+- pluie_orage.mp3  <- « Pluie et orage n°2 » (n°0740)
+- pluie_toit.mp3   <- « Grosse pluie sur un toit de voiture » (n°1294)
+- tonnerre.mp3     <- « Tonnerre n°5 » (n°3116)
+- sirene.mp3       <- « Sirène de gendarmerie, passage » (n°2029)
+- insectes.mp3     <- « Insectes nocturnes n°4 » (n°1470)
+- bar.mp3          <- « Ambiance bar n°2 » (n°0480)
+- klaxon.mp3       <- « Klaxon de voiture récente n°7 » (n°0969)
