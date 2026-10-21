@@ -4911,6 +4911,7 @@
     <div class="set-group">
       <h3>Son &amp; musique</h3>
       <button class="set-row" id="btnToggleSound"><span><svg class="i" aria-hidden="true"><use href="#i-vol"/></svg> Son</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleAmb"><span><svg class="i" aria-hidden="true"><use href="#i-vol"/></svg> Sons d'ambiance des tables</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleMusic"><span><svg class="i" aria-hidden="true"><use href="#i-music"/></svg> Musique de fond</span><span class="switch"></span></button>
       <label class="set-row set-slider"><span>Volume de la musique</span><input type="range" id="musicVol" min="0" max="100" step="5"></label>
       <label class="set-row set-slider"><span>Volume des effets</span><input type="range" id="sfxVol" min="0" max="100" step="5"></label>
@@ -6218,6 +6219,7 @@
     const t = audioCtx.currentTime;
     master.gain.setTargetAtTime(soundOn ? 1 : 0, t, 0.05);
     sfxBus.gain.setTargetAtTime(sfxLevel(), t, 0.05);
+    if(window.AmbRec) AmbRec.level();
     musicBus.gain.setTargetAtTime(musicLevel(), t, 0.3);
   }
   // the mute button: silence everything and stop the audio clock (saves the battery)
@@ -6540,7 +6542,16 @@
     cristal: {name:'Lumière de verre', mood:'clair, élégant', dur:6, pad:'glass', lead:'kalimba', density:0.32, bass:true,
       parts:[['Ebmaj9','Bb6','Cm9','Abmaj7','Ebmaj9','Gm7','Abmaj9','Bbsus4'], ['Abmaj7','Bb','Gm7','Cm9','Fm9','Bb9','Ebmaj9','Ebmaj9']]},
     orage:   {name:'Saison des pluies', mood:'sombre, dramatique', dur:6.4, pad:'strings', lead:'felt', density:0.3, bass:true, amb:'rain',
-      parts:[['Dm9','Bbmaj7','Gm9','A7sus4','Dm9','Fmaj7','Gm9','A7'], ['Bbmaj7','C6','Am7','Dm9','Gm9','A7sus4','Dm9','Dm9']]}
+      parts:[['Dm9','Bbmaj7','Gm9','A7sus4','Dm9','Fmaj7','Gm9','A7'], ['Bbmaj7','C6','Am7','Dm9','Gm9','A7sus4','Dm9','Dm9']]},
+    // v67: the four new tables (their real sounds of the place play on top: see AmbRec)
+    police:  {name:'Contrôle de nuit', mood:'noir, tendu', dur:5.2, pad:'strings', lead:'epiano', density:0.26, bass:true, walk:true, beat:{bpm:88, swing:0.55, style:'smooth'},
+      parts:[['Cm9','Fm9','Dm7b5','G7sus4','Cm9','Abmaj7','Dm7b5','G7'], ['Ebmaj7','Abmaj7','Fm9','Bb7sus4','Cm9','Fm7','Abmaj9','G7sus4']]},
+    auvent:  {name:'Sous la tôle', mood:'sombre, intime', dur:6.2, pad:'warm', lead:'felt', density:0.26, bass:true, beat:{bpm:76, swing:0.6},
+      parts:[['Dm9','Bbmaj7','Gm9','A7sus4','Dm9','Fmaj7','Gm9','A7'], ['Bbmaj7','C6','Am7','Dm9','Gm9','A7sus4','Dm9','Dm9']]},
+    taxi:    {name:'Carrefour Warda', mood:'afrobeat, nocturne', dur:4.4, pad:'warm', lead:'balafon', density:0.4, bass:true, beat:{bpm:106, swing:0.55, style:'afro'},
+      parts:[['Am9','Fmaj7','Cmaj7','G6','Am9','Fmaj9','Dm9','E7sus4'], ['Fmaj7','G','Em7','Am9','Dm9','G9','Cmaj7','E7sus4']]},
+    zinc:    {name:'Néon vert', mood:'afro-funk, moite', dur:4.2, pad:'synth', lead:'epiano', density:0.34, bass:true, beat:{bpm:112, swing:0.5, style:'house'},
+      parts:[['Em7','Em7','Cmaj7','D','Em7','G','Am7','B7sus4'], ['Cmaj7','D','Bm7','Em7','Am7','D','Em7','B7']]}
   };
 
   // the exceptional tables borrow the arrangement of a close piece, under their own name
@@ -8383,6 +8394,11 @@
       {id:'chambre', name:'La chambre aux persiennes',   swatch:'#1d3f8a', req:p=>rankIndex(p.rep)>=1, hint:'Rang « Joueur du dimanche »'},
       {id:'maquis',  name:'Le maquis sous l’orage',      swatch:'#f2ece0', req:p=>rankIndex(p.rep)>=2, hint:'Rang « Joueur sérieux »'},
       {id:'cave',    name:'La cave',                     swatch:'#9a7a52', req:p=>rankIndex(p.rep)>=3 || !!(p.story && p.story.finished), hint:'Rang « Redouté »'},
+      // v67: four new nights, each with its own light and its own sounds
+      {id:'auvent',  name:'La véranda sous l’orage',     swatch:'#8c6238', req:()=>true},
+      {id:'zinc',    name:'Le maquis au néon vert',      swatch:'#b3babf', req:()=>true},
+      {id:'taxi',    name:'Sur le capot du taxi',        swatch:'#ffc93c', req:p=> totalWins(p)>=3, hint:'Gagne 3 matchs'},
+      {id:'police',  name:'Sur le capot de la police',   swatch:'#e9edf2', req:p=> rankIndex(p.rep)>=1, hint:'Rang « Joueur du dimanche »'},
       ...SHOP_TABLES.map(t=> ({id:t.id, name:t.name, swatch:t.swatch, req:p=> shopOwns(p, 'table', t.id), hint:'Boutique · '+t.price.toLocaleString('fr-FR')+' jetons'}))
     ],
     light: [
@@ -8634,6 +8650,7 @@
     const sw = (id, on)=> document.getElementById(id).classList.toggle('on', !!on);
     sw('btnToggleSound', soundOn);
     sw('btnToggleMusic', !prefs.noMusic);
+    sw('btnToggleAmb', !prefs.noAmb);
     document.getElementById('musicVol').value = Math.round(100*(prefs.musicVol==null ? 0.6 : prefs.musicVol));
     document.getElementById('sfxVol').value = Math.round(100*(prefs.sfxVol==null ? 0.8 : prefs.sfxVol));
     refreshNowPlaying();
@@ -8657,6 +8674,7 @@
   });
   toggle('btnToggleSound',   ()=> setSound(!soundOn));
   toggle('btnToggleMusic',   ()=>{ prefs.noMusic = !prefs.noMusic; applyAudioLevels(); ensureAudio(); Music.kick(); });
+  toggle('btnToggleAmb',     ()=>{ prefs.noAmb = !prefs.noAmb; if(window.AmbRec) AmbRec.level(); });
   // volume sliders: heard immediately while dragging, saved when let go
   [['musicVol','musicVol'], ['sfxVol','sfxVol']].forEach(([id,key])=>{
     const el = document.getElementById(id);
@@ -9459,7 +9477,9 @@
     const U = (u, v)=> ({x:TP.x + u*TP.w, y:TP.y + v*TP.h});
     // how often the power goes in each quartier, and whether the light survives it (kerosene, moon, lightning)
     const TBL = {
-      tripot:{cut:.5}, bar:{cut:.4}, veranda:{cut:.7}, club:{cut:.1}, cour:{cut:.6}, chambre:{cut:.5}, maquis:{cut:.8}, cave:{cut:.9}, verre:{cut:.15}
+      tripot:{cut:.5}, bar:{cut:.4}, veranda:{cut:.7}, club:{cut:.1}, cour:{cut:.6}, chambre:{cut:.5}, maquis:{cut:.8}, cave:{cut:.9}, verre:{cut:.15},
+      // v67: the hood of a police car, the veranda under the storm, the yellow taxi in the headlights, the green neon of the maquis
+      police:{cut:0}, auvent:{cut:.6}, taxi:{cut:0}, zinc:{cut:.5}
     };
     const TABLE_IDS = Object.keys(TBL);
     const tid = ()=>{ const id = currentTableId(); return TBL[id] ? id : 'tripot'; };
@@ -9827,6 +9847,74 @@
       c.restore(); c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 3; rr(c, TP.x + 2, TP.y + 2, TP.w - 4, TP.h - 4, 11); c.stroke(); c.strokeStyle = '#1B120C'; c.lineWidth = 2; rr(c, TP.x, TP.y, TP.w, TP.h, 12); c.stroke();
     }
 
+    // v67 — the hood of a patrol car at night: wet asphalt around, white paint, the blue band, POLICE stencilled across
+    function paintPolice(c){
+      c.fillStyle = '#1c1d22'; c.fillRect(0, 0, W, H); grain(c, 0, 0, W, H, 2600, 'rgba(0,0,0,.25)', 'rgba(200,210,230,.05)');
+      for(let k = 0; k < 7; k++){ c.fillStyle = 'rgba(120,140,170,.10)'; c.beginPath(); c.ellipse(rnd()*W, rnd()*H, 26 + rnd()*50, 8 + rnd()*14, rnd()*3, 0, 7); c.fill(); }
+      // the hood: a long curved shape, a dark seam where it meets the windscreen
+      rr(c, F.x, F.y, F.w, F.h, 34); c.fillStyle = '#000'; c.fill();
+      let g = c.createLinearGradient(F.x, 0, F.x + F.w, 0); g.addColorStop(0, '#c9ced6'); g.addColorStop(.5, '#f4f6f9'); g.addColorStop(1, '#b9bfc8');
+      rr(c, F.x + 3, F.y + 3, F.w - 6, F.h - 6, 31); c.fillStyle = g; c.fill();
+      rr(c, TP.x, TP.y, TP.w, TP.h, 24); g = c.createLinearGradient(0, TP.y, 0, TP.y + TP.h); g.addColorStop(0, '#dfe3e9'); g.addColorStop(.5, '#f7f8fa'); g.addColorStop(1, '#d4d9e0'); c.fillStyle = g; c.fill();
+      c.save(); rr(c, TP.x, TP.y, TP.w, TP.h, 24); c.clip();
+      c.fillStyle = '#123a8a'; c.fillRect(TP.x, TP.y + TP.h*.44, TP.w, TP.h*.12); c.fillStyle = '#e9edf2'; c.fillRect(TP.x, TP.y + TP.h*.44 + TP.h*.05, TP.w, 3);
+      c.save(); c.translate(TP.x + TP.w/2, TP.y + TP.h*.3); c.font = '700 ' + Math.round(TP.w*.17) + 'px Fredoka, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(18,58,138,.16)'; c.fillText('POLICE', 0, 0); c.restore();
+      // the curve of the hood: a soft highlight down the middle, two crease lines
+      const hl = c.createLinearGradient(TP.x, 0, TP.x + TP.w, 0); hl.addColorStop(.35, 'rgba(255,255,255,0)'); hl.addColorStop(.5, 'rgba(255,255,255,.55)'); hl.addColorStop(.65, 'rgba(255,255,255,0)'); c.fillStyle = hl; c.fillRect(TP.x, TP.y, TP.w, TP.h);
+      c.strokeStyle = 'rgba(0,0,0,.12)'; c.lineWidth = 2; [.18, .82].forEach(u=>{ c.beginPath(); c.moveTo(TP.x + TP.w*u, TP.y); c.quadraticCurveTo(TP.x + TP.w*(u + (u < .5 ? -.04 : .04)), TP.y + TP.h*.5, TP.x + TP.w*u, TP.y + TP.h); c.stroke(); });
+      for(let k = 0; k < 40; k++){ c.fillStyle = 'rgba(150,170,200,.35)'; c.beginPath(); c.arc(TP.x + rnd()*TP.w, TP.y + rnd()*TP.h, .8 + rnd()*1.6, 0, 7); c.fill(); }   // drops of the last rain
+      const sh = c.createLinearGradient(0, TP.y, 0, TP.y + 30); sh.addColorStop(0, 'rgba(10,14,24,.55)'); sh.addColorStop(1, 'rgba(10,14,24,0)'); c.fillStyle = sh; c.fillRect(TP.x, TP.y, TP.w, 30);
+      c.restore(); c.lineWidth = 3; c.strokeStyle = '#000'; rr(c, F.x, F.y, F.w, F.h, 34); c.stroke();
+    }
+    // v67 — the veranda under the storm: soaked cement, planks of a heavy table, the edge of a tin awning dripping
+    function paintAuvent(c){
+      c.fillStyle = '#34383d'; c.fillRect(0, 0, W, H); grain(c, 0, 0, W, H, 2200, 'rgba(0,0,0,.2)', 'rgba(200,220,255,.05)');
+      for(let k = 0; k < 10; k++){ c.fillStyle = 'rgba(150,180,215,.14)'; c.beginPath(); c.ellipse(rnd()*W, rnd()*H, 30 + rnd()*60, 9 + rnd()*16, rnd()*3, 0, 7); c.fill(); }
+      rr(c, F.x, F.y, F.w, F.h, 6); c.fillStyle = '#000'; c.fill();
+      const n = 7, ph = (F.h - 8)/n;
+      for(let k = 0; k < n; k++){ const y = F.y + 4 + k*ph, tone = ['#8c6238','#80592f','#93693e','#7a5530'][k%4];
+        rr(c, F.x + 3, y + 1, F.w - 6, ph - 2, 3); c.fillStyle = tone; c.fill();
+        c.save(); rr(c, F.x + 4, y + 1, F.w - 8, ph - 3, 4); c.clip(); c.strokeStyle = 'rgba(40,20,8,.4)'; c.lineWidth = 1.2;
+        for(let j = 0; j < 6; j++){ const yy = y + 4 + rnd()*(ph - 8); c.beginPath(); c.moveTo(F.x, yy); c.bezierCurveTo(F.x + F.w*.3, yy + rnd()*6 - 3, F.x + F.w*.6, yy + rnd()*6 - 3, F.x + F.w, yy + rnd()*4 - 2); c.stroke(); }
+        c.fillStyle = 'rgba(160,190,220,.18)'; c.beginPath(); c.ellipse(F.x + F.w*(.2 + rnd()*.6), y + ph/2, 14 + rnd()*12, 4, 0, 0, 7); c.fill();   // rain puddles on the wood
+        c.restore(); c.fillStyle = '#2a2a2a'; [F.x + 14, F.x + F.w - 14].forEach(x=>{ c.beginPath(); c.arc(x, y + ph/2, 2.2, 0, 7); c.fill(); }); }
+      c.lineWidth = 3.5; c.strokeStyle = '#000'; rr(c, F.x, F.y, F.w, F.h, 6); c.stroke();
+      // the edge of the corrugated tin awning, right above the table
+      const ay = Math.max(0, F.y - 36); c.fillStyle = '#6d7277'; c.fillRect(0, ay, W, 22);
+      for(let x = 0; x < W; x += 14){ const gg = c.createLinearGradient(x, 0, x + 14, 0); gg.addColorStop(0, 'rgba(255,255,255,.18)'); gg.addColorStop(.5, 'rgba(0,0,0,.25)'); gg.addColorStop(1, 'rgba(255,255,255,.18)'); c.fillStyle = gg; c.fillRect(x, ay, 14, 22); }
+      c.fillStyle = '#000'; c.fillRect(0, ay + 22, W, 3); c.fillStyle = 'rgba(140,90,40,.45)'; for(let k = 0; k < 9; k++) c.fillRect(rnd()*W, ay + 4 + rnd()*12, 10 + rnd()*20, 4);   // rust
+    }
+    // v67 — on the hood of a yellow taxi at the junction: red laterite, the yellow paint, the black-and-white band, the windscreen edge
+    function paintTaxi(c){
+      c.fillStyle = '#5e2c18'; c.fillRect(0, 0, W, H); for(let k = 0; k < 2400; k++){ c.fillStyle = rnd() < .5 ? 'rgba(0,0,0,.2)' : 'rgba(255,190,140,.06)'; c.fillRect(rnd()*W, rnd()*H, 2, 2); }
+      rr(c, F.x, F.y, F.w, F.h, 30); c.fillStyle = '#000'; c.fill();
+      let g = c.createLinearGradient(F.x, 0, F.x + F.w, 0); g.addColorStop(0, '#c98f0e'); g.addColorStop(.5, '#ffd24a'); g.addColorStop(1, '#bf860c');
+      rr(c, F.x + 3, F.y + 3, F.w - 6, F.h - 6, 27); c.fillStyle = g; c.fill();
+      rr(c, TP.x, TP.y, TP.w, TP.h, 20); g = c.createLinearGradient(0, TP.y, 0, TP.y + TP.h); g.addColorStop(0, '#e6a812'); g.addColorStop(.5, '#ffc93c'); g.addColorStop(1, '#e09d10'); c.fillStyle = g; c.fill();
+      c.save(); rr(c, TP.x, TP.y, TP.w, TP.h, 20); c.clip();
+      // the windscreen at the top, dark, with the wiper resting on it
+      c.fillStyle = '#121a24'; c.fillRect(TP.x, TP.y, TP.w, TP.h*.12); c.strokeStyle = '#000'; c.lineWidth = 4; c.beginPath(); c.moveTo(TP.x + TP.w*.18, TP.y + TP.h*.11); c.lineTo(TP.x + TP.w*.6, TP.y + TP.h*.04); c.stroke();
+      // the band of black and white squares down the middle
+      const sq = Math.max(10, TP.w/22), by = TP.y + TP.h*.62; for(let x = TP.x, i = 0; x < TP.x + TP.w; x += sq, i++){ c.fillStyle = i % 2 ? '#111' : '#f4f1ea'; c.fillRect(x, by, sq, sq); c.fillStyle = i % 2 ? '#f4f1ea' : '#111'; c.fillRect(x, by + sq, sq, sq); }
+      const hl = c.createLinearGradient(TP.x, 0, TP.x + TP.w, 0); hl.addColorStop(.38, 'rgba(255,255,255,0)'); hl.addColorStop(.5, 'rgba(255,250,220,.5)'); hl.addColorStop(.62, 'rgba(255,255,255,0)'); c.fillStyle = hl; c.fillRect(TP.x, TP.y + TP.h*.12, TP.w, TP.h);
+      for(let k = 0; k < 16; k++){ c.fillStyle = 'rgba(110,50,20,.35)'; c.beginPath(); c.arc(TP.x + rnd()*TP.w, TP.y + TP.h*(.2 + rnd()*.8), 1 + rnd()*3, 0, 7); c.fill(); }   // red dust of the road
+      c.save(); c.translate(TP.x + TP.w/2, TP.y + TP.h*.4); c.font = '700 ' + Math.round(TP.w*.14) + 'px Fredoka, sans-serif'; c.textAlign = 'center'; c.fillStyle = 'rgba(40,25,0,.14)'; c.fillText('TAXI', 0, 0); c.restore();
+      c.restore(); c.lineWidth = 3; c.strokeStyle = '#000'; rr(c, F.x, F.y, F.w, F.h, 30); c.stroke();
+    }
+    // v67 — the zinc counter of a maquis: dark green tiles, brushed metal, rings of bottles
+    function paintZinc(c){
+      const s = 30; for(let y = 0; y < H; y += s) for(let x = 0; x < W; x += s){ c.fillStyle = ((x/s + y/s) & 1) ? '#16302a' : '#1d3b33'; c.fillRect(x, y, s, s); }
+      c.strokeStyle = 'rgba(0,0,0,.4)'; c.lineWidth = 1.5; for(let x = 0; x < W; x += s){ c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); } for(let y = 0; y < H; y += s){ c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+      rr(c, F.x, F.y, F.w, F.h, 10); c.fillStyle = '#000'; c.fill();
+      let g = c.createLinearGradient(0, F.y, 0, F.y + F.h); g.addColorStop(0, '#c3c9ce'); g.addColorStop(1, '#868e95'); rr(c, F.x + 3, F.y + 3, F.w - 6, F.h - 6, 8); c.fillStyle = g; c.fill();
+      rr(c, TP.x, TP.y, TP.w, TP.h, 6); g = c.createLinearGradient(TP.x, TP.y, TP.x + TP.w, TP.y + TP.h); g.addColorStop(0, '#a9b0b6'); g.addColorStop(.5, '#d3d8dc'); g.addColorStop(1, '#9aa2a8'); c.fillStyle = g; c.fill();
+      c.save(); rr(c, TP.x, TP.y, TP.w, TP.h, 6); c.clip();
+      c.strokeStyle = 'rgba(255,255,255,.12)'; c.lineWidth = 1; for(let y = TP.y; y < TP.y + TP.h; y += 3){ c.beginPath(); c.moveTo(TP.x, y + rnd()); c.lineTo(TP.x + TP.w, y + rnd()); c.stroke(); }   // brushed metal
+      [[.3,.3,15],[.62,.2,14],[.5,.7,16],[.24,.66,13]].forEach(([u,v,r])=>{ const p = U(u, v); c.strokeStyle = 'rgba(60,70,60,.35)'; c.lineWidth = 3; c.beginPath(); c.arc(p.x, p.y, r, 0, 7); c.stroke(); });
+      c.fillStyle = 'rgba(255,255,255,.1)'; c.beginPath(); c.ellipse(TP.x + TP.w*.65, TP.y + TP.h*.4, 70, 18, -.3, 0, 7); c.fill();
+      c.restore(); c.lineWidth = 3; c.strokeStyle = '#000'; rr(c, F.x, F.y, F.w, F.h, 10); c.stroke();
+    }
+
     /* ---------- layout ---------- */
     function layout(){
       D = Math.min(2, window.devicePixelRatio || 1); W = innerWidth; H = innerHeight; OFF = W + 400;
@@ -9846,9 +9934,11 @@
       if(key==='bar'){ F.w = W - 40; ins = 8; }
       if(key==='veranda'){ F.x = 34; F.w = W - 46; ins = 4; }
       if(key==='cour'){ ins = 12; } if(key==='chambre'){ ins = 14; } if(key==='maquis'){ ins = 12; } if(key==='cave'){ ins = 4; } if(key==='verre'){ ins = 12; } if(key==='club'){ ins = 18; }
+      if(key==='police' || key==='taxi'){ ins = 16; } if(key==='auvent'){ F.x = 20; F.w = W - 40; ins = 4; } if(key==='zinc'){ ins = 10; }
       TP = inset(F, ins);
       bx.setTransform(D, 0, 0, D, 0, 0); seed = 11;
-      ({tripot:paintTripot, bar:paintBar, veranda:paintVeranda, club:paintClub, cour:paintCour, chambre:paintChambre, maquis:paintMaquis, cave:paintCave, verre:paintVerre})[key](bx);
+      ({tripot:paintTripot, bar:paintBar, veranda:paintVeranda, club:paintClub, cour:paintCour, chambre:paintChambre, maquis:paintMaquis, cave:paintCave, verre:paintVerre,
+        police:paintPolice, auvent:paintAuvent, taxi:paintTaxi, zinc:paintZinc})[key](bx);
       setupLights(); setupObjects(); return true;
     }
 
@@ -9866,6 +9956,14 @@
       if(key==='maquis') L = [B('bulb', TP.x + TP.w*.3, TP.y + vh*.35, 380, [255,200,140], .5, .5, 1), B('bolt', W + 120, TP.y - 160, 800, [200,215,255], 1.6, 0, 0)];
       if(key==='cave') L = [B('low', TP.x + TP.w*.86, TP.y + vh*.22, 120, [255,214,150], .7, 1.05, 1)];
       if(key==='verre') L = [B('chand', TP.x + TP.w*.5, TP.y + vh*.38, 480, [255,226,180], .7, 1, 1), B('amb', W/2, H, 900, [150,200,220], .9, .2, 1)];
+      // the two beacons of the patrol car turn: red on the left, blue on the right, an orange street lamp far behind
+      if(key==='police') L = [B('gyroR', TP.x + TP.w*.2, TP.y - 30, 240, [255,40,50], .8, 1.2, 0), B('gyroB', TP.x + TP.w*.8, TP.y - 30, 240, [40,110,255], .8, 1.25, 0), B('far', -80, TP.y + vh + 90, 620, [255,165,85], .95, .45, 1)];
+      // a bare bulb swings under the tin awning; the lightning floods everything
+      if(key==='auvent') L = [B('swing', TP.x + TP.w*.5, TP.y + vh*.22, 260, [255,196,120], .52, .7, 1), B('bolt', W*.7, TP.y - 200, 900, [205,220,255], 1.7, 0, 0)];
+      // a motorbike's headlight from below, the orange lamp of the junction above
+      if(key==='taxi') L = [B('head', W*.5, TP.y + vh + 40, 200, [255,250,232], .62, 1.35, 0), B('lamp', TP.x - 60, TP.y - 160, 700, [255,150,60], .75, .28, 1)];
+      // the green neon tube over the zinc counter, and the warm bulb of the kitchen behind
+      if(key==='zinc') L = [B('tube', TP.x + TP.w*.5, TP.y - 18, 170, [90,255,150], .85, 1.05, 1), B('kitchen', W + 60, TP.y + vh*.7, 520, [255,190,120], .8, .35, 1)];
       L.forEach(l=>{ l.x = l.x0; l.y = l.y0; l.e = l.I; });
     }
     function setupObjects(){
@@ -9877,6 +9975,10 @@
       if(key==='maquis'){ add('bottle', .12, .2, {r:22, h:80, cap:'#c8352b'}); add('plate', .86, .22, {r:30, h:6}); add('glass', .88, .58, {r:14, h:38, beer:1}); }
       if(key==='cave'){ add('bottle', .14, .2, {r:20, h:76, cap:'#d9a441'}); add('lock', .86, .24, {h:8, rot:.4}); add('ashtray', .14, .58, {r:20, h:7}); }
       if(key==='verre'){ add('tumbler', .12, .2, {r:15, h:34}); add('whisky', .88, .2, {h:70}); add('coins', .86, .58, {r:10, h:8, n:4}); }
+      if(key==='police'){ add('radio', .14, .2, {h:30, rot:.2}); add('mug', .87, .2, {r:15, h:32}); add('note', .84, .6, {h:2, rot:-.3}); add('coins', .14, .6, {r:10, h:7, n:3}); }
+      if(key==='auvent'){ add('mug', .15, .2, {r:16, h:34}); [[.86,.6],[.9,.66],[.82,.67]].forEach(([u,v])=> add('kola', u, v, {r:7, h:8, rot:rnd()*6})); add('coins', .14, .6, {r:10, h:6, n:3}); }
+      if(key==='taxi'){ add('bottle', .12, .2, {r:22, h:80, cap:'#d9a441'}); add('phone', .86, .22, {h:3, rot:.3}); add('coins', .86, .6, {r:10, h:7, n:4}); add('kola', .16, .62, {r:7, h:8, rot:1}); }
+      if(key==='zinc'){ add('bottle', .1, .18, {r:20, h:78, cap:'#2fb36b'}); add('bottle', .18, .24, {r:20, h:78, cap:'#c8352b'}); add('glass', .86, .22, {r:14, h:38, beer:1}); add('plate', .86, .6, {r:28, h:6}); }
     }
 
     /* ---------- the new objects ---------- */
@@ -9934,7 +10036,9 @@
       S.gust = Math.max(0, S.gust - dt*.5); if(!RM && Math.random() < .002) S.gust = .6;
       const n = RM ? 0 : (Math.sin(t*.011)*.5 + Math.sin(t*.027 + 1)*.3 + Math.sin(t*.053 + 2)*.2);
       if(key==='bar'){ if(!RM && !cut && Math.random() < .004) S.neon = .15; S.neon += (1 - S.neon)*.25; }
-      if(key==='maquis'){ if(t > S.nextBolt){ S.nextBolt = t + 7000 + Math.random()*9000; S.bolt = 1; let i = 0; const seq = [1, .2, .9, 0, .6, 0]; (function st(){ S.bolt = seq[i++]; if(i < seq.length) setTimeout(st, 70 + Math.random()*60); })(); } }
+      if(key==='auvent' && t > S.nextBolt){ S.nextBolt = t + 6000 + Math.random()*8000; S.bolt = 1; if(window.AmbRec) AmbRec.thunder(400 + Math.random()*1400); let i = 0; const seq = [1, .15, 1, .3, .8, 0, .5, 0]; (function st(){ S.bolt = seq[i++]; if(i < seq.length) setTimeout(st, 60 + Math.random()*70); })(); }
+      if(key==='zinc'){ if(!RM && !cut && Math.random() < .006){ S.tube = .2 + Math.random()*.4; setTimeout(()=>{ S.tube = 1; }, 60 + Math.random()*120); } }
+      if(key==='maquis'){ if(t > S.nextBolt){ S.nextBolt = t + 7000 + Math.random()*9000; S.bolt = 1; if(window.AmbRec) AmbRec.thunder(700 + Math.random()*1800); let i = 0; const seq = [1, .2, .9, 0, .6, 0]; (function st(){ S.bolt = seq[i++]; if(i < seq.length) setTimeout(st, 70 + Math.random()*60); })(); } }
       if(key==='chambre'){ if(t > S.nextCar){ S.nextCar = t + 9000 + Math.random()*9000; S.car = 0; } if(S.car >= 0){ S.car += dt*.6; if(S.car > 1) S.car = -1; } }
       if(key==='veranda'){ S.phoneOn = Math.max(0, S.phoneOn - dt*.25); if(!RM && Math.random() < .0015) S.phoneOn = 1; }
       L.forEach(l=>{
@@ -9944,6 +10048,11 @@
         if(l.k==='flame'){ e *= .88 + .08*n - (S.gust > 0 ? Math.abs(Math.sin(t*.03))*.45*S.gust : 0); l.x = l.x0 + n*1.5 + (S.gust > 0 ? Math.sin(t*.04)*4*S.gust : 0); l.y = l.y0 + n; }
         if(l.k==='string') e *= .85 + .15*Math.sin(t*.003 + l.x0);
         if(l.k==='bolt') e = 1.5*S.bolt;
+        // the beacons turn: each sweeps across the hood and blinks in turn
+        if(l.k==='gyroR' || l.k==='gyroB'){ const ph = t*.0085 + (l.k==='gyroB' ? Math.PI : 0), p = Math.max(0, Math.sin(ph)); e *= RM ? .7 : .25 + 1.1*p*p*p; l.x = l.x0 + (RM ? 0 : Math.cos(ph)*TP.w*.18); }
+        if(l.k==='swing'){ const a = RM ? 0 : Math.sin(t*.0014)*.6 + Math.sin(t*.0031)*.15; l.x = l.x0 + a*TP.w*.12; l.y = l.y0 + Math.abs(a)*6; e *= .92 + .08*n; }
+        if(l.k==='head'){ e *= RM ? 1 : .94 + .06*Math.sin(t*.06) + .03*Math.sin(t*.013); l.x = l.x0 + (RM ? 0 : Math.sin(t*.0009)*14); }
+        if(l.k==='tube') e *= (S.tube==null ? 1 : S.tube)*(RM ? 1 : .97 + .03*Math.sin(t*.12));
         if(l.k==='moon' && cut && key==='veranda') e *= .6;
         l.e = e*(l.k==='bolt' ? 1 : fx);
       });
@@ -9955,7 +10064,7 @@
       shadows(c); drawAll(c, t);
       // the light map, multiplied over the whole drawing
       lx.setTransform(1/3, 0, 0, 1/3, 0, 0); lx.globalCompositeOperation = 'source-over';
-      const amb = cut ? (key==='veranda' || key==='cour' ? [26,24,40] : [34,36,62]) : (key==='cave' ? [16,13,18] : key==='maquis' ? [26,28,40] : [30,26,42]);
+      const amb = cut ? (key==='veranda' || key==='cour' ? [26,24,40] : [34,36,62]) : (key==='cave' ? [16,13,18] : key==='maquis' ? [26,28,40] : key==='police' ? [14,14,26] : key==='auvent' ? [18,20,30] : key==='taxi' ? [20,16,22] : key==='zinc' ? [12,20,16] : [30,26,42]);
       lx.fillStyle = 'rgb('+amb+')'; lx.fillRect(0, 0, W, H); lx.globalCompositeOperation = 'lighter';
       const ice = [175,215,255];
       L.forEach(l=>{ if(l.e < .01) return; const col = LFX.cold > .01 ? l.col.map((v, i)=> Math.round(v + (ice[i] - v)*LFX.cold)) : l.col, q = col.join(',');
@@ -9995,7 +10104,20 @@
       if(key==='cave'){ const l = L[0]; if(l.e > .05){ const g = c.createRadialGradient(l.x, l.y, 0, l.x, l.y, 120); g.addColorStop(0, 'rgba(255,230,170,'+(.4*l.e)+')'); g.addColorStop(1, 'rgba(255,200,120,0)'); c.fillStyle = g; c.fillRect(l.x - 120, l.y - 120, 240, 240); } }
       if(key==='verre'){ const l = L[0]; sparks.forEach(s=>{ const a = Math.max(0, Math.sin(t*.003 + s.p*3))*l.e; if(a < .2) return; const x = TP.x + s.x*TP.w, y = TP.y + s.y*TP.h; c.strokeStyle = 'rgba(255,255,255,'+(a*.8)+')'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(x - 5*a, y); c.lineTo(x + 5*a, y); c.moveTo(x, y - 5*a); c.lineTo(x, y + 5*a); c.stroke(); }); }
       if(key==='maquis' && S.bolt > .05){ c.fillStyle = 'rgba(210,225,255,'+(.25*S.bolt)+')'; c.fillRect(0, 0, W, H); }
+      // v67: the visible sources of the four new tables
+      if(key==='police') L.filter(l=> l.k==='gyroR' || l.k==='gyroB').forEach(l=>{ const r = 70 + 50*Math.min(1, l.e); const g = c.createRadialGradient(l.x, l.y, 0, l.x, l.y, r); g.addColorStop(0, 'rgba('+l.col.join(',')+','+Math.min(.85, .55*l.e)+')'); g.addColorStop(1, 'rgba('+l.col.join(',')+',0)'); c.fillStyle = g; c.fillRect(l.x - r, l.y - r, r*2, r*2);
+        const sw = c.createLinearGradient(l.x, l.y, l.x + (l.x - W/2)*.2, TP.y + TP.h); sw.addColorStop(0, 'rgba('+l.col.join(',')+','+(.12*l.e)+')'); sw.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = sw; c.beginPath(); c.moveTo(l.x - 10, l.y); c.lineTo(l.x + 10, l.y); c.lineTo(l.x + 120, TP.y + TP.h); c.lineTo(l.x - 120, TP.y + TP.h); c.closePath(); c.fill(); });
+      if(key==='auvent'){ const l = L[0]; if(l.e > .05){ const g = c.createRadialGradient(l.x, l.y, 0, l.x, l.y, 70); g.addColorStop(0, 'rgba(255,225,160,'+(.55*l.e)+')'); g.addColorStop(1, 'rgba(255,190,110,0)'); c.fillStyle = g; c.fillRect(l.x - 70, l.y - 70, 140, 140); }
+        if(S.bolt > .05){ c.fillStyle = 'rgba(215,228,255,'+(.42*S.bolt)+')'; c.fillRect(0, 0, W, H); } }
+      if(key==='taxi'){ const l = L[0], by = TP.y + TP.h + 10;
+        // the beam of the motorbike: a cone of white light climbing up the hood from below
+        const cone = c.createLinearGradient(0, by, 0, TP.y + TP.h*.25); cone.addColorStop(0, 'rgba(255,252,235,'+(.32*l.e)+')'); cone.addColorStop(1, 'rgba(255,252,235,0)');
+        c.fillStyle = cone; c.beginPath(); c.moveTo(l.x - 26, by); c.lineTo(l.x + 26, by); c.lineTo(l.x + TP.w*.42, TP.y + TP.h*.25); c.lineTo(l.x - TP.w*.42, TP.y + TP.h*.25); c.closePath(); c.fill();
+        const g = c.createRadialGradient(l.x, by + 30, 0, l.x, by + 30, 120); g.addColorStop(0, 'rgba(255,252,235,'+(.75*l.e)+')'); g.addColorStop(1, 'rgba(255,250,230,0)'); c.fillStyle = g; c.fillRect(l.x - 120, by - 90, 240, 240); }
+      if(key==='zinc'){ const l = L[0]; if(l.e > .05){ const y = Math.max(8, TP.y - 30); c.fillStyle = 'rgba(150,255,190,'+Math.min(1, .9*l.e)+')'; rr(c, TP.x + TP.w*.18, y - 4, TP.w*.64, 8, 4); c.fill(); const g = c.createLinearGradient(0, y - 40, 0, y + 60); g.addColorStop(0, 'rgba(90,255,150,0)'); g.addColorStop(.45, 'rgba(90,255,150,'+(.28*l.e)+')'); g.addColorStop(1, 'rgba(90,255,150,0)'); c.fillStyle = g; c.fillRect(TP.x, y - 40, TP.w, 100); } }
       c.restore();
+      if(key==='auvent' && !RM){ c.strokeStyle = 'rgba(190,210,240,.26)'; c.lineWidth = 1.2; for(let k = 0; k < 60; k++){ const x = (k*47 + t*.5) % (W + 40) - 20, y = (k*89 + t*1.4) % H; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 6, y + 20); c.stroke(); }
+        c.fillStyle = 'rgba(200,220,255,.5)'; const ay = Math.max(0, F.y - 36) + 25; for(let k = 0; k < 14; k++){ const x = (k*W/14 + 9) % W, y = ay + ((t*.25 + k*37) % 60); c.beginPath(); c.ellipse(x, y, 1.6, 3.2, 0, 0, 7); c.fill(); } }   // drops falling off the tin
       if(key==='maquis' && !RM){ c.strokeStyle = 'rgba(180,200,230,.18)'; c.lineWidth = 1; for(let k = 0; k < 30; k++){ const x = (k*53 + t*.35) % W, y = (k*97 + t*.9) % H; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 4, y + 14); c.stroke(); } }
     }
 
@@ -10038,16 +10160,84 @@
       veranda:'radial-gradient(circle at 0% 90%,rgba(255,170,80,.8),transparent 60%),repeating-linear-gradient(0deg,#b07a48 0 12px,#1B120C 12px 14px)', club:'radial-gradient(circle at 50% 45%,rgba(255,236,205,.45),transparent 40%),radial-gradient(circle,#0c0a0d 0 2px,transparent 3px) 0 0/14px 14px,#26232a',
       cour:'radial-gradient(ellipse at 30% 30%,rgba(14,12,26,.55) 0 18%,transparent 20%),radial-gradient(circle at 90% 0%,rgba(140,170,255,.5),transparent 60%),#ece6da', chambre:'repeating-linear-gradient(170deg,rgba(255,190,110,.7) 0 6px,transparent 6px 14px),#1d3f8a',
       maquis:'repeating-linear-gradient(90deg,rgba(200,40,40,.55) 0 8px,transparent 8px 16px),repeating-linear-gradient(0deg,rgba(200,40,40,.55) 0 8px,#f2ece0 8px 16px)', cave:'radial-gradient(circle at 85% 20%,rgba(255,214,150,.75),transparent 55%),repeating-linear-gradient(0deg,#9a7a52 0 14px,#1B120C 14px 16px)',
-      verre:'linear-gradient(118deg,transparent 30%,rgba(255,255,255,.8) 36%,transparent 44%),radial-gradient(circle at 50% 40%,rgba(255,226,180,.5),transparent 60%),repeating-conic-gradient(#b9c9c0 0 25%,#2f3c3a 0 50%) 0 0/16px 16px'
+      verre:'linear-gradient(118deg,transparent 30%,rgba(255,255,255,.8) 36%,transparent 44%),radial-gradient(circle at 50% 40%,rgba(255,226,180,.5),transparent 60%),repeating-conic-gradient(#b9c9c0 0 25%,#2f3c3a 0 50%) 0 0/16px 16px',
+      police:'radial-gradient(circle at 15% 10%,rgba(255,40,50,.8),transparent 45%),radial-gradient(circle at 85% 10%,rgba(40,110,255,.85),transparent 45%),linear-gradient(0deg,transparent 42%,#123a8a 42% 56%,transparent 56%),#e9edf2',
+      auvent:'linear-gradient(120deg,transparent 40%,rgba(220,232,255,.75) 46%,transparent 52%),repeating-linear-gradient(105deg,rgba(200,215,240,.35) 0 1px,transparent 1px 7px),repeating-linear-gradient(0deg,#8c6238 0 12px,#1B120C 12px 14px)',
+      taxi:'radial-gradient(ellipse at 50% 110%,rgba(255,252,235,.9),transparent 55%),linear-gradient(0deg,transparent 30%,#111 30% 36%,#f4f1ea 36% 42%,transparent 42%),#ffc93c',
+      zinc:'linear-gradient(0deg,transparent 78%,rgba(120,255,170,.95) 80% 84%,transparent 86%),radial-gradient(ellipse at 50% 12%,rgba(90,255,150,.45),transparent 65%),#b3babf'
     };
     return {
       enter(){ lkey = ''; t0 = performance.now(); nextFlick = 5000; S.nextBolt = 4000; S.nextCar = 6000; if(cut) powerBack(true); planCut(true); },
       _cut: powerCut, _back: ()=> powerBack(),
       swatch(id){ return SW[id] || null; },
-      rim(id){ return {tripot:'#7d4a26', bar:'#f3ead2', veranda:'#b07a48', club:'#d9a441', cour:'#f4f1ea', chambre:'#5a341c', maquis:'#4a3e32', cave:'#9a7a52', verre:'#d0d6dc'}[id]; },
+      rim(id){ return {tripot:'#7d4a26', bar:'#f3ead2', veranda:'#b07a48', club:'#d9a441', cour:'#f4f1ea', chambre:'#5a341c', maquis:'#4a3e32', cave:'#9a7a52', verre:'#d0d6dc', police:'#e9edf2', auvent:'#8c6238', taxi:'#f2b81d', zinc:'#9aa2a8'}[id]; },
       ids: TABLE_IDS
     };
   })();
+  // ===================== LES SONS DU LIEU (v67) =====================
+  // Real recordings (CC0, BigSoundBank, sfx/amb), loaded only when a table needs them: the rain on the tin, the crowd of
+  // the bar, the insects of the night, a siren passing behind the patrol car, a taxi's horn; the thunder follows the
+  // lightning of the table. A crackling police radio and the hum of the neon are made by the game. Switchable in Paramètres.
+  const AmbRec = (()=>{
+    const PLAN = {
+      tripot:{loops:[['bar', .09, 3500]]}, bar:{loops:[['bar', .26]]}, veranda:{loops:[['insectes', .3]]}, club:{loops:[['bar', .12, 1100]]},
+      cour:{loops:[['insectes', .4]]}, chambre:{loops:[['pluie_orage', .15, 900]]}, maquis:{loops:[['pluie_toit', .3]]}, cave:{loops:[['pluie_orage', .09, 450]]}, verre:{loops:[['bar', .08, 2500]]},
+      police:{loops:[['insectes', .2]], shots:[['sirene', .2, 40000, 90000]], radio:true},
+      auvent:{loops:[['pluie_toit', .4], ['pluie_orage', .15, 1800]]},
+      taxi:{loops:[['insectes', .24]], shots:[['klaxon', .14, 20000, 55000]]},
+      zinc:{loops:[['bar', .24]], buzz:true}
+    };
+    const buf = {}, loading = {};
+    let bus = null, cur = null, tok = 0, timers = [], nodes = [];
+    function load(n){
+      if(buf[n]) return Promise.resolve(buf[n]); if(loading[n]) return loading[n];
+      return loading[n] = fetch('sfx/amb/' + n + '.mp3').then(r=> r.ok ? r.arrayBuffer() : Promise.reject())
+        .then(a=> new Promise((res, rej)=> audioCtx.decodeAudioData(a, res, rej))).then(b=> (buf[n] = b)).catch(()=>{ loading[n] = null; return null; });
+    }
+    const level = ()=> prefs.noAmb ? 0 : sfxLevel()*.9;
+    function ensureBus(){ if(!audioCtx || !master) return null; if(!bus){ bus = audioCtx.createGain(); bus.connect(master); } bus.gain.setTargetAtTime(level(), audioCtx.currentTime, .2); return bus; }
+    function stop(){
+      tok++; cur = null; timers.forEach(clearTimeout); timers = [];
+      const c = audioCtx; nodes.forEach(n=>{ try{ n.g.gain.setTargetAtTime(0, c.currentTime, .35); setTimeout(()=>{ try{ n.s.stop(); }catch(e){} }, 1600); }catch(e){} }); nodes = [];
+    }
+    function shot(n, v, delay){
+      const my = tok; load(n).then(b=>{ if(!b || my!==tok || !bus) return; const c = audioCtx, s = c.createBufferSource(), g = c.createGain(); s.buffer = b; g.gain.value = v;
+        let out = g; if(c.createStereoPanner){ const p = c.createStereoPanner(); p.pan.value = Math.random()*1.2 - .6; g.connect(p); out = p; } s.connect(g); out.connect(bus); s.start(c.currentTime + (delay||0)/1000); });
+    }
+    // the police radio: a burst of crackle, a squelch, a voice-band hiss
+    function radio(my){
+      const go = ()=>{ timers.push(setTimeout(()=>{ if(my!==tok || !bus) return; const c = audioCtx, t = c.currentTime, d = .9 + Math.random()*1.4;
+        const nb = c.createBuffer(1, Math.floor(c.sampleRate*d), c.sampleRate), x = nb.getChannelData(0); for(let i = 0; i < x.length; i++){ const gate = Math.sin(i/c.sampleRate*Math.PI*(3 + Math.random()*.2)) > -.2 ? 1 : .15; x[i] = (Math.random()*2 - 1)*gate; }
+        const s = c.createBufferSource(), bp = c.createBiquadFilter(), g = c.createGain(); s.buffer = nb; bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 1.4;
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.05, t + .03); g.gain.setValueAtTime(.05, t + d - .08); g.gain.linearRampToValueAtTime(0, t + d);
+        s.connect(bp); bp.connect(g); g.connect(bus); s.start(t);
+        const o = c.createOscillator(), og = c.createGain(); o.type = 'square'; o.frequency.value = 1250; og.gain.setValueAtTime(.025, t + d); og.gain.exponentialRampToValueAtTime(.0001, t + d + .12); o.connect(og); og.connect(bus); o.start(t + d); o.stop(t + d + .15);
+        go(); }, 14000 + Math.random()*16000)); };
+      go();
+    }
+    // the hum of the green neon tube
+    function buzz(my){ const c = audioCtx, o = c.createOscillator(), lp = c.createBiquadFilter(), g = c.createGain(); o.type = 'sawtooth'; o.frequency.value = 100; lp.type = 'lowpass'; lp.frequency.value = 520; g.gain.value = 0;
+      o.connect(lp); lp.connect(g); g.connect(bus); o.start(); g.gain.setTargetAtTime(.011, c.currentTime, 1); nodes.push({s:o, g}); }
+    function play(id){
+      if(cur===id) return; stop(); cur = id;
+      if(prefs.noAmb || !soundOn) return;
+      const c = ensureAudio(); if(!c || !ensureBus()) return;
+      const P = PLAN[id]; if(!P) return; const my = tok;
+      P.loops.forEach(([n, v, lp])=> load(n).then(b=>{ if(!b || my!==tok) return; const s = c.createBufferSource(), g = c.createGain(); s.buffer = b; s.loop = true; g.gain.value = 0;
+        if(lp){ const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = lp; s.connect(f); f.connect(g); } else s.connect(g);
+        g.connect(bus); s.start(0, Math.random()*b.duration); g.gain.setTargetAtTime(v, c.currentTime, 1.2); nodes.push({s, g}); }));
+      (P.shots || []).forEach(([n, v, a, b])=>{ const sch = ()=> timers.push(setTimeout(()=>{ if(my!==tok) return; shot(n, v); sch(); }, a + Math.random()*(b - a))); sch(); });
+      if(P.radio) radio(my); if(P.buzz) buzz(my);
+    }
+    // the menus, a paused or hidden game: the place falls silent
+    setInterval(()=>{ try{ if(cur && (!inGame() || document.hidden)) stop(); }catch(e){} }, 1000);
+    return {
+      play, stop,
+      thunder(delay){ if(cur==='maquis' || cur==='auvent') shot('tonnerre', cur==='auvent' ? .55 : .4, delay); },
+      level(){ if(bus && audioCtx) bus.gain.setTargetAtTime(level(), audioCtx.currentTime, .2); if(prefs.noAmb) stop(); }
+    };
+  })();
+  window.AmbRec = AmbRec;
   SKINS.table.forEach(s=>{ const sw = DScene.swatch(s.id); if(sw) s.swatch = sw; });
   SHOP_TABLES.forEach(t=>{ const sw = DScene.swatch(t.id); if(sw) t.swatch = sw; });
 
@@ -10057,6 +10247,7 @@
     DScene.enter();
     Rig.setLight({dx:-.35, dy:-.9, I:.95, col:[1,.89,.7], amb:[.32,.3,.38], rim:[1,.85,.6], rimI:.45});
     Music.play(currentTableId());
+    AmbRec.play(currentTableId());
     ['pauseOverlay','confirmRestartOverlay'].forEach(hide);
     // (the phone's back button then opens the pause menu: see backPressed)
   }

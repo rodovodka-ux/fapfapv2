@@ -342,7 +342,8 @@
   .ctrl{ position:fixed; z-index:50; left:50%; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%); display:flex; gap:8px; }
   .pill{ display:inline-flex; align-items:center; gap:8px; min-height:46px; padding:0 18px 0 14px; border-radius:999px; border:2.5px solid var(--ink); cursor:pointer;
     background:var(--paper); color:var(--ink); font:900 14px/1 var(--f-ui); box-shadow:0 4px 0 var(--ink), 0 10px 24px rgba(0,0,0,.55); }
-  .pill svg{ width:18px; height:18px; }
+  .pill{ white-space:nowrap; }
+  .pill svg{ width:18px; height:18px; flex:none; }
   .pill.on{ background:var(--amber); }
 
   /* ---- le carnet ---- */
@@ -449,6 +450,15 @@
   .gmend{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,.6); }
   .gmend[hidden]{ display:none; }
   .adult .resume{ color:#ffd23a; font-weight:700; }
+  /* l'éclair de l'orage : l'écran blanchit deux fois, très vite */
+  .nk-flash{ position:fixed; inset:0; z-index:40; pointer-events:none; background:#e6eeff; opacity:0; mix-blend-mode:screen; }
+  .nk-flash.on{ animation:nkBolt 1s ease-out; }
+  @keyframes nkBolt{ 0%{ opacity:0; } 4%{ opacity:.55; } 10%{ opacity:.08; } 16%{ opacity:.42; } 40%{ opacity:.05; } 100%{ opacity:0; } }
+  /* sur un téléphone : l'objectif a sa propre ligne sous la barre, le flair se réduit à ses trois losanges */
+  @media (max-width:520px){ .hud .ttl small{ position:absolute; left:max(12px, env(safe-area-inset-left)); right:max(12px, env(safe-area-inset-right)); top:calc(100% - 4px); white-space:normal; padding:4px 10px; border-radius:10px; background:rgba(11,10,15,.78); text-shadow:none; font-size:11.5px; line-height:1.3; }
+    .flair span{ display:none; } }
+  .ctrl .snd{ margin-right:8px; }
+  .snd .x{ display:none; } .snd.off .x{ display:inline; } .snd.off .w{ display:none; } .snd.off{ opacity:.7; }
 </style>
 
 <div class="prog" id="prog"></div>
@@ -462,6 +472,7 @@
 <main id="strip" aria-label="Bande dessinée"></main>
 
 <div class="ctrl">
+  <button class="ibtn snd" id="snd" type="button" aria-pressed="true" aria-label="Couper le son"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
   <button class="pill" id="auto" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg><span>Lecture auto</span></button>
 </div>
 
@@ -2733,6 +2744,42 @@
   addEventListener('keydown', e=>{ if(e.key!=='Escape') return; if(!$('#exam').hidden) closeExam(); else if(!$('#fouille').hidden) closeScene(); else if(!$('#proof').hidden) closeProof(); });
   flairUI(); renderSheet(); endText(); layoutAll(); requestAnimationFrame(loop);
 
+  /* =============== l'ambiance : la nuit, la pluie dehors, l'orage, une nappe de piano, le papier des bulles =============== */
+  // Les vrais enregistrements (CC0, BigSoundBank) viennent de sfx/amb, chargés après le premier geste. Bouton « son » en haut.
+  const Amb = (()=>{
+    let on = true; try{ on = localStorage.getItem('nk-snd')!=='0'; }catch(e){}
+    let bus = null, rain = null, bed = null, boltT = 0, started = false; const buf = {};
+    const load = n=> buf[n] ? Promise.resolve(buf[n]) : fetch('sfx/amb/' + n + '.mp3').then(r=> r.ok ? r.arrayBuffer() : Promise.reject()).then(a=> new Promise((res, rej)=> audio().decodeAudioData(a, res, rej))).then(b=> (buf[n] = b)).catch(()=> null);
+    function ensure(){ const a = audio(); if(!a) return null; if(!bus){ bus = a.createGain(); bus.gain.value = on ? 1 : 0; bus.connect(a.destination); } return a; }
+    function startRain(){ const a = ensure(); if(!a || rain) return; load('pluie_orage').then(b=>{ if(!b || rain) return; const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = b; s.loop = true; f.type = 'lowpass'; f.frequency.value = 2400; g.gain.value = 0;
+      s.connect(f); f.connect(g); g.connect(bus); s.start(0, Math.random()*b.duration); g.gain.linearRampToValueAtTime(.2, a.currentTime + 3); rain = {s, g}; }); }
+    // une nappe de piano feutré et une contrebasse, très bas, quatre accords qui tournent
+    function startBed(){ const a = ensure(); if(!a || bed) return; const g = a.createGain(); g.gain.value = 0; g.gain.linearRampToValueAtTime(.05, a.currentTime + 4); g.connect(bus);
+      const CH = [[220, 261.6, 329.6, 392, 110], [174.6, 220, 261.6, 329.6, 87.3], [146.8, 174.6, 220, 261.6, 73.4], [164.8, 207.7, 246.9, 293.7, 82.4]]; let i = 0;
+      const step = ()=>{ if(!bed) return; const t = a.currentTime, ch = CH[i++ % CH.length];
+        ch.forEach((fr, k)=>{ const o = a.createOscillator(), e = a.createGain(); o.type = k===4 ? 'triangle' : 'sine'; o.frequency.value = fr; e.gain.setValueAtTime(0, t + k*.06); e.gain.linearRampToValueAtTime(k===4 ? .5 : .16, t + k*.06 + .04); e.gain.exponentialRampToValueAtTime(.002, t + 4.4); o.connect(e); e.connect(g); o.start(t + k*.06); o.stop(t + 4.6); }); };
+      bed = {g, iv:setInterval(step, 4600)}; step(); }
+    // l'éclair : l'écran blanchit deux fois, puis le tonnerre roule
+    const flash = document.createElement('div'); flash.className = 'nk-flash'; flash.setAttribute('aria-hidden', 'true'); document.body.appendChild(flash);
+    function bolt(){ if(!on || document.hidden) return schedule(); if(!RM){ flash.classList.remove('on'); void flash.offsetWidth; flash.classList.add('on'); }
+      load('tonnerre').then(b=>{ const a = ensure(); if(!b || !a) return; const s = a.createBufferSource(), g = a.createGain(); s.buffer = b; g.gain.value = .55; s.connect(g); g.connect(bus); s.start(a.currentTime + .5 + Math.random()*1.3); });
+      schedule(); }
+    function schedule(){ clearTimeout(boltT); boltT = setTimeout(bolt, 22000 + Math.random()*28000); }
+    function start(){ if(started) return; started = true; if(!on) return; startRain(); startBed(); schedule(); }
+    // une bulle qui s'ouvre : un petit froissement de papier
+    let lastPop = 0;
+    function pop(){ if(!on || !started) return; const now = performance.now(); if(now - lastPop < 140) return; lastPop = now; const a = ensure(); if(!a) return;
+      const t = a.currentTime, n = a.createBuffer(1, Math.floor(a.sampleRate*.07), a.sampleRate), d = n.getChannelData(0); for(let i = 0; i < d.length; i++) d[i] = (Math.random()*2 - 1)*Math.pow(1 - i/d.length, 2);
+      const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = n; f.type = 'bandpass'; f.frequency.value = 2600 + Math.random()*900; f.Q.value = .8; g.gain.value = .06; s.connect(f); f.connect(g); g.connect(bus); s.start(t); }
+    function set(v){ on = v; try{ localStorage.setItem('nk-snd', v ? '1' : '0'); }catch(e){} const a = ensure(); if(bus && a) bus.gain.setTargetAtTime(v ? 1 : 0, a.currentTime, .2); if(v && started){ startRain(); startBed(); schedule(); } else if(!v) clearTimeout(boltT); ui(); }
+    function ui(){ const b = document.getElementById('snd'); if(b){ b.classList.toggle('off', !on); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Couper le son' : 'Remettre le son'); } }
+    document.addEventListener('visibilitychange', ()=>{ if(!AC) return; if(document.hidden) AC.suspend(); else AC.resume(); });
+    return {start, pop, set, ui, get on(){ return on; }};
+  })();
+  $('#snd').addEventListener('click', ()=> Amb.set(!Amb.on)); Amb.ui();
+  $('#filmGo').addEventListener('click', ()=> Amb.start());
+  $('#adultGo').addEventListener('click', ()=> setTimeout(()=>{ if($('#film').hidden) Amb.start(); }, 50));
+
   /* =============== les bulles ne se chevauchent plus : une bulle qui en recouvre une autre descend juste en dessous =============== */
   // Les positions sont écrites en pourcentage pour un écran large ; sur un téléphone, le texte prend plus de lignes et les
   // bulles se rentrent dedans. On les pousse dans l'ordre du récit (mesures de mise en page, pas les animations).
@@ -2754,8 +2801,8 @@
   }
   const unstackQ = new Set(); let unstackT = 0;
   const unstackSoon = pn=>{ unstackQ.add(pn); clearTimeout(unstackT); unstackT = setTimeout(()=>{ unstackQ.forEach(unstack); unstackQ.clear(); }, 30); };
-  if('MutationObserver' in window) new MutationObserver(ms=> ms.forEach(m=>{ const t = m.target; if(t.classList && t.classList.contains('bub')){ const pn = t.closest('.pn'); if(pn) unstackSoon(pn); } }))
-    .observe(strip, {subtree:true, attributes:true, attributeFilter:['class'], childList:false});
+  if('MutationObserver' in window) new MutationObserver(ms=> ms.forEach(m=>{ const t = m.target; if(t.classList && t.classList.contains('bub')){ const pn = t.closest('.pn'); if(pn) unstackSoon(pn); if(t.classList.contains('on') && !(m.oldValue || '').split(' ').includes('on')) Amb.pop(); } }))
+    .observe(strip, {subtree:true, attributes:true, attributeFilter:['class'], attributeOldValue:true, childList:false});
   addEventListener('resize', ()=> setTimeout(()=> PN.forEach(P=> unstack(P.el)), 200));
 
   /* =============== la sauvegarde : tout l'état de l'enquête, gardé sur le téléphone, et la reprise là où on s'est arrêté =============== */
