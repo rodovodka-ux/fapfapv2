@@ -926,7 +926,7 @@
     background: radial-gradient(120% 90% at 0% 0%, rgba(244,184,96,0.22), transparent 60%), linear-gradient(160deg, #2b1c0e, #140c06);
     box-shadow: 0 14px 30px rgba(0,0,0,0.45); }
   .acct-who{ min-width:0; }
-  .avatar img.av-photo{ object-fit:cover; object-position:50% 50%; transform:none; }
+  .avatar img.av-photo{ object-fit:cover; object-position:50% 50%; transform:none; border-radius:50%; }
   .acct-av-btn{ position:relative; flex-shrink:0; padding:0; border:0; background:none; border-radius:50%; cursor:pointer; -webkit-tap-highlight-color:transparent; }
   .acct-av-btn .acct-cam{ position:absolute; right:-3px; bottom:-3px; width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
     background:#FFC93C; color:#1B120C; border:2px solid #1B120C; box-shadow:0 3px 8px rgba(0,0,0,.45); }
@@ -8005,6 +8005,59 @@
     el.classList.remove('has-rig'); el.innerHTML = '<img class="av-photo" alt="">'; el.firstChild.src = ph;
   }
   function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
+  // other players' faces (v71): the server gives a short fingerprint of each photo with the lists; the phone keeps
+  // the photos it already has (localStorage, the 40 last seen) and only downloads the new or changed ones
+  const Photos = (()=>{
+    const KEY = 'fapfap_photos_v1', MAX = 40;
+    let db = {}; try{ db = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }catch(e){ db = {}; }
+    const want = new Map(); let busy = false, saveT = 0;
+    const save = ()=>{ clearTimeout(saveT); saveT = setTimeout(()=>{
+      const ids = Object.keys(db).sort((a,b)=> (db[b].t||0) - (db[a].t||0));
+      ids.slice(MAX).forEach(id=> delete db[id]);
+      try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ db = {}; try{ localStorage.removeItem(KEY); }catch(_){} }
+    }, 400); };
+    const ok = d=> typeof d==='string' && /^data:image\/(jpeg|png|webp);base64,/.test(d) && d.length < 80000;
+    // rows from the server: [{pid, ph}]; a missing ph means no photo any more
+    function note(rows){
+      (rows||[]).forEach(r=>{
+        if(!r || !r.pid) return;
+        if(!r.ph){ if(db[r.pid]){ delete db[r.pid]; save(); } return; }
+        if(db[r.pid] && db[r.pid].ph===r.ph){ db[r.pid].t = Date.now(); return; }
+        want.set(r.pid, r.ph);
+      });
+      pull();
+    }
+    async function pull(){
+      if(busy || !want.size || typeof supaClient==='undefined' || !supaClient) return;
+      busy = true;
+      const ids = [...want.keys()].slice(0, 30);
+      try{
+        const { data, error } = await supaClient.rpc('fapfap_photos', { ids });
+        if(!error && data){
+          data.forEach(r=>{ if(ok(r.photo)) db[r.pid] = {ph: want.get(r.pid), d: r.photo, t: Date.now()}; });
+          save();
+          refresh();
+        }
+      }catch(e){}
+      ids.forEach(id=> want.delete(id));
+      busy = false;
+      if(want.size) pull();
+    }
+    const get = id=> (id && db[id] && ok(db[id].d)) ? db[id].d : '';
+    // every avatar drawn by fill() follows its player's photo when it arrives
+    function refresh(){ document.querySelectorAll('.avatar[data-pid]').forEach(el=>{ const d = get(el.dataset.pid); if(d && el.dataset.phd!==d.slice(-24)) put(el, d); }); }
+    function put(el, d){
+      if(el._rig && el._rig.destroy){ try{ el._rig.destroy(); }catch(e){} el._rig = null; }
+      el.classList.remove('has-rig'); el.innerHTML = '<img class="av-photo" alt="">'; el.firstChild.src = d; el.dataset.phd = d.slice(-24);
+    }
+    function fill(el, id, name){
+      if(!el) return;
+      if(id) el.dataset.pid = id;
+      const d = get(id);
+      if(d) put(el, d); else { delete el.dataset.phd; fillAvatar(el, null, name || 'J'); }
+    }
+    return {note, fill, get, refresh};
+  })();
   // the opponent's hands holding their cards replace the row of face-down cards when the picture exists
   function showTableArt(charId){
     const img = document.getElementById('oppTableArt');
@@ -17547,8 +17600,8 @@
       const sub = row.querySelector('.rich-sub');
       sub.textContent = RANKS[rankIndex(r.rep||0)].name;
       if(r.saved) sub.insertAdjacentHTML('beforeend', ' '+ico('check'));
-      fillAvatar(row.querySelector('.rich-av'), null, r.name);
-      if(r.me) applyMyFrame(row.querySelector('.rich-av'));
+      if(r.me){ fillMe(row.querySelector('.rich-av'), r.name); applyMyFrame(row.querySelector('.rich-av')); }
+      else Photos.fill(row.querySelector('.rich-av'), r.pid, r.name);
       // another player: touch to add them as a friend or challenge them
       if(!r.me && r.pid){
         row.classList.add('tappable');
@@ -17558,6 +17611,7 @@
         row.addEventListener('click', ()=> openPlayerSheet({id:r.pid, name:r.name, rep:r.rep, chips:r.chips, saved:r.saved}));
       }
     });
+    Photos.note(rows.filter(r=> !r.me));
   }
 
   // ===================== Amis : ajoutés depuis le classement, défiés en un geste =====================
@@ -17600,6 +17654,7 @@
         });
         acc.sort((a,b)=> (b.last||0) - (a.last||0));
         profile.friends = acc; Friends.req = {inn, out};
+        Photos.note(data);
         saveProfile();
         Friends.synced = Date.now();
         return true;
@@ -17718,7 +17773,7 @@
     row.innerHTML = '<span class="avatar'+(isOnline(f.id) ? ' is-online' : '')+'" style="--s:42px"></span><span class="bn"><b></b><small></small></span><span class="bell-acts">'+(acts||'')+'</span>';
     row.querySelector('b').textContent = f.name || 'Joueur';
     row.querySelector('small').textContent = sub || '';
-    fillAvatar(row.querySelector('.avatar'), null, f.name || 'J');
+    Photos.fill(row.querySelector('.avatar'), f.id, f.name);
     return row;
   }
   function bellSection(box, title, rows){
@@ -17800,7 +17855,7 @@
   function renderChat(){
     const c = Friends.chat; if(!c) return;
     $id('chatName').textContent = c.name;
-    fillAvatar($id('chatAv'), null, c.name);
+    Photos.fill($id('chatAv'), c.id, c.name);
     chatStatus();
     drawMsgs();
     chatLoad();
@@ -17948,7 +18003,7 @@
   function renderPlayerSheet(){
     const p = Lobby.sheet; if(!p) return;
     $id('psName').textContent = p.name || 'Joueur';
-    fillAvatar($id('psAvatar'), null, p.name || 'J');
+    Photos.fill($id('psAvatar'), p.id, p.name);
     $id('psAvatar').classList.toggle('is-online', isOnline(p.id));
     $id('psSub').textContent = (p.rep!=null ? RANKS[rankIndex(p.rep||0)].name : '')+(p.chips!=null ? ' · '+fmtChips(p.chips)+' jetons' : '');
     $id('psStatus').innerHTML = isOnline(p.id) ? '<i class="dot-on"></i> En ligne maintenant' : 'Hors ligne · tu pourras lui envoyer le lien par WhatsApp';
@@ -18020,7 +18075,7 @@
     Lobby.incoming = p;
     $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+' te défie !';
     $id('fiText').textContent = (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?';
-    fillAvatar($id('fiAvatar'), null, p.name || 'J');
+    Photos.fill($id('fiAvatar'), p.from, p.name);
     show('friendInviteOverlay');
     vibrate([60,80,60]);
     sfx((c,t)=>{ [76,83,88].forEach((m,i)=> fmNote(c, sfxBus, t+i*0.12, mtof(m), {vol:0.07, dur:0.4, ratio:2, index:1})); });
