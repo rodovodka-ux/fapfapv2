@@ -274,6 +274,8 @@
     transition: color 0.2s, border-color 0.2s, box-shadow 0.2s; z-index:5; min-height:22px;
   }
   .demand-badge:empty{ visibility:hidden; }
+  /* v69: in the duel, the label under the hand already says whose turn it is: the note in the middle of the table only repeated it */
+  #demandBadge{ visibility:hidden !important; }
   .demand-badge b{ color:var(--bulb); font-weight:700; }
   .demand-badge .pip{ margin-left:2px; }
   .demand-badge.your-turn, .sq-demand.your-turn{
