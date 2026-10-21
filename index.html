@@ -1705,6 +1705,12 @@
   .pf-top{ position:relative; z-index:1; display:flex; align-items:center; gap:14px; }
   .pf-av-wrap{ position:relative; flex-shrink:0; }
   .pf-av-wrap .avatar{ --s:84px; border:3px solid var(--pk); box-shadow:0 0 0 3px #FFC44D, 0 0 24px rgba(255,196,77,.55); }
+  body.noir.ui-d:not(#z):not(#y):not(#x) .pf-av-btn, body.ui-d:not(#z):not(#y) .pf-av-btn{ background:none !important; border:0 !important; box-shadow:none !important; padding:0 !important; }
+  .pf-av-btn{ background:none !important; border:0 !important; box-shadow:none !important; padding:0 !important; min-height:0; width:auto; cursor:pointer; }
+  .pf-cam{ position:absolute; left:-4px; bottom:-4px; width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#fff; color:#1B120C; border:3px solid var(--pk); }
+  .pf-cam .i{ width:15px; height:15px; }
+  .pf-addph{ display:inline-flex !important; align-items:center; gap:6px; margin:4px 0 6px; padding:6px 12px !important; min-height:0 !important; width:auto !important; border-radius:999px !important; font-size:12.5px !important; font-weight:800; background:#FFC44D !important; color:#1B120C !important; border:2px solid #1B120C !important; box-shadow:none !important; }
+  .pf-addph .i{ width:15px; height:15px; }
   .pf-lvl{ position:absolute; right:-6px; bottom:-4px; min-width:30px; height:30px; padding:0 6px; border-radius:99px; display:grid; place-items:center; background:#FFC44D; color:var(--pk); border:3px solid var(--pk); font:800 14px var(--pfd); }
   .pf-id{ min-width:0; flex:1; }
   .pf-name{ font:700 27px/1.05 var(--pfd); color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-shadow:0 3px 0 rgba(0,0,0,.45); }
@@ -2658,6 +2664,7 @@
   .bell-acts button{ padding:8px 11px; border-radius:13px; font-size:12.5px; font-weight:800; }
   .bell-acts .ok{ background:linear-gradient(180deg, #4fc27f, #1f7a46) !important; color:#fff !important; border-color:transparent !important; }
   .unread-n{ min-width:20px; height:20px; padding:0 6px; border-radius:10px; background:#ff5a3c; color:#fff; font-size:11.5px; font-weight:800; line-height:20px; text-align:center; }
+  .rich-go.fr-write{ padding:8px 10px; }
   .fr-pend{ font-size:11.5px; font-weight:800; color:var(--dust); padding:6px 10px; border-radius:12px; border:1px dashed rgba(255,255,255,.22); }
   /* la conversation */
   #chatPage{ overflow:hidden; }
@@ -14361,8 +14368,8 @@
     const card = document.getElementById('profileCard');
     card.style.setProperty('--d', 0);
     card.innerHTML =
-      '<div class="pf-top"><div class="pf-av-wrap"><div class="avatar" data-who="you"></div><span class="pf-lvl">'+(ri+1)+'</span></div>'+
-      '<div class="pf-id"><div class="pf-name"></div><div class="pf-tags"><span class="pf-tag">'+ico('crown')+' '+RANKS[ri].name+'</span>'+
+      '<div class="pf-top"><button type="button" class="pf-av-wrap pf-av-btn" aria-label="'+(myPhoto() ? 'Changer ma photo' : 'Ajouter ma photo')+'"><div class="avatar" data-who="you"></div><span class="pf-lvl">'+(ri+1)+'</span><span class="pf-cam">'+ico('camera')+'</span></button>'+
+      '<div class="pf-id"><div class="pf-name"></div>'+(myPhoto() ? '' : '<button type="button" class="pf-addph">'+ico('camera')+' Ajouter ma photo</button>')+'<div class="pf-tags"><span class="pf-tag">'+ico('crown')+' '+RANKS[ri].name+'</span>'+
         (myTitle() ? '<span class="pf-tag t2">'+myTitle()+'</span>' : '')+
         (CLOUD_ON ? (signed ? '<span class="pf-tag on">'+ico('cloud')+' Compte sauvegardé</span>' : '<span class="pf-tag off">'+ico('cloud')+' Invité</span>') : '')+
       '</div></div></div>'+
@@ -14374,6 +14381,7 @@
         '<div><b>'+pct(won, played)+'%</b><span>réussite</span></div>'+
       '</div>';
     card.querySelector('.pf-name').textContent = prefs.name || 'Toi';
+    card.querySelectorAll('.pf-av-btn, .pf-addph').forEach(b=> b.addEventListener('click', ()=>{ if(window.pickMyPhoto) window.pickMyPhoto(); }));
     fillMe(card.querySelector('.avatar'), prefs.name || 'Toi');
     applyMyFrame(card.querySelector('.avatar'));
     document.querySelector('#statsOverlay .pf-actions').style.setProperty('--d', 1);
@@ -14384,12 +14392,8 @@
     const tile = (c, icon, n, label)=> '<div class="pf-tile '+c+'">'+ico(icon)+'<b>'+n+'</b><span>'+label+'</span></div>';
     const bar = (cls, label, w, n, sub)=> '<div><div class="pf-mode-top"><span>'+label+'</span><small>'+sub+'</small></div><div class="pf-mbar '+cls+'"><i style="width:'+Math.max(n>0 ? 3 : 0, w)+'%"></i></div></div>';
     const cardH = (d, icon, title, right)=> '<section class="pf-card" style="--d:'+d+'"><div class="pf-h"><span class="pf-ic">'+ico(icon)+'</span>'+title+(right ? '<small>'+right+'</small>' : '')+'</div>';
-    // the book: which of the five endings were found
-    let ends = '';
-    try{ if(typeof ENDING_GROUPS!=='undefined' && typeof stGet==='function'){ const P = stGet(), E = P.endings || [];
-      const got = ENDING_GROUPS.map(g=> E.some(e=> ENDINGS[e] && ENDINGS[e].group===g[0]));
-      ends = cardH(7, 'book', 'Pourquoi je suis mort ?', got.filter(Boolean).length+' / 5 fins')+'<div class="pf-ends">'+
-        ENDING_GROUPS.map((g,i)=> '<div class="pf-end'+(got[i] ? ' got' : '')+'">'+ico(got[i] ? 'check' : 'lock')+(got[i] ? g[1] : 'Fin encore cachée')+'</div>').join('')+'</div></section>'; } }catch(e){}
+    // v69: the book is gone from the game, and its endings card with it
+    const ends = '';
     const pushOn = !!prefs.push && 'Notification' in window && Notification.permission==='granted';
     const box = document.getElementById('statsContent');
     box.style.display = 'contents';
@@ -17422,6 +17426,7 @@
   $id('btnShowAccount').addEventListener('click', ()=> Nav.go('accountPage'));
   // ---- my photo: chosen on the phone, framed in a circle (drag, zoom), kept small (192 px) ----
   const pickPhoto = ()=>{ const f = $id('photoFile'); f.value = ''; f.click(); };
+  window.pickMyPhoto = pickPhoto; // the Profil page opens it too
   $id('btnAcctPhoto').addEventListener('click', pickPhoto);
   $id('btnPhotoPick').addEventListener('click', pickPhoto);
   $id('btnPhotoDel').addEventListener('click', ()=>{ delete prefs.photo; savePrefs(); renderAccount(); showToast('Photo retirée', 'Ton initiale revient.', {ms:1800}); vibrate(12); });
@@ -17467,7 +17472,7 @@
       const out = document.createElement('canvas'); out.width = out.height = 192; paint(out.getContext('2d'), 192);
       let data = ''; try{ data = out.toDataURL('image/jpeg', .82); }catch(err){}
       if(!data || data.length > 80000){ showToast('Photo trop lourde', 'Essaie avec une autre photo.', {ms:2200}); return; }
-      prefs.photo = data; savePrefs(); close(); renderAccount(); vibrate(15);
+      prefs.photo = data; savePrefs(); close(); renderAccount(); if(Nav.cur()==='statsOverlay') renderStats(); vibrate(15);
       showToast('Belle photo', 'Elle est sur ton profil, au Carré, au classement et sur ton certificat.', {ms:2600});
     };
   }
@@ -17915,13 +17920,14 @@
       const n = Friends.unread[f.id]|0;
       const sub = (isOnline(f.id) ? 'En ligne' : 'Hors ligne')+(f.rep!=null ? ' · '+RANKS[rankIndex(f.rep||0)].name : '');
       const r = friendRow(f, n ? n+(n>1 ? ' nouveaux messages' : ' nouveau message') : sub,
-        (n ? '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>' : '')+'<button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button>', 'tappable'+(n ? ' new' : ''));
+        (n ? '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>' : '')+'<button class="rich-go fr-write" aria-label="Écrire à '+(f.name||'').replace(/[<>"&]/g, '')+'">'+ico('chat')+'</button><button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button>', 'tappable'+(n ? ' new' : ''));
       r.addEventListener('click', ()=> openPlayerSheet(f));
-      r.querySelector('.rich-go').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
+      r.querySelector('.fr-write').addEventListener('click', e=>{ e.stopPropagation(); openChat(f); });
+      r.querySelector('.rich-go:not(.fr-write)').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
       return r;
     }));
     bellSection(list, 'Demandes envoyées', Friends.req.out.map(f=>{
-      const r = friendRow(f, 'Attend sa réponse', '<span class="fr-pend">En attente</span>', 'tappable');
+      const r = friendRow(f, 'Doit accepter pour que vous puissiez vous écrire', '<span class="fr-pend">En attente</span>', 'tappable');
       r.addEventListener('click', ()=> openPlayerSheet(f));
       return r;
     }));
