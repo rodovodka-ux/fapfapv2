@@ -2597,10 +2597,10 @@
   .hx-novel.nk .hx-home-txt b em{ display:block; font-style:normal; font-size:15px; letter-spacing:.24em; color:#f4eee4; }
   .hx-novel.nk .hx-cta{ background:none; border:1.5px solid rgba(242,168,59,.8); border-radius:2px; color:#f4eee4; letter-spacing:.18em; text-transform:uppercase; font-size:12px; }
   /* « Zéro à Héros »: a phone lit in the dark, rain, the pink of the hospital wristband */
-  .hx-novel.zh{ margin-top:12px; border-color:rgba(255,201,60,.45); background:#0b0807; }
-  .hx-novel.zh::before{ background:radial-gradient(70px 90px at 82% 45%, rgba(255,201,60,.32), transparent 70%), radial-gradient(60px 60px at 92% 80%, rgba(240,107,168,.28), transparent 70%),
-    repeating-linear-gradient(100deg, transparent 0 13px, rgba(200,215,235,.07) 13px 14px); }
-  .hx-novel.zh::after{ background:linear-gradient(90deg, #0b0807 12%, rgba(11,8,7,.72) 58%, rgba(11,8,7,.1) 100%); }
+  .hx-novel.zh{ margin-top:12px; border-color:rgba(255,201,60,.45); background:#0b0807; min-height:210px; }
+  /* the poster: Amour in the rain, the neon of the Maison behind her (art/zh/affiche-carte.webp) */
+  .hx-novel.zh::before{ background:url('art/zh/affiche-carte.webp') 78% 30% / cover no-repeat; }
+  .hx-novel.zh::after{ background:linear-gradient(90deg, #0b0807 6%, rgba(11,8,7,.78) 44%, rgba(11,8,7,0) 72%); }
   .hx-novel.zh .hx-home-txt small{ color:#FFC93C; }
   .hx-novel.zh .hx-home-txt b{ font:700 30px/1 'Fredoka', 'Trebuchet MS', sans-serif; color:#FFC93C; -webkit-text-stroke:2px #1B120C; paint-order:stroke fill; text-shadow:0 3px 0 #1B120C; text-transform:uppercase; }
   .hx-novel.zh .hx-home-txt b em{ font-style:normal; font-size:18px; color:#FFF6DC; -webkit-text-stroke:0; text-shadow:none; }
@@ -3467,6 +3467,8 @@
   body.ui-d:not(#z) #menuOverlay .hero-play .hero-faces .avatar{ box-shadow:0 0 0 3px var(--d-ink) !important; }
   body.ui-d:not(#z) #menuOverlay .hx-novel{ border:3px solid var(--d-ink) !important; border-radius:24px !important; box-shadow:0 5px 0 var(--d-ink) !important; background-color:var(--d-night) !important; }
   body.ui-d:not(#z) #menuOverlay .hx-novel::before{ background:url('art/d/perso-penalty.svg') right -10px bottom -14px / 150px auto no-repeat !important; opacity:.95; }
+  /* Zéro à Héros keeps its poster (Amour in the rain) in the drawn style too */
+  body.ui-d:not(#z) #menuOverlay .hx-novel.zh::before{ background:url('art/zh/affiche-carte.webp') 78% 30% / cover no-repeat !important; opacity:1; }
   body.ui-d:not(#z) #menuOverlay .hx-novel b{ font-family:var(--d-t) !important; }
   body.ui-d:not(#z) #menuOverlay .hx-cta{ background:var(--d-mango) !important; color:var(--d-ink) !important; border:3px solid var(--d-ink); border-radius:12px !important; font:700 15px var(--d-t) !important; box-shadow:0 3px 0 #000 !important; }
   body.ui-d:not(#z) #menuOverlay .hcard{ background:#fff !important; color:var(--d-txt) !important; border:3px solid var(--d-ink) !important; border-radius:20px !important; box-shadow:0 5px 0 var(--d-ink) !important; }
@@ -4609,7 +4611,8 @@
         <span class="hx-cta">Ouvrir mon téléphone</span></span>
     </button>
 
-    <a class="hx-novel nk press" id="btnEnquete" href="enquete.html" style="--d:2;text-decoration:none">
+    <!-- Les Dossiers de Nkolbisson : masqués pour l'instant (demande du 22/10), la page enquete.html reste en place -->
+    <a class="hx-novel nk press" id="btnEnquete" href="enquete.html" hidden style="--d:2;text-decoration:none;display:none">
       <span class="hx-home-txt"><small>L’histoire · 18+</small><b><em>Les Dossiers de</em>Nkolbisson</b><span>Un polar en BD : interroge, joue au Fap Fap, accuse.</span>
         <span class="hx-cta">Ouvrir le dossier</span></span>
     </a>
@@ -7281,6 +7284,7 @@
   const artSrc = base=> base.indexOf('livre/')===0 ? PIC(base.slice(6)) : 'art/'+base+'.webp';
   function artImgTag(base){
     if(base.indexOf('livre/')===0) return '<img src="'+artSrc(base)+'" alt="" onerror="this.remove()">';
+    if(base.indexOf('zh/')===0) return '<img src="art/'+base+'.webp" alt="" onerror="this.remove()">';
     return '<img src="art/'+base+'.jpg" data-alt="art/'+base+'.png" alt="" '+
       'onerror="if(this.dataset.alt){this.src=this.dataset.alt;this.dataset.alt=\'\';}else{this.remove();}">';
   }
@@ -8084,7 +8088,7 @@
     if(!img || !zone) return;
     const off = ()=>{ img.hidden = true; zone.classList.remove('has-art'); };
     off();
-    if(!ART_FILE[charId] || /^(story|livre)\//.test(ART_FILE[charId])) return; // portraits only: no drawn "hands at the table" any more
+    if(!ART_FILE[charId] || /^(story|livre|zh)\//.test(ART_FILE[charId])) return; // portraits only: no drawn "hands at the table" any more
     const base = 'art/'+ART_FILE[charId]+'-table';
     let triedPng = false;
     img.onload = ()=>{ img.hidden = false; zone.classList.add('has-art'); };
@@ -15524,7 +15528,7 @@
   // the phone asks {zh:'play'}, the game plays the duel with the full rules and the opponent's AI, then answers {zh:'result'}.
   const ZH_OPP = {rall:'aristide', penalty:'penalty', christelle:'gervais'};
   const ZH_PERSONAS = {
-    mado:{name:'Mado', brain:'pimc', lines:{
+    mado:{name:'Mado', brain:'pimc', pic:1, lines:{
       control:['Ma fille, regarde bien comment on fait.', 'Tu croyais que la vieille dormait ?', 'Range ta carte, je passe.'],
       win:['Va dire à ta mère que Mado t’a éduqué.', 'C’est le marché, mon fils. On paie.'],
       cora:['CORA ! Le 3, c’est comme le piment : petit mais méchant.'], glacee:['33 Glacée ! Le Bon Coin va trembler.'],
@@ -15534,6 +15538,11 @@
       control:['Intéressant.', 'Merci.', 'Prévisible.'], win:['On se reverra.', 'La Maison vous remercie.'],
       cora:['CORA.'], glacee:['33 Glacée. Notez-le.'], surprise:['Tiens donc.', 'Vous apprenez vite.'],
       lose:['Bien joué. Monsieur Ondoua sera curieux de vous connaître.'], behind:['Je prends mon temps.'], missed:['Dommage.']}},
+    // the man in costume has a name now (act 2, the final of the Saturday tournament)
+    armand:{name:'Armand Ondoua', brain:'pimc', pic:1, lines:{
+      control:['Intéressant.', 'Je connais cette carte.', 'Prévisible, encore.'], win:['La famille Ondoua gagne toujours.', 'Rangez vos cartes. Et votre fierté.'],
+      cora:['CORA. Mon oncle adore ce coup.'], glacee:['33 Glacée. Retenez la leçon.'], surprise:['Vous me surprenez. Je n’aime pas ça.', 'Tiens donc.'],
+      lose:['Bien joué. On se reparlera. Pas aux cartes.'], behind:['Je ne perds jamais deux fois.'], missed:['Dommage.']}},
   };
   const ZH = {open:false};
   function zhPost(m){ const f = $id('zhFrame'); try{ if(f.contentWindow) f.contentWindow.postMessage(m, location.origin); }catch(e){} }
@@ -15566,6 +15575,8 @@
       DUEL_PERSONAS[pid] = {name:(P && P.name) || String(d.name||'Joueur').slice(0, 24), stars:3, brain:(P && P.brain) || 'pimc', pimcMs:280, pimcSamples:70,
         announce:[0.8, 0.95], repWin:0, tagline:'', lines:(P && P.lines) || {}};
       storyRun.art[pid] = undefined;
+      // the painted portrait of the story (art/zh/<opp>.webp) sits in the opponent's medal
+      if(P && P.pic) ART_FILE[pid] = 'zh/'+d.opp;
     }
     $id('zhOverlay').classList.add('hidden'); ZH.open = false;
     duelOpp = pid; mode = 'ai'; TARGET_SCORE = Math.max(1, Math.min(5, d.target|0 || 3));
