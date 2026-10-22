@@ -135,6 +135,8 @@
   /* the conversation */
   .msgs{ flex:1; overflow-y:auto; padding:8px max(14px, env(safe-area-inset-left,0px)) 10px; display:flex; flex-direction:column; gap:6px; }
   .m{ max-width:80%; padding:9px 13px; border-radius:20px; border-bottom-left-radius:6px; background:#2b211a; align-self:flex-start; white-space:pre-wrap; word-wrap:break-word; animation:up .25s ease-out both; }
+  /* the bank's texts: a receipt, square and readable */
+  .m.momo{ max-width:88%; background:#14231a; border:1.5px solid #2FB36B; border-radius:14px; font:700 14px/1.45 var(--f-b); color:#dff5e6; font-variant-numeric:tabular-nums; }
   .m.me{ align-self:flex-end; background:var(--mango); color:var(--ink); border-bottom-left-radius:20px; border-bottom-right-radius:6px; font-weight:700; }
   .m.sys{ align-self:center; background:none; color:var(--mute); font-size:12px; font-weight:800; padding:4px; }
   .typing{ align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:#2b211a; border-radius:20px; }
@@ -455,7 +457,9 @@ const PEOPLE = {
   clarisse:{name:'Clarisse Ebodé', role:'Trésorière de la tontine du quartier', face:{img:ZH_ART+'clarisse.webp', bg:'#3D7FD9'}},
   bosco:{name:'Bosco Tchana', role:'Patron du bar Le Bon Coin', face:{img:ZH_ART+'bosco.webp', bg:'#2FB36B'}},
 };
-const anonFace = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2b211a"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="46" fill="#a99a86">?</text></svg>';
+// the bank's thread: Mobile Money, a green card with the franc sign
+PEOPLE.momo = {name:'Mobile Money', role:'Ton compte · reçus et virements', face:{img:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#2FB36B"/><rect x="22" y="32" width="56" height="38" rx="7" fill="#FFF8E7" stroke="#1B120C" stroke-width="5"/><text x="50" y="62" text-anchor="middle" font-family="Arial" font-weight="900" font-size="28" fill="#1B120C">F</text></svg>'), bg:'#2FB36B'}};
+const anonFace ='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2b211a"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="46" fill="#a99a86">?</text></svg>';
 const pic = id=> id==='me' ? (S.hero.av===-1 && S.hero.photo ? '<img class="ph-me" src="'+S.hero.photo+'" alt="">' : face(HEROES[Math.max(0, S.hero.av)])) : (PEOPLE[id] && PEOPLE[id].face ? face(PEOPLE[id].face) : anonFace);
 
 // ===================== the state: one save, one ledger =====================
@@ -488,7 +492,7 @@ async function burst(id, lines, choices){ await say(id, lines, choices, 380); }
 function borrow(who, label, amount, rate, days){
   S.debts = S.debts || [];
   S.debts.push({id:who+'-'+S.day+'-'+S.m, who, label, principal:amount, paid:0, day:S.day, rate, due:S.day + days});
-  tx(+amount, label);
+  tx(+amount, label, who);
 }
 function owed(d){
   const weeks = Math.floor((S.day - d.day)/7) + 1;
@@ -496,7 +500,7 @@ function owed(d){
   const late = Math.max(0, S.day - d.due); if(late && d.rate) o *= Math.pow(1.05, late);
   return Math.max(0, Math.round(o - d.paid));
 }
-function repay(d){ const amt = Math.min(S.cash, owed(d)); if(amt<1) return; d.paid += amt; tx(-amt, 'Remboursement · '+PEOPLE[d.who].name); }
+function repay(d){ const amt = Math.min(S.cash, owed(d)); if(amt<1) return; d.paid += amt; tx(-amt, 'Remboursement · '+payeeName(d.who), d.who); }
 const debtsLeft = ()=> (S.debts||[]).filter(d=> owed(d)>0);
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===1){ s.pam = s.pam || {love:70, storm:30}; s.mem = s.mem || {}; return s; } return null; }catch(e){ return null; } }
@@ -506,13 +510,36 @@ const HOST = (window.parent!==window && /[?&]in=game\b/.test(location.search)) ?
 const hostPost = m=>{ try{ HOST.postMessage(m, location.origin); }catch(e){} };
 const PLAYS = {};
 let hostChips = null, hostPhoto = '', hostName = '';
-function tx(amount, label){
+// who: when the money comes from someone or goes to someone (not cash at a table), it is a transfer, and the account texts you
+function tx(amount, label, who){
   S.cash += amount;
   S.ledger.unshift({a:amount, l:label, d:S.day, m:S.m});
   if(HOST) hostPost({zh:'tx', amount:Math.round(amount)});
   // you hear your money: a stack falling in, or a single chip going out
   if(Math.abs(amount) >= 500) SFX.play(amount > 0 ? 'jetons' : 'jeton', .35);
+  if(who) momo(amount, who, label);
   save(); renderHome();
+}
+// ---- Mobile Money: the account that texts you, like a real bank, for every transfer in or out ----
+const PAYEE = {hopital:'Hôpital Central', poste:'Commissariat de Bastos', maison:'La Maison · Nkolbisson'};
+const payeeName = who=> PAYEE[who] || (PEOPLE[who] ? PEOPLE[who].name.replace(/\s*❤️/, '') : who);
+const momoRef = ()=> 'MM'+String(S.day).padStart(2, '0')+(S.m+1)+'.'+String(Math.floor(1000 + Math.random()*9000));
+function momo(amount, who, label){
+  const inn = amount > 0, txt = (inn ? 'Transfert reçu ✅' : 'Paiement effectué ✅')+'\n'+(inn ? 'De : ' : 'À : ')+payeeName(who)+'\nMontant : '+fmt(Math.abs(amount))+' F\nMotif : '+label+
+    '\nNouveau solde : '+fmt(S.cash)+' F\nRéf. '+momoRef();
+  const th = thread('momo'); th.msgs.push({who:'them', txt, d:S.day, m:S.m, k:'momo'}); bump('momo');
+  if(openThread==='momo') drawThread(); else { th.unread++; banner('momo', (inn ? '+' : '−')+fmt(Math.abs(amount))+' F · '+(inn ? 'de ' : 'à ')+payeeName(who)); }
+}
+// before any payment you make yourself: who, how much, why, and what is left. Then a receipt.
+function confirmPay(o){
+  sheet('<h3>Confirmer le paiement</h3><div class="card"><div class="bill"><span>Bénéficiaire</span><em>'+esc(payeeName(o.to))+'</em><span>Montant</span><em>'+fmt(o.amount)+' F</em>'+
+    '<span>Motif</span><em>'+esc(o.label)+'</em><span>Solde après</span><em>'+fmt(S.cash - o.amount)+' F</em></div></div>'+
+    '<div class="btns"><button class="btn green" id="cpOk">Confirmer</button><button class="btn ghost" id="cpNo">Annuler</button></div>');
+  $('#cpNo').onclick = closeSheet;
+  $('#cpOk').onclick = ()=>{ o.pay(); SFX.play('jeton', .4);
+    sheet('<h3>Paiement réussi ✓</h3><p class="story">'+fmt(o.amount)+' F envoyés à '+esc(payeeName(o.to))+'. Le reçu est dans tes messages (Mobile Money).</p>'+
+      '<div class="delta"><span class="dn">−'+fmt(o.amount)+'</span><span>Solde : '+fmt(S.cash)+' F</span></div><div class="btns"><button class="btn" id="cpEnd">Fermer</button></div>');
+    $('#cpEnd').onclick = ()=>{ closeSheet(); o.done && o.done(); }; };
 }
 // a table: in the game, a real game of Fap Fap; alone, a simulated result. Resolves {won}.
 function playTable(spec){
@@ -578,9 +605,9 @@ const ANSWERS = {
   p1lie: async()=>{ pam(0, -2); remember('lie_hosp');
     await say('pamela', ['Mmm.', 'Ok. Dors bien alors 😘']); },
   // ---- day 2 morning: the nails ----
-  p2full: async()=>{ tx(-15000, 'Amour · ongles'); pam(+12, -15);
+  p2full: async()=>{ tx(-15000, 'Amour · ongles', 'pamela'); pam(+12, -15);
     await burst('pamela', ['TU ES LE MEILLEUR 😍😍', 'Je t’aime. Vraiment.', 'Ne dis rien à ta sœur 🤫']); },
-  p2part: async()=>{ tx(-2000, 'Amour · « pour les ongles »'); pam(+2, +5);
+  p2part: async()=>{ tx(-2000, 'Amour · « pour les ongles »', 'pamela'); pam(+2, +5);
     await say('pamela', calm() ? ['2 000… 😒', 'Bon. C’est le geste qui compte, il paraît.'] : ['2 000 ?!', 'Je te demande des ongles, pas un beignet.', 'Garde ton argent la prochaine fois.']); },
   p2no: async()=>{
     if(knows('told_hosp') || knows('pam_knows')){ pam(-2, +6); await say('pamela', ['Toujours l’hôpital…', 'Je comprends. Mais j’aime pas.']); }
@@ -610,14 +637,14 @@ const ANSWERS = {
   rall2no: async()=>{ await say('rall', ['Fier hein 😂 ok.']); },
   cla1join: async()=>{ S.tontine = {daily:1000, turn:10, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
     await say('clarisse', ['Bienvenue dans la famille 🙏', 'Tu es au tour 10 sur 10. Tu toucheras 10 000 le jour '+(S.day+10)+'.', 'Si tu veux passer au tour 2, la place coûte 2 000. C’est comme ça pour tout le monde.']); },
-  cla1buy: async()=>{ tx(-2000, 'Tontine · achat du tour 2'); S.tontine = {daily:1000, turn:2, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
+  cla1buy: async()=>{ tx(-2000, 'Tontine · achat du tour 2', 'clarisse'); S.tontine = {daily:1000, turn:2, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
     await say('clarisse', ['Tour 2, c’est noté ✍️', 'Tu touches 10 000 le jour '+(S.day+2)+'. Ne rate aucune cotisation.', 'Ceux qui ratent… perdent leur tour.']); },
   cla1no: async()=>{ await say('clarisse', ['Dommage.', 'La tontine, c’est la seule banque qui ne demande pas de papiers.']); },
-  bos1yes: async()=>{ tx(3000, 'Bosco · « service rendu »'); remember('match_fixed');
+  bos1yes: async()=>{ tx(3000, 'Bosco · « service rendu »', 'bosco'); remember('match_fixed');
     S.agenda.push({id:'bosco', day:S.day+1, m:2, place:'bosco', title:'Perdre contre Mado (arrangé)', who:'bosco', stake:'Bosco t’a déjà payé 3 000'}); save();
     await say('bosco', ['Bien. Demain soir, au bar, tu perds contre Mado. Proprement.', 'Personne ne doit savoir. Personne.']); },
   bos1no: async()=>{ await say('bosco', ['Tu es honnête. C’est rare.', 'Et ça ne paie pas.']); },
-  pam5yes: async()=>{ tx(5000, 'Amour · « pour ton inscription »'); pam(+6, -4); remember('pam_paid');
+  pam5yes: async()=>{ tx(5000, 'Amour · « pour ton inscription »', 'pamela'); pam(+6, -4); remember('pam_paid');
     await say('pamela', ['Voilà. 5 000.', 'Maintenant tu me dois quelque chose.', 'Et c’est moi qui choisirai quoi. 😏']); },
   pam5no: async()=>{ pam(-3, +8); await say('pamela', ['Trop fier pour mon argent ?', 'Ok. Mais ne viens pas pleurer.']); },
 
@@ -698,6 +725,27 @@ const CHAT = {
     unknown:{c:['😂 tu parles chinois ma belle ?', 'Mdr ok', 'Je t’écris après, le match commence'], t:['Hein ?'], s:['…'], fx:[0, 0]},
   },
 };
+// ---- never in a loop: a line is only said again once 20 other lines of hers have passed ----
+function pick(pid, pool){
+  const recent = new Set(thread(pid).msgs.filter(m=> m.who==='them').slice(-20).map(m=> m.txt));
+  const fresh = (pool || []).filter(l=> !recent.has(l));
+  return fresh.length ? fresh[Math.floor(Math.random()*fresh.length)] : null;
+}
+// when she has nothing new to say about what you wrote, she changes the subject, like a real person
+const SUBJECT = {
+  pamela:{
+    c:['Au fait, tu as mangé ? Tu maigris, ça m’inquiète.', 'Mon chef m’a encore crié dessus aujourd’hui. Je le déteste.', 'Samedi, tu m’emmènes où ?', 'Ma mère demande quand elle va enfin te voir.', 'J’ai vu une robe… Je ne dis rien. Je dis juste que j’ai vu une robe. 😏', 'Tu penses à moi, là, maintenant ?'],
+    t:['Bon. On parle d’autre chose ?', 'Tu es où, exactement ?', 'Je n’aime pas quand tu réponds comme ça.', 'Mon père a demandé de tes nouvelles. Bizarre, non ?', 'Tu me caches quelque chose. Je le sens.'],
+    s:['Je ne veux plus parler de ça.', 'Tu sais ce que je pense ? Non. Tu ne sais rien.', 'Continue de jouer tes cartes, va.', 'Je vais finir par me fatiguer de toi.', 'Ne m’écris que si c’est pour t’excuser.']},
+  yowale:{
+    c:['Tu as vu le match hier ? 😂', 'Les gars disent bonjour 😂', 'On mange un soya ce soir ?', 'J’ai rêvé qu’on gagnait au PMU 😂', 'Tu es trop sérieuse ma belle, souris un peu'],
+    t:['Hmm 😅', 'On en parle plus tard ok ?', 'Tu es fâchée ?'],
+    s:['…', 'Je te laisse respirer un peu']},
+};
+const BYE = {
+  pamela:{c:['Bon, je dois y aller. Le boulot. On se parle ce soir 😘', 'Je te laisse, mon chef arrive. Bisous.'], t:['J’ai des choses à faire. On reparlera.', 'Je n’ai pas que ça à faire.'], s:['Je ne réponds plus. Réfléchis à ce que tu fais.', 'Laisse-moi tranquille pour aujourd’hui.']},
+  yowale:{c:['Je file ma belle, les gars m’attendent 😘', 'Mon téléphone meurt, à plus 😂'], t:['On se parle plus tard'], s:['Bye']},
+};
 async function freeSend(pid, text){
   text = String(text||'').replace(/\s+/g, ' ').trim().slice(0, 200); if(!text) return;
   const th = thread(pid);
@@ -706,15 +754,20 @@ async function freeSend(pid, text){
   th.msgs.push({who:'me', txt:text, d:S.day, m:S.m}); save(); drawThread(); renderHome();
   const book = CHAT[pid], k = detect(text), e = book[k] || book.unknown;
   const mood = S.pam.storm>=65 ? 's' : S.pam.storm>=45 ? 't' : 'c';
+  // a conversation has an end: after a few exchanges in the same moment she has other things to do, and says so once
+  S.flags.chatN = S.flags.chatN || {}; const ck = pid+'_'+S.day+'_'+S.m, n = S.flags.chatN[ck] = (S.flags.chatN[ck] || 0) + 1;
+  if(n > 6){ save(); if(n===7){ await wait(700); await say(pid, [pick(pid, BYE[pid][mood] || BYE[pid].c) || 'On se parle plus tard.']); } return; }
   // what she already knows about you comes first, once per memory
   const known = e.know ? Object.keys(e.know).find(m=> knows(m) && !(S.flags.said||{})[pid+k+m]) : null;
   let lines;
   if(known){ S.flags.said = S.flags.said || {}; S.flags.said[pid+k+known] = 1; lines = [e.know[known]]; }
   else {
-    const pool = e[mood] || e.c; S.flags.turn = S.flags.turn || {};
-    const i = S.flags.turn[pid+k+mood] = ((S.flags.turn[pid+k+mood] ?? -1) + 1) % pool.length;
-    // in a storm she fires two or three lines in a row
-    lines = mood==='s' && pool.length>1 ? pool.slice(i).concat(pool.slice(0, i)).slice(0, 2) : [pool[i]];
+    // never a line she said recently: first her answer for this meaning, then something else in the same mood, then she changes the subject
+    const pool = e[mood] || e.c;
+    const a = pick(pid, pool) || pick(pid, (e.c || []).concat(e.t || [], e.s || [])) || pick(pid, SUBJECT[pid][mood] || SUBJECT[pid].c) || pick(pid, SUBJECT[pid].c);
+    lines = [a || '…'];
+    // in a storm she fires a second line, if she has a new one
+    if(mood==='s'){ const b = pick(pid, pool); if(b) lines.push(b); }
   }
   pam(e.fx[0], e.fx[1]); if(e.mem) remember(e.mem);
   await wait(500);
@@ -787,7 +840,7 @@ async function beatBody(name, run){
         [{t:'Envoyer 15 000', a:'p2full', need:15000}, {t:'Envoyer 2 000, c’est tout ce que je peux', a:'p2part', need:2000}, {t:'Je n’ai rien, tout va à l’hôpital.', a:'p2no'}, {t:'Tu es déjà belle sans ça 😘', a:'p2flirt'}, {t:'Demande à ton père, il est riche.', a:'p2dad'}]); }
     else if(knows('yo_promised')){
       await say('yowale', ['Ma belle désolé 🙏', 'J’ai dormi chez un pote, mon téléphone était mort', 'Mais regarde, je t’ai envoyé 3 000 pour Princesse 😘']);
-      tx(3000, 'Daryl Bleu Magic · « pour Princesse »');
+      tx(3000, 'Daryl Bleu Magic · « pour Princesse »', 'yowale');
       await say('yowale', ['Tu me pardonnes ?'], [{t:'Tu avais promis, Daryl.', a:'y2hurt'}, {t:'Merci. Ça aide vraiment.', a:'y2thanks'}]); }
     else await say('yowale', ['Bien dormi ma belle ? 😂', 'Moi non, on a fêté la victoire jusqu’à 5 h']);
   }
@@ -880,7 +933,11 @@ function openApp(id, arg){
         '<button class="btn ghost" data-repay="'+d.id+'"'+(S.cash<1 ? ' disabled' : '')+'>Rembourser '+fmt(Math.min(S.cash, owed(d)))+'</button>'; }).join('')+'</div>';
     if(t && t.active) h += '<div class="card"><span class="k">Tontine de Clarisse</span><div class="bill"><span>Cotisation</span><em>'+fmt(t.daily)+' / jour</em><span>Ton tour</span><em>'+t.turn+' sur '+t.of+'</em><span>Tu toucheras</span><em>'+fmt(t.daily*t.of)+'</em><span class="due">'+(t.got ? 'Touché ! Tu cotises jusqu’au jour '+(t.joined + t.of) : 'Le jour '+(t.joined + t.turn))+' · cotisations payées : '+t.paid+'</span></div></div>';
     $('#debts').innerHTML = h;
-    $('#debts').querySelectorAll('[data-repay]').forEach(b=> b.onclick = ()=>{ const d = S.debts.find(x=> x.id===b.dataset.repay); repay(d); openApp('banque'); });
+    $('#debts').querySelectorAll('[data-repay]').forEach(b=> b.onclick = ()=>{ const d = S.debts.find(x=> x.id===b.dataset.repay);
+      confirmPay({to:d.who, amount:Math.min(S.cash, owed(d)), label:'Remboursement · '+d.label, pay:()=> repay(d), done:()=> openApp('banque')}); });
+    // sending money to someone of your own will: a few amounts, then the same confirmation and receipt
+    $('#debts').insertAdjacentHTML('afterend', '<button class="btn ghost" id="send">Envoyer de l’argent</button>');
+    $('#send').onclick = sendMoney;
     $('#txs').innerHTML = S.ledger.map(t=> '<div class="tx"><b>'+esc(t.l)+'</b><small>Jour '+t.d+' · '+MOMENTS[t.m]+'</small><em class="'+(t.a>=0 ? 'p' : 'n')+'">'+(t.a>=0 ? '+' : '−')+fmt(Math.abs(t.a))+'</em></div>').join('');
   }
   if(id==='sante'){
@@ -931,7 +988,7 @@ function drawThread(){
   const pid = openThread; if(!pid) return;
   const th = thread(pid), box = $('#appBody');
   th.unread = 0; save();
-  box.innerHTML = th.msgs.map(m=> '<div class="m'+(m.who==='me' ? ' me' : '')+'">'+esc(m.txt)+'</div>').join('') || '<div class="empty">Pas encore de message.</div>';
+  box.innerHTML = th.msgs.map(m=> '<div class="m'+(m.who==='me' ? ' me' : '')+(m.k ? ' '+m.k : '')+'">'+esc(m.txt)+'</div>').join('') || '<div class="empty">Pas encore de message.</div>';
   box.scrollTop = box.scrollHeight;
   const c = $('#appChoices');
   if(th.choices && th.choices.length){
@@ -943,7 +1000,7 @@ function drawThread(){
       c.appendChild(b); });
     // Amour hates waiting: an open conversation left unanswered for 20 s gets a jab, once per question
     clearTimeout(drawThread.t);
-    if(pid==='pamela' && !th.pressed){ drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [hot() ? 'Tu écris la Bible ou quoi ?? 😤' : 'Tu écris un roman ? 🙄']); } }, 20000); }
+    if(pid==='pamela' && !th.pressed){ drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [pick('pamela', hot() ? ['Tu écris la Bible ou quoi ?? 😤', 'Réponds. MAINTENANT.', 'Je vois que tu es en ligne.'] : ['Tu écris un roman ? 🙄', 'Allô ? 😒', 'Tu réfléchis trop, ça me fait peur.']) || '…']); } }, 20000); }
   } else c.hidden = true;
   // the free-writing bar lives outside the redrawn part, so what you are typing is never wiped by her next message
   $('#appFree').hidden = !CHAT[pid];
@@ -1025,14 +1082,42 @@ function visit(){
     '<div class="delta"><span class="up">Relation +'+rel+'</span><span class="up">Santé +'+hp+'</span><span>Le moment est passé</span></div><div class="btns"><button class="btn" id="okV">Continuer</button></div>');
   $('#okV').onclick = ()=>{ closeSheet(); advance();
     // she does not share you, not even with your sister
-    if(PART()==='pamela' && S.pam.storm>40){ pam(0, +5); setTimeout(()=> say('pamela', ['Encore à l’hôpital ?', 'Tu passes plus de temps avec ta sœur qu’avec moi.']), 2600); } };
+    // once a day at most, and never the same words twice in a row
+    if(PART()==='pamela' && S.pam.storm>40 && S.flags.jealousDay!==S.day){ S.flags.jealousDay = S.day; pam(0, +5);
+      const J = [['Encore à l’hôpital ?', 'Tu passes plus de temps avec ta sœur qu’avec moi.'], ['Tu es encore là-bas ?', 'Moi aussi je peux tomber malade, tu sais.'],
+        ['Ta sœur, ta sœur, toujours ta sœur.'], ['Je suis passée devant chez toi. Personne.', 'Laisse-moi deviner : l’hôpital.'], ['Dis bonjour à Princesse de ma part.', 'Elle ne me répondra pas, mais dis-le quand même.'],
+        ['Tu sais quoi, vas-y. Reste avec elle.', 'Je ne dirai plus rien.']];
+      const k = S.flags.jealousN = ((S.flags.jealousN ?? -1) + 1) % J.length; setTimeout(()=> say('pamela', J[k]), 2600); } };
 }
 function payAdvance(){
   const left = S.hosp.advance - S.hosp.paid, amt = Math.min(S.cash, left);
   if(amt<1) return;
-  sheet('<h3>Verser '+fmt(amt)+' ?</h3><p>Il te restera <b>'+fmt(S.cash - amt)+'</b> jetons. L’avance sera payée à '+Math.round((S.hosp.paid+amt)/S.hosp.advance*100)+' %.</p><div class="btns"><button class="btn" id="okP">Verser</button><button class="btn ghost" id="noP">Garder mon argent</button></div>');
-  $('#okP').onclick = ()=>{ S.hosp.paid += amt; tx(-amt, 'Hôpital · avance d’admission'); closeSheet(); openApp('sante'); };
-  $('#noP').onclick = closeSheet;
+  confirmPay({to:'hopital', amount:amt, label:'Avance d’admission ('+Math.round((S.hosp.paid+amt)/S.hosp.advance*100)+' % payés)',
+    pay:()=>{ S.hosp.paid += amt; tx(-amt, 'Hôpital · avance d’admission', 'hopital'); }, done:()=> openApp('sante')});
+}
+// what a gift does depends on who receives it: your sister feels it, Amour (or Daryl) remembers it, a friend thanks you
+const GIFT = {
+  princesse:a=>{ nudge('rel', Math.min(8, Math.round(a/1000) + 1)); say('princesse', [a>=5000 ? 'Mais ?? '+fmt(a)+' ? Tu es fou'+G().e+' 😭 Merci…' : 'Merci '+G().gf+' 🥺 Je vais m’acheter du jus.']); },
+  pamela:a=>{ pam(Math.min(10, Math.round(a/2000) + 1), -Math.min(10, Math.round(a/2000))); say('pamela', [pick('pamela', a>=10000 ? ['Ohhh 😍 Tu vois que tu m’aimes.', 'Mon bébé est généreux aujourd’hui 😘'] : ['C’est pour quoi ça ? 😏', 'Merci… c’est mignon 😘'])
+    || 'Merci bébé 😘']); },
+  yowale:a=>{ pam(Math.min(6, Math.round(a/2000) + 1), 0); say('yowale', [pick('yowale', ['Ma belle 😍 tu es une reine', 'Je ne vais pas tout parier, promis 😂']) || 'Merci 😘']); },
+  rall:a=>{ say('rall', ['Frère 🙏 Merci, sérieux.']); },
+  christelle:a=>{ say('christelle', ['Tu n’étais pas obligé'+G().e+'… Merci 🙂']); },
+};
+function sendMoney(){
+  const who = S.contacts.filter(id=> GIFT[id]), amts = [500, 1000, 2000, 5000, 10000].filter(a=> a <= S.cash);
+  if(!amts.length){ sheet('<h3>Envoyer de l’argent</h3><p>Il te faut au moins 500 F sur ton compte.</p><div class="btns"><button class="btn" id="smX">Fermer</button></div>'); $('#smX').onclick = closeSheet; return; }
+  let to = who[0], amt = amts[0];
+  const draw = ()=>{ sheet('<h3>Envoyer de l’argent</h3><div class="lab" style="font:800 11px var(--f-b);letter-spacing:.14em;text-transform:uppercase;color:#7A6650">À qui</div>'+
+    '<div class="btns" id="smTo">'+who.map(id=> '<button class="btn '+(id===to ? '' : 'ghost')+'" data-to="'+id+'">'+esc(payeeName(id))+'</button>').join('')+'</div>'+
+    '<div class="lab" style="font:800 11px var(--f-b);letter-spacing:.14em;text-transform:uppercase;color:#7A6650;margin-top:8px">Combien</div>'+
+    '<div class="btns" id="smAmt" style="flex-direction:row;flex-wrap:wrap">'+amts.map(a=> '<button class="btn '+(a===amt ? '' : 'ghost')+'" data-a="'+a+'" style="flex:1;min-width:30%">'+fmt(a)+'</button>').join('')+'</div>'+
+    '<div class="btns"><button class="btn green" id="smGo">Continuer</button><button class="btn ghost" id="smNo">Annuler</button></div>');
+    $('#smTo').onclick = e=>{ const b = e.target.closest('[data-to]'); if(b){ to = b.dataset.to; draw(); } };
+    $('#smAmt').onclick = e=>{ const b = e.target.closest('[data-a]'); if(b){ amt = +b.dataset.a; draw(); } };
+    $('#smNo').onclick = closeSheet;
+    $('#smGo').onclick = ()=> confirmPay({to, amount:amt, label:'Envoi à '+payeeName(to), pay:()=>{ tx(-amt, 'Envoi à '+payeeName(to), to); setTimeout(()=> GIFT[to](amt), 1800); }, done:()=> openApp('banque')}); };
+  draw();
 }
 // the Maison: 5 000 to register, then the first real table, where the house keeps 10 % of every pot
 function inscription(a){
@@ -1133,9 +1218,9 @@ function morning(){
   const t = S.tontine;
   if(t && t.active){
     // your turn pays the whole pot… but you keep paying every day until everyone has had theirs
-    if(S.day === t.joined + t.turn && !t.got){ t.got = 1; tx(t.daily*t.of, 'Tontine · c’est ton tour !'); setTimeout(()=> say('clarisse', ['C’est ton tour 🎉', fmt(t.daily*t.of)+' versés.', 'N’oublie pas : tu cotises jusqu’au jour '+(t.joined + t.of)+', comme tout le monde 🙏']), 1800); }
+    if(S.day === t.joined + t.turn && !t.got){ t.got = 1; tx(t.daily*t.of, 'Tontine · c’est ton tour !', 'clarisse'); setTimeout(()=> say('clarisse', ['C’est ton tour 🎉', fmt(t.daily*t.of)+' versés.', 'N’oublie pas : tu cotises jusqu’au jour '+(t.joined + t.of)+', comme tout le monde 🙏']), 1800); }
     else if(S.day > t.joined + t.of){ t.active = 0; }
-    else if(S.cash >= t.daily){ t.paid++; tx(-t.daily, 'Tontine de Clarisse · cotisation'); }
+    else if(S.cash >= t.daily){ t.paid++; tx(-t.daily, 'Tontine de Clarisse · cotisation', 'clarisse'); }
     else { t.missed = (t.missed||0) + 1; remember('tontine_missed');
       setTimeout(()=> say('clarisse', t.got ? ['Tu as touché ta part et tu ne cotises plus ?', 'Tout le quartier va le savoir. Ton nom, c’est tout ce que tu as.'] : ['Tu n’as pas cotisé ce matin.', 'Encore une fois et tu perds ton tour. Les règles, c’est les règles.']), 1800); }
   }
@@ -1554,7 +1639,7 @@ Object.assign(ANSWERS, {
   // ---- day 4 morning: Princesse wants beignets-haricots ----
   s4beignets: async()=>{ tx(-500, 'Beignets-haricots pour Princesse'); nudge('rel', +6); S.flags.beignets = S.day;
     await say('princesse', ['😍😍 Tu es le meilleur '+G().gf+' du monde.', 'Viens vite avant que l’infirmière les voie 🤫']); },
-  s4money: async()=>{ tx(-1000, 'Pour Princesse · « demande à l’infirmière »'); nudge('rel', +2); await say('princesse', ['Merci…', 'Mais c’est toi que je voulais voir, pas ton argent.']); },
+  s4money: async()=>{ tx(-1000, 'Pour Princesse · « demande à l’infirmière »', 'princesse'); nudge('rel', +2); await say('princesse', ['Merci…', 'Mais c’est toi que je voulais voir, pas ton argent.']); },
   s4no: async()=>{ nudge('rel', -6); remember('chose_maison'); await say('princesse', ['La Maison…', 'Ok. Bonne chance alors.']); },
   ts4yes: async()=>{ if(!S.agenda.some(a=> a.id==='tournoi')) S.agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:'3 000 l’entrée · 15 000 au vainqueur'}); save(); renderHome();
     await say('tsala', ['Noté. Samedi soir. Ne sois pas en retard, je ferme la porte moi-même.']); },
@@ -1563,16 +1648,16 @@ Object.assign(ANSWERS, {
   a4yes: async()=>{ pam(+8, -10); remember('informer'); await say('pamela', ['Je savais que je pouvais compter sur toi 😌', 'Pas un mot à mon père. Pas un mot à personne.', 'Dimanche, tu me dis qui parle à Bosco.']); },
   a4no: async()=>{ pam(-6, +14); remember('refused_amour'); await burst('pamela', ['Tu « ne trahis pas la Maison » ?', 'Mais moi, tu me trahis tous les jours.', 'Ok. Retiens bien ce moment.']); },
   a4pay: async()=>{
-    if(calm()){ tx(4000, 'Amour · « frais de mission »'); remember('informer'); remember('informer_paid'); pam(+2, -2); await say('pamela', ['4 000. Ne prends pas l’habitude.', 'Maintenant tu travailles pour moi 😏']); }
+    if(calm()){ tx(4000, 'Amour · « frais de mission »', 'pamela'); remember('informer'); remember('informer_paid'); pam(+2, -2); await say('pamela', ['4 000. Ne prends pas l’habitude.', 'Maintenant tu travailles pour moi 😏']); }
     else { pam(-8, +16); remember('refused_amour'); await burst('pamela', ['Tu me VENDS tes yeux ?', 'À moi ?', 'Garde-les. Je trouverai quelqu’un d’autre.']); } },
   // ---- day 4 afternoon, for a heroine: Daryl has a « sure bet » ----
-  y4lend: async()=>{ tx(-5000, 'Prêt à Daryl Bleu Magic'); remember('daryl_loan'); await say('yowale', ['Ma belle 😍 tu es une reine', 'Dimanche tu vois 10 000. Parole de Bleu Magic 🔥']); },
-  y4two: async()=>{ tx(-2000, 'Prêt à Daryl Bleu Magic'); remember('daryl_loan2'); await say('yowale', ['2 000 ? 😂 ok ok, petit pari alors', 'Dimanche je te rends 4 000']); },
+  y4lend: async()=>{ tx(-5000, 'Prêt à Daryl Bleu Magic', 'yowale'); remember('daryl_loan'); await say('yowale', ['Ma belle 😍 tu es une reine', 'Dimanche tu vois 10 000. Parole de Bleu Magic 🔥']); },
+  y4two: async()=>{ tx(-2000, 'Prêt à Daryl Bleu Magic', 'yowale'); remember('daryl_loan2'); await say('yowale', ['2 000 ? 😂 ok ok, petit pari alors', 'Dimanche je te rends 4 000']); },
   y4no: async()=>{ pam(-2, 0); await say('yowale', ['Tu doutes de moi ? 😂', 'Ok, je trouve ailleurs. Comme toujours.']); },
   // ---- day 5 morning: Mado saw the fixed match ----
   md_err: async()=>{ remember('mado_doubt'); await say('mado', ['Une erreur. Hm.', 'Au marché, une cliente qui se trompe deux fois, je ne la sers plus.']); },
   md_truth: async()=>{ remember('mado_ally'); await say('mado', ['Bosco…', 'Il fait ça à tout le monde. Merci de me l’avoir dit en face.', 'Le jour où tu as besoin d’une vieille au marché, tu sais où je suis.']); },
-  md_pay: async()=>{ tx(-1500, 'Mado · « sa part »'); remember('mado_bought'); await say('mado', ['1 500 pour mon silence ?', 'Je prends. Mais je ne suis pas à vendre, mon enfant. Je suis juste pratique.']); },
+  md_pay: async()=>{ tx(-1500, 'Mado · « sa part »', 'mado'); remember('mado_bought'); await say('mado', ['1 500 pour mon silence ?', 'Je prends. Mais je ne suis pas à vendre, mon enfant. Je suis juste pratique.']); },
   md_help: async()=>{ remember('mado_ally'); remember('mado_deal');
     (S.debts||[]).filter(d=> d.who==='bosco').forEach(d=> d.paid = d.principal); save();
     await say('mado', ['J’ai parlé à Bosco. Il te laisse tranquille.', 'En échange : samedi, au tournoi, si on se croise… tu me laisses gagner. 😌']); },
@@ -1594,7 +1679,7 @@ Object.assign(ANSWERS, {
   a7none: async()=>{ pam(-4, +10); await say('pamela', ['Tu n’as rien vu ? En trois jours ?', 'Soit tu es aveugle, soit tu me mens.']); },
   a7stranger: async()=>{ pam(0, +2); await say('pamela', ['Un costume. Super. Ça m’aide beaucoup. 🙄']); },
   // ---- day 7 afternoon: the tontine's cash box is short ----
-  cl7pay: async()=>{ tx(-2000, 'Tontine · combler la caisse'); remember('tontine_loyal'); await say('clarisse', ['Merci 🙏', 'Tout le monde ne fait pas pareil. Je m’en souviendrai.']); },
+  cl7pay: async()=>{ tx(-2000, 'Tontine · combler la caisse', 'clarisse'); remember('tontine_loyal'); await say('clarisse', ['Merci 🙏', 'Tout le monde ne fait pas pareil. Je m’en souviendrai.']); },
   cl7no: async()=>{ remember('tontine_refused'); await say('clarisse', ['Je comprends.', 'Mais si la caisse tombe, elle tombe pour tout le monde.']); },
   // ---- day 9: the second job ----
   ar2yes: async()=>{ remember('valise'); dealSet('valise', 'accepté', {who:'armand', title:'La valise de Bastos', pay:30000, note:'Après le week-end · acte 3'});
@@ -1607,7 +1692,7 @@ Object.assign(ANSWERS, {
   e_dlaugh: async()=>{ pam(+1, 0); await say('yowale', ['😂 ok ok je ne sais rien moi', 'Mais fais attention ma belle. Pour de vrai cette fois.']); endAct2(); },
   e_dworry: async()=>{ pam(+3, 0); await say('yowale', ['Je ne les ai pas laissés entrer.', 'Tu vois, je sers à quelque chose 😎']); endAct2(); },
   e_rallpost: async()=>{ nudge('rel', 0); await say('rall', ['Tu es venu'+G().e+'…', 'Tu avais raison de refuser. Moi j’ai dit oui.', 'Ne fais jamais ce que j’ai fait.']); endAct2(); },
-  e_rallbail: async()=>{ tx(-5000, 'Caution de RALL'); remember('rall_bail'); await say('rall', ['Frère… 🙏', 'Je n’oublierai jamais.', 'Armand, lui, ne s’est même pas présenté.']); endAct2(); },
+  e_rallbail: async()=>{ tx(-5000, 'Caution de RALL', 'poste'); remember('rall_bail'); await say('rall', ['Frère… 🙏', 'Je n’oublierai jamais.', 'Armand, lui, ne s’est même pas présenté.']); endAct2(); },
 });
 function endAct2(){ if(S.flags.act2done) return; S.flags.act2done = 1; save(); setTimeout(()=> film(FILM_END2, ()=>{ show('scHome'); renderHome(); }), 3500); }
 // the moments of the act: 'd4m0' = day 4, morning
@@ -1643,8 +1728,8 @@ const ACT2 = {
   d7m0: async(w)=>{ await w(1500);
     if(PART()==='pamela' && knows('informer')) await say('pamela', ['Alors ?', 'Qui parle à Bosco ?'], [{t:'Armand Ondoua. Le neveu de ton père.', a:'a7armand'}, {t:'Personne. Je n’ai rien vu.', a:'a7none'}, {t:'Un homme en costume.', a:'a7stranger'}]);
     if(PART()==='yowale'){
-      if(knows('daryl_loan') && S.pam.love >= 60){ tx(10000, 'Daryl Bleu Magic · « parole tenue »'); await say('yowale', ['Ma belle 😎', '10 000 comme promis.', 'Tu vois que Bleu Magic tient parole… parfois 😂']); }
-      else if(knows('daryl_loan2')){ tx(4000, 'Daryl Bleu Magic · « petit pari »'); await say('yowale', ['4 000 pour toi 😘', 'Le Nigeria a perdu, je te jure je n’ai rien fait 😂']); }
+      if(knows('daryl_loan') && S.pam.love >= 60){ tx(10000, 'Daryl Bleu Magic · « parole tenue »', 'yowale'); await say('yowale', ['Ma belle 😎', '10 000 comme promis.', 'Tu vois que Bleu Magic tient parole… parfois 😂']); }
+      else if(knows('daryl_loan2')){ tx(4000, 'Daryl Bleu Magic · « petit pari »', 'yowale'); await say('yowale', ['4 000 pour toi 😘', 'Le Nigeria a perdu, je te jure je n’ai rien fait 😂']); }
       else if(knows('daryl_loan')) await say('yowale', ['Ma belle…', 'Le match était truqué dans l’autre sens 😅', 'Je te rends tout bientôt. Promis promis.']);
     } },
   d7m1: async(w)=>{ if(!(S.tontine && S.tontine.active)) return; await w(1500);
@@ -1914,7 +1999,7 @@ $('#goDev').onclick = ()=>{ if(!S) S = fresh(); devPanel(); };
 
 S = load();
 // test hook, only on this computer (never on the published page): lets the checks jump to a scene
-if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, get S(){ return S; }, answer:(pid, i)=> answer(pid, thread(pid).choices[i]), jump:devJump};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, get S(){ return S; }, answer:(pid, i)=> answer(pid, thread(pid).choices[i]), jump:devJump, freeSend, openApp, visit};
 if(S && S.started){ $('#goResume').hidden = false; }
 if(!S) S = fresh();
 $('#goDev').hidden = !DEV();
