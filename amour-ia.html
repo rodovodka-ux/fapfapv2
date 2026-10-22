@@ -69,7 +69,7 @@
     <div class="models" id="models"></div>
     <div class="bar"><i id="prog"></i></div>
     <div class="status" id="mstat">Aucun modèle chargé : Amour répond avec les phrases du jeu (secours).</div>
-    <small class="status">Le premier chargement télécharge le modèle une seule fois (Wi-Fi conseillé). Ensuite il reste sur l’appareil et marche sans Internet.</small>
+    <small class="status">Le modèle se télécharge une seule fois (Wi-Fi conseillé ; sur une connexion lente, compte une demi-heure ou plus). Ensuite il reste sur l’appareil et Amour répond même sans Internet.</small>
   </div>
 
   <div class="phone">
@@ -204,53 +204,69 @@ const fresh = ()=> ({history:[], souvenirs:[], scene:{nom:'Junior', jour:3, mome
 let ST; try{ ST = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || 'null') || {}); }catch(e){ ST = fresh(); }
 const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(ST)); }catch(e){} };
 
-// ===================== the two models compared =====================
+// ===================== the two models compared (GGUF files run by llama.cpp in the page: wllama) =====================
+// wllama works in its own worker, so the page never freezes; it uses the graphics card when it can, the processor otherwise.
+const WL = 'https://cdn.jsdelivr.net/npm/@wllama/wllama@3.6.1/esm/';
 const MODELS = [
-  {id:'gemma3-1b-it-q4f16_1-MLC', nom:'Gemma 3 · 1B', poids:'≈ 0,7 Go', note:'Léger : le plus de chances de tenir sur un iPhone.'},
-  {id:'Qwen2.5-1.5B-Instruct-q4f16_1-MLC', nom:'Qwen 2.5 · 1,5B', poids:'≈ 1,6 Go', note:'Plus solide en français, plus lourd.'},
+  {id:'qwen05', repo:'Qwen/Qwen2.5-0.5B-Instruct-GGUF', file:'qwen2.5-0.5b-instruct-q4_k_m.gguf', mo:469, nom:'Petit · Qwen 2.5 0,5B', note:'Le plus rapide à télécharger. Français correct, parfois maladroit.'},
+  {id:'gemma1', repo:'ggml-org/gemma-3-1b-it-GGUF', file:'gemma-3-1b-it-Q4_K_M.gguf', mo:769, nom:'Moyen · Gemma 3 1B', note:'Meilleur français, plus long à télécharger.'},
 ];
-let webllm = null, engine = null, loaded = null, busy = false, loading = false;
+let Wllama = null, engine = null, loaded = null, busy = false, loading = false;
 
-// ===================== the device =====================
+// ===================== the device and the connection =====================
 async function device(){
   const ua = navigator.userAgent, ios = /iPhone|iPad/.test(ua), out = [];
   out.push((ios ? 'iPhone / iPad' : /Android/.test(ua) ? 'Android' : 'Ordinateur')+' · '+(/Edg\//.test(ua) ? 'Edge' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : /Firefox/.test(ua) ? 'Firefox' : 'navigateur'));
-  if(navigator.deviceMemory) out.push('mémoire annoncée : '+navigator.deviceMemory+' Go');
-  let gpu = 'non';
-  if(navigator.gpu){ try{ const a = await navigator.gpu.requestAdapter(); if(a){ const i = a.info || {}; gpu = 'oui'+((i.vendor || i.architecture) ? ' ('+[i.vendor, i.architecture].filter(Boolean).join(' ')+')' : ''); DEV.maxBuf = Math.round((a.limits.maxBufferSize || 0)/1048576); } else gpu = 'non (pas de carte graphique accessible)'; }catch(e){ gpu = 'non ('+e.message+')'; } }
-  DEV.gpu = gpu.startsWith('oui'); DEV.txt = out.join(' · ')+' · WebGPU : '+gpu;
-  $('#dev').innerHTML = esc(DEV.txt)+(DEV.gpu ? ' <b class="ok">✓ l’IA locale peut tourner</b>' : ' <b class="ko">✗ pas d’IA locale ici : Amour répondra avec les phrases du jeu</b>');
+  if(navigator.deviceMemory) out.push('mémoire : '+navigator.deviceMemory+' Go');
+  DEV.gpu = !!navigator.gpu;
+  out.push(DEV.gpu ? 'carte graphique utilisable' : 'processeur seul (plus lent)');
+  // the connection decides how long the first download takes: say it before, not after
+  const c = navigator.connection;
+  if(c && c.downlink){ DEV.mbps = c.downlink; out.push('connexion ≈ '+String(c.downlink).replace('.', ',')+' Mbit/s'); }
+  DEV.txt = out.join(' · ');
+  $('#dev').innerHTML = esc(DEV.txt)+' <b class="ok">✓ Amour peut répondre avec une IA ici</b>';
 }
-const DEV = {gpu:false, txt:''};
+const DEV = {gpu:false, txt:'', mbps:0};
+// how long a download should take on this connection, in plain words
+const duree = mo=>{ if(!DEV.mbps) return ''; const min = Math.ceil(mo*8/DEV.mbps/60); return min < 2 ? '≈ 1 min' : min < 60 ? '≈ '+min+' min' : '≈ '+Math.floor(min/60)+' h '+String(min % 60).padStart(2, '0'); };
+async function enCache(m){ try{ const {CacheManager} = await import(WL+'index.js'); const list = await new CacheManager().list(); return list.some(x=> (x.name || '').includes(m.file) || (x.metadata && JSON.stringify(x.metadata).includes(m.file))); }catch(e){ return false; } }
 
-function drawModels(){
-  $('#models').innerHTML = MODELS.map(m=> '<div class="model'+(loaded===m.id ? ' on' : '')+'"><b>'+m.nom+'</b><small>'+m.poids+' · '+m.note+'</small>'+
-    '<button class="btn '+(loaded===m.id ? 'green' : 'ghost')+'" data-m="'+m.id+'"'+(!DEV.gpu || busy || loading ? ' disabled' : '')+'>'+(loaded===m.id ? 'Chargé ✓' : 'Charger')+'</button></div>').join('');
+async function drawModels(){
+  const have = {}; for(const m of MODELS) have[m.id] = await enCache(m);
+  $('#models').innerHTML = MODELS.map(m=> '<div class="model'+(loaded===m.id ? ' on' : '')+'"><b>'+m.nom+'</b><small>'+m.mo+' Mo · '+m.note+'</small>'+
+    '<button class="btn '+(loaded===m.id ? 'green' : 'ghost')+'" data-m="'+m.id+'"'+(busy || loading ? ' disabled' : '')+'>'+
+    (loaded===m.id ? 'Prête ✓' : have[m.id] ? 'Réveiller Amour (déjà téléchargé)' : 'Télécharger'+(duree(m.mo) ? ' · '+duree(m.mo) : ''))+'</button></div>').join('');
   $('#models').querySelectorAll('[data-m]').forEach(b=> b.onclick = ()=> load(b.dataset.m));
 }
 async function load(id){
   // while a model loads, the conversation goes on with the game's lines
   if(loading || busy || loaded===id) return; loading = true; loaded = null; drawModels();
-  const m = MODELS.find(x=> x.id===id), t0 = performance.now();
-  $('#mstat').textContent = 'Chargement de '+m.nom+'…';
+  const m = MODELS.find(x=> x.id===id), t0 = performance.now(), cached = await enCache(m);
+  $('#mstat').textContent = cached ? 'Amour se réveille…' : 'Téléchargement de '+m.nom+'…';
   try{
-    webllm = webllm || await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm');
-    const cached = await webllm.hasModelInCache(id).catch(()=> false);
-    // a network that cannot reach the model server must not leave the page waiting in silence
-    let last = performance.now();
-    const cb = p=>{ last = performance.now(); $('#prog').style.width = Math.round((p.progress || 0)*100)+'%'; $('#mstat').textContent = (cached ? 'Depuis l’appareil · ' : 'Téléchargement · ')+(p.text || ''); };
-    const guard = setInterval(()=>{ if(performance.now() - last > 30000) $('#mstat').innerHTML = '<b class="ko">Le serveur des modèles (huggingface.co) ne répond pas</b> depuis 30 s. Vérifie ta connexion. En attendant, Amour répond avec les phrases du jeu.'; }, 5000);
-    try{ if(engine){ engine.setInitProgressCallback(cb); await engine.reload(id); } else engine = await webllm.CreateMLCEngine(id, {initProgressCallback:cb}); }
-    finally{ clearInterval(guard); }
-    loaded = id; ST.modele = id; save();
-    const s = ((performance.now() - t0)/1000).toFixed(1);
-    $('#mstat').innerHTML = '<b class="ok">'+m.nom+' prêt</b> · chargé en '+s+' s'+(cached ? ' (déjà sur l’appareil)' : ' (premier téléchargement)');
+    if(!Wllama) ({Wllama} = await import(WL+'index.js'));
+    if(engine){ try{ await engine.exit(); }catch(e){} engine = null; }
+    const w = new Wllama({default:WL+'wasm/wllama.wasm'});
+    let last = performance.now(), lastB = 0, speed = 0;
+    const progressCallback = ({loaded:l, total})=>{
+      const now = performance.now(); if(now - last > 1500){ speed = (l - lastB)/((now - last)/1000); last = now; lastB = l; }
+      const left = speed > 0 ? Math.ceil((total - l)/speed/60) : 0;
+      $('#prog').style.width = Math.round(l/total*100)+'%';
+      $('#mstat').textContent = 'Téléchargement : '+Math.round(l/1048576)+' / '+Math.round(total/1048576)+' Mo'+(left ? ' · encore ≈ '+left+' min' : '')+'. Tu peux continuer à écrire à Amour pendant ce temps.';
+    };
+    // the graphics card first; if it refuses, the processor
+    try{ await w.loadModelFromHF({repo:m.repo, file:m.file}, {n_ctx:2048, progressCallback}); }
+    catch(e){ $('#mstat').textContent = 'La carte graphique refuse, essai sur le processeur…'; await w.loadModelFromHF({repo:m.repo, file:m.file}, {n_ctx:2048, n_gpu_layers:0, progressCallback}); }
+    engine = w; loaded = id; ST.modele = id; save();
+    const s = ((performance.now() - t0)/1000).toFixed(0);
+    $('#prog').style.width = '100%';
+    $('#mstat').innerHTML = '<b class="ok">Amour est réveillée</b> ('+m.nom+') · prête en '+s+' s'+(cached ? ' (déjà sur l’appareil)' : ' (premier téléchargement)')+'. Écris-lui !';
     ST.mesures.push({type:'chargement', modele:m.nom, appareil:DEV.txt, secondes:+s, cache:!!cached, date:new Date().toISOString()}); save();
   }catch(e){
-    $('#mstat').innerHTML = '<b class="ko">Échec du chargement</b> : '+esc(e.message || e)+'. Amour continue avec les phrases du jeu.';
+    $('#mstat').innerHTML = '<b class="ko">Ça n’a pas marché</b> : '+esc(e.message || e)+'. Amour continue avec les phrases du jeu.';
     loaded = null; engine = null;
   }
-  $('#who').textContent = loaded ? 'IA locale · '+MODELS.find(x=> x.id===loaded).nom : 'secours · réponses du jeu';
+  $('#who').textContent = loaded ? 'IA sur ton appareil · '+MODELS.find(x=> x.id===loaded).nom : 'secours · réponses du jeu';
   loading = false; drawModels();
 }
 
@@ -339,10 +355,12 @@ async function repondre(text, opts = {}){
     const hist = ST.history.slice(-12).map(m=> ({role:m.who==='me' ? 'user' : 'assistant', content:m.txt}));
     const messages = [{role:'system', content:systeme()}].concat(hist, [{role:'user', content:text}]);
     const t0 = performance.now(); let first = 0, out = '', usage = null, timedOut = false;
-    const timer = setTimeout(()=>{ timedOut = true; try{ engine.interruptGenerate(); }catch(_){} }, opts.timeout || 25000);
+    // too slow: we stop listening and the game's line answers (the worker finishes its short reply on its own)
+    const timer = setTimeout(()=>{ timedOut = true; }, opts.timeout || 30000);
     try{
-      const stream = await engine.chat.completions.create({messages, stream:true, temperature:0.8, top_p:0.9, max_tokens:90, stream_options:{include_usage:true}});
+      const stream = await engine.createChatCompletion({messages, stream:true, temperature:0.8, top_p:0.9, max_tokens:90});
       for await(const ch of stream){
+        if(timedOut) break;
         const d = ch.choices && ch.choices[0] && ch.choices[0].delta && ch.choices[0].delta.content;
         if(d){ if(!first) first = performance.now(); out += d; opts.onText && opts.onText(nettoyer(out)); }
         if(ch.usage) usage = ch.usage;
@@ -356,7 +374,7 @@ async function repondre(text, opts = {}){
     // the model failed (empty, out of character, too slow): the game's own line takes over
     const r = secours(k, e); r.raison = timedOut ? 'trop lent' : txt ? 'hors personnage' : 'réponse vide'; r.ms = ms; return r;
   }
-  const r = secours(k, e); r.raison = DEV.gpu ? 'aucun modèle chargé' : 'pas de WebGPU'; return r;
+  const r = secours(k, e); r.raison = loading ? 'IA en cours de téléchargement' : 'IA pas encore réveillée'; return r;
 }
 function secours(k, e){
   const mood = humeur(), pool = e[mood] || e.c;
@@ -448,7 +466,7 @@ $('#copy').onclick = async ()=>{
 bindScene(); drawScene(); drawSouv(); draw(); drawBench();
 await device(); drawModels();
 // the model already on this device comes back on its own, without downloading anything
-if(DEV.gpu && ST.modele){ try{ webllm = await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm'); if(await webllm.hasModelInCache(ST.modele)) load(ST.modele); }catch(e){} }
+{ const m = MODELS.find(x=> x.id===ST.modele); if(m && await enCache(m)) load(m.id); }
 </script>
 </body>
 </html>
