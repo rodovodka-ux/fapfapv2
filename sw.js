@@ -10,7 +10,8 @@ self.addEventListener('install', (event)=>{
 self.addEventListener('activate', (event)=>{
   event.waitUntil(
     caches.keys()
-      .then(keys=> Promise.all(keys.filter(k=> k!==CACHE).map(k=> caches.delete(k))))
+      // only the game's own old caches go: the local AI's models (webllm/…) stay on the phone between versions
+      .then(keys=> Promise.all(keys.filter(k=> k!==CACHE && k.startsWith('fapfap-')).map(k=> caches.delete(k))))
       .then(()=> self.clients.claim())
   );
 });
@@ -51,6 +52,8 @@ self.addEventListener('fetch', (event)=>{
   const url = new URL(req.url);
   // online play goes straight to Supabase, never through the cache
   if(url.hostname.endsWith('supabase.co')) return;
+  // the local AI downloads its model itself (hundreds of MB, kept in its own cache): never copied here
+  if(/(^|\.)huggingface\.co$|(^|\.)hf\.co$|raw\.githubusercontent\.com$/.test(url.hostname) || /@mlc-ai\//.test(url.pathname)) return;
 
   // the game page itself: network first (always the latest version), cached copy when offline
   if(req.mode==='navigate'){
