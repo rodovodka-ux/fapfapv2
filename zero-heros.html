@@ -95,6 +95,41 @@
   .bar{ height:14px; border-radius:99px; border:2.5px solid var(--ink); background:#f1e3c4; overflow:hidden; margin-top:8px; }
   .bar i{ display:block; height:100%; background:var(--mango); border-right:2.5px solid var(--ink); min-width:4px; transition:width .6s; }
   .w-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  /* the time: where you are in the 30 days, in the day, and what is coming */
+  .w-time{ display:flex; flex-direction:column; gap:8px; text-align:left; width:100%; }
+  .tm-top{ display:flex; align-items:center; gap:8px; }
+  .tm-id{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .tm-day{ font:700 26px var(--f-t); line-height:1; font-variant-numeric:tabular-nums; }
+  .tm-day small{ font:700 14px var(--f-t); color:#7A6650; }
+  .tm-wd{ font:800 12px var(--f-b); color:#7A6650; flex:1; min-width:0; }
+  .tm-left{ flex:none; font:800 11.5px var(--f-b); padding:3px 8px; border-radius:99px; border:2px solid var(--ink); background:#fff3d6; white-space:nowrap; }
+  .tm-left.hot{ background:var(--red); color:#fff; }
+  .tm-mom{ display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; }
+  .tm-mom span{ font:800 10.5px var(--f-b); text-align:center; padding:4px 0; border-radius:10px; border:2px solid #d8c7a2; color:#9a8868; white-space:nowrap; }
+  .tm-mom span.past{ background:#eadcbc; border-color:#eadcbc; color:#b3a17e; text-decoration:line-through; }
+  .tm-mom span.now{ background:var(--mango); border-color:var(--ink); color:var(--ink); box-shadow:0 2px 0 var(--ink); }
+  .tm-strip{ display:grid; grid-template-columns:repeat(30, 1fr); gap:2px; align-items:end; }
+  .tm-strip i{ height:12px; border-radius:3px; background:#efe2c3; position:relative; }
+  .tm-strip i.sat{ background:#e2cfa5; }
+  .tm-strip i.past{ background:#7A6650; }
+  .tm-strip i.now{ height:18px; background:var(--mango); outline:2px solid var(--ink); }
+  .tm-strip i.dl::after{ content:''; position:absolute; left:50%; top:-6px; width:6px; height:6px; margin-left:-3px; border-radius:50%; background:var(--red); border:1.5px solid var(--ink); }
+  .tm-strip i.op{ background:var(--red); }
+  .tm-next{ font:800 12px var(--f-b); color:var(--txt); display:flex; gap:6px; align-items:center; }
+  .tm-next em{ font-style:normal; color:var(--red); white-space:nowrap; }
+  .tm-next b{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cal-row{ display:flex; gap:10px; align-items:center; padding:9px 0; border-bottom:1px dashed #d8c7a2; }
+  .cal-row .when{ flex:none; width:74px; font:800 11px var(--f-b); color:#7A6650; text-transform:uppercase; letter-spacing:.06em; }
+  .cal-row .when.hot{ color:var(--red); }
+  .cal-row b{ display:block; font:700 15px var(--f-t); }
+  .cal-row small{ color:#7A6650; font-weight:700; }
+  .cal-g{ display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; margin:4px 0 6px; }
+  .cal-g .h{ font:800 10px var(--f-b); color:#7A6650; text-align:center; text-transform:uppercase; }
+  .cal-g i{ font:700 13px/30px var(--f-t); font-style:normal; text-align:center; border-radius:9px; background:#f3e7cb; position:relative; color:var(--txt); }
+  .cal-g i.past{ background:transparent; color:#b3a17e; text-decoration:line-through; }
+  .cal-g i.now{ background:var(--mango); outline:2.5px solid var(--ink); }
+  .cal-g i.op{ background:var(--red); color:#fff; }
+  .cal-g i.dl::after{ content:''; position:absolute; right:3px; top:3px; width:7px; height:7px; border-radius:50%; background:var(--red); border:1.5px solid var(--ink); }
   .w-sis{ display:flex; gap:10px; align-items:center; }
   .w-sis .pic{ width:52px; height:52px; flex:none; }
   .mini{ display:flex; flex-direction:column; gap:5px; flex:1; min-width:0; }
@@ -112,7 +147,8 @@
   .app span{ font:700 11.5px var(--f-b); color:var(--cream); }
   .badge{ position:absolute; top:-6px; right:calc(50% - 38px); min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--red); color:#fff; border:2.5px solid var(--ink); font:800 12px/17px var(--f-b); text-align:center; }
   .dock{ flex:none; padding:10px max(16px, env(safe-area-inset-left,0px)) max(14px, env(safe-area-inset-bottom,0px)); display:flex; gap:10px; align-items:center; border-top:1px solid var(--line); background:rgba(0,0,0,.35); }
-  .dock .btn{ flex:1; font-size:16px; padding:12px 14px; }
+  .dock .btn{ flex:1; font-size:16px; padding:12px 10px; white-space:nowrap; }
+  .lab.qf{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:#7A6650; margin-top:8px; }
   .dock .menu{ width:48px; height:48px; border-radius:16px; border:3px solid var(--ink); background:var(--paper); color:var(--ink); box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; flex:none; }
 
   /* app pages */
@@ -361,6 +397,7 @@
   <section class="scene home" id="scHome" hidden>
     <div class="sb"><span class="when" id="sbWhen"></span><span id="sbTime"></span><span class="sp"></span><span>MTN</span><span class="bat"><i></i></span></div>
     <div class="home-body">
+      <button class="w w-time" id="wTime" aria-label="Le temps et les échéances"></button>
       <div class="w w-million">
         <div class="k">Pour Princesse · objectif 1 000 000</div>
         <div class="big" id="wCash"></div>
@@ -374,6 +411,7 @@
     </div>
     <div class="dock">
       <button class="menu" id="goMenu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="btn green" id="goDo">📍 Que faire ?</button>
       <button class="btn" id="goNext"></button>
     </div>
   </section>
@@ -403,6 +441,449 @@
 <script>
 (()=>{
 'use strict';
+const M = (()=>{
+// Zéro à Héros · the engine (steps M1-M2 of « la mécanique du jeu », with the rules validated after the audit on 22/10).
+// Pure rules, no screen: the same file runs in the phone, in the test page and in the automatic tester (node).
+// One game = one plain object (the save). Every change goes through the functions below; every number lives in REGLES,
+// so the balance can be tuned in one place with the tester.
+
+const REGLES = {
+  jours: 30, depart: 3500,
+  // the hospital: the advance covers admission and the first 10 days of bed; then the bed is billed on days 14, 21 and 28
+  avance: 50000, avanceAvant: 10, litApres: 10, lit: 2000, factureJours: [14, 21, 28], factureDelai: 3, delaiNegocie: 5, delaiRelation: 50,
+  operation: 1000000, crise: 20000, criseDelai: 2, crisesMax: 2, crisesEcart: 5, rappelsOperation: [20, 25, 28, 30],
+  // Princesse's health, every morning in this order: illness, late bill, strength from the relation; never more than 8 lost a day
+  santeDepart: 64, maladie: 1, retardSoins: 3, perteMax: 8, crisePerte: 15, visiteSante: 2,
+  // her relation
+  relationDepart: 70, visiteRelation: 6, promesseRelation: 10, boudeVisite: 3, sansVisite: 4, silenceRelation: 2, reponseRelation: 2,
+  relationForte: 70, relationBoude: 40, relationRefus: 20, cadeauMin: 2000,
+  // the partner
+  amourDepart: 70, orageDepart: 30,
+  // the police
+  chaleurNuit: 3, chaleurCalme: 3, controle: 40, rafle: 70, rafleEcart: 4, arrestation: 100, amendeRafle: 10000,
+  // the small job: the safety net, mornings only, and only when you are nearly broke
+  boulot: 1500, boulotPlafond: 10000,
+  // the registration of the Maison: half now, half kept on your first winnings there
+  inscription: 5000, inscriptionAcompte: 2500,
+  // the moneylender: 10 % of the capital for each full 7 days; late, +5 % a day, at most +50 %; two loans at a time
+  usure: 0.10, retardJour: 0.05, retardMax: 0.5, gvDelai: 7, gvMax: 2, renouvellement: 0.20, saisie: 3, tabac: 6, mort: 10, mortSeuil: 30000,
+  // the tontine (savings, not income)
+  cotisation: 1000, tours: 10,
+  // Bosco's bar: 50 000 a share, 2 000 a day per share, 4 shares at most; the entrepreneur ending from 150 000 earned there
+  barPart: 50000, barJour: 3000, barParts: 4, entrepreneur: 150000,
+  // the big moments (option 1): the Saturday tournaments grow with the acts; the Grand Tournament; Penalty covers the rest
+  tournoiEntree: [3000, 10000, 25000, 50000], tournoiPrix: [20000, 60000, 150000, 500000], grandEntree: 100000, grandPrix: 500000,
+  // the neighbourhood helps (option 3): a collection on day 22, from 50 000 to 250 000 with your relation and your reputation
+  collecteJour: 22, collecteBase: 50000, collecteRelation: 4000, collecteRep: 3000, collecteMax: 400000,
+  // Hubert pays part of the operation, only if your reputation counts, in exchange for a « service »
+  hubertPart: 600000, hubertRep: 60, hubertJour: 19,
+  // the reputation that opens the rooms
+  repSalle2: 30, repSalons: 45,
+  // the legal chances of the first two weeks (validated 22/10): Mado's big fish, RALL's bet, Christelle's salon, the tontine's 2nd turn
+  coupsLegaux: true,
+};
+
+// the places and their tables. joueurs: how many put the stake in the pot; force: the chance an average player wins it.
+// quick: played « vite » with a computed result (the small tables); the others are real games in the real game.
+const TABLES = {
+  veillee: {nom:'Veillée de Mvog-Ada', mises:[200, 500, 1000], moments:[2], joueurs:3, coupe:0, force:0.34, rep:1, quick:true, ouverte:s=> true},
+  boncoin: {nom:'Bar Le Bon Coin', mises:[1000, 2000, 3000], moments:[1, 2], joueurs:2, coupe:0, force:0.5, rep:1, quick:true, ouverte:s=> s.jour>=2},
+  commune: {nom:'La Maison · salle commune', mises:[2000, 3500, 5000], moments:[2, 3], joueurs:4, coupe:0.10, force:0.26, rep:4, ouverte:s=> s.membre},
+  salle2: {nom:'La Maison · salle 2', mises:[10000, 15000, 25000], moments:[2, 3], joueurs:4, coupe:0.10, force:0.25, rep:6, ouverte:s=> s.membre && (s.rep>=REGLES.repSalle2 || s.f.recoMado)},
+  salons: {nom:'Salons de Bastos', mises:[50000, 75000, 100000], moments:[3], joueurs:6, coupe:0.10, force:0.17, rep:6, ouverte:s=> s.rep>=REGLES.repSalons && s.f.invitation},
+};
+const MOMENTS = ['Matin', 'Après-midi', 'Soir', 'Nuit'];
+const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+const jourNom = j=> JOURS[(j - 1) % 7];
+const clamp = v=> Math.max(0, Math.min(100, Math.round(v)));
+const VERSION = 3;
+
+// a seeded random, so a game (and a test) can be replayed exactly
+function hasard(seed){ let s = (seed >>> 0) || 1; return ()=> ((s = (s*1664525 + 1013904223) >>> 0) / 4294967296); }
+
+// ===================== a new game, and old saves =====================
+function nouvellePartie(o = {}){
+  const R = REGLES;
+  return {
+    v:VERSION, jour:1, m:2, fin:null, femme:!!o.femme, nom:o.nom || (o.femme ? 'Nadia' : 'Junior'), graine:o.graine || 1,
+    cash:R.depart, registre:[{a:R.depart, l:'Ce qu’il te reste', j:1, m:2}],
+    hop:{factures:[], lit:0, avance:0, operation:false, financement:null, crise:null, crises:0, derniereCrise:-99, date:false, delaiUtilise:false},
+    sis:{sante:R.santeDepart, relation:R.relationDepart, derniereVisite:1, promesse:0, aRepondre:0, geste:false},
+    amour:{love:R.amourDepart, orage:R.orageDepart, rupture:false, demande:null},
+    chaleur:0, rep:0, membre:false, examen:false, veillee:false, inscriptionDue:0,
+    dettes:[], tontine:null, bar:{parts:0, gagne:0}, legal:0, sale:0,
+    cellule:0, tabassage:0, billet:false, grandTournoi:null, derniereRafle:-99, risque:-99,
+    f:{}, journal:[], fait:{}, inbox:[],
+  };
+}
+// a save from an older version keeps its money and its days
+function migrer(s){
+  if(!s || s.v===VERSION) return s;
+  const n = nouvellePartie({femme:s.femme, nom:s.nom});
+  for(const k of ['jour', 'm', 'cash', 'registre', 'chaleur', 'rep', 'membre', 'examen', 'veillee', 'dettes', 'tontine', 'f', 'fait', 'journal']) if(s[k]!=null) n[k] = s[k];
+  if(s.sis) Object.assign(n.sis, s.sis); if(s.amour) Object.assign(n.amour, s.amour); if(s.hop) Object.assign(n.hop, s.hop);
+  return n;
+}
+
+// ===================== money: one ledger, every token goes through here =====================
+function argent(s, montant, libelle, qui, sale){
+  if(!montant) return 0;
+  s.cash += montant; s.registre.unshift({a:montant, l:libelle, j:s.jour, m:s.m, qui:qui || null});
+  if(montant > 0 && sale) s.sale += montant;
+  if(qui) dire(s, 'momo', (montant > 0 ? 'Transfert reçu' : 'Paiement effectué')+' · '+fmt(Math.abs(montant))+' F', {montant, de:qui, libelle, solde:s.cash});
+  return montant;
+}
+const fmt = n=> Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
+// what happened, for the screen (messages, banners, receipts)
+function dire(s, qui, texte, extra){ s.inbox.push(Object.assign({qui, texte, j:s.jour, m:s.m}, extra||{})); s.journal.push('J'+s.jour+' '+MOMENTS[s.m]+' · '+qui+' · '+texte); }
+// winnings at the Maison first pay what is left of the registration
+function gainMaison(s, net, libelle){
+  if(s.inscriptionDue > 0){ const r = Math.min(s.inscriptionDue, net); s.inscriptionDue -= r; net -= r; if(r) s.journal.push('J'+s.jour+' · Maison · '+fmt(r)+' retenus pour l’inscription'); }
+  if(net) argent(s, net, libelle);
+}
+
+// ===================== what you can do now (one action per moment; paying is free) =====================
+function actions(s){
+  if(s.fin) return [];
+  const R = REGLES, A = [], m = s.m;
+  if(s.cellule > 0) return [{id:'attendre', nom:'Attendre en cellule', moment:true}];
+  if(s.tabassage > 0) return [{id:'attendre', nom:'Te soigner (tu as été passé à tabac)', moment:true}];
+  // Princesse: no visit in intensive care, or while she refuses to see you
+  const refuse = s.sis.relation < R.relationRefus && !s.sis.geste;
+  if(m <= 1 && s.sis.sante >= 15 && !refuse) A.push({id:'visite', nom:'Rendre visite à Princesse', lieu:'hopital', moment:true});
+  if(refuse && s.cash >= R.cadeauMin) A.push({id:'cadeau', nom:'Envoyer un cadeau à Princesse · '+fmt(R.cadeauMin), libre:true, cout:R.cadeauMin});
+  // the safety net
+  // with almost nothing left, the market also hires in the afternoon: never a day without something to do
+  if((m===0 && s.cash < R.boulotPlafond) || (m===1 && s.cash < 1000)) A.push({id:'boulot', nom:'Petit boulot à Mokolo · '+fmt(R.boulot), lieu:'mokolo', moment:true});
+  // the tables that are open now
+  for(const [id, t] of Object.entries(TABLES)) if(t.moments.includes(m) && t.ouverte(s)) t.mises.forEach(mise=>{ if(mise <= s.cash) A.push({id:'table', table:id, mise, nom:t.nom+' · mise '+fmt(mise), lieu:id, moment:true}); });
+  // the story gates: always a second chance
+  if(!s.veillee && m===2 && s.jour>=2) A.push({id:'veillee', nom:'Veillée chez RALL (ouvre l’examen)', lieu:'mvogada', moment:true});
+  if(s.veillee && !s.examen && m===0) A.push({id:'examen', nom:'Examen de la Maison'+(s.f.examenRate && s.cash >= 1000 ? ' · 1 000 pour repasser' : ''), lieu:'maison', moment:true});
+  if(s.examen && !s.membre && m>=2 && s.cash >= R.inscriptionAcompte) A.push({id:'inscription', nom:'Inscription à la Maison · '+fmt(Math.min(s.cash, R.inscription))+(s.cash < R.inscription ? ' (le reste sur tes gains)' : ''), lieu:'maison', moment:true});
+  // the Saturday tournament
+  const w = Math.min(3, Math.max(0, Math.floor((s.jour - 6)/7))), entree = R.tournoiEntree[w];
+  if(s.membre && m===2 && jourNom(s.jour)==='samedi' && !s.fait['tournoi'+s.jour] && s.cash >= entree) A.push({id:'tournoi', nom:'Tournoi du samedi · entrée '+fmt(entree)+' · '+fmt(R.tournoiPrix[w])+' au vainqueur', lieu:'maison', moment:true, cout:entree});
+  // the Grand Tournament, days 28 to 30
+  if(s.jour>=28 && m===2 && !(s.grandTournoi && s.grandTournoi.fini)){
+    if(!s.grandTournoi && s.jour===28 && (s.billet || s.cash >= R.grandEntree)) A.push({id:'grand', nom:'Grand Tournoi · '+(s.billet ? 'ton billet gratuit' : 'entrée '+fmt(R.grandEntree)), lieu:'santa', moment:true});
+    else if(s.grandTournoi && s.grandTournoi.tour===s.jour - 28) A.push({id:'grand', nom:'Grand Tournoi · '+['qualifications', 'demi-finale', 'finale'][s.grandTournoi.tour], lieu:'santa', moment:true});
+  }
+  // free things: paying, borrowing, the operation
+  const f = s.hop.factures.find(x=> !x.payee);
+  if(f && s.cash > 0) A.push({id:'payerFacture', nom:'Payer la facture de l’hôpital · '+fmt(f.reste), libre:true, cout:f.reste});
+  if(f && !s.hop.delaiUtilise && s.sis.relation > R.delaiRelation) A.push({id:'delai', nom:'Demander un délai de '+R.delaiNegocie+' jours au Docteur Nitcheu', libre:true});
+  if(s.hop.avance < R.avance && s.cash >= 1000) A.push({id:'payerAvance', nom:'Verser sur l’avance ('+fmt(s.hop.avance)+' / '+fmt(R.avance)+')', libre:true});
+  if(s.hop.crise && !s.hop.crise.payee && s.cash >= R.crise) A.push({id:'payerCrise', nom:'Payer l’urgence de Princesse · '+fmt(R.crise), libre:true, cout:R.crise});
+  if(!s.hop.operation && s.hop.date && s.cash >= R.operation) A.push({id:'operation', nom:'Payer l’opération · '+fmt(R.operation), libre:true, cout:R.operation});
+  s.dettes.filter(d=> du(s, d) > 0).forEach(d=>{
+    A.push({id:'rembourser', dette:d.id, nom:'Rembourser '+d.nom+' · '+fmt(Math.min(s.cash, du(s, d))), libre:true});
+    if(d.taux && !d.renouvelee && s.jour <= d.echeance) A.push({id:'renouveler', dette:d.id, nom:'Repousser l’échéance de '+R.gvDelai+' jours (+20 %)', libre:true});
+  });
+  if(s.dettes.filter(d=> d.qui==='grosventre' && du(s, d) > 0).length < R.gvMax) A.push({id:'emprunter', qui:'grosventre', nom:'Emprunter à Papa Gros-Ventre (10 % par semaine)', libre:true});
+  if(!s.tontine && s.jour>=3 && s.jour<=12) A.push({id:'tontine', nom:'Entrer dans la tontine de Clarisse (1 000 par jour, 10 000 à ton tour)', libre:true});
+  if(s.jour>=9 && s.cash >= R.barPart && s.bar.parts < R.barParts) A.push({id:'bar', nom:'Racheter une part du bar de Bosco · '+fmt(R.barPart), libre:true, cout:R.barPart});
+  // the legal chances of the first two weeks
+  if(R.coupsLegaux){
+    if(m===2 && s.jour>=5 && s.jour<=8 && !s.fait.poisson && s.cash >= 2000) A.push({id:'poisson', nom:'Avec Mado contre un gros commerçant · mise 2 000, 15 000 à gagner', lieu:'boncoin', moment:true});
+    if(m===2 && s.jour>=10 && s.jour<=13 && !s.fait.pariRall && s.cash >= 5000) A.push({id:'pariRall', nom:'Le pari à deux de RALL · mise 5 000, 15 000 à gagner', lieu:'mvogada', moment:true});
+    if(m===1 && s.jour>=4 && s.jour<=14 && (s.fait.salon || 0) < 5) A.push({id:'salon', nom:'Aider Christelle au salon · 2 500', lieu:'mvogada', moment:true});
+    if(!s.tontine && s.jour>=3 && s.jour<=5 && s.cash >= 2000) A.push({id:'tontine2', nom:'Tontine : acheter le 2e tour (2 000), 10 000 dans 2 jours', libre:true});
+  }
+  // the dirty business: Armand's envelope, his suitcase, Hubert's « service »
+  if(s.membre && m===1 && s.jour>=5 && s.jour<=8 && !s.fait.enveloppe) A.push({id:'enveloppe', nom:'Porter l’enveloppe d’Armand · 10 000', lieu:'mokolo', moment:true, sale:true});
+  if(s.fait.enveloppe && m===1 && s.jour>=9 && s.jour<=16 && !s.fait.valise) A.push({id:'valise', nom:'Porter la valise d’Armand · 30 000', lieu:'bastos', moment:true, sale:true});
+  if(s.jour>=R.hubertJour && !s.hop.operation && !s.f.serviceHubert && s.hop.date && s.rep >= R.hubertRep) A.push({id:'hubert', nom:'Accepter le « service » d’Hubert : '+fmt(R.hubertPart)+' pour l’opération', libre:true, sale:true});
+  A.push({id:'repos', nom:m===3 ? 'Dormir' : 'Te reposer', moment:true});
+  return A;
+}
+
+// ===================== doing it =====================
+// In the game, a real table returns its result through o.gagne; in « quick » mode and in the tester the result is computed
+// from the table's strength (to be replaced by the measured chances).
+function agir(s, a, o = {}){
+  const R = REGLES, rnd = o.rnd || Math.random, r = {texte:''};
+  const prend = ()=> avancer(s);
+  switch(a.id){
+    case 'visite': {
+      const promis = s.sis.promesse===s.jour, boude = s.sis.relation < R.relationBoude;
+      s.sis.relation = clamp(s.sis.relation + (promis ? R.promesseRelation : boude ? R.boudeVisite : R.visiteRelation)); s.sis.sante = clamp(s.sis.sante + R.visiteSante);
+      s.sis.derniereVisite = s.jour; s.sis.geste = false;
+      r.texte = promis ? 'Elle t’attendait, coiffée. « Tu as tenu parole. »' : boude ? 'Elle regarde le mur. « Tu es venu'+(s.femme ? 'e' : '')+', enfin. »' : 'Elle dort. Tu poses ta main sur la sienne. Elle ouvre un œil : « Tu es venu'+(s.femme ? 'e' : '')+'. »';
+      prend(); break; }
+    case 'cadeau': argent(s, -R.cadeauMin, 'Cadeau pour Princesse', 'princesse'); s.sis.geste = true; s.sis.relation = clamp(s.sis.relation + 5); r.texte = '« … Merci. Tu peux passer demain. »'; break;
+    case 'boulot': argent(s, R.boulot, 'Petit boulot · Mokolo'); r.texte = 'Tu portes des sacs de riz toute la matinée. '+fmt(R.boulot)+' F, et le dos en compote.'; prend(); break;
+    case 'table': { const res = table(s, a.table, a.mise, o.gagne != null ? o.gagne : rnd() < TABLES[a.table].force + (o.bonus || 0)); r.texte = res; prend(); break; }
+    case 'veillee': {
+      s.veillee = true; const g = o.gagne != null ? o.gagne : rnd() < 0.5 + (o.bonus || 0);
+      if(s.cash >= 500) argent(s, g ? 500 : -500, 'Veillée chez RALL · '+(g ? 'pot gagné' : 'mise perdue'));
+      r.texte = 'RALL te glisse une carte : « Demain matin, la Maison. Le jury te fait passer l’examen. »'; prend(); break; }
+    case 'examen': {
+      if(s.f.examenRate && s.cash >= 1000) argent(s, -1000, 'Maison · repasser l’examen');
+      const ok = o.reussi != null ? o.reussi : rnd() < 0.7;
+      if(ok){ s.examen = true; r.texte = 'Maître Tsala soupire : « Bon. Tu peux t’inscrire. »'; }
+      else { s.f.examenRate = true; r.texte = 'Raté. Tsala ricane. Tu peux repasser demain matin.'; }
+      prend(); break; }
+    case 'inscription': { const v = Math.min(s.cash, R.inscription); argent(s, -v, 'Maison · inscription'); s.inscriptionDue = R.inscription - v; s.membre = true; s.rep = Math.max(s.rep, 10);
+      r.texte = s.inscriptionDue ? 'Te voilà membre. Tsala : « Le reste, je le prends sur tes gains. »' : 'Te voilà membre de la Maison.'; prend(); break; }
+    case 'tournoi': r.texte = tournoi(s, rnd, o); prend(); break;
+    case 'grand': r.texte = grandTournoi(s, rnd, o); prend(); break;
+    case 'payerFacture': { const f = s.hop.factures.find(x=> !x.payee); const v = Math.min(s.cash, o.montant || f.reste); argent(s, -v, 'Hôpital · facture du jour '+f.jour, 'hopital'); f.reste -= v; if(f.reste<=0) f.payee = true; r.texte = f.payee ? 'Facture réglée.' : 'Versé : '+fmt(v)+' F. Il reste '+fmt(f.reste)+' F.'; break; }
+    case 'delai': { const f = s.hop.factures.find(x=> !x.payee); f.echeance += R.delaiNegocie; s.hop.delaiUtilise = true; dire(s, 'mengue', 'Je vous accorde '+R.delaiNegocie+' jours. Une seule fois.'); r.texte = 'Délai accordé.'; break; }
+    case 'payerAvance': { const v = Math.min(s.cash, o.montant || (R.avance - s.hop.avance), R.avance - s.hop.avance); argent(s, -v, 'Hôpital · avance d’admission', 'hopital'); s.hop.avance += v;
+      if(s.hop.avance >= R.avance && !s.hop.date){ s.hop.date = true; dire(s, 'mengue', 'L’avance est réglée. L’opération est fixée au jour 30. Il faudra le million d’ici là.'); }
+      r.texte = 'Versé : '+fmt(v)+' F.'; break; }
+    case 'payerCrise': argent(s, -R.crise, 'Hôpital · urgence', 'hopital'); s.hop.crise.payee = true; s.sis.sante = clamp(s.sis.sante + 10); r.texte = 'Les soins d’urgence sont payés. Elle respire mieux.'; break;
+    case 'operation': argent(s, -R.operation, 'Hôpital · l’opération de Princesse', 'hopital'); payerOperation(s); r.texte = 'L’opération est payée.'; break;
+    case 'rembourser': { const d = s.dettes.find(x=> x.id===a.dette), v = Math.min(s.cash, o.montant || du(s, d), du(s, d)); d.paye += v; argent(s, -v, 'Remboursement · '+d.nom, d.qui); r.texte = 'Remboursé : '+fmt(v)+' F.'; break; }
+    case 'renouveler': { const d = s.dettes.find(x=> x.id===a.dette); d.capital = Math.round(d.capital*(1 + R.renouvellement)); d.echeance += R.gvDelai; d.renouvelee = true; r.texte = '« 😊 Sept jours de plus. Et 20 % pour ma patience. »'; break; }
+    case 'emprunter': { const v = o.montant || 10000; s.dettes.push({id:'gv'+s.jour+'_'+s.m+'_'+s.dettes.length, qui:'grosventre', nom:'Papa Gros-Ventre', capital:v, paye:0, jour:s.jour, taux:R.usure, echeance:s.jour + R.gvDelai});
+      argent(s, v, 'Prêt de Papa Gros-Ventre', 'grosventre'); r.texte = '« Voilà mon fils 😊 Tu me rends ça dans 7 jours. »'; break; }
+    case 'tontine': s.tontine = {debut:s.jour, tour:o.tour || R.tours, paye:0, touche:false, actif:true}; r.texte = 'Clarisse : « Bienvenue dans la famille 🙏 »'; break;
+    case 'bar': argent(s, -R.barPart, 'Part du bar de Bosco', 'bosco'); s.bar.parts++; r.texte = 'Bosco te serre la main : « Associé. »'; break;
+    case 'enveloppe': s.fait.enveloppe = 1; s.risque = s.jour; argent(s, 10000, 'Armand · « livraison »', null, true); s.chaleur = clamp(s.chaleur + 15); s.f.calme = false; r.texte = 'Dix mille pour une enveloppe. Trop facile.'; prend(); break;
+    case 'valise': { s.fait.valise = 1; s.risque = s.jour; s.chaleur = clamp(s.chaleur + 20); s.f.calme = false;
+      // one time out of three it goes wrong: half is missing, and Armand says it is you
+      if(rnd() < 0.3){ const v = Math.min(s.cash, 30000); argent(s, -v, 'Armand · la moitié manquante'); r.texte = 'Il manque la moitié. Armand te fait payer.'; }
+      else { argent(s, 30000, 'Armand · la valise', null, true); r.texte = 'La valise est arrivée. 30 000.'; }
+      prend(); break; }
+    case 'hubert': s.f.serviceHubert = 1; argent(s, R.hubertPart, 'Hubert Ondoua · « pour ta sœur »', 'hubert', true); s.chaleur = clamp(s.chaleur + 10);
+      if(s.rep >= 60 && !s.f.invitation){ s.f.invitation = true; } r.texte = '« Tu me devras une nuit. »'; break;
+    case 'poisson': { s.fait.poisson = 1; const g = o.gagne != null ? o.gagne : rnd() < 0.5 + (o.bonus || 0); argent(s, g ? 15000 : -2000, 'Avec Mado · '+(g ? 'le gros poisson est tombé' : 'perdu')); s.rep = clamp(s.rep + (g ? 6 : 1)); r.texte = g ? 'Mado rit : « On refait ça quand tu veux. »' : 'Le commerçant repart avec vos mises.'; prend(); break; }
+    case 'pariRall': { s.fait.pariRall = 1; const g = o.gagne != null ? o.gagne : rnd() < 0.5 + (o.bonus || 0); argent(s, g ? 15000 : -5000, 'Pari avec RALL · '+(g ? 'gagné' : 'perdu')); r.texte = g ? 'RALL te prend dans ses bras.' : 'RALL : « La prochaine fois. »'; prend(); break; }
+    case 'salon': s.fait.salon = (s.fait.salon || 0) + 1; argent(s, 2500, 'Salon de Christelle'); s.legal += 2500; r.texte = 'Tu tiens la caisse du salon. 2 500.'; prend(); break;
+    case 'tontine2': argent(s, -2000, 'Tontine · achat du 2e tour', 'clarisse'); s.tontine = {debut:s.jour, tour:2, paye:0, touche:false, actif:true}; r.texte = 'Clarisse : « Tour 2, c’est noté. »'; break;
+    case 'attendre': case 'repos': r.texte = a.id==='repos' ? (s.m===3 ? 'Tu dors.' : 'Tu souffles un peu.') : 'Le temps passe.'; prend(); break;
+  }
+  fins(s);
+  return r;
+}
+// where the money of the operation came from decides the ending: more than half dirty money means you owe
+function payerOperation(s, garant){
+  s.hop.operation = true;
+  s.hop.financement = garant || (s.sale > REGLES.operation/2 ? 'sale' : 'propre');
+}
+
+// a table, quickly: the pot, the house's cut, reputation and, at night, the police
+function table(s, id, mise, gagne){
+  const t = TABLES[id], nuit = s.m===3;
+  if(nuit){ s.chaleur = clamp(s.chaleur + REGLES.chaleurNuit); s.f.calme = false; s.risque = s.jour; }
+  // above 40, the night tables are searched: one time out of two the stake is seized
+  if(nuit && s.chaleur >= REGLES.controle && (s.jour + s.m) % 2===0){ argent(s, -mise, t.nom+' · mise saisie par la police'); return 'Contrôle de police. Ta mise est saisie.'; }
+  if(gagne){ const net = Math.round(mise*t.joueurs*(1 - t.coupe)) - mise; if(t.coupe) gainMaison(s, net, t.nom+' · gagné'); else argent(s, net, t.nom+' · gagné'); s.rep = clamp(s.rep + t.rep); return 'Gagné : +'+fmt(net)+' F.'; }
+  argent(s, -mise, t.nom+' · perdu'); if(!t.coupe) s.rep = clamp(s.rep - 1); return 'Perdu : −'+fmt(mise)+' F.';
+}
+function tournoi(s, rnd, o){
+  const R = REGLES, w = Math.min(3, Math.max(0, Math.floor((s.jour - 6)/7))), entree = R.tournoiEntree[w], prix = R.tournoiPrix[w];
+  s.fait['tournoi'+s.jour] = 1; argent(s, -entree, 'Maison · entrée du tournoi');
+  // in the game the two rounds are real games: o.manches = [semi-final won?, final won?]
+  const p = 0.5 + (o.bonus || 0), M = o.manches || [];
+  const demi = M[0] != null ? M[0] : o.gagne != null ? o.gagne : rnd() < p, finale = demi && (M[1] != null ? M[1] : o.gagne != null ? o.gagne : rnd() < p);
+  if(!finale){ s.rep = clamp(s.rep + (demi ? 6 : 2)); return demi ? 'Éliminé en finale.' : 'Éliminé en demi-finale.'; }
+  gainMaison(s, prix, 'Maison · tournoi du samedi gagné'); s.rep = clamp(s.rep + 20);
+  if(s.jour===27){ s.billet = true; return 'Vainqueur ! +'+fmt(prix)+' F, et ton billet pour le Grand Tournoi.'; }
+  return 'Vainqueur du tournoi ! +'+fmt(prix)+' F.';
+}
+// three rounds, one a day; winning the final pays the prize, and Penalty covers what is missing for the operation
+function grandTournoi(s, rnd, o){
+  const R = REGLES;
+  if(!s.grandTournoi){ if(!s.billet) argent(s, -R.grandEntree, 'Grand Tournoi · entrée'); s.grandTournoi = {tour:0, fini:false}; }
+  const g = s.grandTournoi, ok = o.gagne != null ? o.gagne : rnd() < 0.5 + (o.bonus || 0) - g.tour*0.05;
+  if(!ok){ g.fini = true; g.perdu = true; return ['Éliminé en qualifications.', 'Éliminé en demi-finale.', 'Penalty gagne la finale.'][g.tour]; }
+  g.tour++;
+  if(g.tour===3){ g.fini = true; g.gagne = true; argent(s, R.grandPrix, 'Grand Tournoi · vainqueur'); s.rep = 100;
+    if(!s.hop.operation){ if(s.hop.date && s.cash >= R.operation){ argent(s, -R.operation, 'Hôpital · l’opération de Princesse', 'hopital'); payerOperation(s); }
+      else { const v = Math.min(s.cash, R.operation); argent(s, -v, 'Hôpital · l’opération (Penalty garantit le reste)', 'hopital'); s.hop.date = true; payerOperation(s, 'penalty'); dire(s, 'penalty', 'Je garantis le reste à l’hôpital. Tu me le rendras… en revanche.'); } }
+    return 'Tu bats Penalty. '+fmt(R.grandPrix)+' F.'; }
+  return ['Qualifié pour la demi-finale.', 'Qualifié pour la finale contre Penalty.'][g.tour - 1];
+}
+
+// what a debt is worth today: 10 % of the capital for each full 7 days; late, +5 % a day of what is due, at most +50 %
+function du(s, d){
+  const R = REGLES, semaines = Math.floor((s.jour - d.jour)/7);
+  let v = d.capital*(1 + (d.taux || 0)*semaines);
+  const retard = Math.max(0, s.jour - d.echeance); if(retard && d.taux) v *= 1 + Math.min(R.retardMax, R.retardJour*retard);
+  return d.solde ? 0 : Math.max(0, Math.round(v - d.paye));
+}
+
+// ===================== time: a moment passes; at the end of the night a new day starts =====================
+function avancer(s){
+  if(s.fin) return;
+  if(s.m < 3){ s.m++; return; }
+  // the day's message of Princesse left without an answer
+  if(s.sis.aRepondre){ s.sis.relation = clamp(s.sis.relation - REGLES.silenceRelation); s.sis.aRepondre = 0; }
+  s.m = 0; s.jour++;
+  // after the night of day 30, the story ends: no new morning
+  if(s.jour > REGLES.jours){ fins(s); return; }
+  if(s.cellule > 0) s.cellule--;
+  if(s.tabassage > 0) s.tabassage--;
+  matin(s);
+}
+
+// every morning the world turns on its own, always in this order
+function matin(s){
+  const R = REGLES, j = s.jour;
+  // 1. the hospital: the bed after the advance's 10 days, the bills of days 14, 21 and 28
+  if(j > R.litApres) s.hop.lit += R.lit;
+  if(R.factureJours.includes(j) && s.hop.lit){ s.hop.factures.push({jour:j, montant:s.hop.lit, reste:s.hop.lit, echeance:j + R.factureDelai, payee:false}); dire(s, 'mengue', 'Facture du lit : '+fmt(s.hop.lit)+' F, à régler avant le jour '+(j + R.factureDelai)+'.'); s.hop.lit = 0; }
+  // 2. Princesse's health: illness, late bill (once, in proportion to what is left), strength from the relation; at most 8 lost
+  const late = s.hop.factures.filter(f=> !f.payee && j > f.echeance);
+  let d = -R.maladie;
+  if(late.length){ const reste = late.reduce((x, f)=> x + f.reste, 0), total = late.reduce((x, f)=> x + f.montant, 0); d -= Math.ceil(R.retardSoins*reste/total); dire(s, 'mengue', 'La facture n’est pas réglée. Nous réduisons ses soins.'); }
+  if(s.sis.relation > R.relationForte) d += 1;
+  d = Math.max(-R.perteMax, d);
+  if(s.hop.crise && !s.hop.crise.payee && j > s.hop.crise.echeance){ d -= R.crisePerte; s.hop.crise.payee = true; dire(s, 'mengue', 'L’urgence n’a pas été payée. Son état s’est aggravé.'); }
+  s.sis.sante = clamp(s.sis.sante + d);
+  // 3. a crisis when she falls under 40: two at most, never two within 5 days
+  if(s.sis.sante < 40 && s.hop.crises < R.crisesMax && j - s.hop.derniereCrise >= R.crisesEcart && !(s.hop.crise && !s.hop.crise.payee)){
+    s.hop.crises++; s.hop.derniereCrise = j; s.hop.crise = {echeance:j + R.criseDelai, payee:false};
+    dire(s, 'mengue', 'Princesse a fait une crise cette nuit. Il faut '+fmt(R.crise)+' F de soins d’urgence d’ici '+R.criseDelai+' jours.'); }
+  if(s.sis.sante < 15 && !s.f.alerte15){ s.f.alerte15 = true; dire(s, 'mengue', 'Elle est en soins intensifs. Plus de visites. Je suis désolé.'); }
+  if(j > R.avanceAvant && !s.hop.date && !s.f.avanceRetard){ s.f.avanceRetard = true; dire(s, 'mengue', 'Sans l’avance, je ne peux pas programmer l’opération. Chaque jour compte.'); }
+  if(R.rappelsOperation.includes(j) && !s.hop.operation) dire(s, 'mengue', 'Rappel : l’opération est prévue au jour 30. '+(s.hop.date ? 'Il manque '+fmt(Math.max(0, R.operation - s.cash))+' F.' : 'L’avance n’est toujours pas payée.'));
+  // 4. her relation: two days without a visit; today's message
+  if(j - s.sis.derniereVisite >= 2) s.sis.relation = clamp(s.sis.relation - R.sansVisite);
+  s.sis.aRepondre = 1; dire(s, 'princesse', MESSAGES_PRINCESSE[(j - 1) % MESSAGES_PRINCESSE.length], {quotidien:true});
+  // 5. the police: a calm day cools down; a raid at most every 4 days, only after a risk taken the day before; arrest at 100
+  if(s.f.calme !== false) s.chaleur = clamp(s.chaleur - R.chaleurCalme); s.f.calme = true;
+  if(s.amour.love >= 80 && s.amour.orage < 30 && !s.amour.rupture && j % 7===0){ s.chaleur = clamp(s.chaleur - 10); dire(s, 'pamela', 'J’ai fait effacer ton nom d’une liste. Ne me demande pas laquelle.'); }
+  if(s.chaleur >= R.arrestation) arrestation(s);
+  else if(s.chaleur >= R.rafle && j - s.derniereRafle >= R.rafleEcart && s.risque===j - 1){ s.derniereRafle = j; s.cellule = 1; argent(s, -Math.min(s.cash, R.amendeRafle), 'Amende · rafle'); s.chaleur = clamp(s.chaleur - 20); dire(s, 'poste', 'Rafle. Une nuit en cellule, et l’amende.'); }
+  // 6. the debts, the oldest first: reminder, chasers, seizure, beating, then death above 30 000 (seizure below)
+  s.dettes.slice().sort((a, b)=> a.echeance - b.echeance).forEach(d=>{
+    const v = du(s, d); if(v <= 0 || !d.taux) return;
+    const retard = j - d.echeance;
+    if(retard===-1) dire(s, 'grosventre', 'Demain, c’est le jour 😊 '+fmt(v)+' F.');
+    if(retard>=1 && retard < R.saisie) dire(s, 'grosventre', 'Mon fils 😊 Tu as oublié quelque chose ? '+fmt(v)+' F aujourd’hui.');
+    if(retard===R.saisie){ const x = Math.min(v, Math.round(s.cash*0.3)); if(x){ argent(s, -x, 'Saisie des garçons de Gros-Ventre'); d.paye += x; } dire(s, 'grosventre', 'Mes garçons sont passés. Ce n’est qu’un début 😊'); }
+    if(retard===R.tabac){ s.tabassage = 1; dire(s, 'grosventre', 'On t’a cherché. On t’a trouvé. Dernier avertissement. '+(v > R.mortSeuil ? 'La prochaine fois, c’est le Mfoundi.' : '')); }
+    if(retard===R.mort - 2 && v > R.mortSeuil) dire(s, 'grosventre', 'Deux jours. Après, je ne réponds plus de rien.');
+    if(retard >= R.mort){ if(v > R.mortSeuil) s.fin = 'tragique-toi'; else { const x = Math.min(v, s.cash); if(x) argent(s, -x, 'Gros-Ventre se paie lui-même'); d.solde = true; s.rep = clamp(s.rep - 20); dire(s, 'grosventre', 'On est quittes. Tout le quartier sait ce que tu vaux.'); } }
+  });
+  // 7. the tontine: your turn pays the pot; you keep paying until the end
+  const t = s.tontine;
+  if(t && t.actif){
+    if(j===t.debut + t.tour && !t.touche){ t.touche = true; argent(s, R.cotisation*R.tours, 'Tontine · ton tour', 'clarisse'); }
+    else if(j > t.debut + R.tours) t.actif = false;
+    else if(s.cash >= R.cotisation){ t.paye++; argent(s, -R.cotisation, 'Tontine · cotisation', 'clarisse'); }
+    else { s.rep = clamp(s.rep - 3); dire(s, 'clarisse', 'Tu n’as pas cotisé ce matin.'); }
+  }
+  // 8. Bosco's bar pays every day
+  if(s.bar.parts){ const g = s.bar.parts*R.barJour; s.bar.gagne += g; s.legal += g; argent(s, g, 'Part du bar de Bosco', 'bosco'); }
+  // 9. the neighbourhood's collection (option 3): legal money that rewards the relation and the reputation
+  if(j===R.collecteJour){ const v = Math.min(R.collecteMax, R.collecteBase + R.collecteRelation*Math.max(0, s.sis.relation - 50) + R.collecteRep*s.rep);
+    s.legal += v; argent(s, v, 'Collecte du quartier pour Princesse', 'quartier'); dire(s, 'christelle', 'Le quartier s’est cotisé pour Princesse. '+fmt(v)+' F. L’église, le marché, la tontine… tout le monde.'); }
+  // 10. the partner asks for money every 3 days; Ornella's invitation to the salons
+  if(j % 3===0 && !s.amour.rupture){ s.amour.demande = {montant:[5000, 10000, 15000][(j/3) % 3 | 0], jour:j}; dire(s, s.femme ? 'yowale' : 'pamela', s.femme ? 'Ma belle tu peux me dépanner de '+fmt(s.amour.demande.montant)+' ? Je te rends vite 😂' : 'Bébé, j’ai besoin de '+fmt(s.amour.demande.montant)+'. Tu m’envoies ? 🥺', {demande:s.amour.demande.montant}); }
+  if(j===12 && s.membre){ s.f.invitation = true; dire(s, 'ornella', 'Une soirée à Bastos. Tu viens ? Les salons s’ouvriront quand ton nom comptera.'); }
+  // 11. the director: what is waiting for you, never an empty morning
+  if(!s.membre && s.veillee && s.examen && j>=4) dire(s, 'tsala', 'L’inscription t’attend toujours. '+fmt(R.inscriptionAcompte)+' suffisent pour commencer.');
+  if(!s.veillee && j>=3) dire(s, 'rall', 'Ce soir veillée chez moi, comme toujours. Viens, '+(s.femme ? 'ma go' : 'mola')+'.');
+  if(j===25) dire(s, 'penalty', 'Le Grand Tournoi est annoncé : jours 28 à 30, entrée '+fmt(R.grandEntree)+', '+fmt(R.grandPrix)+' au vainqueur.');
+  fins(s);
+}
+const MESSAGES_PRINCESSE = ['Bonjour… la nuit était longue.', 'Tu passes aujourd’hui ?', 'L’infirmière Brigitte est gentille.', 'J’ai rêvé de maman.', 'Tu manges bien au moins ?', 'Les autres filles ont de la visite. Moi j’attends.', 'Je t’aime fort, tu sais.'];
+
+// the partner's request, answered from the phone
+function repondreDemande(s, payer){
+  const d = s.amour.demande; if(!d) return '';
+  s.amour.demande = null;
+  if(payer && s.cash >= d.montant){ argent(s, -d.montant, s.femme ? 'Prêt à Daryl' : 'Pour Amour', s.femme ? 'yowale' : 'pamela'); s.amour.love = clamp(s.amour.love + 8); s.amour.orage = clamp(s.amour.orage - 10); return 'Merci 😘'; }
+  s.amour.love = clamp(s.amour.love - 4); s.amour.orage = clamp(s.amour.orage + 12);
+  if(s.amour.orage >= 85 && !s.femme){ s.chaleur = clamp(s.chaleur + 20); dire(s, 'pamela', 'Tu vas voir.'); }
+  if(s.amour.love <= 15){ s.amour.rupture = true; dire(s, s.femme ? 'yowale' : 'pamela', s.femme ? '…' : 'C’est fini. Ne m’écris plus.'); }
+  return 'Ok.';
+}
+function repondrePrincesse(s){ if(s.sis.aRepondre){ s.sis.aRepondre = 0; s.sis.relation = clamp(s.sis.relation + REGLES.reponseRelation); } }
+
+function arrestation(s){
+  if(!s.femme && !s.amour.rupture && s.amour.love >= 60){ s.chaleur = 50; s.amour.love = clamp(s.amour.love - 10); s.cellule = 1; dire(s, 'pamela', 'Je t’ai sorti. C’est la dernière fois.'); return; }
+  if(s.f.serviceHubert){ s.chaleur = 50; s.cellule = 1; dire(s, 'hubert', 'Tu sors. Tu me dois encore plus.'); return; }
+  s.fin = 'chute';
+}
+
+// ===================== the doors of the story (M3) =====================
+// A scene waits for its window (days, moments) and its conditions, plays once, and never blocks: when its window closes
+// without it, the story goes on by another path (the scene's « sinon »). The phone plays the scene; the engine decides when.
+// j: [first day, last day]; m: the moments; si: the condition; apres: a door that must have played before.
+const PORTES = [
+  // act 1
+  {id:'sis1', j:[1, 1], m:[2, 3]},
+  {id:'part1', j:[1, 2], m:[3, 0], apres:'sis1'},
+  {id:'day2am', j:[2, 3], m:[0, 1]},
+  {id:'day2pm', j:[2, 3], m:[1, 2], apres:'day2am'},
+  {id:'day3money', j:[3, 9], m:[0, 1, 2, 3], si:s=> s.examen && !s.membre},
+  // act 2: the act card, then the moments of the days 4 to 10
+  {id:'d4m0', j:[4, 6], m:[0, 1]},
+  {id:'d4m1', j:[4, 6], m:[1, 2], apres:'d4m0'},
+  {id:'d5m0', j:[5, 8], m:[0, 1], apres:'d4m0'},
+  {id:'d5m1', j:[5, 8], m:[1, 2], apres:'d4m0', si:s=> s.membre},
+  {id:'d5m2', j:[5, 8], m:[2], apres:'d4m0'},
+  {id:'d6m0', j:[6, 6], m:[0, 1], apres:'d4m0'},
+  {id:'d7m0', j:[7, 9], m:[0, 1], apres:'d4m0'},
+  {id:'d7m1', j:[7, 9], m:[1, 2], apres:'d4m0', si:s=> !!(s.tontine && s.tontine.actif)},
+  {id:'d8m0', j:[8, 10], m:[0, 1], apres:'d4m0'},
+  {id:'d8m2', j:[8, 10], m:[2], apres:'d4m0'},
+  {id:'d9m1', j:[9, 12], m:[1, 2], apres:'d4m0', si:s=> !!s.fait.enveloppe},
+  {id:'d10m3', j:[10, 12], m:[3], apres:'d4m0'},
+];
+// the doors open now, in order; the phone plays them and marks them
+function portesOuvertes(s){
+  s.joue = s.joue || {};
+  return PORTES.filter(p=> !s.joue[p.id] && s.jour >= p.j[0] && s.jour <= p.j[1] && p.m.includes(s.m) && (!p.apres || s.joue[p.apres]) && (!p.si || p.si(s))).map(p=> p.id);
+}
+function marquer(s, id){ s.joue = s.joue || {}; s.joue[id] = {j:s.jour, m:s.m}; }
+
+// ===================== the scenes' own effects (they go through the same ledger and the same rules) =====================
+// a loan from someone: a contract written in the bank, like Gros-Ventre's (a friend lends without interest)
+function preter(s, qui, nom, montant, taux, delai){
+  s.dettes.push({id:qui+s.jour+'_'+s.m+'_'+s.dettes.length, qui, nom, capital:montant, paye:0, jour:s.jour, taux:taux || 0, echeance:s.jour + (delai || 7)});
+  argent(s, montant, 'Prêt · '+nom, qui);
+}
+// a debt with no money lent (a betrayal, a « service »): written in the bank all the same
+function devoir(s, qui, nom, montant, delai){ s.dettes.push({id:qui+'d'+s.jour+'_'+s.dettes.length, qui, nom, capital:montant, paye:0, jour:s.jour, taux:0, echeance:s.jour + (delai || 1)}); }
+// the jauges a scene moves, always within 0 and 100
+function jauge(s, quoi, d){
+  if(quoi==='relation') s.sis.relation = clamp(s.sis.relation + d);
+  if(quoi==='sante') s.sis.sante = clamp(s.sis.sante + d);
+  if(quoi==='love') s.amour.love = clamp(s.amour.love + d);
+  if(quoi==='orage') s.amour.orage = clamp(s.amour.orage + d);
+  if(quoi==='chaleur'){ s.chaleur = clamp(s.chaleur + d); if(d > 0){ s.f.calme = false; s.risque = s.jour; } }
+  if(quoi==='rep') s.rep = clamp(s.rep + d);
+}
+// what the screen needs to show the money: what is owed today on each debt
+const dettesEnCours = s=> s.dettes.filter(d=> du(s, d) > 0).map(d=> Object.assign({}, d, {du:du(s, d), retard:Math.max(0, s.jour - d.echeance)}));
+
+// ===================== the endings, in one single order =====================
+// During the game: Princesse's health at 0, a debt above 30 000 ten days late, an arrest with nobody to get you out.
+// On the evening of day 30: the operation decides everything.
+function fins(s){
+  if(s.fin) return s.fin;
+  if(s.sis.sante <= 0){ s.fin = 'tragique-elle'; return s.fin; }
+  if(s.chaleur >= REGLES.arrestation) arrestation(s);
+  if(s.fin) return s.fin;
+  if(s.jour > REGLES.jours){
+    if(!s.hop.operation) s.fin = 'tragique-elle';
+    else if(s.grandTournoi && s.grandTournoi.gagne) s.fin = 'roi';
+    else if(s.hop.financement==='sale') s.fin = 'doit';
+    else if(s.sis.relation > 60) s.fin = s.bar.gagne >= REGLES.entrepreneur ? 'entrepreneur' : 'libre';
+    else s.fin = 'sauvee';
+  }
+  return s.fin;
+}
+const FINS = {
+  'libre':{titre:'Sauvée et libre', texte:'Le Docteur Nitcheu enlève son masque : « Elle est forte, votre sœur. » Princesse se réveille et demande ses beignets.'},
+  'entrepreneur':{titre:'L’entrepreneur', texte:'Princesse est sauvée. Sur l’enseigne du bar, il y a ton nom.'},
+  'roi':{titre:'Le roi des tables', texte:'Santa Barbara. Penalty te tend la main : « Enfin quelqu’un. » Le pot part directement à l’hôpital.'},
+  'doit':{titre:'Sauvée, mais tu dois', texte:'Princesse est sauvée. Ton téléphone vibre : « Mardi soir. Nkolbisson. Tu me dois une nuit. »'},
+  'sauvee':{titre:'Sauvée', texte:'Princesse est sauvée. Mais vous vous êtes perdus, ces trente jours.'},
+  'chute':{titre:'La chute', texte:'Une cellule à Bastos. Un message de Princesse : « Tu viens quand ? »'},
+  'tragique-elle':{titre:'La fin tragique', texte:'Le bip s’arrête. Sa barrette rose sur la table de chevet.'},
+  'tragique-toi':{titre:'La fin tragique', texte:'Le bord du Mfoundi, au petit matin. Ton téléphone sonne dans l’herbe : Princesse.'},
+};
+
+return {REGLES, TABLES, MOMENTS, JOURS, jourNom, VERSION, hasard, nouvellePartie, migrer, argent, fmt, actions, agir, du, avancer, repondreDemande, repondrePrincesse, PORTES, portesOuvertes, marquer, preter, devoir, jauge, dettesEnCours, fins, FINS};
+})();
 const $ = s=> document.querySelector(s);
 const esc = s=> String(s).replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt = n=> Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
@@ -462,22 +943,22 @@ PEOPLE.momo = {name:'Mobile Money', role:'Ton compte · reçus et virements', fa
 const anonFace ='<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2b211a"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="46" fill="#a99a86">?</text></svg>';
 const pic = id=> id==='me' ? (S.hero.av===-1 && S.hero.photo ? '<img class="ph-me" src="'+S.hero.photo+'" alt="">' : face(HEROES[Math.max(0, S.hero.av)])) : (PEOPLE[id] && PEOPLE[id].face ? face(PEOPLE[id].face) : anonFace);
 
-// ===================== the state: one save, one ledger =====================
-// Every token enters or leaves through tx(); nothing else touches the money. The same rule holds in the real game.
-const KEY = 'zero-heros-maquette-v1';
+// ===================== the state: the engine's game, plus what only the phone needs =====================
+// The rules live in the engine (moteur.js, written here as M by construire.mjs): the money and its one ledger, the days,
+// the hospital, the debts, the tontine, the police, the doors of the story, the endings. The phone tells them: messages,
+// scenes, screens. Every token goes through the engine; nothing on the phone touches the money by itself.
+const KEY = 'zero-heros-partie-v3', R = M.REGLES;
 let S = null;
 function fresh(){
-  return { v:1, started:false, hero:{name:'Junior', fem:0, av:0},
-    day:1, m:2, cash:0, ledger:[], hosp:{advance:50000, advDue:3, daily:3000, owed:0, paid:0},
-    sis:{hp:64, rel:70}, pam:{love:70, storm:30}, mem:{}, threads:{}, order:[], agenda:[], news:[], contacts:['princesse','mengue'], flags:{}, beats:{} };
+  return Object.assign(M.nouvellePartie(), {cash:0, registre:[], started:false, hero:{name:'Junior', fem:0, av:0}, vu:'1-2',
+    mem:{}, threads:{}, order:[], agenda:[], news:[], contacts:['princesse', 'mengue'], flags:{}, beats:{}, deals:[], badges:{}});
 }
 // ---- the partner (Amour, or Daryl Bleu Magic for a heroine): two hidden gauges and a memory of what you said ----
 const PART = ()=> S.hero.fem ? 'yowale' : 'pamela';
-const clamp = v=> Math.max(0, Math.min(100, v));
-function pam(dLove, dStorm){ S.pam.love = clamp(S.pam.love + dLove); S.pam.storm = clamp(S.pam.storm + dStorm); save(); }
-const calm = ()=> S.pam.storm < 45, hot = ()=> S.pam.storm >= 65;
+function pam(dLove, dStorm){ M.jauge(S, 'love', dLove); M.jauge(S, 'orage', dStorm); save(); }
+const calm = ()=> S.amour.orage < 45, hot = ()=> S.amour.orage >= 65;
 // the game remembers: a lie, a promise, an insult can come back days later
-const remember = k=>{ S.mem[k] = {d:S.day, m:S.m}; save(); };
+const remember = k=>{ S.mem[k] = {d:S.jour, m:S.m}; save(); };
 const knows = k=> !!S.mem[k];
 const MEM_LABEL = {told_hosp:'tu lui as dit pour l’hôpital', lie_hosp:'tu lui as menti sur l’hôpital', insult_father:'tu as insulté son père', promised_resto:'tu lui as promis un resto',
   pam_threat:'elle t’a menacé', pam_knows:'elle sait pour ta sœur', pam_suspicious:'elle soupçonne Christelle', pam_intel:'elle t’a donné une info de police',
@@ -487,47 +968,50 @@ const MEM_LABEL = {told_hosp:'tu lui as dit pour l’hôpital', lie_hosp:'tu lui
 // a burst: short messages one after the other, each with its banner
 async function burst(id, lines, choices){ await say(id, lines, choices, 380); }
 
-// ---- debts: every loan is written down with its rate and its due day, and what you owe grows on its own ----
-// The moneylender: +10 % per started week, then +5 % per day of delay. A friend: 0 %. The money goes through tx() like the rest.
-function borrow(who, label, amount, rate, days){
-  S.debts = S.debts || [];
-  S.debts.push({id:who+'-'+S.day+'-'+S.m, who, label, principal:amount, paid:0, day:S.day, rate, due:S.day + days});
-  tx(+amount, label, who);
-}
-function owed(d){
-  const weeks = Math.floor((S.day - d.day)/7) + 1;
-  let o = d.principal * (d.rate ? Math.pow(1 + d.rate, weeks) : 1);
-  const late = Math.max(0, S.day - d.due); if(late && d.rate) o *= Math.pow(1.05, late);
-  return Math.max(0, Math.round(o - d.paid));
-}
-function repay(d){ const amt = Math.min(S.cash, owed(d)); if(amt<1) return; d.paid += amt; tx(-amt, 'Remboursement · '+payeeName(d.who), d.who); }
-const debtsLeft = ()=> (S.debts||[]).filter(d=> owed(d)>0);
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===1){ s.pam = s.pam || {love:70, storm:30}; s.mem = s.mem || {}; return s; } return null; }catch(e){ return null; } }
+// ---- debts: the engine writes every loan with its rate and its due day, and what you owe grows on its own ----
+// The moneylender: 10 % of the capital per full week, then +5 % a day late (at most +50 %). A friend: 0 %.
+function borrow(who, amount, rate, days){ M.preter(S, who, payeeName(who), amount, rate, days); flush(); }
+const owed = d=> M.du(S, d);
+const debtsLeft = ()=> M.dettesEnCours(S);
+function save(){ if(!S) return; S.femme = !!S.hero.fem; S.nom = S.hero.name; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.v===M.VERSION && s.hero ? s : null; }catch(e){ return null; } }
 // ---- inside the real game (zero-heros.html?in=game, in a frame of the game): the game keeps the chips — one single
 // currency — and plays the tables for real. On its own (the mockup), the phone keeps its own purse and simulates the tables.
 const HOST = (window.parent!==window && /[?&]in=game\b/.test(location.search)) ? window.parent : null;
 const hostPost = m=>{ try{ HOST.postMessage(m, location.origin); }catch(e){} };
 const PLAYS = {};
 let hostChips = null, hostPhoto = '', hostName = '';
-// who: when the money comes from someone or goes to someone (not cash at a table), it is a transfer, and the account texts you
-function tx(amount, label, who){
-  S.cash += amount;
-  S.ledger.unshift({a:amount, l:label, d:S.day, m:S.m});
-  if(HOST) hostPost({zh:'tx', amount:Math.round(amount)});
-  // you hear your money: a stack falling in, or a single chip going out
-  if(Math.abs(amount) >= 500) SFX.play(amount > 0 ? 'jetons' : 'jeton', .35);
-  if(who) momo(amount, who, label);
+// a scene's money: who, when it comes from someone or goes to someone (not cash at a table), makes it a transfer, and the
+// account texts you. The engine writes it in the ledger; flush() shows it.
+function tx(amount, label, who){ M.argent(S, amount, label, who); flush(); }
+// ---- what the engine has to say reaches the screen here: the money that moved, the receipts, the messages ----
+let lastCash = null, talk = Promise.resolve();
+const SCRIPTED_SIS = {2:1, 4:1};   // mornings where a scene of Princesse already speaks for her
+function flush(){
+  if(!S) return;
+  if(lastCash==null) lastCash = S.cash;
+  const d = S.cash - lastCash; lastCash = S.cash;
+  // in the game the real chips follow; and you hear your money: a stack falling in, or a single chip going out
+  if(d){ if(HOST) hostPost({zh:'tx', amount:Math.round(d)}); if(Math.abs(d) >= 500) SFX.play(d > 0 ? 'jetons' : 'jeton', .35); }
+  for(const it of S.inbox.splice(0)){
+    if(it.qui==='momo'){ momo(it.montant, it.de, it.libelle, it.solde); continue; }
+    if(it.quotidien && SCRIPTED_SIS[it.j]) continue;
+    const who = it.qui, choices = it.quotidien ? DAILY_SIS : it.demande ? demandChoices() : null;
+    if(!PEOPLE[who]) continue;
+    talk = talk.then(()=> say(who, [it.texte], choices && !thread(who).choices ? choices : null)).catch(()=>{});
+  }
   save(); renderHome();
 }
+const DAILY_SIS = [{t:'Bonjour ma puce ❤️', a:'psd_love'}, {t:'Courage. Je pense à toi.', a:'psd_brave'}];
+const demandChoices = ()=> S.amour.demande ? [{t:'Envoyer '+fmt(S.amour.demande.montant), a:'dem_yes', need:S.amour.demande.montant}, {t:'Pas maintenant.', a:'dem_no'}] : null;
 // ---- Mobile Money: the account that texts you, like a real bank, for every transfer in or out ----
-const PAYEE = {hopital:'Hôpital Central', poste:'Commissariat de Bastos', maison:'La Maison · Nkolbisson'};
+const PAYEE = {hopital:'Hôpital Central', poste:'Commissariat de Bastos', maison:'La Maison · Nkolbisson', quartier:'Collecte du quartier'};
 const payeeName = who=> PAYEE[who] || (PEOPLE[who] ? PEOPLE[who].name.replace(/\s*❤️/, '') : who);
-const momoRef = ()=> 'MM'+String(S.day).padStart(2, '0')+(S.m+1)+'.'+String(Math.floor(1000 + Math.random()*9000));
-function momo(amount, who, label){
+const momoRef = ()=> 'MM'+String(S.jour).padStart(2, '0')+(S.m+1)+'.'+String(Math.floor(1000 + Math.random()*9000));
+function momo(amount, who, label, solde){
   const inn = amount > 0, txt = (inn ? 'Transfert reçu ✅' : 'Paiement effectué ✅')+'\n'+(inn ? 'De : ' : 'À : ')+payeeName(who)+'\nMontant : '+fmt(Math.abs(amount))+' F\nMotif : '+label+
-    '\nNouveau solde : '+fmt(S.cash)+' F\nRéf. '+momoRef();
-  const th = thread('momo'); th.msgs.push({who:'them', txt, d:S.day, m:S.m, k:'momo'}); bump('momo');
+    '\nNouveau solde : '+fmt(solde==null ? S.cash : solde)+' F\nRéf. '+momoRef();
+  const th = thread('momo'); th.msgs.push({who:'them', txt, d:S.jour, m:S.m, k:'momo'}); bump('momo');
   if(openThread==='momo') drawThread(); else { th.unread++; banner('momo', (inn ? '+' : '−')+fmt(Math.abs(amount))+' F · '+(inn ? 'de ' : 'à ')+payeeName(who)); }
 }
 // before any payment you make yourself: who, how much, why, and what is left. Then a receipt.
@@ -554,11 +1038,11 @@ function playTable(spec){
 if(HOST) addEventListener('message', e=>{
   if(e.source!==HOST || e.origin!==location.origin) return;
   const d = e.data || {};
-  if(d.zh==='chips'){ hostChips = d.chips; if(d.photo) hostPhoto = d.photo; if(d.name) hostName = d.name; if(S && S.started){ S.cash = d.chips; save(); renderHome(); if(curApp && curApp.id==='banque') openApp('banque'); } }
+  if(d.zh==='chips'){ hostChips = d.chips; if(d.photo) hostPhoto = d.photo; if(d.name) hostName = d.name; if(S && S.started){ S.cash = lastCash = d.chips; save(); renderHome(); if(curApp && curApp.id==='banque') openApp('banque'); } }
   if(d.zh==='result' && PLAYS[d.id]){ const f = PLAYS[d.id]; delete PLAYS[d.id]; f(d); }
 });
 const G = ()=> S.hero.fem ? {gf:'grande sœur', frere:'ma sœur', mola:'ma go', il:'elle', e:'e'} : {gf:'grand frère', frere:'mon frère', mola:'mola', il:'il', e:''};
-function nudge(k, d){ S.sis[k] = Math.max(0, Math.min(100, S.sis[k] + d)); save(); renderHome(); }
+function nudge(k, d){ M.jauge(S, k, d); save(); renderHome(); }   // 'relation' or 'sante', always within 0 and 100
 
 // ===================== messages =====================
 function thread(id){ if(!S.threads[id]) S.threads[id] = {msgs:[], unread:0, choices:null}; return S.threads[id]; }
@@ -573,7 +1057,7 @@ async function say(id, lines, choices, gap){
     if(openThread===id){ showTyping(true); await wait(gap ? gap + txt.length*8 : 700 + Math.min(1600, txt.length*22)); showTyping(false); }
     else await wait(gap || 900);
     if(run!==RUN) return;
-    th.msgs.push({who:'them', txt, d:S.day, m:S.m});
+    th.msgs.push({who:'them', txt, d:S.jour, m:S.m});
     if(openThread!==id){ th.unread++; banner(id, txt); }
     save(); if(openThread===id) drawThread(); renderHome();
   }
@@ -588,12 +1072,12 @@ function banner(id, txt){
 }
 // what each answer does: messages first, then the effects
 const ANSWERS = {
-  sis1a: async()=>{ nudge('rel', +6); await say('princesse', ['Promis promis ?', 'Je te crois. Mais ne fais pas de bêtises hein. Je te connais.']); beat('rall1'); },
-  sis1b: async()=>{ nudge('rel', +2); await say('princesse', ['Ok… Bonne nuit '+G().gf+'.']); beat('rall1'); },
+  sis1a: async()=>{ nudge('relation', +6); await say('princesse', ['Promis promis ?', 'Je te crois. Mais ne fais pas de bêtises hein. Je te connais.']); beat('rall1'); },
+  sis1b: async()=>{ nudge('relation', +2); await say('princesse', ['Ok… Bonne nuit '+G().gf+'.']); beat('rall1'); },
   rall1a: async()=>{ S.flags.honest = 1; await say('rall', ['3 500 ?! Eish.', 'Ok écoute. Demain soir, veillée chez moi à Mvog-Ada, 19 h. Petites mises, 200 à 1 000. On va faire monter ton argent.', 'Après on verra pour la Maison. Mais là-bas on ne rigole pas.']); meet(); },
   rall1b: async()=>{ S.flags.proud = 1; await say('rall', ['Ahan, '+G().mola+' fait le dur 😂', 'Je te connais, tu n’as rien. Demain soir, veillée chez moi, Mvog-Ada, 19 h. On commence petit.', 'Et la Maison, ce n’est pas pour les orgueilleux.']); meet(); },
-  sis2a: async()=>{ S.flags.promisedMorning = 1; nudge('rel', +3); await say('princesse', ['Vrai ?? Apporte-moi un yaourt stp 🙏']); },
-  sis2b: async()=>{ nudge('rel', -4); await say('princesse', ['Ok.', 'La veillée de RALL hein… Fais attention.']); },
+  sis2a: async()=>{ S.sis.promesse = S.jour; nudge('relation', +3); await say('princesse', ['Vrai ?? Apporte-moi un yaourt stp 🙏']); },
+  sis2b: async()=>{ nudge('relation', -4); await say('princesse', ['Ok.', 'La veillée de RALL hein… Fais attention.']); },
   chr1a: async()=>{ S.flags.chrWarm = 1; await say('christelle', ['Tu sais où me trouver. Même tard. 🙂']); },
   chr1b: async()=>{ await say('christelle', ['Comme tu veux. Courage quand même.']); },
 
@@ -630,18 +1114,18 @@ const ANSWERS = {
   p4rest: async()=>{ pam(0, -2); remember('lie_evening'); await say('pamela', ['Repose-toi mon cœur 😘']); },
 
   // ---- day 3: everyone has money for you, each with his own price ----
-  gv1yes: async()=>{ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv');
+  gv1yes: async()=>{ borrow('grosventre', 10000, R.usure, R.gvDelai); remember('loan_gv');
     await say('grosventre', ['Voilà mon fils 😊', '10 000. Tu me rends 11 000 dans 7 jours.', 'Et si tu es en retard… on discute. 😊']); },
   gv1no: async()=>{ await say('grosventre', ['Comme tu veux 😊', 'Mon numéro ne change pas. Les besoins, eux, reviennent toujours.']); },
-  rall2yes: async()=>{ borrow('rall', 'Prêt de RALL', 1000, 0, 5); await say('rall', ['Tiens. Et ne dis pas merci, rends seulement 😂']); },
+  rall2yes: async()=>{ borrow('rall', 1000, 0, 5); await say('rall', ['Tiens. Et ne dis pas merci, rends seulement 😂']); },
   rall2no: async()=>{ await say('rall', ['Fier hein 😂 ok.']); },
-  cla1join: async()=>{ S.tontine = {daily:1000, turn:10, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
-    await say('clarisse', ['Bienvenue dans la famille 🙏', 'Tu es au tour 10 sur 10. Tu toucheras 10 000 le jour '+(S.day+10)+'.', 'Si tu veux passer au tour 2, la place coûte 2 000. C’est comme ça pour tout le monde.']); },
-  cla1buy: async()=>{ tx(-2000, 'Tontine · achat du tour 2', 'clarisse'); S.tontine = {daily:1000, turn:2, of:10, joined:S.day, paid:0, active:1}; remember('tontine'); save();
-    await say('clarisse', ['Tour 2, c’est noté ✍️', 'Tu touches 10 000 le jour '+(S.day+2)+'. Ne rate aucune cotisation.', 'Ceux qui ratent… perdent leur tour.']); },
+  cla1join: async()=>{ M.agir(S, {id:'tontine'}); remember('tontine'); flush();
+    await say('clarisse', ['Bienvenue dans la famille 🙏', 'Tu es au tour 10 sur 10. Tu toucheras 10 000 le jour '+(S.jour+10)+'.', 'Si tu veux passer au tour 2, la place coûte 2 000. C’est comme ça pour tout le monde.']); },
+  cla1buy: async()=>{ M.agir(S, {id:'tontine2'}); remember('tontine'); flush();
+    await say('clarisse', ['Tour 2, c’est noté ✍️', 'Tu touches 10 000 le jour '+(S.jour+2)+'. Ne rate aucune cotisation.', 'Ceux qui ratent… perdent leur tour.']); },
   cla1no: async()=>{ await say('clarisse', ['Dommage.', 'La tontine, c’est la seule banque qui ne demande pas de papiers.']); },
   bos1yes: async()=>{ tx(3000, 'Bosco · « service rendu »', 'bosco'); remember('match_fixed');
-    S.agenda.push({id:'bosco', day:S.day+1, m:2, place:'bosco', title:'Perdre contre Mado (arrangé)', who:'bosco', stake:'Bosco t’a déjà payé 3 000'}); save();
+    S.agenda.push({id:'bosco', day:S.jour+1, m:2, place:'bosco', title:'Perdre contre Mado (arrangé)', who:'bosco', stake:'Bosco t’a déjà payé 3 000'}); save();
     await say('bosco', ['Bien. Demain soir, au bar, tu perds contre Mado. Proprement.', 'Personne ne doit savoir. Personne.']); },
   bos1no: async()=>{ await say('bosco', ['Tu es honnête. C’est rare.', 'Et ça ne paie pas.']); },
   pam5yes: async()=>{ tx(5000, 'Amour · « pour ton inscription »', 'pamela'); pam(+6, -4); remember('pam_paid');
@@ -653,6 +1137,11 @@ const ANSWERS = {
   y1free: async()=>{ pam(+1, 0); await say('yowale', ['😂😂 tu me connais trop', 'Bisous ma belle, courage pour ta sœur']); },
   y2hurt: async()=>{ pam(-3, 0); await say('yowale', ['Je sais… 🙏', 'Tu me pardonnes ? Regarde ma tête de chien battu 🐶']); },
   y2thanks: async()=>{ pam(+3, 0); await say('yowale', ['C’est rien ma belle 😘', 'Bon je file, les gars m’attendent']); },
+  // ---- every morning: Princesse's message (answering it is what counts), the partner's request every 3 days ----
+  psd_love: async()=>{ await say('princesse', [pick('princesse', ['🥰', 'Ma puce elle-même 😌', 'Tu es le meilleur, '+G().gf+'.']) || '❤️']); },
+  psd_brave: async()=>{ await say('princesse', [pick('princesse', ['Merci… 🥺', 'Toi aussi, courage.', 'Je tiens bon, promis.']) || '🙏']); },
+  dem_yes: async()=>{ const r = M.repondreDemande(S, true); flush(); await say(PART(), [PART()==='pamela' ? pick('pamela', ['Merci mon bébé 😘', 'Tu vois quand tu veux 😍']) || r : pick('yowale', ['Ma belle 😍 je te rends vite', 'Tu es une reine 😂']) || r]); },
+  dem_no: async()=>{ M.repondreDemande(S, false); flush(); if(!S.amour.rupture) await say(PART(), [PART()==='pamela' ? (hot() ? 'Ok. Je retiens.' : 'Ok… 😒') : 'lol ok 😂']); },
 };
 // ===================== free conversation, with no AI and nothing to pay =====================
 // The game reads what you mean (an excuse, a lie, love, money, an insult, Christelle…), then the character answers with
@@ -751,11 +1240,11 @@ async function freeSend(pid, text){
   const th = thread(pid);
   // writing freely while she waits for an answer counts as your answer
   if(th.choices){ th.choices = null; th.pressed = 0; clearTimeout(drawThread.t); }
-  th.msgs.push({who:'me', txt:text, d:S.day, m:S.m}); save(); drawThread(); renderHome();
+  th.msgs.push({who:'me', txt:text, d:S.jour, m:S.m}); save(); drawThread(); renderHome();
   const book = CHAT[pid], k = detect(text), e = book[k] || book.unknown;
-  const mood = S.pam.storm>=65 ? 's' : S.pam.storm>=45 ? 't' : 'c';
+  const mood = S.amour.orage>=65 ? 's' : S.amour.orage>=45 ? 't' : 'c';
   // a conversation has an end: after a few exchanges in the same moment she has other things to do, and says so once
-  S.flags.chatN = S.flags.chatN || {}; const ck = pid+'_'+S.day+'_'+S.m, n = S.flags.chatN[ck] = (S.flags.chatN[ck] || 0) + 1;
+  S.flags.chatN = S.flags.chatN || {}; const ck = pid+'_'+S.jour+'_'+S.m, n = S.flags.chatN[ck] = (S.flags.chatN[ck] || 0) + 1;
   if(n > 6){ save(); if(n===7){ await wait(700); await say(pid, [pick(pid, BYE[pid][mood] || BYE[pid].c) || 'On se parle plus tard.']); } return; }
   // what she already knows about you comes first, once per memory
   const known = e.know ? Object.keys(e.know).find(m=> knows(m) && !(S.flags.said||{})[pid+k+m]) : null;
@@ -816,7 +1305,7 @@ async function beatBody(name, run){
       [{t:'D’accord.', a:'bos1yes'}, {t:'Je ne perds pas exprès.', a:'bos1no'}]);
     await wait(2500);
     if(PART()==='pamela'){
-      if(S.pam.love>=60 && S.pam.storm<55) await say('pamela', ['Tu as réussi ton examen ? 😍', 'Mon bébé est intelligent.', 'Il te manque combien pour l’inscription ? Je peux payer.'],
+      if(S.amour.love>=60 && S.amour.orage<55) await say('pamela', ['Tu as réussi ton examen ? 😍', 'Mon bébé est intelligent.', 'Il te manque combien pour l’inscription ? Je peux payer.'],
         [{t:'Oui, si tu peux… 5 000.', a:'pam5yes'}, {t:'Non, je ne veux pas de ton argent.', a:'pam5no'}]);
       else await say('pamela', ['J’ai appris pour ton examen.', 'Tu as besoin d’argent ? Demande à tes cartes.']);
     } else await say('yowale', ['Bravo ma belle 😂🔥', 'Je t’aurais bien prêté mais je suis à sec']);
@@ -851,7 +1340,7 @@ async function beatBody(name, run){
     else if(hot()){
       await burst('pamela', ['Ce soir je passe à la veillée de RALL.', 'Je veux voir avec qui tu joues.', 'Et si je vois Christelle là-bas…'],
         [{t:'Viens, je n’ai rien à cacher.', a:'p4come'}, {t:'Ne viens pas, s’il te plaît.', a:'p4no'}]); }
-    else if(S.pam.love>=70){
+    else if(S.amour.love>=70){
       await say('pamela', ['Je pensais à toi 🥺', 'Désolée pour ce matin. Je suis comme ça, tu sais.', 'Info du bureau, ne le répète pas : contrôle prévu à Mvog-Ada cette semaine. Ce soir, garde le minimum sur toi.'],
         [{t:'Merci bébé, tu me sauves.', a:'p4thanks'}, {t:'Tu fais ça pour moi ? Tu risques ton poste.', a:'p4risk'}]); }
     else await say('pamela', ['Tu fais quoi ce soir ?'], [{t:'Veillée chez RALL.', a:'p4veillee'}, {t:'Rien, je me repose.', a:'p4rest'}]);
@@ -863,7 +1352,7 @@ function show(id){ document.querySelectorAll('.scene').forEach(s=> s.hidden = s.
   // the rain on the roof follows you on the title and the phone; a scene of its own brings its own sound
   if(id==='scTitle' || id==='scHome') SFX.loop('pluie', .12, 3); }
 function renderClock(){
-  const w = 'Jour '+S.day+' · '+MOMENTS[S.m];
+  const w = 'Jour '+S.jour+' · '+MOMENTS[S.m];
   ['#sbWhen', '#sbWhen2'].forEach(s=> $(s).textContent = w); ['#sbTime', '#sbTime2'].forEach(s=> $(s).textContent = CLOCK[S.m]);
 }
 const APPS = [
@@ -878,23 +1367,68 @@ const APPS = [
 ];
 function badges(){
   const unread = Object.values(S.threads).reduce((s, t)=> s + t.unread, 0);
-  const next = S.agenda.filter(a=> !a.done && (a.day>S.day || (a.day===S.day && a.m>=S.m))).length;
-  return {messages:unread, infos:S.news.filter(n=> !n.seen).length, agenda:next, sante: S.day>=S.hosp.advDue-1 && S.hosp.paid < S.hosp.advance ? 1 : 0};
+  const next = S.agenda.filter(a=> !a.done && (a.day>S.jour || (a.day===S.jour && a.m>=S.m))).length;
+  const h = S.hop, due = (!h.date && S.jour >= R.avanceAvant - 2) || h.factures.some(f=> !f.payee) || !!(h.crise && !h.crise.payee);
+  return {messages:unread, infos:S.news.filter(n=> !n.seen).length, agenda:next, sante:due ? 1 : 0};
+}
+// ===================== the time: the player always knows where he is =====================
+// Day N of 30, the weekday and the week, the moment of the day, the days left before the operation, and every date
+// the player has been told about (the advance, the bills, the debts, the tontine, the Saturdays, his meetings).
+const MOM_SHORT = ['☀️ Matin', '⛅ Aprèm', '🌆 Soir', '🌙 Nuit'];
+const semaine = j=> Math.ceil(j/7);
+function echeances(){
+  const E = [], h = S.hop, j = S.jour, add = (jour, t, s, ic, hot, m)=>{ if(jour >= j && jour <= R.jours) E.push({jour, m:m==null ? -1 : m, t, s, ic, hot:!!hot}); };
+  if(!h.date) add(Math.max(j, R.avanceAvant), 'Avance de l’hôpital', 'Il reste '+fmt(R.avance - h.avance)+(j > R.avanceAvant ? ' · EN RETARD' : ' · sans elle, pas d’opération'), '🏥', true);
+  h.factures.filter(f=> !f.payee).forEach(f=> add(Math.max(j, f.echeance), 'Facture du lit', fmt(f.reste)+(j > f.echeance ? ' · EN RETARD, ses soins baissent' : ''), '🏥', true));
+  const nb = R.factureJours.find(x=> x > j); if(nb) add(nb, 'Facture du lit', 'Environ '+fmt(h.lit + R.lit*Math.max(0, nb - Math.max(j, R.litApres))), '🧾');
+  if(h.crise && !h.crise.payee) add(Math.max(j, h.crise.echeance), 'Urgence de Princesse', fmt(R.crise), '🚑', true);
+  debtsLeft().forEach(d=> add(Math.max(j, d.echeance), 'Rembourser '+d.nom, fmt(d.du)+(d.retard ? ' · EN RETARD' : ''), '💸', d.retard > 0 || d.echeance - j <= 1));
+  const t = S.tontine; if(t && t.actif && !t.touche) add(t.debut + t.tour, 'Ton tour de tontine', '+'+fmt(R.cotisation*R.tours), '🤝');
+  if(S.membre){ const sat = [6, 13, 20, 27].find(x=> x >= j && !S.fait['tournoi'+x]); if(sat){ const w = Math.min(3, Math.floor((sat - 6)/7)); add(sat, 'Tournoi du samedi', 'Entrée '+fmt(R.tournoiEntree[w])+' · '+fmt(R.tournoiPrix[w])+' au vainqueur', '🃏', false, 2); } }
+  if(j >= 25 && !(S.grandTournoi && S.grandTournoi.fini)) add(Math.max(j, 28), 'Grand Tournoi · Santa Barbara', 'Jours 28 à 30 · '+fmt(R.grandPrix)+' au vainqueur', '🏆', false, 2);
+  S.agenda.filter(a=> !a.done && !E.some(e=> e.t===a.title)).forEach(a=> add(a.day, a.title, MOMENTS[a.m].toLowerCase()+' · '+a.stake, '📅', false, a.m));
+  if(!h.operation) add(R.jours, 'L’opération de Princesse', fmt(R.operation)+(h.date ? '' : ' · l’avance n’est pas payée'), '❤️', true, 2);
+  return E.sort((a, b)=> a.jour - b.jour || a.m - b.m || b.hot - a.hot);
+}
+const quand = e=>{ const d = e.jour - S.jour;
+  if(d > 1) return 'dans '+d+' j';
+  if(d===1) return 'demain';
+  return e.m===S.m ? 'maintenant' : e.m > S.m ? ['ce matin', 'cet aprèm', 'ce soir', 'cette nuit'][e.m] : 'aujourd’hui'; };
+function renderTime(){
+  const j = S.jour, left = R.jours - j, E = echeances(), mk = new Set(E.map(e=> e.jour)), nx = E[0];
+  $('#wTime').innerHTML =
+    '<div class="tm-top"><span class="tm-id"><span class="tm-day">Jour '+j+'<small> / '+R.jours+'</small></span><span class="tm-wd">'+M.jourNom(j)+' · semaine '+semaine(j)+' sur 5</span></span>'+
+      '<span class="tm-left'+(left <= 5 ? ' hot' : '')+'">'+(S.hop.operation ? 'Opération payée ✓' : left ? '❤️ Opération dans '+left+' j' : '❤️ Opération ce soir')+'</span></div>'+
+    '<div class="tm-mom">'+MOM_SHORT.map((t, i)=> '<span class="'+(i < S.m ? 'past' : i===S.m ? 'now' : '')+'">'+t+'</span>').join('')+'</div>'+
+    '<div class="tm-strip" aria-hidden="true">'+Array.from({length:R.jours}, (_, k)=>{ const d = k + 1;
+      return '<i class="'+[d < j ? 'past' : d===j ? 'now' : '', M.jourNom(d)==='samedi' ? 'sat' : '', d===R.jours ? 'op' : '', d > j && mk.has(d) && d!==R.jours ? 'dl' : ''].join(' ')+'"></i>'; }).join('')+'</div>'+
+    (nx ? '<div class="tm-next">'+nx.ic+' <b>'+esc(nx.t)+'</b><em>'+quand(nx)+'</em></div>' : '');
+}
+// the calendar: the 30 days as a month (day 1 is a Monday), then every date, the nearest first
+function calendrier(){
+  const j = S.jour, E = echeances(), mk = new Set(E.map(e=> e.jour));
+  sheet('<h3>Jour '+j+' sur '+R.jours+' · '+M.jourNom(j)+', '+MOMENTS[S.m].toLowerCase()+'</h3>'+
+    '<p style="margin:0;font-weight:700;color:#7A6650">Chaque jour a 4 moments. Une action par moment. Il te reste '+(R.jours - j)+' jour'+(R.jours - j > 1 ? 's' : '')+' après aujourd’hui.</p>'+
+    '<div class="cal-g">'+['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'].map(d=> '<span class="h">'+d+'</span>').join('')+
+      Array.from({length:R.jours}, (_, k)=>{ const d = k + 1; return '<i class="'+[d < j ? 'past' : d===j ? 'now' : '', d===R.jours ? 'op' : '', d > j && mk.has(d) && d!==R.jours ? 'dl' : ''].join(' ')+'">'+d+'</i>'; }).join('')+'</div>'+
+    '<div style="max-height:38vh;overflow-y:auto">'+(E.length ? E.map(e=> '<div class="cal-row"><span class="when'+(e.hot && e.jour - j <= 1 ? ' hot' : '')+'">'+quand(e)+'<br>jour '+e.jour+'</span><span>'+e.ic+'</span><span style="flex:1;min-width:0"><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small></span></div>').join('') : '<div class="empty">Rien de prévu.</div>')+'</div>'+
+    '<div class="btns"><button class="btn" id="calX">Fermer</button></div>');
+  $('#calX').onclick = closeSheet;
 }
 function renderHome(){
   if(!S) return;
-  renderClock();
+  renderClock(); renderTime();
   $('#wCash').innerHTML = fmt(S.cash)+' <small>/ 1 000 000</small>';
   $('#wCashBar').style.width = Math.max(0.5, S.cash/GOAL*100)+'%';
   $('#wSisPic').innerHTML = face(PEOPLE.princesse.face);
-  $('#wHp').textContent = S.sis.hp; $('#wRel').textContent = S.sis.rel;
-  $('#wHpBar').style.width = S.sis.hp+'%'; $('#wRelBar').style.width = S.sis.rel+'%';
+  $('#wHp').textContent = S.sis.sante; $('#wRel').textContent = S.sis.relation;
+  $('#wHpBar').style.width = S.sis.sante+'%'; $('#wRelBar').style.width = S.sis.relation+'%';
   const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0];
   $('#wNextT').textContent = nx ? nx.title : 'Rien de prévu';
   $('#wNextW').textContent = nx ? 'Jour '+nx.day+' · '+CLOCK[nx.m] : 'Attends des nouvelles';
   const b = badges();
   $('#apps').innerHTML = APPS.map(a=> '<button class="app" data-app="'+a.id+'"><span class="ic" style="background:'+a.bg+'"><svg viewBox="0 0 24 24">'+a.svg+'</svg></span><span>'+a.name+'</span>'+(b[a.id] ? '<i class="badge">'+b[a.id]+'</i>' : '')+'</button>').join('');
-  $('#goNext').textContent = '⏩ '+(S.m===3 ? 'Dormir · Jour '+(S.day+1) : 'Avancer '+['à l’après-midi', 'au soir', 'à la nuit'][S.m]);
+  $('#goNext').textContent = S.m===3 ? '🌙 Dormir' : '⏩ '+['Après-midi', 'Soir', 'Nuit'][S.m];
 }
 
 // ===================== the apps =====================
@@ -928,39 +1462,52 @@ function openApp(id, arg){
     // what you owe, and the tontine: the two things that move your money without asking
     const ds = debtsLeft(), t = S.tontine;
     let h = '';
-    if(ds.length) h += '<div class="card"><span class="k">Tes dettes</span>'+ds.map(d=>{ const late = S.day > d.due;
-      return '<div class="bill"><span>'+esc(PEOPLE[d.who].name)+(d.rate ? ' · '+Math.round(d.rate*100)+' % par semaine' : ' · sans intérêt')+'</span><em>'+fmt(owed(d))+'</em><span class="due">'+(late ? 'EN RETARD de '+(S.day - d.due)+' jour(s) · +5 % par jour' : 'À rendre avant le jour '+d.due)+'</span></div>'+
-        '<button class="btn ghost" data-repay="'+d.id+'"'+(S.cash<1 ? ' disabled' : '')+'>Rembourser '+fmt(Math.min(S.cash, owed(d)))+'</button>'; }).join('')+'</div>';
-    if(t && t.active) h += '<div class="card"><span class="k">Tontine de Clarisse</span><div class="bill"><span>Cotisation</span><em>'+fmt(t.daily)+' / jour</em><span>Ton tour</span><em>'+t.turn+' sur '+t.of+'</em><span>Tu toucheras</span><em>'+fmt(t.daily*t.of)+'</em><span class="due">'+(t.got ? 'Touché ! Tu cotises jusqu’au jour '+(t.joined + t.of) : 'Le jour '+(t.joined + t.turn))+' · cotisations payées : '+t.paid+'</span></div></div>';
+    if(ds.length) h += '<div class="card"><span class="k">Tes dettes</span>'+ds.map(d=>
+      '<div class="bill"><span>'+esc(d.nom)+(d.taux ? ' · '+Math.round(d.taux*100)+' % par semaine' : ' · sans intérêt')+'</span><em>'+fmt(d.du)+'</em><span class="due">'+(d.retard ? 'EN RETARD de '+d.retard+' jour(s)'+(d.taux ? ' · +5 % par jour' : '') : 'À rendre avant le jour '+d.echeance)+'</span></div>'+
+        '<button class="btn ghost" data-repay="'+d.id+'"'+(S.cash<1 ? ' disabled' : '')+'>Rembourser '+fmt(Math.min(S.cash, d.du))+'</button>').join('')+'</div>';
+    if(t && t.actif) h += '<div class="card"><span class="k">Tontine de Clarisse</span><div class="bill"><span>Cotisation</span><em>'+fmt(R.cotisation)+' / jour</em><span>Ton tour</span><em>'+t.tour+' sur '+R.tours+'</em><span>Tu toucheras</span><em>'+fmt(R.cotisation*R.tours)+'</em><span class="due">'+(t.touche ? 'Touché ! Tu cotises jusqu’au jour '+(t.debut + R.tours) : 'Le jour '+(t.debut + t.tour))+' · cotisations payées : '+t.paye+'</span></div></div>';
     $('#debts').innerHTML = h;
-    $('#debts').querySelectorAll('[data-repay]').forEach(b=> b.onclick = ()=>{ const d = S.debts.find(x=> x.id===b.dataset.repay);
-      confirmPay({to:d.who, amount:Math.min(S.cash, owed(d)), label:'Remboursement · '+d.label, pay:()=> repay(d), done:()=> openApp('banque')}); });
+    $('#debts').querySelectorAll('[data-repay]').forEach(b=> b.onclick = ()=> repayDebt(ds.find(x=> x.id===b.dataset.repay)));
     // sending money to someone of your own will: a few amounts, then the same confirmation and receipt
     $('#debts').insertAdjacentHTML('afterend', '<button class="btn ghost" id="send">Envoyer de l’argent</button>');
     $('#send').onclick = sendMoney;
-    $('#txs').innerHTML = S.ledger.map(t=> '<div class="tx"><b>'+esc(t.l)+'</b><small>Jour '+t.d+' · '+MOMENTS[t.m]+'</small><em class="'+(t.a>=0 ? 'p' : 'n')+'">'+(t.a>=0 ? '+' : '−')+fmt(Math.abs(t.a))+'</em></div>').join('');
+    $('#txs').innerHTML = S.registre.map(t=> '<div class="tx"><b>'+esc(t.l)+'</b><small>Jour '+t.j+' · '+MOMENTS[t.m]+'</small><em class="'+(t.a>=0 ? 'p' : 'n')+'">'+(t.a>=0 ? '+' : '−')+fmt(Math.abs(t.a))+'</em></div>').join('');
   }
   if(id==='sante'){
     T('Santé · Princesse');
-    const h = S.hosp, left = Math.max(0, h.advance - h.paid);
+    const h = S.hop, left = Math.max(0, R.avance - h.avance), f = h.factures.find(x=> !x.payee), crise = h.crise && !h.crise.payee ? h.crise : null;
+    const can = id=> M.actions(S).some(a=> a.id===id);
+    const doc = S.sis.sante < 15 ? '« Soins intensifs. Plus de visites pour l’instant. Je suis désolé. »' : S.sis.sante < 40 ? '« Son état m’inquiète. Elle a besoin de vous, et de soins. »' : '« Son état est stable. Ce qui l’aide le plus, c’est de vous voir. »';
     body.innerHTML = '<div class="card" style="flex-direction:row;align-items:center;gap:12px"><span style="width:64px;height:64px;flex:none">'+face(PEOPLE.princesse.face)+'</span><div style="flex:1;display:flex;flex-direction:column;gap:8px">'+
-      '<div class="gauge"><span>Santé <b>'+S.sis.hp+' / 100</b></span><div class="bar h"><i style="width:'+S.sis.hp+'%"></i></div></div>'+
-      '<div class="gauge"><span>Votre relation <b>'+S.sis.rel+' / 100</b></span><div class="bar r"><i style="width:'+S.sis.rel+'%"></i></div></div></div></div>'+
+      '<div class="gauge"><span>Santé <b>'+S.sis.sante+' / 100</b></span><div class="bar h"><i style="width:'+S.sis.sante+'%"></i></div></div>'+
+      '<div class="gauge"><span>Votre relation <b>'+S.sis.relation+' / 100</b></span><div class="bar r"><i style="width:'+S.sis.relation+'%"></i></div></div></div></div>'+
       '<div class="card"><span class="k">Facture · Hôpital Central</span><div class="bill">'+
-        '<span>Avance d’admission</span><em>'+fmt(left)+'</em><span class="due">À payer avant le jour '+h.advDue+(S.day>=h.advDue ? ' · AUJOURD’HUI' : '')+'</span>'+
-        '<span>Lit et repas (3 000 par jour)</span><em>'+fmt(h.owed)+'</em>'+
-        '<span>Opération</span><em>1 000 000</em></div></div>'+
-      '<div class="card"><span class="k">Service · Docteur Nitcheu</span><span>« Son état est stable. Ce qui l’aide le plus, c’est de vous voir. »</span></div>'+
+        '<span>Avance d’admission</span><em>'+(left ? fmt(left) : 'payée ✓')+'</em>'+(left ? '<span class="due">Avant le jour '+R.avanceAvant+(S.jour>R.avanceAvant ? ' · EN RETARD, l’opération n’est pas programmée' : ' · elle couvre les '+R.litApres+' premiers jours de lit')+'</span>' : '')+
+        '<span>Lit (dès le jour '+(R.litApres+1)+', '+fmt(R.lit)+' par jour)</span><em>'+fmt(h.lit)+'</em><span class="due">Facturé les jours '+R.factureJours.join(', ')+', à régler en '+R.factureDelai+' jours</span>'+
+        (f ? '<span>Facture du jour '+f.jour+'</span><em>'+fmt(f.reste)+'</em><span class="due">'+(S.jour > f.echeance ? 'EN RETARD · ses soins sont réduits' : 'À régler avant le jour '+f.echeance)+'</span>' : '')+
+        (crise ? '<span>Urgence (crise)</span><em>'+fmt(R.crise)+'</em><span class="due">Avant le jour '+crise.echeance+'</span>' : '')+
+        '<span>Opération'+(h.operation ? '' : h.date ? ' · jour '+R.jours : ' · pas encore programmée')+'</span><em>'+(h.operation ? 'payée ✓' : fmt(R.operation))+'</em></div></div>'+
+      '<div class="card"><span class="k">Service · Docteur Nitcheu</span><span>'+doc+'</span></div>'+
       '<button class="btn" id="visit">Aller la voir · prend le moment</button>'+
-      '<button class="btn ghost" id="payAdv"'+(S.cash<1 || left<1 ? ' disabled' : '')+'>Verser sur l’avance ('+fmt(Math.min(S.cash, left))+')</button>';
-    $('#visit').onclick = visit; $('#payAdv').onclick = payAdvance;
+      (left ? '<button class="btn ghost" id="payAdv"'+(S.cash<1 ? ' disabled' : '')+'>Verser sur l’avance ('+fmt(Math.min(S.cash, left))+')</button>' : '')+
+      (f ? '<button class="btn ghost" id="payBill"'+(S.cash<1 ? ' disabled' : '')+'>Payer la facture ('+fmt(Math.min(S.cash, f.reste))+')</button>' : '')+
+      (can('delai') ? '<button class="btn ghost" id="askDelay">Demander un délai de '+R.delaiNegocie+' jours</button>' : '')+
+      (crise ? '<button class="btn red" id="payCrisis"'+(S.cash<R.crise ? ' disabled' : '')+'>Payer l’urgence ('+fmt(R.crise)+')</button>' : '');
+    $('#visit').onclick = visit;
+    if($('#payAdv')) $('#payAdv').onclick = payAdvance;
+    const free = (a, amount, done)=> confirmPay({to:'hopital', amount, label:a.nom || a.label, pay:()=>{ M.agir(S, a, {montant:amount}); flush(); }, done:done || (()=> openApp('sante'))});
+    if($('#payBill')) $('#payBill').onclick = ()=> free({id:'payerFacture', label:'Hôpital · facture du jour '+f.jour}, Math.min(S.cash, f.reste));
+    if($('#payCrisis')) $('#payCrisis').onclick = ()=> free({id:'payerCrise', label:'Hôpital · urgence'}, R.crise);
+    if($('#askDelay')) $('#askDelay').onclick = ()=>{ M.agir(S, {id:'delai'}); flush(); openApp('sante'); };
   }
   if(id==='agenda'){
     T('Agenda');
     const items = S.agenda.slice().sort((a,b)=> a.day-b.day || a.m-b.m);
     body.innerHTML = items.length ? items.map(a=> '<button class="row" data-pin="'+a.id+'"><span class="pic">'+pic(a.who)+'</span><span class="t"><b>'+esc(a.title)+'</b><small>Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(a.stake)+'</small></span></button>').join('')
       : '<div class="empty">Ton agenda est vide. Les rendez-vous arrivent par message.</div>';
-    body.insertAdjacentHTML('beforeend', '<div class="card"><span class="k">Hôpital</span><span>Avance de 50 000 à verser avant le jour 3.</span></div>');
+    body.insertAdjacentHTML('afterbegin', '<button class="btn" id="agCal">📆 Le calendrier des 30 jours</button>');
+    $('#agCal').onclick = calendrier;
+    if(!S.hop.date) body.insertAdjacentHTML('beforeend', '<div class="card"><span class="k">Hôpital</span><span>Avance de '+fmt(R.avance)+' à verser avant le jour '+R.avanceAvant+' (déjà versé : '+fmt(S.hop.avance)+').</span></div>');
     body.querySelectorAll('[data-pin]').forEach(b=> b.onclick = ()=> openApp('carte', b.dataset.pin));
   }
   if(id==='carte'){ T('Carte · Yaoundé'); drawMap(body, arg); }
@@ -1007,8 +1554,13 @@ function drawThread(){
   if(CHAT[pid] && th.choices) c.querySelector('.lab').textContent = 'Ta réponse · ou écris ce que tu veux en bas';
 }
 async function answer(pid, ch){
-  const th = thread(pid); th.choices = null; th.pressed = 0; clearTimeout(drawThread.t); th.msgs.push({who:'me', txt:ch.t, d:S.day, m:S.m}); save(); drawThread(); renderHome();
+  const th = thread(pid); th.choices = null; th.pressed = 0; clearTimeout(drawThread.t); th.msgs.push({who:'me', txt:ch.t, d:S.jour, m:S.m}); save(); drawThread(); renderHome();
+  // any answer to Princesse is the answer the engine waits for that day
+  if(pid==='princesse'){ M.repondrePrincesse(S); save(); renderHome(); }
   await ANSWERS[ch.a]();
+  // the partner's request waited for the scene to end: it comes back now
+  const d = pid===PART() && !thread(pid).choices && demandChoices();
+  if(d){ thread(pid).choices = d; save(); if(openThread===pid) drawThread(); }
 }
 let typingEl = null;
 function showTyping(on){
@@ -1056,7 +1608,7 @@ function placeCard(k){
 }
 function agCard(id){
   const a = S.agenda.find(x=> x.id===id); if(!a) return;
-  const now = a.day===S.day && a.m===S.m, late = a.day<S.day || (a.day===S.day && a.m<S.m);
+  const now = a.day===S.jour && a.m===S.m, late = a.day<S.jour || (a.day===S.jour && a.m<S.m);
   $('#mapInfo').innerHTML = '<div class="card"><span class="k">Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(PLACES[a.place].name)+'</span><b style="font:700 18px var(--f-t)">'+esc(a.title)+'</b><span>'+esc(a.stake)+'</span>'+
     (now ? '<button class="btn green" id="goAg">Y aller maintenant</button>' : late ? '<span style="color:var(--red);font-weight:800">Trop tard.</span>'
       : '<span style="color:#7A6650;font-weight:800">Pas encore l’heure : jour '+a.day+', '+MOMENTS[a.m].toLowerCase()+'.</span><button class="btn" id="skipAg">⏩ Avancer jusqu’au rendez-vous</button>')+'</div>';
@@ -1072,32 +1624,38 @@ function closeSheet(){ $('#sheet').hidden = true; ['bar', 'insectes', 'sirene'].
 const ambience = n=> SFX.loop(n, n==='sirene' ? .12 : .22);
 $('#sheet').addEventListener('click', e=>{ if(e.target.id==='sheet') closeSheet(); });
 function visit(){
-  if(S.flags['visit'+S.day+'_'+S.m]) return;
-  S.flags['visit'+S.day+'_'+S.m] = 1;
-  // a promise kept (the yoghurt, « demain matin ») or beignets in hand counts double
-  const kept = (S.flags.promisedMorning && S.day===2 && S.m===0) || (S.flags.promiseDay===S.day && S.m===0) || S.flags.beignets===S.day;
-  const rel = kept ? 10 : 6, hp = 2; S.lastVisit = S.day;
-  nudge('rel', rel); nudge('hp', hp);
-  sheet('<h3>Au chevet de Princesse</h3><p class="story">'+(S.flags.beignets===S.day ? 'Elle cache les beignets sous le drap, la bouche pleine. « Ne dis rien à l’infirmière. »' : kept ? (S.day===2 ? 'Elle voit le yaourt et rit malgré la perfusion. « Tu as tenu parole. »' : 'Elle t’attendait, assise, déjà coiffée. « Tu as tenu parole. »') : 'Elle dort. Tu poses ta main sur la sienne. Elle ouvre un œil : « Tu es venu'+G().e+'. »')+'</p>'+
-    '<div class="delta"><span class="up">Relation +'+rel+'</span><span class="up">Santé +'+hp+'</span><span>Le moment est passé</span></div><div class="btns"><button class="btn" id="okV">Continuer</button></div>');
-  $('#okV').onclick = ()=>{ closeSheet(); advance();
+  // the engine says when you can: mornings and afternoons, not in intensive care, not while she refuses to see you
+  if(!M.actions(S).some(a=> a.id==='visite')){
+    const why = S.sis.sante < 15 ? 'Elle est en soins intensifs. Le Docteur Nitcheu ne laisse entrer personne.' : S.sis.relation < R.relationRefus ? 'Elle ne veut pas te voir. Un cadeau, d’abord ('+fmt(R.cadeauMin)+'), et peut-être demain.' : 'Les visites, c’est le matin et l’après-midi. Reviens demain.';
+    sheet('<h3>Hôpital Central</h3><p class="story">'+why+'</p><div class="btns"><button class="btn" id="okV">Fermer</button></div>'); $('#okV').onclick = closeSheet; return; }
+  // a promise kept (the yoghurt, « demain matin ») or beignets in hand counts more
+  const kept = S.sis.promesse===S.jour, beignets = S.flags.beignets===S.jour, rel0 = S.sis.relation, hp0 = S.sis.sante;
+  const r = act({id:'visite'}), rel = S.sis.relation - rel0, hp = S.sis.sante - hp0;
+  const sign = n=> (n >= 0 ? '+' : '−')+Math.abs(n);
+  sheet('<h3>Au chevet de Princesse</h3><p class="story">'+(beignets ? 'Elle cache les beignets sous le drap, la bouche pleine. « Ne dis rien à l’infirmière. »' : kept && S.jour===2 ? 'Elle voit le yaourt et rit malgré la perfusion. « Tu as tenu parole. »' : esc(r.texte))+'</p>'+
+    '<div class="delta"><span class="'+(rel >= 0 ? 'up' : 'dn')+'">Relation '+sign(rel)+'</span><span class="'+(hp >= 0 ? 'up' : 'dn')+'">Santé '+sign(hp)+'</span><span>Le moment est passé</span></div><div class="btns"><button class="btn" id="okV">Continuer</button></div>');
+  $('#okV').onclick = ()=>{ closeSheet(); moved();
     // she does not share you, not even with your sister
     // once a day at most, and never the same words twice in a row
-    if(PART()==='pamela' && S.pam.storm>40 && S.flags.jealousDay!==S.day){ S.flags.jealousDay = S.day; pam(0, +5);
+    if(PART()==='pamela' && S.amour.orage>40 && S.flags.jealousDay!==S.jour){ S.flags.jealousDay = S.jour; pam(0, +5);
       const J = [['Encore à l’hôpital ?', 'Tu passes plus de temps avec ta sœur qu’avec moi.'], ['Tu es encore là-bas ?', 'Moi aussi je peux tomber malade, tu sais.'],
         ['Ta sœur, ta sœur, toujours ta sœur.'], ['Je suis passée devant chez toi. Personne.', 'Laisse-moi deviner : l’hôpital.'], ['Dis bonjour à Princesse de ma part.', 'Elle ne me répondra pas, mais dis-le quand même.'],
         ['Tu sais quoi, vas-y. Reste avec elle.', 'Je ne dirai plus rien.']];
       const k = S.flags.jealousN = ((S.flags.jealousN ?? -1) + 1) % J.length; setTimeout(()=> say('pamela', J[k]), 2600); } };
 }
 function payAdvance(){
-  const left = S.hosp.advance - S.hosp.paid, amt = Math.min(S.cash, left);
+  const left = R.avance - S.hop.avance, amt = Math.min(S.cash, left);
   if(amt<1) return;
-  confirmPay({to:'hopital', amount:amt, label:'Avance d’admission ('+Math.round((S.hosp.paid+amt)/S.hosp.advance*100)+' % payés)',
-    pay:()=>{ S.hosp.paid += amt; tx(-amt, 'Hôpital · avance d’admission', 'hopital'); }, done:()=> openApp('sante')});
+  confirmPay({to:'hopital', amount:amt, label:'Avance d’admission ('+Math.round((S.hop.avance+amt)/R.avance*100)+' % payés)',
+    pay:()=>{ M.agir(S, {id:'payerAvance'}, {montant:amt}); flush(); }, done:()=> openApp('sante')});
+}
+function repayDebt(d){
+  const amt = Math.min(S.cash, d.du); if(amt<1) return;
+  confirmPay({to:d.qui, amount:amt, label:'Remboursement · '+d.nom, pay:()=>{ M.agir(S, {id:'rembourser', dette:d.id}, {montant:amt}); flush(); }, done:()=> openApp('banque')});
 }
 // what a gift does depends on who receives it: your sister feels it, Amour (or Daryl) remembers it, a friend thanks you
 const GIFT = {
-  princesse:a=>{ nudge('rel', Math.min(8, Math.round(a/1000) + 1)); say('princesse', [a>=5000 ? 'Mais ?? '+fmt(a)+' ? Tu es fou'+G().e+' 😭 Merci…' : 'Merci '+G().gf+' 🥺 Je vais m’acheter du jus.']); },
+  princesse:a=>{ nudge('relation', Math.min(8, Math.round(a/1000) + 1)); say('princesse', [a>=5000 ? 'Mais ?? '+fmt(a)+' ? Tu es fou'+G().e+' 😭 Merci…' : 'Merci '+G().gf+' 🥺 Je vais m’acheter du jus.']); },
   pamela:a=>{ pam(Math.min(10, Math.round(a/2000) + 1), -Math.min(10, Math.round(a/2000))); say('pamela', [pick('pamela', a>=10000 ? ['Ohhh 😍 Tu vois que tu m’aimes.', 'Mon bébé est généreux aujourd’hui 😘'] : ['C’est pour quoi ça ? 😏', 'Merci… c’est mignon 😘'])
     || 'Merci bébé 😘']); },
   yowale:a=>{ pam(Math.min(6, Math.round(a/2000) + 1), 0); say('yowale', [pick('yowale', ['Ma belle 😍 tu es une reine', 'Je ne vais pas tout parier, promis 😂']) || 'Merci 😘']); },
@@ -1121,9 +1679,9 @@ function sendMoney(){
 }
 // the Maison: 5 000 to register, then the first real table, where the house keeps 10 % of every pot
 function inscription(a){
-  const need = 5000;
+  const need = R.inscriptionAcompte, pay = Math.min(S.cash, R.inscription);
   if(S.cash < need){
-    sheet('<h3>Inscription à la Maison</h3><p class="story">Maître Tsala tend la main sans lever les yeux : « 5 000. »</p>'+
+    sheet('<h3>Inscription à la Maison</h3><p class="story">Maître Tsala tend la main sans lever les yeux : « '+fmt(R.inscription)+'. La moitié tout de suite, '+fmt(need)+'. Le reste, je le prends sur tes gains. »</p>'+
       '<p style="font-weight:800;color:var(--red)">Il te manque '+fmt(need - S.cash)+'.</p><p>Regarde tes messages : des gens te proposent de l’argent… à leurs conditions.</p>'+
       '<div class="btns"><button class="btn" id="okI">Voir mes messages</button></div>');
     $('#okI').onclick = ()=>{ closeSheet(); openApp('messages'); };
@@ -1132,58 +1690,59 @@ function inscription(a){
   ambience('bar');
   const remark = knows('pam_paid') ? '<p class="story">« La fille d’Hubert paie pour toi ? Intéressant… Très intéressant. »</p>' : knows('loan_gv') ? '<p class="story">« Je reconnais ces billets. Papa Gros-Ventre. Tu commences bien, toi. »</p>' : '';
   sheet('<h3>Inscription à la Maison</h3><p class="story">La porte en fer s’ouvre. Fumée, néons, le bruit des cartes. Maître Tsala compte tes billets un par un.</p>'+remark+
-    '<div class="delta"><span class="dn">Tu paies 5 000</span><span>Il te restera '+fmt(S.cash - need)+'</span></div>'+
-    '<div class="btns"><button class="btn" id="payI">Payer et m’inscrire</button><button class="btn ghost" id="laterI">Pas maintenant</button></div>');
+    '<div class="delta"><span class="dn">Tu paies '+fmt(pay)+'</span>'+(pay < R.inscription ? '<span>Les '+fmt(R.inscription - pay)+' restants seront pris sur tes gains à la Maison</span>' : '')+'<span>Il te restera '+fmt(S.cash - pay)+'</span></div>'+
+    '<div class="btns"><button class="btn" id="payI">Payer et m’inscrire · prend la soirée</button><button class="btn ghost" id="laterI">Pas maintenant</button></div>');
   $('#laterI').onclick = closeSheet;
   $('#payI').onclick = ()=>{
-    tx(-need, 'Maison · inscription'); a.done = 1; remember('member'); save();
-    const stake = 2000, pot = stake*2, cut = pot*0.10;
+    act({id:'inscription'}); a.done = 1; remember('member'); flush();
+    // the night that follows: the first table of the common room, where the house keeps 10 % of every pot
+    const t = M.TABLES.commune, stake = t.mises[0], pot = stake*t.joueurs, cut = Math.round(pot*t.coupe);
     if(S.cash < stake){
       sheet('<h3>Bienvenue à la Maison</h3><p class="story">Te voilà membre. Mais avec '+fmt(S.cash)+' en poche, tu ne peux même pas t’asseoir à une table.</p><div class="btns"><button class="btn" id="okW">Retour au téléphone</button></div>');
-      $('#okW').onclick = ()=>{ closeSheet(); openApp('banque'); }; return;
+      $('#okW').onclick = ()=>{ closeSheet(); moved(); }; return;
     }
-    sheet('<h3>Ta première table</h3><p class="story">Salle commune. Un inconnu en costume pose 2 000. « On joue ? »</p>'+
-      '<div class="card"><span class="k">Comment la Maison gagne</span><div class="bill"><span>Ta mise</span><em>2 000</em><span>Sa mise</span><em>2 000</em><span>Pot</span><em>'+fmt(pot)+'</em><span>La Maison prend 10 %</span><em>−'+fmt(cut)+'</em><span>Le gagnant touche</span><em>'+fmt(pot - cut)+'</em></div></div>'+
-      '<div class="btns"><button class="btn green" id="tw">Jouer · mise 2 000</button></div>');
+    sheet('<h3>Ta première table</h3><p class="story">Minuit, salle commune. Quatre chaises, quatre mises de '+fmt(stake)+'. En face de toi, un inconnu en costume. « On joue ? »</p>'+
+      '<div class="card"><span class="k">Comment la Maison gagne</span><div class="bill"><span>Ta mise</span><em>'+fmt(stake)+'</em><span>Les trois autres</span><em>'+fmt(stake*(t.joueurs - 1))+'</em><span>Pot</span><em>'+fmt(pot)+'</em><span>La Maison prend '+Math.round(t.coupe*100)+' %</span><em>−'+fmt(cut)+'</em><span>Le gagnant touche</span><em>'+fmt(pot - cut)+'</em></div></div>'+
+      '<div class="btns"><button class="btn green" id="tw">Jouer · mise '+fmt(stake)+' · prend la nuit</button><button class="btn ghost" id="tLater">Rentrer dormir</button></div>');
+    $('#tLater').onclick = ()=>{ closeSheet(); moved(); };
     $('#tw').onclick = async ()=>{
-      tx(-stake, 'Maison · mise de la première table');
-      const r = await playTable({opp:'costume', name:'L’homme en costume', stake, target:3, table:'tripot', title:'Maison · salle commune'});
-      if(r.won) tx(pot - cut, 'Maison · pot gagné (après les 10 % de la Maison)');
-      end(r.won);
+      const r = await playTable(Object.assign({stake, target:3, title:'Maison · salle commune'}, PLAY.commune));
+      const c0 = S.cash; act({id:'table', table:'commune', mise:stake}, {gagne:r.won}); flush(); end(r.won, S.cash - c0);
     };
-    const end = won=>{
+    const end = (won, net)=>{
       const d = debtsLeft();
       sheet('<h3>'+(won ? 'Première victoire' : 'Première défaite')+'</h3><p class="story">'+(won ? 'L’inconnu sourit. « On se reverra. » Tu remarques qu’il salue Hubert Ondoua en sortant.' : 'L’inconnu ramasse le pot sans un mot. Maître Tsala, au fond, ricane.')+'</p>'+
-        '<div class="delta"><span class="'+(won ? 'up' : 'dn')+'">'+(won ? '+'+fmt(pot - cut - stake)+' net' : '−'+fmt(stake))+'</span><span>Solde : '+fmt(S.cash)+'</span>'+(d.length ? '<span class="dn">Dettes : '+fmt(d.reduce((s, x)=> s + owed(x), 0))+'</span>' : '')+'</div>'+
+        '<div class="delta"><span class="'+(net >= 0 ? 'up' : 'dn')+'">'+(net >= 0 ? '+' : '−')+fmt(Math.abs(net))+' net</span><span>Solde : '+fmt(S.cash)+'</span>'+(d.length ? '<span class="dn">Dettes : '+fmt(d.reduce((s, x)=> s + x.du, 0))+'</span>' : '')+'</div>'+
+        (won && S.inscriptionDue===0 && pay < R.inscription ? '<p style="font-weight:800">Tsala a gardé de quoi finir ton inscription.</p>' : '')+
         (knows('match_fixed') ? '<p style="font-weight:800">Demain soir : le match arrangé de Bosco, au Bon Coin.</p>' : '')+
-        '<div class="btns"><button class="btn" id="okT">Voir ma banque</button></div>');
-      $('#okT').onclick = ()=>{ closeSheet(); openApp('banque'); };
+        '<div class="btns"><button class="btn" id="okT">Retour au téléphone</button></div>');
+      $('#okT').onclick = ()=>{ closeSheet(); moved(); };
     };
   };
 }
 // Bosco paid you to lose against Mado: keep your word (and your shame), or play to win and betray him
 function fixedMatch(a){
   ambience('bar');
-  sheet('<h3>Le Bon Coin</h3><p class="story">Bosco essuie un verre et te fait un clin d’œil. En face, Mado bat les cartes. Elle ne sait rien. Mise : 1 000.</p>'+
+  const stake = 1000, table = {id:'table', table:'boncoin', mise:stake};
+  if(S.cash < stake){ sheet('<h3>Le Bon Coin</h3><p class="story">Bosco te regarde vider tes poches. « Même pas '+fmt(stake)+' pour t’asseoir ? »</p><div class="btns"><button class="btn" id="okFx">Partir</button></div>'); $('#okFx').onclick = closeSheet; return; }
+  sheet('<h3>Le Bon Coin</h3><p class="story">Bosco essuie un verre et te fait un clin d’œil. En face, Mado bat les cartes. Elle ne sait rien. Mise : '+fmt(stake)+'.</p>'+
     '<div class="btns"><button class="btn" id="fxLose">Perdre exprès, comme promis</button><button class="btn red" id="fxWin">Jouer pour gagner (trahir Bosco)</button></div>');
   $('#fxLose').onclick = ()=>{
-    a.done = 1; tx(-1000, 'Bon Coin · mise perdue exprès contre Mado'); remember('kept_deal'); save();
+    a.done = 1; act(table, {gagne:false}); remember('kept_deal'); flush();
     sheet('<h3>Tu as perdu exprès</h3><p class="story">Tu joues le 9 au lieu du 3. Mado ramasse le pot en riant. Au comptoir, Bosco lève son verre vers toi. Mado, elle, te regarde un peu trop longtemps.</p>'+
-      '<div class="delta"><span class="dn">−1 000 de mise</span><span class="up">Bosco t’avait donné 3 000</span></div><div class="btns"><button class="btn" id="okFx">Retour au téléphone</button></div>');
-    $('#okFx').onclick = closeSheet;
+      '<div class="delta"><span class="dn">−'+fmt(stake)+' de mise</span><span class="up">Bosco t’avait donné 3 000</span></div><div class="btns"><button class="btn" id="okFx">Retour au téléphone</button></div>');
+    $('#okFx').onclick = ()=>{ closeSheet(); moved(); };
     setTimeout(()=> say('bosco', ['Propre. Très propre. 😏', 'Je t’appellerai pour d’autres « services ».']), 2500);
   };
   $('#fxWin').onclick = async ()=>{
-    tx(-1000, 'Bon Coin · mise contre Mado');
-    const r = await playTable({opp:'mado', name:'Mado', stake:1000, target:3, table:'zinc', title:'Le Bon Coin · contre Mado'});
-    a.done = 1; remember('betrayed_bosco'); save();
-    if(r.won) tx(2000, 'Bon Coin · pot gagné contre Mado');
+    const r = await playTable(Object.assign({stake, target:3, title:'Le Bon Coin · contre Mado'}, PLAY.boncoin));
+    a.done = 1; act(table, {gagne:r.won}); remember('betrayed_bosco'); flush();
     sheet('<h3>'+(r.won ? 'Tu as gagné… et trahi Bosco' : 'Tu as perdu pour de vrai')+'</h3><p class="story">'+(r.won ? 'Mado jette ses cartes. Au comptoir, Bosco pose son verre si fort qu’il se fend.' : 'Tu as voulu gagner et Mado t’a battu. Bosco sourit : pour lui, le contrat est rempli. Toi, tu as tout perdu sauf ton honneur.')+'</p>'+
       '<div class="btns"><button class="btn" id="okFx">Retour au téléphone</button></div>');
-    $('#okFx').onclick = closeSheet;
+    $('#okFx').onclick = ()=>{ closeSheet(); moved(); };
     if(r.won){
-      // betraying him is a debt too: 6 000 tomorrow, written down like any other
-      S.debts = S.debts || []; S.debts.push({id:'bosco-'+S.day, who:'bosco', label:'Bosco · trahison', principal:6000, paid:0, day:S.day, rate:0, due:S.day + 1}); save();
+      // betraying him is a debt too: 6 000 tomorrow, written in the bank like any other
+      M.devoir(S, 'bosco', 'Bosco · trahison', 6000, 1); save();
       setTimeout(()=> burst('bosco', ['Tu crois que je suis un enfant ?', 'Mes 3 000. Demain. Plus 3 000 pour l’humiliation.', 'Sinon on va causer autrement.']), 2500);
     }
   };
@@ -1194,70 +1753,93 @@ function veillee(a){
     : (knows('pam_suspicious') || hot()) ? '<p class="story">Une Toyota noire est garée en face. Amour. Elle te regarde jouer, sans sortir de la voiture.</p>'
     : knows('pam_intel') ? '<p class="story">Grâce au conseil d’Amour, tu n’as pris que le strict minimum sur toi.</p>' : '';
   ambience('insectes');
-  sheet('<h3>La veillée chez RALL</h3><p class="story">Une bâche, deux ampoules, l’odeur du soya. RALL t’accueille : « Mise de 500. On joue au Fap Fap, premier à 3. »</p>'+echo+
-    '<div class="delta"><span>Tu risques 500</span><span>Tu peux gagner 500</span><span>Si tu perds, il te reste&nbsp;'+fmt(S.cash-500)+'</span></div>'+
-    '<div class="btns"><button class="btn green" id="w">Jouer contre RALL</button><button class="btn ghost" id="l">Pas ce soir</button></div>');
+  const stake = 500, broke = S.cash < stake;
+  sheet('<h3>La veillée chez RALL</h3><p class="story">Une bâche, deux ampoules, l’odeur du soya. RALL t’accueille : « Mise de '+fmt(stake)+'. On joue au Fap Fap, premier à 3. »</p>'+echo+
+    (broke ? '<p style="font-weight:800">Tu n’as pas '+fmt(stake)+'. Tu regardes jouer, et RALL te présente quand même aux anciens.</p>'
+      : '<div class="delta"><span>Tu risques '+fmt(stake)+'</span><span>Tu peux gagner '+fmt(stake)+'</span><span>Si tu perds, il te reste&nbsp;'+fmt(S.cash - stake)+'</span></div>')+
+    '<div class="btns"><button class="btn green" id="w">'+(broke ? 'Regarder et apprendre' : 'Jouer contre RALL')+' · prend la soirée</button><button class="btn ghost" id="l">Pas ce soir</button></div>');
   $('#l').onclick = closeSheet;
   $('#w').onclick = async ()=>{
-    tx(-500, 'Veillée chez RALL · mise');
-    const r = await playTable({opp:'rall', name:'RALL', stake:500, target:3, table:'auvent', title:'La veillée chez RALL'});
-    a.done = 1; if(r.won) tx(+1000, 'Veillée chez RALL · pot gagné'); save(); end(r.won);
+    const r = broke ? {won:false} : await playTable({opp:'rall', name:'RALL', stake, target:3, table:'auvent', title:'La veillée chez RALL'});
+    a.done = 1; act({id:'veillee'}, {gagne:r.won}); flush(); end(r.won);
   };
   function end(won){
-    sheet('<h3>'+(won ? 'RALL rit jaune' : 'RALL ramasse')+'</h3><p class="story">'+(won ? '« Ahan ! Tu n’as pas perdu la main. Avec ça, la Maison peut t’écouter. »' : '« Eh, tu joues comme un enfant ce soir. Reviens demain, on recommence. »')+'</p>'+
+    sheet('<h3>'+(broke ? 'Une soirée à regarder' : won ? 'RALL rit jaune' : 'RALL ramasse')+'</h3><p class="story">'+(broke ? '« Regarde bien comment ils tiennent leurs cartes. Demain, c’est toi. »' : won ? '« Ahan ! Tu n’as pas perdu la main. Avec ça, la Maison peut t’écouter. »' : '« Eh, tu joues comme un enfant ce soir. Reviens demain, on recommence. »')+'</p>'+
       '<p>RALL te glisse une carte : « Demain matin, la Maison, à Nkolbisson. Le jury te fait passer l’examen. Révise. »</p><div class="btns"><button class="btn" id="okE">Retour au téléphone</button></div>');
-    $('#okE').onclick = ()=>{
+    $('#okE').onclick = async ()=>{
       closeSheet();
-      if(!S.agenda.some(x=> x.id==='examen')){ S.agenda.push({id:'examen', day:3, m:0, place:'maison', title:'Examen d’entrée de la Maison', who:'tsala', stake:'20 questions · 14 pour entrer'}); save(); }
-      openApp('agenda');
+      if(!S.agenda.some(x=> x.id==='examen')){ S.agenda.push({id:'examen', day:S.jour + 1, m:0, place:'maison', title:'Examen d’entrée de la Maison', who:'tsala', stake:'20 questions · 14 pour entrer'}); save(); }
+      await moved(); openApp('agenda');
     };
   }
 }
-// every morning the money moves on its own: the tontine takes its share (or pays you on your turn), debts grow and remind you
-function morning(){
-  const t = S.tontine;
-  if(t && t.active){
-    // your turn pays the whole pot… but you keep paying every day until everyone has had theirs
-    if(S.day === t.joined + t.turn && !t.got){ t.got = 1; tx(t.daily*t.of, 'Tontine · c’est ton tour !', 'clarisse'); setTimeout(()=> say('clarisse', ['C’est ton tour 🎉', fmt(t.daily*t.of)+' versés.', 'N’oublie pas : tu cotises jusqu’au jour '+(t.joined + t.of)+', comme tout le monde 🙏']), 1800); }
-    else if(S.day > t.joined + t.of){ t.active = 0; }
-    else if(S.cash >= t.daily){ t.paid++; tx(-t.daily, 'Tontine de Clarisse · cotisation', 'clarisse'); }
-    else { t.missed = (t.missed||0) + 1; remember('tontine_missed');
-      setTimeout(()=> say('clarisse', t.got ? ['Tu as touché ta part et tu ne cotises plus ?', 'Tout le quartier va le savoir. Ton nom, c’est tout ce que tu as.'] : ['Tu n’as pas cotisé ce matin.', 'Encore une fois et tu perds ton tour. Les règles, c’est les règles.']), 1800); }
+// ===================== time: one action per moment; the engine moves the clock, the phone catches up =====================
+// act() does what the player chose (the engine applies the rules and, if it takes the moment, moves the clock). moved()
+// then shows what happened: the black card of the new moment, the messages of the morning, the doors of the story that
+// open now, a missed meeting that comes back, and the end when it has come.
+function act(a, o){ const r = M.agir(S, a, o || {}); save(); return r; }
+async function moved(fast){
+  if(!S || !S.started) return;
+  const now = S.jour+'-'+S.m, prev = S.vu, changed = prev!==now, newDay = changed && +prev.split('-')[0] !== S.jour;
+  S.vu = now;
+  let ghosted = false;
+  if(changed){
+    // leaving the partner on « Vu »: the moment passes without your answer, and that is an answer too
+    const pt = S.threads[PART()]; ghosted = !!(pt && pt.choices);
+    if(ghosted){ pt.choices = null; pt.pressed = 0; remember('ghosted'); if(PART()==='pamela') pam(-4, +15); else pam(-1, 0); if(S.amour.demande) M.repondreDemande(S, false); }
+    busy = 1; save();
+    // the black card says where you are: the day out of 30, the moment among the 4, and on a new day what is left
+    const left = R.jours - S.jour, dots = MOMENTS.map((_, i)=> '<i style="display:inline-block;width:9px;height:9px;margin:0 4px;border-radius:50%;background:'+(i===S.m ? 'var(--mango)' : i < S.m ? '#7A6650' : '#333')+'"></i>').join('');
+    const bl = $('#black'); bl.innerHTML = '<div><small>Jour '+S.jour+' / '+R.jours+(S.fin ? '' : ' · '+M.jourNom(S.jour))+'</small>'+MOMENTS[S.m]+
+      '<div style="margin-top:10px">'+dots+'</div>'+(newDay && !S.fin && !S.hop.operation ? '<small style="margin:12px 0 0;color:#f6ead6">'+(left ? 'Opération dans '+left+' jour'+(left > 1 ? 's' : '') : 'Opération ce soir')+'</small>' : '')+'</div>'; bl.classList.add('on');
+    await wait(fast ? 650 : newDay ? 1700 : 1100); bl.classList.remove('on'); busy = 0;
   }
-  // the hospital does not wait: an unpaid advance costs her health every morning
-  if(S.day > S.hosp.advDue && S.hosp.paid < S.hosp.advance){ nudge('hp', -4);
-    setTimeout(()=> say('mengue', ['Bonjour. L’avance de '+fmt(S.hosp.advance - S.hosp.paid)+' n’est toujours pas réglée.', 'Sans elle, nous réduisons ses soins. Je suis désolé.']), 3200); }
-  // two days without a visit and she feels it
-  if(S.day >= 4 && S.day - (S.lastVisit || 1) >= 2){ nudge('rel', -4); if(!S.flags['miss'+S.day]){ S.flags['miss'+S.day] = 1; setTimeout(()=> say('princesse', ['Tu m’as oubliée ?']), 4200); } }
-  debtsLeft().forEach(d=>{
-    if(!d.rate) return;
-    if(S.day === d.due - 1) setTimeout(()=> say('grosventre', ['Bonjour mon fils 😊', 'Demain, c’est le jour. '+fmt(owed(d))+'. Je sais que tu n’as pas oublié.']), 2400);
-    if(S.day > d.due) setTimeout(()=> burst('grosventre', ['Mon fils 😊', 'Tu as oublié quelque chose ?', 'Aujourd’hui c’est '+fmt(owed(d))+'.', 'Les intérêts, eux, n’oublient jamais.']), 2400);
+  show('scHome'); curApp = null; openThread = null;
+  flush();
+  if(S.fin) return ending();
+  if(ghosted) PART()==='pamela' ? burst('pamela', hot() ? ['Vu.', 'Tu as vu et tu ne réponds pas ?', 'Ok.', 'Tu vas voir.'] : ['Vu…', 'Bon. Ok. 😒']) : say('yowale', ['lol ok 😂']);
+  // two days without a visit: she says it once (the engine already counts it in your relation)
+  if(newDay && S.jour >= 4 && S.jour - S.sis.derniereVisite >= 2) talk = talk.then(()=> say('princesse', ['Tu m’as oubliée ?'])).catch(()=>{});
+  agendaRoll(); renderHome();
+  await doors();
+}
+// the doors of the story (engine, M3): each scene waits for its window and its conditions, plays once, never blocks
+async function doors(){ for(const id of M.portesOuvertes(S)){ M.marquer(S, id); save(); await beat(id); } }
+// a meeting is never « too late »: what the story needs comes back at the next occasion; a one-off missed has its consequence
+const AG_RETRY = {veillee:2, examen:0, inscription:2};
+const AG_DONE = {veillee:()=> S.veillee, examen:()=> S.examen, inscription:()=> S.membre};
+const AG_MISSED = {
+  bosco:()=>{ M.devoir(S, 'bosco', 'Bosco · les 3 000 du match', 3000, 2); talk = talk.then(()=> burst('bosco', ['Tu n’es pas venu'+G().e+'.', 'Mes 3 000. Après-demain. On ne fait pas attendre Bosco.'])); },
+  colis:()=>{ dealSet('colis', 'abandonné', {who:'armand', title:'Le colis de Mokolo', pay:0}); remember('dropped_parcel'); talk = talk.then(()=> burst('armand', ['Le garçon en jaune vous a attendu.', 'Je n’aime pas les gens qui ne viennent pas.'])); },
+  tournoi:()=>{ talk = talk.then(()=> say('tsala', ['Ta chaise est restée vide samedi.', 'Il y a un tournoi chaque samedi. Les lâches aussi ont droit à une deuxième chance.'])); },
+};
+function agendaRoll(){
+  S.agenda.forEach(a=>{
+    if(a.done) return;
+    if(AG_DONE[a.id] && AG_DONE[a.id]()){ a.done = 1; return; }
+    if(a.day > S.jour || (a.day===S.jour && a.m >= S.m)) return;
+    if(a.id in AG_RETRY){ const m = AG_RETRY[a.id]; a.day = S.m <= m ? S.jour : S.jour + 1; a.m = m; return; }
+    a.done = 1; if(AG_MISSED[a.id]) AG_MISSED[a.id](a);
   });
   save();
 }
 // the time is the player's: one moment at a time, or straight to the next meeting (nothing is skipped: each moment's news still arrives)
 async function skipTo(day, m){
-  while(S.day<day || (S.day===day && S.m<m)) await advance(true);
+  while(!S.fin && (S.jour<day || (S.jour===day && S.m<m))) await advance(true);
 }
+// « ⏩ »: nothing else to do this moment, so you rest (in a cell or after a beating, you wait)
 async function advance(fast){
-  if(busy) return; busy = 1;
-  // leaving the partner on "Vu": the moment passes without your answer, and that is an answer too
-  const pt = S.threads[PART()], ghosted = !!(pt && pt.choices);
-  if(ghosted){ pt.choices = null; pt.pressed = 0; remember('ghosted'); if(PART()==='pamela') pam(-4, +15); else pam(-1, 0); }
-  const last = S.m===3;
-  S.m = last ? 0 : S.m + 1; if(last){ S.day++; S.hosp.owed += S.hosp.daily; }
-  save();
-  const bl = $('#black'); bl.innerHTML = '<div><small>Jour '+S.day+'</small>'+MOMENTS[S.m]+'</div>'; bl.classList.add('on');
-  await wait(fast ? 650 : 1100); bl.classList.remove('on');
-  renderHome(); show('scHome'); busy = 0;
-  if(ghosted) PART()==='pamela' ? burst('pamela', hot() ? ['Vu.', 'Tu as vu et tu ne réponds pas ?', 'Ok.', 'Tu vas voir.'] : ['Vu…', 'Bon. Ok. 😒']) : say('yowale', ['lol ok 😂']);
-  if(last) morning();
-  if(S.day===1 && S.m===3) beat('part1');
-  if(S.day===2 && S.m===0) beat('day2am');
-  if(S.day===2 && S.m===1) beat('day2pm');
-  // from day 4 on, the act 2 moments ('d5m1' = day 5, afternoon)
-  if(S.day>=4) beat('d'+S.day+'m'+S.m);
+  if(busy || !S || S.fin) return;
+  act({id:S.cellule > 0 || S.tabassage > 0 ? 'attendre' : 'repos'});
+  await moved(!!fast);
+}
+// the end: the engine decides it, the phone tells it like the opening, then a new game
+function ending(){
+  if(S.flags.endShown) return; S.flags.endShown = 1; save();
+  const F = M.FINS[S.fin] || {titre:'Fin', texte:''}, dark = /^tragique|chute/.test(S.fin);
+  film([{bg:dark ? 'decor-nuit' : 'decor-hopital', sfx:dark ? ['tonnerre', .5] : ['bip'], html:'<span class="sm">Jour '+Math.min(S.jour, R.jours)+'</span><p class="nr">'+esc(F.texte)+'</p>'},
+    {bg:'decor-nuit', ttl:1, html:'<span class="k">Fin</span><span class="n" style="font-size:clamp(34px,10vw,48px)">'+esc(F.titre.toUpperCase())+'</span><button class="btn" data-go="1">Recommencer</button>'}],
+    ()=>{ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); });
 }
 
 // ===================== the opening =====================
@@ -1276,15 +1858,15 @@ async function opening(){
     await line('Docteur Nitcheu', 'Mais son cœur… Il faudra opérer. Et vite.');
     await line(S.hero.name, 'Opérer ? Ça coûte combien, docteur ?', 'me');
     await line('', '1 000 000 F', 'big');
-    await line('Docteur Nitcheu', 'Il me faut une avance de 50 000 d’ici trois jours pour la garder en soins. Je suis désolé.');
+    await line('Docteur Nitcheu', 'Il me faut une avance de '+fmt(R.avance)+' avant le jour '+R.avanceAvant+' pour programmer l’opération. Je suis désolé.');
     await line('Docteur Nitcheu', 'Passez la voir. Elle vous réclame.');
     clearInterval(tick);
     $('#callActs').innerHTML = '<button class="btn" id="hang">Raccrocher</button>';
     $('#hang').onclick = ()=>{
       // the story starts everyone at 3 500: in the game, the real chips are set to that (the player agreed on the title screen)
-      S.started = true; S.cash = 0; if(HOST) hostPost({zh:'set', chips:0}); tx(3500, 'Ce qu’il te reste'); save();
-      const bl = $('#black'); bl.innerHTML = '<div><small>Tu as</small>3 500</div>'; bl.classList.add('on');
-      setTimeout(()=>{ bl.classList.remove('on'); show('scHome'); renderHome(); beat('sis1'); }, 1700);
+      S.started = true; S.cash = lastCash = 0; S.vu = S.jour+'-'+S.m; if(HOST) hostPost({zh:'set', chips:0}); tx(R.depart, 'Ce qu’il te reste'); save();
+      const bl = $('#black'); bl.innerHTML = '<div><small>Tu as</small>'+fmt(R.depart)+'</div>'; bl.classList.add('on');
+      setTimeout(()=>{ bl.classList.remove('on'); moved(); }, 1700);
     };
   };
   $('#callNo').onclick = ()=>{ ring(false); $('#callSub').textContent = 'Appel manqué… ça rappelle.'; setTimeout(()=>{ $('#callSub').textContent = 'Appel entrant…'; ring(true); }, 1600); };
@@ -1554,29 +2136,28 @@ function examResult(){
     '<div class="ex-score">'+s+'<small>/20</small></div>'+
     (title ? '<div class="badge-big">'+medal+'<b>'+title+'</b><span>'+(s===20 ? 'Invitation directe en salle 2' : '+2 000 de prime')+'</span></div>' : '')+
     '<div class="ex-lv">'+LEVELS.map((L, i)=> '<span>'+L+'</span><em>'+EX.byLvl[i]+' / 4</em>').join('')+'<span>Meilleure série</span><em>🔥 '+EX.best+'</em></div>'+
-    (pass ? '<p style="margin:0;color:var(--mute);font-weight:700">Inscription à la Maison : 5 000 à payer avant ta première table.</p>' : '<p style="margin:0;color:var(--mute);font-weight:700">Il fallait 14. Repasser l’examen coûte 1 000 et une journée.</p>')+'</div>';
+    (pass ? '<p style="margin:0;color:var(--mute);font-weight:700">Inscription à la Maison : '+fmt(R.inscription)+', dont '+fmt(R.inscriptionAcompte)+' tout de suite, ce soir.</p>' : '<p style="margin:0;color:var(--mute);font-weight:700">Il fallait 14. '+(S.started ? 'Tu peux repasser demain matin, pour 1 000.' : 'Réessaie.')+'</p>')+'</div>';
   $('#exFoot').className = 'ex-foot'; $('#exFb').hidden = true;
-  const go = $('#exGo'); go.disabled = false; go.textContent = pass ? 'Retour au téléphone' : 'Repasser l’examen (1 000)';
+  const go = $('#exGo'); go.disabled = false; go.textContent = pass || S.started ? 'Retour au téléphone' : 'Repasser l’examen';
   EX.end = true;
   if(S.started){
-    S.badges = S.badges || {};
+    // the sitting takes the morning; the engine opens the Maison (or not), and charges the 1 000 of a retake
+    act({id:'examen'}, {reussi:pass});
     if(s>=18 && !S.badges.eleve){ S.badges.eleve = 1; tx(2000, 'Prime de la Maison · examen '+s+'/20'); }
     if(s===20) S.badges.prodige = 1;
     if(pass){ S.flags.examPassed = s; PLACES.maison.open = true; }
     const ag = S.agenda.find(a=> a.id==='examen'); if(ag && pass) ag.done = 1;
-    // passing opens the next problem: 5 000 to register, this evening
-    if(pass && !S.agenda.some(a=> a.id==='inscription')){
-      S.agenda.push({id:'inscription', day:S.day + (S.m>2 ? 1 : 0), m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:'5 000 à payer · puis ta première table'});
-      setTimeout(()=> beat('day3money'), 1500);
-    }
-    save();
+    // passing opens the next problem: the registration, this evening
+    if(pass && !S.agenda.some(a=> a.id==='inscription'))
+      S.agenda.push({id:'inscription', day:S.jour + (S.m>2 ? 1 : 0), m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:fmt(R.inscriptionAcompte)+' à payer · puis ta première table'});
+    flush();
   }
 }
 $('#exGo').onclick = ()=>{
   if(EX.end){
-    if(EX.score>=14){ show('scHome'); renderHome(); }
-    else if(!S.started || S.cash>=1000){ if(S.started) tx(-1000, 'Maison · frais pour repasser l’examen'); examStart(); }
-    else { show('scHome'); renderHome(); }
+    if(S.started) moved();
+    else if(EX.score>=14){ show('scHome'); renderHome(); }
+    else examStart();
     return;
   }
   if(!EX.done) return examCheck();
@@ -1637,11 +2218,11 @@ Object.assign(MEM_LABEL, {chose_maison:'tu as préféré la Maison à ta sœur',
 function dealSet(id, state, extra){ S.deals = S.deals || []; let d = S.deals.find(x=> x.id===id); if(!d){ d = {id}; S.deals.push(d); } Object.assign(d, extra||{}, {state}); save(); }
 Object.assign(ANSWERS, {
   // ---- day 4 morning: Princesse wants beignets-haricots ----
-  s4beignets: async()=>{ tx(-500, 'Beignets-haricots pour Princesse'); nudge('rel', +6); S.flags.beignets = S.day;
+  s4beignets: async()=>{ tx(-500, 'Beignets-haricots pour Princesse'); nudge('relation', +6); S.flags.beignets = S.sis.promesse = S.jour;
     await say('princesse', ['😍😍 Tu es le meilleur '+G().gf+' du monde.', 'Viens vite avant que l’infirmière les voie 🤫']); },
-  s4money: async()=>{ tx(-1000, 'Pour Princesse · « demande à l’infirmière »', 'princesse'); nudge('rel', +2); await say('princesse', ['Merci…', 'Mais c’est toi que je voulais voir, pas ton argent.']); },
-  s4no: async()=>{ nudge('rel', -6); remember('chose_maison'); await say('princesse', ['La Maison…', 'Ok. Bonne chance alors.']); },
-  ts4yes: async()=>{ if(!S.agenda.some(a=> a.id==='tournoi')) S.agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:'3 000 l’entrée · 15 000 au vainqueur'}); save(); renderHome();
+  s4money: async()=>{ tx(-1000, 'Pour Princesse · « demande à l’infirmière »', 'princesse'); nudge('relation', +2); await say('princesse', ['Merci…', 'Mais c’est toi que je voulais voir, pas ton argent.']); },
+  s4no: async()=>{ nudge('relation', -6); remember('chose_maison'); await say('princesse', ['La Maison…', 'Ok. Bonne chance alors.']); },
+  ts4yes: async()=>{ if(!S.agenda.some(a=> a.id==='tournoi')) S.agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:fmt(R.tournoiEntree[0])+' l’entrée · '+fmt(R.tournoiPrix[0])+' au vainqueur'}); save(); renderHome();
     await say('tsala', ['Noté. Samedi soir. Ne sois pas en retard, je ferme la porte moi-même.']); },
   ts4no: async()=>{ S.flags.tsWait = 1; await say('tsala', ['Réfléchis vite. Les places partent. Contrairement à ton talent.']); },
   // ---- day 4 afternoon: Amour wants eyes inside the Maison ----
@@ -1659,7 +2240,7 @@ Object.assign(ANSWERS, {
   md_truth: async()=>{ remember('mado_ally'); await say('mado', ['Bosco…', 'Il fait ça à tout le monde. Merci de me l’avoir dit en face.', 'Le jour où tu as besoin d’une vieille au marché, tu sais où je suis.']); },
   md_pay: async()=>{ tx(-1500, 'Mado · « sa part »', 'mado'); remember('mado_bought'); await say('mado', ['1 500 pour mon silence ?', 'Je prends. Mais je ne suis pas à vendre, mon enfant. Je suis juste pratique.']); },
   md_help: async()=>{ remember('mado_ally'); remember('mado_deal');
-    (S.debts||[]).filter(d=> d.who==='bosco').forEach(d=> d.paid = d.principal); save();
+    S.dettes.filter(d=> d.qui==='bosco').forEach(d=> d.solde = true); save();
     await say('mado', ['J’ai parlé à Bosco. Il te laisse tranquille.', 'En échange : samedi, au tournoi, si on se croise… tu me laisses gagner. 😌']); },
   md_nohelp: async()=>{ await say('mado', ['Comme tu veux.', 'Bosco n’oublie rien. Moi non plus.']); },
   // ---- day 5 afternoon: Armand and his parcel ----
@@ -1670,10 +2251,10 @@ Object.assign(ANSWERS, {
   ar_no: async()=>{ remember('refused_parcel'); dealSet('colis', 'refusé', {who:'armand', title:'Le colis de Mokolo', pay:10000});
     await say('armand', ['Dommage.', 'Je trouverai quelqu’un de moins prudent.']); },
   // ---- day 5 evening: Princesse ----
-  ps_promise: async()=>{ remember('promised_visit'); S.flags.promiseDay = S.day + 1; save(); await say('princesse', ['Promis ?', 'Je vais compter les heures. Vraiment.']); },
-  ps_forYou: async()=>{ nudge('rel', -2); await say('princesse', ['Je sais…', 'Mais moi je préfère toi à l’argent.']); },
-  ps_braid: async()=>{ nudge('rel', +4); await say('princesse', ['😂 Pas touche à mes cheveux !', 'Mais toi, je te fais des tresses. Prépare-toi.']); },
-  ps_proud: async()=>{ nudge('rel', +3); await say('princesse', ['Je m’ennuie moins quand tu m’écris.', 'Écris-moi plus, alors.']); },
+  ps_promise: async()=>{ remember('promised_visit'); S.sis.promesse = S.jour + 1; save(); await say('princesse', ['Promis ?', 'Je vais compter les heures. Vraiment.']); },
+  ps_forYou: async()=>{ nudge('relation', -2); await say('princesse', ['Je sais…', 'Mais moi je préfère toi à l’argent.']); },
+  ps_braid: async()=>{ nudge('relation', +4); await say('princesse', ['😂 Pas touche à mes cheveux !', 'Mais toi, je te fais des tresses. Prépare-toi.']); },
+  ps_proud: async()=>{ nudge('relation', +3); await say('princesse', ['Je m’ennuie moins quand tu m’écris.', 'Écris-moi plus, alors.']); },
   // ---- day 7 morning: Amour wants her name ----
   a7armand: async()=>{ remember('told_armand'); pam(+5, 0); await say('pamela', ['…', 'Armand. Le neveu de mon père.', 'Ne répète ça à personne. Personne. Tu m’entends ?']); },
   a7none: async()=>{ pam(-4, +10); await say('pamela', ['Tu n’as rien vu ? En trois jours ?', 'Soit tu es aveugle, soit tu me mens.']); },
@@ -1691,7 +2272,7 @@ Object.assign(ANSWERS, {
   e_help: async()=>{ pam(+2, 0); await say('pamela', ['Aide-toi d’abord.', 'Ne dépense plus un seul de ces billets. Et ne remets plus les pieds à Mokolo pour Armand.']); endAct2(); },
   e_dlaugh: async()=>{ pam(+1, 0); await say('yowale', ['😂 ok ok je ne sais rien moi', 'Mais fais attention ma belle. Pour de vrai cette fois.']); endAct2(); },
   e_dworry: async()=>{ pam(+3, 0); await say('yowale', ['Je ne les ai pas laissés entrer.', 'Tu vois, je sers à quelque chose 😎']); endAct2(); },
-  e_rallpost: async()=>{ nudge('rel', 0); await say('rall', ['Tu es venu'+G().e+'…', 'Tu avais raison de refuser. Moi j’ai dit oui.', 'Ne fais jamais ce que j’ai fait.']); endAct2(); },
+  e_rallpost: async()=>{ nudge('relation', 0); await say('rall', ['Tu es venu'+G().e+'…', 'Tu avais raison de refuser. Moi j’ai dit oui.', 'Ne fais jamais ce que j’ai fait.']); endAct2(); },
   e_rallbail: async()=>{ tx(-5000, 'Caution de RALL', 'poste'); remember('rall_bail'); await say('rall', ['Frère… 🙏', 'Je n’oublierai jamais.', 'Armand, lui, ne s’est même pas présenté.']); endAct2(); },
 });
 function endAct2(){ if(S.flags.act2done) return; S.flags.act2done = 1; save(); setTimeout(()=> film(FILM_END2, ()=>{ show('scHome'); renderHome(); }), 3500); }
@@ -1699,13 +2280,13 @@ function endAct2(){ if(S.flags.act2done) return; S.flags.act2done = 1; save(); s
 const ACT2 = {
   d4m0: async(w, g)=>{
     await new Promise(r=> film(FILM_ACT2, r)); show('scHome'); renderHome();
-    S.news.unshift({d:4, t:'La Maison de Nkolbisson annonce son tournoi du samedi : 3 000 l’entrée, 15 000 au vainqueur.'}); save();
+    S.news.unshift({d:4, t:'La Maison de Nkolbisson annonce son tournoi du samedi : '+fmt(R.tournoiEntree[0])+' l’entrée, '+fmt(R.tournoiPrix[0])+' au vainqueur.'}); save();
     await w(1200); await say('princesse', ['Le docteur dit que je dois manger mieux.', 'La nourriture d’ici 🤢', 'Tu m’apportes des beignets-haricots ?'],
       [{t:'J’arrive avec des beignets (500)', a:'s4beignets', need:500}, {t:'Je t’envoie 1 000, demande à l’infirmière.', a:'s4money', need:1000}, {t:'Pas aujourd’hui, j’ai la Maison.', a:'s4no'}]);
     await w(2500);
-    if(knows('member')) await say('tsala', ['Le nouveau. Ou la nouvelle, je ne regarde pas les visages.', 'Tournoi samedi soir. 3 000. Les touristes s’abstiennent.', 'Tu en es ?'], [{t:'Inscris-moi.', a:'ts4yes'}, {t:'Je réfléchis.', a:'ts4no'}]);
-    else { await say('tsala', ['Tu as réussi mon examen et tu ne t’inscris pas ?', 'L’inscription reste ouverte. 5 000. Ce soir.']);
-      const ins = S.agenda.find(a=> a.id==='inscription'); if(ins && !ins.done){ ins.day = S.day; ins.m = 2; save(); renderHome(); } } },
+    if(S.membre) await say('tsala', ['Le nouveau. Ou la nouvelle, je ne regarde pas les visages.', 'Tournoi samedi soir. '+fmt(R.tournoiEntree[0])+'. Les touristes s’abstiennent.', 'Tu en es ?'], [{t:'Inscris-moi.', a:'ts4yes'}, {t:'Je réfléchis.', a:'ts4no'}]);
+    else if(S.examen){ await say('tsala', ['Tu as réussi mon examen et tu ne t’inscris pas ?', 'L’inscription reste ouverte. '+fmt(R.inscriptionAcompte)+' suffisent pour commencer. Ce soir.']);
+      const ins = S.agenda.find(a=> a.id==='inscription'); if(ins && !ins.done){ ins.day = S.jour; ins.m = 2; save(); renderHome(); } } },
   d4m1: async(w)=>{ await w(1500);
     if(PART()==='pamela') await burst('pamela', [knows('pam_paid') ? 'Tu te souviens ? Tu me dois quelque chose.' : 'Bébé, j’ai besoin de toi.', 'Mon service surveille la Maison.', 'Mon père ne doit RIEN savoir.', 'Dis-moi qui parle à Bosco cette semaine.'],
       [{t:'D’accord. Je serai tes yeux.', a:'a4yes'}, {t:'Je ne trahis pas la Maison.', a:'a4no'}, {t:'Combien tu paies ?', a:'a4pay'}]);
@@ -1718,25 +2299,25 @@ const ACT2 = {
       [{t:'Parle-lui. Je te dois une faveur.', a:'md_help'}, {t:'Je me débrouille seul'+G().e+'.', a:'md_nohelp'}]);
     else await say('mado', ['C’est Mado, du Bon Coin.', 'On dit que tu as passé l’examen de Tsala.', 'Viens me voir un de ces soirs. On verra ce que tu vaux.']);
     if(S.flags.tsWait && !S.agenda.some(a=> a.id==='tournoi')){ await w(2500); await say('tsala', ['Dernière chance pour samedi.', 'Après, je donne ta place à un mouton.'], [{t:'Inscris-moi.', a:'ts4yes'}, {t:'Non.', a:'ts4no'}]); } },
-  d5m1: async(w)=>{ if(!knows('member')) return; await w(1500);
+  d5m1: async(w)=>{ if(!S.membre) return; await w(1500);
     await say('armand', ['Bonjour. C’est l’homme en costume. Armand Ondoua.', 'Je vous ai regardé jouer. Vous gardez votre calme.', 'J’ai un petit travail : une enveloppe à porter de Mokolo à Bastos, demain après-midi. 10 000 à l’arrivée.', 'Vous ne l’ouvrez pas.'],
       [{t:'J’accepte.', a:'ar_yes'}, {t:'Qu’est-ce qu’il y a dedans ?', a:'ar_what'}, {t:'Non merci.', a:'ar_no'}]); },
   d5m2: async(w)=>{ await w(1500);
-    if(S.sis.rel < 55) await say('princesse', ['Tu ne viens plus…', 'Les autres filles de la chambre ont de la famille qui passe.'], [{t:'Je viens demain matin. Promis.', a:'ps_promise'}, {t:'Je fais tout ça pour toi.', a:'ps_forYou'}]);
+    if(S.sis.relation < 55) await say('princesse', ['Tu ne viens plus…', 'Les autres filles de la chambre ont de la famille qui passe.'], [{t:'Je viens demain matin. Promis.', a:'ps_promise'}, {t:'Je fais tout ça pour toi.', a:'ps_forYou'}]);
     else await say('princesse', ['L’infirmière Brigitte m’a appris à tresser 😍', 'Je te fais des tresses quand je sors ?'], [{t:'Si tu touches à ma tête… 😂', a:'ps_braid'}, {t:'Tout ce que tu veux. Je suis fier'+G().e+' de toi.', a:'ps_proud'}]); },
   d6m0: async(w)=>{ await w(1500); await say('rall', [S.agenda.some(a=> a.id==='tournoi') ? 'Ce soir le tournoi ?? Je viens te supporter 🔥' : 'Tu ne fais pas le tournoi ce soir ? Dommage, c’était ta chance.', 'Et ne dis pas à Tsala que je t’ai aidé à réviser 😂']); },
   d7m0: async(w)=>{ await w(1500);
     if(PART()==='pamela' && knows('informer')) await say('pamela', ['Alors ?', 'Qui parle à Bosco ?'], [{t:'Armand Ondoua. Le neveu de ton père.', a:'a7armand'}, {t:'Personne. Je n’ai rien vu.', a:'a7none'}, {t:'Un homme en costume.', a:'a7stranger'}]);
     if(PART()==='yowale'){
-      if(knows('daryl_loan') && S.pam.love >= 60){ tx(10000, 'Daryl Bleu Magic · « parole tenue »', 'yowale'); await say('yowale', ['Ma belle 😎', '10 000 comme promis.', 'Tu vois que Bleu Magic tient parole… parfois 😂']); }
+      if(knows('daryl_loan') && S.amour.love >= 60){ tx(10000, 'Daryl Bleu Magic · « parole tenue »', 'yowale'); await say('yowale', ['Ma belle 😎', '10 000 comme promis.', 'Tu vois que Bleu Magic tient parole… parfois 😂']); }
       else if(knows('daryl_loan2')){ tx(4000, 'Daryl Bleu Magic · « petit pari »', 'yowale'); await say('yowale', ['4 000 pour toi 😘', 'Le Nigeria a perdu, je te jure je n’ai rien fait 😂']); }
       else if(knows('daryl_loan')) await say('yowale', ['Ma belle…', 'Le match était truqué dans l’autre sens 😅', 'Je te rends tout bientôt. Promis promis.']);
     } },
-  d7m1: async(w)=>{ if(!(S.tontine && S.tontine.active)) return; await w(1500);
+  d7m1: async(w)=>{ if(!(S.tontine && S.tontine.actif)) return; await w(1500);
     await say('clarisse', ['Mauvaise nouvelle 😔', 'Une cotisante est partie à Douala avec trois jours de caisse.', 'Pour que le tour continue, chacun met 2 000 de plus.'], [{t:'Je mets 2 000.', a:'cl7pay', need:2000}, {t:'Ce n’est pas à moi de payer pour elle.', a:'cl7no'}]); },
   d8m0: async(w)=>{ S.news.unshift({d:8, t:'Billets volés : des coupures neuves tirées d’une saisie de la police judiciaire circulent à Bastos et Mokolo. Enquête ouverte.'}); save(); await w(1500);
     await say('rall', knows('tournoi_won') ? ['Ahan !! Tout Mvog-Ada parle de toi 🔥', 'Tu as battu Armand Ondoua en finale ? Fais attention, ce gars n’aime pas perdre.'] : ['On dit quoi ?', 'Tu as vu les infos ? Des billets volés à la police. Le quartier est chaud.']); },
-  d8m2: async(w)=>{ await w(1500); const paid = S.hosp.paid >= S.hosp.advance;
+  d8m2: async(w)=>{ await w(1500); const paid = S.hop.date;
     await say('mengue', paid ? ['Bonsoir. L’avance est réglée, merci.', 'Nous avons fixé l’opération de Princesse au jour 30.', 'Il faudra le million d’ici là. Je suis désolé de vous le rappeler.'] : ['Bonsoir.', 'L’avance n’est toujours pas réglée. Je ne peux pas programmer l’opération.', 'Chaque jour compte pour son cœur.']); },
   d9m1: async(w)=>{ if(!knows('delivered')) return; await w(1500);
     await say('armand', ['Le colis était parfait.', 'J’ai plus gros : une valise, Bastos, après le week-end. 30 000.', 'On dit oui ?'], [{t:'Oui.', a:'ar2yes'}, {t:'Non, une fois suffit.', a:'ar2no'}]); },
@@ -1753,17 +2334,17 @@ function colis(a){
   SFX.play('klaxon', .3);
   sheet('<h3>Marché Mokolo</h3><p class="story">Allée des tissus. Un garçon en maillot jaune te glisse une enveloppe kraft, lourde, scotchée de partout. « Bastos. Le portail vert. Vite. »</p>'+
     '<div class="btns"><button class="btn" id="cOk">Livrer sans ouvrir</button><button class="btn red" id="cOpen">Ouvrir discrètement</button></div>');
-  const pay = opened=>{ a.done = 1; tx(10000, 'Armand · « livraison »'); remember('delivered'); dealSet('colis', 'fait', {who:'armand', title:'Le colis de Mokolo', pay:10000}); save();
+  const pay = opened=>{ a.done = 1; act({id:'enveloppe'}); remember('delivered'); dealSet('colis', 'fait', {who:'armand', title:'Le colis de Mokolo', pay:10000}); flush();
     sheet('<h3>Bastos · le portail vert</h3><p class="story">Un chauffeur prend l’enveloppe sans un mot et te tend dix billets de 1 000, neufs, qui sentent encore l’encre.'+(opened ? ' Les mêmes que ceux de l’enveloppe.' : '')+'</p>'+
       '<div class="delta"><span class="up">+10 000</span><span>Pour vingt minutes de moto</span></div><p style="font-weight:800">Dix mille pour une enveloppe. C’est trop facile.</p><div class="btns"><button class="btn" id="cEnd">Retour au téléphone</button></div>');
-    $('#cEnd').onclick = closeSheet; };
+    $('#cEnd').onclick = ()=>{ closeSheet(); moved(); }; };
   const deliver = opened=>{
     // Amour in a storm, and you never helped her: her colleagues are at the crossroads
     if(PART()==='pamela' && hot() && !knows('informer')){ ambience('sirene');
       sheet('<h3>Contrôle au carrefour</h3><p class="story">Deux policiers arrêtent les motos-taxis. L’enveloppe pèse sous ta chemise. L’un d’eux te regarde un peu trop longtemps.</p>'+
         '<div class="btns"><button class="btn" id="cPass">Passer calmement</button><button class="btn ghost" id="cBack">Faire demi-tour et abandonner</button></div>');
       $('#cPass').onclick = ()=>{ closeSheet(); pay(opened); };
-      $('#cBack').onclick = ()=>{ a.done = 1; dealSet('colis', 'abandonné', {who:'armand', title:'Le colis de Mokolo', pay:0}); remember('dropped_parcel'); save(); closeSheet();
+      $('#cBack').onclick = ()=>{ a.done = 1; dealSet('colis', 'abandonné', {who:'armand', title:'Le colis de Mokolo', pay:0}); remember('dropped_parcel'); act({id:'attendre'}); closeSheet(); moved();
         setTimeout(()=> burst('armand', ['Le colis n’est jamais arrivé.', 'Je n’aime pas les gens qui ne finissent pas leur travail.']), 1500); };
       return; }
     pay(opened); };
@@ -1775,33 +2356,141 @@ function colis(a){
 // the Saturday tournament: a semi-final against Mado, a final against Armand
 function tournoi(a){
   ambience('bar');
-  const entry = 3000, prize = 15000;
-  if(S.cash < entry){ sheet('<h3>Le tournoi du samedi</h3><p class="story">Maître Tsala tend la main : « 3 000. »</p><p style="font-weight:800;color:var(--red)">Il te manque '+fmt(entry - S.cash)+'.</p><div class="btns"><button class="btn" id="tX">Partir</button></div>'); $('#tX').onclick = closeSheet; return; }
+  // the entry and the prize grow with the weeks (engine); two real games: a semi-final against Mado, a final against Armand
+  const w = Math.min(3, Math.max(0, Math.floor((S.jour - 6)/7))), entry = R.tournoiEntree[w], prize = R.tournoiPrix[w];
+  if(S.cash < entry){ sheet('<h3>Le tournoi du samedi</h3><p class="story">Maître Tsala tend la main : « '+fmt(entry)+'. »</p><p style="font-weight:800;color:var(--red)">Il te manque '+fmt(entry - S.cash)+'.</p><div class="btns"><button class="btn" id="tX">Partir</button></div>'); $('#tX').onclick = closeSheet; return; }
   sheet('<h3>Le tournoi du samedi</h3><p class="story">Seize joueurs, une seule table éclairée au milieu. Maître Tsala annonce les règles au micro, avec l’enthousiasme d’un croque-mort.</p>'+
-    '<div class="card"><span class="k">Le tournoi</span><div class="bill"><span>Entrée</span><em>3 000</em><span>Demi-finale</span><em>contre Mado</em><span>Finale</span><em>?</em><span>Le vainqueur touche</span><em>'+fmt(prize)+'</em></div></div>'+
-    '<div class="btns"><button class="btn green" id="tGo">Payer et jouer</button><button class="btn ghost" id="tNo">Pas ce soir</button></div>');
+    '<div class="card"><span class="k">Le tournoi</span><div class="bill"><span>Entrée</span><em>'+fmt(entry)+'</em><span>Demi-finale</span><em>contre Mado</em><span>Finale</span><em>?</em><span>Le vainqueur touche</span><em>'+fmt(prize)+'</em></div></div>'+
+    '<div class="btns"><button class="btn green" id="tGo">Payer et jouer · prend la soirée</button><button class="btn ghost" id="tNo">Pas ce soir</button></div>');
   $('#tNo').onclick = closeSheet;
-  const out = (txt)=>{ sheet('<h3>Éliminé'+G().e+'</h3><p class="story">'+txt+'</p><div class="btns"><button class="btn" id="tE">Retour au téléphone</button></div>'); $('#tE').onclick = closeSheet; };
+  // the engine settles the evening in one go: the entry, the prize, the reputation
+  const finish = (manches, title, txt)=>{
+    const c0 = S.cash; act({id:'tournoi'}, {manches}); if(manches[1]) remember('tournoi_won'); flush();
+    const net = S.cash - c0;
+    sheet('<h3>'+title+'</h3><p class="story">'+txt+'</p><div class="delta"><span class="'+(net >= 0 ? 'up' : 'dn')+'">'+(net >= 0 ? '+' : '−')+fmt(Math.abs(net))+'</span><span>Solde : '+fmt(S.cash)+'</span></div>'+
+      '<div class="btns"><button class="btn" id="tE">Retour au téléphone</button></div>');
+    $('#tE').onclick = ()=>{ closeSheet(); moved(); };
+  };
+  const out = (manches, txt)=> finish(manches, 'Éliminé'+G().e, txt);
   const semi = async()=>{
-    const r1 = await playTable({opp:'mado', name:'Mado', stake:1500, target:3, table:'tripot', title:'Tournoi · demi-finale contre Mado'});
-    if(!r1.won) return out('Mado ramasse tes cartes avec un sourire de grand-mère. « Reviens quand tu auras grandi. »');
+    const r1 = await playTable({opp:'mado', name:'Mado', stake:entry, target:3, table:'tripot', title:'Tournoi · demi-finale contre Mado'});
+    if(!r1.won) return out([false], 'Mado ramasse tes cartes avec un sourire de grand-mère. « Reviens quand tu auras grandi. »');
     ambience('bar');
     sheet('<h3>En finale</h3><p class="story">En face de toi s’assoit l’homme en costume. Il pose sa montre sur la table. « Armand Ondoua. Enchanté. Encore. »</p><div class="btns"><button class="btn green" id="tF">Jouer la finale</button></div>');
     $('#tF').onclick = async()=>{
-      const r2 = await playTable({opp:'armand', name:'Armand Ondoua', stake:1500, target:3, table:'tripot', title:'Tournoi · finale contre Armand'});
-      if(!r2.won) return out('Armand range ses gains sans les compter. « Vous jouez bien. Pas encore assez bien. »');
-      tx(prize, 'Maison · tournoi du samedi gagné'); remember('tournoi_won');
-      sheet('<h3>Vainqueur du tournoi</h3><p class="story">La salle se lève. Maître Tsala, pour la première fois, applaudit. Deux fois. Au fond, Hubert Ondoua te regarde sans sourire.</p>'+
-        '<div class="delta"><span class="up">+'+fmt(prize)+'</span><span>Solde : '+fmt(S.cash)+'</span></div><div class="btns"><button class="btn" id="tW">Retour au téléphone</button></div>');
-      $('#tW').onclick = closeSheet; };
+      const r2 = await playTable({opp:'armand', name:'Armand Ondoua', stake:entry, target:3, table:'tripot', title:'Tournoi · finale contre Armand'});
+      if(!r2.won) return out([true, false], 'Armand range ses gains sans les compter. « Vous jouez bien. Pas encore assez bien. »');
+      finish([true, true], 'Vainqueur du tournoi', 'La salle se lève. Maître Tsala, pour la première fois, applaudit. Deux fois. Au fond, Hubert Ondoua te regarde sans sourire.'); };
   };
-  $('#tGo').onclick = ()=>{ tx(-entry, 'Maison · entrée du tournoi'); a.done = 1; save();
+  $('#tGo').onclick = ()=>{ a.done = 1; save();
     // a promise made to Mado comes back right here
     if(knows('mado_deal')){
       sheet('<h3>Demi-finale contre Mado</h3><p class="story">Mado s’assoit en face de toi. Elle ne dit rien. Elle attend que tu tiennes parole.</p><div class="btns"><button class="btn" id="tKeep">Tenir parole : la laisser gagner</button><button class="btn red" id="tBreak">Jouer pour gagner</button></div>');
-      $('#tKeep').onclick = ()=>{ remember('kept_mado'); out('Tu joues petit, exprès. Mado ramasse le pot et te serre la main sous la table. « Tu es quelqu’un de bien. C’est rare ici. »'); };
+      $('#tKeep').onclick = ()=>{ remember('kept_mado'); out([false], 'Tu joues petit, exprès. Mado ramasse le pot et te serre la main sous la table. « Tu es quelqu’un de bien. C’est rare ici. »'); };
       $('#tBreak').onclick = ()=>{ S.flags.brokeMado = 1; save(); semi(); };
     } else semi(); };
+}
+
+
+// ===================== « Que faire ? »: everything the engine allows right now, in plain words =====================
+// One thing per moment (a visit, a table, a job…); paying, borrowing or answering takes no time. The list comes from the
+// engine, so the phone can never offer what the rules forbid, nor leave a moment with nothing to do.
+const PLAY = {veillee:{opp:'rall', name:'RALL', table:'auvent'}, boncoin:{opp:'mado', name:'Mado', table:'zinc'}, commune:{opp:'costume', name:'L’homme en costume', table:'tripot'},
+  salle2:{opp:'armand', name:'Armand Ondoua', table:'tripot'}, salons:{opp:'armand', name:'Armand Ondoua', table:'tripot'}};
+PEOPLE.hubert = PEOPLE.hubert || {name:'Hubert Ondoua', role:'Le parrain de la Maison', face:null};
+PEOPLE.penalty = PEOPLE.penalty || {name:'Penalty', role:'Le champion de Santa Barbara', face:null};
+PEOPLE.ornella = PEOPLE.ornella || {name:'Ornella', role:'Les salons de Bastos', face:null};
+PEOPLE.poste = PEOPLE.poste || {name:'Commissariat de Bastos', role:'La police', face:null};
+// what the story keeps for its own scenes: Armand's jobs only once you said yes, and through the agenda
+const hidden = a=> (a.id==='enveloppe') || (a.id==='valise' && !(S.deals || []).some(d=> d.id==='valise' && d.state==='accepté'));
+const agItem = id=> S.agenda.find(x=> x.id===id && !x.done) || {};
+function quoiFaire(){
+  if(busy || !S.started) return;
+  if(S.fin) return ending();
+  const A = M.actions(S).filter(a=> !hidden(a));
+  const tables = {}, moments = [], libres = [];
+  A.forEach((a, i)=>{ a.k = i; if(a.id==='table') (tables[a.table] = tables[a.table] || []).push(a); else if(a.moment && a.id!=='repos') moments.push(a); else if(a.libre) libres.push(a); });
+  const row = (a, cls)=> '<button class="btn '+(cls || 'ghost')+'" data-k="'+a.k+'" style="text-align:left">'+esc(a.nom)+'</button>';
+  let h = '<h3>'+MOMENTS[S.m]+' · jour '+S.jour+' ('+M.jourNom(S.jour)+')</h3><p style="margin:0 0 6px;font-weight:700;color:#7A6650">Une seule chose par moment. Payer, emprunter ou répondre ne prend pas de temps.</p><div class="btns" style="max-height:60vh;overflow-y:auto">';
+  if(moments.length) h += '<div class="lab qf">Ce moment-ci</div>'+moments.map(a=> row(a, a.sale ? 'red' : '')).join('');
+  Object.entries(tables).forEach(([id, list])=>{ const t = M.TABLES[id];
+    h += '<div class="lab qf">'+esc(t.nom)+(t.coupe ? ' · la Maison prend '+Math.round(t.coupe*100)+' %' : '')+'</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      list.map(a=> '<button class="btn ghost" data-k="'+a.k+'" style="flex:1;min-width:28%">'+fmt(a.mise)+'</button>').join('')+'</div>'; });
+  if(libres.length) h += '<div class="lab qf">Sans perdre de temps</div>'+libres.map(a=> row(a)).join('');
+  h += '<div class="lab qf">Sinon</div><button class="btn" data-k="rest">'+(S.m===3 ? '🌙 Dormir jusqu’à demain' : '⏩ Laisser passer le moment')+'</button><button class="btn ghost" id="qfX">Fermer</button></div>';
+  sheet(h);
+  $('#qfX').onclick = closeSheet;
+  $('#sheetIn').querySelectorAll('[data-k]').forEach(b=> b.onclick = ()=>{ if(b.dataset.k==='rest'){ closeSheet(); advance(); return; } doAction(A[+b.dataset.k]); });
+}
+function doAction(a){
+  const H = {visite:visit, veillee:()=> veillee(agItem('veillee')), examen:()=>{ closeSheet(); examStart(); }, inscription:()=> inscription(agItem('inscription')),
+    tournoi:()=> tournoi(agItem('tournoi')), grand:()=> grandSheet(a), table:()=> tableSheet(a), poisson:()=> duel(a, 'mado'), pariRall:()=> duel(a, 'rall'), attendre:()=>{ closeSheet(); advance(); }};
+  if(H[a.id]) return H[a.id]();
+  if(a.libre) return doLibre(a);
+  simple(a);
+}
+// a moment's result, the same card for all: what happened, what it did to your money
+function result(title, texte, c0){
+  const net = S.cash - c0;
+  sheet('<h3>'+esc(title)+'</h3><p class="story">'+esc(texte)+'</p><div class="delta">'+(net ? '<span class="'+(net > 0 ? 'up' : 'dn')+'">'+(net > 0 ? '+' : '−')+fmt(Math.abs(net))+'</span>' : '')+'<span>Solde : '+fmt(S.cash)+'</span><span>Le moment est passé</span></div>'+
+    '<div class="btns"><button class="btn" id="rOk">Continuer</button></div>');
+  $('#rOk').onclick = ()=>{ closeSheet(); moved(); };
+}
+function simple(a){ const c0 = S.cash, r = act(a); flush(); result(a.nom.split(' · ')[0], r.texte, c0); }
+// a table: in the game a real game of Fap Fap; the small tables can also be played « vite », the result computed
+function tableSheet(a){
+  const t = M.TABLES[a.table], pot = a.mise*t.joueurs, cut = Math.round(pot*t.coupe), nuit = S.m===3;
+  sheet('<h3>'+esc(t.nom)+'</h3><div class="card"><div class="bill"><span>Ta mise</span><em>'+fmt(a.mise)+'</em><span>Joueurs à la table</span><em>'+t.joueurs+'</em><span>Pot</span><em>'+fmt(pot)+'</em>'+
+    (cut ? '<span>La Maison prend</span><em>−'+fmt(cut)+'</em>' : '')+'<span>Le gagnant touche</span><em>'+fmt(pot - cut)+'</em></div></div>'+
+    (nuit ? '<p style="font-weight:800;color:var(--red)">La nuit, la police tourne. Chaque partie de nuit fait monter ta « chaleur ».</p>' : '')+
+    (S.inscriptionDue && t.coupe ? '<p style="font-weight:800">Tsala garde '+fmt(S.inscriptionDue)+' sur tes prochains gains (le reste de l’inscription).</p>' : '')+
+    '<div class="btns"><button class="btn green" id="tbReal">Jouer la partie</button>'+(t.quick ? '<button class="btn" id="tbQuick">Jouer vite (résultat calculé)</button>' : '')+'<button class="btn ghost" id="tbNo">Retour</button></div>');
+  $('#tbNo').onclick = quoiFaire;
+  const go = gagne=>{ const c0 = S.cash, r = act(a, gagne==null ? {} : {gagne}); flush(); result(t.nom, r.texte, c0); };
+  $('#tbReal').onclick = async ()=>{ const r = await playTable(Object.assign({stake:a.mise, target:3, title:t.nom}, PLAY[a.table])); go(r.won); };
+  if($('#tbQuick')) $('#tbQuick').onclick = ()=>{ SFX.play('melange', .45); go(null); };
+}
+// the Grand Tournament at Santa Barbara, one round a night: a stranger from Douala, then Armand, then Penalty
+const GT_ROUNDS = [{opp:'requin', name:'Le Requin de Douala', titre:'Qualifications', txt:'La villa de Santa Barbara. Des joueurs venus de Douala, de Bafoussam, de Libreville. Ton premier adversaire ne te regarde même pas.'},
+  {opp:'armand', name:'Armand Ondoua', titre:'Demi-finale', txt:'Armand Ondoua, encore. Il a payé son entrée en billets neufs. « Cette fois, mon oncle regarde. »'},
+  {opp:'penalty', name:'Penalty', titre:'Finale', txt:'Penalty pose ses deux téléphones sur la table et sourit. « Enfin quelqu’un. Montre-moi. »'}];
+function grandSheet(a){
+  const g = S.grandTournoi, k = g ? g.tour : 0, rd = GT_ROUNDS[k], c0 = S.cash;
+  ambience('bar');
+  sheet('<h3>Grand Tournoi · '+rd.titre+'</h3><p class="story">'+rd.txt+'</p>'+
+    '<div class="card"><div class="bill">'+(k===0 ? '<span>Entrée</span><em>'+(S.billet ? 'ton billet gratuit' : fmt(R.grandEntree))+'</em>' : '')+'<span>Adversaire</span><em>'+esc(rd.name)+'</em><span>Le vainqueur touche</span><em>'+fmt(R.grandPrix)+'</em></div></div>'+
+    '<p style="font-weight:800">Une manche par soir : jours 28, 29 et 30. Une défaite, et c’est fini.</p>'+
+    '<div class="btns"><button class="btn green" id="gtReal">Jouer la partie · prend la soirée</button><button class="btn" id="gtQuick">Jouer vite (résultat calculé)</button><button class="btn ghost" id="gtNo">Retour</button></div>');
+  $('#gtNo').onclick = quoiFaire;
+  const go = gagne=>{ const r = act(a, gagne==null ? {} : {gagne}); flush();
+    const won = S.grandTournoi && S.grandTournoi.gagne;
+    result(won ? 'Tu as battu Penalty' : 'Grand Tournoi · '+rd.titre, won ? 'Tu bats Penalty. Les '+fmt(R.grandPrix)+' partent directement à l’hôpital'+(S.hop.financement==='penalty' ? ', et Penalty garantit le reste' : '')+' : l’opération de Princesse est payée.' : r.texte, c0); };
+  $('#gtReal').onclick = async ()=>{ const r = await playTable({opp:rd.opp, name:rd.name, stake:R.grandEntree, target:3, table:'tripot', title:'Grand Tournoi · '+rd.titre}); go(r.won); };
+  $('#gtQuick').onclick = ()=>{ SFX.play('melange', .45); go(null); };
+}
+// Mado's big fish, RALL's bet: one game, a real one or a quick one
+function duel(a, opp){
+  sheet('<h3>'+esc(a.nom.split(' · ')[0])+'</h3><p class="story">'+esc(a.nom.split(' · ').slice(1).join(' · '))+'</p>'+
+    '<div class="btns"><button class="btn green" id="dReal">Jouer la partie</button><button class="btn" id="dQuick">Jouer vite (résultat calculé)</button><button class="btn ghost" id="dNo">Retour</button></div>');
+  $('#dNo').onclick = quoiFaire;
+  const go = gagne=>{ const c0 = S.cash, r = act(a, gagne==null ? {} : {gagne}); flush(); result(PEOPLE[opp].name, r.texte, c0); };
+  $('#dReal').onclick = async ()=>{ const r = await playTable({opp, name:PEOPLE[opp].name, stake:a.id==='poisson' ? 2000 : 5000, target:3, table:opp==='mado' ? 'zinc' : 'auvent', title:a.nom.split(' · ')[0]}); go(r.won); };
+  $('#dQuick').onclick = ()=>{ SFX.play('melange', .45); go(null); };
+}
+// what takes no time: paying (with its confirmation and its receipt), borrowing, the tontine, a share of the bar…
+const LIBRE_TO = {payerFacture:'hopital', payerAvance:'hopital', payerCrise:'hopital', operation:'hopital', cadeau:'princesse', bar:'bosco', tontine2:'clarisse'};
+const LIBRE_WHY = {emprunter:'10 000 tout de suite. 10 % de plus par semaine. En retard, +5 % par jour, et ses garçons passent.', tontine:'1 000 chaque matin. À ton tour (le 10e), tu touches 10 000 d’un coup.',
+  delai:'Une seule fois, et seulement si Princesse va assez bien avec toi.', renouveler:'Sept jours de plus pour payer. La dette grossit de 20 %.', hubert:'600 000 pour l’opération. Il ne dit pas ce qu’il veut en échange.'};
+function doLibre(a){
+  if(a.id==='payerAvance'){ closeSheet(); return payAdvance(); }
+  if(a.id==='rembourser'){ const d = debtsLeft().find(x=> x.id===a.dette); return d && repayDebt(d); }
+  if(LIBRE_TO[a.id]){ const amount = Math.min(S.cash, a.cout || 0);
+    return confirmPay({to:LIBRE_TO[a.id], amount, label:a.nom.split(' · ')[0], pay:()=>{ M.agir(S, a, {montant:amount}); flush(); }, done:quoiFaire}); }
+  sheet('<h3>'+esc(a.nom)+'</h3><p class="story">'+esc(LIBRE_WHY[a.id] || '')+(a.sale ? ' De l’argent sale. Il se paie toujours, un jour.' : '')+'</p>'+
+    '<div class="btns"><button class="btn '+(a.sale ? 'red' : 'green')+'" id="lOk">Oui</button><button class="btn ghost" id="lNo">Retour</button></div>');
+  $('#lNo').onclick = quoiFaire;
+  $('#lOk').onclick = ()=>{ const r = M.agir(S, a); flush(); if(a.id==='tontine') remember('tontine'); if(a.id==='emprunter') remember('loan_gv');
+    sheet('<h3>C’est fait</h3><p class="story">'+esc(r.texte)+'</p><div class="btns"><button class="btn" id="lEnd">Continuer</button></div>'); $('#lEnd').onclick = quoiFaire; };
 }
 
 // ===================== the film: the story told plan after plan before you start, and the act cards =====================
@@ -1898,15 +2587,17 @@ $('.logo').addEventListener('click', ()=>{
 });
 $('#goBackTitle').onclick = ()=> hostPost({zh:'close'});
 $('#goFilm').onclick = ()=> film(FILM_OPEN);
-$('#goResume').onclick = ()=>{ audio(); show('scHome'); renderHome(); };
+$('#goResume').onclick = ()=>{ audio(); lastCash = S.cash; show('scHome'); renderHome(); if(S.fin) ending(); else doors(); };
+$('#goDo').onclick = quoiFaire;
+$('#wTime').onclick = calendrier;
 $('#apps').addEventListener('click', e=>{ const b = e.target.closest('[data-app]'); if(b) openApp(b.dataset.app); });
 $('#appBack').onclick = ()=>{ if(curApp && curApp.id==='thread'){ openThread = null; openApp('messages'); } else { openThread = null; curApp = null; show('scHome'); renderHome(); } };
 $('#goNext').onclick = ()=> advance();
 $('#appFree').addEventListener('submit', e=>{ e.preventDefault(); const i = $('#freeIn'), t = i.value; if(!t.trim() || !openThread) return; i.value = ''; freeSend(openThread, t); });
 $('#wSis').onclick = ()=> openApp('sante');
 $('#wNext').onclick = ()=>{ const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0]; openApp(nx ? 'carte' : 'agenda', nx ? nx.id : undefined); };
-$('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce que tu testes : le téléphone, l’appel de l’hôpital, les messages à choix, la banque, la santé de Princesse, l’agenda et la carte, sur les jours 1 et 2.</p>'+
-  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Amour' : 'Daryl Bleu Magic')+' (caché dans le vrai jeu) : affection '+S.pam.love+' · orage '+S.pam.storm+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
+$('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce que tu testes : les actes 1 et 2 (jours 1 à 10), joués par le moteur du jeu : chaque moment, une action ; l’argent, l’hôpital, les dettes et la tontine suivent leurs règles.</p>'+
+  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Amour' : 'Daryl Bleu Magic')+' (caché dans le vrai jeu) : affection '+S.amour.love+' · orage '+S.amour.orage+'<br>Réputation '+S.rep+' · police (chaleur) '+S.chaleur+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
   if($('#tryExam')) $('#tryExam').onclick = ()=>{ closeSheet(); examStart(); };
   if($('#openDev')) $('#openDev').onclick = devPanel;
   if($('#backGame')) $('#backGame').onclick = ()=>{ closeSheet(); hostPost({zh:'close'}); };
@@ -1933,38 +2624,43 @@ const DEV_JUMPS = [
   ['a2end', 'Jour 10 · nuit · les billets marqués (fin de l’acte 2)'],
   ['a2endR', 'Jour 10 · nuit · fin si tu as refusé le colis (RALL)'],
 ];
+// a game of the engine placed at a day and a moment, with the doors already played marked as played
 function devState(day, m, extra){
   RUN++;
-  const fem = S && S.hero ? S.hero.fem : 0, pamS = S && S.pam ? S.pam : {love:70, storm:30};
+  const fem = S && S.hero ? S.hero.fem : 0, amour = S && S.amour ? Object.assign({}, S.amour) : null;
   S = fresh(); S.started = true; S.hero.fem = fem; S.hero.av = fem ? 3 : 0; S.hero.name = fem ? 'Nadia' : 'Junior';
-  S.contacts.push('rall', PART()); S.day = day; S.m = m; S.pam = Object.assign({}, pamS);
-  S.cash = 3500; S.ledger = [{a:3500, l:'Ce qu’il te reste', d:1, m:2}];
+  S.contacts.push('rall', PART()); S.jour = day; S.m = m; S.vu = day+'-'+m; if(amour) S.amour = amour;
+  S.sis.derniereVisite = day;
+  const x = Object.assign({cash:R.depart}, extra || {});
+  M.argent(S, x.cash, 'Départ (mode développeur)'); delete x.cash; S.inbox = [];
   if(day>=2 || m>=2) S.agenda.push({id:'veillee', day:2, m:2, place:'mvogada', title:'Veillée chez RALL', who:'rall', stake:'Mises de 200 à 1 000'});
-  Object.assign(S, extra||{}); save();
+  const beats = x.beats || {}; delete x.beats;
+  Object.assign(S, x); S.beats = beats; Object.keys(beats).forEach(b=> M.marquer(S, b));
+  lastCash = S.cash; save();
   if(HOST) hostPost({zh:'set', chips:S.cash}); // in the game, the real chips follow the scene
   openThread = null; busy = 0; closeSheet(); show('scHome'); renderHome();
 }
 const BEATS = list=> Object.fromEntries(list.map(b=> [b, 1]));
+const A1 = ['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'];
 function devJump(k){
-  if(k==='call'){ devState(1, 2); S.started = false; S.cash = 0; S.ledger = []; S.agenda = []; save(); opening(); return; }
-  if(k==='night1'){ devState(1, 3, {beats:BEATS(['sis1', 'rall1'])}); beat('part1'); }
-  if(k==='day2am'){ devState(2, 0, {beats:BEATS(['sis1', 'rall1', 'part1'])}); beat('day2am'); }
-  if(k==='day2pm'){ devState(2, 1, {mem:{lie_hosp:{d:1, m:3}}, beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2'])}); beat('day2pm'); }
-  if(k==='veillee'){ devState(2, 2, {beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'])}); openApp('carte', 'veillee'); }
-  if(k==='exam'){ devState(3, 0, {beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'])}); examStart(); }
+  if(k==='call'){ devState(1, 2); S.started = false; S.cash = lastCash = 0; S.registre = []; S.agenda = []; save(); opening(); return; }
+  if(k==='night1'){ devState(1, 3, {beats:BEATS(['sis1', 'rall1'])}); M.marquer(S, 'part1'); beat('part1'); }
+  if(k==='day2am'){ devState(2, 0, {beats:BEATS(['sis1', 'rall1', 'part1'])}); M.marquer(S, 'day2am'); beat('day2am'); }
+  if(k==='day2pm'){ devState(2, 1, {mem:{lie_hosp:{d:1, m:3}}, beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2'])}); M.marquer(S, 'day2pm'); beat('day2pm'); }
+  if(k==='veillee'){ devState(2, 2, {beats:BEATS(A1)}); openApp('carte', 'veillee'); }
+  if(k==='exam'){ devState(3, 0, {veillee:true, beats:BEATS(A1)}); examStart(); }
   if(k==='day3' || k==='inscription' || k==='debt'){
-    devState(3, k==='day3' ? 0 : 2, {cash:4000, ledger:[{a:4000, l:'Départ (mode développeur)', d:3, m:0}], flags:{examPassed:17},
-      agenda:[{id:'inscription', day:3, m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:'5 000 à payer · puis ta première table'}],
-      beats:BEATS(['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3'].concat(k==='day3' ? [] : ['day3money']))});
-    if(k==='day3') beat('day3money');
-    if(k==='inscription'){ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv'); openApp('carte', 'inscription'); }
-    if(k==='debt'){ borrow('grosventre', 'Prêt de Papa Gros-Ventre', 10000, 0.10, 7); remember('loan_gv'); S.agenda[0].done = 1; S.day = 10; S.m = 3; save(); advance(); }
+    devState(3, k==='day3' ? 1 : 2, {cash:4000, veillee:true, examen:true, flags:{examPassed:17},
+      agenda:[{id:'inscription', day:3, m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:fmt(R.inscriptionAcompte)+' à payer · puis ta première table'}],
+      beats:BEATS(A1.concat(k==='day3' ? [] : ['day3money']))});
+    if(k==='day3') doors();
+    if(k==='inscription'){ borrow('grosventre', 10000, R.usure, R.gvDelai); remember('loan_gv'); openApp('carte', 'inscription'); }
+    if(k==='debt'){ S.jour = 3; borrow('grosventre', 10000, R.usure, R.gvDelai); remember('loan_gv'); S.agenda[0].done = 1; S.membre = true; S.jour = 10; S.m = 3; S.vu = '10-3'; save(); advance(); }
   }
   if(/^a2/.test(k)) act2Jump(k);
 }
 // act 2 starts from a member of the Maison with 8 000, the advance paid, every act 1 moment already lived
 function act2Jump(k){
-  const A1 = ['sis1', 'rall1', 'part1', 'day2am', 'part2', 'day2pm', 'part3', 'day3money'];
   const at = {a2:[4, 0, 'd4m0'], a2d4pm:[4, 1, 'd4m1'], a2mado:[5, 0, 'd5m0'], a2armand:[5, 1, 'd5m1'], a2colis:[6, 1, null], a2tournoi:[6, 2, null], a2d7:[7, 0, 'd7m0'], a2end:[10, 3, 'd10m3'], a2endR:[10, 3, 'd10m3']}[k];
   const passed = Object.keys(ACT2).filter(b=>{ const [, d, m] = b.match(/d(\d+)m(\d)/).map(Number); return d < at[0] || (d===at[0] && m < at[1]); });
   const mem = {member:{d:3, m:2}, kept_deal:{d:4, m:2}};
@@ -1974,23 +2670,24 @@ function act2Jump(k){
   if(k==='a2d7' && PART()==='yowale') mem.daryl_loan2 = {d:4, m:1};
   const agenda = [];
   if(k==='a2colis') agenda.push({id:'colis', day:6, m:1, place:'mokolo', title:'Le colis d’Armand', who:'armand', stake:'10 000 à la livraison · ne l’ouvre pas'});
-  if(k==='a2tournoi') agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:'3 000 l’entrée · 15 000 au vainqueur'});
-  devState(at[0], at[1], {cash:8000, ledger:[{a:8000, l:'Départ de l’acte 2 (mode développeur)', d:at[0], m:at[1]}], flags:{examPassed:17}, mem, agenda, lastVisit:at[0],
-    hosp:{advance:50000, advDue:3, daily:3000, owed:0, paid:50000}, tontine:k==='a2d7' ? {daily:1000, turn:10, of:10, joined:3, paid:3, active:1} : undefined,
-    beats:BEATS(A1.concat(passed))});
+  if(k==='a2tournoi') agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:fmt(R.tournoiEntree[0])+' l’entrée · '+fmt(R.tournoiPrix[0])+' au vainqueur'});
+  devState(at[0], at[1], {cash:8000, flags:{examPassed:17}, mem, agenda, veillee:true, examen:true, membre:true, rep:10,
+    hop:Object.assign(fresh().hop, {avance:R.avance, date:true}), fait:k==='a2end' ? {enveloppe:1} : {},
+    tontine:k==='a2d7' ? {debut:3, tour:10, paye:3, touche:false, actif:true} : null,
+    beats:BEATS(A1.concat('day3money', passed))});
   S.contacts.push('tsala', 'mado', 'armand'); save();
-  if(at[2]) beat(at[2]);
-  if(k==='a2d7') setTimeout(()=> beat('d7m1'), 9000);
+  if(at[2]){ M.marquer(S, at[2]); beat(at[2]); }
+  if(k==='a2d7') setTimeout(()=>{ M.marquer(S, 'd7m1'); beat('d7m1'); }, 9000);
   if(agenda.length) openApp('carte', agenda[0].id);
 }
 function devPanel(){
   sheet('<h3>🛠 Mode développeur</h3><p>Va directement à une scène. La partie en cours est remplacée.</p>'+
     '<div class="seg" id="devSex"><button type="button" data-f="0" aria-pressed="'+(!S.hero.fem)+'">Héros homme (Amour)</button><button type="button" data-f="1" aria-pressed="'+(!!S.hero.fem)+'">Héroïne (Daryl Bleu Magic)</button></div>'+
-    '<div class="seg" id="devMood"><button type="button" data-s="30" aria-pressed="'+(S.pam.storm<45)+'">Amour calme</button><button type="button" data-s="75" aria-pressed="'+(S.pam.storm>=65)+'">Amour en orage</button></div>'+
+    '<div class="seg" id="devMood"><button type="button" data-s="30" aria-pressed="'+(S.amour.orage<45)+'">Amour calme</button><button type="button" data-s="75" aria-pressed="'+(S.amour.orage>=65)+'">Amour en orage</button></div>'+
     '<div class="btns" style="max-height:46vh;overflow-y:auto">'+DEV_JUMPS.map(([k, l])=> '<button class="btn ghost" data-j="'+k+'" style="text-align:left">'+esc(l)+'</button>').join('')+
     '<button class="btn" id="devCash">+10 000 jetons</button><button class="btn ghost" id="devClose">Fermer</button></div>');
   $('#devSex').onclick = e=>{ const b = e.target.closest('[data-f]'); if(!b) return; S.hero.fem = +b.dataset.f; save(); devPanel(); };
-  $('#devMood').onclick = e=>{ const b = e.target.closest('[data-s]'); if(!b) return; S.pam.storm = +b.dataset.s; S.pam.love = +b.dataset.s<45 ? 75 : 55; save(); devPanel(); };
+  $('#devMood').onclick = e=>{ const b = e.target.closest('[data-s]'); if(!b) return; S.amour.orage = +b.dataset.s; S.amour.love = +b.dataset.s<45 ? 75 : 55; save(); devPanel(); };
   $('#sheetIn').querySelectorAll('[data-j]').forEach(b=> b.onclick = ()=>{ audio(); devJump(b.dataset.j); });
   $('#devCash').onclick = ()=>{ tx(10000, 'Mode développeur · +10 000'); closeSheet(); };
   $('#devClose').onclick = closeSheet;
@@ -1999,7 +2696,7 @@ $('#goDev').onclick = ()=>{ if(!S) S = fresh(); devPanel(); };
 
 S = load();
 // test hook, only on this computer (never on the published page): lets the checks jump to a scene
-if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, get S(){ return S; }, answer:(pid, i)=> answer(pid, thread(pid).choices[i]), jump:devJump, freeSend, openApp, visit};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, M, quoiFaire, doAction, moved, act, get S(){ return S; }, answer:(pid, i)=> answer(pid, thread(pid).choices[i]), jump:devJump, freeSend, openApp, visit};
 if(S && S.started){ $('#goResume').hidden = false; }
 if(!S) S = fresh();
 $('#goDev').hidden = !DEV();
