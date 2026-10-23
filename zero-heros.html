@@ -136,10 +136,35 @@
   .mini span{ display:flex; justify-content:space-between; font:800 11px var(--f-b); color:#7A6650; }
   .mini .bar{ height:9px; margin:0; border-width:2px; }
   .mini .bar.h i{ background:var(--red); } .mini .bar.r i{ background:var(--pink); }
-  .w-next{ display:flex; flex-direction:column; gap:3px; }
-  .w-next b{ font:700 16px var(--f-t); line-height:1.15; }
-  .w-next small{ color:#7A6650; font-weight:700; }
-  .apps{ display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 8px; padding:4px 2px; }
+  /* your status: what opens doors and what brings the police, always in sight */
+  .w-stat{ display:grid; grid-template-columns:1fr 1fr; gap:8px 6px; align-content:center; padding:10px 10px; }
+  .st{ display:flex; flex-direction:column; gap:0; min-width:0; }
+  .st b{ font:700 17px var(--f-t); line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .st span{ font:800 9px var(--f-b); letter-spacing:.06em; text-transform:uppercase; color:#7A6650; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .st b.hot{ color:var(--red); } .st b.ok{ color:var(--green); }
+  .apps{ display:grid; grid-template-columns:repeat(5, 1fr); gap:14px 6px; padding:4px 2px; }
+  /* the neighbourhood's news, one line, the newest first */
+  .w-news{ display:flex; gap:8px; align-items:center; text-align:left; width:100%; padding:9px 12px; border-radius:16px; border:1px solid var(--line); background:rgba(255,246,220,.06); color:var(--cream); font:700 13px var(--f-b); }
+  .w-news b{ flex:none; color:var(--mango); font:800 10.5px var(--f-b); letter-spacing:.1em; text-transform:uppercase; }
+  .w-news span{ flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .w-news i{ flex:none; width:8px; height:8px; border-radius:50%; background:var(--red); font-style:normal; }
+  /* what an action changed floats up for a moment: « Relation +6 », « Police +3 » */
+  .fxs{ position:absolute; left:0; right:0; bottom:92px; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; padding:0 16px; pointer-events:none; z-index:30; }
+  .fx{ font:800 13px var(--f-b); padding:5px 10px; border-radius:99px; border:2px solid var(--ink); box-shadow:0 3px 0 var(--ink); background:var(--paper); color:var(--ink); animation:fxUp 2.8s ease forwards; }
+  .fx.up{ background:#d9f5e3; } .fx.dn{ background:#fde0df; }
+  @keyframes fxUp{ 0%{ opacity:0; transform:translateY(14px) scale(.9); } 12%{ opacity:1; transform:none; } 80%{ opacity:1; } 100%{ opacity:0; transform:translateY(-26px); } }
+  /* the sky of the phone follows the moment of the day */
+  .home.m0{ background:radial-gradient(90% 55% at 80% 0%, rgba(255,201,60,.22), transparent 60%), radial-gradient(90% 50% at 0% 30%, rgba(61,127,217,.16), transparent 60%), var(--screen); }
+  .home.m1{ background:radial-gradient(90% 55% at 80% 0%, rgba(255,150,60,.24), transparent 60%), radial-gradient(90% 50% at 0% 30%, rgba(255,201,60,.12), transparent 60%), var(--screen); }
+  .home.m2{ background:radial-gradient(90% 55% at 80% 0%, rgba(240,107,168,.22), transparent 60%), radial-gradient(90% 50% at 0% 30%, rgba(124,77,255,.16), transparent 60%), var(--screen); }
+  .home.m3{ background:radial-gradient(90% 55% at 80% 0%, rgba(80,90,200,.16), transparent 60%), #07060a; }
+  /* Princesse's portrait follows her health */
+  .w-sis .pic{ position:relative; transition:filter .6s; }
+  .w-sis .pic.tired{ filter:saturate(.6) brightness(.95); }
+  .w-sis .pic.weak{ filter:grayscale(.75) brightness(.85); }
+  .w-sis .pic em{ position:absolute; right:-4px; bottom:-4px; font-style:normal; font-size:17px; }
+  /* money counts up or down instead of jumping */
+  .w-million .big.flash-up{ color:var(--green); } .w-million .big.flash-dn{ color:var(--red); }
   .app{ background:none; border:0; display:flex; flex-direction:column; align-items:center; gap:6px; padding:0; position:relative; }
   .app .ic{ width:58px; height:58px; border-radius:18px; border:3px solid var(--ink); box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; }
   .app .ic svg{ width:28px; height:28px; }
@@ -148,6 +173,16 @@
   .badge{ position:absolute; top:-6px; right:calc(50% - 38px); min-width:22px; height:22px; padding:0 6px; border-radius:11px; background:var(--red); color:#fff; border:2.5px solid var(--ink); font:800 12px/17px var(--f-b); text-align:center; }
   .dock{ flex:none; padding:10px max(16px, env(safe-area-inset-left,0px)) max(14px, env(safe-area-inset-bottom,0px)); display:flex; gap:10px; align-items:center; border-top:1px solid var(--line); background:rgba(0,0,0,.35); }
   .dock .btn{ flex:1; font-size:16px; padding:12px 10px; white-space:nowrap; }
+  /* an action card: what it is, then what it gives (green), risks or costs (red), and how long it takes */
+  .acts{ display:flex; flex-direction:column; gap:8px; }
+  .act{ display:flex; flex-direction:column; gap:6px; text-align:left; padding:10px 12px; border:3px solid var(--ink); border-radius:16px; background:#fff; color:var(--txt); box-shadow:0 4px 0 var(--ink); font:700 15px var(--f-t); cursor:pointer; }
+  .act:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ink); }
+  .act.sale{ background:#fff0ef; }
+  .chips{ display:flex; flex-wrap:wrap; gap:5px; }
+  .chips i{ font:800 11.5px var(--f-b); font-style:normal; padding:2px 8px; border-radius:99px; background:#f1e3c4; color:#5c4a33; }
+  .chips i.up{ background:#d9f5e3; color:#1a6b3d; } .chips i.dn{ background:#fde0df; color:#a3302f; }
+  .swipe-back{ position:fixed; left:0; top:50%; z-index:200; width:44px; height:44px; margin-top:-22px; border-radius:50%; display:grid; place-items:center; background:rgba(255,246,220,.92); color:var(--ink); box-shadow:0 4px 14px rgba(0,0,0,.35); transform:translateX(-60px); opacity:0; pointer-events:none; }
+  .swipe-back.go{ background:var(--mango); }
   .lab.qf{ font:800 11px var(--f-b); letter-spacing:.14em; text-transform:uppercase; color:#7A6650; margin-top:8px; }
   .dock .menu{ width:48px; height:48px; border-radius:16px; border:3px solid var(--ink); background:var(--paper); color:var(--ink); box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; flex:none; }
 
@@ -175,6 +210,11 @@
   .m.momo{ max-width:88%; background:#14231a; border:1.5px solid #2FB36B; border-radius:14px; font:700 14px/1.45 var(--f-b); color:#dff5e6; font-variant-numeric:tabular-nums; }
   .m.me{ align-self:flex-end; background:var(--mango); color:var(--ink); border-bottom-left-radius:20px; border-bottom-right-radius:6px; font-weight:700; }
   .m.sys{ align-self:center; background:none; color:var(--mute); font-size:12px; font-weight:800; padding:4px; }
+  .msgs .day{ align-self:center; margin:8px 0 2px; padding:3px 10px; border-radius:99px; background:rgba(255,246,220,.08); color:var(--mute); font:800 10.5px var(--f-b); letter-spacing:.08em; text-transform:uppercase; }
+  .m .hr{ display:block; margin-top:3px; font:700 10px var(--f-b); opacity:.6; text-align:right; }
+  /* a hot question has a fuse: the bar empties while she waits for your answer */
+  #appChoices.fuse::before{ content:''; display:block; height:4px; border-radius:99px; background:var(--red); transform-origin:left; animation:fuse 20s linear forwards; margin-bottom:6px; }
+  @keyframes fuse{ from{ transform:scaleX(1); } to{ transform:scaleX(0); } }
   .typing{ align-self:flex-start; display:flex; gap:4px; padding:12px 14px; background:#2b211a; border-radius:20px; }
   .typing i{ width:7px; height:7px; border-radius:50%; background:var(--mute); animation:blink 1s infinite; } .typing i:nth-child(2){ animation-delay:.15s; } .typing i:nth-child(3){ animation-delay:.3s; }
   @keyframes blink{ 50%{ opacity:.25; } }
@@ -405,10 +445,12 @@
       </div>
       <div class="w-row">
         <button class="w w-sis" id="wSis" style="text-align:left"><span class="pic" id="wSisPic"></span><span class="mini"><span>Santé <b id="wHp"></b></span><span class="bar h"><i id="wHpBar"></i></span><span>Relation <b id="wRel"></b></span><span class="bar r"><i id="wRelBar"></i></span></span></button>
-        <button class="w w-next" id="wNext" style="text-align:left"><span class="k">Prochain rendez-vous</span><b id="wNextT"></b><small id="wNextW"></small></button>
+        <button class="w w-stat" id="wStat" style="text-align:left" aria-label="Ton statut"></button>
       </div>
       <div class="apps" id="apps"></div>
+      <button class="w-news" id="wNews" aria-label="Les nouvelles du quartier"></button>
     </div>
+    <div class="fxs" id="fxs" aria-live="polite"></div>
     <div class="dock">
       <button class="menu" id="goMenu" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
       <button class="btn green" id="goDo">📍 Que faire ?</button>
@@ -996,6 +1038,12 @@ function flush(){
   for(const it of S.inbox.splice(0)){
     if(it.qui==='momo'){ momo(it.montant, it.de, it.libelle, it.solde); continue; }
     if(it.quotidien && SCRIPTED_SIS[it.j]) continue;
+    // the first late debt and every crisis come as a phone call, not a text
+    if(it.qui==='grosventre' && /oublié quelque chose/.test(it.texte) && !S.flags.gvCall){ S.flags.gvCall = 1;
+      setTimeout(()=> appel('grosventre', [['grosventre', 'Allô, '+(S.hero.fem ? 'ma fille' : 'mon fils')+' ? 😊'], ['grosventre', 'Tu dors bien, la nuit ? Moi non. Je pense à mon argent.'], ['me', 'Papa, je vais payer. Laisse-moi quelques jours.'], ['grosventre', it.texte.replace(/^Mon fils 😊 /, '')], ['grosventre', 'Chaque jour, c’est 5 % de plus. Et mes garçons s’ennuient.']],
+        ['Tu ne décroches pas ? 😊', it.texte]), 2500); continue; }
+    if(it.qui==='mengue' && /crise/.test(it.texte)){
+      setTimeout(()=> appel('mengue', [['mengue', 'Désolé de vous appeler à cette heure.'], ['mengue', it.texte], ['me', 'J’arrive… Je vais trouver l’argent, docteur.'], ['mengue', 'Faites vite. Elle vous réclame.']], [it.texte]), 2500); continue; }
     const who = it.qui, choices = it.quotidien ? DAILY_SIS : it.demande ? demandChoices() : null;
     if(!PEOPLE[who]) continue;
     talk = talk.then(()=> say(who, [it.texte], choices && !thread(who).choices ? choices : null)).catch(()=>{});
@@ -1011,8 +1059,11 @@ const momoRef = ()=> 'MM'+String(S.jour).padStart(2, '0')+(S.m+1)+'.'+String(Mat
 function momo(amount, who, label, solde){
   const inn = amount > 0, txt = (inn ? 'Transfert reçu ✅' : 'Paiement effectué ✅')+'\n'+(inn ? 'De : ' : 'À : ')+payeeName(who)+'\nMontant : '+fmt(Math.abs(amount))+' F\nMotif : '+label+
     '\nNouveau solde : '+fmt(solde==null ? S.cash : solde)+' F\nRéf. '+momoRef();
-  const th = thread('momo'); th.msgs.push({who:'them', txt, d:S.jour, m:S.m, k:'momo'}); bump('momo');
-  if(openThread==='momo') drawThread(); else { th.unread++; banner('momo', (inn ? '+' : '−')+fmt(Math.abs(amount))+' F · '+(inn ? 'de ' : 'à ')+payeeName(who)); }
+  // every receipt is kept, but only money that arrives rings: a payment you made, a tontine share or a bill does not
+  // fill your messages with unread badges (153 at day 11 before this rule)
+  const th = thread('momo'); th.msgs.push({who:'them', txt, d:S.jour, m:S.m, k:'momo'});
+  if(!S.order.includes('momo') || inn) bump('momo');
+  if(openThread==='momo') drawThread(); else if(inn){ th.unread++; banner('momo', '+'+fmt(amount)+' F · de '+payeeName(who)); }
 }
 // before any payment you make yourself: who, how much, why, and what is left. Then a receipt.
 function confirmPay(o){
@@ -1039,6 +1090,7 @@ if(HOST) addEventListener('message', e=>{
   if(e.source!==HOST || e.origin!==location.origin) return;
   const d = e.data || {};
   if(d.zh==='chips'){ hostChips = d.chips; if(d.photo) hostPhoto = d.photo; if(d.name) hostName = d.name; if(S && S.started){ S.cash = lastCash = d.chips; save(); renderHome(); if(curApp && curApp.id==='banque') openApp('banque'); } }
+  if(d.zh==='back') phoneBack();
   if(d.zh==='result' && PLAYS[d.id]){ const f = PLAYS[d.id]; delete PLAYS[d.id]; f(d); }
 });
 const G = ()=> S.hero.fem ? {gf:'grande sœur', frere:'ma sœur', mola:'ma go', il:'elle', e:'e'} : {gf:'grand frère', frere:'mon frère', mola:'mola', il:'il', e:''};
@@ -1067,7 +1119,7 @@ function banner(id, txt){
   const n = $('#notif');
   $('#nPic').innerHTML = pic(id); $('#nWho').textContent = PEOPLE[id] ? PEOPLE[id].name : id; $('#nTxt').textContent = txt;
   n.onclick = ()=>{ n.classList.remove('on'); openApp('thread', id); };
-  n.classList.add('on'); buzz();
+  n.classList.add('on'); buzz(id);
   clearTimeout(banner.t); banner.t = setTimeout(()=> n.classList.remove('on'), 3600);
 }
 // what each answer does: messages first, then the effects
@@ -1350,7 +1402,8 @@ async function beatBody(name, run){
 // ===================== screens =====================
 function show(id){ document.querySelectorAll('.scene').forEach(s=> s.hidden = s.id!==id); $('#snd').hidden = id!=='scTitle';
   // the rain on the roof follows you on the title and the phone; a scene of its own brings its own sound
-  if(id==='scTitle' || id==='scHome') SFX.loop('pluie', .12, 3); }
+  if(id==='scTitle' || id==='scHome') SFX.loop('pluie', .12, 3);
+  if(id!=='scHome') moniteur(false); }
 function renderClock(){
   const w = 'Jour '+S.jour+' · '+MOMENTS[S.m];
   ['#sbWhen', '#sbWhen2'].forEach(s=> $(s).textContent = w); ['#sbTime', '#sbTime2'].forEach(s=> $(s).textContent = CLOCK[S.m]);
@@ -1361,15 +1414,33 @@ const APPS = [
   {id:'sante', name:'Santé', bg:'#E24B4A', svg:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z" fill="#fff" stroke="#1B120C" stroke-width="2.4" stroke-linejoin="round"/>'},
   {id:'agenda', name:'Agenda', bg:'#3D7FD9', svg:'<rect x="4" y="5" width="16" height="15" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M4 10h16M9 3v4M15 3v4" stroke="#1B120C" stroke-width="2.4" stroke-linecap="round"/>'},
   {id:'carte', name:'Carte', bg:'#9BD07A', svg:'<path d="M12 21s-6-6.5-6-11a6 6 0 0 1 12 0c0 4.5-6 11-6 11z" fill="#E24B4A" stroke="#1B120C" stroke-width="2.4"/><circle cx="12" cy="10" r="2.2" fill="#fff" stroke="#1B120C" stroke-width="1.8"/>'},
-  {id:'affaires', name:'Affaires', bg:'#F06BA8', svg:'<rect x="4" y="8" width="16" height="11" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#1B120C" stroke-width="2.4" fill="none"/>'},
-  {id:'contacts', name:'Contacts', bg:'#FFF6DC', svg:'<circle cx="12" cy="9" r="4" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6" fill="#fff" stroke="#1B120C" stroke-width="2.4" stroke-linecap="round"/>'},
-  {id:'infos', name:'Infos', bg:'#1d1940', svg:'<rect x="4" y="5" width="16" height="14" rx="2" fill="#fff" stroke="#1B120C" stroke-width="2.4"/><path d="M8 9h8M8 13h8M8 16h5" stroke="#1B120C" stroke-width="2.2" stroke-linecap="round"/>'},
 ];
+// five apps, not eight: the contacts live in Messages, the deals in the Bank, the news on a line of the home screen
 function badges(){
   const unread = Object.values(S.threads).reduce((s, t)=> s + t.unread, 0);
-  const next = S.agenda.filter(a=> !a.done && (a.day>S.jour || (a.day===S.jour && a.m>=S.m))).length;
+  const soon = echeances().filter(e=> e.hot && e.jour - S.jour <= 1).length;
   const h = S.hop, due = (!h.date && S.jour >= R.avanceAvant - 2) || h.factures.some(f=> !f.payee) || !!(h.crise && !h.crise.payee);
-  return {messages:unread, infos:S.news.filter(n=> !n.seen).length, agenda:next, sante:due ? 1 : 0};
+  return {messages:unread, agenda:soon, sante:due ? 1 : 0, banque:debtsLeft().filter(d=> d.retard > 0).length};
+}
+// ---- your status, always in sight: what opens the rooms, what brings the police, what you owe, how she feels ----
+const humeurAmour = ()=> S.amour.rupture ? ['💔', 'partie'] : S.amour.orage >= 65 ? ['😡', 'en colère'] : S.amour.orage >= 45 ? ['😒', 'tendue'] : S.amour.love >= 70 ? ['😍', 'amoureuse'] : ['🙂', 'calme'];
+function statut(){
+  const d = debtsLeft().reduce((s, x)=> s + x.du, 0), [ic, mot] = humeurAmour(), part = PART()==='pamela' ? 'Amour' : 'Daryl';
+  // the value first, big; the word under it, small: four readable boxes in half a screen
+  return '<span class="st"><b class="'+(S.rep >= R.repSalle2 ? 'ok' : '')+'">⭐ '+S.rep+'</b><span>Réputation</span></span>'+
+    '<span class="st"><b class="'+(S.chaleur >= R.controle ? 'hot' : '')+'">🚨 '+S.chaleur+'</b><span>Police</span></span>'+
+    '<span class="st"><b class="'+(debtsLeft().some(x=> x.retard) ? 'hot' : '')+'">💸 '+(d ? (d >= 10000 ? Math.round(d/1000)+'k' : fmt(d)) : '0')+'</b><span>Dettes</span></span>'+
+    '<span class="st"><b>'+ic+'</b><span>'+part+' · '+mot+'</span></span>';
+}
+function statutSheet(){
+  const d = debtsLeft(), [ic, mot] = humeurAmour(), part = PART()==='pamela' ? 'Amour' : 'Daryl';
+  sheet('<h3>Ton statut</h3><div class="card"><div class="bill">'+
+    '<span>⭐ Réputation</span><em>'+S.rep+' / 100</em><span class="due">Elle grandit quand tu gagnes. À '+R.repSalle2+', la salle 2 de la Maison s’ouvre ; à '+R.repSalons+', les salons de Bastos (sur invitation).</span>'+
+    '<span>🚨 Police</span><em>'+S.chaleur+' / 100</em><span class="due">Les tables de nuit et les affaires d’Armand la font monter ; un jour calme la fait baisser. À '+R.controle+', les mises de nuit peuvent être saisies ; à '+R.rafle+', c’est la rafle ; à '+R.arrestation+', l’arrestation.</span>'+
+    '<span>💸 Dettes</span><em>'+fmt(d.reduce((s, x)=> s + x.du, 0))+'</em><span class="due">'+(d.length ? d.map(x=> x.nom+' : '+fmt(x.du)+(x.retard ? ' (en retard)' : ' avant le jour '+x.echeance)).join(' · ') : 'Tu ne dois rien à personne.')+'</span>'+
+    '<span>'+ic+' '+part+'</span><em>'+mot+'</em><span class="due">'+(PART()==='pamela' ? 'Fâchée, elle peut te nuire (elle est policière). Amoureuse, elle peut te sortir de cellule.' : 'Il promet beaucoup, tient peu, mais aide parfois.')+'</span>'+
+    '</div></div><div class="btns"><button class="btn" id="stX">Fermer</button></div>');
+  $('#stX').onclick = closeSheet;
 }
 // ===================== the time: the player always knows where he is =====================
 // Day N of 30, the weekday and the week, the moment of the day, the days left before the operation, and every date
@@ -1405,30 +1476,57 @@ function renderTime(){
     (nx ? '<div class="tm-next">'+nx.ic+' <b>'+esc(nx.t)+'</b><em>'+quand(nx)+'</em></div>' : '');
 }
 // the calendar: the 30 days as a month (day 1 is a Monday), then every date, the nearest first
-function calendrier(){
+function calHtml(){
   const j = S.jour, E = echeances(), mk = new Set(E.map(e=> e.jour));
-  sheet('<h3>Jour '+j+' sur '+R.jours+' · '+M.jourNom(j)+', '+MOMENTS[S.m].toLowerCase()+'</h3>'+
+  return '<h3 style="margin:0">Jour '+j+' sur '+R.jours+' · '+M.jourNom(j)+', '+MOMENTS[S.m].toLowerCase()+'</h3>'+
     '<p style="margin:0;font-weight:700;color:#7A6650">Chaque jour a 4 moments. Une action par moment. Il te reste '+(R.jours - j)+' jour'+(R.jours - j > 1 ? 's' : '')+' après aujourd’hui.</p>'+
     '<div class="cal-g">'+['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'].map(d=> '<span class="h">'+d+'</span>').join('')+
       Array.from({length:R.jours}, (_, k)=>{ const d = k + 1; return '<i class="'+[d < j ? 'past' : d===j ? 'now' : '', d===R.jours ? 'op' : '', d > j && mk.has(d) && d!==R.jours ? 'dl' : ''].join(' ')+'">'+d+'</i>'; }).join('')+'</div>'+
-    '<div style="max-height:38vh;overflow-y:auto">'+(E.length ? E.map(e=> '<div class="cal-row"><span class="when'+(e.hot && e.jour - j <= 1 ? ' hot' : '')+'">'+quand(e)+'<br>jour '+e.jour+'</span><span>'+e.ic+'</span><span style="flex:1;min-width:0"><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small></span></div>').join('') : '<div class="empty">Rien de prévu.</div>')+'</div>'+
-    '<div class="btns"><button class="btn" id="calX">Fermer</button></div>');
+    (E.length ? E.map(e=>{ const ag = S.agenda.find(a=> !a.done && a.title===e.t);
+      return '<div class="cal-row"'+(ag ? ' data-pin="'+ag.id+'" style="cursor:pointer"' : '')+'><span class="when'+(e.hot && e.jour - j <= 1 ? ' hot' : '')+'">'+quand(e)+'<br>jour '+e.jour+'</span><span>'+e.ic+'</span><span style="flex:1;min-width:0"><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small></span>'+(ag ? '<span>›</span>' : '')+'</div>'; }).join('') : '<div class="empty">Rien de prévu.</div>');
+}
+function calendrier(){
+  sheet(calHtml().replace('<h3 style="margin:0">', '<h3>')+'<div class="btns"><button class="btn" id="calX">Fermer</button></div>');
   $('#calX').onclick = closeSheet;
+  $('#sheetIn').querySelectorAll('[data-pin]').forEach(b=> b.onclick = ()=>{ closeSheet(); openApp('carte', b.dataset.pin); });
+}
+// money counts up or down instead of jumping: green when it comes, red when it goes (only while you look at it)
+let shownCash = null, cashAnim = 0;
+function countCash(){
+  const el = $('#wCash'), to = S.cash, put = v=> el.innerHTML = fmt(v)+' <small>/ 1 000 000</small>';
+  if($('#scHome').hidden) return;
+  const from = shownCash==null ? to : shownCash; shownCash = to;
+  if(from===to){ put(to); return; }
+  cancelAnimationFrame(cashAnim); el.classList.remove('flash-up', 'flash-dn'); el.classList.add(to > from ? 'flash-up' : 'flash-dn');
+  const t0 = performance.now(), dur = Math.min(1200, 400 + Math.abs(to - from)/50);
+  const step = t=>{ const k = Math.min(1, (t - t0)/dur), e = 1 - Math.pow(1 - k, 3); put(Math.round(from + (to - from)*e));
+    if(k < 1) cashAnim = requestAnimationFrame(step); else setTimeout(()=> el.classList.remove('flash-up', 'flash-dn'), 500); };
+  cashAnim = requestAnimationFrame(step);
 }
 function renderHome(){
   if(!S) return;
   renderClock(); renderTime();
-  $('#wCash').innerHTML = fmt(S.cash)+' <small>/ 1 000 000</small>';
+  countCash();
   $('#wCashBar').style.width = Math.max(0.5, S.cash/GOAL*100)+'%';
-  $('#wSisPic').innerHTML = face(PEOPLE.princesse.face);
+  $('#scHome').className = 'scene home m'+S.m;
+  // her portrait tells how she is before the numbers do
+  const hp = S.sis.sante, pic = $('#wSisPic');
+  pic.className = 'pic'+(hp < 40 ? ' weak' : hp < 60 ? ' tired' : '');
+  pic.innerHTML = face(PEOPLE.princesse.face)+(hp < 15 ? '<em>🫁</em>' : hp < 40 ? '<em>🤒</em>' : S.sis.relation >= 80 ? '<em>💗</em>' : '');
   $('#wHp').textContent = S.sis.sante; $('#wRel').textContent = S.sis.relation;
   $('#wHpBar').style.width = S.sis.sante+'%'; $('#wRelBar').style.width = S.sis.relation+'%';
-  const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0];
-  $('#wNextT').textContent = nx ? nx.title : 'Rien de prévu';
-  $('#wNextW').textContent = nx ? 'Jour '+nx.day+' · '+CLOCK[nx.m] : 'Attends des nouvelles';
+  $('#wStat').innerHTML = statut();
+  const n = S.news[0], fresh = S.news.filter(x=> !x.seen).length;
+  $('#wNews').innerHTML = '<b>Quartier</b><span>'+esc(n ? n.t : 'Rien de neuf. Le quartier dort… pour l’instant.')+'</span>'+(fresh ? '<i aria-label="'+fresh+' nouvelle(s)"></i>' : '');
   const b = badges();
   $('#apps').innerHTML = APPS.map(a=> '<button class="app" data-app="'+a.id+'"><span class="ic" style="background:'+a.bg+'"><svg viewBox="0 0 24 24">'+a.svg+'</svg></span><span>'+a.name+'</span>'+(b[a.id] ? '<i class="badge">'+b[a.id]+'</i>' : '')+'</button>').join('');
   $('#goNext').textContent = S.m===3 ? '🌙 Dormir' : '⏩ '+['Après-midi', 'Soir', 'Nuit'][S.m];
+  // when she is in danger, the hospital monitor beeps softly under everything
+  moniteur(S.started && !S.fin && S.sis.sante < 40 && !$('#scHome').hidden);
+}
+function moniteur(on){
+  if(on && !moniteur.t) moniteur.t = setInterval(()=> tone(1046, 0, .1, .025), 1300);
+  if(!on && moniteur.t){ clearInterval(moniteur.t); moniteur.t = 0; }
 }
 
 // ===================== the apps =====================
@@ -1440,7 +1538,9 @@ function openApp(id, arg){
   const T = (t)=> $('#appTitle').textContent = t;
   if(id==='messages'){
     T('Messages');
-    if(!S.order.length) body.innerHTML = '<div class="empty">Aucun message pour l’instant.</div>';
+    body.innerHTML = '<button class="btn ghost" id="toContacts" style="align-self:flex-start;font-size:14px;padding:7px 12px">👥 Contacts ('+S.contacts.filter(id=> PEOPLE[id]).length+')</button>';
+    $('#toContacts').onclick = ()=> openApp('contacts');
+    if(!S.order.length) body.insertAdjacentHTML('beforeend', '<div class="empty">Aucun message pour l’instant.</div>');
     S.order.forEach(pid=>{
       const th = thread(pid), last = th.msgs[th.msgs.length-1];
       const r = document.createElement('button'); r.className = 'row'+(th.unread ? ' new' : '');
@@ -1456,9 +1556,11 @@ function openApp(id, arg){
   }
   if(id==='banque'){
     T('Banque');
-    body.innerHTML = '<div class="solde"><small>Ton solde</small><div class="big">'+fmt(S.cash)+'</div><small>jetons, ta seule monnaie</small></div>'+
-      '<div class="card"><span class="k">Pour Princesse</span><b style="font:700 18px var(--f-t)">'+fmt(S.cash)+' sur 1 000 000</b><div class="bar"><i style="width:'+Math.max(0.5, S.cash/GOAL*100)+'%"></i></div><small style="color:#7A6650;font-weight:700">Il manque '+fmt(GOAL - S.cash)+'</small></div>'+
-      '<div id="debts"></div><div class="h3">Historique</div><div id="txs"></div>';
+    body.innerHTML = '<div class="solde"><small>Ton solde</small><div class="big">'+fmt(S.cash)+'</div><small>Il manque '+fmt(Math.max(0, GOAL - S.cash))+' pour l’opération</small></div>'+
+      '<div id="debts"></div><div id="deals"></div><div class="h3">Activité du compte</div><div id="txs"></div>';
+    // the deals (Armand's jobs…) live here now: money, at a price
+    const dl = S.deals || [];
+    if(dl.length) $('#deals').innerHTML = '<div class="card"><span class="k">Tes affaires</span>'+dl.map(d=> '<div class="bill"><span>'+esc(d.title)+' · '+esc(PEOPLE[d.who] ? PEOPLE[d.who].name : '')+'</span><em>'+fmt(d.pay)+'</em><span class="due">'+esc(d.state)+(d.note ? ' · '+esc(d.note) : '')+'</span></div>').join('')+'</div>';
     // what you owe, and the tontine: the two things that move your money without asking
     const ds = debtsLeft(), t = S.tontine;
     let h = '';
@@ -1501,13 +1603,9 @@ function openApp(id, arg){
     if($('#askDelay')) $('#askDelay').onclick = ()=>{ M.agir(S, {id:'delai'}); flush(); openApp('sante'); };
   }
   if(id==='agenda'){
-    T('Agenda');
-    const items = S.agenda.slice().sort((a,b)=> a.day-b.day || a.m-b.m);
-    body.innerHTML = items.length ? items.map(a=> '<button class="row" data-pin="'+a.id+'"><span class="pic">'+pic(a.who)+'</span><span class="t"><b>'+esc(a.title)+'</b><small>Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(a.stake)+'</small></span></button>').join('')
-      : '<div class="empty">Ton agenda est vide. Les rendez-vous arrivent par message.</div>';
-    body.insertAdjacentHTML('afterbegin', '<button class="btn" id="agCal">📆 Le calendrier des 30 jours</button>');
-    $('#agCal').onclick = calendrier;
-    if(!S.hop.date) body.insertAdjacentHTML('beforeend', '<div class="card"><span class="k">Hôpital</span><span>Avance de '+fmt(R.avance)+' à verser avant le jour '+R.avanceAvant+' (déjà versé : '+fmt(S.hop.avance)+').</span></div>');
+    // one single « À venir »: the same list as the home screen's time block, never a second version of it
+    T('Agenda · à venir');
+    body.innerHTML = '<div class="card">'+calHtml()+'</div>';
     body.querySelectorAll('[data-pin]').forEach(b=> b.onclick = ()=> openApp('carte', b.dataset.pin));
   }
   if(id==='carte'){ T('Carte · Yaoundé'); drawMap(body, arg); }
@@ -1535,7 +1633,16 @@ function drawThread(){
   const pid = openThread; if(!pid) return;
   const th = thread(pid), box = $('#appBody');
   th.unread = 0; save();
-  box.innerHTML = th.msgs.map(m=> '<div class="m'+(m.who==='me' ? ' me' : '')+(m.k ? ' '+m.k : '')+'">'+esc(m.txt)+'</div>').join('') || '<div class="empty">Pas encore de message.</div>';
+  // like a real messenger: a separator for each day and moment, the time under the last message of a group, and « Vu »
+  let last = '', out = '';
+  const lastMe = th.msgs.map(m=> m.who).lastIndexOf('me'), seen = lastMe >= 0 && th.msgs.slice(lastMe + 1).some(m=> m.who==='them');
+  th.msgs.forEach((m, i)=>{
+    const key = (m.d || 1)+'-'+(m.m || 0);
+    if(key!==last){ last = key; out += '<div class="day">'+(m.d===S.jour ? 'Aujourd’hui' : m.d===S.jour - 1 ? 'Hier' : M.jourNom(m.d || 1).replace(/^./, c=> c.toUpperCase())+' · jour '+(m.d || 1))+' · '+MOMENTS[m.m || 0].toLowerCase()+'</div>'; }
+    const nx = th.msgs[i + 1], end = !nx || nx.who!==m.who || (nx.d+'-'+nx.m)!==key;
+    out += '<div class="m'+(m.who==='me' ? ' me' : '')+(m.k ? ' '+m.k : '')+'">'+esc(m.txt)+(end ? '<small class="hr">'+CLOCK[m.m || 0]+(i===lastMe && seen ? ' · Vu' : '')+'</small>' : '')+'</div>';
+  });
+  box.innerHTML = out || '<div class="empty">Pas encore de message.</div>';
   box.scrollTop = box.scrollHeight;
   const c = $('#appChoices');
   if(th.choices && th.choices.length){
@@ -1546,9 +1653,9 @@ function drawThread(){
       else b.onclick = ()=> answer(pid, ch);
       c.appendChild(b); });
     // Amour hates waiting: an open conversation left unanswered for 20 s gets a jab, once per question
-    clearTimeout(drawThread.t);
-    if(pid==='pamela' && !th.pressed){ drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [pick('pamela', hot() ? ['Tu écris la Bible ou quoi ?? 😤', 'Réponds. MAINTENANT.', 'Je vois que tu es en ligne.'] : ['Tu écris un roman ? 🙄', 'Allô ? 😒', 'Tu réfléchis trop, ça me fait peur.']) || '…']); } }, 20000); }
-  } else c.hidden = true;
+    clearTimeout(drawThread.t); c.classList.remove('fuse');
+    if(pid==='pamela' && !th.pressed){ void c.offsetWidth; c.classList.add('fuse'); drawThread.t = setTimeout(()=>{ if(openThread==='pamela' && thread('pamela').choices && !thread('pamela').pressed){ thread('pamela').pressed = 1; pam(0, +4); say('pamela', [pick('pamela', hot() ? ['Tu écris la Bible ou quoi ?? 😤', 'Réponds. MAINTENANT.', 'Je vois que tu es en ligne.'] : ['Tu écris un roman ? 🙄', 'Allô ? 😒', 'Tu réfléchis trop, ça me fait peur.']) || '…']); } }, 20000); }
+  } else { c.hidden = true; c.classList.remove('fuse'); }
   // the free-writing bar lives outside the redrawn part, so what you are typing is never wiped by her next message
   $('#appFree').hidden = !CHAT[pid];
   if(CHAT[pid] && th.choices) c.querySelector('.lab').textContent = 'Ta réponse · ou écris ce que tu veux en bas';
@@ -1574,13 +1681,44 @@ const PLACES = {
   mvogada:{x:250, y:250, name:'Mvog-Ada', open:true},
   hopital:{x:150, y:150, name:'Hôpital Central', open:true},
   maison:{x:100, y:300, name:'La Maison · Nkolbisson', open:false},
-  bosco:{x:270, y:120, name:'Bar de Bosco', open:false},
+  bosco:{x:270, y:120, name:'Le Bon Coin', open:false},
   mokolo:{x:110, y:220, name:'Marché Mokolo', open:false},
   bastos:{x:180, y:60, name:'Bastos', open:false},
   santa:{x:300, y:340, name:'Santa Barbara', open:false},
 };
+// ===================== the living map: every place says what you can do there right now =====================
+// The engine's actions carry a place (lieu); the tables carry their own id. Each one is drawn at its place on the map,
+// with a green number when something can be done there now; touching a place lists its actions as clear cards.
+const LIEU = {hopital:'hopital', mokolo:'mokolo', mvogada:'mvogada', maison:'maison', boncoin:'bosco', bastos:'bastos', santa:'santa',
+  veillee:'mvogada', commune:'maison', salle2:'maison', salons:'bastos'};
+const lieuDe = a=> LIEU[a.table || a.lieu] || null;
+const iciNow = ()=> (S.flags.ici && PLACES[S.flags.ici]) ? S.flags.ici : 'mvogada';
+function dispo(k){ return M.actions(S).filter(a=> a.moment && a.id!=='repos' && a.id!=='attendre' && !hidden(a) && lieuDe(a)===k); }
+// what an action gives, risks and costs, in three short chips
+function chips(a){
+  const c = [], nuit = S.m===3, pol = n=> c.push(['dn', '🚨 Police +'+n]);
+  if(a.id==='table'){ const t = M.TABLES[a.table], net = Math.round(a.mise*t.joueurs*(1 - t.coupe)) - a.mise; c.push(['up', 'Gain +'+fmt(net)], ['dn', 'Risque −'+fmt(a.mise)]); if(nuit) pol(R.chaleurNuit); }
+  else if(a.id==='visite') c.push(['up', 'Relation +'+(S.sis.promesse===S.jour ? R.promesseRelation : R.visiteRelation)], ['up', 'Santé +'+R.visiteSante]);
+  else if(a.id==='boulot') c.push(['up', '+'+fmt(R.boulot)+' F']);
+  else if(a.id==='salon') c.push(['up', '+2 500 F']);
+  else if(a.id==='poisson') c.push(['up', 'Gain +15 000'], ['dn', 'Risque −2 000']);
+  else if(a.id==='pariRall') c.push(['up', 'Gain +15 000'], ['dn', 'Risque −5 000']);
+  else if(a.id==='veillee') c.push(['', 'Mise 500'], ['up', 'Ouvre l’examen']);
+  else if(a.id==='examen') c.push(['up', 'Ouvre la Maison']);
+  else if(a.id==='inscription') c.push(['dn', '−'+fmt(Math.min(S.cash, R.inscription))+' F'], ['up', 'Membre de la Maison']);
+  else if(a.id==='tournoi'){ const w = Math.min(3, Math.max(0, Math.floor((S.jour - 6)/7))); c.push(['dn', 'Entrée '+fmt(R.tournoiEntree[w])], ['up', 'Prix '+fmt(R.tournoiPrix[w])]); }
+  else if(a.id==='grand') c.push(['up', 'Prix '+fmt(R.grandPrix)]);
+  else if(a.id==='valise'){ c.push(['up', '+30 000 F']); pol(20); }
+  else if(a.cout) c.push(['dn', '−'+fmt(a.cout)+' F']);
+  if(a.moment) c.push(['', '⏱ '+['La matinée', 'L’après-midi', 'La soirée', 'La nuit'][S.m]]);
+  if(a.sale) c.push(['dn', 'Argent sale']);
+  return '<span class="chips">'+c.map(([k, t])=> '<i class="'+k+'">'+esc(t)+'</i>').join('')+'</span>';
+}
+const titre = a=> a.id==='table' ? M.TABLES[a.table].nom.replace(/^La Maison · /, 'Maison · ')+' · mise '+fmt(a.mise) : a.nom.split(' · ')[0].replace(/ \(.*\)$/, '');
+const carte = (a, k)=> '<button class="act'+(a.sale ? ' sale' : '')+'" data-k="'+k+'"><b>'+esc(titre(a))+'</b>'+chips(a)+'</button>';
 function drawMap(body, focus){
-  const pins = S.agenda.filter(a=> !a.done);
+  const pins = S.agenda.filter(a=> !a.done), ici = iciNow();
+  S.flags.lieux = S.flags.lieux || {};
   let svg = '<svg viewBox="0 0 360 400" role="img" aria-label="Carte du quartier">'+
     '<defs><pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#bfae86"/><line x1="0" y1="0" x2="0" y2="8" stroke="#a8966c" stroke-width="3"/></pattern></defs>'+
     '<rect width="360" height="400" fill="#d9c9a3"/>'+
@@ -1588,29 +1726,44 @@ function drawMap(body, focus){
     '<path d="M30 0 L120 400 M0 270 L360 230 M220 0 L300 400 M0 90 L360 110" stroke="#f2e6c7" stroke-width="9" fill="none"/>'+
     '<path d="M30 0 L120 400 M0 270 L360 230 M220 0 L300 400 M0 90 L360 110" stroke="#1B120C" stroke-width="1.5" stroke-dasharray="6 7" fill="none" opacity=".35"/>';
   Object.entries(PLACES).forEach(([k, p0])=>{
-    const p = Object.assign({}, p0, {open: p0.open || pins.some(a=> a.place===k) || (k==='maison' && S.flags.examPassed)});
+    const n = dispo(k).length + pins.filter(a=> a.place===k && a.day===S.jour && a.m===S.m).length;
+    const open = p0.open || n > 0 || pins.some(a=> a.place===k) || S.flags.lieux[k] || (k==='maison' && S.examen);
+    if(n) S.flags.lieux[k] = 1;
     svg += '<g class="pin" data-place="'+k+'">'+
-      (p.open ? '' : '<circle cx="'+p.x+'" cy="'+p.y+'" r="30" fill="url(#hatch)" opacity=".8"/>')+
-      '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(p.open ? 9 : 7)+'" fill="'+(p.open ? '#FFF8E7' : '#8a7a5c')+'" stroke="#1B120C" stroke-width="3"/>'+
-      '<text x="'+p.x+'" y="'+(p.y+26)+'" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#1B120C">'+esc(p.name)+(p.open ? '' : ' 🔒')+'</text></g>';
+      (open ? '' : '<circle cx="'+p0.x+'" cy="'+p0.y+'" r="30" fill="url(#hatch)" opacity=".8"/>')+
+      '<circle cx="'+p0.x+'" cy="'+p0.y+'" r="'+(open ? 9 : 7)+'" fill="'+(open ? '#FFF8E7' : '#8a7a5c')+'" stroke="#1B120C" stroke-width="3"/>'+
+      (n ? '<circle cx="'+(p0.x + 13)+'" cy="'+(p0.y - 13)+'" r="10" fill="#2FB36B" stroke="#1B120C" stroke-width="2.5"/><text x="'+(p0.x + 13)+'" y="'+(p0.y - 9)+'" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="12" fill="#fff">'+n+'</text>' : '')+
+      '<text x="'+p0.x+'" y="'+(p0.y+26)+'" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#1B120C">'+esc(p0.name)+(open ? '' : ' 🔒')+'</text></g>';
   });
   pins.forEach(a=>{ const p = PLACES[a.place];
     svg += '<g class="pin" data-ag="'+a.id+'"><path d="M'+p.x+' '+(p.y-12)+' c-12 -14 -16 -22 -16 -30 a16 16 0 0 1 32 0 c0 8 -4 16 -16 30z" fill="#E24B4A" stroke="#1B120C" stroke-width="3"/><text x="'+p.x+'" y="'+(p.y-37)+'" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="13" fill="#fff">'+CLOCK[a.m].slice(0,2)+'h</text></g>'; });
-  svg += '<g><circle cx="200" cy="300" r="10" fill="#3D7FD9" stroke="#1B120C" stroke-width="3"/><text x="200" y="322" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#1B120C">Toi</text></g></svg>';
+  // you are where you last went
+  const me = PLACES[ici];
+  svg += '<g class="me"><circle cx="'+(me.x - 16)+'" cy="'+(me.y + 4)+'" r="9" fill="#3D7FD9" stroke="#1B120C" stroke-width="3"/><text x="'+(me.x - 16)+'" y="'+(me.y + 8)+'" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="9" fill="#fff">toi</text></g></svg>';
   body.innerHTML = '<div class="map">'+svg+'</div><div id="mapInfo"></div>';
   body.querySelectorAll('[data-ag]').forEach(g=> g.addEventListener('click', ()=> agCard(g.dataset.ag)));
   body.querySelectorAll('[data-place]').forEach(g=> g.addEventListener('click', ()=> placeCard(g.dataset.place)));
-  if(focus) agCard(focus); else $('#mapInfo').innerHTML = '<div class="card"><span class="k">Comment ça marche</span><span>Touche une épingle rouge pour voir un rendez-vous. Les zones hachurées s’ouvriront au fil de l’histoire.</span></div>';
+  if(focus) agCard(focus);
+  else $('#mapInfo').innerHTML = '<div class="card"><span class="k">'+MOMENTS[S.m]+' · jour '+S.jour+'</span><span>Un <b style="color:var(--green)">chiffre vert</b> = ce que tu peux faire là-bas maintenant. Touche un lieu.</span><button class="btn green" id="mapAll">📋 Tout ce que je peux faire</button></div>';
+  if($('#mapAll')) $('#mapAll').onclick = quoiFaire;
 }
 function placeCard(k){
-  const p = PLACES[k];
-  $('#mapInfo').innerHTML = '<div class="card"><span class="k">'+esc(p.name)+'</span><span>'+(p.open ? (k==='hopital' ? 'Princesse est ici. Tu peux aller la voir depuis l’appli Santé.' : 'Ton quartier.') : 'Fermé pour toi. Il faudra qu’on t’y invite.')+'</span></div>';
+  const p = PLACES[k], A = dispo(k), ag = S.agenda.filter(a=> !a.done && a.place===k);
+  const open = p.open || A.length || ag.length || (S.flags.lieux || {})[k] || (k==='maison' && S.examen);
+  let h = '<div class="card"><span class="k">'+esc(p.name)+'</span>';
+  if(A.length) h += '<span>Maintenant ('+MOMENTS[S.m].toLowerCase()+') :</span><div class="acts">'+A.map((a, i)=> carte(a, i)).join('')+'</div>';
+  else h += '<span>'+(!open ? 'Fermé pour toi. Il faudra qu’on t’y invite.' : k==='hopital' ? 'Princesse est ici. Les visites, c’est le matin et l’après-midi.' : 'Rien à faire ici '+(S.m===3 ? 'cette nuit' : 'pour l’instant')+'. Reviens à un autre moment.')+'</span>';
+  if(ag.length) h += ag.map(a=> '<button class="btn ghost" data-ag2="'+a.id+'">📅 '+esc(a.title)+' · jour '+a.day+', '+MOMENTS[a.m].toLowerCase()+'</button>').join('');
+  $('#mapInfo').innerHTML = h+'</div>';
+  $('#mapInfo').querySelectorAll('[data-k]').forEach(b=> b.onclick = ()=>{ S.flags.ici = k; save(); doAction(A[+b.dataset.k]); });
+  $('#mapInfo').querySelectorAll('[data-ag2]').forEach(b=> b.onclick = ()=> agCard(b.dataset.ag2));
+  $('#mapInfo').scrollIntoView({behavior:'smooth', block:'start'});
 }
 function agCard(id){
   const a = S.agenda.find(x=> x.id===id); if(!a) return;
   const now = a.day===S.jour && a.m===S.m, late = a.day<S.jour || (a.day===S.jour && a.m<S.m);
   $('#mapInfo').innerHTML = '<div class="card"><span class="k">Jour '+a.day+' · '+CLOCK[a.m]+' · '+esc(PLACES[a.place].name)+'</span><b style="font:700 18px var(--f-t)">'+esc(a.title)+'</b><span>'+esc(a.stake)+'</span>'+
-    (now ? '<button class="btn green" id="goAg">Y aller maintenant</button>' : late ? '<span style="color:var(--red);font-weight:800">Trop tard.</span>'
+    (now ? '<button class="btn green" id="goAg">Y aller maintenant</button>' : late ? '<span style="color:#7A6650;font-weight:800">Ce rendez-vous reviendra à la prochaine occasion.</span>'
       : '<span style="color:#7A6650;font-weight:800">Pas encore l’heure : jour '+a.day+', '+MOMENTS[a.m].toLowerCase()+'.</span><button class="btn" id="skipAg">⏩ Avancer jusqu’au rendez-vous</button>')+'</div>';
   const ACT = {examen:()=> examStart(), inscription, bosco:fixedMatch, tournoi, colis};
   if(now) $('#goAg').onclick = ()=> (ACT[a.id] || veillee)(a);
@@ -1777,7 +1930,33 @@ function veillee(a){
 // act() does what the player chose (the engine applies the rules and, if it takes the moment, moves the clock). moved()
 // then shows what happened: the black card of the new moment, the messages of the morning, the doors of the story that
 // open now, a missed meeting that comes back, and the end when it has come.
-function act(a, o){ const r = M.agir(S, a, o || {}); save(); return r; }
+function act(a, o){ if(!fxBefore) fxBefore = etat(); const r = M.agir(S, a, o || {}); save(); return r; }
+// ---- what an action changed, made visible: small chips float up on the home screen ----
+const etat = ()=> ({cash:S.cash, sante:S.sis.sante, relation:S.sis.relation, rep:S.rep, chaleur:S.chaleur});
+const FX_NOM = {cash:['', ' F'], sante:['Santé ', ''], relation:['Relation ', ''], rep:['Réputation ', ''], chaleur:['Police ', '']};
+let fxBefore = null;
+function floatFx(from){
+  if(!from) return; const box = $('#fxs'), to = etat(), out = [];
+  for(const k of Object.keys(FX_NOM)){ const d = to[k] - from[k]; if(!d) continue;
+    // for the police, going up is bad news
+    const good = k==='chaleur' ? d < 0 : d > 0;
+    out.push('<span class="fx '+(good ? 'up' : 'dn')+'">'+FX_NOM[k][0]+(d > 0 ? '+' : '−')+fmt(Math.abs(d))+FX_NOM[k][1]+'</span>'); }
+  if(!out.length) return;
+  box.innerHTML = out.join(''); clearTimeout(floatFx.t); floatFx.t = setTimeout(()=> box.innerHTML = '', 3000);
+}
+// ---- the day's summary, at the first light of the next one: what yesterday did, what today asks ----
+function resumeJour(){
+  const d0 = S.flags.debutJour; S.flags.debutJour = Object.assign(etat(), {jour:S.jour}); save();
+  if(!d0 || d0.jour!==S.jour - 1) return;
+  const now = etat(), row = (k, lab, unit, invert)=>{ const d = now[k] - d0[k]; if(!d) return ''; const good = invert ? d < 0 : d > 0;
+    return '<span>'+lab+'</span><em style="color:'+(good ? 'var(--green)' : 'var(--red)')+'">'+(d > 0 ? '+' : '−')+fmt(Math.abs(d))+(unit || '')+'</em>'; };
+  const rows = row('cash', '💰 Argent', ' F')+row('sante', '❤️ Santé de Princesse')+row('relation', '🤝 Votre relation')+row('rep', '⭐ Réputation')+row('chaleur', '🚨 Police', '', true);
+  const today = echeances().filter(e=> e.jour - S.jour <= 1);
+  sheet('<h3>Hier, jour '+d0.jour+'</h3>'+(rows ? '<div class="card"><div class="bill">'+rows+'</div></div>' : '<p class="story">Une journée sans rien de changé. Le temps, lui, a passé.</p>')+
+    '<div class="card"><span class="k">Aujourd’hui · jour '+S.jour+' ('+M.jourNom(S.jour)+')</span>'+(today.length ? today.map(e=> '<div class="cal-row"><span class="when'+(e.hot ? ' hot' : '')+'">'+quand(e)+'</span><span>'+e.ic+'</span><span style="flex:1;min-width:0"><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small></span></div>').join('') : '<span>Rien d’urgent. Profite-en pour avancer.</span>')+'</div>'+
+    '<div class="btns"><button class="btn" id="rjGo">Commencer le jour '+S.jour+'</button></div>');
+  $('#rjGo').onclick = closeSheet;
+}
 async function moved(fast){
   if(!S || !S.started) return;
   const now = S.jour+'-'+S.m, prev = S.vu, changed = prev!==now, newDay = changed && +prev.split('-')[0] !== S.jour;
@@ -1797,6 +1976,9 @@ async function moved(fast){
   show('scHome'); curApp = null; openThread = null;
   flush();
   if(S.fin) return ending();
+  // a new day opens on its summary; within a day, what the action changed floats up
+  if(newDay) resumeJour(); else floatFx(fxBefore);
+  fxBefore = null;
   if(ghosted) PART()==='pamela' ? burst('pamela', hot() ? ['Vu.', 'Tu as vu et tu ne réponds pas ?', 'Ok.', 'Tu vas voir.'] : ['Vu…', 'Bon. Ok. 😒']) : say('yowale', ['lol ok 😂']);
   // two days without a visit: she says it once (the engine already counts it in your relation)
   if(newDay && S.jour >= 4 && S.jour - S.sis.derniereVisite >= 2) talk = talk.then(()=> say('princesse', ['Tu m’as oubliée ?'])).catch(()=>{});
@@ -1828,8 +2010,19 @@ async function skipTo(day, m){
   while(!S.fin && (S.jour<day || (S.jour===day && S.m<m))) await advance(true);
 }
 // « ⏩ »: nothing else to do this moment, so you rest (in a cell or after a beating, you wait)
-async function advance(fast){
+async function advance(fast, sure){
   if(busy || !S || S.fin) return;
+  // before sleeping, the phone warns about what falls due tomorrow and is not paid yet
+  if(!fast && !sure && S.m===3){
+    const due = echeances().filter(e=> /🏥|🚑|💸/.test(e.ic) && e.jour - S.jour <= 1);
+    if(due.length){
+      sheet('<h3>Avant de dormir</h3><p class="story">Pas encore réglé, et ça tombe très bientôt :</p><div class="card">'+due.map(e=> '<div class="cal-row"><span class="when hot">'+quand(e)+'</span><span>'+e.ic+'</span><span style="flex:1;min-width:0"><b>'+esc(e.t)+'</b><small>'+esc(e.s)+'</small></span></div>').join('')+'</div>'+
+        '<div class="btns"><button class="btn green" id="bdPay">Régler maintenant</button><button class="btn ghost" id="bdSleep">Dormir quand même</button></div>');
+      $('#bdPay').onclick = ()=>{ closeSheet(); openApp(due.some(e=> e.ic==='💸') && !due.some(e=> e.ic!=='💸') ? 'banque' : 'sante'); };
+      $('#bdSleep').onclick = ()=>{ closeSheet(); advance(false, true); };
+      return;
+    }
+  }
   act({id:S.cellule > 0 || S.tabassage > 0 ? 'attendre' : 'repos'});
   await moved(!!fast);
 }
@@ -1843,6 +2036,25 @@ function ending(){
 }
 
 // ===================== the opening =====================
+// ---- the big moments ring: a real call, like the doctor's on the first night, instead of one more text ----
+const CALL_ACTS = $('#callActs').innerHTML;
+let inCall = false;
+function appel(pid, lignes, siRefus){
+  if(inCall) return; inCall = true;
+  const back = ()=>{ inCall = false; ring(false); show('scHome'); renderHome(); };
+  show('scCall'); $('#callWhen').textContent = 'Jour '+S.jour+' · '+MOMENTS[S.m]+' · '+CLOCK[S.m];
+  $('#callWho').textContent = PEOPLE[pid].name; $('#callSub').textContent = 'Appel entrant…';
+  $('#callAva').classList.add('ringing'); $('#callAva').innerHTML = pic(pid); $('#callLines').innerHTML = ''; $('#callActs').innerHTML = CALL_ACTS;
+  ring(true);
+  $('#callNo').onclick = ()=>{ back(); if(siRefus) talk = talk.then(()=> say(pid, siRefus)).catch(()=>{}); };
+  $('#callYes').onclick = async ()=>{
+    ring(false); $('#callAva').classList.remove('ringing'); $('#callSub').textContent = 'En ligne';
+    $('#callActs').innerHTML = '<button class="btn" id="hang" disabled>…</button>';
+    const L = $('#callLines');
+    for(const [who, txt] of lignes){ const d = document.createElement('div'); d.className = 'ln'+(who==='me' ? ' me' : ''); d.innerHTML = '<b>'+esc(who==='me' ? S.hero.name : PEOPLE[pid].name)+'</b>'+esc(txt); L.appendChild(d); while(L.children.length > 4) L.firstChild.remove(); await wait(1200 + txt.length*26); }
+    const h = $('#hang'); h.disabled = false; h.textContent = 'Raccrocher'; h.onclick = back;
+  };
+}
 async function opening(){
   show('scCall'); $('#callWhen').textContent = 'Jour 1 · Soir · 21:40';
   ring(true);
@@ -1864,7 +2076,7 @@ async function opening(){
     $('#callActs').innerHTML = '<button class="btn" id="hang">Raccrocher</button>';
     $('#hang').onclick = ()=>{
       // the story starts everyone at 3 500: in the game, the real chips are set to that (the player agreed on the title screen)
-      S.started = true; S.cash = lastCash = 0; S.vu = S.jour+'-'+S.m; if(HOST) hostPost({zh:'set', chips:0}); tx(R.depart, 'Ce qu’il te reste'); save();
+      S.started = true; S.cash = lastCash = 0; S.flags.debutJour = {cash:R.depart, sante:S.sis.sante, relation:S.sis.relation, rep:0, chaleur:0, jour:1}; S.vu = S.jour+'-'+S.m; if(HOST) hostPost({zh:'set', chips:0}); tx(R.depart, 'Ce qu’il te reste'); save();
       const bl = $('#black'); bl.innerHTML = '<div><small>Tu as</small>'+fmt(R.depart)+'</div>'; bl.classList.add('on');
       setTimeout(()=>{ bl.classList.remove('on'); moved(); }, 1700);
     };
@@ -2145,7 +2357,6 @@ function examResult(){
     act({id:'examen'}, {reussi:pass});
     if(s>=18 && !S.badges.eleve){ S.badges.eleve = 1; tx(2000, 'Prime de la Maison · examen '+s+'/20'); }
     if(s===20) S.badges.prodige = 1;
-    if(pass){ S.flags.examPassed = s; PLACES.maison.open = true; }
     const ag = S.agenda.find(a=> a.id==='examen'); if(ag && pass) ag.done = 1;
     // passing opens the next problem: the registration, this evening
     if(pass && !S.agenda.some(a=> a.id==='inscription'))
@@ -2161,7 +2372,14 @@ $('#exGo').onclick = ()=>{
     return;
   }
   if(!EX.done) return examCheck();
-  EX.i++; if(EX.i>=EX.qs.length) examResult(); else examDraw();
+  EX.i++;
+  if(EX.i>=EX.qs.length) examResult();
+  // two halves of 10: a breath in the middle, with the score so far
+  else if(EX.i===10 && !EX.mi){ EX.mi = 1;
+    sheet('<h3>Mi-temps</h3><p class="story">Maître Tsala boit une gorgée d’eau sans te quitter des yeux. « La moitié. Ne te réjouis pas trop vite. »</p>'+
+      '<div class="delta"><span class="up">'+EX.score+' / 10 bonnes réponses</span><span>Il en faut 14 sur 20</span></div><div class="btns"><button class="btn" id="exMi">Deuxième manche</button></div>');
+    $('#exMi').onclick = ()=>{ closeSheet(); examDraw(); }; }
+  else examDraw();
 };
 $('#exQuit').onclick = ()=>{ sheet('<h3>Quitter l’examen ?</h3><p>Ta progression sera perdue. Maître Tsala n’aime pas qu’on parte.</p><div class="btns"><button class="btn red" id="qY">Quitter</button><button class="btn ghost" id="qN">Continuer l’examen</button></div>');
   $('#qY').onclick = ()=>{ closeSheet(); show('scHome'); renderHome(); }; $('#qN').onclick = closeSheet; };
@@ -2171,7 +2389,14 @@ let AC = null, ringT = 0;
 function audio(){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} return AC; }
 function tone(f, t0, d, v){ if(!SFX.on) return; const a = audio(); if(!a) return; const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o.type = 'sine'; g.gain.setValueAtTime(0, a.currentTime+t0); g.gain.linearRampToValueAtTime(v, a.currentTime+t0+.02); g.gain.exponentialRampToValueAtTime(.001, a.currentTime+t0+d); o.connect(g); g.connect(a.destination); o.start(a.currentTime+t0); o.stop(a.currentTime+t0+d+.05); }
 function ring(on){ clearInterval(ringT); if(!on) return; const r = ()=>{ [0, .18].forEach(t=>{ tone(880, t, .16, .08); tone(660, t+.09, .14, .06); }); buzz(); }; r(); ringT = setInterval(r, 1600); }
-function buzz(){ try{ navigator.vibrate && navigator.vibrate([60, 40, 60]); }catch(e){} if(SFX.on) { tone(1320, 0, .12, .05); tone(1760, .1, .14, .04); } }
+// each person has a ring of their own, so you know who writes before you look; the phone only vibrates once you touched it
+// (browsers refuse it before, and filled the console with errors)
+const RING = {pamela:[988, 1319], yowale:[784, 1047], princesse:[1568, 2093], grosventre:[392, 330], mengue:[880, 880], rall:[659, 988], momo:[1175, 1568]};
+function buzz(who){
+  try{ if(navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate([60, 40, 60]); }catch(e){}
+  const [a, b] = RING[who] || [1320, 1760];
+  if(SFX.on){ tone(a, 0, .12, .05); tone(b, .1, .14, .04); }
+}
 // ---- the real recordings of the game and of the Dossiers de Nkolbisson (sfx/ and sfx/amb/, CC0 / Kenney), loaded on first use.
 // One-shots (thunder, chips, cards, a horn) and loops that fade in and out (rain, the bar, the siren). Missing files stay silent.
 const SFX = (()=>{
@@ -2407,20 +2632,18 @@ const agItem = id=> S.agenda.find(x=> x.id===id && !x.done) || {};
 function quoiFaire(){
   if(busy || !S.started) return;
   if(S.fin) return ending();
-  const A = M.actions(S).filter(a=> !hidden(a));
-  const tables = {}, moments = [], libres = [];
-  A.forEach((a, i)=>{ a.k = i; if(a.id==='table') (tables[a.table] = tables[a.table] || []).push(a); else if(a.moment && a.id!=='repos') moments.push(a); else if(a.libre) libres.push(a); });
-  const row = (a, cls)=> '<button class="btn '+(cls || 'ghost')+'" data-k="'+a.k+'" style="text-align:left">'+esc(a.nom)+'</button>';
-  let h = '<h3>'+MOMENTS[S.m]+' · jour '+S.jour+' ('+M.jourNom(S.jour)+')</h3><p style="margin:0 0 6px;font-weight:700;color:#7A6650">Une seule chose par moment. Payer, emprunter ou répondre ne prend pas de temps.</p><div class="btns" style="max-height:60vh;overflow-y:auto">';
-  if(moments.length) h += '<div class="lab qf">Ce moment-ci</div>'+moments.map(a=> row(a, a.sale ? 'red' : '')).join('');
-  Object.entries(tables).forEach(([id, list])=>{ const t = M.TABLES[id];
-    h += '<div class="lab qf">'+esc(t.nom)+(t.coupe ? ' · la Maison prend '+Math.round(t.coupe*100)+' %' : '')+'</div><div style="display:flex;gap:8px;flex-wrap:wrap">'+
-      list.map(a=> '<button class="btn ghost" data-k="'+a.k+'" style="flex:1;min-width:28%">'+fmt(a.mise)+'</button>').join('')+'</div>'; });
-  if(libres.length) h += '<div class="lab qf">Sans perdre de temps</div>'+libres.map(a=> row(a)).join('');
-  h += '<div class="lab qf">Sinon</div><button class="btn" data-k="rest">'+(S.m===3 ? '🌙 Dormir jusqu’à demain' : '⏩ Laisser passer le moment')+'</button><button class="btn ghost" id="qfX">Fermer</button></div>';
+  // the moment's actions, place by place, each a card with what it gives, risks and costs; then what takes no time
+  const A = M.actions(S).filter(a=> !hidden(a)), byPlace = {}, libres = [];
+  A.forEach((a, i)=>{ a.k = i; if(a.moment && a.id!=='repos' && a.id!=='attendre'){ const p = lieuDe(a) || 'ailleurs'; (byPlace[p] = byPlace[p] || []).push(a); } else if(a.libre) libres.push(a); });
+  let h = '<h3>'+MOMENTS[S.m]+' · jour '+S.jour+' ('+M.jourNom(S.jour)+')</h3><p style="margin:0 0 6px;font-weight:700;color:#7A6650">Une seule chose par moment. Payer, emprunter ou répondre ne prend pas de temps.</p><div class="btns" style="max-height:62vh;overflow-y:auto">';
+  Object.entries(byPlace).forEach(([p, list])=>{
+    h += '<div class="lab qf">📍 '+esc(PLACES[p] ? PLACES[p].name : 'Ailleurs')+'</div><div class="acts">'+list.map(a=> carte(a, a.k)).join('')+'</div>'; });
+  if(libres.length) h += '<div class="lab qf">💳 Sans perdre de temps</div><div class="acts">'+libres.map(a=> carte(a, a.k)).join('')+'</div>';
+  h += '<div class="lab qf">Sinon</div><button class="btn" data-k="rest">'+(S.m===3 ? '🌙 Dormir jusqu’à demain' : '⏩ Laisser passer le moment')+'</button><button class="btn ghost" id="qfMap">🗺 Voir sur la carte</button><button class="btn ghost" id="qfX">Fermer</button></div>';
   sheet(h);
   $('#qfX').onclick = closeSheet;
-  $('#sheetIn').querySelectorAll('[data-k]').forEach(b=> b.onclick = ()=>{ if(b.dataset.k==='rest'){ closeSheet(); advance(); return; } doAction(A[+b.dataset.k]); });
+  $('#qfMap').onclick = ()=>{ closeSheet(); openApp('carte'); };
+  $('#sheetIn').querySelectorAll('[data-k]').forEach(b=> b.onclick = ()=>{ if(b.dataset.k==='rest'){ closeSheet(); advance(); return; } const a = A[+b.dataset.k]; if(lieuDe(a)){ S.flags.ici = lieuDe(a); save(); } doAction(a); });
 }
 function doAction(a){
   const H = {visite:visit, veillee:()=> veillee(agItem('veillee')), examen:()=>{ closeSheet(); examStart(); }, inscription:()=> inscription(agItem('inscription')),
@@ -2591,16 +2814,17 @@ $('#goResume').onclick = ()=>{ audio(); lastCash = S.cash; show('scHome'); rende
 $('#goDo').onclick = quoiFaire;
 $('#wTime').onclick = calendrier;
 $('#apps').addEventListener('click', e=>{ const b = e.target.closest('[data-app]'); if(b) openApp(b.dataset.app); });
-$('#appBack').onclick = ()=>{ if(curApp && curApp.id==='thread'){ openThread = null; openApp('messages'); } else { openThread = null; curApp = null; show('scHome'); renderHome(); } };
+$('#appBack').onclick = ()=>{ if(curApp && (curApp.id==='thread' || curApp.id==='contacts')){ openThread = null; openApp('messages'); } else { openThread = null; curApp = null; show('scHome'); renderHome(); } };
 $('#goNext').onclick = ()=> advance();
 $('#appFree').addEventListener('submit', e=>{ e.preventDefault(); const i = $('#freeIn'), t = i.value; if(!t.trim() || !openThread) return; i.value = ''; freeSend(openThread, t); });
 $('#wSis').onclick = ()=> openApp('sante');
-$('#wNext').onclick = ()=>{ const nx = S.agenda.filter(a=> !a.done).sort((a,b)=> a.day-b.day || a.m-b.m)[0]; openApp(nx ? 'carte' : 'agenda', nx ? nx.id : undefined); };
+$('#wStat').onclick = statutSheet;
+$('#wNews').onclick = ()=> openApp('infos');
 $('#goMenu').onclick = ()=>{ sheet('<h3>Maquette · Zéro à Héros</h3><p>Ce que tu testes : les actes 1 et 2 (jours 1 à 10), joués par le moteur du jeu : chaque moment, une action ; l’argent, l’hôpital, les dettes et la tontine suivent leurs règles.</p>'+
-  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Amour' : 'Daryl Bleu Magic')+' (caché dans le vrai jeu) : affection '+S.amour.love+' · orage '+S.amour.orage+'<br>Réputation '+S.rep+' · police (chaleur) '+S.chaleur+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button><button class="btn ghost" id="tryExam">Essayer l’examen tout de suite</button>' : '')+'<button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
-  if($('#tryExam')) $('#tryExam').onclick = ()=>{ closeSheet(); examStart(); };
+  '<p style="font-weight:800">'+(PART()==='pamela' ? 'Amour' : 'Daryl Bleu Magic')+' (caché dans le vrai jeu) : affection '+S.amour.love+' · orage '+S.amour.orage+'<br>Réputation '+S.rep+' · police (chaleur) '+S.chaleur+'<br><small style="color:#7A6650">Ce dont le jeu se souvient : '+(Object.keys(S.mem).map(k=> MEM_LABEL[k] || k).join(' · ') || 'rien encore')+'</small></p><div class="btns">'+(HOST ? '<button class="btn" id="backGame">Retour au jeu</button>' : '')+(DEV() ? '<button class="btn" id="openDev">🛠 Mode développeur (aller à une scène)</button>' : '')+'<button class="btn ghost" id="suggest">💡 Boîte à suggestions</button><button class="btn red" id="restart">Recommencer depuis le début</button><button class="btn ghost" id="closeM">Fermer</button></div>');
   if($('#openDev')) $('#openDev').onclick = devPanel;
   if($('#backGame')) $('#backGame').onclick = ()=>{ closeSheet(); hostPost({zh:'close'}); };
+  $('#suggest').onclick = ()=>{ closeSheet(); suggestion(); };
   $('#restart').onclick = ()=>{ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }; $('#closeM').onclick = closeSheet; };
 
 // ===================== developer mode: jump straight to any scene, without replaying the days =====================
@@ -2650,7 +2874,7 @@ function devJump(k){
   if(k==='veillee'){ devState(2, 2, {beats:BEATS(A1)}); openApp('carte', 'veillee'); }
   if(k==='exam'){ devState(3, 0, {veillee:true, beats:BEATS(A1)}); examStart(); }
   if(k==='day3' || k==='inscription' || k==='debt'){
-    devState(3, k==='day3' ? 1 : 2, {cash:4000, veillee:true, examen:true, flags:{examPassed:17},
+    devState(3, k==='day3' ? 1 : 2, {cash:4000, veillee:true, examen:true,
       agenda:[{id:'inscription', day:3, m:2, place:'maison', title:'Inscription à la Maison', who:'tsala', stake:fmt(R.inscriptionAcompte)+' à payer · puis ta première table'}],
       beats:BEATS(A1.concat(k==='day3' ? [] : ['day3money']))});
     if(k==='day3') doors();
@@ -2671,7 +2895,7 @@ function act2Jump(k){
   const agenda = [];
   if(k==='a2colis') agenda.push({id:'colis', day:6, m:1, place:'mokolo', title:'Le colis d’Armand', who:'armand', stake:'10 000 à la livraison · ne l’ouvre pas'});
   if(k==='a2tournoi') agenda.push({id:'tournoi', day:6, m:2, place:'maison', title:'Tournoi du samedi', who:'tsala', stake:fmt(R.tournoiEntree[0])+' l’entrée · '+fmt(R.tournoiPrix[0])+' au vainqueur'});
-  devState(at[0], at[1], {cash:8000, flags:{examPassed:17}, mem, agenda, veillee:true, examen:true, membre:true, rep:10,
+  devState(at[0], at[1], {cash:8000, mem, agenda, veillee:true, examen:true, membre:true, rep:10,
     hop:Object.assign(fresh().hop, {avance:R.avance, date:true}), fait:k==='a2end' ? {enveloppe:1} : {},
     tontine:k==='a2d7' ? {debut:3, tour:10, paye:3, touche:false, actif:true} : null,
     beats:BEATS(A1.concat('day3money', passed))});
@@ -2694,6 +2918,41 @@ function devPanel(){
 }
 $('#goDev').onclick = ()=>{ if(!S) S = fresh(); devPanel(); };
 
+// ---- « back », from the game's back button, the system gesture or a slide from the left edge: one step at a time ----
+function phoneBack(){
+  const vis = id=> !$(id).hidden;
+  const f = document.querySelector('.film'); if(f){ const s = f.querySelector('.skip'); (s || f).click(); return; }
+  if(!$('#sheet').hidden){ closeSheet(); return; }
+  if(vis('#scCall')) return;                                   // a call is answered or declined, never swiped away
+  if(vis('#scExam')){ $('#exQuit').click(); return; }
+  if(vis('#scApp')){ $('#appBack').click(); return; }
+  if(vis('#scHero')){ show('scTitle'); return; }
+  if(HOST) hostPost({zh:'close'});
+}
+(function swipeBack(){
+  let top = window; try{ top = window.top; }catch(e){}
+  const standalone = (top.navigator && top.navigator.standalone) || (top.matchMedia && top.matchMedia('(display-mode: standalone)').matches);
+  if(!standalone || !('ontouchstart' in window)) return;
+  const ind = document.createElement('div'); ind.className = 'swipe-back'; ind.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>'; document.body.appendChild(ind);
+  let x0 = 0, y0 = 0, on = false, dx = 0;
+  document.addEventListener('touchstart', e=>{ const t = e.touches[0]; if(e.touches.length!==1 || t.clientX > 22) return; on = true; x0 = t.clientX; y0 = t.clientY; dx = 0; }, {passive:true});
+  document.addEventListener('touchmove', e=>{ if(!on) return; const t = e.touches[0]; dx = t.clientX - x0; const dy = Math.abs(t.clientY - y0);
+    if(dy > 60 && dy > dx){ on = false; ind.style.opacity = 0; return; }
+    const k = Math.max(0, Math.min(1, dx/110)); ind.style.top = t.clientY+'px'; ind.style.transform = 'translateX('+(-60 + k*76)+'px)'; ind.style.opacity = k; ind.classList.toggle('go', k >= 1); }, {passive:true});
+  document.addEventListener('touchend', ()=>{ if(!on) return; on = false; ind.style.opacity = 0; ind.style.transform = 'translateX(-60px)'; ind.classList.remove('go'); if(dx >= 110) phoneBack(); }, {passive:true});
+})();
+// ---- the suggestion box: in the game it is the game's own (sent to the team); alone, the mockup keeps it here ----
+function suggestion(){
+  if(HOST){ hostPost({zh:'suggest'}); return; }
+  sheet('<h3>💡 Boîte à suggestions</h3><p>Une idée, un bug, une remarque sur Zéro à Héros ?</p><textarea id="sgT" maxlength="1000" rows="5" style="width:100%;box-sizing:border-box;padding:10px;border:2.5px solid var(--ink);border-radius:14px;font:600 16px var(--f-b)"></textarea>'+
+    '<div class="btns"><button class="btn green" id="sgGo">Envoyer</button><button class="btn ghost" id="sgX">Fermer</button></div>');
+  $('#sgX').onclick = closeSheet;
+  $('#sgGo').onclick = ()=>{ const t = $('#sgT').value.trim(); if(t.length < 3) return;
+    try{ const q = JSON.parse(localStorage.getItem('fapfap_sugg_queue') || '[]'); q.push({texte:t.slice(0, 1000), categorie:'histoire', version:'v77', origine:'zero-heros', appareil:navigator.userAgent.slice(0, 200)}); localStorage.setItem('fapfap_sugg_queue', JSON.stringify(q.slice(-20))); }catch(e){}
+    sheet('<h3>Merci !</h3><p>Ta suggestion partira à l’équipe à la prochaine ouverture du jeu.</p><div class="btns"><button class="btn" id="sgOk">Fermer</button></div>'); $('#sgOk').onclick = closeSheet; };
+}
+// the mockup's first save (before the engine) can no longer be read: it goes, so nothing old lingers on the phone
+try{ localStorage.removeItem('zero-heros-maquette-v1'); }catch(e){}
 S = load();
 // test hook, only on this computer (never on the published page): lets the checks jump to a scene
 if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__zh = {beat, advance, owed, M, quoiFaire, doAction, moved, act, get S(){ return S; }, answer:(pid, i)=> answer(pid, thread(pid).choices[i]), jump:devJump, freeSend, openApp, visit};

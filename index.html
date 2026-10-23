@@ -1161,6 +1161,37 @@
   /* =====================================================================================
      AGE CHECK and the scrolling quotes on the home screen
      ===================================================================================== */
+  /* ---- opening credits: black screen, golden names, a slow light ---- */
+  .launch{ position:fixed; inset:0; z-index:1000; background:#050304; display:grid; place-items:center; overflow:hidden; transition:opacity .7s; }
+  .launch::before{ content:''; position:absolute; inset:-20%; background:radial-gradient(40% 30% at 50% 50%, rgba(255,201,60,.16), transparent 70%); animation:lnGlow 6s ease-in-out infinite alternate; }
+  .launch.done{ opacity:0; pointer-events:none; }
+  .ln-shot{ position:absolute; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:0 28px; opacity:0; transform:scale(.97); transition:opacity .8s, transform 2.4s ease-out; }
+  .ln-shot.on{ opacity:1; transform:scale(1); }
+  .ln-shot small{ font:800 13px 'Nunito', system-ui, sans-serif; letter-spacing:.32em; text-transform:uppercase; color:#c9b48a; }
+  .ln-shot b{ font:700 clamp(30px, 9vw, 46px)/1.1 'Fredoka', 'Trebuchet MS', sans-serif; color:#FFC93C; text-shadow:0 0 30px rgba(255,201,60,.35); }
+  .ln-logo img{ width:min(72vw, 340px); height:auto; filter:drop-shadow(0 0 30px rgba(255,201,60,.25)); }
+  .ln-skip{ position:absolute; right:16px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); padding:8px 14px; border-radius:99px; border:1px solid rgba(255,246,220,.25); background:rgba(255,246,220,.06); color:#e9dcc2; font:700 13px 'Nunito', system-ui, sans-serif; }
+  @keyframes lnGlow{ from{ transform:translate(-6%, -4%); } to{ transform:translate(6%, 4%); } }
+  /* ---- the beta notice and the suggestion box ---- */
+  .beta-note, .sugg{ position:fixed; inset:0; z-index:950; display:grid; place-items:center; padding:20px 16px; background:rgba(5,3,4,.72); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+  .beta-note.hidden, .sugg.hidden{ display:none; }
+  .bn-card, .sg-card{ width:min(420px, 100%); background:#FFF8E7; color:#2A1D12; border:3px solid #1B120C; border-radius:24px; box-shadow:0 6px 0 #1B120C; padding:18px; display:flex; flex-direction:column; gap:10px; font:600 15px/1.45 'Nunito', system-ui, sans-serif; }
+  .bn-card h2, .sg-card h2{ margin:0; font:700 22px/1.15 'Fredoka', 'Trebuchet MS', sans-serif; }
+  .bn-card p, .sg-p{ margin:0; }
+  .bn-tag{ align-self:flex-start; padding:3px 10px; border-radius:99px; background:#E24B4A; color:#fff; font:800 11px 'Nunito', sans-serif; letter-spacing:.14em; text-transform:uppercase; }
+  .bn-btns, .sg-btns{ display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+  .bn-ok, .bn-idea, .sg-send, .sg-close{ font:700 16px 'Fredoka', 'Trebuchet MS', sans-serif; padding:12px; border-radius:14px; border:3px solid #1B120C; box-shadow:0 4px 0 #1B120C; background:#FFC93C; color:#1B120C; }
+  .bn-idea, .sg-close{ background:#FFF8E7; }
+  .sg-cats{ display:flex; flex-wrap:wrap; gap:6px; }
+  .sg-cats button{ padding:6px 12px; border-radius:99px; border:2px solid #1B120C; background:#fff; font:700 13px 'Nunito', sans-serif; color:#1B120C; }
+  .sg-cats button[aria-pressed="true"]{ background:#1B120C; color:#FFC93C; }
+  .sg-card textarea{ width:100%; resize:vertical; min-height:110px; padding:10px 12px; border:2.5px solid #1B120C; border-radius:14px; font:600 16px/1.4 'Nunito', system-ui, sans-serif; color:#2A1D12; background:#fff; box-sizing:border-box; }
+  .sg-count{ align-self:flex-end; color:#7A6650; font-weight:700; }
+  .sg-done{ margin:0; font-weight:800; color:#1a6b3d; } .sg-done.hidden{ display:none; }
+  .beta-tag{ display:inline-block; margin-top:6px; padding:3px 10px; border-radius:99px; background:#E24B4A; color:#fff; font:800 10.5px 'Nunito', sans-serif; letter-spacing:.14em; text-transform:uppercase; border:0; }
+  /* ---- the iPhone-style back gesture: a chevron that follows the finger ---- */
+  .swipe-back{ position:fixed; left:0; top:50%; z-index:1200; width:44px; height:44px; margin-top:-22px; border-radius:50%; display:grid; place-items:center; background:rgba(255,246,220,.92); color:#1B120C; box-shadow:0 4px 14px rgba(0,0,0,.35); transform:translateX(-60px); opacity:0; pointer-events:none; }
+  .swipe-back.go{ background:#FFC93C; }
   .age-gate{ position:fixed; inset:0; z-index:300; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 18px 70px;
     background: radial-gradient(ellipse at 50% 30%, rgba(74,46,20,0.97), #050302 75%); }
   .ag-card{ width:100%; max-width:360px; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; animation: sheetPop 0.5s cubic-bezier(.25,1.5,.45,1); }
@@ -4231,6 +4262,39 @@
   </div>
   <p class="ag-foot">Nul n’entre ici s’il est babylone.</p>
 </div>
+<!-- The opening credits, at every launch (a touch skips them), then the beta notice once per version -->
+<div class="launch" id="launch" aria-label="Générique d’ouverture">
+  <div class="ln-shot" data-i="0"><small>Yowalé Distribution</small><b>présente</b></div>
+  <div class="ln-shot" data-i="1"><small>Une création de</small><b>Nitcheu Roland</b></div>
+  <div class="ln-shot" data-i="2"><small>Direction artistique</small><b>Franck Lado</b></div>
+  <div class="ln-shot ln-logo" data-i="3"><img src="art/logo.png" alt="Fap Fap" width="600" height="312"><small>Yaoundé · la nuit · les cartes</small></div>
+  <button class="ln-skip" id="lnSkip">Passer ›</button>
+</div>
+<div class="beta-note hidden" id="betaNote" role="dialog" aria-modal="true" aria-labelledby="bnT">
+  <div class="bn-card">
+    <span class="bn-tag">Version bêta</span>
+    <h2 id="bnT">Bienvenue dans la version de test</h2>
+    <p>Cette version de Fap Fap est une <b>bêta</b>, disponible seulement pour les tests. Le jeu change et s’améliore en continu : des choses peuvent bouger, et parfois casser.</p>
+    <p>Une idée, un bug, une remarque ? La <b>boîte à suggestions</b> est là pour ça, sur l’accueil.</p>
+    <div class="bn-btns"><button class="bn-ok" id="bnOk">C’est compris</button><button class="bn-idea" id="bnIdea">💡 Donner une idée</button></div>
+  </div>
+</div>
+<!-- The suggestion box: an idea, a bug, a remark, sent to the creators -->
+<div class="sugg hidden" id="sugg" role="dialog" aria-modal="true" aria-labelledby="sgT">
+  <div class="sg-card">
+    <h2 id="sgT">💡 Boîte à suggestions</h2>
+    <p class="sg-p">Tout est lu par l’équipe. Merci de faire grandir le jeu avec nous.</p>
+    <div class="sg-cats" id="sgCats">
+      <button type="button" data-c="idee" aria-pressed="true">Une idée</button><button type="button" data-c="bug" aria-pressed="false">Un bug</button><button type="button" data-c="histoire" aria-pressed="false">L’histoire</button><button type="button" data-c="autre" aria-pressed="false">Autre</button>
+    </div>
+    <textarea id="sgText" maxlength="1000" rows="5" placeholder="Écris ta suggestion ici…"></textarea>
+    <small class="sg-count" id="sgCount">0 / 1000</small>
+    <div class="sg-btns"><button class="sg-send" id="sgSend">Envoyer</button><button class="sg-close" id="sgClose">Fermer</button></div>
+    <p class="sg-done hidden" id="sgDone"></p>
+  </div>
+</div>
+<!-- the iPhone-style back: a chevron that follows the finger from the left edge -->
+<div class="swipe-back" id="swipeBack" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></div>
 <div class="bulb-glow"></div>
 <div class="rain-layer"></div>
 <div class="amb-layer">
@@ -4586,6 +4650,7 @@
       <h2 class="logo neon-logo" aria-label="Fap Fap"><span class="neon-plate" id="neonPlate"><svg class="neon-sign" viewBox="0 0 400 120" aria-hidden="true"><defs><filter id="neonBlur" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="n-glow" filter="url(#neonBlur)"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-tube"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g><g class="n-gas"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow2"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-shine" transform="translate(-1.2 -1.6)"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g></svg></span></h2>
       <svg class="logo-d" viewBox="0 0 360 112" role="img" aria-label="Fap Fap"><g font-family="Fredoka, Trebuchet MS, sans-serif" font-weight="700" font-size="80" text-anchor="middle" stroke-linejoin="round"><text x="88" y="92" fill="#1B120C" stroke="#1B120C" stroke-width="16">FAP</text><text x="272" y="92" fill="#1B120C" stroke="#1B120C" stroke-width="16">FAP</text><text x="88" y="86" fill="#1B120C" stroke="#1B120C" stroke-width="10">FAP</text><text x="272" y="86" fill="#1B120C" stroke="#1B120C" stroke-width="10">FAP</text><text x="88" y="86" fill="#F06BA8">FAP</text><text x="272" y="86" fill="#3D7FD9">FAP</text></g><path d="M42 34 q14 -10 30 -8 M226 34 q14 -10 30 -8" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".7"/><g transform="translate(180 30) rotate(12)"><rect x="-13" y="-17" width="26" height="34" rx="5" fill="#fff" stroke="#1B120C" stroke-width="3"/><path d="M0 -8 C-7 -15 -12 -4 0 6 C12 -4 7 -15 0 -8Z" fill="#E24B4A" stroke="#1B120C" stroke-width="2"/></g></svg>
       <p class="home-tag">Yaoundé · la nuit · les cartes</p>
+      <button class="beta-tag" id="betaTag" aria-label="Version bêta : en savoir plus">Version bêta</button>
     </div>
 
     <section class="og-king" id="ogKing" aria-label="Le Ngonzormorrr">
@@ -4642,6 +4707,10 @@
       <span class="qb-ico"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg></span>
       <div class="qb-track"><p class="qb-text" id="quoteText"></p></div>
     </div>
+    <button class="gl solid hcard wide press og" id="btnSuggest" style="--d:5">
+      <span class="gl-sym" style="font-size:20px">💡</span>
+      <span class="hc-txt"><b>Boîte à suggestions</b><small>Une idée, un bug ? Dis-le à l’équipe</small></span>
+    </button>
     <button class="gl solid tinted hcard wide press hidden" id="btnInstall"><span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-download"/></svg></span><span class="hc-txt"><b>Installer le jeu</b><small>Sur l'écran d'accueil de ce téléphone</small></span></button>
   </div>
   <nav class="lg gl tabbar og" id="homeTabbar" aria-label="Menu principal">
@@ -8952,6 +9021,11 @@
   let backExitAt = 0;
   function backPressed(){
     const open = id=>{ const el = document.getElementById(id); return !!el && !el.classList.contains('hidden'); };
+    // the story's phone has its own « back » (close a sheet, leave an app, then the phone itself)
+    if(document.getElementById('launch')){ document.getElementById('launch').click(); return true; }
+    if(open('sugg')){ closeSuggest(); return true; }
+    if(open('betaNote')){ document.getElementById('bnOk').click(); return true; }
+    if(typeof ZH!=='undefined' && ZH.open){ zhPost({zh:'back'}); return true; }
     if(open('friendInviteOverlay')){ document.getElementById('fiNo').click(); return true; }
     if(open('playerSheet')){ document.getElementById('psClose').click(); return true; }
     if(open('confirmRestartOverlay')){ document.getElementById('btnConfirmRestartNo').click(); return true; }
@@ -12903,6 +12977,85 @@
     });
   })();
 
+  // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
+  const APP_VERSION = 'v77';
+  (function launch(){
+    const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
+    if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
+    let i = -1, t = 0, over = false;
+    const end = ()=>{ if(over) return; over = true; clearTimeout(t); el.classList.add('done'); setTimeout(()=> el.remove(), 800); betaNotice(); };
+    const next = ()=>{ if(i >= 0) shots[i].classList.remove('on'); i++; if(i >= shots.length) return end(); shots[i].classList.add('on'); t = setTimeout(next, i===shots.length - 1 ? 2200 : 1900); };
+    el.addEventListener('click', end);
+    setTimeout(next, 250);
+  })();
+  function betaNotice(force){
+    let seen = ''; try{ seen = localStorage.getItem('fapfap_beta_seen') || ''; }catch(e){}
+    if(seen===APP_VERSION && !force) return;
+    const n = document.getElementById('betaNote'); n.classList.remove('hidden');
+    const close = ()=>{ n.classList.add('hidden'); try{ localStorage.setItem('fapfap_beta_seen', APP_VERSION); }catch(e){} };
+    document.getElementById('bnOk').onclick = close;
+    document.getElementById('bnIdea').onclick = ()=>{ close(); openSuggest(); };
+  }
+  document.getElementById('betaTag').addEventListener('click', ()=> betaNotice(true));
+
+  // ---- The suggestion box: sent to the team (Supabase table « suggestions », write-only for players). If the network
+  // fails, the suggestion waits on the phone and leaves at the next launch: nothing typed is ever lost.
+  const SUGG_Q = 'fapfap_sugg_queue';
+  let suggCat = 'idee', suggFrom = 'accueil';
+  function openSuggest(from){
+    suggFrom = from || 'accueil';
+    const s = document.getElementById('sugg'), ta = document.getElementById('sgText'), done = document.getElementById('sgDone');
+    s.classList.remove('hidden'); done.classList.add('hidden'); ta.value = ''; document.getElementById('sgCount').textContent = '0 / 1000';
+    setTimeout(()=> ta.focus(), 250);
+  }
+  function closeSuggest(){ document.getElementById('sugg').classList.add('hidden'); }
+  document.getElementById('sgCats').addEventListener('click', e=>{ const b = e.target.closest('[data-c]'); if(!b) return; suggCat = b.dataset.c;
+    document.querySelectorAll('#sgCats [data-c]').forEach(x=> x.setAttribute('aria-pressed', String(x===b))); });
+  document.getElementById('sgText').addEventListener('input', e=> document.getElementById('sgCount').textContent = e.target.value.length+' / 1000');
+  document.getElementById('sgClose').addEventListener('click', closeSuggest);
+  async function suggSendNow(row){
+    if(!SUPABASE_URL || !(await loadSupabase())) throw new Error('réseau');
+    const { error } = await supaMake().from('suggestions').insert(row);
+    if(error) throw error;
+  }
+  async function suggFlush(){
+    let q = []; try{ q = JSON.parse(localStorage.getItem(SUGG_Q) || '[]'); }catch(e){}
+    if(!q.length) return;
+    const left = [];
+    for(const row of q){ try{ await suggSendNow(row); }catch(e){ left.push(row); } }
+    try{ localStorage.setItem(SUGG_Q, JSON.stringify(left)); }catch(e){}
+  }
+  document.getElementById('sgSend').addEventListener('click', async ()=>{
+    const ta = document.getElementById('sgText'), done = document.getElementById('sgDone'), txt = ta.value.trim();
+    if(txt.length < 3){ done.textContent = 'Écris au moins quelques mots.'; done.classList.remove('hidden'); return; }
+    const row = {texte:txt.slice(0, 1000), categorie:suggCat, joueur:((typeof prefs!=='undefined' && prefs.name) || '').trim().slice(0, 40) || null,
+      version:APP_VERSION, appareil:(navigator.userAgent || '').slice(0, 200), origine:suggFrom};
+    const btn = document.getElementById('sgSend'); btn.disabled = true;
+    try{ await suggSendNow(row); done.textContent = 'Merci ! Ta suggestion est arrivée chez l’équipe.'; }
+    catch(e){ let q = []; try{ q = JSON.parse(localStorage.getItem(SUGG_Q) || '[]'); }catch(_){} q.push(row);
+      try{ localStorage.setItem(SUGG_Q, JSON.stringify(q.slice(-20))); }catch(_){}
+      done.textContent = 'Merci ! Pas de réseau pour l’instant : elle partira toute seule à la prochaine ouverture du jeu.'; }
+    btn.disabled = false; ta.value = ''; done.classList.remove('hidden');
+    setTimeout(closeSuggest, 2200);
+  });
+  document.getElementById('btnSuggest').addEventListener('click', ()=> openSuggest('accueil'));
+  setTimeout(suggFlush, 8000);
+
+  // ---- The iPhone-style back: slide from the left edge, anywhere in the game. In Safari and on Android the system
+  // gesture already goes through the back button above; the installed app on iPhone has none, so the game draws its own.
+  (function swipeBack(){
+    const standalone = navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    if(!standalone || !('ontouchstart' in window)) return;
+    const ind = document.getElementById('swipeBack');
+    let x0 = 0, y0 = 0, on = false, dx = 0;
+    document.addEventListener('touchstart', e=>{ const t = e.touches[0]; if(e.touches.length!==1 || t.clientX > 22) return; on = true; x0 = t.clientX; y0 = t.clientY; dx = 0; }, {passive:true});
+    document.addEventListener('touchmove', e=>{ if(!on) return; const t = e.touches[0]; dx = t.clientX - x0; const dy = Math.abs(t.clientY - y0);
+      if(dy > 60 && dy > dx){ on = false; ind.style.opacity = 0; return; }
+      const k = Math.max(0, Math.min(1, dx/110)); ind.style.top = t.clientY+'px'; ind.style.transform = 'translateX('+(-60 + k*76)+'px)'; ind.style.opacity = k; ind.classList.toggle('go', k >= 1); }, {passive:true});
+    document.addEventListener('touchend', ()=>{ if(!on) return; on = false; ind.style.opacity = 0; ind.style.transform = 'translateX(-60px)'; ind.classList.remove('go');
+      if(dx >= 110){ try{ backPressed(); }catch(err){ console.error(err); } } }, {passive:true});
+  })();
+
   // ---- Quotes from the neighbourhood, scrolling at the bottom of the home screen ----
   const QUOTES = [
     ['Le 3 ne prévient pas. Il frappe.', 'Penalty'],
@@ -15565,6 +15718,7 @@
     if(d.zh==='set'){ const n = Math.max(0, Math.min(1e6, Math.round(+d.chips||0))); if(profile.chips==null) chipsInit(); chipsAdd(n - profile.chips); zhSendChips(); }
     if(d.zh==='play') zhPlay(d);
     if(d.zh==='close') zhClose();
+    if(d.zh==='suggest') openSuggest('zero-heros');
   });
   function zhPlay(d){
     const known = ZH_OPP[d.opp], P = ZH_PERSONAS[d.opp];
