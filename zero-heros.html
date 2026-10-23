@@ -389,6 +389,59 @@
   .snd{ position:absolute; z-index:45; top:calc(8px + env(safe-area-inset-top,0px)); right:10px; width:38px; height:38px; border-radius:50%; border:2px solid var(--line); background:rgba(5,3,6,.55); color:var(--cream); font-size:17px; }
 
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  /* ===================== polish (23/10): motion and depth, transform and opacity only ===================== */
+  /* one easing for everything that moves: quick to start, soft to land */
+  :root{ --ease:cubic-bezier(.2,.8,.2,1); --spring:cubic-bezier(.3,1.35,.45,1); }
+  /* a screen arrives instead of appearing */
+  .scene.enter{ animation:sceneIn .32s var(--ease) both; }
+  @keyframes sceneIn{ from{ opacity:0; transform:translateY(10px) scale(.99); } }
+  .scene.page.enter{ animation-name:pageIn; }
+  @keyframes pageIn{ from{ opacity:0; transform:translateX(24px); } }
+  /* the home screen's cards come in one after the other */
+  .home.enter .home-body > *{ animation:cardIn .42s var(--spring) both; }
+  .home.enter .home-body > :nth-child(2){ animation-delay:.04s; } .home.enter .home-body > :nth-child(3){ animation-delay:.08s; }
+  .home.enter .home-body > :nth-child(4){ animation-delay:.12s; } .home.enter .home-body > :nth-child(5){ animation-delay:.16s; }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(14px) scale(.98); } }
+  /* depth: a warm light on top of the paper cards, a softer shadow under them */
+  .w{ background-image:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0) 42%); }
+  .w-million{ position:relative; overflow:hidden; }
+  .w-million::after{ content:''; position:absolute; top:0; bottom:0; width:40%; left:-60%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent); animation:sheen 7s ease-in-out 2s infinite; pointer-events:none; }
+  @keyframes sheen{ 0%, 80%{ transform:translateX(0); } 100%{ transform:translateX(420%); } }
+  /* every button answers the finger: it sinks, then springs back */
+  .btn, .act, .app .ic, .w-time, .w-sis, .w-stat, .w-news, .row{ transition:transform .16s var(--ease), box-shadow .16s var(--ease); }
+  .w-time:active, .w-sis:active, .w-stat:active, .w-news:active, .row:active{ transform:scale(.98); }
+  .app:active .ic{ transform:translateY(3px) scale(.96); }
+  /* the sheet: the room darkens, then the card slides up with a small bounce */
+  .sheet:not([hidden]){ animation:dim .25s ease both; }
+  @keyframes dim{ from{ background:rgba(0,0,0,0); } }
+  .sheet .in{ animation:sheetUp .38s var(--spring) both; box-shadow:0 -12px 40px rgba(0,0,0,.35); }
+  .sheet .in::before{ content:''; align-self:center; width:42px; height:5px; border-radius:99px; background:rgba(27,18,12,.18); margin:-8px 0 2px; }
+  @keyframes sheetUp{ from{ transform:translateY(40%); opacity:.4; } }
+  /* a new badge pops */
+  .badge.pop{ animation:pop .45s var(--spring); }
+  /* the banner of a message drops with a little weight */
+  .notif.on{ animation:notifIn .45s var(--spring); }
+  @keyframes notifIn{ from{ transform:translateY(-140%); } }
+  /* the living map: places with something to do breathe */
+  .map .pin circle[fill="#2FB36B"]{ transform-box:fill-box; transform-origin:center; animation:breathe 1.8s ease-in-out infinite; }
+  @keyframes breathe{ 50%{ transform:scale(1.18); } }
+  .map .me circle{ transform-box:fill-box; transform-origin:center; animation:breathe 2.4s ease-in-out infinite; }
+  /* the present moment glows in the time strip */
+  .tm-strip i.now{ animation:nowGlow 2.2s ease-in-out infinite; }
+  @keyframes nowGlow{ 50%{ box-shadow:0 0 0 3px rgba(255,201,60,.35); } }
+  .tm-mom span.now{ transition:background .3s; }
+  /* action cards lift a little when they appear in a list */
+  .acts .act{ animation:cardIn .36s var(--spring) both; }
+  .acts .act:nth-child(2){ animation-delay:.03s; } .acts .act:nth-child(3){ animation-delay:.06s; } .acts .act:nth-child(n+4){ animation-delay:.09s; }
+  /* messages: mine slide from the right, theirs from the left */
+  .m{ animation-name:msgIn; } .m.me{ animation-name:msgMe; }
+  @keyframes msgIn{ from{ opacity:0; transform:translateX(-10px) scale(.97); } }
+  @keyframes msgMe{ from{ opacity:0; transform:translateX(10px) scale(.97); } }
+  /* phones that ask for less motion get almost none */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    .w-million::after{ display:none; }
+  }
 </style>
 
 <div class="stage">
@@ -1400,7 +1453,11 @@ async function beatBody(name, run){
 }
 
 // ===================== screens =====================
-function show(id){ document.querySelectorAll('.scene').forEach(s=> s.hidden = s.id!==id); $('#snd').hidden = id!=='scTitle';
+function show(id){
+  // the scene that becomes visible plays its entrance once (the class is removed when it ends, so nothing keeps running)
+  document.querySelectorAll('.scene').forEach(s=>{ const was = s.hidden; s.hidden = s.id!==id;
+    if(!s.hidden && was){ s.classList.remove('enter'); void s.offsetWidth; s.classList.add('enter'); s.addEventListener('animationend', function f(e){ if(e.target===s){ s.classList.remove('enter'); s.removeEventListener('animationend', f); } }); } });
+  $('#snd').hidden = id!=='scTitle';
   // the rain on the roof follows you on the title and the phone; a scene of its own brings its own sound
   if(id==='scTitle' || id==='scHome') SFX.loop('pluie', .12, 3);
   if(id!=='scHome') moniteur(false); }
@@ -1519,7 +1576,9 @@ function renderHome(){
   const n = S.news[0], fresh = S.news.filter(x=> !x.seen).length;
   $('#wNews').innerHTML = '<b>Quartier</b><span>'+esc(n ? n.t : 'Rien de neuf. Le quartier dort… pour l’instant.')+'</span>'+(fresh ? '<i aria-label="'+fresh+' nouvelle(s)"></i>' : '');
   const b = badges();
-  $('#apps').innerHTML = APPS.map(a=> '<button class="app" data-app="'+a.id+'"><span class="ic" style="background:'+a.bg+'"><svg viewBox="0 0 24 24">'+a.svg+'</svg></span><span>'+a.name+'</span>'+(b[a.id] ? '<i class="badge">'+b[a.id]+'</i>' : '')+'</button>').join('');
+  // a badge that grows pops once, so a new message is felt even without looking at the number
+  const prev = renderHome.b || {}; renderHome.b = b;
+  $('#apps').innerHTML = APPS.map(a=> '<button class="app" data-app="'+a.id+'"><span class="ic" style="background:'+a.bg+'"><svg viewBox="0 0 24 24">'+a.svg+'</svg></span><span>'+a.name+'</span>'+(b[a.id] ? '<i class="badge'+((b[a.id] || 0) > (prev[a.id] || 0) ? ' pop' : '')+'">'+b[a.id]+'</i>' : '')+'</button>').join('');
   $('#goNext').textContent = S.m===3 ? '🌙 Dormir' : '⏩ '+['Après-midi', 'Soir', 'Nuit'][S.m];
   // when she is in danger, the hospital monitor beeps softly under everything
   moniteur(S.started && !S.fin && S.sis.sante < 40 && !$('#scHome').hidden);

@@ -1170,6 +1170,24 @@
   .ln-shot small{ font:800 13px 'Nunito', system-ui, sans-serif; letter-spacing:.32em; text-transform:uppercase; color:#c9b48a; }
   .ln-shot b{ font:700 clamp(30px, 9vw, 46px)/1.1 'Fredoka', 'Trebuchet MS', sans-serif; color:#FFC93C; text-shadow:0 0 30px rgba(255,201,60,.35); }
   .ln-logo img{ width:min(72vw, 340px); height:auto; filter:drop-shadow(0 0 30px rgba(255,201,60,.25)); }
+  /* film grain and a thin gold line under each name: a cinema feel for the price of two gradients */
+  .launch::after{ content:''; position:absolute; inset:0; pointer-events:none; opacity:.07; background-image:repeating-radial-gradient(circle at 17% 32%, #fff 0 .6px, transparent .8px 3px), repeating-radial-gradient(circle at 71% 64%, #fff 0 .5px, transparent .7px 4px); animation:grain .9s steps(3) infinite; }
+  @keyframes grain{ 33%{ transform:translate(-1.5%, 1%); } 66%{ transform:translate(1%, -1.5%); } }
+  .ln-shot small{ transition:letter-spacing 2.2s var(--ln-ease, cubic-bezier(.2,.8,.2,1)); letter-spacing:.18em; }
+  .ln-shot.on small{ letter-spacing:.34em; }
+  .ln-shot b::after{ content:''; display:block; height:2px; margin:12px auto 0; width:0; background:linear-gradient(90deg, transparent, #FFC93C, transparent); transition:width 1.4s cubic-bezier(.2,.8,.2,1) .25s; }
+  .ln-shot.on b::after{ width:70%; }
+  .ln-logo img{ transform:scale(.94); transition:transform 2.4s cubic-bezier(.2,.8,.2,1); }
+  .ln-logo.on img{ transform:scale(1); }
+  /* the beta pill keeps its red, whatever the theme does to buttons */
+  /* (the night theme styles every home button with three ids of weight: this one needs four to keep its red) */
+  #betaTag#betaTag#betaTag#betaTag#betaTag#betaTag.beta-tag.beta-tag.beta-tag{ background:#E24B4A !important; color:#fff !important; border:0 !important; box-shadow:0 2px 0 rgba(0,0,0,.35) !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  /* the two cards arrive with a small spring */
+  .beta-note:not(.hidden) .bn-card, .sugg:not(.hidden) .sg-card{ animation:cardPop .42s cubic-bezier(.3,1.35,.45,1) both; }
+  .beta-note:not(.hidden), .sugg:not(.hidden){ animation:veil .3s ease both; }
+  @keyframes cardPop{ from{ opacity:0; transform:translateY(18px) scale(.96); } }
+  @keyframes veil{ from{ opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .launch::after{ animation:none; } .ln-shot, .ln-shot small, .ln-logo img{ transition:none; } .bn-card, .sg-card{ animation:none !important; } }
   .ln-skip{ position:absolute; right:16px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); padding:8px 14px; border-radius:99px; border:1px solid rgba(255,246,220,.25); background:rgba(255,246,220,.06); color:#e9dcc2; font:700 13px 'Nunito', system-ui, sans-serif; }
   @keyframes lnGlow{ from{ transform:translate(-6%, -4%); } to{ transform:translate(6%, 4%); } }
   /* ---- the beta notice and the suggestion box ---- */
@@ -4173,6 +4191,20 @@
   .sr-t{ display:block; font:700 22px/1.15 var(--d-t); color:#fff; margin:14px 0 4px; }
   .sr-pan.over{ filter:brightness(.45) saturate(.6); transition:filter .6s; } .sr-pan.over .sr-pin{ animation:none; pointer-events:none; }
   @media (prefers-reduced-motion: reduce){ .sr-pin{ animation:none; } }
+
+  /* ===================== polish (23/10): the hand and the table, by touch and light ===================== */
+  /* The cards keep their fanned rotations (transform); the lift uses the separate « translate » and « scale »
+     properties, which add to them instead of replacing them. Only translate, scale and opacity move: cheap to draw. */
+  .hand .card{ transition:transform .2s cubic-bezier(.3,1.45,.5,1), translate .26s cubic-bezier(.3,1.45,.5,1), scale .26s cubic-bezier(.3,1.45,.5,1), box-shadow .2s, filter .2s; }
+  @media (hover:hover){ .hand .card.playable:hover{ translate:0 -8px; scale:1.04; } }
+  /* your turn: a gold halo breathes around the cards you may play (its own layer, only its opacity changes) */
+  .hand .card.playable::after{ content:''; position:absolute; inset:-3px; border-radius:10px; box-shadow:0 0 14px 2px rgba(255,201,60,.55); opacity:0; pointer-events:none; }
+  .hand-zone.active-turn .hand .card.playable::after{ animation:handHalo 1.8s ease-in-out infinite; }
+  @keyframes handHalo{ 0%, 100%{ opacity:.15; } 50%{ opacity:.85; } }
+  /* the choices of a game (modes, opponents) answer the finger with a soft spring */
+  .mode-card, .opp-card, .hcard, .hero-play{ transition:scale .2s cubic-bezier(.3,1.45,.5,1), translate .2s cubic-bezier(.3,1.45,.5,1); }
+  .mode-card:active, .opp-card:active, .hcard:active, .hero-play:active{ scale:.975; }
+  @media (prefers-reduced-motion: reduce){ .hand .card.playable::after{ animation:none; } .hand .card{ transition:none; } }
 </style>
 </head>
 <body>
@@ -12978,12 +13010,14 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v77';
+  const APP_VERSION = 'v78';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
     let i = -1, t = 0, over = false;
-    const end = ()=>{ if(over) return; over = true; clearTimeout(t); el.classList.add('done'); setTimeout(()=> el.remove(), 800); betaNotice(); };
+    // the home screen plays its entrance as the credits fade, so the player sees it arrive instead of finding it there
+    const end = ()=>{ if(over) return; over = true; clearTimeout(t); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
+      if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); betaNotice(); };
     const next = ()=>{ if(i >= 0) shots[i].classList.remove('on'); i++; if(i >= shots.length) return end(); shots[i].classList.add('on'); t = setTimeout(next, i===shots.length - 1 ? 2200 : 1900); };
     el.addEventListener('click', end);
     setTimeout(next, 250);
