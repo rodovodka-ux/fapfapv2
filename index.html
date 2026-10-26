@@ -5510,7 +5510,8 @@
   // the game opened from one of its old addresses (github.io, githack): tell the player it has moved.
   // A guest's progression lives with the address, so they are asked to save it to their account first.
   (function movedBanner(){
-    if(DEV_HOST || location.hostname==='fapfap-jeu.vercel.app') return;
+    // (the test versions published by Vercel live on their own *.vercel.app address: no banner there either)
+    if(DEV_HOST || location.hostname==='fapfap-jeu.vercel.app' || /^fapfap-[\w-]+\.vercel\.app$/.test(location.hostname)) return;
     const home = document.querySelector('#menuOverlay .home-body');
     if(!home) return;
     const b = document.createElement('div');
