@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Unbounded:wght@300;700;800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -2654,8 +2654,25 @@
   .hx-novel.zh .hx-home-txt b{ font:700 30px/1 'Fredoka', 'Trebuchet MS', sans-serif; color:#FFC93C; -webkit-text-stroke:2px #1B120C; paint-order:stroke fill; text-shadow:0 3px 0 #1B120C; text-transform:uppercase; }
   .hx-novel.zh .hx-home-txt b em{ font-style:normal; font-size:18px; color:#FFF6DC; -webkit-text-stroke:0; text-shadow:none; }
   .hx-novel.zh .hx-cta{ background:#FFC93C; color:#1B120C; border:2.5px solid #1B120C; box-shadow:0 3px 0 #1B120C; }
+  /* the Fap-Fap League on the home screen: a night stadium, the ball of eight cards. The ids win over the themes' button rules. */
+  #btnLeague#btnLeague#btnLeague#btnLeague#btnLeague#btnLeague.lg-home{ position:relative; width:100%; min-height:196px; margin-top:12px; border-radius:22px !important; overflow:hidden; display:flex; align-items:flex-end; padding:16px; text-align:left; cursor:pointer;
+    background:radial-gradient(120% 90% at 85% 115%, #2443b8 0%, #0d1c5c 40%, #030619 78%) !important; border:1px solid rgba(242,199,106,.45) !important; box-shadow:0 14px 34px rgba(3,6,25,.55), inset 0 1px 0 rgba(255,255,255,.08) !important; color:#eef1ff !important; }
+  .lg-ball{ position:absolute; right:-18px; top:14px; width:150px; height:150px; animation:lgTurn 40s linear infinite; }
+  .lg-ball i{ position:absolute; left:50%; top:50%; width:30px; height:42px; margin:-21px 0 0 -15px; border-radius:5px; background:linear-gradient(165deg,#fffef8,#efe4c6); box-shadow:0 0 0 1.5px rgba(242,199,106,.9), 0 6px 14px rgba(0,0,0,.45); }
+  .lg-ball i:nth-child(1){ transform:rotate(0) translateY(-52px); } .lg-ball i:nth-child(2){ transform:rotate(45deg) translateY(-52px); } .lg-ball i:nth-child(3){ transform:rotate(90deg) translateY(-52px); } .lg-ball i:nth-child(4){ transform:rotate(135deg) translateY(-52px); }
+  .lg-ball i:nth-child(5){ transform:rotate(180deg) translateY(-52px); } .lg-ball i:nth-child(6){ transform:rotate(225deg) translateY(-52px); } .lg-ball i:nth-child(7){ transform:rotate(270deg) translateY(-52px); } .lg-ball i:nth-child(8){ transform:rotate(315deg) translateY(-52px); }
+  .lg-ball b{ position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px; border-radius:50%; display:grid; place-items:center; font:800 14px 'Unbounded', sans-serif; color:#3a2405;
+    background:radial-gradient(circle at 34% 28%, #fff6d8, #f2c76a 46%, #a87a24); box-shadow:0 0 30px rgba(242,199,106,.55); animation:lgTurn 40s linear infinite reverse; }
+  @keyframes lgTurn{ to{ rotate:360deg; } }
+  .lg-txt{ position:relative; z-index:1; max-width:66%; display:flex; flex-direction:column; align-items:flex-start; }
+  .lg-txt small{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#f2c76a !important; }
+  .lg-txt b{ display:block; font:800 26px/1 'Unbounded', 'Manrope', sans-serif !important; color:#fff !important; margin:8px 0 6px; letter-spacing:.01em; }
+  .lg-txt b em{ display:block; font:300 12px 'Unbounded', sans-serif; font-style:normal; letter-spacing:.55em; color:#f2c76a; margin-top:6px; }
+  .lg-txt > span:not(.lg-cta){ font:700 12.5px/1.4 'Manrope', sans-serif; color:#c3cbef !important; }
+  .lg-cta{ margin-top:12px; border-radius:999px; padding:10px 16px; font:700 11px 'Unbounded', sans-serif; letter-spacing:.08em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02 !important; }
+  @media (prefers-reduced-motion: reduce){ .lg-ball, .lg-ball b{ animation:none; } }
   /* the phone of the story, full screen above the game */
-  #zhOverlay{ position:fixed; inset:0; z-index:90; background:#0b0807; }
+  #zhOverlay{ position:fixed; inset:0; z-index:90; background:#030619; }
   #zhOverlay iframe{ width:100%; height:100%; border:0; display:block; }
   /* the road: each opponent in a photograph, at their place */
   .opp-card{ display:grid !important; grid-template-columns:96px 1fr; gap:14px; align-items:stretch !important; padding:12px !important; border-radius:18px !important; background:#15110d !important; border:1px solid rgba(255,255,255,.1) !important; box-shadow:none !important; }
@@ -4560,7 +4577,7 @@
   </div>
 </div>
 
-<div class="hidden" id="zhOverlay"><iframe id="zhFrame" title="Zéro à Héros" allow="autoplay"></iframe></div>
+<div class="hidden" id="zhOverlay"><iframe id="zhFrame" title="Fap-Fap League" allow="autoplay"></iframe></div>
 
 <div class="overlay modal hidden" id="playerSheet">
   <div class="sheet ps-sheet">
@@ -4703,16 +4720,12 @@
         <span class="hx-bar"><i id="hxHomeBar"></i></span><span class="hx-cta" id="hxHomeTag">Commencer l’enquête</span></span>
     </button>
 
-    <button class="hx-novel zh press" id="btnZeroHeros" style="--d:2">
-      <span class="hx-home-txt"><small>Le mode histoire · 18+</small><b>Zéro <em>à</em> Héros</b><span>Ta sœur est à l’hôpital. Il faut un million. Tu as 3 500.</span>
-        <span class="hx-cta">Ouvrir mon téléphone</span></span>
+    <!-- v80: the Fap-Fap League replaces the story modes (league.html, opened in #zhFrame above the game) -->
+    <button class="lg-home press" id="btnLeague" style="--d:2">
+      <span class="lg-ball" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>FF</b></span>
+      <span class="lg-txt"><small id="lgHomeTag">Nouveau · Saison 1</small><b>FAP·FAP<em>LEAGUE</em></b><span id="lgHomeSub">32 quartiers de Yaoundé et Douala. Un seul roi.</span>
+        <span class="lg-cta" id="lgHomeCta">Entrer dans la League</span></span>
     </button>
-
-    <!-- Les Dossiers de Nkolbisson : masqués pour l'instant (demande du 22/10), la page enquete.html reste en place -->
-    <a class="hx-novel nk press" id="btnEnquete" href="enquete.html" hidden style="--d:2;text-decoration:none;display:none">
-      <span class="hx-home-txt"><small>L’histoire · 18+</small><b><em>Les Dossiers de</em>Nkolbisson</b><span>Un polar en BD : interroge, joue au Fap Fap, accuse.</span>
-        <span class="hx-cta">Ouvrir le dossier</span></span>
-    </a>
 
     <div class="home-row2">
       <button class="gl solid hcard press og deep" id="modeDaily" style="--d:2">
@@ -7142,7 +7155,9 @@
       lines:{"control":["Je regarde tout. Je retiens tout.","Mon frère jouait cette carte.","Ce pli, je le prends.","Tu caches quelque chose."],"win":["Penalty m'a bien appris.","Une partie de plus, une vérité de plus.","Merci. Ça m'aide à réfléchir."],"cora":["CORA. Pour mon frère.","Un 3… comme lui."],"glacee":["33 Glacée. Il serait fier.","Deux 3. Le quartier va enfin m'écouter."],"surprise":["Tu joues comme un témoin qui ment.","Joli. Je note.","Tu as des secrets, toi."],"lose":["Je cherche encore. Je trouverai.","Tu as gagné. Pas la guerre.","Bien. Rejoue, je dois comprendre."],"behind":["Je n'ai pas fini mon enquête.","Le dernier pli dira la vérité.","Patience. Tout finit par sortir."],"missed":["J'avais une victoire automatique… j'étais ailleurs, dans l'enquête."]}};
   // what opens each of them: a game won in the book (or the end of the book, for Stéphane)
   const STORY_OPP = {mami:{game:'kiosque'}, caroline:{game:'caroline'}, cobra:{game:'cobra'}, ismael:{game:'ismael'}, tchinda:{game:'tchinda'}, mballa:{game:'mballa'}, stephane:{ended:1}};
-  function storyOppOpen(id, p){ const o = STORY_OPP[id], b = (p || profile).book || {}; if(!o) return true; return o.ended ? (b.ended || []).length > 0 : !!(b.won && b.won[o.game]); }
+  // v80: the stories are gone; beating the character in the Fap-Fap League opens them now (what the book opened stays open)
+  function storyOppOpen(id, p){ const o = STORY_OPP[id], pr = p || profile, b = pr.book || {}; if(!o) return true; if(pr.leagueBeat && pr.leagueBeat[id]) return true; return o.ended ? (b.ended || []).length > 0 : !!(b.won && b.won[o.game]); }
+  Object.keys(STORY_OPP).forEach(id=>{ if(DUEL_PERSONAS[id]) DUEL_PERSONAS[id].lockedHint = 'Fap-Fap League · bats '+DUEL_PERSONAS[id].name+' en League'; });
   // when the book opens one of them: a medal says so, once
   function announceStoryOpps(){ try{ const seen = profile.oppSeen = profile.oppSeen || {}; Object.keys(STORY_OPP).forEach(id=>{ if(!seen[id] && storyOppOpen(id)){ seen[id] = 1; saveProfile(); trophyPop({icon:'user', name:DUEL_PERSONAS[id].name, kind:'Nouvel adversaire · route du quartier et Carré'}); } }); }catch(e){} }
   const MASK_NAME = 'Le Ngonzormorrr';
@@ -13025,7 +13040,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v79';
+  const APP_VERSION = 'v80';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -14057,6 +14072,7 @@
   function sqShowEliminationChoice(winnerId, label, count){
     sq.lastWinner = winnerId; sqLastChampion = winnerId;
     sq.mult = /GLACÉE/.test(label) ? 4 : /CORA/.test(label) ? 2 : 1;
+    sq.lastMult = sq.mult;
     const others = sqActivePlayers().filter(id=>id!==winnerId);
     if(others.length===0){ return sqShowChampion(winnerId); }
     const n = Math.min(count||1, others.length);
@@ -15740,7 +15756,7 @@
     if(duelOpp.indexOf('zh_')===0 || r.zh) duelOpp = prefs.lastOpp && DUEL_PERSONAS[prefs.lastOpp] ? prefs.lastOpp : 'penalty';
     if(r.table) applySkins();
   }
-  // ===================== Zéro à Héros: the story's phone (zero-heros.html) in a frame above the game =====================
+  // ===================== The frame above the game: once Zéro à Héros, now the Fap-Fap League (league.html, v80) =====================
   // The phone tells the story; the game keeps the chips (one single currency) and plays its tables for real:
   // the phone asks {zh:'play'}, the game plays the duel with the full rules and the opponent's AI, then answers {zh:'result'}.
   const ZH_OPP = {rall:'aristide', penalty:'penalty', christelle:'gervais'};
@@ -15764,14 +15780,31 @@
   const ZH = {open:false};
   function zhPost(m){ const f = $id('zhFrame'); try{ if(f.contentWindow) f.contentWindow.postMessage(m, location.origin); }catch(e){} }
   function zhSendChips(){ if(profile.chips==null) chipsInit(); zhPost({zh:'chips', chips:profile.chips, name:(prefs.name||'').trim(), photo:myPhoto()}); }
+  // v80: the frame now holds the Fap-Fap League (league.html); the stories are gone, the bridge stays the same
   function zhOpen(){
     const f = $id('zhFrame');
-    if(!f.getAttribute('src')) f.setAttribute('src', 'zero-heros.html?in=game');
+    if(!f.getAttribute('src')) f.setAttribute('src', 'league.html?in=game');
     $id('zhOverlay').classList.remove('hidden'); ZH.open = true;
     zhSendChips();
   }
-  function zhClose(){ $id('zhOverlay').classList.add('hidden'); ZH.open = false; renderChips(); renderMenuRank(); }
-  document.getElementById('btnZeroHeros').addEventListener('click', ()=>{ ensureAudio(); zhOpen(); });
+  function zhClose(){ $id('zhOverlay').classList.add('hidden'); ZH.open = false; renderChips(); renderMenuRank(); renderLeagueHome(); announceStoryOpps(); }
+  document.getElementById('btnLeague').addEventListener('click', ()=>{ ensureAudio(); zhOpen(); });
+  // the home card tells where the player's season stands (read from the League's own save)
+  function renderLeagueHome(){
+    try{
+      const s = JSON.parse(localStorage.getItem('fapfap_league_v1') || 'null');
+      if(!s || s.v!==1) return;
+      const Q_NAMES = ['Mokolo','Briqueterie','Mvog-Ada','Mvog-Mbi','Essos','Nkolbisson','Biyem-Assi','Obili','Melen','Mendong','Ekounou','Emana','Nkoldongo','Etoudi','Mimboman','Madagascar','Cité Verte','Elig-Edzoa','Mvan','Tsinga','Messa','Nlongkak','Bastos','Odza','New-Bell','Akwa','Deïdo','Bépanda','Ndokotti','Bonabéri','Makepe','Village'];
+      const ROUNDS = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale'};
+      const me = Q_NAMES[s.me] || '', el = id=> document.getElementById(id); // ($id is declared further down the file)
+      el('lgHomeTag').textContent = 'Saison '+s.n+' · '+me;
+      el('lgHomeSub').textContent = s.champion!=null ? (s.champion===s.me ? me+' est champion ! Une nouvelle saison t’attend.' : 'Saison terminée. Une nouvelle saison t’attend.')
+        : s.out ? me+' est éliminé. Regarde qui va gagner, puis reviens plus fort.'
+        : s.phase==='groups' ? 'Journée '+s.day+' sur 6 · ta soirée t’attend ce soir.' : (ROUNDS[s.round] || '')+' · tout se joue ce soir.';
+      el('lgHomeCta').textContent = s.cur ? 'Reprendre la soirée' : 'Continuer ma saison';
+    }catch(e){}
+  }
+  renderLeagueHome();
   window.addEventListener('message', e=>{
     const f = $id('zhFrame');
     if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
@@ -15782,11 +15815,32 @@
     if(d.zh==='set'){ const n = Math.max(0, Math.min(1e6, Math.round(+d.chips||0))); if(profile.chips==null) chipsInit(); chipsAdd(n - profile.chips); zhSendChips(); }
     if(d.zh==='play') zhPlay(d);
     if(d.zh==='close') zhClose();
-    if(d.zh==='suggest') openSuggest('zero-heros');
+    if(d.zh==='suggest') openSuggest('league');
+    // a champion beaten in the League joins the road of the quarter and the Carré (what the stories used to open)
+    if(d.zh==='beat' && DUEL_PERSONAS[d.persona]){ profile.leagueBeat = profile.leagueBeat || {}; if(!profile.leagueBeat[d.persona]){ profile.leagueBeat[d.persona] = 1; saveProfile(); } }
   });
   function zhPlay(d){
-    const known = ZH_OPP[d.opp], P = ZH_PERSONAS[d.opp];
-    storyRun = {zh:true, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table||null};
+    const known = (d.persona && DUEL_PERSONAS[d.persona]) ? d.persona : ZH_OPP[d.opp], P = ZH_PERSONAS[d.opp];
+    storyRun = {zh:true, league:!!d.league, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table||null};
+    const label = d.league ? 'Fap-Fap League' : 'Zéro à Héros';
+    // the League's Carré: 3 or 4 seats, each one worn by a character of the game (its portrait, its lines, a name with its neighbourhood)
+    if(d.carre){
+      const n = d.carre===3 ? 3 : 4, names = {};
+      $id('zhOverlay').classList.add('hidden'); ZH.open = false;
+      Object.keys(d.seats || {}).forEach(seat=>{
+        if(!sqSeatsFor(n).includes(seat) || seat==='you') return;
+        const s = d.seats[seat], dp = DUEL_PERSONAS[s.p], l = (dp && dp.lines) || {};
+        names[seat] = String(s.name || (dp && dp.name) || 'Joueur').slice(0, 32);
+        if(dp){
+          storyRun.art[seat] = ART_FILE[seat]; ART_FILE[seat] = ART_FILE[s.p];
+          storyRun.sqp[seat] = SQ_PERSONAS[seat];
+          SQ_PERSONAS[seat] = {name:names[seat], control:l.control||[], win:l.win||[], cora:l.cora||[], glacee:l.glacee||[], lose:l.lose||[]};
+        }
+      });
+      sqNewGame({n, names});
+      document.querySelector('header .sub').textContent = label+' · '+String(d.title || 'Carré').slice(0, 60);
+      return;
+    }
     let pid = known;
     if(!pid){
       pid = 'zh_'+String(d.opp||'x').replace(/\W/g, '');
@@ -15801,7 +15855,7 @@
     // the page wears the story table's colours too (the player's own table comes back with applySkins after the game)
     if(storyRun.table) SKINS.table.forEach(s=> document.body.classList.toggle('table-'+s.id, s.id===storyRun.table && s.id!==SKINS.table[0].id && s.id!=='verre'));
     enterGame(); applyOppNameToUI(); newMatch();
-    document.querySelector('header .sub').textContent = 'Zéro à Héros · '+String(d.title || 'Toi contre '+oppName()).slice(0, 60);
+    document.querySelector('header .sub').textContent = label+' · '+String(d.title || 'Toi contre '+oppName()).slice(0, 60);
   }
 
   function storyMatchEnd(won){
@@ -15810,9 +15864,12 @@
       run.done = true;
       if(won){ sfxMatchWin(); bigImpact(); } else sfxMatchLose();
       touchDayStreak();
-      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Ton téléphone vibre…' : 'Ça fait mal au portefeuille.', {big:true, celebrate:won, ms:1700});
+      showToast(won ? 'Victoire !' : 'Défaite…', run.league ? (won ? 'Le quartier chante ton nom !' : 'La soirée continue…') : (won ? 'Ton téléphone vibre…' : 'Ça fait mal au portefeuille.'), {big:true, celebrate:won, ms:1700});
       const you = scores.you, them = scores.ai;
-      setTimeout(()=>{ goToMainMenu(); zhOpen(); zhPost({zh:'result', id:run.id, won, you, them}); }, 1900);
+      // for the League: who survived the Carré, and what the deciding hand was worth (×2 CORA, ×4 33 Glacée)
+      const sqGame = mode==='square' && sq, champ = sqGame ? sq.championSeat : null;
+      const mult = sqGame ? (sq.lastMult || 1) : (matchManches.length ? matchManches[matchManches.length - 1].mult : 1);
+      setTimeout(()=>{ goToMainMenu(); zhOpen(); zhPost({zh:'result', id:run.id, won, you, them, champ, mult}); }, 1900);
       return;
     }
     if(run && run.book){
