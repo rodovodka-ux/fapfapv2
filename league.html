@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#040823">
+<title>Fap-Fap League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Fap-Fap League — maquette iPhone : ouverture, choix du quartier, tirage au sort, ta poule.
+   Only transform/opacity animate; everything calms down under prefers-reduced-motion. */
+:root{
+  --night:#040823; --night2:#0b1950; --ink:#e9edff; --mute:#9aa6d6; --gold:#f3c96b; --gold2:#b8862b;
+  --ease:cubic-bezier(.2,.8,.2,1); --spring:cubic-bezier(.3,1.45,.5,1);
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:var(--night); color:var(--ink); font:500 15px/1.35 Inter,system-ui,sans-serif; overflow:hidden; }
+button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; }
+.scene{ position:fixed; inset:0; display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .6s var(--ease); }
+.scene.on{ opacity:1; pointer-events:auto; }
+
+/* the night sky shared by every scene */
+.sky{ position:fixed; inset:0; background:radial-gradient(120% 70% at 50% 108%, #1d3a9c 0%, #0b1950 38%, var(--night) 72%); overflow:hidden; }
+.sky .st{ position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.2; animation:tw var(--d,3s) ease-in-out infinite; animation-delay:var(--dl,0s); }
+@keyframes tw{ 50%{ opacity:.95; transform:scale(1.6); } }
+.beam{ position:absolute; bottom:-10%; left:50%; width:140px; height:130%; margin-left:-70px; transform-origin:50% 100%;
+  background:linear-gradient(to top, rgba(160,190,255,.32), rgba(160,190,255,0) 85%); filter:blur(6px); opacity:0;
+  clip-path:polygon(42% 100%, 58% 100%, 100% 0, 0 0); }
+.go .beam{ animation:beam 7s ease-in-out infinite; }
+.beam:nth-child(2){ animation-delay:-1.8s !important; } .beam:nth-child(3){ animation-delay:-3.6s !important; } .beam:nth-child(4){ animation-delay:-5.2s !important; }
+@keyframes beam{ 0%{ transform:rotate(-38deg); opacity:0; } 15%{ opacity:.9; } 50%{ transform:rotate(34deg); opacity:.7; } 85%{ opacity:.9; } 100%{ transform:rotate(-38deg); opacity:0; } }
+
+/* ============ 1. L'OUVERTURE ============ */
+#intro{ align-items:center; justify-content:center; text-align:center; padding:calc(var(--top) + 20px) 20px calc(var(--bot) + 28px); }
+.ballwrap{ width:240px; height:240px; perspective:700px; margin-bottom:26px; }
+.ball{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transform:rotateX(18deg); }
+.go .ball{ animation:spin 16s linear infinite; }
+@keyframes spin{ to{ transform:rotateX(18deg) rotateZ(360deg); } }
+.ball .c{ position:absolute; left:50%; top:50%; width:46px; height:66px; margin:-33px 0 0 -23px; border-radius:7px;
+  background:linear-gradient(160deg,#fffdf5,#efe3c2); color:#16182a; display:grid; place-items:center; font:800 19px 'Barlow Condensed',sans-serif;
+  box-shadow:0 0 0 1.5px var(--gold), 0 6px 18px rgba(0,0,0,.5), 0 0 22px rgba(243,201,107,.35);
+  transform:rotate(var(--a)) translateY(-78px) scale(0); opacity:0; }
+.ball .c.r{ color:#c62a3a; }
+.go .ball .c{ animation:cardIn .9s var(--spring) forwards; animation-delay:calc(.35s + var(--i) * .09s); }
+@keyframes cardIn{ from{ transform:rotate(calc(var(--a) - 160deg)) translateY(-260px) scale(.4); opacity:0; } to{ transform:rotate(var(--a)) translateY(-78px) scale(1); opacity:1; } }
+.ball .core{ position:absolute; left:50%; top:50%; width:78px; height:78px; margin:-39px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff3c9, var(--gold) 45%, var(--gold2)); box-shadow:0 0 40px rgba(243,201,107,.6);
+  display:grid; place-items:center; font:800 22px 'Barlow Condensed',sans-serif; color:#3b2606; letter-spacing:.02em; scale:0; }
+/* the core turns against the ball, so "FF" always reads straight */
+.go .ball .core{ animation:pop .7s var(--spring) 1.3s forwards, unspin 16s linear infinite; }
+@keyframes pop{ to{ scale:1; } }
+@keyframes unspin{ to{ rotate:-360deg; } }
+.ttl{ font:800 54px/0.9 'Barlow Condensed',sans-serif; letter-spacing:.06em; margin:0; opacity:0;
+  background:linear-gradient(180deg,#fff,#cdd6ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.ttl2{ font:700 22px 'Barlow Condensed',sans-serif; letter-spacing:.9em; color:var(--gold); margin:10px 0 0 .9em; opacity:0; }
+.go .ttl{ animation:rise .9s var(--ease) 1.7s forwards; }
+.go .ttl2{ animation:track 1.4s var(--ease) 2s forwards; }
+@keyframes rise{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
+@keyframes track{ from{ opacity:0; letter-spacing:.9em; } to{ opacity:1; letter-spacing:.42em; } }
+.season{ margin-top:14px; color:var(--mute); font-size:13px; letter-spacing:.08em; opacity:0; }
+.go .season{ animation:rise .8s var(--ease) 2.5s forwards; }
+.cta{ margin-top:34px; padding:16px 30px; border-radius:40px; font:800 17px 'Barlow Condensed',sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  background:linear-gradient(180deg,#ffe39a,var(--gold) 55%,var(--gold2)); color:#2d1c03; box-shadow:0 10px 30px rgba(243,201,107,.35), inset 0 1px 0 #fff6d6;
+  opacity:0; transition:scale .2s var(--spring); }
+.go .cta{ animation:rise .8s var(--ease) 2.9s forwards, glow 2.4s ease-in-out 3.7s infinite; }
+@keyframes glow{ 50%{ box-shadow:0 10px 44px rgba(243,201,107,.7), inset 0 1px 0 #fff6d6; } }
+.cta:active, .crest-b:active, .ghost:active{ scale:.96; }
+.flash{ position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:50; }
+.flash.go{ animation:flash .7s ease-out; }
+@keyframes flash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
+
+/* shared header */
+.hd{ padding:calc(var(--top) + 14px) 18px 10px; display:flex; align-items:center; gap:10px; }
+.back{ width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.08); display:grid; place-items:center; font-size:22px; }
+.hd h2{ margin:0; font:800 26px 'Barlow Condensed',sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+.hd small{ display:block; color:var(--gold); font:700 12px Inter,sans-serif; letter-spacing:.18em; text-transform:uppercase; }
+.mute{ margin-left:auto; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.08); font-size:16px; }
+
+/* ============ 2. TON QUARTIER ============ */
+.tabs{ display:flex; gap:8px; padding:4px 18px 12px; }
+.tabs button{ flex:1; padding:10px; border-radius:14px; background:rgba(255,255,255,.06); font-weight:700; color:var(--mute); transition:background .2s, color .2s; }
+.tabs button.on{ background:rgba(243,201,107,.16); color:var(--gold); box-shadow:inset 0 0 0 1px rgba(243,201,107,.5); }
+.grid{ flex:1; overflow:auto; padding:4px 14px calc(var(--bot) + 120px); display:grid; grid-template-columns:repeat(3,1fr); gap:10px; align-content:start; -webkit-overflow-scrolling:touch; }
+.crest-b{ display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 4px 10px; border-radius:18px; background:rgba(255,255,255,.04);
+  transition:scale .2s var(--spring), background .2s; opacity:0; transform:translateY(10px); animation:rise .5s var(--ease) forwards; animation-delay:calc(var(--i) * 25ms); }
+.crest-b.sel{ background:rgba(243,201,107,.14); box-shadow:inset 0 0 0 1.5px var(--gold); }
+.crest-b span{ font-size:12.5px; font-weight:700; text-align:center; line-height:1.15; }
+.crest{ --s:58px; width:var(--s); height:var(--s); border-radius:50%; position:relative; display:grid; place-items:center; flex:none;
+  background:conic-gradient(var(--c1) 0 50%, var(--c2) 0 100%); box-shadow:0 4px 14px rgba(0,0,0,.45), 0 0 0 2px rgba(255,255,255,.85); }
+.crest::before{ content:''; position:absolute; inset:16%; border-radius:50%; background:radial-gradient(circle at 35% 30%, #1b2a6b, #070d30); box-shadow:inset 0 0 0 1.5px var(--c1); }
+.crest b{ position:relative; font:800 calc(var(--s) * .3) 'Barlow Condensed',sans-serif; letter-spacing:.04em; color:#fff; }
+.crest i{ position:absolute; bottom:-3px; right:-3px; font-style:normal; font-size:calc(var(--s) * .2); background:var(--gold); color:#2d1c03; border-radius:8px; padding:0 4px; font-weight:800; }
+.pick{ position:fixed; left:0; right:0; bottom:0; padding:16px 18px calc(var(--bot) + 18px); background:linear-gradient(to top, #040823 60%, rgba(4,8,35,0));
+  display:flex; align-items:center; gap:14px; transform:translateY(110%); transition:transform .45s var(--spring); }
+.pick.on{ transform:none; }
+.pick .crest{ --s:64px; }
+.pick p{ margin:0; flex:1; font-size:13px; color:var(--mute); }
+.pick p b{ display:block; font:800 22px 'Barlow Condensed',sans-serif; color:#fff; letter-spacing:.03em; }
+.pick .cta{ margin:0; padding:14px 18px; font-size:15px; opacity:1; animation:none; }
+
+/* ============ 3. LE TIRAGE AU SORT ============ */
+#draw .hd{ padding-bottom:4px; }
+.groups{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; padding:6px 10px; }
+.grp{ border-radius:14px; background:rgba(255,255,255,.05); padding:6px 5px 5px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.07); }
+.grp h4{ margin:0 0 4px; text-align:center; font:800 13px 'Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--gold); }
+.slot{ height:27px; border-radius:8px; margin-top:3px; background:rgba(0,0,0,.25); display:flex; align-items:center; gap:4px; padding:0 3px; overflow:hidden; }
+.slot .crest{ --s:20px; box-shadow:0 0 0 1px rgba(255,255,255,.8); }
+.slot .crest b{ display:none; }
+.slot span{ font-size:10px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.slot.fill{ animation:land .5s var(--spring); }
+.slot.me{ background:rgba(243,201,107,.22); box-shadow:inset 0 0 0 1px var(--gold); }
+@keyframes land{ from{ transform:scale(1.25); background:rgba(243,201,107,.5); } }
+.stage{ flex:1; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.pot{ font:800 14px 'Barlow Condensed',sans-serif; letter-spacing:.3em; color:var(--mute); text-transform:uppercase; margin-bottom:12px; transition:opacity .3s; }
+.bowl{ width:170px; height:170px; border-radius:50%; position:relative;
+  background:radial-gradient(circle at 35% 25%, rgba(255,255,255,.35), rgba(255,255,255,.04) 40%, rgba(120,150,255,.08) 70%, rgba(255,255,255,.18));
+  box-shadow:inset 0 -12px 30px rgba(120,150,255,.25), 0 20px 50px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.2); }
+.bowl .bl{ position:absolute; width:30px; height:30px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #c9d3f5 60%, #8d9bcc);
+  box-shadow:0 3px 6px rgba(0,0,0,.35); left:var(--x); top:var(--y); animation:bob var(--d) ease-in-out infinite alternate; }
+@keyframes bob{ to{ transform:translate(var(--dx), var(--dy)) rotate(40deg); } }
+.fly{ position:fixed; z-index:20; left:50%; top:50%; pointer-events:none; }
+.orb{ width:74px; height:74px; margin:-37px; border-radius:50%; position:relative; transition:transform .5s var(--spring); }
+.orb .paper{ z-index:2; box-shadow:0 14px 40px rgba(0,0,0,.55), 0 0 0 2px var(--gold); }
+.orb .h{ position:absolute; left:0; right:0; height:50%; background:radial-gradient(circle at 35% 60%, #fff, #c9d3f5 60%, #8d9bcc); transition:transform .45s var(--ease), opacity .45s; }
+.orb .h.t{ top:0; border-radius:74px 74px 0 0; } .orb .h.b{ bottom:0; border-radius:0 0 74px 74px; background:radial-gradient(circle at 35% 0%, #e6ebff, #9eaad6); }
+.orb.open .h.t{ transform:translateY(-34px) rotate(-14deg); opacity:0; } .orb.open .h.b{ transform:translateY(34px) rotate(10deg); opacity:0; }
+.paper{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.2); opacity:0; display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:12px 16px; border-radius:16px; background:linear-gradient(180deg,#fffdf5,#eadfbf); color:#14183a; min-width:140px; transition:transform .45s var(--spring), opacity .3s; }
+.orb.open .paper{ transform:translate(-50%,-50%) scale(1); opacity:1; }
+.paper b{ font:800 20px 'Barlow Condensed',sans-serif; letter-spacing:.03em; white-space:nowrap; }
+.paper small{ font-size:10px; font-weight:800; letter-spacing:.2em; color:#7a6a3c; }
+.paper .crest{ --s:44px; }
+.spot{ position:fixed; inset:0; z-index:15; pointer-events:none; background:radial-gradient(circle at 50% var(--sy,50%), transparent 90px, rgba(0,0,0,.72) 190px); opacity:0; transition:opacity .4s; }
+.spot.on{ opacity:1; }
+.yours{ position:fixed; left:0; right:0; top:22%; z-index:22; text-align:center; font:800 30px 'Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--gold); opacity:0; text-shadow:0 4px 20px rgba(243,201,107,.5); }
+.yours.on{ animation:yrs 1.8s var(--ease) forwards; }
+@keyframes yrs{ 0%{ opacity:0; transform:scale(.6); } 20%{ opacity:1; transform:scale(1.05); } 80%{ opacity:1; transform:scale(1); } 100%{ opacity:0; transform:scale(1); } }
+.ctrl{ display:flex; gap:10px; justify-content:center; padding:10px 18px calc(var(--bot) + 18px); }
+.ghost{ padding:12px 18px; border-radius:30px; background:rgba(255,255,255,.08); font-weight:700; transition:scale .2s var(--spring); }
+
+/* ============ 4. TA POULE ============ */
+#group .body{ flex:1; overflow:auto; padding:6px 16px calc(var(--bot) + 24px); }
+.card{ border-radius:22px; background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); padding:14px; margin-bottom:14px;
+  opacity:0; transform:translateY(14px); }
+#group.on .card{ animation:rise .6s var(--ease) forwards; } #group.on .card:nth-child(2){ animation-delay:.12s; } #group.on .card:nth-child(3){ animation-delay:.24s; }
+.card h3{ margin:0 0 10px; font:800 16px 'Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; }
+.vs{ display:flex; align-items:center; justify-content:space-between; text-align:center; padding:8px 0 4px; }
+.vs .side{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; font:800 18px 'Barlow Condensed',sans-serif; letter-spacing:.04em; }
+.vs .crest{ --s:72px; }
+.vs .x{ font:800 30px 'Barlow Condensed',sans-serif; color:var(--gold); }
+.vs-meta{ text-align:center; color:var(--mute); font-size:12.5px; margin:6px 0 12px; }
+.row{ display:flex; align-items:center; gap:10px; padding:8px 4px; border-top:1px solid rgba(255,255,255,.06); }
+.row:first-of-type{ border-top:0; }
+.row .crest{ --s:30px; } .row .crest b{ display:none; }
+.row .n{ flex:1; font-weight:700; } .row .pts{ font:800 16px 'Barlow Condensed',sans-serif; width:44px; text-align:right; color:var(--mute); }
+.row.me .n{ color:var(--gold); }
+.tbl-h{ display:flex; font-size:10.5px; color:var(--mute); letter-spacing:.14em; font-weight:800; padding:0 4px 4px; } .tbl-h span:first-child{ flex:1; }
+.day{ display:flex; align-items:center; gap:10px; padding:9px 2px; border-top:1px solid rgba(255,255,255,.06); font-size:13.5px; }
+.day:first-of-type{ border-top:0; }
+.day .j{ width:30px; font:800 15px 'Barlow Condensed',sans-serif; color:var(--mute); }
+.day .who{ flex:1; font-weight:700; }
+.chip{ font-size:10.5px; font-weight:800; letter-spacing:.08em; padding:4px 8px; border-radius:10px; text-transform:uppercase; }
+.chip.dom{ background:rgba(110,220,150,.16); color:#8fe6ad; } .chip.ext{ background:rgba(255,140,120,.14); color:#ffb2a4; }
+.fmt{ display:flex; gap:6px; margin-top:12px; }
+.fmt span{ flex:1; text-align:center; padding:9px 4px; border-radius:12px; background:rgba(0,0,0,.25); font-size:11.5px; font-weight:700; line-height:1.25; }
+.fmt span b{ display:block; font:800 15px 'Barlow Condensed',sans-serif; color:var(--gold); letter-spacing:.06em; }
+.note{ text-align:center; color:var(--mute); font-size:12px; margin:4px 0 0; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  .beam{ display:none; }
+}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"><div class="beam"></div><div class="beam"></div><div class="beam"></div><div class="beam"></div></div>
+<div class="flash" id="flash"></div>
+
+<!-- 1. L'ouverture -->
+<section class="scene on" id="intro">
+  <div class="ballwrap"><div class="ball" id="ball"><div class="core">FF</div></div></div>
+  <h1 class="ttl">FAP·FAP</h1>
+  <div class="ttl2">LEAGUE</div>
+  <div class="season">SAISON 1 · YAOUNDÉ — DOUALA<br>32 QUARTIERS · UN SEUL ROI</div>
+  <button class="cta" id="enter">Entrer dans la League</button>
+</section>
+
+<!-- 2. Ton quartier -->
+<section class="scene" id="choose">
+  <div class="hd"><button class="back" data-back="intro" aria-label="Retour">‹</button><div><small>Saison 1</small><h2>Choisis ton quartier</h2></div><button class="mute" data-mute aria-label="Son">🔊</button></div>
+  <div class="tabs"><button class="on" data-city="Y">Yaoundé · 24</button><button data-city="D">Douala · 8</button></div>
+  <div class="grid" id="grid"></div>
+  <div class="pick" id="pick"><span class="crest" id="pickCrest"><b></b></span><p>Tu défends<b id="pickName"></b></p><button class="cta" id="toDraw">Le tirage</button></div>
+</section>
+
+<!-- 3. Le tirage au sort -->
+<section class="scene" id="draw">
+  <div class="hd"><button class="back" data-back="choose" aria-label="Retour">‹</button><div><small>Phase de poules</small><h2>Tirage au sort</h2></div><button class="mute" data-mute aria-label="Son">🔊</button></div>
+  <div class="groups" id="groups"></div>
+  <div class="stage"><div class="pot" id="pot">Chapeau 1</div><div class="bowl" id="bowl"></div></div>
+  <div class="ctrl"><button class="ghost" id="fast">Accélérer ⏩</button><button class="ghost" id="skip">Tout tirer</button></div>
+</section>
+<div class="spot" id="spot"></div>
+<div class="yours" id="yours">TON QUARTIER !</div>
+
+<!-- 4. Ta poule -->
+<section class="scene" id="group">
+  <div class="hd"><button class="back" data-back="draw" aria-label="Retour">‹</button><div><small id="gSmall">Groupe</small><h2>Ta poule</h2></div><button class="mute" data-mute aria-label="Son">🔊</button></div>
+  <div class="body">
+    <div class="card">
+      <h3>Journée 1 · ce soir</h3>
+      <div class="vs" id="vs"></div>
+      <div class="vs-meta" id="vsMeta"></div>
+      <div class="fmt"><span><b>Manche 1</b>Jeu à 2</span><span><b>Manche 2</b>Jeu à 3</span><span><b>Manche 3</b>Carré la Pute</span><span><b>Égalité</b>Quiz</span></div>
+      <button class="cta" style="width:100%;opacity:1;animation:none;margin-top:14px" id="play">Jouer la soirée</button>
+      <p class="note">Maquette : la soirée elle-même arrive à l’étape suivante.</p>
+    </div>
+    <div class="card"><h3 id="tblTitle">Classement</h3><div class="tbl-h"><span>QUARTIER</span><span>J</span><span style="width:44px;text-align:right">PTS</span></div><div id="table"></div></div>
+    <div class="card"><h3>Calendrier · aller-retour</h3><div id="cal"></div></div>
+  </div>
+</section>
+
+<script>
+(()=>{
+'use strict';
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- data: the 32 neighbourhoods (later shared by every player online) ----------
+const Q = [
+  ['Mokolo','MOK','Y','#e23b3b','#f3c96b'], ['Briqueterie','BRQ','Y','#2bb673','#ffffff'], ['Mvog-Ada','MVA','Y','#7b3fe4','#f3c96b'], ['Mvog-Mbi','MVM','Y','#ff8a1f','#1b1b1b'],
+  ['Essos','ESS','Y','#1e88e5','#ffffff'], ['Nkolbisson','NKB','Y','#00897b','#ffd54f'], ['Biyem-Assi','BYA','Y','#c2185b','#ffffff'], ['Obili','OBL','Y','#3949ab','#ff7043'],
+  ['Melen','MLN','Y','#43a047','#1b1b1b'], ['Mendong','MDG','Y','#f4511e','#ffffff'], ['Ekounou','EKN','Y','#8e24aa','#80deea'], ['Emana','EMN','Y','#fdd835','#1b1b1b'],
+  ['Nkoldongo','NKD','Y','#d32f2f','#1b1b1b'], ['Etoudi','ETD','Y','#00acc1','#f3c96b'], ['Mimboman','MMB','Y','#6d4c41','#ffcc80'], ['Madagascar','MDC','Y','#e91e63','#ffeb3b'],
+  ['Cité Verte','CVT','Y','#2e7d32','#c5e1a5'], ['Elig-Edzoa','ELE','Y','#5e35b1','#ffffff'], ['Mvan','MVN','Y','#ef6c00','#4fc3f7'], ['Tsinga','TSG','Y','#0277bd','#f3c96b'],
+  ['Messa','MES','Y','#ad1457','#1b1b1b'], ['Nlongkak','NLK','Y','#558b2f','#ffffff'], ['Bastos','BST','Y','#212121','#f3c96b'], ['Odza','ODZ','Y','#00838f','#ff8a65'],
+  ['New-Bell','NBL','D','#1565c0','#ffd600'], ['Akwa','AKW','D','#c62828','#ffffff'], ['Deïdo','DEI','D','#2e7d32','#ffd600'], ['Bépanda','BEP','D','#6a1b9a','#ffffff'],
+  ['Ndokotti','NDK','D','#ff6f00','#1b1b1b'], ['Bonabéri','BNB','D','#00695c','#ffffff'], ['Makepe','MKP','D','#283593','#ef5350'], ['Village','VLG','D','#4e342e','#ffd54f']
+].map(([name, code, city, c1, c2], i)=> ({i, name, code, city, c1, c2}));
+const crest = (q, cls='', s)=> '<span class="crest '+cls+'" style="'+(s ? '--s:'+s+'px;' : '')+'--c1:'+q.c1+';--c2:'+q.c2+'"><b>'+q.code+'</b>'+(q.city==='D' ? '<i>DLA</i>' : '')+'</span>';
+
+// the draw is seeded by the season: every player sees the same groups (ready for the online league)
+const SEASON_SEED = 20261026;
+function rng(seed){ return ()=>{ seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function seasonDraw(){
+  const r = rng(SEASON_SEED), order = Q.map(q=> q.i);
+  for(let i = order.length - 1; i>0; i--){ const j = Math.floor(r()*(i+1)); [order[i], order[j]] = [order[j], order[i]]; }
+  // 4 pots of 8, each pot spread over the 8 groups A to H
+  const picks = [];
+  for(let p = 0; p<4; p++) for(let g = 0; g<8; g++) picks.push({q: order[p*8 + g], g, pot: p});
+  return picks;
+}
+const DRAW = seasonDraw();
+const G = 'ABCDEFGH';
+let me = null;
+
+// ---------- the sky ----------
+const sky = $('sky');
+for(let i = 0; i<70; i++){
+  const s = document.createElement('i'); s.className = 'st';
+  s.style.cssText = 'left:'+(Math.random()*100)+'%;top:'+(Math.random()*85)+'%;--d:'+(2+Math.random()*4)+'s;--dl:'+(-Math.random()*5)+'s';
+  sky.appendChild(s);
+}
+
+// ---------- the anthem: an original choir of pads and bells, made in the browser ----------
+let ac = null, master = null, muted = false, anthemOn = false;
+function audio(){
+  if(ac) return ac;
+  try{ ac = new (window.AudioContext || window.webkitAudioContext)(); master = ac.createGain(); master.gain.value = .55; master.connect(ac.destination); }catch(e){ ac = null; }
+  return ac;
+}
+const hz = n=> 440 * Math.pow(2, (n - 69) / 12);
+function pad(notes, t, dur){
+  notes.forEach(n=> [0, 7, -7].forEach(det=>{
+    const o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = 'sawtooth'; o.frequency.value = hz(n); o.detune.value = det;
+    f.type = 'lowpass'; f.frequency.value = 1400; f.Q.value = .4;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.022, t + .6); g.gain.setValueAtTime(.022, t + dur - .5); g.gain.linearRampToValueAtTime(0, t + dur + .3);
+    o.connect(f); f.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .4);
+  }));
+}
+function bell(n, t){
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = 'sine'; o.frequency.value = hz(n);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + 2.2);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + 2.3);
+}
+function anthem(){
+  if(!audio() || anthemOn) return; anthemOn = true;
+  ac.resume && ac.resume();
+  const t = ac.currentTime + .05, D = 2.2;
+  const prog = [[50,57,62,65],[46,53,58,62],[41,53,57,60],[48,55,60,64],[50,57,62,65],[46,55,58,62],[48,55,60,67],[50,57,62,69]];
+  const mel = [74,72,70,69, 74,77,76,74];
+  prog.forEach((c, i)=>{ pad(c, t + i*D, D); bell(mel[i], t + i*D); bell(mel[i] + 12, t + i*D + D/2); });
+  setTimeout(()=>{ anthemOn = false; }, prog.length * D * 1000);
+}
+function tick(hi){
+  if(!ac || muted) return;
+  const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime;
+  o.type = 'triangle'; o.frequency.value = hi ? 1320 : 880;
+  g.gain.setValueAtTime(.08, t); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + .3);
+}
+document.querySelectorAll('[data-mute]').forEach(b=> b.addEventListener('click', ()=>{
+  muted = !muted; if(master) master.gain.value = muted ? 0 : .55;
+  document.querySelectorAll('[data-mute]').forEach(x=> x.textContent = muted ? '🔇' : '🔊');
+}));
+
+// ---------- scenes ----------
+function show(id){
+  document.querySelectorAll('.scene').forEach(s=> s.classList.toggle('on', s.id===id));
+  if(navigator.vibrate) try{ navigator.vibrate(8); }catch(e){}
+}
+document.querySelectorAll('[data-back]').forEach(b=> b.addEventListener('click', ()=>{ stopDraw(); show(b.dataset.back); }));
+
+// 1. the opening: the cards fly in to form the ball
+const ball = $('ball');
+['3♠','10♥','7♣','9♦','3♥','10♣','5♠','3♦'].forEach((t, i)=>{
+  const c = document.createElement('div'); c.className = 'c'+(/[♥♦]/.test(t) ? ' r' : '');
+  c.style.cssText = '--a:'+(i*45)+'deg;--i:'+i; c.textContent = t; ball.appendChild(c);
+});
+requestAnimationFrame(()=> document.body.classList.add('go'));
+$('enter').addEventListener('click', ()=>{
+  anthem();
+  const f = $('flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+  setTimeout(()=> show('choose'), 250);
+});
+
+// 2. the neighbourhood
+let city = 'Y';
+function renderGrid(){
+  $('grid').innerHTML = Q.filter(q=> q.city===city).map((q, k)=>
+    '<button class="crest-b'+(me===q.i ? ' sel' : '')+'" data-q="'+q.i+'" style="--i:'+k+'">'+crest(q)+'<span>'+q.name+'</span></button>').join('');
+}
+document.querySelectorAll('[data-city]').forEach(b=> b.addEventListener('click', ()=>{
+  city = b.dataset.city; document.querySelectorAll('[data-city]').forEach(x=> x.classList.toggle('on', x===b)); renderGrid();
+}));
+$('grid').addEventListener('click', e=>{
+  const b = e.target.closest('[data-q]'); if(!b) return;
+  me = +b.dataset.q; const q = Q[me];
+  document.querySelectorAll('.crest-b').forEach(x=> x.classList.toggle('sel', x===b));
+  const pc = $('pickCrest'); pc.style.setProperty('--c1', q.c1); pc.style.setProperty('--c2', q.c2); pc.querySelector('b').textContent = q.code;
+  $('pickName').textContent = q.name; $('pick').classList.add('on'); tick();
+});
+renderGrid();
+$('toDraw').addEventListener('click', ()=>{ show('draw'); startDraw(); });
+
+// 3. the draw
+const groupsEl = $('groups');
+groupsEl.innerHTML = [...G].map(g=> '<div class="grp"><h4>'+g+'</h4>'+'<div class="slot"></div>'.repeat(4)+'</div>').join('');
+const bowl = $('bowl');
+function fillBowl(n){
+  bowl.innerHTML = '';
+  for(let i = 0; i<n; i++){
+    const b = document.createElement('i'); b.className = 'bl';
+    const a = Math.random()*Math.PI*2, r = Math.random()*48;
+    b.style.cssText = '--x:'+(70 + Math.cos(a)*r)+'px;--y:'+(80 + Math.sin(a)*r*.7)+'px;--dx:'+(Math.random()*16-8)+'px;--dy:'+(Math.random()*12-6)+'px;--d:'+(.6+Math.random()*.8)+'s';
+    bowl.appendChild(b);
+  }
+}
+let step = 0, speed = 1, timer = null, running = false;
+const wait = ms=> new Promise(r=>{ timer = setTimeout(r, reduce ? 0 : ms / speed); });
+function slotOf(pick){ return groupsEl.children[pick.g].querySelectorAll('.slot')[pick.pot]; }
+function place(pick){
+  const q = Q[pick.q], s = slotOf(pick);
+  s.innerHTML = crest(q)+'<span>'+q.name+'</span>'; s.classList.add('fill'); if(pick.q===me) s.classList.add('me');
+}
+function stopDraw(){ running = false; clearTimeout(timer); document.querySelectorAll('.fly').forEach(f=> f.remove()); $('spot').classList.remove('on'); }
+async function startDraw(){
+  stopDraw();
+  step = 0; speed = 1; running = true;
+  groupsEl.querySelectorAll('.slot').forEach(s=>{ s.innerHTML = ''; s.className = 'slot'; });
+  $('fast').textContent = 'Accélérer ⏩';
+  fillBowl(8);
+  await wait(700);
+  while(running && step<DRAW.length){
+    const pick = DRAW[step], q = Q[pick.q], mine = pick.q===me;
+    if(step % 8===0){ $('pot').textContent = 'Chapeau '+(pick.pot + 1); fillBowl(8); await wait(500); }
+    if(!running) return;
+    bowl.lastChild && bowl.lastChild.remove();
+    // the ball rises, opens, shows the name, then flies to its group
+    const fly = document.createElement('div'); fly.className = 'fly';
+    const stage = $('bowl').getBoundingClientRect();
+    fly.style.left = (stage.left + stage.width/2)+'px'; fly.style.top = (stage.top + stage.height/2)+'px';
+    fly.innerHTML = '<div class="orb"><div class="paper">'+crest(q)+'<b>'+q.name+'</b><small>GROUPE '+G[pick.g]+'</small></div><div class="h t"></div><div class="h b"></div></div>';
+    document.body.appendChild(fly);
+    const orb = fly.firstChild;
+    // out of the bowl first, so the name opens in the clear above it
+    orb.style.transform = 'scale(.4)'; void orb.offsetWidth; orb.style.transform = 'translateY(-150px) scale(1.15)';
+    if(mine){ const sp = $('spot'); sp.style.setProperty('--sy', (stage.top + stage.height/2 - 150)+'px'); sp.classList.add('on'); }
+    await wait(mine ? 700 : 380); if(!running) return;
+    orb.classList.add('open'); tick(mine);
+    if(mine){ const y = $('yours'); y.classList.remove('on'); void y.offsetWidth; y.classList.add('on'); if(navigator.vibrate) try{ navigator.vibrate([30,40,60]); }catch(e){} }
+    await wait(mine ? 1900 : 650); if(!running) return;
+    const to = slotOf(pick).getBoundingClientRect(), from = fly.getBoundingClientRect();
+    fly.style.transition = 'transform .5s cubic-bezier(.5,0,.3,1), opacity .5s';
+    fly.style.transform = 'translate('+(to.left + to.width/2 - (from.left + from.width/2))+'px,'+(to.top + to.height/2 - (from.top + from.height/2))+'px) scale(.22)';
+    fly.style.opacity = '.2';
+    orb.style.transition = 'transform .5s cubic-bezier(.5,0,.3,1)'; orb.style.transform = 'none'; // the ball comes back to the flight's origin as it flies
+    $('spot').classList.remove('on');
+    await wait(480); fly.remove(); place(pick); step++;
+  }
+  if(running){ $('pot').textContent = 'Tirage terminé'; await wait(900); if(running){ running = false; openGroup(); } }
+}
+$('fast').addEventListener('click', ()=>{ speed = speed===1 ? 4 : 1; $('fast').textContent = speed===1 ? 'Accélérer ⏩' : 'Vitesse normale'; });
+$('skip').addEventListener('click', ()=>{ stopDraw(); DRAW.forEach(p=> place(p)); $('pot').textContent = 'Tirage terminé'; setTimeout(openGroup, 700); });
+
+// 4. your group: table, calendar (home and away), and tonight's match
+function openGroup(){
+  const mine = DRAW.find(p=> p.q===me) || DRAW[0];
+  const gq = DRAW.filter(p=> p.g===mine.g).map(p=> Q[p.q]), you = Q[mine.q];
+  const rivals = gq.filter(q=> q!==you);
+  $('gSmall').textContent = 'Groupe '+G[mine.g]; $('tblTitle').textContent = 'Classement · groupe '+G[mine.g];
+  $('table').innerHTML = gq.map(q=> '<div class="row'+(q===you ? ' me' : '')+'">'+crest(q)+'<span class="n">'+q.name+'</span><span class="pts" style="width:20px">0</span><span class="pts">0</span></div>').join('');
+  const days = [[rivals[0], 1], [rivals[1], 0], [rivals[2], 1], [rivals[0], 0], [rivals[1], 1], [rivals[2], 0]];
+  $('cal').innerHTML = days.map(([q, home], i)=> '<div class="day"><span class="j">J'+(i+1)+'</span>'+crest(q, '', 26)+'<span class="who">'+(home ? you.name+' — '+q.name : q.name+' — '+you.name)+'</span><span class="chip '+(home ? 'dom' : 'ext')+'">'+(home ? 'Domicile' : 'Extérieur')+'</span></div>').join('');
+  $('vs').innerHTML = '<div class="side">'+crest(you)+you.name+'</div><div class="x">VS</div><div class="side">'+crest(rivals[0])+rivals[0].name+'</div>';
+  $('vsMeta').textContent = 'À domicile, au maquis de '+you.name+' · ton public est derrière toi';
+  show('group');
+}
+$('play').addEventListener('click', ()=>{ tick(true); $('play').textContent = 'Bientôt : la soirée en 3 manches'; });
+})();
+</script>
+</body>
+</html>
