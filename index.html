@@ -4861,8 +4861,8 @@
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La route du quartier</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
     <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
-      <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
-      <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
+      <button class="fmt" data-q="1" role="radio"><b>Partie unique</b><small>Une manche, comme au quartier</small></button>
+      <button class="fmt" data-q="0" role="radio"><b>En 3 manches</b><small>Le premier à 2 gagne</small></button>
     </div>
     <div class="stake-pick">
       <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
@@ -4901,7 +4901,7 @@
 <div class="overlay page hidden" id="carrePage">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Carré la Pute</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
-    <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Le dernier debout gagne tout.</p>
+    <p class="page-intro">Chacun pour soi. Le gagnant de chaque manche élimine qui il veut (deux joueurs sur un CORA). Chaque éliminé paie sa mise à celui qui l'a sorti : ×2 sur un CORA, ×4 sur une 33 Glacée.</p>
     <div class="cp-pick">
       <button class="cp-n" data-n="2"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span></span><b>2 joueurs</b><small>Toi et un adversaire</small></button>
       <button class="cp-n" data-n="3"><span class="cp-faces"><span class="avatar" data-char="penalty" style="--s:34px"></span><span class="avatar" data-char="aristide" style="--s:34px"></span></span><b>3 joueurs</b><small>Toi, RALL et Penalty</small></button>
@@ -5084,17 +5084,17 @@
       <h3>Commande &amp; contrôle</h3>
       <p>Celui qui pose la première carte <b>commande</b> sa couleur. Les autres doivent la suivre s'ils en ont. Sinon, ils jouent ce qu'ils veulent (« jouer libre »), mais ne prennent jamais le contrôle. La plus forte carte dans la couleur demandée prend le <b>contrôle</b> et commande le tour suivant.</p>
       <h3>Gagner la manche</h3>
-      <p>Celui qui a le contrôle sur la <b>dernière carte</b> gagne : +1 point. Premier à 5 points.</p>
+      <p>Celui qui a le contrôle sur la <b>dernière carte</b> gagne la manche et la mise. Comme au quartier, une partie se joue en <b>une seule manche</b> ; en 3 manches, le premier à 2 l'emporte, et chaque manche se paie.</p>
       <h3>CORA &amp; 33 Glacée</h3>
-      <p><b>CORA</b> : la dernière carte gagnante est un 3 → +2. <b>33 Glacée</b> : les deux dernières cartes gagnantes sont des 3 → +3.</p>
+      <p><b>CORA</b> : la dernière carte gagnante est un 3 → <b>gain ×2</b>. <b>33 Glacée</b> (double CORA) : les deux dernières cartes gagnantes sont des 3 → <b>gain ×4</b>. Pour tout le monde, sans exception : si tu te prends un CORA, tu paies double.</p>
       <h3>La Passe</h3>
       <p>Avec 2 cartes en main, sans la couleur demandée : soit 2 cartes de même couleur, soit 2 couleurs différentes dont un 3. Tu peux passer : tu ne joues pas ce tour, puis tu poses <b>tes 2 cartes d'un coup</b> au dernier tour.</p>
       <h3>Victoires automatiques</h3>
-      <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → +1.</p>
+      <p>À annoncer avant la 2ᵉ carte jouée : total ≤ 21, trois 3 ou trois 7, les 4 symboles (même valeur dans les 4 couleurs), 5 cartes de même couleur → la manche est pour toi.</p>
       <h3>Claquer</h3>
       <p>Quand plus personne ne peut te battre, tu <b>claques</b> : toutes tes cartes d'un coup, la manche est pour toi (un 3 dedans : CORA). Ça marche en commandant <b>et en répondant</b> : il commande le 7 Coubie, tu as le 9 Coubie, le 9 Black et le 10 Zing → tu claques tout de suite.</p>
       <h3>La feinte (genjutsu)</h3>
-      <p>Il te reste une grosse carte et un 3, et l'adversaire commande une couleur que tu n'as pas. Tu jettes <b>exprès la grosse carte</b> et tu gardes le 3. Au dernier tour, si la carte qui gagne est de la couleur que tu as sacrifiée et plus faible qu'elle, ta carte l'aurait battue : <b>la manche est pour toi</b> (+1).</p>
+      <p>Il te reste une grosse carte et un 3, et l'adversaire commande une couleur que tu n'as pas. Tu jettes <b>exprès la grosse carte</b> et tu gardes le 3. Au dernier tour, si la carte qui gagne est de la couleur que tu as sacrifiée et plus faible qu'elle, ta carte l'aurait battue : <b>la manche est pour toi</b>.</p>
     </div>
     <button class="primary" id="btnCloseRules">J'ai compris</button>
   </div>
@@ -5176,14 +5176,14 @@
     <p>Entre ton prénom, puis crée ou rejoins une partie.</p>
     <input id="mpNameInput" class="mp-input" maxlength="16" placeholder="Ton prénom">
     <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
-      <button class="fmt" data-q="0" role="radio"><b>Match</b><small>Premier à 5 points</small></button>
-      <button class="fmt" data-q="1" role="radio"><b>Partie rapide</b><small>Une seule manche décide</small></button>
+      <button class="fmt" data-q="1" role="radio"><b>Partie unique</b><small>Une manche, comme au quartier</small></button>
+      <button class="fmt" data-q="0" role="radio"><b>En 3 manches</b><small>Le premier à 2 gagne</small></button>
     </div>
     <div class="stake-pick" data-scope="mp">
       <div class="sp-head"><span>Mise de chaque joueur</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
       <div class="sp-row"></div>
     </div>
-    <p class="small-note" id="lobbyNote">Celui qui crée la partie choisit la mise ; l’autre doit l’accepter avant de jouer. Chacun met la même somme, le gagnant rafle le pot. Quitter en cours de partie, c’est perdre par forfait.</p>
+    <p class="small-note" id="lobbyNote">Celui qui crée la partie choisit la mise ; l’autre doit l’accepter avant de jouer. Chaque manche se paie : la mise, ×2 sur un CORA, ×4 sur une 33 Glacée. Quitter en cours de partie, c’est perdre par forfait.</p>
     <button class="primary big" id="btnMpHost">Créer une partie</button>
     <button class="big" id="btnMpJoin">Rejoindre une partie</button>
     <button class="big" id="btnMpFriends"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Défier un de mes amis</button>
@@ -5599,9 +5599,11 @@
   function suitSvg(suit, cls){
     return '<svg class="'+(cls||'')+'" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="'+SUIT_PATH[suit]+'"/></svg>';
   }
-  // 5 points for a full match, 1 for a quick game (the first hand decides)
+  // hands to win: 1 for the single game, 2 for the three-hand format
   let TARGET_SCORE = 5;
-  function setMatchLength(quick){ TARGET_SCORE = quick ? 1 : 5; }
+  // like in the neighbourhood, a game is one single hand; the longer format is three hands, the first to win two
+  function setMatchLength(quick){ TARGET_SCORE = quick ? 1 : 2; }
+  function quickPref(){ return prefs.quick!==false; }
   function isMatchPoint(){
     if(TARGET_SCORE===1) return false; // a quick game is one decisive hand: no extra crowd swell on every trick
     return scores.you>=TARGET_SCORE-1 || scores.ai>=TARGET_SCORE-1;
@@ -6131,7 +6133,7 @@
     }
     mpOffer = {stake};
     mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null, chips: profile.chips});
-    mpSend({t:'offer', stake, want, target: prefs.quick ? 1 : 5});
+    mpSend({t:'offer', stake, want, target: quickPref() ? 1 : 2});
     const st = $id('mpHostStatus');
     if(st) st.textContent = oppNameVal+' est là. Il doit accepter la mise de '+fmtChips(stake)+' jetons'+(stake<want ? ' (il n’a pas plus)' : '')+'…';
   }
@@ -6139,8 +6141,8 @@
     const stake = Math.max(0, msg.stake|0);
     mpOffer = {stake};
     $id('soTitle').textContent = oppNameVal+' te propose une partie';
-    $id('soPot').innerHTML = '<b>'+ico('coin')+' '+fmtChips(stake)+'</b><span>chacun · le gagnant rafle '+fmtChips(stake*2)+'</span>';
-    $id('soText').textContent = (msg.target===1 ? 'Partie rapide : une seule manche décide.' : 'Match en 5 points.')+
+    $id('soPot').innerHTML = '<b>'+ico('coin')+' '+fmtChips(stake)+'</b><span>par manche · ×2 sur un CORA, ×4 sur une 33 Glacée</span>';
+    $id('soText').textContent = (msg.target===1 ? 'Partie unique : une seule manche décide.' : 'En 3 manches : le premier à 2 gagne.')+
       ((msg.want|0)>stake ? ' Il voulait jouer '+fmtChips(msg.want|0)+', la mise est baissée à ton solde.' : '')+' Tu as '+fmtChips(profile.chips)+' jetons.';
     fillAvatar($id('soAvatar'), null, oppNameVal);
     show('stakeOfferOverlay'); vibrate(30);
@@ -6197,7 +6199,7 @@
   function startMpMatch(){
     if(mpMatchStarted) return;
     mpMatchStarted = true; mpForfeit = false; mpOffer = null;
-    if(mpIsHost){ setMatchLength(!!prefs.quick); mpStake = Math.min(mpStake||0, profile.chips); } // the format and the accepted stake apply to both
+    if(mpIsHost){ setMatchLength(quickPref()); mpStake = Math.min(mpStake||0, profile.chips); } // the format and the accepted stake apply to both
     startMatchTracking();
     if(mpIsHost) takeMpStake();
     mode = 'mp';
@@ -6235,7 +6237,7 @@
     if(msg.t==='start'){
       if(mpMatchStarted) return;
       mpMatchStarted = true; mpForfeit = false;
-      TARGET_SCORE = msg.target===1 ? 1 : 5; // the host chose the format
+      TARGET_SCORE = msg.target===1 ? 1 : 2; // the host chose the format
       mpStake = Math.max(0, msg.stake|0);   // …and the stake
       startMatchTracking();
       takeMpStake();
@@ -8464,7 +8466,7 @@
     {id:'quad',         icon:'cards', name:'Les 4 symboles',            desc:'Gagner avec la même valeur dans les 4 couleurs.'},
     {id:'passe',        icon:'hand', name:'L’art de différer',      desc:'Gagner une manche après avoir passé.'},
     {id:'sommeil',      icon:'sleep', name:'Tu dors ?',                 desc:'Jouer faible alors que tu avais plus fort, et gagner la manche.'},
-    {id:'sans_appel',   icon:'target', name:'Sans appel',                desc:'Gagner un match 5 à 0.'},
+    {id:'sans_appel',   icon:'target', name:'Sans appel',                desc:'Gagner un match en 3 manches 2 à 0.'},
     {id:'remontada',    icon:'flame', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
     {id:'serie3',       icon:'trend', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
     {id:'revanche',     icon:'repeat', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
@@ -10515,8 +10517,8 @@
 
   let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
   function startMatchTracking(){
-    repStart(); matchMaxDeficit = 0;
-    document.querySelector('.scorebar .mid').textContent = TARGET_SCORE===1 ? 'Partie rapide · 1 manche' : 'Premier à '+TARGET_SCORE;
+    repStart(); matchMaxDeficit = 0; matchManches = [];
+    document.querySelector('.scorebar .mid').textContent = TARGET_SCORE===1 ? 'Partie unique' : 'En 3 manches · premier à 2';
   }
   // the table remembers who won the last hand against whom (this phone, this session)
   let lastDeal = null;
@@ -12360,7 +12362,10 @@
   }
 
   function awardPoints(who, pts, label){
-    if(who==='you') scores.you += pts; else scores.ai += pts;
+    // the board counts hands won; what a hand is worth goes to the money: ×2 on a CORA, ×4 on a 33 Glacée (double CORA)
+    const mult = /GLACÉE/.test(label) ? 4 : /CORA/.test(label) ? 2 : 1;
+    matchManches.push({you: who==='you', mult});
+    if(who==='you') scores.you += 1; else scores.ai += 1;
     const scoreEl = document.getElementById(who==='you'?'scoreYou':'scoreAI');
     scoreEl.textContent = who==='you'?scores.you:scores.ai;
     bumpScore(scoreEl);
@@ -12409,7 +12414,7 @@
       const slot = document.getElementById(who==='you' ? 'youSlot' : 'aiSlot'), cs = slot ? slot.querySelectorAll('.card') : [];
       FX2.hand(who, pts, cs.length ? cs[cs.length - 1] : null);
     }
-    logMsg((who==='you'?'Toi':'Penalty')+' : '+label+' (+'+pts+' pt'+(pts>1?'s':'')+')', true);
+    logMsg((who==='you'?'Toi':'Penalty')+' : '+label+(mult>1 ? ' (gain ×'+mult+')' : ''), true);
     document.getElementById('btnPasse').classList.add('hidden');
     document.getElementById('btnDump').classList.add('hidden');
     document.getElementById('btnAnnounce').classList.add('hidden');
@@ -12446,7 +12451,7 @@
     if(daily && mode==='ai'){
       // daily challenge: a fixed number of hands, scored hand by hand, instead of "first to 5"
       daily.marks.push(who==='you' ? (isGlacee?'🧊':isCora?'🟨':isAutoWin?'⚡':'🟩') : '🟥');
-      if(who==='you'){ daily.points += pts; chipsAdd(100); } // each hand won in the daily challenge pays 100 jetons
+      if(who==='you'){ daily.points += pts; chipsAdd(100*mult); } // each hand won in the daily challenge pays 100 jetons, ×2 / ×4 on a CORA
       saveProfile();
       const delay = (isGlacee||isCora) ? 2600 : isAutoWin ? 3000 : 1100;
       if(daily.marks.length>=DAILY_HANDS) gameTimeout(finishDaily, delay);
@@ -12539,7 +12544,7 @@
   document.getElementById('btnTutoPlay').addEventListener('click', ()=>{
     document.getElementById('tutoDoneOverlay').classList.add('hidden');
     enterGame();
-    setMatchLength(!!prefs.quick);
+    setMatchLength(quickPref());
     duelOpp = 'gervais';
     mode = 'ai';
     applyOppNameToUI();
@@ -12685,7 +12690,7 @@
         duelOpp = id;
         prefs.lastOpp = id; savePrefs();
         mode = 'ai';
-        setMatchLength(!!prefs.quick);
+        setMatchLength(quickPref());
         enterGame();
         applyOppNameToUI();
         newMatch();
@@ -12706,7 +12711,7 @@
   const ODDS = {gervais:1.5, aristide:2, penalty:3, mbarga:5, mami:1.5, caroline:2, cobra:2.2, ismael:2.2, tchinda:3, mballa:3, stephane:3};
   // the neighbourhood's fortunes: beat someone with a stake and they pay you; lose and they pocket it
   const RICH_START = {gervais:2500, aristide:6000, penalty:25000, mbarga:80000, mami:4000, caroline:7000, cobra:9000, ismael:8000, tchinda:20000, mballa:18000, stephane:12000};
-  let matchStake = 0, matchCoras = 0, matchGlacees = 0;
+  let matchStake = 0, matchCoras = 0, matchGlacees = 0, matchManches = [];
   function chipsInit(){
     if(profile.chips==null){ profile.chips = CHIP_START; profile.chipsBest = CHIP_START; profile.chipsWon = 0; }
     if(!profile.rich) profile.rich = Object.assign({}, RICH_START);
@@ -12812,7 +12817,7 @@
   }
   // a match against the computer takes its stake at the start (quitting or restarting forfeits it)
   function takeStake(){
-    matchCoras = 0; matchGlacees = 0;
+    matchCoras = 0; matchGlacees = 0; matchManches = [];
     matchStake = Math.min(prefs.stake||0, profile.chips);
     if(matchStake>0){
       chipsAdd(-matchStake);
@@ -12832,7 +12837,7 @@
     saveProfile();
   }
   function takeMpStake(){
-    matchCoras = 0; matchGlacees = 0;
+    matchCoras = 0; matchGlacees = 0; matchManches = [];
     matchStake = Math.min(mpStake||0, profile.chips);
     if(matchStake>0){
       chipsAdd(-matchStake);
@@ -12841,25 +12846,32 @@
     }
   }
   // settles the stake at the end of a match; returns what to show on the result screen
+  // every hand is paid, for everyone, no exception: the stake ×1, ×2 on a CORA, ×4 on a 33 Glacée (double CORA).
+  // Against the computer a hand you win also pays the opponent's odds. Returns what comes back on top of the stake
+  // already put down (never more than the balance can lose), and the line shown on the result screen.
+  function payHands(stake, odds){
+    let net = 0;
+    const parts = matchManches.map(m=>{
+      const v = m.you ? Math.round(stake*odds*m.mult) : -stake*m.mult;
+      net += v;
+      return (v>0 ? '+' : '−')+fmtChips(Math.abs(v))+(m.mult===4 ? ' (double CORA ×4)' : m.mult===2 ? ' (CORA ×2)' : '');
+    });
+    const back = Math.max(stake + net, -profile.chips);
+    chipsAdd(back);
+    return {delta: back - stake, line: 'Mise '+fmtChips(stake)+(odds!==1 && matchManches.some(m=> m.you) ? ' · cote ×'+String(odds).replace('.',',') : '')+' · '+parts.join(' · ')};
+  }
   function settleStake(won){
     const res = {stake:matchStake, delta:0, mult:0, bonus:0};
     if(mode==='ai'){
       if(won) chipsAdd(50), res.delta += 50; // every win against the computer pays a little, even friendly ones
       if(matchStake>0){
-        if(won){
-          const odds = ODDS[duelOpp] || 2;
-          res.bonus = 0.25*matchCoras + 0.5*matchGlacees; // your CORAs and Glacées push the payout up
-          const pay = Math.round(matchStake*odds*(1+res.bonus));
-          chipsAdd(pay); res.delta += pay - matchStake; res.mult = odds;
-          profile.rich[duelOpp] = Math.max(0, (profile.rich[duelOpp]||0) - (pay - matchStake));
-        } else {
-          res.delta -= matchStake;
-          profile.rich[duelOpp] = (profile.rich[duelOpp]||0) + matchStake;
-        }
+        const odds = ODDS[duelOpp] || 2, p = payHands(matchStake, odds);
+        res.delta += p.delta; res.mult = odds; res.line = p.line;
+        profile.rich[duelOpp] = Math.max(0, (profile.rich[duelOpp]||0) - p.delta);
       }
     } else if(mode==='mp'){
-      // online: both players put the same stake in the pot, the winner takes it all
-      if(matchStake>0){ if(won){ chipsAdd(matchStake*2); res.delta = matchStake; } else res.delta = -matchStake; }
+      // online: the same rule, between the two players, hand by hand
+      if(matchStake>0){ const p = payHands(matchStake, 1); res.delta = p.delta; res.line = p.line; }
       mpLogAdd({k:'duel', o:oppNameVal, u:oppUid||undefined, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
     }
     saveProfile();
@@ -12888,13 +12900,15 @@
   // match format: a full match (first to 5) or a quick game (one hand) — remembered for next time
   function refreshFormatPick(){
     document.querySelectorAll('.format-pick .fmt[data-q]').forEach(b=>{
-      const on = (b.dataset.q==='1')===!!prefs.quick;
+      const on = (b.dataset.q==='1')===quickPref();
       b.classList.toggle('on', on); b.setAttribute('aria-checked', on);
     });
   }
   document.querySelectorAll('.format-pick .fmt[data-q]').forEach(b=> b.addEventListener('click', ()=>{
     prefs.quick = b.dataset.q==='1'; savePrefs(); refreshFormatPick();
   }));
+  // v79: the single game becomes the rule for everyone, whatever format was picked before
+  if(prefs.fmtUnique!==1){ prefs.quick = true; prefs.fmtUnique = 1; savePrefs(); }
   refreshFormatPick();
   document.getElementById('btnGoPlay').addEventListener('click', ()=>{ ensureAudio(); Nav.go('playPage'); });
   document.getElementById('modeAI').addEventListener('click', ()=>{ ensureAudio(); Nav.go('oppSelectOverlay'); });
@@ -13011,7 +13025,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v78';
+  const APP_VERSION = 'v79';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -13267,8 +13281,8 @@
       if(won) rec.w++; else rec.l++;
       // progression for a duel against the AI
       if(won){
-        const quick = TARGET_SCORE===1; // a quick game is worth a third of a full match, and can't earn "5 à 0"
-        repAdd(quick ? Math.round(oppPersona().repWin/3) : oppPersona().repWin, (quick ? 'Partie rapide gagnée contre ' : 'Victoire contre ')+oppName());
+        const quick = TARGET_SCORE===1; // the single game is the standard; three hands are worth half again, and only they can earn "2 à 0"
+        repAdd(quick ? oppPersona().repWin : Math.round(oppPersona().repWin*1.5), 'Victoire contre '+oppName());
         unlockTrophy('premiere');
         unlockTrophy('beat_'+duelOpp);
         if(theirs===0 && !quick) unlockTrophy('sans_appel');
@@ -13289,12 +13303,14 @@
       else repAdd(25, 'Match en ligne');
       saveProfile(); checkExploits();
     }
-    document.getElementById('matchOverTitle').textContent = won ? 'Tu gagnes '+mine+' à '+theirs+' !' : oppName()+' gagne '+theirs+' à '+mine+'.';
+    document.getElementById('matchOverTitle').textContent = TARGET_SCORE===1
+      ? (won ? 'Tu gagnes la partie !' : oppName()+' gagne la partie.')
+      : (won ? 'Tu gagnes '+mine+' à '+theirs+' !' : oppName()+' gagne '+theirs+' à '+mine+'.');
     let text;
     const pick = arr=> arr[Math.floor(Math.random()*arr.length)];
     if(won){
       text = mode==='ai' ? '« '+pick(L('lose'))+' » — '+oppName() : oppName()+' va vouloir sa revanche…';
-    } else if(theirs-mine<=1){
+    } else if(TARGET_SCORE>1 && theirs-mine<=1){
       // a narrow loss is the strongest "one more game" hook there is — say it out loud
       text = mode==='ai' ? '« T’étais à un point… Tu reviens, ou tu as peur ? » — '+oppName() : 'À un point près ! La revanche est à portée de main.';
     } else {
@@ -13342,8 +13358,7 @@
       }, 700);
       document.getElementById('crDetail').textContent =
         chips.stake===0 ? 'Bonus de victoire · solde '+fmtChips(profile.chips)
-        : chips.delta>0 ? (mode==='mp' ? 'Tu rafles le pot' : 'Mise '+fmtChips(chips.stake)+' × '+String(chips.mult).replace('.',',')+(chips.bonus ? ' + bonus CORA' : ''))+' · solde '+fmtChips(profile.chips)
-        : 'Mise perdue · solde '+fmtChips(profile.chips);
+        : (chips.line || 'Mise '+fmtChips(chips.stake))+' · solde '+fmtChips(profile.chips);
     } else cr.classList.add('hidden');
     // the opponent's face on the certificate: sulking when you win, gloating when you lose
     const face = document.getElementById('matchOverFace');
@@ -13471,7 +13486,7 @@
     };
     SQ_SEAT_ORDER.forEach(id=>{ sq.players[id] = {eliminated:false, hand:[], originalHand:[]}; sq.history[id] = []; sq.knownVoid[id] = new Set(); });
     // the stake: the survivor takes one stake per player at the table
-    matchCoras = 0; matchGlacees = 0;
+    matchCoras = 0; matchGlacees = 0; matchManches = [];
     matchStake = storyRun ? 0 : Math.min(cfg.online ? (cfg.stake||0) : (prefs.stake||0), profile.chips);
     if(matchStake>0) chipsAdd(-matchStake);
     sq.stake = cfg.online ? (cfg.stake||0) : matchStake;
@@ -14041,6 +14056,7 @@
 
   function sqShowEliminationChoice(winnerId, label, count){
     sq.lastWinner = winnerId; sqLastChampion = winnerId;
+    sq.mult = /GLACÉE/.test(label) ? 4 : /CORA/.test(label) ? 2 : 1;
     const others = sqActivePlayers().filter(id=>id!==winnerId);
     if(others.length===0){ return sqShowChampion(winnerId); }
     const n = Math.min(count||1, others.length);
@@ -14092,11 +14108,21 @@
     const left = sqActivePlayers().length - targets.length;
     if(winnerId!=='you') showToast(sqName(winnerId)+' élimine '+names+' !', left>1 ? 'Il ne reste plus que '+left+' joueurs.' : 'Il ne reste plus que '+sqName(winnerId)+'.', {ms:2600});
     sqEvent('elim', {winner:winnerId, targets});
+    sqBook(winnerId, targets);
     renderSquare();
     const myGen = sq.gen;
     gameTimeout(()=>{ if(sq.gen===myGen) sqEliminate(targets); }, sqDelay(winnerId==='you' ? 300 : 1600));
   }
 
+  // the Carré pays hand by hand too: each player knocked out pays his stake to the one who knocked him out,
+  // ×2 on a CORA, ×4 on a 33 Glacée. Counted in stakes, settled at the end of the game.
+  function sqBook(winner, targets){
+    if(!sq) return;
+    const m = sq.mult || 1;
+    if(winner==='you') sq.payIn = (sq.payIn||0) + m*targets.length;
+    if(targets.includes('you')) sq.payOut = m;
+    sq.mult = 1;
+  }
   function sqEliminate(ids){
     ids = Array.isArray(ids) ? ids : [ids];
     ids.forEach(id=>{
@@ -14151,16 +14177,18 @@
     const mo = document.getElementById('matchOverOverlay');
     mo.dataset.result = won ? 'win' : 'lose';
     const face = document.getElementById('matchOverFace'); if(face) face.innerHTML = '';
-    // the stake: the survivor takes one stake per player at the table
+    // the stake: what the hands booked (see sqBook), never more than the balance can lose
     const res = {stake:matchStake, delta:0, mult:nPlayers, bonus:0};
     if(won){ chipsAdd(50); res.delta += 50; }
     if(matchStake>0){
-      if(won){ chipsAdd(matchStake*nPlayers); res.delta += matchStake*(nPlayers-1); }
-      else res.delta -= matchStake;
+      const inn = (sq && sq.payIn) || 0, out = (sq && sq.payOut) || 0;
+      const back = Math.max(matchStake*(1 + inn - out), -profile.chips);
+      chipsAdd(back); res.delta += back - matchStake;
+      res.line = 'Mise '+fmtChips(matchStake)+(inn ? ' · +'+fmtChips(matchStake*inn)+' de tes éliminés' : '')+(out ? ' · −'+fmtChips(matchStake*out)+(out===4 ? ' (double CORA ×4)' : out===2 ? ' (CORA ×2)' : '') : '');
     }
     if(sq && (sq.online || sq.remote)) mpLogAdd({k:'carre', o: won ? nPlayers+' joueurs' : champName, s:matchStake, d:res.delta - (won ? 50 : 0), r: won ? 'V' : 'D'});
     matchStake = 0;
-    showChipsResult(res, won && res.stake ? 'Mise '+fmtChips(res.stake)+' × '+nPlayers+' joueurs' : null);
+    showChipsResult(res);
     refreshRematchUI(); refreshFriendBtnMo();
     const remoteWatcher = sq && sq.remote;
     document.getElementById('btnRematch').classList.toggle('hidden', !!remoteWatcher);
@@ -14186,8 +14214,7 @@
     }, 700);
     document.getElementById('crDetail').textContent =
       chips.stake===0 ? 'Bonus de victoire · solde '+fmtChips(profile.chips)
-      : chips.delta>0 ? (detailWin||'Gain')+' · solde '+fmtChips(profile.chips)
-      : 'Mise perdue · solde '+fmtChips(profile.chips);
+      : (chips.line || detailWin || (chips.delta>0 ? 'Gain' : 'Mise perdue'))+' · solde '+fmtChips(profile.chips);
   }
 
   function sqTurnId(){
@@ -14485,7 +14512,7 @@
     if(newGame){
       room.gid = d.gid; room.seenEv = 0; room.started = true;
       // a new game: this phone puts in its own stake, up to the agreed amount
-      matchCoras = 0; matchGlacees = 0;
+      matchCoras = 0; matchGlacees = 0; matchManches = [];
       matchStake = Math.min(d.stake||0, profile.chips);
       if(matchStake>0) chipsAdd(-matchStake);
       hide('matchOverOverlay');
@@ -14543,10 +14570,12 @@
       // everyone at the table gets to look at the announced cards
       if(ev.cards) showAutoWinReveal({mine: me, name: sqName(V(ev.seat)), hand: ev.cards, label: ev.label, watchOnly: true, autoMs: 20000});
     } else if(ev.kind==='handwin'){
+      if(sq) sq.mult = ev.glacee ? 4 : ev.cora ? 2 : 1;
       if(me) sqHandWonRewards(ev.cora, ev.glacee, (sq.history.you||[]).some(e=>e.type==='passe'));
       sqHandWonShow(V(ev.seat), ev.cora, ev.glacee);
     } else if(ev.kind==='elim'){
       const w = V(ev.winner), t = ev.targets.map(V);
+      if(sq && sq.remote) sqBook(w, t);
       if(w!=='you') showToast(sqName(w)+' élimine '+t.map(x=> x==='you' ? 'toi' : sqName(x)).join(' et ')+' !', t.includes('you') ? 'Tu regardes la suite depuis le banc.' : '', {ms:2600});
     } else if(ev.kind==='say'){
       sqBubble(V(ev.seat), ev.text); avatarFx(V(ev.seat), 'speaking');
@@ -17342,7 +17371,7 @@
     dare.addEventListener('click', ()=>{
       if(!isOppUnlocked('mbarga')){ say(maskLine('locked'), true); vibrate([40]); return; }
       duelOpp = 'mbarga'; prefs.lastOpp = 'mbarga'; savePrefs();
-      mode = 'ai'; setMatchLength(!!prefs.quick);
+      mode = 'ai'; setMatchLength(quickPref());
       enterGame(); applyOppNameToUI(); newMatch();
     });
     // back on the home screen: he greets you the way the last match ended; left alone, he gets bored and says so
@@ -18515,7 +18544,8 @@
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
       lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect, Book,
-      playerPlays, genjutsuFx, feintWinner, sqClaqueOrder, setLocked: v=>{ locked = v; } };
+      playerPlays, genjutsuFx, feintWinner, sqClaqueOrder, setLocked: v=>{ locked = v; },
+      settleStake, sqBook, setMatch: (m, stake, manches, opp)=>{ mode = m; matchStake = stake; matchManches = manches; if(opp) duelOpp = opp; } };
   }
 
 })();
