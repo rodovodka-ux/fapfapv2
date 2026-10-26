@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030619">
+<title>Compétition du quartier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Maquette iPhone (à valider) : la compétition du quartier — accueil, classement de la semaine, quartiers,
+   le Roi, le Mystère du vendredi, l'annonce de la League, les notifications. Rien de tout ça n'est branché au jeu. */
+:root{
+  --night:#030619; --ink:#eef1ff; --mute:#8f9bcf; --gold:#f2c76a; --gold-d:#a87a24; --good:#92e8b0; --bad:#ffb4a6;
+  --disp:'Unbounded','Manrope',system-ui,sans-serif; --ui:'Manrope',system-ui,sans-serif;
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:var(--night); color:var(--ink); font:600 15px/1.4 var(--ui); overflow:hidden; -webkit-font-smoothing:antialiased; }
+button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; }
+.sky{ position:fixed; inset:0; background:radial-gradient(130% 75% at 50% 112%, #2443b8 0%, #0d1c5c 34%, var(--night) 70%); }
+.scene{ position:fixed; inset:0; bottom:calc(var(--bot) + 74px); display:none; flex-direction:column; }
+.scene.on{ display:flex; }
+.scroll{ flex:1; overflow:auto; padding:4px 16px 24px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.scroll::-webkit-scrollbar{ display:none; }
+.hd{ padding:calc(var(--top) + 14px) 16px 10px; flex:none; }
+.eyebrow{ display:block; color:var(--gold); font:800 10.5px var(--ui); letter-spacing:.22em; text-transform:uppercase; margin-bottom:3px; }
+.hd h2{ margin:0; font:700 19px/1.1 var(--disp); text-transform:uppercase; }
+.card{ border-radius:24px; background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); padding:16px; margin-bottom:14px; }
+.card h3{ margin:0 0 12px; font:800 10.5px var(--ui); letter-spacing:.22em; color:var(--gold); text-transform:uppercase; display:flex; justify-content:space-between; gap:8px; }
+.card h3 span{ color:var(--mute); letter-spacing:.1em; }
+.note{ color:var(--mute); font:600 12px/1.5 var(--ui); margin:10px 0 0; }
+.cta{ padding:14px 22px; border-radius:40px; font:700 11.5px var(--disp); letter-spacing:.1em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,var(--gold) 55%,#c9973b); color:#2b1a02; box-shadow:0 10px 26px rgba(242,199,106,.3), inset 0 1px 0 rgba(255,255,255,.7); transition:scale .12s; }
+.cta.wide{ width:100%; } .cta:active, .ghost:active, .seg button:active{ scale:.96; }
+.ghost{ padding:11px 16px; border-radius:30px; background:rgba(255,255,255,.07); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); font:700 12.5px var(--ui); transition:scale .12s; }
+/* avatars: initials on a colour, as the game's photos would sit */
+.av{ --s:40px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; flex:none; position:relative; font:800 calc(var(--s)*.36) var(--ui); color:#fff;
+  background:linear-gradient(150deg, var(--a1,#5b6bd6), var(--a2,#2a3380)); box-shadow:0 0 0 2px rgba(255,255,255,.85); }
+.av.gold{ box-shadow:0 0 0 2.5px var(--gold), 0 0 16px rgba(242,199,106,.55); }
+.av .crown{ position:absolute; top:calc(var(--s) * -.42); left:50%; translate:-50% 0; font-size:calc(var(--s)*.42); filter:drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.av .cap{ position:absolute; bottom:-4px; right:-4px; font:800 8px var(--ui); background:var(--gold); color:#2b1a02; border-radius:6px; padding:1px 4px; letter-spacing:.06em; }
+.qtag{ font:800 9.5px var(--ui); letter-spacing:.08em; color:var(--mute); }
+.up{ color:var(--good); font:800 11px var(--ui); } .down{ color:var(--bad); font:800 11px var(--ui); } .same{ color:var(--mute); font:800 11px var(--ui); }
+
+/* ===== bottom switcher between the screens of the mockup ===== */
+.seg{ position:fixed; left:8px; right:8px; bottom:calc(var(--bot) + 8px); z-index:30; display:flex; gap:3px; padding:5px; border-radius:22px; background:rgba(12,20,62,.96); box-shadow:0 14px 34px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.1); overflow-x:auto; scrollbar-width:none; }
+.seg::-webkit-scrollbar{ display:none; }
+.seg button{ flex:1 0 auto; padding:9px 8px 7px; border-radius:16px; font:800 9.5px var(--ui); color:var(--mute); display:flex; flex-direction:column; align-items:center; gap:2px; white-space:nowrap; transition:background .2s, color .2s, scale .12s; }
+.seg button span{ font-size:16px; line-height:1; }
+.seg button.on{ background:rgba(242,199,106,.16); color:var(--gold); }
+
+/* ===== 1. ACCUEIL ===== */
+.home-top{ display:flex; align-items:center; justify-content:space-between; padding:calc(var(--top) + 12px) 16px 6px; }
+.logo{ font:800 22px var(--disp); letter-spacing:.02em; } .logo em{ font-style:normal; color:var(--gold); }
+.chips{ display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:20px; background:rgba(255,255,255,.07); font:800 12.5px var(--ui); }
+.chips i{ width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff1c4, var(--gold) 55%, var(--gold-d)); }
+.ticker{ margin:4px 16px 12px; padding:9px 0; border-radius:14px; background:rgba(255,255,255,.05); overflow:hidden; white-space:nowrap; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+.ticker div{ display:inline-block; padding-left:100%; animation:tick 26s linear infinite; font:700 12px var(--ui); color:#cfd5f5; }
+.ticker b{ color:var(--gold); }
+@keyframes tick{ to{ transform:translateX(-100%); } }
+.podium{ display:flex; align-items:flex-end; justify-content:center; gap:10px; margin:22px 0 8px; }
+.pd{ display:flex; flex-direction:column; align-items:center; gap:6px; width:88px; text-align:center; }
+.pd .nm{ font:700 12px/1.2 var(--ui); } .pd .pt{ font:800 11px var(--ui); color:var(--gold); }
+.pd .step{ width:100%; border-radius:12px 12px 4px 4px; display:grid; place-items:center; font:800 20px var(--disp); color:rgba(255,255,255,.85); background:linear-gradient(180deg, rgba(242,199,106,.35), rgba(242,199,106,.06)); box-shadow:inset 0 1px 0 rgba(255,255,255,.25); transform-origin:50% 100%; }
+.pd.p1 .step{ height:74px; } .pd.p2 .step{ height:52px; background:linear-gradient(180deg, rgba(200,210,240,.3), rgba(200,210,240,.05)); } .pd.p3 .step{ height:40px; background:linear-gradient(180deg, rgba(205,140,90,.32), rgba(205,140,90,.05)); }
+.pd.p1 .av{ --s:58px; } .pd .av{ --s:46px; }
+.myplace{ display:flex; align-items:center; gap:12px; padding:12px; border-radius:18px; background:rgba(242,199,106,.1); box-shadow:inset 0 0 0 1px rgba(242,199,106,.35); margin-top:12px; }
+.myplace .big{ font:800 26px var(--disp); color:var(--gold); } .myplace .big small{ font:700 11px var(--ui); color:var(--mute); }
+.myplace .tx{ flex:1; font:700 12.5px/1.4 var(--ui); }
+.king{ display:flex; align-items:center; gap:14px; }
+.king .tx b{ display:block; font:700 16px var(--disp); } .king .tx small{ color:var(--mute); font:700 12px var(--ui); }
+.mys-teaser{ display:flex; align-items:center; gap:14px; }
+.box-mini{ width:62px; height:56px; position:relative; flex:none; }
+.box-mini .lid, .box-mini .body{ position:absolute; left:0; right:0; border-radius:8px; background:linear-gradient(180deg, #7b3fe4, #3b1a8a); box-shadow:inset 0 0 0 2px var(--gold); }
+.box-mini .body{ bottom:0; height:38px; } .box-mini .lid{ top:4px; height:16px; }
+.box-mini .q{ position:absolute; left:0; right:0; bottom:8px; text-align:center; font:800 18px var(--disp); color:var(--gold); }
+.mys-teaser .tx{ flex:1; } .mys-teaser .tx b{ display:block; font:700 15px var(--disp); } .mys-teaser .tx small{ color:var(--mute); font:700 12px var(--ui); }
+.prog{ height:6px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px; } .prog i{ display:block; height:100%; background:linear-gradient(90deg, var(--gold-d), var(--gold)); transform-origin:0 50%; }
+
+/* ===== 2. CLASSEMENT ===== */
+.tabs4{ display:flex; gap:3px; padding:4px; border-radius:16px; background:rgba(255,255,255,.06); margin:0 16px 12px; flex:none; }
+.tabs4 button{ flex:1; padding:9px 2px; border-radius:12px; font:800 11.5px var(--ui); color:var(--mute); }
+.tabs4 button.on{ background:var(--gold); color:#2b1a02; }
+.countdown{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:18px; background:linear-gradient(90deg, rgba(242,199,106,.16), rgba(242,199,106,.04)); box-shadow:inset 0 0 0 1px rgba(242,199,106,.3); margin-bottom:12px; }
+.countdown b{ font:700 13px var(--disp); } .countdown span{ font:800 15px var(--ui); color:var(--gold); font-variant-numeric:tabular-nums; }
+.rewards{ display:flex; gap:6px; margin-bottom:12px; }
+.rewards div{ flex:1; padding:9px 6px; border-radius:14px; background:rgba(0,0,0,.25); text-align:center; font:700 10.5px/1.3 var(--ui); color:#dfe4ff; }
+.rewards div b{ display:block; font:800 10px var(--ui); color:var(--gold); letter-spacing:.1em; margin-bottom:2px; }
+.lrow{ display:flex; align-items:center; gap:10px; padding:9px 6px; border-radius:14px; }
+.lrow + .lrow{ border-top:1px solid rgba(255,255,255,.05); }
+.lrow .pos{ width:26px; font:700 12px var(--disp); color:var(--mute); text-align:center; }
+.lrow .av{ --s:34px; }
+.lrow .n{ flex:1; min-width:0; font:700 13.5px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lrow .n small{ display:block; }
+.lrow .pts{ font:800 13.5px var(--ui); font-variant-numeric:tabular-nums; }
+.lrow .mv{ width:30px; text-align:right; }
+.lrow.me{ background:rgba(242,199,106,.12); box-shadow:inset 0 0 0 1.5px var(--gold); }
+.lrow.me .n{ color:var(--gold); }
+.lrow .frame{ font-size:13px; }
+.stickme{ position:sticky; bottom:0; margin:10px -4px 0; padding:4px; border-radius:18px; background:rgba(10,18,58,.97); box-shadow:0 -10px 30px rgba(3,6,25,.8); }
+.challenge{ font:800 10px var(--ui); letter-spacing:.06em; padding:6px 9px; border-radius:10px; background:rgba(242,199,106,.16); color:var(--gold); }
+.qbar{ display:flex; align-items:center; gap:10px; padding:9px 4px; }
+.qbar + .qbar{ border-top:1px solid rgba(255,255,255,.05); }
+.qbar .pos{ width:22px; font:700 12px var(--disp); color:var(--mute); }
+.crest{ --s:30px; width:var(--s); height:var(--s); border-radius:50%; position:relative; flex:none; background:conic-gradient(from 200deg, var(--c1) 0 50%, var(--c2) 0 100%); box-shadow:0 0 0 2px rgba(255,255,255,.9); }
+.crest::before{ content:''; position:absolute; inset:16%; border-radius:50%; background:#0b1650; }
+.qbar .info{ flex:1; min-width:0; }
+.qbar .info b{ display:flex; justify-content:space-between; font:700 13px var(--ui); }
+.qbar .info b span{ font-variant-numeric:tabular-nums; color:var(--gold); }
+.qbar .info small{ color:var(--mute); font:700 11px var(--ui); }
+.qbar .track{ height:5px; border-radius:5px; background:rgba(255,255,255,.07); margin-top:5px; overflow:hidden; }
+.qbar .track i{ display:block; height:100%; border-radius:5px; background:linear-gradient(90deg, var(--c1), var(--c2)); transform-origin:0 50%; }
+.qbar.mine{ background:rgba(242,199,106,.08); border-radius:14px; }
+.qhead{ display:flex; align-items:center; gap:14px; }
+.qhead .crest{ --s:62px; }
+.qhead b{ display:block; font:700 18px var(--disp); } .qhead small{ color:var(--mute); font:700 12px var(--ui); }
+.counts{ font:800 9px var(--ui); letter-spacing:.08em; padding:4px 7px; border-radius:8px; background:rgba(110,220,150,.15); color:var(--good); }
+.counts.no{ background:rgba(255,255,255,.07); color:var(--mute); }
+
+/* ===== 3. MYSTÈRE ===== */
+#mystere .scroll{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.mys-k{ font:800 11px var(--ui); letter-spacing:.3em; color:var(--gold); margin-top:6px; }
+.mys-t{ font:800 24px/1.15 var(--disp); margin:8px 0 6px; }
+.mys-s{ color:#cfd5f5; font:600 13.5px/1.5 var(--ui); max-width:320px; }
+.chest{ width:170px; height:150px; position:relative; margin:84px 0 18px; } /* room above for the lid and the prize */
+.chest .glow{ position:absolute; inset:-40px; border-radius:50%; background:radial-gradient(circle, rgba(242,199,106,.45), transparent 62%); opacity:.5; }
+.chest .body{ position:absolute; left:0; right:0; bottom:0; height:96px; border-radius:16px; background:linear-gradient(180deg, #7b3fe4, #3b1a8a); box-shadow:inset 0 0 0 3px var(--gold), 0 18px 40px rgba(0,0,0,.5); }
+.chest .lid{ position:absolute; left:-6px; right:-6px; top:16px; height:44px; border-radius:18px 18px 8px 8px; background:linear-gradient(180deg, #9a63ff, #5a2bc4); box-shadow:inset 0 0 0 3px var(--gold); transform-origin:50% 100%; }
+.chest .lock{ position:absolute; left:50%; top:46px; width:34px; height:38px; margin-left:-17px; border-radius:8px; background:linear-gradient(180deg, #fff1c4, var(--gold) 50%, var(--gold-d)); display:grid; place-items:center; font:800 18px var(--disp); color:#3a2405; z-index:2; }
+.prize{ position:absolute; left:50%; top:40px; translate:-50% 0; font:800 26px var(--disp); color:var(--gold); white-space:nowrap; opacity:0; text-shadow:0 4px 20px rgba(242,199,106,.6); z-index:3; }
+.steps{ width:100%; max-width:340px; text-align:left; margin-top:6px; }
+.step-r{ display:flex; align-items:center; gap:10px; padding:10px 4px; border-top:1px solid rgba(255,255,255,.06); font:700 13px var(--ui); }
+.step-r:first-child{ border-top:0; }
+.step-r .ok{ width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:12px; background:rgba(110,220,150,.18); color:var(--good); flex:none; }
+.step-r .ok.no{ background:rgba(255,255,255,.07); color:var(--mute); }
+.odds{ width:100%; max-width:340px; text-align:left; }
+.odds div{ display:flex; justify-content:space-between; padding:7px 2px; font:700 12.5px var(--ui); border-top:1px solid rgba(255,255,255,.05); }
+.odds div:first-child{ border-top:0; } .odds b{ color:var(--gold); }
+
+/* ===== 4. ANNONCE ===== */
+.news-hero{ border-radius:26px; padding:22px 18px; text-align:center; background:radial-gradient(120% 90% at 50% 120%, #2443b8 0%, #0d1c5c 45%, #050a2a 80%); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); margin-bottom:14px; }
+.news-hero .k{ font:800 10.5px var(--ui); letter-spacing:.3em; color:var(--gold); }
+.news-hero h1{ margin:10px 0 4px; font:800 28px/1 var(--disp); } .news-hero h1 em{ display:block; font:300 13px var(--disp); font-style:normal; letter-spacing:.55em; color:var(--gold); margin-top:8px; }
+.news-hero p{ color:#cfd5f5; font:600 13.5px/1.5 var(--ui); margin:12px 0 0; }
+.howto{ display:flex; gap:12px; padding:10px 2px; border-top:1px solid rgba(255,255,255,.06); }
+.howto:first-of-type{ border-top:0; }
+.howto .n{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; flex:none; background:rgba(242,199,106,.16); color:var(--gold); font:800 12px var(--disp); }
+.howto b{ display:block; font:700 13.5px var(--ui); } .howto small{ display:block; color:var(--mute); font:600 12.5px/1.45 var(--ui); margin-top:2px; }
+.ptable div{ display:flex; justify-content:space-between; gap:10px; padding:8px 2px; border-top:1px solid rgba(255,255,255,.06); font:700 12.5px var(--ui); }
+.ptable div:first-child{ border-top:0; } .ptable b{ color:var(--gold); white-space:nowrap; }
+
+/* ===== 5. NOTIFICATIONS ===== */
+.lock{ border-radius:30px; padding:18px 12px 14px; background:linear-gradient(180deg, rgba(40,60,140,.55), rgba(10,16,50,.6)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.1); margin-bottom:14px; }
+.lock .time{ text-align:center; font:300 52px/1 var(--disp); } .lock .date{ text-align:center; color:#cfd5f5; font:700 13px var(--ui); margin:6px 0 16px; }
+.notif{ display:flex; gap:10px; padding:11px 12px; border-radius:18px; background:rgba(240,244,255,.14); margin-top:8px; }
+.notif .ic{ width:34px; height:34px; border-radius:9px; flex:none; display:grid; place-items:center; font:800 12px var(--disp); color:#3a2405; background:radial-gradient(circle at 34% 28%, #fff6d8, var(--gold) 46%, var(--gold-d)); }
+.notif .tx{ flex:1; min-width:0; } .notif .tx b{ display:flex; justify-content:space-between; gap:8px; font:800 12.5px var(--ui); } .notif .tx b span{ color:#c3cbef; font-weight:600; font-size:11px; }
+.notif .tx small{ display:block; font:600 12.5px/1.35 var(--ui); color:#e6eaff; margin-top:2px; }
+.plan div{ display:flex; gap:10px; padding:9px 2px; border-top:1px solid rgba(255,255,255,.06); font:700 12.5px/1.4 var(--ui); }
+.plan div:first-child{ border-top:0; } .plan div span{ color:var(--gold); width:84px; flex:none; font-weight:800; }
+.pick3{ display:flex; gap:6px; margin-top:10px; } .pick3 button{ flex:1; padding:10px 4px; border-radius:12px; background:rgba(0,0,0,.25); font:800 11.5px var(--ui); color:var(--mute); }
+.pick3 button.on{ background:var(--gold); color:#2b1a02; }
+
+.toast{ position:fixed; left:12px; right:12px; top:calc(var(--top) + 10px); z-index:40; display:flex; gap:10px; padding:12px; border-radius:20px; background:rgba(14,24,72,.97); box-shadow:0 16px 40px rgba(0,0,0,.55), inset 0 0 0 1px rgba(242,199,106,.45); opacity:0; pointer-events:none; }
+.toast .tx b{ display:block; font:800 13px var(--ui); } .toast .tx small{ color:#cfd5f5; font:600 12px var(--ui); }
+.confetti{ position:fixed; inset:0; pointer-events:none; z-index:35; overflow:hidden; } .confetti i{ position:absolute; top:-20px; width:8px; height:14px; border-radius:2px; }
+@media (prefers-reduced-motion: reduce){ .ticker div{ animation:none; } }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+
+<!-- 1. ACCUEIL -->
+<section class="scene on" id="accueil">
+  <div class="home-top"><div class="logo">FAP<em>·</em>FAP</div><span class="chips"><i></i>12 450</span></div>
+  <div class="ticker"><div>⚡ <b>Carine</b> a battu Junior sur un CORA ×2 &nbsp;·&nbsp; 🏟️ <b>Mokolo</b> passe 2ᵉ des quartiers &nbsp;·&nbsp; 🔥 <b>Blaise</b> enchaîne 5 victoires &nbsp;·&nbsp; 👑 <b>Junior</b> est toujours Roi du quartier &nbsp;·&nbsp; 🎁 Le Mystère du vendredi ouvre ce soir à 18 h</div></div>
+  <div class="scroll">
+    <div class="card" id="homePodium">
+      <h3>Le quartier cette semaine<span>fin dans 2 j 14 h</span></h3>
+      <div class="podium">
+        <div class="pd p2"><span class="av" style="--a1:#c2185b;--a2:#6a0f33">CA</span><span class="nm">Carine<br><span class="qtag">ESSOS</span></span><span class="pt">1 240 pts</span><div class="step">2</div></div>
+        <div class="pd p1"><span class="av gold" style="--a1:#ff8a1f;--a2:#8a3b00"><span class="crown">👑</span>JU</span><span class="nm">Junior<br><span class="qtag">MOKOLO</span></span><span class="pt">1 410 pts</span><div class="step">1</div></div>
+        <div class="pd p3"><span class="av" style="--a1:#00897b;--a2:#004d40">BL</span><span class="nm">Blaise<br><span class="qtag">TSINGA</span></span><span class="pt">1 105 pts</span><div class="step">3</div></div>
+      </div>
+      <div class="myplace"><div class="big">14<small>ᵉ</small></div><div class="tx"><span class="up">▲ 3 places aujourd’hui</span><br>Plus que <b style="color:var(--gold)">2 victoires</b> pour dépasser Landry (13ᵉ).</div></div>
+      <button class="cta wide" style="margin-top:12px" data-go="classement">Voir le classement</button>
+    </div>
+    <div class="card"><h3>Le Roi du quartier</h3>
+      <div class="king"><span class="av gold" style="--s:54px;--a1:#ff8a1f;--a2:#8a3b00"><span class="crown">👑</span>JU</span><div class="tx"><b>Junior · Mokolo</b><small>Roi depuis 2 semaines · 1 410 pts</small></div></div>
+      <p class="note">Le 1er de la semaine porte la couronne partout : aux tables, dans son profil, dans les listes. Détrône-le avant lundi.</p>
+      <button class="ghost" style="margin-top:10px">⚔️ Défier Junior</button>
+    </div>
+    <div class="card"><h3>Le Mystère du vendredi<span>dès 18 h</span></h3>
+      <div class="mys-teaser"><div class="box-mini"><div class="lid"></div><div class="body"></div><div class="q">?</div></div><div class="tx"><b>Un coffre t’attend</b><small>Joue 5 parties cette semaine pour l’ouvrir : 3 sur 5</small><div class="prog"><i style="transform:scaleX(.6)"></i></div></div></div>
+      <button class="ghost" style="margin-top:12px" data-go="mystere">Voir le Mystère</button>
+    </div>
+    <div class="card"><h3>Ton quartier · Mokolo</h3>
+      <div class="myplace" style="margin-top:0"><div class="big">2<small>ᵉ</small></div><div class="tx">Mokolo est 2ᵉ des 32 quartiers. <b style="color:var(--gold)">3 victoires de plus</b> et on passe Essos.</div></div>
+      <button class="ghost" style="margin-top:12px" data-go="classement" data-tab="quartiers">Voir les quartiers</button>
+    </div>
+  </div>
+</section>
+
+<!-- 2. CLASSEMENT -->
+<section class="scene" id="classement">
+  <div class="hd"><span class="eyebrow">Tout le quartier</span><h2>Le classement</h2></div>
+  <div class="tabs4" id="tabs4"><button class="on" data-t="joueurs">Joueurs</button><button data-t="quartiers">Quartiers</button><button data-t="amis">Amis</button><button data-t="riches">Les riches</button></div>
+  <div class="scroll" id="clBody"></div>
+</section>
+
+<!-- 3. MYSTÈRE -->
+<section class="scene" id="mystere">
+  <div class="scroll">
+    <div class="mys-k" style="margin-top:calc(var(--top) + 10px)">CHAQUE VENDREDI · 18 H</div>
+    <div class="mys-t">Le Mystère<br>du vendredi</div>
+    <p class="mys-s">Un coffre gratuit, une fois par semaine. Pour l’ouvrir, il faut avoir joué. Ce qu’il y a dedans, personne ne le sait.</p>
+    <div class="chest" id="chest"><div class="glow" id="glow"></div><div class="body"></div><div class="lid" id="lid"></div><div class="lock" id="lockI">?</div><div class="prize" id="prize"></div></div>
+    <button class="cta" id="openChest">Ouvrir le coffre</button>
+    <div class="card steps" style="margin-top:18px"><h3>Pour l’ouvrir cette semaine</h3>
+      <div class="step-r"><span class="ok">✓</span>Jouer 5 parties (en ligne ou en League)</div>
+      <div class="step-r"><span class="ok">✓</span>Gagner au moins 1 soirée de League</div>
+      <div class="step-r"><span class="ok no">·</span>Être connecté entre vendredi 18 h et dimanche minuit</div>
+    </div>
+    <div class="card odds"><h3>Ce que le coffre peut contenir<span>chances affichées</span></h3>
+      <div><span>500 à 2 000 jetons</span><b>60 %</b></div>
+      <div><span>Double points pendant 1 heure</span><b>20 %</b></div>
+      <div><span>Un dos de cartes rare</span><b>12 %</b></div>
+      <div><span>5 000 jetons</span><b>7 %</b></div>
+      <div><span>👑 JACKPOT : 25 000 jetons + bonus pour tout ton quartier</span><b>1 %</b></div>
+    </div>
+    <p class="note" style="max-width:340px">Gratuit, sans achat possible : on ne paie jamais pour ouvrir le coffre. Si quelqu’un de ton quartier touche le jackpot, tout le quartier reçoit 500 jetons.</p>
+  </div>
+</section>
+
+<!-- 4. ANNONCE -->
+<section class="scene" id="annonce">
+  <div class="scroll">
+    <div class="news-hero" style="margin-top:calc(var(--top) + 10px)">
+      <div class="k">NOUVEAU DANS FAP FAP</div>
+      <h1>FAP·FAP<em>LEAGUE</em></h1>
+      <p>32 quartiers de Yaoundé et Douala. Une saison comme la Ligue des champions. Un seul roi.</p>
+      <button class="cta" style="margin-top:16px">Choisir mon quartier</button>
+    </div>
+    <div class="card"><h3>Comment ça marche</h3>
+      <div class="howto"><span class="n">1</span><div><b>Choisis ton quartier</b><small>Tu le défends toute la saison. Le tirage au sort te place dans une poule de 4.</small></div></div>
+      <div class="howto"><span class="n">2</span><div><b>6 soirées de poule, en aller-retour</b><small>Chaque soirée se joue en 3 manches : jeu à 2, jeu à 3, Carré la Pute. Égalité ? Le quiz Fap Fap départage.</small></div></div>
+      <div class="howto"><span class="n">3</span><div><b>Les 2 premiers passent</b><small>Huitièmes, quarts, demies en aller-retour, puis la finale au Grand Carrefour.</small></div></div>
+      <div class="howto"><span class="n">4</span><div><b>Bats les champions</b><small>Chaque personnage battu en League rejoint ta Route du quartier.</small></div></div>
+    </div>
+    <div class="card ptable"><h3>Ce que tu gagnes</h3>
+      <div><span>Manche gagnée</span><b>200 jetons (×2 CORA, ×4 double)</b></div>
+      <div><span>Soirée gagnée</span><b>800 jetons</b></div>
+      <div><span>Qualifié pour les huitièmes</span><b>2 500 jetons</b></div>
+      <div><span>Huitièmes · quarts · demies passés</span><b>3 000 · 5 000 · 8 000</b></div>
+      <div><span>Champion de la saison</span><b>20 000 jetons</b></div>
+    </div>
+    <div class="card ptable"><h3>Le classement des joueurs</h3>
+      <div><span>Soirée gagnée · manche gagnée</span><b>+30 · +6 LP</b></div>
+      <div><span>Soirée perdue</span><b>−12 LP</b></div>
+      <div><span>3 jours sans jouer</span><b>−4 % par jour</b></div>
+      <div><span>Divisions</span><b>Quartier → Légende</b></div>
+      <div><span>Top 10 à la fin du mois</span><b>un titre</b></div>
+    </div>
+    <div class="card ptable"><h3>Ce qui change aussi</h3>
+      <div><span>Une partie se joue en une seule manche, comme au quartier (3 manches en option)</span><b></b></div>
+      <div><span>CORA : gain ×2 · 33 Glacée : gain ×4, pour tout le monde</span><b></b></div>
+      <div><span>Les modes histoire laissent la place à la League</span><b></b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. NOTIFICATIONS -->
+<section class="scene" id="notifs">
+  <div class="scroll">
+    <div class="lock" style="margin-top:calc(var(--top) + 10px)">
+      <div class="time">19:02</div><div class="date">vendredi 30 octobre</div>
+      <div class="notif"><span class="ic">FF</span><div class="tx"><b>Fap Fap<span>maintenant</span></b><small>😤 Carine (Essos) vient de te passer devant. Tu es 15ᵉ. Reprends ta place !</small></div></div>
+      <div class="notif"><span class="ic">FF</span><div class="tx"><b>Fap Fap<span>il y a 1 h</span></b><small>🎁 Le Mystère du vendredi est ouvert. Ton coffre t’attend jusqu’à dimanche.</small></div></div>
+      <div class="notif"><span class="ic">FF</span><div class="tx"><b>Fap Fap<span>hier</span></b><small>🏟️ Journée 4 : Mokolo reçoit Akwa ce soir. Ton public t’attend au maquis.</small></div></div>
+    </div>
+    <div class="card plan"><h3>Quand le jeu t’écrit<span>3 par jour au plus</span></h3>
+      <div><span>Chaque soir</span>Ta soirée de League t’attend (si tu n’as pas encore joué)</div>
+      <div><span>Dépassé</span>Quelqu’un vient de te passer devant au classement</div>
+      <div><span>Le roi tombe</span>Le Roi du quartier a perdu sa couronne</div>
+      <div><span>Vendredi 18 h</span>Le Mystère du vendredi est ouvert</div>
+      <div><span>Surprise</span>Heure double : points ×2 pendant 1 heure</div>
+      <div><span>Dimanche</span>Plus que 24 h : tu es à 15 pts du top 10</div>
+      <div><span>Lundi</span>Les résultats de la semaine et le nouveau Roi</div>
+      <div><span>3 jours sans jouer</span>Ton classement s’use</div>
+    </div>
+    <div class="card"><h3>Dans les réglages</h3>
+      <p class="note" style="margin:0">Chacun choisit combien il en reçoit. Jamais entre 22 h et 8 h.</p>
+      <div class="pick3"><button>Toutes</button><button class="on">Importantes</button><button>Aucune</button></div>
+    </div>
+  </div>
+</section>
+
+<nav class="seg" id="seg">
+  <button class="on" data-go="accueil"><span>🏠</span>Accueil</button>
+  <button data-go="classement"><span>🏆</span>Classement</button>
+  <button data-go="mystere"><span>🎁</span>Mystère</button>
+  <button data-go="annonce"><span>📣</span>Annonce</button>
+  <button data-go="notifs"><span>🔔</span>Notifs</button>
+</nav>
+<div class="toast" id="toast"><span class="av" style="--s:36px;--a1:#c2185b;--a2:#6a0f33">CA</span><div class="tx"><b>Tu passes devant Carine !</b><small>+40 pts · tu es maintenant 12ᵉ du quartier</small></div></div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const OUT = 'cubic-bezier(.16,1,.3,1)', BACK = 'cubic-bezier(.34,1.56,.64,1)';
+const A = (el, f, o)=> el ? el.animate(f, Object.assign({duration:420, easing:OUT, fill:'both'}, o, reduce ? {duration:1, delay:0} : {})).finished.catch(()=>{}) : Promise.resolve();
+
+// ---- screens ----
+let cur = 'accueil';
+async function go(id, tab){
+  if(tab) clTab = tab;
+  if(id===cur){ if(id==='classement') renderCl(true); return; }
+  const from = $(cur), to = $(id);
+  await A(from, [{opacity:1}, {opacity:0, transform:'translateX(-24px)'}], {duration:180, easing:'cubic-bezier(.55,0,1,.45)'});
+  from.classList.remove('on'); from.getAnimations().forEach(a=> a.cancel());
+  to.classList.add('on'); cur = id;
+  document.querySelectorAll('#seg button').forEach(b=> b.classList.toggle('on', b.dataset.go===id));
+  A(to, [{opacity:0, transform:'translateX(24px)'}, {opacity:1, transform:'none'}], {duration:340, fill:'none'});
+  enter(id);
+}
+document.addEventListener('click', e=>{ const b = e.target.closest('[data-go]'); if(b) go(b.dataset.go, b.dataset.tab); });
+function stagger(sel, root){ [...(root || document).querySelectorAll(sel)].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:440, delay:Math.min(i*60, 420), fill:'backwards'})); }
+function enter(id){
+  if(id==='accueil'){ stagger('#accueil .card'); podiumIn(); }
+  if(id==='classement') renderCl(true);
+  if(id==='mystere') stagger('#mystere .card');
+  if(id==='annonce'){ stagger('#annonce .card'); A(document.querySelector('.news-hero'), [{opacity:0, transform:'scale(.96)'}, {opacity:1, transform:'none'}], {duration:520}); }
+  if(id==='notifs') [...document.querySelectorAll('.notif')].forEach((n, i)=> A(n, [{opacity:0, transform:'translateY(-14px) scale(.97)'}, {opacity:1, transform:'none'}], {duration:520, delay:250 + i*260, easing:BACK, fill:'backwards'}));
+}
+function podiumIn(){
+  document.querySelectorAll('.pd').forEach((p, i)=>{
+    const order = [1, 0, 2][i];
+    A(p.querySelector('.step'), [{transform:'scaleY(0)'}, {transform:'scaleY(1)'}], {duration:600, delay:200 + order*160});
+    A(p.querySelector('.av'), [{opacity:0, transform:'translateY(16px) scale(.7)'}, {opacity:1, transform:'none'}], {duration:520, delay:420 + order*160, easing:BACK});
+  });
+}
+enter('accueil');
+
+// ---- the ranking ----
+const P = [
+  ['Junior','MOKOLO',1410,0,'#ff8a1f','#8a3b00'], ['Carine','ESSOS',1240,1,'#c2185b','#6a0f33'], ['Blaise','TSINGA',1105,-1,'#00897b','#004d40'],
+  ['Nadège','AKWA',1020,2,'#1e88e5','#0d3c75'], ['Hervé','BASTOS',990,0,'#5e35b1','#2a1663'], ['Prisca','MELEN',955,-2,'#43a047','#1b4a1d'],
+  ['Ulrich','NEW-BELL',930,1,'#e53935','#6d1210'], ['Joëlle','ODZA',905,0,'#00838f','#003c42'], ['Arnaud','EMANA',880,3,'#fdd835','#7a6400'],
+  ['Vanessa','OBILI',861,-1,'#3949ab','#141c55'], ['Kévin','DEÏDO',840,0,'#2e7d32','#0f3812'], ['Larissa','MVAN',812,-2,'#ef6c00','#6b2f00'],
+  ['Landry','MOKOLO',790,1,'#6d4c41','#2e1d17'], ['Toi','MOKOLO',762,3,'#f2c76a','#a87a24'], ['Rosine','ETOUDI',748,-1,'#ad1457','#4f0827']
+];
+let clTab = 'joueurs';
+document.querySelectorAll('#tabs4 button').forEach(b=> b.addEventListener('click', ()=>{ clTab = b.dataset.t; renderCl(true); }));
+const mv = d=> d>0 ? '<span class="up">▲'+d+'</span>' : d<0 ? '<span class="down">▼'+(-d)+'</span>' : '<span class="same">—</span>';
+const initials = n=> n==='Toi' ? 'TOI' : n.slice(0, 2).toUpperCase();
+function row(p, i){
+  const me = p[0]==='Toi', frame = i<10 ? '<span class="frame" title="Cadre doré du top 10">✨</span>' : '';
+  return '<div class="lrow'+(me ? ' me' : '')+'" data-i="'+i+'"><span class="pos">'+(i+1)+'</span><span class="av'+(i<10 ? ' gold' : '')+'" style="--a1:'+p[4]+';--a2:'+p[5]+'">'+(i===0 ? '<span class="crown">👑</span>' : '')+initials(p[0])+'</span>'+
+    '<span class="n">'+p[0]+' '+frame+'<small class="qtag">'+p[1]+'</small></span><span class="pts">'+p[2].toLocaleString('fr-FR')+'</span><span class="mv">'+mv(p[3])+'</span>'+(me || i>15 ? '' : (i===12 ? '<span class="challenge">Défier</span>' : ''))+'</div>';
+}
+const Qs = [
+  ['Essos','#1e88e5','#ffffff',14820,'10 sur 31 joueurs comptent'], ['Mokolo','#e23b3b','#f2c76a',14610,'10 sur 42 joueurs comptent'], ['Akwa','#c62828','#ffffff',13990,'10 sur 18 joueurs comptent'],
+  ['Tsinga','#0277bd','#f2c76a',12450,'10 sur 12 joueurs comptent'], ['Bastos','#212121','#f2c76a',11870,'10 sur 25 joueurs comptent'], ['New-Bell','#1565c0','#ffd600',11020,'10 sur 16 joueurs comptent'],
+  ['Melen','#43a047','#1b1b1b',9800,'8 joueurs seulement'], ['Bonabéri','#00695c','#ffffff',4120,'4 joueurs · +20 % de points 🔥']
+];
+function renderCl(anim){
+  document.querySelectorAll('#tabs4 button').forEach(b=> b.classList.toggle('on', b.dataset.t===clTab));
+  let h = '';
+  if(clTab==='joueurs'){
+    h += '<div class="countdown"><b>Semaine 44</b><span id="cd">2 j 14 h 06 min</span></div>';
+    h += '<div class="rewards"><div><b>1ᵉʳ</b>👑 + 10 000</div><div><b>TOP 10</b>✨ Cadre doré</div><div><b>TOP 50</b>2 000 jetons</div></div>';
+    h += '<div class="card" style="padding:8px"><div id="list">'+P.slice(0, 13).map(row).join('')+'</div>';
+    h += '<div class="stickme" id="stick">'+row(P[13], 13)+'</div></div>';
+    h += '<button class="cta wide" id="sim">Démo : tu gagnes une partie</button>';
+    h += '<p class="note">Points de la semaine : victoire en ligne +10, ×2 sur un CORA, ×4 sur une 33 Glacée. Tout le monde repart de zéro le lundi. Ta ligne reste collée en bas de l’écran.</p>';
+  } else if(clTab==='quartiers'){
+    const max = Qs[0][3];
+    h += '<div class="countdown"><b>Les 32 quartiers</b><span>semaine 44</span></div>';
+    h += '<div class="card" style="padding:10px">'+Qs.map((q, i)=> '<div class="qbar'+(q[0]==='Mokolo' ? ' mine' : '')+'"><span class="pos">'+(i+1)+'</span><span class="crest" style="--c1:'+q[1]+';--c2:'+q[2]+'"></span><div class="info"><b>'+q[0]+'<span>'+q[3].toLocaleString('fr-FR')+'</span></b><small>'+q[4]+'</small><div class="track"><i style="--c1:'+q[1]+';--c2:'+q[2]+';transform:scaleX('+(q[3]/max).toFixed(3)+')"></i></div></div></div>').join('')+'</div>';
+    h += '<p class="note">Seuls les 10 meilleurs joueurs de chaque quartier comptent : un petit quartier peut battre un grand. Un quartier qui manque de joueurs donne +20 % de points à ceux qui le rejoignent.</p>';
+    h += '<div class="card"><h3>Mokolo · ton quartier<span>2ᵉ</span></h3><div class="qhead"><span class="crest" style="--c1:#e23b3b;--c2:#f2c76a"></span><div><b>Mokolo</b><small>42 joueurs · tu es 2ᵉ du quartier</small></div></div>'+
+      '<div style="margin-top:14px">'+[['Junior',1410,1],['Toi',762,1],['Landry',790,0],['Steve',640,0],['Murielle',590,0]].sort((a, b)=> b[1]-a[1]).map((p, i)=> '<div class="lrow'+(p[0]==='Toi' ? ' me' : '')+'"><span class="pos">'+(i+1)+'</span><span class="av'+(i===0 ? ' gold' : '')+'" style="--a1:#e23b3b;--a2:#7a1414">'+(i===0 ? '<span class="cap">CAPITAINE</span>' : '')+initials(p[0])+'</span><span class="n">'+p[0]+'</span><span class="pts">'+p[1].toLocaleString('fr-FR')+'</span><span class="counts">COMPTE</span></div>').join('')+
+      '<div class="lrow"><span class="pos">11</span><span class="av" style="--a1:#888;--a2:#444">ED</span><span class="n">Edgar</span><span class="pts">210</span><span class="counts no">NE COMPTE PAS</span></div></div>'+
+      '<p class="note">Le 1er de la semaine devient Capitaine. Les parties entre deux joueurs de Mokolo (derbys) comptent pour le classement des joueurs, pas pour celui des quartiers. On ne change de quartier qu’une fois par mois.</p></div>';
+  } else if(clTab==='amis'){
+    h += '<div class="card" style="padding:8px">'+[['Carine','ESSOS',1240,1,'#c2185b','#6a0f33'],['Toi','MOKOLO',762,3,'#f2c76a','#a87a24'],['Steve','MOKOLO',640,-1,'#455a64','#1c262b']].map((p, i)=> row(p, [1,13,22][i]).replace(/<span class="pos">\d+/, '<span class="pos">'+(i+1))).join('')+'</div><p class="note">Tes amis seulement. Touche un ami pour le défier.</p>';
+  } else {
+    h += '<div class="card" style="padding:8px">'+[['Papa Mbida','BASTOS',4250000],['Junior','MOKOLO',1830000],['Carine','ESSOS',990000]].map((p, i)=> '<div class="lrow"><span class="pos">'+(i+1)+'</span><span class="av" style="--a1:#5b6bd6;--a2:#2a3380">'+initials(p[0])+'</span><span class="n">'+p[0]+'<small class="qtag">'+p[1]+'</small></span><span class="pts">'+p[2].toLocaleString('fr-FR')+' 🪙</span></div>').join('')+'</div><p class="note">Le classement d’aujourd’hui (les jetons de tous les temps) reste là, sous le nom « Les plus riches ».</p>';
+  }
+  $('clBody').innerHTML = h;
+  if(anim) stagger('#clBody .card, #clBody .countdown, #clBody .rewards, #clBody .qbar, #clBody > .cta');
+  const sim = $('sim'); if(sim) sim.addEventListener('click', overtake);
+}
+// the demo: you win a game, your line climbs past two players
+let done = false;
+async function overtake(){
+  if(done) return; done = true;
+  const list = $('list'), stick = $('stick'), meRow = stick.firstChild;
+  const rows = [...list.children], target = rows[11]; // you go up to 12th
+  const first = meRow.getBoundingClientRect();
+  // update the data and redraw: you take 12th, the two passed slide down
+  P.splice(13, 1); P.splice(11, 0, ['Toi','MOKOLO',802,5,'#f2c76a','#a87a24']); P[12][3] = -1; P[13][3] = -1;
+  const before = rows.map(r=> r.getBoundingClientRect().top);
+  list.innerHTML = P.slice(0, 13).map(row).join('');
+  stick.innerHTML = row(P[13], 13);
+  const newRows = [...list.children], meNew = newRows[11], last = meNew.getBoundingClientRect();
+  newRows.forEach((r, i)=>{ if(i===11) return; const d = (before[i] ?? r.getBoundingClientRect().top) - r.getBoundingClientRect().top; if(d) A(r, [{transform:'translateY('+d+'px)'}, {transform:'none'}], {duration:700, delay:150, fill:'none'}); });
+  A(meNew, [{transform:'translateY('+(first.top - last.top)+'px) scale(1.04)', boxShadow:'0 0 0 2px #f2c76a, 0 12px 30px rgba(242,199,106,.5)'}, {transform:'scale(1.04)', offset:.8}, {transform:'none'}], {duration:900, easing:OUT, fill:'none'});
+  meNew.scrollIntoView({block:'center', behavior: reduce ? 'auto' : 'smooth'});
+  setTimeout(()=>{
+    A($('toast'), [{opacity:0, transform:'translateY(-14px)'}, {opacity:1, transform:'none', offset:.12}, {opacity:1, transform:'none', offset:.88}, {opacity:0}], {duration:3600, fill:'none'});
+    confetti(['#f2c76a', '#ffffff', '#e23b3b']);
+    if(navigator.vibrate) try{ navigator.vibrate([20, 40, 60]); }catch(e){}
+  }, 700);
+}
+function confetti(colors){
+  if(reduce) return;
+  const box = $('confetti');
+  for(let i = 0; i<36; i++){
+    const c = document.createElement('i'); c.style.left = (Math.random()*100)+'%'; c.style.background = colors[i % colors.length]; box.appendChild(c);
+    c.animate([{transform:'translate(0,0) rotate(0)'}, {transform:'translate('+((Math.random()*2-1)*80)+'px,'+(innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)'}], {duration:1700 + Math.random()*1200, delay:Math.random()*400, easing:'cubic-bezier(.3,.6,.5,1)', fill:'forwards'}).finished.then(()=> c.remove(), ()=> c.remove());
+  }
+}
+// countdown ticks
+let left = 2*86400 + 14*3600 + 6*60;
+setInterval(()=>{ left--; const el = $('cd'); if(!el) return; const d = Math.floor(left/86400), h = Math.floor(left%86400/3600), m = Math.floor(left%3600/60), s = left%60; el.textContent = d+' j '+h+' h '+String(m).padStart(2,'0')+' min '+String(s).padStart(2,'0'); }, 1000);
+
+// ---- the Friday box ----
+let opened = false;
+$('openChest').addEventListener('click', async ()=>{
+  if(opened) return; opened = true;
+  const chest = $('chest');
+  // anticipation: the box shakes, then the lid flies, the prize rises
+  await A(chest, [{transform:'rotate(0)'}, {transform:'rotate(-4deg)'}, {transform:'rotate(4deg)'}, {transform:'rotate(-3deg)'}, {transform:'rotate(3deg)'}, {transform:'rotate(0)'}], {duration:700, easing:'ease-in-out', fill:'none'});
+  A($('lockI'), [{opacity:1, transform:'scale(1)'}, {opacity:0, transform:'scale(1.6)'}], {duration:300});
+  A($('lid'), [{transform:'none'}, {transform:'translate(-90px,-30px) rotate(-38deg)', opacity:0}], {duration:600, easing:OUT}); // the lid flies off to the side, out of the prize's way
+  A($('glow'), [{opacity:.5, transform:'scale(.8)'}, {opacity:1, transform:'scale(1.3)'}], {duration:700});
+  $('prize').textContent = '+ 5 000 🪙';
+  await A($('prize'), [{opacity:0, transform:'translateY(30px) scale(.6)'}, {opacity:1, transform:'translateY(-80px) scale(1)'}], {duration:700, delay:200, easing:BACK});
+  confetti(['#f2c76a', '#9a63ff', '#ffffff']);
+  if(navigator.vibrate) try{ navigator.vibrate([30, 50, 90]); }catch(e){}
+  $('openChest').textContent = 'Reviens vendredi prochain';
+});
+document.querySelectorAll('.pick3 button').forEach(b=> b.addEventListener('click', ()=> document.querySelectorAll('.pick3 button').forEach(x=> x.classList.toggle('on', x===b))));
+})();
+</script>
+</body>
+</html>
