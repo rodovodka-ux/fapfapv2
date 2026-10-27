@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Première visite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{ --ink:#1B120C; --cream:#FFF6DC; --cream2:#FBE9BC; --mango:#FFC93C; --mango-d:#E8A817; --red:#E24B4A; --green:#2FB36B; --green-d:#1F8A50;
+  --blue:#3D7FD9; --txt:#2A1D12; --mute:#7A6650; --night:#1d1940; --t:'Fredoka', system-ui, sans-serif; --b:'Nunito', system-ui, sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:#140d08; color:#FFF1D6; font-family:var(--b); overflow:hidden; }
+/* the bar at night, behind every screen */
+.bg{ position:fixed; inset:0; background:radial-gradient(120% 70% at 50% 0%, rgba(255,190,110,.22), transparent 60%), url('../art/d/lieu-yaounde.svg') 50% 100% / cover no-repeat, #1a120c; }
+.bg::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,13,8,.55), rgba(20,13,8,.88) 60%, #140d08); }
+.scr{ position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 58px); overflow-y:auto; }
+.scr.on{ display:flex; }
+.tag{ align-self:center; font:700 11px var(--b); letter-spacing:.12em; text-transform:uppercase; color:#ffd9a0; opacity:.8; margin-bottom:6px; }
+.card{ background:var(--cream); color:var(--txt); border:3px solid var(--ink); border-radius:22px; box-shadow:0 5px 0 var(--ink); padding:18px; }
+h1,h2,h3{ font-family:var(--t); margin:0; }
+h1{ font-size:28px; line-height:1.1; }
+h2{ font-size:24px; line-height:1.15; }
+p{ margin:8px 0 0; font-size:15px; line-height:1.45; }
+.mute{ color:var(--mute); }
+.btn{ display:block; width:100%; border:3px solid var(--ink); border-radius:16px; box-shadow:0 5px 0 var(--ink); padding:15px 14px; font:700 19px var(--t); color:var(--txt); background:#fff; cursor:pointer; transition:transform .08s, box-shadow .08s; }
+.btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--ink); }
+.btn.go{ background:var(--green); color:#fff; text-shadow:0 2px 0 var(--green-d); }
+.btn.mango{ background:var(--mango); }
+.btn small{ display:block; font:700 13px var(--b); opacity:.85; text-shadow:none; margin-top:2px; }
+.link{ background:none; border:0; color:#e9d6b6; font:800 14px var(--b); text-decoration:underline; padding:12px; cursor:pointer; align-self:center; }
+.stack{ display:flex; flex-direction:column; gap:14px; }
+.grow{ flex:1; }
+.logo{ width:min(78%, 300px); align-self:center; margin:8px 0 4px; filter:drop-shadow(0 6px 0 rgba(0,0,0,.35)); }
+.beta{ display:inline-block; background:var(--red); color:#fff; font:800 11px var(--b); letter-spacing:.08em; padding:4px 10px; border-radius:99px; border:2px solid var(--ink); }
+/* Penalty and his speech bubble */
+.host{ display:flex; align-items:flex-end; gap:6px; margin-top:6px; }
+.host img{ width:132px; height:auto; flex:none; filter:drop-shadow(0 6px 0 rgba(0,0,0,.35)); }
+.bubble{ position:relative; background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:18px; box-shadow:0 4px 0 var(--ink); padding:12px 14px; font:700 16px/1.35 var(--b); margin-bottom:40px; }
+.bubble::after{ content:''; position:absolute; left:-12px; bottom:18px; width:16px; height:16px; background:#fff; border-left:3px solid var(--ink); border-bottom:3px solid var(--ink); transform:rotate(45deg); }
+.bubble b{ font-family:var(--t); color:#B83333; display:block; font-size:12px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:2px; }
+/* the table of the first game */
+.table{ position:relative; height:340px; border:3px solid var(--ink); border-radius:26px; box-shadow:0 5px 0 var(--ink); background:radial-gradient(90% 70% at 50% 45%, #2fae6a, #17673d); overflow:hidden; }
+.table .opp{ position:absolute; top:14px; left:50%; transform:translateX(-50%); text-align:center; font:700 13px var(--t); }
+.av{ width:52px; height:52px; border-radius:50%; border:3px solid var(--ink); background:#ffd9a0 center 12% / 120% auto no-repeat; margin:0 auto 4px; box-shadow:0 3px 0 var(--ink); }
+.hand{ position:absolute; bottom:16px; left:0; right:0; display:flex; justify-content:center; }
+.c{ width:52px; height:74px; border-radius:9px; background:#fff; border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); color:#1b1b1b; font:700 20px var(--t); display:flex; align-items:flex-start; justify-content:flex-start; padding:5px 6px; margin:0 -6px; }
+.c.r{ color:#c8283a; }
+.mid{ position:absolute; top:100px; left:50%; transform:translateX(-50%); display:flex; gap:14px; }
+.hint{ position:absolute; bottom:102px; left:50%; transform:translateX(-50%); background:var(--mango); color:var(--txt); border:2.5px solid var(--ink); border-radius:12px; font:800 13px var(--b); padding:6px 10px; white-space:nowrap; box-shadow:0 3px 0 var(--ink); }
+.pill{ display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.18); border-radius:99px; padding:5px 11px; font:800 13px var(--b); color:#ffe6bd; }
+/* the victory and the name */
+.win{ text-align:center; }
+.win .big{ font:700 44px var(--t); color:var(--mango); text-shadow:0 4px 0 var(--ink), 0 0 30px rgba(255,201,60,.4); }
+.coins{ display:inline-flex; gap:8px; align-items:center; font:700 22px var(--t); background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:99px; padding:6px 16px; box-shadow:0 4px 0 var(--ink); margin-top:10px; }
+.coin{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe48a, #e8a817 60%, #b07b0a); border:2px solid var(--ink); }
+input.name{ width:100%; margin-top:12px; border:3px solid var(--ink); border-radius:14px; padding:13px 14px; font:700 20px var(--t); color:var(--txt); background:#fff; outline:none; }
+input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.chip{ border:2.5px solid var(--ink); border-radius:99px; background:var(--cream2); padding:6px 11px; font:800 13px var(--b); color:var(--txt); cursor:pointer; }
+.chip.on{ background:var(--mango); }
+/* the neighbourhood crests */
+.qgrid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 6px; margin-top:12px; max-height:300px; overflow-y:auto; padding:4px 2px 8px; }
+.qb{ background:none; border:0; padding:0; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; font:800 11px var(--b); color:var(--txt); }
+.crest{ width:54px; height:54px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--c1) 0 62%, var(--c2) 0); border:3px solid var(--ink); box-shadow:0 3px 0 var(--ink); position:relative; transition:transform .15s; }
+.crest::before{ content:''; position:absolute; inset:7px; border-radius:50%; background:#1e1a3a; }
+.crest b{ position:relative; font:700 13px var(--t); color:#fff; letter-spacing:.02em; }
+.qb.on .crest{ transform:scale(1.12); box-shadow:0 0 0 4px var(--mango), 0 3px 0 var(--ink); }
+.search{ width:100%; margin-top:12px; border:2.5px solid var(--ink); border-radius:12px; padding:10px 12px; font:700 15px var(--b); background:#fff; color:var(--txt); }
+/* the rank reveal */
+.rank{ text-align:center; padding:22px 18px; }
+.rank .pos{ font:700 64px var(--t); line-height:1; color:var(--txt); }
+.rank .pos small{ font-size:26px; vertical-align:top; position:relative; top:6px; }
+/* the next steps on the home screen */
+.home-top{ display:flex; justify-content:space-between; align-items:center; }
+.bal{ display:inline-flex; gap:8px; align-items:center; background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:99px; padding:5px 12px 5px 6px; box-shadow:0 4px 0 var(--ink); font:700 17px var(--t); }
+.steps h3{ font-size:19px; display:flex; justify-content:space-between; align-items:center; }
+.steps h3 span{ font:800 12px var(--b); color:var(--mute); }
+.st{ display:flex; gap:12px; align-items:center; padding:11px 0; border-top:2px dashed #e7d3a6; }
+.st:first-of-type{ border-top:0; }
+.st i{ flex:none; width:30px; height:30px; border-radius:50%; border:2.5px solid var(--ink); display:grid; place-items:center; font:700 15px var(--t); font-style:normal; background:#fff; }
+.st.done i{ background:var(--green); color:#fff; }
+.st.now i{ background:var(--mango); }
+.st div{ flex:1; font:800 15px/1.3 var(--b); }
+.st small{ display:block; font:700 12.5px var(--b); color:var(--mute); }
+.st em{ font:700 13px var(--t); font-style:normal; color:var(--green-d); white-space:nowrap; }
+.bar{ height:10px; border-radius:99px; background:var(--cream2); border:2px solid var(--ink); overflow:hidden; margin-top:6px; }
+.bar i{ display:block; height:100%; width:34%; background:var(--mango); }
+.later{ opacity:.55; }
+/* the reviewer's guide (not part of the game) */
+.guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:6px; justify-content:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.72); font:700 11px var(--b); color:#bbb; }
+.guide button{ background:#333; color:#ddd; border:0; border-radius:8px; padding:5px 8px; font:800 11px var(--b); cursor:pointer; }
+.guide button.on{ background:var(--mango); color:#111; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style></head>
+<body>
+<div class="bg"></div>
+
+<!-- 1. One screen instead of three: the age, the beta, the welcome -->
+<section class="scr on" id="s1">
+  <div class="grow"></div>
+  <img class="logo" src="../art/logo.png" alt="Fap Fap">
+  <div class="card stack" style="margin-top:14px">
+    <div><span class="beta">VERSION BÊTA</span></div>
+    <h1>Bienvenue au quartier.</h1>
+    <p class="mute" style="margin-top:0">Fap Fap se joue avec des jetons, jamais avec de l’argent. Le jeu est réservé aux adultes.</p>
+    <button class="btn go" data-go="s2">J’ai 18 ans ou plus, on joue !</button>
+    <button class="link" style="color:var(--mute)">Je n’ai pas 18 ans</button>
+  </div>
+  <div class="grow"></div>
+</section>
+
+<!-- 2. Penalty asks one question, then the cards come -->
+<section class="scr" id="s2">
+  <div class="tag">Première visite</div>
+  <div class="host">
+    <img src="../art/livre/perso-penalty.webp" alt="" style="border-radius:20px;border:3px solid var(--ink)">
+    <div class="bubble"><b>Penalty</b>Assieds-toi, petit. Tu connais déjà le Fap Fap&nbsp;?</div>
+  </div>
+  <div class="grow"></div>
+  <div class="stack">
+    <button class="btn go" data-go="s3">Je connais, je joue<small>Partie unique contre Christelle · mise offerte</small></button>
+    <button class="btn mango" data-go="s3">Je découvre<small>Penalty m’explique en jouant (2 minutes)</small></button>
+  </div>
+</section>
+
+<!-- 3. The first game: no stake to choose, no menu, help on screen -->
+<section class="scr" id="s3">
+  <div class="home-top"><span class="pill">🃏 Ta première partie</span><span class="pill">Mise offerte : 100</span></div>
+  <div class="table" style="margin-top:14px">
+    <div class="opp"><div class="av" style="background-image:url('../art/livre/perso-christelle.webp')"></div>Christelle</div>
+    <div class="mid"><div class="c">7♣</div><div class="c r">9♥</div></div>
+    <div class="hint">Joue une carte du même signe : ♥</div>
+    <div class="hand"><div class="c">3♠</div><div class="c r">10♥</div><div class="c r">5♦</div><div class="c">8♣</div><div class="c r">3♥</div></div>
+  </div>
+  <div class="card" style="margin-top:14px;padding:12px 14px"><p style="margin:0"><b>Penalty :</b> « Garde ton 3 pour la fin. Si tu gagnes la dernière main avec un 3, c’est un <b>CORA</b> : tout est payé double. »</p></div>
+  <div class="grow"></div>
+  <button class="btn go" data-go="s4" style="margin-top:14px">▶ Voir la suite (démo : je gagne)</button>
+</section>
+
+<!-- 4. The victory, and the name asked at the best moment -->
+<section class="scr" id="s4">
+  <div class="win" style="margin-top:10px">
+    <div class="big">GAGNÉ !</div>
+    <div class="coins"><span class="coin"></span>+ 500 jetons</div>
+  </div>
+  <div class="card" style="margin-top:22px">
+    <h2>Comment on t’appelle au quartier&nbsp;?</h2>
+    <p class="mute">C’est le nom que tout le monde verra au classement.</p>
+    <input class="name" id="nm" maxlength="16" placeholder="Ton pseudo" autocomplete="off">
+    <div class="chips" id="sugg"></div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go" data-go="s5" style="margin-top:16px">C’est mon nom</button>
+</section>
+
+<!-- 5. The neighbourhood, chosen once, right after the name -->
+<section class="scr" id="s5">
+  <div class="card">
+    <h2>Tu joues pour quel quartier&nbsp;?</h2>
+    <p class="mute">Tes victoires comptent pour lui chaque semaine. Tu pourras changer une fois par mois.</p>
+    <input class="search" id="qs" placeholder="Chercher : Mokolo, Akwa…">
+    <div class="qgrid" id="qg"></div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go" id="qok" data-go="s6" style="margin-top:16px">Je représente <span id="qn">Mokolo</span></button>
+</section>
+
+<!-- 6. Seen at once in the ranking, and the notifications asked when they make sense -->
+<section class="scr" id="s6">
+  <div class="tag">Tout le quartier · cette semaine</div>
+  <div class="card rank">
+    <p class="mute" style="margin:0;font-weight:800">Te voilà au classement</p>
+    <div class="pos" id="pos">27<small>e</small></div>
+    <p style="margin-top:6px"><b id="who">Le Boss</b> de <b id="whereq">Mokolo</b> · 10 points</p>
+    <p class="mute" style="margin-top:4px">Encore <b>2 victoires en ligne</b> et tu entres dans le top 20.</p>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3 style="font-size:19px">Je te préviens quand quelqu’un te dépasse&nbsp;?</h3>
+    <p class="mute">3 messages par jour au plus, jamais la nuit.</p>
+    <div class="stack" style="margin-top:12px">
+      <button class="btn go" data-go="s7">Oui, préviens-moi</button>
+      <button class="link" data-go="s7" style="color:var(--mute)">Plus tard</button>
+    </div>
+  </div>
+  <div class="grow"></div>
+</section>
+
+<!-- 7. The home screen of a new player: one clear next step at the top, everything else stays below -->
+<section class="scr" id="s7">
+  <div class="home-top"><span class="bal"><span class="coin"></span>1 500</span><span class="pill">⭐ Petit joueur</span></div>
+  <div class="card steps" style="margin-top:16px">
+    <h3>Tes premiers pas<span>1 / 4</span></h3>
+    <div class="st done"><i>✓</i><div>Gagner ta première partie<small>+500 jetons</small></div></div>
+    <div class="st now"><i>2</i><div>Gagner 3 parties contre le quartier<small>1 / 3</small><div class="bar"><i></i></div></div><em>+1 000</em></div>
+    <div class="st later"><i>3</i><div>Battre un vrai joueur en ligne<small>Ton nom monte au classement</small></div><em>+2 000</em></div>
+    <div class="st later"><i>4</i><div>Entrer dans la Fap-Fap League<small>Défends ton quartier</small></div><em>Cadre</em></div>
+  </div>
+  <button class="btn go" style="margin-top:16px;font-size:26px">Jouer<small>Prochaine partie contre Ismaël</small></button>
+  <p style="text-align:center;color:#d9c3a0;font:700 13px var(--b);margin-top:14px">↓ La League, Tout le quartier, le défi du jour… restent juste en dessous, comme aujourd’hui.</p>
+  <div class="grow"></div>
+</section>
+
+<nav class="guide" id="guide"></nav>
+
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]fast\b/.test(location.search);
+const A = (el, kf, o)=> el && !reduce ? el.animate(kf, Object.assign({duration:420, easing:'cubic-bezier(.2,.8,.2,1)', fill:'both'}, o)) : null;
+const names = ['1. Bienvenue','2. Penalty','3. Partie','4. Pseudo','5. Quartier','6. Classement','7. Accueil'];
+let cur = 's1';
+function show(id){
+  if(id===cur) return;
+  const from = $(cur), to = $(id);
+  const a = A(from, [{opacity:1, transform:'none'}, {opacity:0, transform:'translateX(-24px)'}], {duration:180, easing:'ease-in'});
+  const swap = ()=>{ from.classList.remove('on'); from.getAnimations().forEach(x=> x.cancel()); to.classList.add('on'); to.scrollTop = 0; cur = id; enter(to); guide(); };
+  a ? a.finished.then(swap) : swap();
+}
+function enter(s){
+  A(s, [{opacity:0, transform:'translateX(24px)'}, {opacity:1, transform:'none'}], {duration:320, fill:'none'});
+  [...s.querySelectorAll('.card, .btn, .host, .table, .win')].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:420, delay:80 + i*70, fill:'backwards'}));
+  if(s.id==='s4'){ A(s.querySelector('.big'), [{transform:'scale(.4)', opacity:0}, {transform:'scale(1.12)', opacity:1, offset:.7}, {transform:'scale(1)'}], {duration:620, easing:'ease-out'}); confetti(); }
+  if(s.id==='s6'){ countDown(); }
+}
+document.addEventListener('click', e=>{ const b = e.target.closest('[data-go]'); if(b){ if(b.dataset.go==='s5' && !$('nm').value.trim()) $('nm').value = 'Le Boss'; show(b.dataset.go); } });
+// name suggestions, in the neighbourhood's own words
+const SUG = ['Le Boss', 'Petit Kora', 'Grand Frère', 'Mola', 'La Machine', 'Dja Boy'];
+$('sugg').innerHTML = SUG.map(s=> '<button class="chip">'+s+'</button>').join('');
+$('sugg').addEventListener('click', e=>{ const c = e.target.closest('.chip'); if(!c) return; $('nm').value = c.textContent; [...$('sugg').children].forEach(x=> x.classList.toggle('on', x===c)); });
+// the 32 neighbourhoods, as in the League
+const Q = [['Mokolo','MOK','#e23b3b','#f2c76a'],['Briqueterie','BRQ','#2bb673','#ffffff'],['Mvog-Ada','MVA','#7b3fe4','#f2c76a'],['Mvog-Mbi','MVM','#ff8a1f','#1b1b1b'],['Essos','ESS','#1e88e5','#ffffff'],['Nkolbisson','NKB','#00897b','#ffd54f'],['Biyem-Assi','BYA','#c2185b','#ffffff'],['Obili','OBL','#3949ab','#ff7043'],['Melen','MLN','#43a047','#1b1b1b'],['Mendong','MDG','#f4511e','#ffffff'],['Ekounou','EKN','#8e24aa','#80deea'],['Emana','EMN','#fdd835','#1b1b1b'],['Nkoldongo','NKD','#d32f2f','#1b1b1b'],['Etoudi','ETD','#00acc1','#f2c76a'],['Mimboman','MMB','#6d4c41','#ffcc80'],['Madagascar','MDC','#e91e63','#ffeb3b'],['Cité Verte','CVT','#2e7d32','#c5e1a5'],['Elig-Edzoa','ELE','#5e35b1','#ffffff'],['Mvan','MVN','#ef6c00','#4fc3f7'],['Tsinga','TSG','#0277bd','#f2c76a'],['Messa','MES','#ad1457','#1b1b1b'],['Nlongkak','NLK','#558b2f','#ffffff'],['Bastos','BST','#212121','#f2c76a'],['Odza','ODZ','#00838f','#ff8a65'],['New-Bell','NBL','#1565c0','#ffd600'],['Akwa','AKW','#c62828','#ffffff'],['Deïdo','DEI','#2e7d32','#ffd600'],['Bépanda','BEP','#6a1b9a','#ffffff'],['Ndokotti','NDK','#ff6f00','#1b1b1b'],['Bonabéri','BNB','#00695c','#ffffff'],['Makepe','MKP','#283593','#ef5350'],['Village','VLG','#4e342e','#ffd54f']];
+let pick = 0;
+function drawQ(f){
+  const n = (f||'').toLowerCase();
+  $('qg').innerHTML = Q.map((q, i)=> !n || q[0].toLowerCase().includes(n) ? '<button class="qb'+(i===pick ? ' on' : '')+'" data-q="'+i+'"><span class="crest" style="--c1:'+q[2]+';--c2:'+q[3]+'"><b>'+q[1]+'</b></span>'+q[0]+'</button>' : '').join('');
+}
+drawQ();
+$('qs').addEventListener('input', e=> drawQ(e.target.value));
+$('qg').addEventListener('click', e=>{ const b = e.target.closest('[data-q]'); if(!b) return; pick = +b.dataset.q; $('qn').textContent = Q[pick][0]; drawQ($('qs').value); A(b.querySelector('.crest'), [{transform:'scale(1)'}, {transform:'scale(1.25)'}, {transform:'scale(1.12)'}], {duration:300}); });
+function countDown(){
+  $('who').textContent = $('nm').value.trim() || 'Le Boss'; $('whereq').textContent = Q[pick][0];
+  const el = $('pos'); let n = 181; const end = 27, t0 = performance.now(), d = reduce ? 0 : 1100;
+  const step = now=>{ const k = d ? Math.min(1, (now - t0) / d) : 1, e = 1 - Math.pow(1 - k, 3); el.innerHTML = Math.round(n + (end - n) * e)+'<small>e</small>'; if(k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function confetti(){
+  if(reduce) return;
+  const cols = ['#FFC93C','#2FB36B','#E24B4A','#ffffff','#3D7FD9'];
+  for(let i = 0; i < 40; i++){
+    const p = document.createElement('i'); const x = Math.random() * innerWidth;
+    p.style.cssText = 'position:fixed;top:-12px;left:'+x+'px;width:8px;height:12px;border-radius:2px;z-index:8;background:'+cols[i % cols.length];
+    document.body.appendChild(p);
+    p.animate([{transform:'translate(0,0) rotate(0)'}, {transform:'translate('+(Math.random()*120-60)+'px,'+(innerHeight+40)+'px) rotate('+(Math.random()*720)+'deg)'}], {duration:1400 + Math.random()*900, delay:Math.random()*300, easing:'cubic-bezier(.3,.6,.5,1)'}).finished.then(()=> p.remove());
+  }
+}
+function guide(){ $('guide').innerHTML = names.map((n, i)=> '<button class="'+('s'+(i+1)===cur ? 'on' : '')+'" data-g="s'+(i+1)+'">'+(i+1)+'</button>').join('') + '<span style="align-self:center;margin-left:6px">'+names[+cur.slice(1)-1]+'</span>'; }
+$('guide').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(b) show(b.dataset.g); });
+guide(); enter($('s1'));
+})();
+</script>
+</body></html>
