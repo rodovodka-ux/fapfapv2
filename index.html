@@ -16066,7 +16066,7 @@
   // on the home screen: the League's announcement once, then Monday's ceremony once a week
   function qzAutoOpen(){
     if(!inHome() || QZ.open || ZH.open) return;
-    const busy = document.getElementById('launch') || ['betaNote','sugg'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
+    const busy = document.getElementById('launch') || ['ageGate','betaNote','sugg'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
     if(busy){ setTimeout(qzAutoOpen, 2000); return; }
     if(!prefs.newsLeague){ qOpen('annonce'); return; }
     const pv = profile.prevWk;
