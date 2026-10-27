@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Première visite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@900&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{ --ink:#1B120C; --cream:#FFF6DC; --cream2:#FBE9BC; --mango:#FFC93C; --mango-d:#E8A817; --red:#E24B4A; --green:#2FB36B; --green-d:#1F8A50;
   --blue:#3D7FD9; --txt:#2A1D12; --mute:#7A6650; --night:#1d1940; --t:'Fredoka', system-ui, sans-serif; --b:'Nunito', system-ui, sans-serif; }
@@ -30,7 +30,8 @@ p{ margin:8px 0 0; font-size:15px; line-height:1.45; }
 .link{ background:none; border:0; color:#e9d6b6; font:800 14px var(--b); text-decoration:underline; padding:12px; cursor:pointer; align-self:center; }
 .stack{ display:flex; flex-direction:column; gap:14px; }
 .grow{ flex:1; }
-.logo{ width:min(78%, 300px); align-self:center; margin:8px 0 4px; filter:drop-shadow(0 6px 0 rgba(0,0,0,.35)); }
+/* the logo's black background melts into the night */
+.logo{ width:min(84%, 320px); align-self:center; margin:0 0 -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
 .beta{ display:inline-block; background:var(--red); color:#fff; font:800 11px var(--b); letter-spacing:.08em; padding:4px 10px; border-radius:99px; border:2px solid var(--ink); }
 /* Penalty and his speech bubble */
 .host{ display:flex; align-items:flex-end; gap:6px; margin-top:6px; }
@@ -86,6 +87,53 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
 .bar{ height:10px; border-radius:99px; background:var(--cream2); border:2px solid var(--ink); overflow:hidden; margin-top:6px; }
 .bar i{ display:block; height:100%; width:34%; background:var(--mango); }
 .later{ opacity:.55; }
+/* the lesson, like Duolingo: progress at the top, one exercise, the verdict sheet at the bottom */
+.scr.lesson{ background:#FFF8E6; color:var(--txt); }
+.ltop{ display:flex; align-items:center; gap:12px; }
+.x{ background:none; border:0; font:700 24px var(--t); color:#b8a582; padding:0 4px; cursor:pointer; }
+.prog{ flex:1; height:16px; border-radius:99px; background:#eadcbc; overflow:hidden; }
+.prog i{ display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(#63d593, var(--green)); box-shadow:inset 0 4px 0 rgba(255,255,255,.35); transition:width .6s cubic-bezier(.2,.8,.2,1); }
+.streak{ font:800 15px var(--b); color:#e0802a; min-width:44px; text-align:right; }
+.tutor{ display:flex; align-items:flex-end; gap:6px; margin-top:12px; }
+.tutor img{ width:86px; flex:none; }
+.say{ position:relative; flex:1; background:#fff; border:2.5px solid #e2d3b0; border-radius:16px; padding:10px 12px; font:700 14.5px/1.35 var(--b); margin-bottom:22px; }
+.say::after{ content:''; position:absolute; left:-9px; bottom:14px; width:13px; height:13px; background:#fff; border-left:2.5px solid #e2d3b0; border-bottom:2.5px solid #e2d3b0; transform:rotate(45deg); }
+.lq{ font-size:22px; margin:12px 0 10px; }
+.opts{ display:flex; flex-direction:column; gap:10px; }
+.opt{ text-align:left; border:2.5px solid #e2d3b0; border-radius:16px; box-shadow:0 4px 0 #e2d3b0; background:#fff; padding:13px 14px; font:800 16px var(--b); color:var(--txt); cursor:pointer; transition:transform .08s; }
+.opt.sel{ border-color:var(--blue); box-shadow:0 4px 0 var(--blue); background:#e8f1ff; }
+.felt{ position:relative; border:3px solid var(--ink); border-radius:22px; background:radial-gradient(90% 80% at 50% 40%, #2fae6a, #17673d); padding:12px 10px 14px; box-shadow:0 4px 0 var(--ink); color:#fff; }
+.felt .who{ display:flex; align-items:center; gap:8px; font:700 13px var(--t); }
+.felt .who .av{ width:38px; height:38px; margin:0; background-size:cover; background-position:center 30%; }
+.felt .play{ display:flex; justify-content:center; align-items:center; gap:10px; min-height:96px; margin:4px 0 8px; font:800 13px var(--b); color:#d8f5e3; }
+.felt .mine{ display:flex; justify-content:center; gap:8px; }
+.felt .note{ position:absolute; right:10px; top:12px; font:800 11.5px var(--b); background:rgba(0,0,0,.3); border-radius:99px; padding:4px 9px; }
+.k{ position:relative; width:56px; height:80px; border-radius:10px; background:#fff; border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); color:#1b1b1b; font:700 18px/1 var(--t); padding:5px 6px; flex:none; transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s; }
+.k.r{ color:#c8283a; }
+.k::after{ content:attr(data-s); position:absolute; right:6px; bottom:5px; font-size:26px; }
+.k.t{ cursor:pointer; }
+.k.sel{ transform:translateY(-12px); box-shadow:0 0 0 4px var(--mango), 0 3px 0 var(--ink); }
+.k.dim{ opacity:.45; }
+.plis{ display:flex; gap:6px; justify-content:center; margin:2px 0 4px; }
+.plis span{ width:44px; height:58px; border-radius:9px; border:2.5px solid var(--ink); background:#fff; color:var(--txt); display:grid; place-items:center; font:800 11px var(--b); text-align:center; line-height:1.15; }
+.plis span.last{ background:var(--mango); transform:scale(1.12); box-shadow:0 3px 0 var(--ink); }
+.stamp{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) rotate(-8deg); font:700 34px var(--t); color:var(--mango); text-shadow:0 3px 0 var(--ink); pointer-events:none; }
+.lbtm{ position:fixed; left:0; right:0; bottom:0; z-index:5; display:none; padding:14px 16px calc(env(safe-area-inset-bottom) + 50px); background:#FFF8E6; border-top:2px solid #eadcbc; transition:background .25s; }
+.lbtm.on{ display:block; }
+.lbtm.ok{ background:#d9f7c4; border-color:#b5e69a; }
+.lbtm.ko{ background:#ffe0de; border-color:#f5bdb8; }
+.lbtm .btn:disabled{ background:#e6dcc6; color:#a8977a; text-shadow:none; box-shadow:0 5px 0 #cbbd9f; border-color:#cbbd9f; cursor:default; }
+.lbtm.ko .btn{ background:var(--red); text-shadow:0 2px 0 #a83232; }
+.fb h4{ margin:0; font:700 20px var(--t); }
+.lbtm.ok .fb h4{ color:var(--green-d); }
+.lbtm.ko .fb h4{ color:#b83333; }
+.fb p{ margin:4px 0 12px; font:700 14.5px/1.4 var(--b); color:#4a3a28; }
+@keyframes shake{ 0%,100%{ transform:none; } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+.shake{ animation:shake .3s 2; }
+.tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; }
+.tile{ border:3px solid var(--k); border-radius:16px; background:#fff; overflow:hidden; text-align:center; color:var(--txt); }
+.tile b{ display:block; background:var(--k); color:#fff; font:800 11.5px var(--b); padding:4px 2px; text-shadow:0 1px 0 rgba(0,0,0,.25); }
+.tile span{ display:block; font:700 20px var(--t); padding:8px 2px; }
 /* the reviewer's guide (not part of the game) */
 .guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:6px; justify-content:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.72); font:700 11px var(--b); color:#bbb; }
 .guide button{ background:#333; color:#ddd; border:0; border-radius:8px; padding:5px 8px; font:800 11px var(--b); cursor:pointer; }
@@ -98,7 +146,34 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
 <!-- 1. One screen instead of three: the age, the beta, the welcome -->
 <section class="scr on" id="s1">
   <div class="grow"></div>
-  <img class="logo" src="../art/logo.png" alt="Fap Fap">
+  <svg class="logo" viewBox="0 0 400 340" role="img" aria-label="Fap-Fap">
+    <defs>
+      <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>
+      <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient>
+      <radialGradient id="disc" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient>
+      <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient>
+      <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient>
+      <g id="cardF"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="url(#paper)" stroke="#1b120c" stroke-width="3"/></g>
+    </defs>
+    <!-- the medallion -->
+    <circle cx="200" cy="158" r="138" fill="url(#disc)" stroke="url(#rim)" stroke-width="7"/>
+    <circle cx="200" cy="158" r="126" fill="none" stroke="#c99a3e" stroke-opacity=".35" stroke-width="1.5"/>
+    <!-- three cards in a fan: the two 3s of the CORA and a 10 -->
+    <g transform="translate(168 262) rotate(-22)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#1b1b1b">3</text><text x="-38" y="-100" font-size="18" fill="#1b1b1b">♠</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#1b1b1b">♠</text></g>
+    <g transform="translate(232 262) rotate(22)"><use href="#cardF"/><text x="37" y="-122" text-anchor="end" font-family="Fredoka" font-weight="700" font-size="24" fill="#c8283a">10</text><text x="37" y="-100" text-anchor="end" font-size="18" fill="#c8283a">♦</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♦</text></g>
+    <g transform="translate(200 254)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#c8283a">3</text><text x="-37" y="-100" font-size="18" fill="#c8283a">♥</text><text x="0" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♥</text></g>
+    <!-- the chip -->
+    <g transform="translate(200 206)">
+      <circle r="35" fill="#120d09" stroke="url(#rim)" stroke-width="4"/>
+      <circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/>
+      <circle r="21" fill="#1a130d" stroke="url(#rim)" stroke-width="2.5"/>
+      <text y="10" font-size="28" text-anchor="middle" fill="url(#gold)">♠</text>
+    </g>
+    <!-- the banner and the name -->
+    <path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="url(#band)" stroke="url(#rim)" stroke-width="4" stroke-linejoin="round"/>
+    <text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="900" font-size="54" letter-spacing="1" fill="url(#gold)" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>
+    <text x="200" y="322" text-anchor="middle" font-size="20" fill="url(#gold)">♠</text>
+  </svg>
   <div class="card stack" style="margin-top:14px">
     <div><span class="beta">VERSION BÊTA</span></div>
     <h1>Bienvenue au quartier.</h1>
@@ -109,30 +184,58 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
   <div class="grow"></div>
 </section>
 
-<!-- 2. Penalty asks one question, then the cards come -->
+<!-- 2. Maître Tsala asks one question: the lesson, or the cards straight away -->
 <section class="scr" id="s2">
   <div class="tag">Première visite</div>
   <div class="host">
-    <img src="../art/livre/perso-penalty.webp" alt="" style="border-radius:20px;border:3px solid var(--ink)">
-    <div class="bubble"><b>Penalty</b>Assieds-toi, petit. Tu connais déjà le Fap Fap&nbsp;?</div>
+    <img src="../art/zh/buste-tsala.webp" alt="">
+    <div class="bubble"><b>Maître Tsala</b>Assieds-toi. Tu connais déjà le Fap Fap, ou je dois tout t’apprendre&nbsp;?</div>
   </div>
   <div class="grow"></div>
   <div class="stack">
-    <button class="btn go" data-go="s3">Je connais, je joue<small>Partie unique contre Christelle · mise offerte</small></button>
-    <button class="btn mango" data-go="s3">Je découvre<small>Penalty m’explique en jouant (2 minutes)</small></button>
+    <button class="btn mango" data-go="sL">Je découvre<small>La leçon de Maître Tsala · 7 petits exercices · 2 minutes</small></button>
+    <button class="btn go" data-go="s3">Je connais, je joue<small>Partie directe contre Christelle · mise offerte</small></button>
   </div>
 </section>
 
-<!-- 3. The first game: no stake to choose, no menu, help on screen -->
+<!-- 3. The lesson, like Duolingo: one idea per exercise, the player answers, the answer is explained -->
+<section class="scr lesson" id="sL">
+  <div class="ltop"><button class="x" data-go="s2" aria-label="Quitter">✕</button><div class="prog"><i id="lp"></i></div><span class="streak" id="lst">🔥 0</span></div>
+  <div class="tutor"><img src="../art/zh/buste-tsala.webp" alt=""><div class="say" id="lsay"></div></div>
+  <h2 class="lq" id="lq"></h2>
+  <div id="lx"></div>
+  <div class="grow"></div>
+  <div style="height:96px"></div>
+</section>
+<div class="lbtm" id="lb"><div class="fb" id="lfb"></div><button class="btn go" id="lgo" disabled>Vérifier</button></div>
+
+<!-- 4. The end of the lesson: what was learned, the reward, then the real game -->
+<section class="scr" id="sD">
+  <div class="grow"></div>
+  <div class="win"><img src="../art/zh/buste-tsala.webp" alt="" style="width:150px;display:block;margin:0 auto -6px"><div class="big" style="font-size:36px">Leçon terminée&nbsp;!</div></div>
+  <div class="tiles">
+    <div class="tile" style="--k:#FFC93C"><b>Précision</b><span id="dacc">100 %</span></div>
+    <div class="tile" style="--k:#ff9a3c"><b>Meilleure série</b><span id="dst">🔥 7</span></div>
+    <div class="tile" style="--k:#3D7FD9"><b>Temps</b><span id="dtm">1:42</span></div>
+  </div>
+  <div class="card" style="margin-top:16px;text-align:center;padding:14px">
+    <div class="coins" style="margin-top:0"><span class="coin"></span>+ 200 jetons</div>
+    <p style="margin-top:10px"><b>Badge « Élève de Maître Tsala »</b><br><span class="mute">« Pas mal. Maintenant, montre-moi ça contre Christelle. »</span></p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go" data-go="s3" style="margin-top:16px">Ma première vraie partie</button>
+</section>
+
+<!-- 5. The first game: no stake to choose, no menu, help on screen -->
 <section class="scr" id="s3">
   <div class="home-top"><span class="pill">🃏 Ta première partie</span><span class="pill">Mise offerte : 100</span></div>
   <div class="table" style="margin-top:14px">
-    <div class="opp"><div class="av" style="background-image:url('../art/livre/perso-christelle.webp')"></div>Christelle</div>
+    <div class="opp"><div class="av" style="background-image:url('../art/zh/christelle.webp');background-position:center 30%;background-size:cover"></div>Christelle</div>
     <div class="mid"><div class="c">7♣</div><div class="c r">9♥</div></div>
     <div class="hint">Joue une carte du même signe : ♥</div>
     <div class="hand"><div class="c">3♠</div><div class="c r">10♥</div><div class="c r">5♦</div><div class="c">8♣</div><div class="c r">3♥</div></div>
   </div>
-  <div class="card" style="margin-top:14px;padding:12px 14px"><p style="margin:0"><b>Penalty :</b> « Garde ton 3 pour la fin. Si tu gagnes la dernière main avec un 3, c’est un <b>CORA</b> : tout est payé double. »</p></div>
+  <div class="card" style="margin-top:14px;padding:12px 14px"><p style="margin:0"><b>Maître Tsala :</b> « Garde ton 3 pour la fin. Si tu gagnes la dernière main avec un 3, c’est un <b>CORA</b> : tout est payé double. »</p></div>
   <div class="grow"></div>
   <button class="btn go" data-go="s4" style="margin-top:14px">▶ Voir la suite (démo : je gagne)</button>
 </section>
@@ -207,7 +310,8 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
 const $ = id=> document.getElementById(id);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]fast\b/.test(location.search);
 const A = (el, kf, o)=> el && !reduce ? el.animate(kf, Object.assign({duration:420, easing:'cubic-bezier(.2,.8,.2,1)', fill:'both'}, o)) : null;
-const names = ['1. Bienvenue','2. Penalty','3. Partie','4. Pseudo','5. Quartier','6. Classement','7. Accueil'];
+const ORDER = ['s1','s2','sL','sD','s3','s4','s5','s6','s7'];
+const names = ['Bienvenue','La question','La leçon','Leçon finie','1re partie','Pseudo','Quartier','Classement','Accueil'];
 let cur = 's1';
 function show(id){
   if(id===cur) return;
@@ -221,7 +325,118 @@ function enter(s){
   [...s.querySelectorAll('.card, .btn, .host, .table, .win')].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:420, delay:80 + i*70, fill:'backwards'}));
   if(s.id==='s4'){ A(s.querySelector('.big'), [{transform:'scale(.4)', opacity:0}, {transform:'scale(1.12)', opacity:1, offset:.7}, {transform:'scale(1)'}], {duration:620, easing:'ease-out'}); confetti(); }
   if(s.id==='s6'){ countDown(); }
+  if(s.id==='sL') lessonStart();
+  if(s.id==='sD') lessonEnd();
+  $('lb').classList.toggle('on', s.id==='sL');
 }
+
+// ---- the lesson: one idea per exercise, checked, explained; a mistake comes back at the end ----
+const SUIT = {'♠':'Black', '♣':'Tchaka', '♥':'Coubie', '♦':'Zing'};
+const card = (c, cls)=>{ const s = c.slice(-1); return '<div class="k'+(/[♥♦]/.test(s) ? ' r' : '')+(cls ? ' '+cls : '')+'" data-c="'+c+'" data-s="'+s+'">'+c.slice(0, -1)+'</div>'; };
+const val = c=> +c.slice(0, -1), suit = c=> c.slice(-1);
+const XAV = '<div class="av" style="background-image:url(\'../art/zh/christelle.webp\')"></div>';
+const EX = [
+  { say:'Écoute bien, c’est la règle la plus importante.', q:'Une manche se joue en 5 plis. Seul le dernier compte.',
+    art:'<div class="plis"><span>1<br>toi</span><span>2<br>toi</span><span>3<br>toi</span><span>4<br>toi</span><span class="last">5<br>elle</span></div>',
+    ask:'Tu gagnes les 4 premiers plis, Christelle gagne le 5e. Qui gagne la manche ?',
+    opts:['Moi, j’ai gagné 4 plis', 'Christelle', 'Personne, on rejoue'], ok:1,
+    good:'Exact. Au Fap Fap, seul le 5e pli compte. Les 4 premiers servent à préparer la fin.',
+    bad:'C’est Christelle. Seul le 5e pli compte, même si tu as gagné tous les autres.' },
+  { say:'Les cartes vont du 3 au 10, en 4 couleurs : Black ♠, Tchaka ♣, Coubie ♥ et Zing ♦.', q:'Touche la carte la plus forte.',
+    hand:['4♥','9♥','6♥','3♥'], ok:c=> c==='9♥',
+    good:()=> '9♥ est la plus forte. Dans une même couleur, la plus grosse valeur gagne.',
+    bad:c=> c==='3♥' ? 'Le 3 est la plus petite carte… mais garde-le en tête, il cache un secret. La bonne réponse était 9♥.' : 'Presque ! La plus forte était 9♥ : dans une même couleur, la plus grosse valeur gagne.' },
+  { say:'Quand l’adversaire pose une carte, tu dois répondre dans sa couleur.', q:'Christelle joue 7♥. Réponds-lui.',
+    opp:'7♥', hand:['3♠','10♥','5♦','8♣','4♥'], ok:c=> suit(c)==='♥',
+    good:c=> c==='10♥' ? '10♥ bat 7♥ : tu prends la main, c’est toi qui commandes le pli suivant.' : 'Bien, tu as fourni du Coubie. Ton 4 est plus petit que son 7, donc elle garde la main.',
+    bad:()=> 'Tu as du Coubie ♥ en main, tu es obligé de fournir. Le jeu bloquera toujours ce coup.' },
+  { say:'Prendre la main, c’est choisir la couleur du pli suivant. Il faut la plus forte carte de sa couleur.', q:'Christelle joue 6♣. Prends-lui la main.',
+    opp:'6♣', hand:['4♣','9♣','10♦'], ok:c=> c==='9♣',
+    good:()=> '9♣ bat 6♣. Le 10♦ ne servait à rien : il n’est pas de la bonne couleur.',
+    bad:c=> c==='10♦' ? 'Le 10 est fort, mais en Zing. Il fallait du Tchaka ♣ plus fort que son 6 : le 9♣.' : 'Ton 4♣ est plus petit que son 6♣. Il fallait le 9♣.' },
+  { say:'Et si tu n’as pas sa couleur ?', q:'Christelle joue 8♦. Tu n’as aucun Zing.',
+    opp:'8♦', show:['5♠','7♣','3♥'],
+    ask:'Que se passe-t-il ?', opts:['Je joue la carte de mon choix et je perds le pli', 'Je gagne avec ma plus forte carte', 'Je passe mon tour'], ok:0,
+    good:'Oui. Sans sa couleur, tu poses ce que tu veux, mais tu perds le pli. Astuce : jette ta plus petite carte et garde ton 3.',
+    bad:'Sans sa couleur, tu poses la carte de ton choix et tu perds le pli. Astuce : jette ta plus petite et garde ton 3.' },
+  { say:'Voici le secret du 3. Gagne le dernier pli avec un 3, et c’est un CORA : il vaut double.', q:'Dernier pli. C’est toi qui commandes. Fais un CORA.',
+    note:'Il lui reste : 8♥', hand:['3♠','10♥'], ok:c=> c==='3♠', cora:true, reply:'8♥',
+    good:()=> 'CORA ! Christelle n’a pas de Black, elle ne peut pas répondre à ton 3♠. Tu gagnes le dernier pli avec un 3 : 2 points.',
+    bad:()=> 'Tu gagnes avec ton 10♥, mais ça ne vaut qu’1 point. Avec le 3♠, elle ne pouvait pas répondre : c’était un CORA à 2 points.' },
+  { say:'Dernière question, et je te laisse jouer.', q:'Une partie se joue en 5 points.',
+    ask:'Tu gagnes une manche en faisant un CORA. Combien de points ?', opts:['1 point', '2 points', '5 points'], ok:1,
+    good:'2 points. Une manche normale vaut 1 point, un CORA en vaut 2. Le premier à 5 points gagne la partie.',
+    bad:'Un CORA vaut 2 points (une manche normale, 1). Le premier à 5 points gagne la partie.' }
+];
+const L = {};
+function lessonStart(){
+  Object.assign(L, { queue:EX.map((_, i)=> i), done:0, streak:0, best:0, tries:0, miss:0, t0:Date.now(), sel:null, state:'ask' });
+  lessonDraw();
+}
+function lessonDraw(){
+  const e = EX[L.queue[0]];
+  L.sel = null; L.state = 'ask';
+  $('lp').style.width = (L.done / EX.length * 100)+'%';
+  $('lst').textContent = '🔥 '+L.streak;
+  $('lsay').textContent = e.say; $('lq').textContent = e.q;
+  let h = e.art || '';
+  if(e.opp || e.hand || e.show){
+    h += '<div class="felt">'+'<div class="who">'+XAV+'Christelle</div>'+(e.note ? '<span class="note">'+e.note+'</span>' : '')
+      +'<div class="play">'+(e.opp ? card(e.opp) : 'À toi de commander')+'</div>'
+      +'<div class="mine">'+(e.hand || e.show).map(c=> card(c, e.hand ? 't' : 'dim')).join('')+'</div></div>';
+  }
+  if(e.opts) h += '<p style="font-weight:800;margin:12px 0 10px">'+e.ask+'</p><div class="opts">'+e.opts.map((o, i)=> '<button class="opt" data-o="'+i+'">'+o+'</button>').join('')+'</div>';
+  else if(e.ask) h += '<p style="font-weight:800">'+e.ask+'</p>';
+  $('lx').innerHTML = h;
+  $('lb').className = 'lbtm on'; $('lfb').innerHTML = ''; $('lgo').textContent = 'Vérifier'; $('lgo').disabled = true;
+  [...$('lx').children].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:380, delay:i*60, fill:'backwards'}));
+}
+$('lx').addEventListener('click', ev=>{
+  if(L.state!=='ask') return;
+  const k = ev.target.closest('.k.t'), o = ev.target.closest('.opt');
+  if(!k && !o) return;
+  tone(520, .05);
+  [...$('lx').querySelectorAll('.k.t, .opt')].forEach(x=> x.classList.toggle('sel', x===(k || o)));
+  L.sel = k ? k.dataset.c : +o.dataset.o; $('lgo').disabled = false;
+});
+$('lgo').addEventListener('click', ()=>{
+  const e = EX[L.queue[0]];
+  if(L.state==='ask'){
+    if(L.sel===null) return;
+    const ok = e.opts ? L.sel===e.ok : e.ok(L.sel);
+    L.tries++; L.state = 'told';
+    const say = ok ? e.good : e.bad, txt = typeof say==='function' ? say(L.sel) : say;
+    $('lb').className = 'lbtm on '+(ok ? 'ok' : 'ko');
+    $('lfb').innerHTML = '<h4>'+(ok ? ['Bravo !','Parfait !','Exactement !','Bien joué !'][L.tries % 4] : 'Pas tout à fait…')+'</h4><p>'+txt+'</p>';
+    $('lgo').textContent = 'Continuer';
+    A($('lb'), [{transform:'translateY(30px)', opacity:.6}, {transform:'none', opacity:1}], {duration:260, fill:'none'});
+    const picked = $('lx').querySelector('.sel');
+    if(ok){
+      L.streak++; L.best = Math.max(L.best, L.streak); L.done++; tone(660, .09); setTimeout(()=> tone(880, .12), 110);
+      $('lp').style.width = (L.done / EX.length * 100)+'%'; $('lst').textContent = '🔥 '+L.streak;
+      if(e.cora && !reduce){ const f = $('lx').querySelector('.felt'), s = document.createElement('div'); s.className = 'stamp'; s.textContent = 'CORA !'; f.appendChild(s); A(s, [{opacity:0, transform:'translate(-50%,-50%) rotate(-8deg) scale(.6)'}, {opacity:1, transform:'translate(-50%,-50%) rotate(-8deg) scale(1)'}], {duration:500, easing:'cubic-bezier(.3,1.5,.5,1)'}); }
+      if(picked && picked.classList.contains('k')){ const play = $('lx').querySelector('.play'); if(play){ play.querySelector('.k') ? play.insertAdjacentHTML('beforeend', card(L.sel)) : (play.innerHTML = card(L.sel)); picked.style.visibility = 'hidden'; if(e.reply) setTimeout(()=>{ play.insertAdjacentHTML('beforeend', card(e.reply)); A(play.lastChild, [{opacity:0, transform:'translateY(-30px)'}, {opacity:1, transform:'none'}], {duration:320}); }, 380); } }
+    } else {
+      L.streak = 0; L.miss++; tone(220, .14); $('lst').textContent = '🔥 0';
+      if(picked) picked.classList.add('shake');
+    }
+    L.lastOk = ok;
+    return;
+  }
+  // continue: a wrong exercise comes back at the end of the lesson, like Duolingo
+  const i = L.queue.shift(); if(!L.lastOk) L.queue.push(i);
+  L.queue.length ? lessonDraw() : show('sD');
+});
+function lessonEnd(){
+  if(!L.t0) return;
+  const s = Math.round((Date.now() - L.t0) / 1000);
+  $('dacc').textContent = Math.round(EX.length / Math.max(1, L.tries) * 100)+' %';
+  $('dst').textContent = '🔥 '+L.best;
+  $('dtm').textContent = Math.floor(s / 60)+':'+String(s % 60).padStart(2, '0');
+}
+// soft sounds, never loud
+let AC = null;
+function tone(f, d){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(.08, AC.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d + .15); o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + d + .2); }catch(e){} }
 document.addEventListener('click', e=>{ const b = e.target.closest('[data-go]'); if(b){ if(b.dataset.go==='s5' && !$('nm').value.trim()) $('nm').value = 'Le Boss'; show(b.dataset.go); } });
 // name suggestions, in the neighbourhood's own words
 const SUG = ['Le Boss', 'Petit Kora', 'Grand Frère', 'Mola', 'La Machine', 'Dja Boy'];
@@ -253,7 +468,7 @@ function confetti(){
     p.animate([{transform:'translate(0,0) rotate(0)'}, {transform:'translate('+(Math.random()*120-60)+'px,'+(innerHeight+40)+'px) rotate('+(Math.random()*720)+'deg)'}], {duration:1400 + Math.random()*900, delay:Math.random()*300, easing:'cubic-bezier(.3,.6,.5,1)'}).finished.then(()=> p.remove());
   }
 }
-function guide(){ $('guide').innerHTML = names.map((n, i)=> '<button class="'+('s'+(i+1)===cur ? 'on' : '')+'" data-g="s'+(i+1)+'">'+(i+1)+'</button>').join('') + '<span style="align-self:center;margin-left:6px">'+names[+cur.slice(1)-1]+'</span>'; }
+function guide(){ $('guide').innerHTML = ORDER.map((id, i)=> '<button class="'+(id===cur ? 'on' : '')+'" data-g="'+id+'">'+(i+1)+'</button>').join('') + '<span style="align-self:center;margin-left:4px">'+names[ORDER.indexOf(cur)]+'</span>'; }
 $('guide').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(b) show(b.dataset.g); });
 guide(); enter($('s1'));
 })();
