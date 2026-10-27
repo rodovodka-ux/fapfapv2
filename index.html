@@ -9130,12 +9130,17 @@
     showToast('Appuie encore pour quitter', '', {ms:1800});
     return true;
   }
+  // Safari and Chrome skip history entries a page adds before the player has touched it: the system back gesture then
+  // jumped over the game's own entry and did nothing (or left). So the entry is (re)added at each real touch or key
+  // whenever the game is not standing on it.
+  const armBack = ()=>{ try{ if(!(history.state && history.state.ffTop)) history.pushState({ffTop:1}, ''); }catch(e){} };
   try{
-    if(!(history.state && history.state.ffTop)){
-      history.replaceState({ffBase:1}, '');
-      history.pushState({ffTop:1}, '');
-    }
+    if(!(history.state && history.state.ffTop)) history.replaceState({ffBase:1}, '');
   }catch(e){}
+  const armIn = doc=> ['touchend', 'click', 'keydown'].forEach(t=> doc.addEventListener(t, armBack, {capture:true, passive:true}));
+  armIn(document);
+  // touches inside the League and Tout le quartier frames count too
+  ['zhFrame', 'qFrame'].forEach(id=>{ const f = document.getElementById(id); if(f) f.addEventListener('load', ()=>{ try{ armIn(f.contentDocument); }catch(e){} }); });
   window.addEventListener('popstate', (e)=>{
     if(e.state && e.state.ffTop) return; // forward again onto our own entry: nothing to do
     let stay = true;
@@ -13147,12 +13152,24 @@
     if(!standalone || !('ontouchstart' in window)) return;
     const ind = document.getElementById('swipeBack');
     let x0 = 0, y0 = 0, on = false, dx = 0;
-    document.addEventListener('touchstart', e=>{ const t = e.touches[0]; if(e.touches.length!==1 || t.clientX > 22) return; on = true; x0 = t.clientX; y0 = t.clientY; dx = 0; }, {passive:true});
-    document.addEventListener('touchmove', e=>{ if(!on) return; const t = e.touches[0]; dx = t.clientX - x0; const dy = Math.abs(t.clientY - y0);
-      if(dy > 60 && dy > dx){ on = false; ind.style.opacity = 0; return; }
-      const k = Math.max(0, Math.min(1, dx/110)); ind.style.top = t.clientY+'px'; ind.style.transform = 'translateX('+(-60 + k*76)+'px)'; ind.style.opacity = k; ind.classList.toggle('go', k >= 1); }, {passive:true});
-    document.addEventListener('touchend', ()=>{ if(!on) return; on = false; ind.style.opacity = 0; ind.style.transform = 'translateX(-60px)'; ind.classList.remove('go');
-      if(dx >= 110){ try{ backPressed(); }catch(err){ console.error(err); } } }, {passive:true});
+    const end = ()=>{ if(!on) return; on = false; ind.style.opacity = 0; ind.style.transform = 'translateX(-60px)'; ind.classList.remove('go');
+      if(dx >= 90){ try{ backPressed(); }catch(err){ console.error(err); } } };
+    // listened in the capture phase, so a table or a list that stops its touches can never swallow the gesture
+    const opt = {capture:true, passive:true};
+    function bind(doc){
+      if(!doc || doc.__ffSwipe) return; doc.__ffSwipe = 1;
+      doc.addEventListener('touchstart', e=>{ const t = e.touches[0]; if(e.touches.length!==1 || t.clientX > 28) return; on = true; x0 = t.clientX; y0 = t.clientY; dx = 0; }, opt);
+      doc.addEventListener('touchmove', e=>{ if(!on) return; const t = e.touches[0]; dx = t.clientX - x0; const dy = Math.abs(t.clientY - y0);
+        if(dy > 60 && dy > dx){ on = false; ind.style.opacity = 0; return; }
+        const k = Math.max(0, Math.min(1, dx/90)); ind.style.top = t.clientY+'px'; ind.style.transform = 'translateX('+(-60 + k*76)+'px)'; ind.style.opacity = k; ind.classList.toggle('go', k >= 1); }, opt);
+      doc.addEventListener('touchend', end, opt);
+      doc.addEventListener('touchcancel', ()=>{ dx = 0; end(); }, opt);
+    }
+    bind(document);
+    // the League and Tout le quartier live in full-screen frames of the same site: their touches never reach this page,
+    // so the gesture is listened to inside them too (each new page loaded in the frame gets it)
+    ['zhFrame', 'qFrame'].forEach(id=>{ const f = document.getElementById(id); if(!f) return;
+      f.addEventListener('load', ()=>{ try{ bind(f.contentDocument); }catch(err){} }); });
   })();
 
   // ---- Quotes from the neighbourhood, scrolling at the bottom of the home screen ----
