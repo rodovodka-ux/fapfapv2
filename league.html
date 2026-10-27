@@ -439,6 +439,9 @@ const CH = {
   stephane:{name:'Stéphane', art:'stephane', st:3}, mbarga:{name:'Le Ngonzormorrr', art:'masque', st:4}
 };
 const CH_IDS = Object.keys(CH);
+// the champions already repainted (art/zh) show their painted face; the others keep their drawing until theirs is ready
+const PAINTED = ['christelle', 'rall', 'penalty'];
+const champPic = c=> PAINTED.includes(c.art) ? 'art/zh/'+c.art+'.webp' : 'art/d/perso-'+c.art+'.svg';
 const ROUND = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale'};
 const ROUND_SHORT = {r16:'Huitième', qf:'Quart', sf:'Demie', f:'Finale'};
 const PRIME = {manche:200, soiree:800, qualif:2500, r16:3000, qf:5000, sf:8000, f:20000};
@@ -963,7 +966,7 @@ async function walkout(m){
   $('wkTag').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[S.round]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
   $('wkTitle').textContent = home==null ? 'Le Grand Carrefour, ce soir' : home ? 'Au maquis de '+you.name : 'Chez '+th.name;
   $('wkL').innerHTML = '<div class="por"><div class="you">TOI</div>'+crest(you)+'</div><b>'+esc(you.name)+'</b><small>Ton quartier</small>';
-  $('wkR').innerHTML = '<div class="por"><img alt="" src="art/d/perso-'+c.art+'.svg">'+crest(th)+'</div><b>'+esc(th.name)+'</b><small>'+esc(c.name)+'</small>';
+  $('wkR').innerHTML = '<div class="por"><img alt="" src="'+champPic(c)+'">'+crest(th)+'</div><b>'+esc(th.name)+'</b><small>'+esc(c.name)+'</small>';
   $('wkLine').textContent = home==null ? 'Terrain neutre. Les deux quartiers ont fait le déplacement : il n’y a plus de place debout.'
     : home ? 'Ton public a sorti les casseroles et les vuvuzelas. '+c.name+' arrive sous les sifflets.'
     : 'Ici, personne ne t’applaudit. Le public de '+th.name+' scande le nom de '+c.name+'.';

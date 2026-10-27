@@ -2697,6 +2697,125 @@
   /* the phone of the story, full screen above the game */
   #zhOverlay, #qOverlay{ position:fixed; inset:0; z-index:90; background:#030619; }
   #zhOverlay iframe, #qOverlay iframe, #pvOverlay iframe{ width:100%; height:100%; border:0; display:block; }
+  /* ===== v83: the icons (style A), the home card « Ta place », the account band, the Play page, installing, « Mon style » ===== */
+  svg.ia{ overflow:visible; filter:drop-shadow(1.2px 1.6px 0 #1B120C); }
+  .gl-sym svg.ia{ width:30px; height:30px; }
+  .tab svg.ia{ width:24px; height:24px; }
+  .gl-round svg.ia{ width:24px; height:24px; }
+  .menu-rank.v3-place{ cursor:pointer; padding:12px 14px !important; }
+  .v3-pl-row{ display:flex; gap:10px; align-items:center; }
+  .v3-rk{ font:700 40px/1 Fredoka, system-ui, sans-serif; min-width:70px; text-align:center; }
+  .v3-rk small{ font-size:17px; vertical-align:top; position:relative; top:3px; }
+  .v3-up{ display:block; font:800 11.5px Nunito, system-ui, sans-serif; color:#1F8A50; margin-top:3px; } .v3-up.down{ color:#c0392b; }
+  .v3-who{ flex:1; min-width:0; }
+  .v3-who b{ font:700 17px Fredoka, system-ui, sans-serif; display:flex; align-items:center; gap:5px; }
+  .v3-sub{ display:block; font:800 12.5px Nunito, system-ui, sans-serif; opacity:.75; }
+  .v3-who em{ font-style:normal; font:800 11.5px Nunito, system-ui, sans-serif; background:#FBE9BC; color:#2A1D12; border:2px solid #1B120C; border-radius:99px; padding:1px 8px; display:inline-block; margin-top:4px; }
+  .v3-cert{ display:inline-grid; place-items:center; width:18px; height:18px; border-radius:50%; background:#2f80ed; color:#fff; font:900 11px Nunito, system-ui, sans-serif; border:2px solid #1B120C; vertical-align:middle; }
+  .v3-cert.no{ background:#cfc2a8; }
+  .v3-crest{ width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--c1) 0 62%, #f2c76a 0); border:3px solid #1B120C; position:relative; flex:none; }
+  .v3-crest::before{ content:''; position:absolute; inset:6px; border-radius:50%; background:#1e1a3a; }
+  .v3-crest b{ position:relative; font:700 12px Fredoka, system-ui, sans-serif; color:#fff; }
+  .v3-bar{ height:10px; border-radius:99px; background:#FBE9BC; border:2px solid #1B120C; overflow:hidden; margin-top:10px; }
+  .v3-bar i{ display:block; height:100%; background:linear-gradient(90deg, #FFC93C, #ff9f2e); }
+  .v3-tip{ display:flex; justify-content:space-between; gap:8px; font:800 12px Nunito, system-ui, sans-serif; opacity:.7; margin-top:5px; }
+  .v3-acct{ display:flex; gap:10px; align-items:center; width:100%; margin:10px 0 2px; text-align:left; background:#2b1c12; border:2px solid #6b4a2a; border-radius:16px; padding:9px 10px; color:#ffe6bd; cursor:pointer; font:inherit; }
+  .v3-acct.loud{ background:#3a1712; border-color:#b8452f; }
+  .v3-ab-ic svg{ width:30px; height:30px; display:block; }
+  .v3-ab-t{ flex:1; font:700 12px/1.3 Nunito, system-ui, sans-serif; }
+  .v3-ab-t b{ display:block; font:700 14px Fredoka, system-ui, sans-serif; color:#fff; }
+  .v3-ab-go{ border:2.5px solid #1B120C; border-radius:12px; background:#FFC93C; color:#2A1D12; font:700 14px Fredoka, system-ui, sans-serif; padding:7px 10px; box-shadow:0 3px 0 #1B120C; flex:none; }
+  .v3-why{ background:#FFF6DC; color:#2A1D12; border:3px solid #1B120C; border-radius:18px; box-shadow:0 4px 0 #1B120C; padding:12px 14px; margin:10px 0; }
+  .v3-why-h{ font:700 14px/1.4 Nunito, system-ui, sans-serif; }
+  .v3-why-r{ display:flex; gap:10px; align-items:flex-start; margin-top:10px; font:700 13.5px/1.35 Nunito, system-ui, sans-serif; }
+  .v3-why-r svg{ width:26px; height:26px; flex:none; overflow:visible; }
+  /* the Play page */
+  #v3PlayBox{ color:#2A1D12; text-align:left; }
+  .v3-quick, .v3-card, .v3-mode, .v3-opp{ background:#FFF6DC; border:3px solid #1B120C; border-radius:22px; box-shadow:0 5px 0 #1B120C; }
+  .v3-quick{ padding:14px; margin-top:4px; }
+  .v3-q-in{ display:flex; gap:12px; align-items:center; }
+  .v3-q-in b{ font:700 22px Fredoka, system-ui, sans-serif; display:block; }
+  .v3-q-in small{ display:block; font:700 12.5px Nunito, system-ui, sans-serif; opacity:.75; margin-top:2px; }
+  .v3-kick{ font:800 11px Nunito, system-ui, sans-serif; letter-spacing:.1em; text-transform:uppercase; opacity:.6; }
+  .v3-av{ --s:72px; flex:none; }
+  .v3-quick .v3-av{ --s:74px; }
+  .v3-stars{ color:#e8a817; font-size:14px; letter-spacing:1px; } .v3-stars i{ font-style:normal; opacity:.3; }
+  .v3-chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+  .v3-chip{ display:inline-flex; align-items:center; gap:4px; border:2.5px solid #1B120C; border-radius:99px; background:#FBE9BC; padding:5px 10px; font:800 13px Nunito, system-ui, sans-serif; color:#2A1D12; cursor:pointer; }
+  .v3-chip.on{ background:#FFC93C; } .v3-chip.cant{ opacity:.4; }
+  .v3-coin{ width:15px; height:15px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe48a, #e8a817 60%, #b07b0a); border:1.5px solid #1B120C; }
+  .v3-go{ display:block; width:100%; margin-top:12px; border:3px solid #1B120C; border-radius:16px; box-shadow:0 5px 0 #1B120C; padding:13px 12px; font:700 19px Fredoka, system-ui, sans-serif; color:#fff; background:#2FB36B; text-shadow:0 2px 0 #1F8A50; cursor:pointer; text-align:center; box-sizing:border-box; }
+  .v3-go small{ display:block; font:700 12.5px Nunito, system-ui, sans-serif; text-shadow:none; opacity:.9; margin-top:1px; }
+  .v3-go:active, .v3-mode:active, .v3-opp:active{ transform:translateY(3px); }
+  .v3-lbl{ font:800 11px Nunito, system-ui, sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#ffd9a0; opacity:.85; margin:18px 2px 8px; }
+  .v3-opps{ display:flex; gap:10px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none; }
+  .v3-opp{ flex:none; width:118px; padding:10px 6px; text-align:center; color:#2A1D12; cursor:pointer; font:inherit; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .v3-opp b{ font:700 15px Fredoka, system-ui, sans-serif; margin-top:4px; }
+  .v3-rec{ font:800 11px Nunito, system-ui, sans-serif; color:#1F8A50; }
+  .v3-opp.lock{ background:#2a1d14; color:#cdb895; border-color:#5a4632; box-shadow:0 4px 0 #000; }
+  .v3-opp.lock .v3-rec{ color:#bfa47e; }
+  .v3-lockav{ width:72px; height:72px; border-radius:50%; background:#3a2a1e; border:3px solid #5a4632; display:grid; place-items:center; }
+  .v3-lockav svg{ width:34px; height:34px; }
+  .v3-mode{ display:flex; gap:12px; align-items:center; width:100%; margin-top:10px; padding:12px 14px; text-align:left; color:#2A1D12; cursor:pointer; font:inherit; }
+  .v3-mode > svg{ width:52px; height:52px; flex:none; padding:9px; border-radius:16px; border:3px solid #1B120C; background:var(--ib, #dff0ff); box-sizing:border-box; filter:none; }
+  .v3-mode[data-act="code"] > svg{ --ib:#ffe9c7; } .v3-mode[data-act="carre"] > svg{ --ib:#ffe0e8; }
+  /* the night theme lightens every small text of the pages: on the cream cards, ink again */
+  body:not(#z) :is(#v3PlayBox, .v3-sheet, .v3-card, .v3-why, .v3-row, .menu-rank.v3-place) :is(small, p, span, b, em){ color:inherit; }
+  body:not(#z) :is(#v3PlayBox, .v3-sheet, .v3-card, .v3-why, .v3-row){ color:#2A1D12; }
+  body:not(#z) :is(#v3PlayBox .v3-quick, #v3PlayBox .v3-mode, #v3PlayBox .v3-opp:not(.lock), .v3-sheet, .v3-card, .v3-row) small{ color:#6b5a48 !important; }
+  body:not(#z) .v3-go, body:not(#z) .v3-go small{ color:#fff !important; }
+  body:not(#z) .v3-req{ color:#fff !important; }
+  body:not(#z) .v3-stars{ color:#e8a817 !important; }
+  body:not(#z) .v3-tbl b{ color:#fff !important; }
+  body:not(#z):not(#y) :is(.v3-card, .v3-why, .v3-sheet) :is(.v3-p, .v3-p b, .v3-step, .v3-step b, .v3-why-h, .v3-why-r, .v3-why-r b, h3){ color:#2A1D12 !important; }
+  body:not(#z) #v3PlayBox .v3-opp.lock, body:not(#z) #v3PlayBox .v3-opp.lock *{ color:#cdb895 !important; }
+  body:not(#z) #v3PlayBox .v3-rec{ color:#1F8A50 !important; }
+  .v3-mode b{ font:700 17px Fredoka, system-ui, sans-serif; display:block; }
+  .v3-mode small{ font:700 12.5px Nunito, system-ui, sans-serif; opacity:.75; }
+  .v3-mode > span{ flex:1; }
+  .v3-req{ font-style:normal; font:800 11px Nunito, system-ui, sans-serif; background:#2f80ed; color:#fff; border:2px solid #1B120C; border-radius:99px; padding:2px 8px; white-space:nowrap; flex:none; }
+  .v3-req.ok{ background:#2FB36B; }
+  .v3-seats{ display:flex; flex:none !important; }
+  .v3-seats .v3-av{ --s:34px; } .v3-seats .v3-av + .v3-av{ margin-left:-10px; }
+  .v3-sheet-wrap{ position:fixed; inset:0; z-index:1300; display:none; }
+  .v3-sheet-wrap.on{ display:block; }
+  .v3-dim{ position:absolute; inset:0; background:rgba(0,0,0,.55); }
+  .v3-sheet{ position:absolute; left:0; right:0; bottom:0; max-height:calc(100% - 30px); overflow-y:auto; box-sizing:border-box; background:#FFF6DC; color:#2A1D12; border-top:3px solid #1B120C; border-radius:26px 26px 0 0; padding:10px 16px calc(env(safe-area-inset-bottom) + 18px); animation:v3up .32s cubic-bezier(.2,.8,.2,1); text-align:left; }
+  @keyframes v3up{ from{ transform:translateY(100%); } to{ transform:none; } }
+  .v3-grip{ display:block; width:44px; height:5px; border-radius:9px; background:#cdbb98; margin:0 auto 10px; }
+  .v3-seg{ display:flex; gap:6px; background:#FBE9BC; border:2.5px solid #1B120C; border-radius:14px; padding:4px; margin-top:12px; }
+  .v3-seg > *{ flex:1; padding:8px 4px; border-radius:10px; border:2px solid transparent; background:none; font:800 13px Nunito, system-ui, sans-serif; color:#2A1D12; cursor:pointer; }
+  .v3-seg > .on{ background:#fff; border-color:#1B120C; box-shadow:0 2px 0 #1B120C; }
+  .v3-p{ font:700 13.5px/1.4 Nunito, system-ui, sans-serif; margin:12px 0 0; color:#2A1D12; }
+  .v3-p.mute{ opacity:.72; }
+  /* installing, « Mon style » */
+  .v3-card{ padding:14px; margin-bottom:14px; color:#2A1D12; text-align:left; }
+  .v3-card h3{ margin:0; font:700 18px Fredoka, system-ui, sans-serif; color:#2A1D12; }
+  .v3-step{ display:flex; gap:12px; align-items:center; margin-top:12px; font:700 14px/1.35 Nunito, system-ui, sans-serif; }
+  .v3-n{ width:30px; height:30px; border-radius:50%; background:#FFC93C; border:2.5px solid #1B120C; display:grid; place-items:center; font:700 15px Fredoka, system-ui, sans-serif; flex:none; }
+  .v3-ill{ width:88px; height:62px; border-radius:12px; background:#fff; border:2.5px solid #1B120C; display:grid; place-items:center; flex:none; overflow:hidden; }
+  .v3-ill svg{ width:88px; height:62px; }
+  .v3-pulse{ transform-box:fill-box; transform-origin:center; animation:v3pulse 1.6s ease-in-out infinite; }
+  @keyframes v3pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+  .v3-note{ font:800 13px Nunito, system-ui, sans-serif; color:#d9c3a0; text-align:center; }
+  .v3-fx{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px; }
+  .v3-fx > *{ background:#fff; border:2.5px solid #1B120C; border-radius:14px; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:3px; font:800 12px Nunito, system-ui, sans-serif; color:#2A1D12; cursor:pointer; }
+  .v3-fx > * svg{ width:28px; height:28px; overflow:visible; }
+  .v3-fx > * small{ font:800 10.5px Nunito, system-ui, sans-serif; opacity:.7; }
+  .v3-fx > .on{ background:#FFC93C; box-shadow:0 3px 0 #1B120C; }
+  .v3-fx > .locked{ opacity:.45; }
+  .v3-tables{ display:flex; gap:8px; overflow-x:auto; padding:6px 2px 8px; }
+  .v3-tbl{ flex:none; width:100px; height:68px; border-radius:14px; border:3px solid #1B120C; background:linear-gradient(180deg, transparent 35%, rgba(0,0,0,.6)), var(--sw) !important; position:relative; cursor:pointer; }
+  .v3-tbl b{ position:absolute; left:6px; right:6px; bottom:4px; font:800 10.5px/1.15 Nunito, system-ui, sans-serif; color:#fff; text-shadow:0 1px 2px #000; text-align:left; }
+  .v3-tbl.on{ box-shadow:0 0 0 4px #FFC93C; }
+  .v3-row{ display:flex; gap:12px; align-items:center; width:100%; margin:0 0 14px; padding:12px 14px; background:#FFF6DC; color:#2A1D12; border:3px solid #1B120C; border-radius:18px; box-shadow:0 4px 0 #1B120C; text-align:left; cursor:pointer; font:inherit; }
+  .v3-row .v3-ic svg{ width:36px; height:36px; display:block; overflow:visible; }
+  .v3-row b{ font:700 17px Fredoka, system-ui, sans-serif; display:block; }
+  .v3-row small{ font:700 12.5px Nunito, system-ui, sans-serif; opacity:.75; }
+  .v3-row > span:nth-child(2){ flex:1; }
+  .v3-chev{ font:700 24px Fredoka, system-ui, sans-serif; }
+  #btnGoPlay .hero-faces .avatar + .avatar{ margin-left:-14px; }
+  @media (prefers-reduced-motion: reduce){ .v3-pulse, .v3-sheet{ animation:none; } }
   /* the first visit (bienvenue.html): above everything, the credits included */
   #pvOverlay{ position:fixed; inset:0; z-index:1150; background:#140d08; }
   /* « Tes premiers pas »: the new player's next step, at the top of the home screen (v82) */
@@ -2716,7 +2835,7 @@
   /* above the night theme's lit buttons (body.noir.ui-d:not(#z):not(#y):not(#x) …) */
   body:not(#z):not(#y):not(#x):not(#w) #pvSteps .pv-go{ background:#2FB36B !important; color:#fff !important; border:3px solid #1B120C !important; box-shadow:0 5px 0 #1B120C !important; opacity:1 !important; filter:none !important; }
   body:not(#z) #pvSteps{ background:#FFF6DC !important; color:#2A1D12 !important; filter:none !important; }
-  .pv-go{ display:block; width:100%; margin-top:10px; border:3px solid #1B120C; border-radius:16px; box-shadow:0 5px 0 #1B120C; padding:13px 12px; font:700 19px Fredoka, system-ui, sans-serif; color:#fff; background:#2FB36B; text-shadow:0 2px 0 #1F8A50; cursor:pointer; }
+  .pv-go{ display:block; width:100%; margin-top:10px; border:3px solid #1B120C; border-radius:16px; box-shadow:0 5px 0 #1B120C; padding:13px 12px; font:700 19px Fredoka, system-ui, sans-serif; color:#fff; background:#2FB36B; text-shadow:0 2px 0 #1F8A50; cursor:pointer; text-align:center; box-sizing:border-box; }
   .pv-go:active{ transform:translateY(4px); box-shadow:0 1px 0 #1B120C; }
   /* the new logo (v82): medallion, three cards, the chip, the gold banner */
   .ff-logo{ display:block; width:min(62vw, 250px); margin:0 auto -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
@@ -4758,6 +4877,8 @@
       <div class="og-bubble" id="ogBubble"><span class="who">Le Ngonzormorrr</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span><button class="og-dare" id="ogDare">Ose me défier ›</button></div>
     </section>
 
+    <!-- v83: the account, suggested with its reason until it is saved -->
+    <div class="v3-acct hidden" id="v3Acct" role="button" tabindex="0"></div>
     <section class="pv-steps hidden" id="pvSteps" aria-label="Tes premiers pas"></section>
 
     <div class="gl solid gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
@@ -4793,9 +4914,13 @@
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span>
         <b>Défi du jour</b><small id="dailyDesc">La même donne pour tout le monde aujourd'hui.</small>
       </button>
+      <button class="gl solid hcard press og deep" id="btnLesson" style="--d:3">
+        <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
+        <b>La leçon</b><small>avec Maître Tsala</small>
+      </button>
       <button class="gl solid hcard press og deep" id="btnShowRules" style="--d:3">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>
-        <b>Les règles</b><small>CORA, Passe, victoires automatiques</small>
+        <b>Les règles</b><small>CORA, Passe…</small>
       </button>
     </div>
 
@@ -4929,6 +5054,17 @@
       <small>Toi, RALL, Penalty et un invité de ton choix. Le vainqueur de chaque manche élimine qui il veut.</small>
     </button>
   </div>
+</div>
+
+<!-- v83: installing the game, step by step -->
+<div class="overlay page hidden" id="installPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Installer le jeu</h2><span class="ph-spacer"></span></header>
+  <div class="page-body" id="installBody"></div>
+</div>
+<!-- v83: « Mon style »: the default effects and the table shown to the friends you host -->
+<div class="overlay page hidden" id="stylePage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Mon style</h2><span class="ph-spacer"></span></header>
+  <div class="page-body" id="styleBody"></div>
 </div>
 
 <div class="overlay page hidden" id="oppSelectOverlay">
@@ -5074,6 +5210,8 @@
     <div class="acct-photo-row"><button type="button" id="btnPhotoPick"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg><span>Ajouter ma photo</span></button><button type="button" class="hidden" id="btnPhotoDel"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg><span>Retirer la photo</span></button></div>
     <input type="file" id="photoFile" accept="image/*" hidden>
     <p class="acct-note" id="acctNote"></p>
+    <!-- v83: why saving matters, said before the buttons -->
+    <div class="v3-why hidden" id="v3Why"></div>
 
     <div class="set-group" id="acctSaveBox">
       <h3>Sauvegarder ma progression</h3>
@@ -5177,6 +5315,7 @@
 <div class="overlay page hidden" id="settingsPage">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Paramètres</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
+    <div class="v3-row" id="btnMyStyle" role="button" tabindex="0"><span class="v3-ic" data-ic="meteorite"></span><span><b>Mon style</b><small>Tes effets de CORA et de claque, la table de tes invités</small></span><span class="v3-chev">›</span></div>
     <div class="set-group">
       <h3>Son &amp; musique</h3>
       <button class="set-row" id="btnToggleSound"><span><svg class="i" aria-hidden="true"><use href="#i-vol"/></svg> Son</span><span class="switch"></span></button>
@@ -6287,7 +6426,7 @@
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
       mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null}); // so the guest knows who they're facing
-      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake}); // flip perspective for the other side
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake, table: currentTableId()}); // flip perspective for the other side; the host's table for both
       beginHand();
     }
     // guest waits for the 'start' message to know who deals first
@@ -6314,6 +6453,7 @@
       mpMatchStarted = true; mpForfeit = false;
       TARGET_SCORE = msg.target===1 ? 1 : 2; // the host chose the format
       mpStake = Math.max(0, msg.stake|0);   // …and the stake
+      if(tableExists(msg.table)){ guestTable = msg.table; wearTable(guestTable); } // …and the table
       startMatchTracking();
       takeMpStake();
       mode = 'mp';
@@ -7374,7 +7514,8 @@
   //                                                                       cards, seen from across the table
   // Until a picture exists, the medallion shows the character's initial and the face-down cards stay.
   // the opponents are the people of the novel, in photographs (art/livre); the mask (mbarga) is drawn: see maskSVG
-  const ART_FILE = {penalty:'livre/perso-penalty', gervais:'livre/perso-christelle', aristide:'livre/perso-rall', mbarga:'livre/perso-masque',
+  // v83: Penalty, RALL and Christelle wear their painted portraits (art/zh, the style of the League's posters)
+  const ART_FILE = {penalty:'zh/penalty', gervais:'zh/christelle', aristide:'zh/rall', mbarga:'livre/perso-masque',
     mami:'livre/perso-mami-ange', caroline:'livre/perso-caroline', cobra:'livre/perso-cobra', ismael:'livre/perso-ismael', tchinda:'livre/perso-tchinda', mballa:'livre/perso-mballa', stephane:'livre/perso-stephane'};
   // the characters are drawn now (art/d, one light SVG each); places stay in art/livre
   // the places of the novel: a comic panel when one exists (art/d/case-*.jpg, width/height), otherwise a drawing
@@ -8839,9 +8980,9 @@
     const i = rankIndex(profile.rep);
     const nTroph = trophyCount(profile);
     const streak = liveDayStreak();
-    // newcomers get the guided game as the first, highlighted choice; afterwards it shrinks to a small link
-    document.getElementById('modeTuto').classList.toggle('hidden', !!profile.tutoDone);
-    document.getElementById('btnTutoAgain').classList.toggle('hidden', !profile.tutoDone);
+    // v83: Maître Tsala's lesson (« La leçon » tile) replaces the old guided game with Penalty, kept in the code
+    document.getElementById('modeTuto').classList.add('hidden');
+    document.getElementById('btnTutoAgain').classList.add('hidden');
     const dd = document.getElementById('dailyDesc');
     if(dd){
       const p = profile.daily;
@@ -8849,6 +8990,8 @@
         ? 'Fait aujourd’hui '+dailyMarksHtml(p, true)+' — touche pour revoir et partager ton résultat.'
         : 'La même donne pour tout le monde aujourd’hui. 3 manches contre Penalty.';
     }
+    // v83: the card says your real place this week in « Tout le quartier » (window.v3Place, filled once the page is ready)
+    if(window.v3Place){ window.v3Place(el); return; }
     el.innerHTML = '<div class="mr-top"><span class="mr-name">'+RANKS[i].name+(myTitle() ? ' <span class="my-title">'+myTitle()+'</span>' : '')+'</span><span class="mr-rep">'+(streak>0?ico('flame')+' '+streak+' j · ':'')+profile.rep+' rép. · '+ico('trophy')+' '+nTroph+'/'+TROPHIES.length+'</span></div>'+
       '<div class="rep-bar small"><div style="width:'+(rankProgress(profile.rep)*100)+'%"></div></div>';
   }
@@ -9137,6 +9280,7 @@
     if(document.getElementById('launch')){ document.getElementById('launch').click(); return true; }
     if(open('sugg')){ closeSuggest(); return true; }
     if(open('betaNote')){ document.getElementById('bnOk').click(); return true; }
+    if(document.querySelector('#v3Sheet.on')){ document.getElementById('v3Sheet').classList.remove('on'); return true; }
     if(PV.open){ pvPost({zh:'back'}); return true; }
     if(typeof ZH!=='undefined' && ZH.open){ zhPost({zh:'back'}); return true; }
     if(typeof QZ!=='undefined' && QZ.open){ qPost({zh:'back'}); return true; }
@@ -9197,16 +9341,23 @@
 
   // render what a page shows each time it appears; tidy up when it's left
   // which piece plays: the table's own music in a game (and while choosing a table), the home theme elsewhere
+  var guestTable = null; // var: currentTableId can run before this line during the start
+  // a table that exists in the game (the decors, or the shop's), whoever owns it
+  const tableExists = id=> typeof id==='string' && (SKINS.table.some(s=> s.id===id) || SHOP_TABLES.some(t=> t.id===id));
+  // the room of the table shown for this game only (the player's own table comes back with applySkins afterwards)
+  function wearTable(id){ SKINS.table.forEach(s=> document.body.classList.toggle('table-'+s.id, s.id===id && s.id!==SKINS.table[0].id && s.id!=='verre')); }
   function currentTableId(){
     // a story table is played where the story happens (the veranda of the evening gathering, the Maison, the bar…)
     if(storyRun && storyRun.table) return storyRun.table;
+    // online, the guest plays on the host's table (v83)
+    if(guestTable) return guestTable;
     const sk = Object.assign({table:'tripot'}, prefs.skin||{});
     return skinUnlocked('table', sk.table) ? sk.table : 'tripot';
   }
   function pageShown(id){
     if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
-    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); if(window.qzHomeShown) window.qzHomeShown(); if(window.pvHomeShown) window.pvHomeShown(); }
+    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); if(window.qzHomeShown) window.qzHomeShown(); if(window.pvHomeShown) window.pvHomeShown(); if(window.v3Home) window.v3Home(); }
     else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='bellPage'){ if(window.renderBell) window.renderBell(); }
@@ -9345,6 +9496,7 @@
       matchStake = 0;
     }
     if(mode==='mp' || mpNet || room.active) mpTeardown(quitLive);
+    if(guestTable){ guestTable = null; applySkins(); }
     daily = null; // an unfinished daily challenge stays recorded as started (so it counts as played)
     tuto = null;
     gameGen++; resumeQueue.length = 0; setPaused(false);
@@ -11722,10 +11874,17 @@
     T.card.classList.add('cora-gold');
     if(done) setTimeout(done, shots*300 + 1100);
   }
+  // the effect chosen in « Mon style »: one of yours, or « au hasard » among those you own (v83)
+  function fxPick(kind){
+    const id = profile.equip && profile.equip[kind];
+    if(id!=='hasard') return id;
+    const own = SHOP_ITEMS.filter(it=> it.kind===kind && shopHas(it)).map(it=> it.id);
+    return own.length ? own[Math.floor(Math.random()*own.length)] : SHOP_DEFAULT[kind];
+  }
   const CORA_FX = {meteore: meteorStrike, foudre: fxFoudre, billets: fxBillets, trounoir: fxTrouNoir, artifice: fxArtifice};
   // your own CORAs use the effect you chose in the shop; the others' keep the meteor
   function coraFx(mine, cardOrFn, count, done){
-    const id = mine && profile.equip && profile.equip.cora;
+    const id = mine && fxPick('cora');
     (id && id!=='meteore' && CORA_FX[id] ? CORA_FX[id] : FX2.cora)(cardOrFn, count, done);
   }
   // ===================== LES EFFETS DE PARTIE (CORA, 33 GLACÉE, MANCHE, VICTOIRE, DÉFAITE) =====================
@@ -11975,7 +12134,7 @@
 
   // the claque effects: extra drama when YOU slam your cards down
   function claqueExtraFx(){
-    const id = (profile.equip && profile.equip.claque) || 'clac';
+    const id = fxPick('claque') || 'clac';
     document.body.classList.remove('claque-fire', 'claque-volt');
     if(id==='onde'){
       const hand = document.querySelector('.hand-zone:not(.hidden)') || document.body, r = hand.getBoundingClientRect();
@@ -13109,8 +13268,8 @@
       +'<text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" letter-spacing="1" fill="'+u('g')+'" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>'
       +'<text x="200" y="322" text-anchor="middle" font-size="20" fill="'+u('g')+'">♠</text></svg>';
   }
-  { const h = document.querySelector('#menuOverlay .home-top'); if(h) h.insertAdjacentHTML('afterbegin', ffLogo());
-    document.querySelectorAll('.ln-logo img, img.ag-logo').forEach(img=> img.outerHTML = ffLogo(img.classList.contains('ag-logo') ? 'ag-logo' : '')); }
+  // (27/10: the new logo appears only in the opening credits; the home screen keeps its glass sign, the age check its logo)
+  document.querySelectorAll('.ln-logo img').forEach(img=> img.outerHTML = ffLogo());
 
   // ---- The first visit (v82, bienvenue.html above the game): one welcome screen (age + beta), Maître Tsala's question,
   // his lesson in the manner of Duolingo, a first real game against Christelle with hints, then the name at the best
@@ -13166,13 +13325,14 @@
     track('pv_game_start');
   }
   function pvFirstEnd(won){
-    const p = profile.pv || (profile.pv = {at:Date.now(), base:{ai:pvAiWins(), on:profile.onlineWins||0}, c:[], flow:'done'});
+    // (a game against Christelle from the replayed lesson: no « Tes premiers pas » for a player who never had them)
+    const p = profile.pv || {flow:'done', replay:1};
     profile.gamesPlayed = (profile.gamesPlayed||0) + 1;
     const rec = profile.ladder.gervais || (profile.ladder.gervais = {w:0, l:0});
     if(won){ rec.w++; repAdd(oppPersona().repWin, 'Victoire contre '+oppName()); unlockTrophy('premiere'); unlockTrophy('beat_gervais'); }
     else { rec.l++; repAdd(20, 'Match joué'); }
     p.played = 1;
-    if(won && !p.w1){ p.w1 = 1; chipsAdd(500); }
+    if(won && !p.w1 && !p.replay){ p.w1 = 1; chipsAdd(500); }
     saveProfile(); checkExploits();
     track('pv_game', {won: won ? 1 : 0});
     return p.flow!=='done';
@@ -13229,6 +13389,7 @@
     if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
     const d = e.data || {};
     if(d.zh==='comp') qzAnswer(d, pvPost);
+    if(d.zh==='close') pvClose(); // the lesson replayed from the home screen
     if(d.zh==='first') pvFirstGame();
     if(d.zh==='push') pushEnable();
     if(d.zh==='pv'){
@@ -13251,6 +13412,250 @@
       if(!inHome()) goToMainMenu();
     }
   });
+
+  // ===================== v83: THE NEW HOME, THE PLAY MENU, INSTALLING, THE ACCOUNT, « MON STYLE » =====================
+  // The icons, style A (validated 27/10): a cream body, a coloured accent, an ink outline and a hard shadow, like the
+  // cards of the game. Parts: m = the body, a = an accent, l = a line (a cream underlay keeps it readable on the night).
+  const IA = {
+    accueil:['#2FB36B', [['m','M3.5 11.2 L12 3.8 L20.5 11.2 V20.2 H14.2 V14.6 H9.8 V20.2 H3.5 Z'],['a','M9.8 14.6 H14.2 V20.2 H9.8 Z'],['l','M2 12.4 L12 3.6 L22 12.4']]],
+    profil:['#3D7FD9', [['m','M12 3.6 a4.2 4.2 0 1 1 0 8.4 a4.2 4.2 0 1 1 0-8.4 Z'],['a','M3.8 20.4 c0-4.4 3.7-6.6 8.2-6.6 s8.2 2.2 8.2 6.6 Z']]],
+    boutique:['#E2558E', [['l','M8.6 8.4 V6.6 a3.4 3.4 0 0 1 6.8 0 V8.4'],['m','M4.6 8.2 H19.4 L18.3 20.4 H5.7 Z'],['a','M4.6 8.2 H19.4 L19.1 11.4 H4.9 Z']]],
+    decors:['#8A4FD8', [['m','M12 3.2 a8.8 8.8 0 1 0 0 17.6 c1.5 0 2.2-.9 2.2-1.9 0-1.6-1.6-2.1 0-3.6 H17 a4 4 0 0 0 4-4 C21 6.8 17 3.2 12 3.2 Z'],['a','M7.6 11 a1.6 1.6 0 1 1 0 .1 Z M9.6 6.9 a1.6 1.6 0 1 1 0 .1 Z M14.4 6.6 a1.6 1.6 0 1 1 0 .1 Z']]],
+    reglages:['#6B7A8F', [['l','M4 7 H20 M4 12 H20 M4 17 H20'],['m','M9 4.8 a2.2 2.2 0 1 1 0 4.4 a2.2 2.2 0 1 1 0-4.4 Z M15.4 9.8 a2.2 2.2 0 1 1 0 4.4 a2.2 2.2 0 1 1 0-4.4 Z M7.4 14.8 a2.2 2.2 0 1 1 0 4.4 a2.2 2.2 0 1 1 0-4.4 Z']]],
+    cloche:['#F0A020', [['m','M5.6 16.4 V11 a6.4 6.4 0 0 1 12.8 0 V16.4 L20 18.4 H4 Z'],['a','M9.8 19.4 a2.2 2.2 0 0 0 4.4 0 Z'],['l','M12 2.6 V4.4']]],
+    jetons:['#D9A21B', [['m','M12 3.4 a8.6 8.6 0 1 1 0 17.2 a8.6 8.6 0 1 1 0-17.2 Z'],['a','M12 6.6 a5.4 5.4 0 1 1 0 10.8 a5.4 5.4 0 1 1 0-10.8 Z'],['l','M12 9 V15 M10 10.6 h3.4 M10 13.4 h3.4']]],
+    defi:['#E24B4A', [['m','M3.8 6 H20.2 V20.2 H3.8 Z'],['a','M3.8 6 H20.2 V10 H3.8 Z'],['l','M8 3.6 V7.6 M16 3.6 V7.6'],['a','M13.6 13.2 H17 V16.6 H13.6 Z']]],
+    lecon:['#3D7FD9', [['m','M6.2 11.6 V16 c0 1.7 2.9 3.2 5.8 3.2 s5.8-1.5 5.8-3.2 V11.6 L12 14.4 Z'],['a','M1.8 9.2 L12 4.2 L22.2 9.2 L12 14.2 Z'],['l','M20.2 10.2 V15.4']]],
+    regles:['#9A6B3F', [['m','M3.6 5.2 c3-1.1 6-1.1 8.4.9 V20.4 c-2.4-2-5.4-2-8.4-.9 Z'],['a','M20.4 5.2 c-3-1.1-6-1.1-8.4.9 V20.4 c2.4-2 5.4-2 8.4-.9 Z']]],
+    enligne:['#1BA3A3', [['m','M12 3 a9 9 0 1 1 0 18 a9 9 0 1 1 0-18 Z'],['l','M3.2 12 H20.8 M12 3 c3.2 3.2 3.2 14.8 0 18 M12 3 c-3.2 3.2-3.2 14.8 0 18 M4.6 7.4 H19.4 M4.6 16.6 H19.4']]],
+    code:['#F07B2B', [['m','M7.8 7.4 a4.6 4.6 0 1 1 0 9.2 a4.6 4.6 0 1 1 0-9.2 Z M12 10.8 H21 V13.4 H19 V15.8 H16.6 V13.4 H12 Z'],['a','M7.8 10.4 a1.6 1.6 0 1 1 0 3.2 a1.6 1.6 0 1 1 0-3.2 Z']]],
+    carre:['#C8283A', [['m','M3.6 7.4 L9.8 5.6 L13.3 18.4 L7.1 20.2 Z'],['m','M10.6 3.8 H18.6 V17.6 H10.6 Z'],['a','M14.6 8.6 c.7-1 2.3-.7 2.3.6 0 1.2-1.6 2.1-2.3 2.8-.7-.7-2.3-1.6-2.3-2.8 0-1.3 1.6-1.6 2.3-.6 Z']]],
+    quartier:['#D9A21B', [['m','M3 8 L7.6 12 L12 4.8 L16.4 12 L21 8 L19 17.6 H5 Z'],['a','M5 17.6 H19 V20.4 H5 Z'],['a','M12 3.2 a1.4 1.4 0 1 1 0 .1 Z M3 6.6 a1.2 1.2 0 1 1 0 .1 Z M21 6.6 a1.2 1.2 0 1 1 0 .1 Z']]],
+    league:['#2B4FC0', [['l','M7 6 H4.4 a2.6 2.6 0 0 0 2.8 4.6 M17 6 h2.6 a2.6 2.6 0 0 1-2.8 4.6'],['m','M7 3.8 H17 V9 a5 5 0 0 1-10 0 Z'],['m','M10.6 13.8 H13.4 V17 H10.6 Z'],['a','M7.4 17 H16.6 V20.4 H7.4 Z']]],
+    installer:['#2FB36B', [['m','M7.2 2.4 H16.8 a1.6 1.6 0 0 1 1.6 1.6 V20 a1.6 1.6 0 0 1-1.6 1.6 H7.2 a1.6 1.6 0 0 1-1.6-1.6 V4 a1.6 1.6 0 0 1 1.6-1.6 Z'],['a','M10 18.4 H14 V19.4 H10 Z'],['l','M12 6.4 V13.4 M9 10.6 L12 13.6 L15 10.6']]],
+    compte:['#2F80ED', [['m','M12 2.8 L19.2 5.8 V11 c0 5-3 8.6-7.2 10.2 C7.8 19.6 4.8 16 4.8 11 V5.8 Z'],['l','M8.4 11.8 L11 14.4 L15.8 9.4']]],
+    cadenas:['#6B7A8F', [['l','M8.4 11 V8 a3.6 3.6 0 0 1 7.2 0 V11'],['m','M5.6 10.8 H18.4 V20.4 H5.6 Z'],['a','M12 13.4 a1.5 1.5 0 0 1 .7 2.8 V17.6 H11.3 V16.2 A1.5 1.5 0 0 1 12 13.4 Z']]],
+    foudre:['#F2B705', [['m','M13.4 2 L4.8 13.4 H11 L9.8 22 L19.2 9.8 H13 Z']]],
+    hasard:['#8A4FD8', [['m','M6 3.6 H18 a2.4 2.4 0 0 1 2.4 2.4 V18 a2.4 2.4 0 0 1-2.4 2.4 H6 A2.4 2.4 0 0 1 3.6 18 V6 A2.4 2.4 0 0 1 6 3.6 Z'],['a','M8.2 6.8 a1.4 1.4 0 1 1 0 2.8 a1.4 1.4 0 1 1 0-2.8 Z M15.8 6.8 a1.4 1.4 0 1 1 0 2.8 a1.4 1.4 0 1 1 0-2.8 Z M12 10.6 a1.4 1.4 0 1 1 0 2.8 a1.4 1.4 0 1 1 0-2.8 Z M8.2 14.4 a1.4 1.4 0 1 1 0 2.8 a1.4 1.4 0 1 1 0-2.8 Z M15.8 14.4 a1.4 1.4 0 1 1 0 2.8 a1.4 1.4 0 1 1 0-2.8 Z']]],
+    meteorite:['#F07B2B', [['l','M3 3 L10 10 M7 2.4 L12.4 7.8 M2.4 7 L7.8 12.4'],['m','M15 9.4 a5.6 5.6 0 1 1 0 11.2 a5.6 5.6 0 1 1 0-11.2 Z'],['a','M13 13 a1.4 1.4 0 1 1 0 .1 Z M16.8 16.6 a1 1 0 1 1 0 .1 Z']]],
+    claque:['#F0A020', [['m','M7.4 20.6 C5.2 18.6 3.4 15.8 3.4 13.8 c0-1.2 1.6-1.6 2.4-.6 L7.4 15 V6.8 a1.4 1.4 0 0 1 2.8 0 V11 V4.6 a1.4 1.4 0 0 1 2.8 0 V11 V5.6 a1.4 1.4 0 0 1 2.8 0 V11.6 V8.2 a1.4 1.4 0 0 1 2.8 0 V14 c0 4.2-2.6 7.2-6.6 7.2 C10 21.2 8.6 21.2 7.4 20.6 Z'],['l','M20.6 4.6 L22 3.2 M21.4 7.6 H23 M18.4 3 L19 1.4']]],
+    feu:['#E24B4A', [['m','M12 2 c1 4 6.2 6.2 6.2 12.2 a6.2 6.2 0 0 1-12.4 0 c0-3 2-5 3-6 0 2 1 3 2 3 -1-3 0-6.2 1.2-9.2 Z'],['a','M12 12.6 c1 1.6 2.6 2.6 2.6 4.6 a2.6 2.6 0 0 1-5.2 0 c0-1.2.8-2 1.6-2.6 0 .8.4 1.2 1 1.2 -.4-1.2 0-2.2 0-3.2 Z']]],
+    artifice:['#E2558E', [['l','M12 2.6 V6.4 M12 17.6 V21.4 M2.6 12 H6.4 M17.6 12 H21.4 M5.4 5.4 L8 8 M16 16 L18.6 18.6 M5.4 18.6 L8 16 M16 8 L18.6 5.4'],['m','M12 8.6 a3.4 3.4 0 1 1 0 6.8 a3.4 3.4 0 1 1 0-6.8 Z'],['a','M12 10.4 a1.6 1.6 0 1 1 0 3.2 a1.6 1.6 0 1 1 0-3.2 Z']]],
+    trounoir:['#5B3FA8', [['m','M12 3.2 a8.8 8.8 0 1 1 0 17.6 a8.8 8.8 0 1 1 0-17.6 Z'],['a','M12 8.4 a3.6 3.6 0 1 1 0 7.2 a3.6 3.6 0 1 1 0-7.2 Z'],['l','M5.6 9.4 C7.4 5.6 12.8 4.6 16 7.2 M18.4 14.6 C16.6 18.4 11.2 19.4 8 16.8']]],
+    onde:['#1BA3A3', [['l','M3.6 13 a8.4 8.4 0 0 1 16.8 0 M7 13 a5 5 0 0 1 10 0'],['m','M12 11 a2.6 2.6 0 1 1 0 5.2 a2.6 2.6 0 1 1 0-5.2 Z'],['a','M5 19.6 H19 V21 H5 Z']]]
+  };
+  function icA(name, cls){
+    const ic = IA[name]; if(!ic) return '';
+    return '<svg class="ia'+(cls ? ' '+cls : '')+'" viewBox="0 0 24 24" aria-hidden="true">'+ic[1].map(([k, d])=> k==='l'
+      ? '<path d="'+d+'" fill="none" stroke="#FFF6DC" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" fill="none" stroke="#1B120C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+      : '<path d="'+d+'" fill="'+(k==='a' ? ic[0] : '#FFF6DC')+'" stroke="#1B120C" stroke-width="1.5" stroke-linejoin="round"/>').join('')+'</svg>';
+  }
+  window.icA = icA;
+  // the icons of the home screen, the tab bar and the settings take style A
+  { const put = (sel, name)=>{ const el = document.querySelector(sel); if(!el) return; const old = el.querySelector(':scope > svg.i, :scope > .gl-sym'); if(old) old.outerHTML = old.classList.contains('gl-sym') ? '<span class="gl-sym">'+icA(name)+'</span>' : icA(name, 'i'); };
+    [['#tabHome','accueil'], ['#btnShowStats','profil'], ['#btnShowShop','boutique'], ['#btnShowSkins','decors'], ['#btnShowSettings','reglages'],
+     ['#btnBell','cloche'], ['#btnRich','quartier'], ['#btnShowAccount','compte'], ['#modeDaily','defi'], ['#btnLesson','lecon'], ['#btnShowRules','regles'], ['#btnInstall','installer']].forEach(([s, n])=> put(s, n));
+    document.querySelectorAll('[data-ic]').forEach(el=> el.innerHTML = icA(el.dataset.ic)); }
+
+  // ---- « Ta place cette semaine »: the card under the logo (it used to say « Petit joueur · 0 rép. ») ----
+  const V3 = {week:null, at:0, lastPos:null};
+  async function v3FetchWeek(){
+    if(!CLOUD_ON || Date.now() - V3.at < 60000) return;
+    V3.at = Date.now();
+    try{ const r = await qzRpc('fapfap_week_top', {lim:100}); if(r.rows){ V3.week = r.rows; renderMenuRank(); } }catch(e){}
+  }
+  window.v3Place = el=>{
+    const w = wkRoll(), rows = V3.week || [], me = rows.find(r=> r.me), q = profile.quartier;
+    const name = (prefs.name||'').trim() || 'Toi', saved = typeof isGuest==='function' && !isGuest();
+    const crest = q==null ? '' : '<span class="v3-crest" style="--c1:'+QZ_COLORS[q]+'"><b>'+QUARTIERS[q].slice(0, 3).toUpperCase()+'</b></span>';
+    const pos = me ? me.pos : null, pts = me ? me.pts : (w.pts||0);
+    // the arrow: places won or lost since the card was last seen
+    const prev = profile.v3LastPos, moved = pos && prev ? prev - pos : 0;
+    if(pos && pos!==prev){ profile.v3LastPos = pos; saveProfile(); }
+    const target = pos && pos > 20 ? rows.find(r=> r.pos===20) : pos && pos > 1 ? rows.find(r=> r.pos===pos - 1) : null;
+    const need = target ? Math.max(1, target.pts - pts + 1) : 0;
+    const prog = pos===1 ? 100 : target ? Math.max(6, Math.min(96, pts / Math.max(1, target.pts + 1) * 100)) : 8;
+    el.classList.add('v3-place');
+    el.innerHTML = '<div class="v3-pl-row"><div class="v3-rk">'+(pos ? pos+'<small>'+(pos===1 ? 'er' : 'e')+'</small>' : '—')+(moved ? '<span class="v3-up'+(moved < 0 ? ' down' : '')+'">'+(moved > 0 ? '▲ ' : '▼ ')+Math.abs(moved)+' place'+(Math.abs(moved) > 1 ? 's' : '')+'</span>' : '')+'</div>'
+      +'<div class="v3-who"><b>'+escHtml(name)+' <span class="v3-cert'+(saved ? '' : ' no')+'" title="'+(saved ? 'Compte certifié' : 'Compte pas encore sauvegardé')+'">✓</span></b>'
+      +'<span class="v3-sub">'+(q==null ? 'Choisis ton quartier' : escHtml(QUARTIERS[q]))+' · '+fmtChips(pts)+' point'+(pts > 1 ? 's' : '')+'</span>'
+      +'<em>'+RANKS[rankIndex(profile.rep)].name+(myTitle() ? ' · '+myTitle() : '')+'</em></div>'+crest+'</div>'
+      +'<div class="v3-bar"><i style="width:'+prog+'%"></i></div>'
+      +'<div class="v3-tip"><span>'+(!pos ? (pts ? 'Ouvre le classement pour voir ta place' : 'Gagne une partie en ligne pour entrer au classement') : pos===1 ? 'Tu es le Roi du quartier !' : pos > 20 ? 'Encore '+fmtChips(need)+' pts pour entrer dans le top 20' : 'Encore '+fmtChips(need)+' pts pour passer '+(pos - 1)+(pos - 1===1 ? 'er' : 'e'))+'</span><span>Cette semaine</span></div>';
+    el.onclick = ()=>{ ensureAudio(); qOpen(); };
+    v3FetchWeek();
+  };
+  const escHtml = s=> String(s||'').replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ---- the account: a discreet band on the home screen, louder when there is a lot to lose ----
+  function v3AcctBand(){
+    const b = document.getElementById('v3Acct'); if(!b) return;
+    const show = CLOUD_ON && typeof isGuest==='function' && isGuest();
+    b.classList.toggle('hidden', !show); if(!show) return;
+    const rich = (profile.chips||0) >= 5000 || !!myTitle() || profile.quartier!=null && (wkRoll().pts||0) >= 50;
+    b.classList.toggle('loud', rich);
+    b.innerHTML = '<span class="v3-ab-ic">'+icA('compte')+'</span><span class="v3-ab-t"><b>'+(rich ? 'Tu as beaucoup à perdre' : 'Ton compte n’est pas sauvegardé')+'</b>'
+      +'Change de téléphone et tu perds tes '+fmtChips(profile.chips||0)+' jetons et ta place.</span><span class="v3-ab-go">Sauvegarder</span>';
+  }
+  document.getElementById('v3Acct').addEventListener('click', ()=>{ ensureAudio(); track('v3_acct_band'); Nav.go('accountPage'); });
+  // on the account page: the reasons, and the certified badge once it is saved
+  window.v3Account = guest=>{
+    const w = document.getElementById('v3Why'); if(!w) return;
+    w.classList.toggle('hidden', !guest);
+    w.innerHTML = '<div class="v3-why-h"><span class="v3-cert">✓</span><b>Le badge « Certifié »</b> : tout le monde le voit à côté de ton nom.</div>'
+      +[['jetons', 'Tes jetons ne se perdent jamais', ' : téléphone cassé, volé ou changé, tu retrouves tout.'],
+        ['enligne', 'Le jeu en ligne', ' est réservé aux comptes sauvegardés (contre les tricheurs et les doubles comptes).'],
+        ['quartier', 'Ta place au classement', ' et ton quartier te suivent partout.'],
+        ['jetons', '+500 jetons', ' offerts à la sauvegarde.']].map(([ic, b, t])=> '<div class="v3-why-r">'+icA(ic)+'<span><b>'+b+'</b>'+t+'</span></div>').join('');
+    const n = document.getElementById('acctName');
+    if(n && !guest && !n.querySelector('.v3-cert')) n.insertAdjacentHTML('beforeend', ' <span class="v3-cert" title="Compte certifié">✓</span>');
+  };
+  // the first time the account is saved: 500 chips, once
+  window.v3OnSession = user=>{
+    if(!user || user.is_anonymous || profile.v3CertBonus) return;
+    profile.v3CertBonus = 1; chipsAdd(500); saveProfile(); renderChips(); track('v3_acct_saved');
+    setTimeout(()=> showToast('Compte certifié ✓', '+500 jetons : ta progression ne se perdra plus.', {big:true, celebrate:true, ms:2800}), 900);
+  };
+  // online play needs a saved account (validated 27/10): asked kindly, with the reason
+  function v3NeedAccount(){
+    if(!(typeof isGuest==='function' && isGuest())) return false;
+    showToast('Le jeu en ligne demande un compte', 'Sauvegarde-le en 10 secondes : +500 jetons et le badge Certifié.', {ms:3200});
+    track('v3_online_locked'); Nav.go('accountPage'); return true;
+  }
+  document.getElementById('modeMP').addEventListener('click', e=>{ if(v3NeedAccount()) e.stopImmediatePropagation(); }, true);
+
+  // ---- the new Play page: one-tap quick game, the opponents, online, the Carré ----
+  const V3_OPPS = ['gervais', 'aristide', 'penalty'];
+  function v3Opps(){ const beat = Object.keys(profile.leagueBeat || {}).filter(id=> DUEL_PERSONAS[id] && !V3_OPPS.includes(id) && id!=='mbarga');
+    return V3_OPPS.concat(beat).filter(id=> DUEL_PERSONAS[id] && isOppUnlocked(id)); }
+  function v3Next(){ const ids = v3Opps(); return ids.find(id=> !((profile.ladder[id]||{}).w)) || (ids.includes(prefs.lastOpp) ? prefs.lastOpp : ids[ids.length - 1]); }
+  const v3Face = id=> '<span class="avatar v3-av" data-char="'+id+'"></span>';
+  const v3Stars = id=>{ const s = Math.min(3, DUEL_PERSONAS[id].stars||1); return '<span class="v3-stars">'+'★'.repeat(s)+'<i>'+'★'.repeat(3 - s)+'</i></span>'; };
+  function v3StakeRow(cur){
+    return STAKES.map(s=> '<div role="button" tabindex="0" class="v3-chip'+(s===cur ? ' on' : '')+(s > (profile.chips||0) ? ' cant' : '')+'" data-stake="'+s+'">'+(s ? '<span class="v3-coin"></span>'+fmtChips(s) : 'Amical')+'</div>').join('');
+  }
+  const v3Stake = ()=> Math.min(prefs.stake||0, profile.chips||0);
+  const v3Gain = (id, s)=> s ? 'Mise '+fmtChips(s)+' · tu touches '+fmtChips(Math.round(s*(ODDS[id]||1.5)))+' si tu gagnes' : 'Partie amicale : rien à perdre';
+  function v3Play(id){
+    ensureAudio(); track('v3_play', {opp:id, stake:v3Stake()});
+    duelOpp = id; prefs.lastOpp = id; savePrefs(); mode = 'ai';
+    setMatchLength(quickPref()); enterGame(); applyOppNameToUI(); newMatch();
+  }
+  function renderV3Play(){
+    const body = document.querySelector('#playPage .page-body'); if(!body) return;
+    // the old cards stay in the page, hidden: their buttons still open the online lobby and the Carré
+    let box = document.getElementById('v3PlayBox');
+    if(!box){ [...body.children].forEach(c=> c.classList.add('hidden')); box = document.createElement('div'); box.id = 'v3PlayBox'; body.appendChild(box); }
+    const nx = v3Next(), P = DUEL_PERSONAS[nx], s = v3Stake(), guest = typeof isGuest==='function' && isGuest();
+    const ids = v3Opps(), more = Math.max(0, 11 - ids.length);
+    box.innerHTML = '<div class="v3-quick"><div class="v3-q-in">'+v3Face(nx)+'<div><span class="v3-kick">Partie rapide</span><b>'+escHtml(P.name)+'</b>'+v3Stars(nx)+'<small>'+escHtml(P.tagline||'')+'</small></div></div>'
+      +'<div class="v3-chips">'+v3StakeRow(s)+'<div role="button" tabindex="0" class="v3-chip v3-fmt">'+(quickPref() ? '1 manche' : '3 manches')+' ▾</div></div>'
+      +'<div role="button" tabindex="0" class="v3-go" data-play="'+nx+'">Jouer contre '+escHtml(P.name)+'<small>'+v3Gain(nx, s)+'</small></div></div>'
+      +'<div class="v3-lbl">Le quartier · choisis ton adversaire</div><div class="v3-opps">'
+      + ids.map(id=>{ const r = profile.ladder[id] || {w:0, l:0}; return '<div role="button" tabindex="0" class="v3-opp" data-opp="'+id+'">'+v3Face(id)+'<b>'+escHtml(DUEL_PERSONAS[id].name)+'</b>'+v3Stars(id)+'<span class="v3-rec">'+(r.w + r.l ? r.w+' V · '+r.l+' D' : 'jamais affronté')+'</span></div>'; }).join('')
+      + (more ? '<div role="button" tabindex="0" class="v3-opp lock" data-lock="1"><span class="v3-av v3-lockav">'+icA('cadenas')+'</span><b>+ '+more+' champions</b><span class="v3-rec">Bats-les en League pour les débloquer</span></div>' : '')
+      +'</div><div class="v3-lbl">Contre de vrais joueurs</div>'
+      +'<div role="button" tabindex="0" class="v3-mode" data-act="mp">'+icA('enligne')+'<span><b>Avec un ami</b><small>Invite-le par WhatsApp. Tu héberges : il joue sur ta table.</small></span>'+(guest ? '<em class="v3-req">Compte requis</em>' : '<em class="v3-req ok">✓ Certifié</em>')+'</div>'
+      +'<div role="button" tabindex="0" class="v3-mode" data-act="code">'+icA('code')+'<span><b>Rejoindre avec un code</b><small>Ton ami t’a envoyé 4 lettres</small></span></div>'
+      +'<div class="v3-lbl">À quatre</div>'
+      +'<div role="button" tabindex="0" class="v3-mode" data-act="carre">'+icA('carre')+'<span><b>Carré la Pute</b><small>Le vainqueur de chaque manche élimine qui il veut</small></span><span class="v3-seats">'+v3Face('penalty')+v3Face('aristide')+v3Face('gervais')+'</span></div>';
+    fillAllAvatars(box);
+  }
+  // one sheet before the cards: the opponent, the format, the stake, what can be won
+  function v3Sheet(id){
+    const P = DUEL_PERSONAS[id]; if(!P) return;
+    let sh = document.getElementById('v3Sheet');
+    if(!sh){ sh = document.createElement('div'); sh.id = 'v3Sheet'; sh.className = 'v3-sheet-wrap'; document.body.appendChild(sh); sh.addEventListener('click', v3PlayClick); } // above the tab bar
+    const s = v3Stake(), line = P.tagline || '';
+    sh.innerHTML = '<div class="v3-dim" data-close="1"></div><div class="v3-sheet"><span class="v3-grip"></span><div class="v3-q-in">'+v3Face(id)+'<div><b>'+escHtml(P.name)+'</b>'+v3Stars(id)+'<small>« '+escHtml(line)+' »</small></div></div>'
+      +'<div class="v3-seg"><div role="button" tabindex="0" data-q="1" class="'+(quickPref() ? 'on' : '')+'">Partie unique</div><div role="button" tabindex="0" data-q="0" class="'+(quickPref() ? '' : 'on')+'">En 3 manches</div></div>'
+      +'<p class="v3-p">Ta mise</p><div class="v3-chips">'+v3StakeRow(s)+'</div><p class="v3-p mute" id="v3Gain">'+v3Gain(id, s)+' · cote ×'+String(ODDS[id]||1.5).replace('.', ',')+'. Un CORA double tout.</p>'
+      +'<div role="button" tabindex="0" class="v3-go" data-play="'+id+'">Jouer contre '+escHtml(P.name)+'</div></div>';
+    fillAllAvatars(sh); sh.classList.add('on'); sh.dataset.opp = id;
+  }
+  function v3PlayClick(e){
+    const t = e.target;
+    const ch = t.closest('[data-stake]');
+    if(ch){ const s = +ch.dataset.stake; if(s > (profile.chips||0)){ showToast('Pas assez de jetons', 'Il te faut '+fmtChips(s)+' jetons pour cette mise.', {ms:1600}); return; }
+      prefs.stake = s; savePrefs(); const sh = document.getElementById('v3Sheet'); renderV3Play(); if(sh && sh.classList.contains('on')) v3Sheet(sh.dataset.opp); return; }
+    if(t.closest('.v3-fmt')){ prefs.quick = !quickPref(); savePrefs(); renderV3Play(); return; }
+    const q = t.closest('.v3-seg [data-q]'); if(q){ prefs.quick = q.dataset.q==='1'; savePrefs(); v3Sheet(document.getElementById('v3Sheet').dataset.opp); renderV3Play(); return; }
+    if(t.closest('[data-close]')){ document.getElementById('v3Sheet').classList.remove('on'); return; }
+    const pl = t.closest('[data-play]'); if(pl){ const sh = document.getElementById('v3Sheet'); if(sh) sh.classList.remove('on'); v3Play(pl.dataset.play); return; }
+    const op = t.closest('[data-opp]'); if(op){ v3Sheet(op.dataset.opp); return; }
+    if(t.closest('[data-lock]')){ showToast('Les champions de la League', 'Bats-les en Fap-Fap League : ils viennent ensuite jouer ici.', {ms:2600}); return; }
+    const a = t.closest('[data-act]'); if(!a) return;
+    if(a.dataset.act==='carre') document.getElementById('modeSquare').click();
+    else if(!v3NeedAccount()) document.getElementById('modeMP').click();
+  }
+  document.getElementById('playPage').addEventListener('click', v3PlayClick);
+
+  // ---- installing the game: a tutorial for each phone, the real button where the browser has one ----
+  function renderInstall(){
+    const ios = typeof isIOS!=='undefined' && isIOS, can = typeof installPrompt!=='undefined' && !!installPrompt;
+    const ill = (svg)=> '<span class="v3-ill"><svg viewBox="0 0 88 62">'+svg+'</svg></span>';
+    const IOS = [
+      ill('<rect x="6" y="40" width="76" height="18" rx="4" fill="#eee" stroke="#1b120c" stroke-width="2"/><g class="v3-pulse"><rect x="36" y="42" width="16" height="14" rx="3" fill="#3D7FD9"/><path d="M44 52 V45 M40.5 48 L44 44.5 L47.5 48" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g>')+'<div>Ouvre le jeu dans <b>Safari</b>, puis touche le bouton <b>Partager</b> en bas de l’écran.</div>',
+      ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><rect x="14" y="16" width="60" height="12" rx="3" fill="#fff" stroke="#ccc"/><g class="v3-pulse"><rect x="14" y="33" width="60" height="14" rx="3" fill="#FFC93C" stroke="#1b120c"/><text x="44" y="43" text-anchor="middle" font-size="6.2" font-weight="800" font-family="Nunito">Sur l’écran d’accueil</text></g>')+'<div>Fais défiler et touche <b>« Sur l’écran d’accueil »</b>.</div>',
+      ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><text x="76" y="21" text-anchor="end" font-size="8" font-weight="800" fill="#3D7FD9" font-family="Nunito" class="v3-pulse">Ajouter</text><circle cx="26" cy="36" r="10" fill="#16100b" stroke="#e9b94e" stroke-width="2"/><text x="26" y="40" text-anchor="middle" font-size="9" font-weight="800" fill="#f1c257" font-family="Cinzel">FF</text>')+'<div>Touche <b>Ajouter</b> en haut à droite. Puis ouvre toujours le jeu depuis l’icône Fap Fap.</div>'];
+    const AND = [
+      ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><g class="v3-pulse"><rect x="18" y="22" width="52" height="18" rx="9" fill="#2FB36B" stroke="#1b120c"/><text x="44" y="34" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff" font-family="Nunito">Installer</text></g>')+'<div>Touche le bouton <b>Installer</b> ci-dessous : le téléphone te demande de confirmer.</div>',
+      ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><text x="72" y="20" font-size="12" font-weight="900" text-anchor="end" font-family="Nunito" class="v3-pulse">⋮</text><rect x="22" y="28" width="56" height="12" rx="3" fill="#FFC93C" stroke="#1b120c"/><text x="50" y="37" text-anchor="middle" font-size="7" font-weight="800" font-family="Nunito">Installer l’application</text>')+'<div>Pas de bouton ? Ouvre le menu <b>⋮</b> du navigateur, puis <b>« Installer l’application »</b> (ou « Ajouter à l’écran d’accueil »).</div>'];
+    const os = document.getElementById('installBody').dataset.os || (ios ? 'ios' : 'and');
+    document.getElementById('installBody').innerHTML = '<div class="v3-card"><p class="v3-p" style="margin-top:0"><b>Une fois installé, Fap Fap s’ouvre comme une vraie application</b> : en plein écran, sans la barre du navigateur, et il peut te prévenir quand on te dépasse au classement.</p>'
+      +'<div class="v3-seg"><div role="button" tabindex="0" data-os="ios" class="'+(os==='ios' ? 'on' : '')+'">iPhone</div><div role="button" tabindex="0" data-os="and" class="'+(os==='and' ? 'on' : '')+'">Android</div></div>'
+      +(os==='ios' ? IOS : AND).map((h, i)=> '<div class="v3-step"><span class="v3-n">'+(i + 1)+'</span>'+h+'</div>').join('')
+      +(os==='and' && can ? '<div role="button" tabindex="0" class="v3-go" id="v3InstallGo">Installer Fap Fap</div>' : '<div role="button" tabindex="0" class="v3-go" data-nav-back>J’ai compris</div>')+'</div>'
+      +'<p class="v3-note">Sur iPhone, les notifications du jeu ne marchent qu’une fois le jeu installé et ouvert depuis son icône.</p>';
+    document.getElementById('installBody').dataset.os = os;
+  }
+  document.getElementById('installBody').addEventListener('click', e=>{
+    const o = e.target.closest('[data-os]'); if(o){ document.getElementById('installBody').dataset.os = o.dataset.os; renderInstall(); return; }
+    if(e.target.closest('#v3InstallGo') && installPrompt){ installPrompt.prompt(); installPrompt.userChoice.finally(()=>{ installPrompt = null; renderInstall(); }); }
+  });
+  // the home card « Installer le jeu » now opens the tutorial (on every phone where the game is not installed yet)
+  document.getElementById('btnInstall').addEventListener('click', e=>{ e.stopImmediatePropagation(); ensureAudio(); track('v3_install_open'); renderInstall(); Nav.go('installPage'); }, true);
+
+  // ---- « Mon style »: the default CORA and claque effects (or « au hasard »), and the table your guests play on ----
+  const V3_FX_IC = {meteore:'meteorite', foudre:'foudre', billets:'jetons', artifice:'artifice', trounoir:'trounoir', clac:'claque', onde:'onde', feu:'feu', eclair:'foudre'};
+  function renderStyle(){
+    const eq = k=>{ const c = profile.equip && profile.equip[k]; return c==null ? SHOP_DEFAULT[k] : c; };
+    const fx = kind=> '<div class="v3-fx">'+SHOP_ITEMS.filter(it=> it.kind===kind).map(it=>{ const has = shopHas(it);
+        return '<div role="button" tabindex="0" class="'+(eq(kind)===it.id ? 'on' : '')+(has ? '' : ' locked')+'" data-fx="'+kind+':'+it.id+'">'+icA(V3_FX_IC[it.id] || 'foudre')+'<span>'+escHtml(it.name)+'</span>'+(has ? '' : '<small>'+fmtChips(it.price)+'</small>')+'</div>'; }).join('')
+      +'<div role="button" tabindex="0" class="'+(eq(kind)==='hasard' ? 'on' : '')+'" data-fx="'+kind+':hasard">'+icA('hasard')+'<span>Au hasard</span><small>parmi les tiens</small></div></div>';
+    const tables = SKINS.table.filter(s=> s.id!=='verre' && skinUnlocked('table', s.id)).map(s=> [s.id, s.name, s.swatch])
+      .concat(SHOP_TABLES.filter(t=> shopOwns(profile, 'table', t.id)).map(t=> [t.id, t.name, t.swatch]));
+    document.getElementById('styleBody').innerHTML =
+      '<div class="v3-card"><h3>Effet du CORA, par défaut</h3><p class="v3-p mute">Il éclate à chacun de tes CORA. Les autres s’achètent à la Boutique.</p>'+fx('cora')+'</div>'
+      +'<div class="v3-card"><h3>Effet de la claque, par défaut</h3>'+fx('claque')+'</div>'
+      +'<div class="v3-card"><h3>Quand tu héberges : ta table</h3><p class="v3-p mute">Ton ami joue sur la table que tu choisis ici. En League, la table est tirée au sort parmi toutes celles du jeu.</p><div class="v3-tables">'
+      + tables.map(([id, n, sw])=> '<div role="button" tabindex="0" class="v3-tbl'+(currentTableId()===id ? ' on' : '')+'" data-tbl="'+id+'" style="--sw:'+(sw||'#2f8a52')+'"><b>'+escHtml(n)+'</b></div>').join('')+'</div></div>';
+  }
+  document.getElementById('styleBody').addEventListener('click', e=>{
+    const f = e.target.closest('[data-fx]');
+    if(f){ const [kind, id] = f.dataset.fx.split(':'), it = SHOP_ITEMS.find(x=> x.kind===kind && x.id===id);
+      if(it && !shopHas(it)){ showToast('Pas encore à toi', 'À la Boutique pour '+fmtChips(it.price)+' jetons.', {ms:2000}); return; }
+      shopEnsure(); profile.equip[kind] = id; saveProfile(); renderStyle(); vibrate(12); return; }
+    const tb = e.target.closest('[data-tbl]');
+    if(tb){ prefs.skin = Object.assign({}, prefs.skin||{}, {table: tb.dataset.tbl}); savePrefs(); applySkins(); renderStyle(); vibrate(12); }
+  });
+  document.getElementById('btnMyStyle').addEventListener('click', ()=>{ renderStyle(); Nav.go('stylePage'); });
+
+  // ---- La leçon: Maître Tsala's lesson, replayable from the home screen ----
+  document.getElementById('btnLesson').addEventListener('click', ()=>{ ensureAudio(); track('v3_lesson'); pvOpen('lesson'); });
+
+  // ---- the home screen, each time it shows ----
+  window.v3Home = ()=>{
+    v3AcctBand(); renderMenuRank();
+    const shx = document.getElementById('v3Sheet'); if(shx) shx.classList.remove('on');
+    const bi = document.getElementById('btnInstall');
+    if(bi && typeof isStandalone==='function') bi.classList.toggle('hidden', isStandalone());
+    const hf = document.querySelector('#btnGoPlay .hero-faces');
+    if(hf && !hf.dataset.v3){ hf.dataset.v3 = 1; hf.innerHTML = ['aristide', 'penalty', 'gervais'].map(id=> '<span class="avatar" data-char="'+id+'" style="--s:46px"></span>').join(''); fillAllAvatars(hf); }
+    const hs = document.querySelector('#btnGoPlay .hero-text small'); if(hs) hs.textContent = 'Partie rapide · le quartier · en ligne · Carré';
+  };
+  document.getElementById('btnGoPlay').addEventListener('click', ()=> renderV3Play(), true);
+  setTimeout(()=>{ if(inHome()) window.v3Home(); }, 1700);
 
   // ---- Age check, asked until it's answered "yes" once on this phone; "no" closes the game ----
   (function ageGate(){
@@ -13276,7 +13681,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v82';
+  const APP_VERSION = 'v83';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -13372,29 +13777,29 @@
   const QUOTES = [
     ['Le 3 ne prévient pas. Il frappe.', 'Penalty'],
     ['Ici on ne joue pas aux cartes, on règle les comptes du quartier.', 'RALL'],
-    ['Mieux vaut un 3 en main que deux 10 en rêve.', 'Le Ngonzormorrr'],
+    ['Mieux vaut un 3 en main que deux 10 en rêve.', 'Maître Tsala'],
     ['Même le délestage attend la fin de la manche.', 'RALL'],
     ['Commander Black sans Black, c’est le ndem assuré.', 'Penalty'],
-    ['Le kongossa, c’est après la partie. Jamais pendant.', 'Le Ngonzormorrr'],
+    ['Le kongossa, c’est après la partie. Jamais pendant.', 'Maître Tsala'],
     ['Tu as mangé quoi ce matin pour jouer comme ça ?', 'RALL'],
     ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Christelle'],
     ['On dit quoi ? On dit CORA !', 'Penalty'],
     ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Christelle'],
-    ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Le Ngonzormorrr'],
+    ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Maître Tsala'],
     ['Au quartier, le contrôle se prend. Il ne se demande pas.', 'Penalty'],
     ['Tchaka sur la table, silence dans la salle.', 'RALL'],
     ['Ce n’est pas la chance, c’est le manuel. Chapitre 5.', 'Penalty'],
     ['La 33 Glacée, ça ne se raconte pas : ça se montre.', 'RALL'],
     ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Christelle'],
-    ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Le Ngonzormorrr'],
+    ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Maître Tsala'],
     ['Mola, range ton 10. On a déjà compris.', 'RALL'],
     ['Le Fap Fap, c’est comme le benskin : il faut savoir quand freiner.', 'Penalty'],
-    ['Tu mènes ? Le score aime les menteurs.', 'Le Ngonzormorrr'],
+    ['Tu mènes ? Le score aime les menteurs.', 'Maître Tsala'],
     ['Ça va aller… mais pas pour toi cette manche.', 'Penalty'],
     ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Christelle'],
     ['Tu partages ou tu coupes ? Décide, le taxi attend.', 'RALL'],
     ['Un CORA le matin, la journée est bénie.', 'Christelle'],
-    ['On ne joue pas contre Penalty. On joue après lui.', 'Le Ngonzormorrr']
+    ['On ne joue pas contre Penalty. On joue après lui.', 'Maître Tsala']
   ];
   (function quoteTicker(){
     const el = document.getElementById('quoteText');
@@ -16318,7 +16723,9 @@
   });
   function zhPlay(d){
     const known = (d.persona && DUEL_PERSONAS[d.persona]) ? d.persona : ZH_OPP[d.opp], P = ZH_PERSONAS[d.opp];
-    storyRun = {zh:true, league:!!d.league, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table||null};
+    // in the League, each game is played on a table drawn among all those of the game (v83)
+    const lgTables = d.league && !d.table ? SKINS.table.map(s=> s.id).concat(SHOP_TABLES.map(t=> t.id)).filter(id=> id!=='verre') : null;
+    storyRun = {zh:true, league:!!d.league, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table || (lgTables ? lgTables[Math.floor(Math.random()*lgTables.length)] : null)};
     const label = d.league ? 'Fap-Fap League' : 'Zéro à Héros';
     // the League's Carré: 3 or 4 seats, each one worn by a character of the game (its portrait, its lines, a name with its neighbourhood)
     if(d.carre){
@@ -18143,6 +18550,7 @@
     Cloud.user = user || null;
     if(user && user.id!==prev){ Cloud.hold = false; Cloud.error = null; Cloud.pullP = cloudPull(); }
     renderAccount(); renderAccountDot();
+    if(window.v3OnSession) window.v3OnSession(user);
     if(user) setTimeout(lobbyJoin, 400); // shows this player online to their friends
     if(user && user.id!==prev) setTimeout(pushRefresh, 1500); // challenge notifications follow the account
   }
@@ -18253,6 +18661,7 @@
     $id('acctMailStep1').classList.toggle('hidden', step2);
     $id('acctMailStep2').classList.toggle('hidden', !step2);
     const ni = $id('acctNameInput'); if(document.activeElement!==ni) ni.value = prefs.name || '';
+    if(window.v3Account) window.v3Account(guest);
   }
   // the little red dot on "Mon compte": a guest who has started to play has something to lose
   function renderAccountDot(){

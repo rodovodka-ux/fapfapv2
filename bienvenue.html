@@ -32,7 +32,7 @@ p{ margin:8px 0 0; font-size:15px; line-height:1.45; }
 .stack{ display:flex; flex-direction:column; gap:14px; }
 .grow{ flex:1; }
 /* the logo's black background melts into the night */
-.logo{ width:min(84%, 320px); align-self:center; margin:0 0 -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
+.logo{ height:auto; width:min(84%, 320px); align-self:center; margin:0 0 -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
 .beta{ display:inline-block; background:var(--red); color:#fff; font:800 11px var(--b); letter-spacing:.08em; padding:4px 10px; border-radius:99px; border:2px solid var(--ink); }
 /* Penalty and his speech bubble */
 .host{ display:flex; align-items:flex-end; gap:6px; margin-top:6px; }
@@ -156,34 +156,7 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
 <!-- 1. One screen instead of three: the age, the beta, the welcome -->
 <section class="scr" id="s1">
   <div class="grow"></div>
-  <svg class="logo" viewBox="0 0 400 340" role="img" aria-label="Fap-Fap">
-    <defs>
-      <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>
-      <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient>
-      <radialGradient id="disc" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient>
-      <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient>
-      <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient>
-      <g id="cardF"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="url(#paper)" stroke="#1b120c" stroke-width="3"/></g>
-    </defs>
-    <!-- the medallion -->
-    <circle cx="200" cy="158" r="138" fill="url(#disc)" stroke="url(#rim)" stroke-width="7"/>
-    <circle cx="200" cy="158" r="126" fill="none" stroke="#c99a3e" stroke-opacity=".35" stroke-width="1.5"/>
-    <!-- three cards in a fan: the two 3s of the CORA and a 10 -->
-    <g transform="translate(168 262) rotate(-22)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#1b1b1b">3</text><text x="-38" y="-100" font-size="18" fill="#1b1b1b">♠</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#1b1b1b">♠</text></g>
-    <g transform="translate(232 262) rotate(22)"><use href="#cardF"/><text x="37" y="-122" text-anchor="end" font-family="Fredoka" font-weight="700" font-size="24" fill="#c8283a">10</text><text x="37" y="-100" text-anchor="end" font-size="18" fill="#c8283a">♦</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♦</text></g>
-    <g transform="translate(200 254)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#c8283a">3</text><text x="-37" y="-100" font-size="18" fill="#c8283a">♥</text><text x="0" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♥</text></g>
-    <!-- the chip -->
-    <g transform="translate(200 206)">
-      <circle r="35" fill="#120d09" stroke="url(#rim)" stroke-width="4"/>
-      <circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/>
-      <circle r="21" fill="#1a130d" stroke="url(#rim)" stroke-width="2.5"/>
-      <text y="10" font-size="28" text-anchor="middle" fill="url(#gold)">♠</text>
-    </g>
-    <!-- the banner and the name -->
-    <path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="url(#band)" stroke="url(#rim)" stroke-width="4" stroke-linejoin="round"/>
-    <text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" letter-spacing="1" fill="url(#gold)" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>
-    <text x="200" y="322" text-anchor="middle" font-size="20" fill="url(#gold)">♠</text>
-  </svg>
+  <img class="logo" src="art/logo.png" alt="Fap Fap" width="600" height="312">
   <div class="card stack" style="margin-top:14px" id="ageCard">
     <div><span class="beta">VERSION BÊTA</span></div>
     <h1>Bienvenue au quartier.</h1>
@@ -457,7 +430,7 @@ $('learn').addEventListener('click', ()=>{ post({zh:'pv', step:'learn'}); show('
 $('know').addEventListener('click', ()=>{ post({zh:'pv', step:'know'}); post({zh:'first'}); });
 document.querySelectorAll('.first').forEach(b=> b.addEventListener('click', ()=> post({zh:'first'})));
 // the phone's back: the lesson goes back to the question, the rest stays (the game is not left half-way)
-function goBack(){ if(cur==='sL' || cur==='sD') show('s2'); }
+function goBack(){ if(START==='lesson') post({zh:'close'}); else if(cur==='sL' || cur==='sD') show('s2'); }
 // 5. the name: typed or picked, never empty, never more than 16 letters
 $('nmOk').addEventListener('click', ()=>{
   const n = $('nm').value.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
@@ -539,7 +512,10 @@ async function boot(){
     $('winCoins').classList.add('hidden');
     $('winSub').textContent = 'Le quartier a un classement maintenant. Il lui faut ton nom.';
   }
-  const first = START==='question' ? 's2' : START==='after' || START==='pseudo' ? 's4' : 's1';
+  // the lesson alone, replayed from the home screen: its cross and its end go back home
+  if(START==='lesson'){ document.querySelector('#sL .x').removeAttribute('data-go'); document.querySelector('#sL .x').onclick = ()=> post({zh:'close'});
+    document.querySelector('#sD .first').insertAdjacentHTML('afterend', '<button class="link" style="color:#e9d6b6" onclick="parent.postMessage({zh:\'close\'}, location.origin)">Retour à l’accueil</button>'); }
+  const first = START==='lesson' ? 'sL' : START==='question' ? 's2' : START==='after' || START==='pseudo' ? 's4' : 's1';
   $(first).classList.add('on'); cur = first;
   enter($(cur));
 }
