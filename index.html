@@ -2713,6 +2713,9 @@
   .v3-who em{ font-style:normal; font:800 11.5px Nunito, system-ui, sans-serif; background:#FBE9BC; color:#2A1D12; border:2px solid #1B120C; border-radius:99px; padding:1px 8px; display:inline-block; margin-top:4px; }
   .v3-cert{ display:inline-grid; place-items:center; width:18px; height:18px; border-radius:50%; background:#2f80ed; color:#fff; font:900 11px Nunito, system-ui, sans-serif; border:2px solid #1B120C; vertical-align:middle; }
   .v3-cert.no{ background:#cfc2a8; }
+  /* v84 : sans place connue, un « ? » dans un rond pointillé (l'ancien tiret ressemblait à un bug) ; le titre reste lisible sous le thème nuit */
+  .v3-q{ display:inline-grid; place-items:center; width:50px; height:50px; border-radius:50%; border:2.5px dashed rgba(255,230,189,.55); font-size:28px; color:#ffe6bd; }
+  body:not(#z) .v3-place .v3-who em{ color:#2A1D12 !important; background:#FBE9BC !important; -webkit-text-fill-color:#2A1D12; }
   .v3-crest{ width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--c1) 0 62%, #f2c76a 0); border:3px solid #1B120C; position:relative; flex:none; }
   .v3-crest::before{ content:''; position:absolute; inset:6px; border-radius:50%; background:#1e1a3a; }
   .v3-crest b{ position:relative; font:700 12px Fredoka, system-ui, sans-serif; color:#fff; }
@@ -2721,6 +2724,16 @@
   .v3-tip{ display:flex; justify-content:space-between; gap:8px; font:800 12px Nunito, system-ui, sans-serif; opacity:.7; margin-top:5px; }
   .v3-acct{ display:flex; gap:10px; align-items:center; width:100%; margin:10px 0 2px; text-align:left; background:#2b1c12; border:2px solid #6b4a2a; border-radius:16px; padding:9px 10px; color:#ffe6bd; cursor:pointer; font:inherit; }
   .v3-acct.loud{ background:#3a1712; border-color:#b8452f; }
+  /* v84 : la barre du haut tient sur un iPhone SE (le bouton compte sortait de l'écran) */
+  body:not(#z) #menuOverlay .home-topbar{ gap:6px; }
+  body:not(#z) #menuOverlay .home-topbar .hb-space{ flex:1 1 0; min-width:0; }
+  body:not(#z) #menuOverlay .home-topbar .gl-round{ width:40px; height:40px; min-width:40px; flex:0 0 40px; padding:0; }
+  body:not(#z) #menuOverlay .home-topbar #chipsBar, body:not(#z) #menuOverlay .home-topbar #btnChipsClaim{ flex:0 1 auto; min-width:0; }
+  body:not(#z) #menuOverlay .home-topbar #btnChipsClaim{ padding-inline:10px; white-space:nowrap; }
+  /* « Les règles » restait seule sur sa ligne avec un trou à côté : elle prend toute la largeur, en ligne */
+  body:not(#z) #menuOverlay #btnShowRules{ grid-column:1 / -1; display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:12px; align-items:center; text-align:left; min-height:0; }
+  body:not(#z) #menuOverlay #btnShowRules .gl-sym{ grid-row:1 / 3; margin:0; }
+  body:not(#z) #menuOverlay #btnShowRules b, body:not(#z) #menuOverlay #btnShowRules small{ grid-column:2; margin:0; }
   .v3-ab-ic svg{ width:30px; height:30px; display:block; }
   .v3-ab-t{ flex:1; font:700 12px/1.3 Nunito, system-ui, sans-serif; }
   .v3-ab-t b{ display:block; font:700 14px Fredoka, system-ui, sans-serif; color:#fff; }
@@ -9918,15 +9931,18 @@
     const swing = ()=>{ B.om += (B.th > 0 ? -1 : 1)*2.2; };
     addEventListener('pointerdown', e=>{ if(!inMenu() || e.target.closest('button, a, input, canvas#glassLogo')) return; const p = bulbPos(); if(Math.hypot(e.clientX - p.x, e.clientY - p.y) < 60) swing(); }, {passive:true});
     logoEl.addEventListener('click', ()=>{ Logo.mode = 'burst'; Logo.t0 = performance.now(); Logo.mt = Logo.t0 + 2200; });
-    let last = performance.now(), nextFlick = last + 25000 + Math.random()*25000, acc = 0, ready = false;
+    // les clignotements du courant du quartier : un hoquet, un double, une baisse qui grésille, une coupure d'une seconde
+    const FLICKS = [[.55, 1, .75, 1], [.2, 1, .3, 1], [.7, .5, .8, .45, 1], [.35, .35, 1, .6, 1], [0, 0, .4, 0, 1, .7, 1], [.8, .6, .85, 1]];
+    let last = performance.now(), nextFlick = last + 4000 + Math.random()*4000, acc = 0, ready = false;
     function frame(t){
       requestAnimationFrame(frame);
       if(!ready || !inMenu()){ last = t; return; }
       const dt = Math.min(.05, (t - last)/1000); last = t;
-      const w0 = 4.2, rest = RM ? 0 : Math.sin(t*.00035)*.006;
+      // un balancement lent et léger (≈ 4°), comme une ampoule qui pend dans un courant d'air
+      const w0 = 4.2, rest = RM ? 0 : Math.sin(t*.00085)*.06 + Math.sin(t*.0021)*.012;
       B.om += (-w0*w0*Math.sin(B.th - rest) - 1.1*B.om)*dt; B.th += B.om*dt;
       if(B.flick){ const f = B.flick; f.t += dt*1000; if(f.t > 70){ f.t = 0; f.i++; } if(f.i >= f.seq.length){ B.power = f.end; B.flick = null; } else B.power = f.seq[f.i]; }
-      else { B.power = .985 + .015*Math.sin(t*.003); if(t > nextFlick && !RM){ flicker([.55, 1, .75, 1], 1); nextFlick = t + 30000 + Math.random()*30000; } }
+      else { B.power = .985 + .015*Math.sin(t*.003); if(t > nextFlick && !RM){ flicker(FLICKS[Math.random()*FLICKS.length|0], 1); nextFlick = t + 5000 + Math.random()*7000; } }
       acc += dt; if(acc < 1/30 && !RM) return; acc = 0;
       if(W !== innerWidth || H !== innerHeight) resize();
       if(logoEl.clientWidth && Logo.w !== logoEl.clientWidth) Logo.setup();
@@ -13476,7 +13492,7 @@
     const need = target ? Math.max(1, target.pts - pts + 1) : 0;
     const prog = pos===1 ? 100 : target ? Math.max(6, Math.min(96, pts / Math.max(1, target.pts + 1) * 100)) : 8;
     el.classList.add('v3-place');
-    el.innerHTML = '<div class="v3-pl-row"><div class="v3-rk">'+(pos ? pos+'<small>'+(pos===1 ? 'er' : 'e')+'</small>' : '—')+(moved ? '<span class="v3-up'+(moved < 0 ? ' down' : '')+'">'+(moved > 0 ? '▲ ' : '▼ ')+Math.abs(moved)+' place'+(Math.abs(moved) > 1 ? 's' : '')+'</span>' : '')+'</div>'
+    el.innerHTML = '<div class="v3-pl-row"><div class="v3-rk">'+(pos ? pos+'<small>'+(pos===1 ? 'er' : 'e')+'</small>' : '<span class="v3-q">?</span>')+(moved ? '<span class="v3-up'+(moved < 0 ? ' down' : '')+'">'+(moved > 0 ? '▲ ' : '▼ ')+Math.abs(moved)+' place'+(Math.abs(moved) > 1 ? 's' : '')+'</span>' : '')+'</div>'
       +'<div class="v3-who"><b>'+escHtml(name)+' <span class="v3-cert'+(saved ? '' : ' no')+'" title="'+(saved ? 'Compte certifié' : 'Compte pas encore sauvegardé')+'">✓</span></b>'
       +'<span class="v3-sub">'+(q==null ? 'Choisis ton quartier' : escHtml(QUARTIERS[q]))+' · '+fmtChips(pts)+' point'+(pts > 1 ? 's' : '')+'</span>'
       +'<em>'+RANKS[rankIndex(profile.rep)].name+(myTitle() ? ' · '+myTitle() : '')+'</em></div>'+crest+'</div>'
@@ -13681,7 +13697,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v83';
+  const APP_VERSION = 'v84';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -13814,7 +13830,9 @@
       if(anim) anim.cancel();
       if(calmOn()){ el.style.transform = 'translateX(0)'; setTimeout(next, 7000); return; }
       // scrolls across at a calm reading speed, then the next one comes
-      anim = el.animate([{transform:'translateX('+w+'px)'}, {transform:'translateX('+(-tw)+'px)'}], {duration: Math.max(6000, (w+tw)/55*1000), easing:'linear'});
+      // starts already in the bar (it used to enter from the right edge: the bar looked empty for a few seconds)
+      const x0 = Math.min(w, 22);
+      anim = el.animate([{transform:'translateX('+x0+'px)', offset:0}, {transform:'translateX('+x0+'px)', offset:Math.min(.25, 1200/Math.max(6000, (x0+tw)/45*1000))}, {transform:'translateX('+(-tw)+'px)'}], {duration: Math.max(6000, (x0+tw)/45*1000) + 1200, easing:'linear'});
       anim.onfinish = ()=> setTimeout(next, 300);
     };
     // starts when the home screen is actually visible (fonts and layout ready)
