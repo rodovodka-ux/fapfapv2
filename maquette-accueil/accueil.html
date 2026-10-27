@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Accueil et menu Jouer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{ --ink:#1B120C; --cream:#FFF6DC; --cream2:#FBE9BC; --mango:#FFC93C; --red:#E24B4A; --green:#2FB36B; --green-d:#1F8A50; --blue:#3D7FD9;
+  --txt:#2A1D12; --mute:#7A6650; --gold:#f2c76a; --t:'Fredoka', system-ui, sans-serif; --b:'Nunito', system-ui, sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:#120b07; color:#FFF1D6; font-family:var(--b); overflow:hidden; }
+button{ font:inherit; color:inherit; }
+/* the wall of the bar at night, lit by the bulb in the top left corner */
+.wall{ position:fixed; inset:0; background:
+  radial-gradient(70% 45% at 12% 4%, rgba(255,196,120,.32), transparent 70%),
+  radial-gradient(120% 60% at 50% 0%, rgba(120,70,30,.35), transparent 70%),
+  linear-gradient(180deg, #2a1a10 0%, #1a110b 58%, #0f1a19 58.2%, #0b1312 100%); }
+.bulb{ position:fixed; left:30px; top:-6px; width:2px; height:64px; background:#0b0806; z-index:1; }
+.bulb::after{ content:''; position:absolute; left:-11px; bottom:-20px; width:24px; height:26px; border-radius:50% 50% 45% 45%; background:radial-gradient(circle at 50% 40%, #fff8dc, #ffd36b 55%, #e8a23a); box-shadow:0 0 30px 12px rgba(255,200,110,.45); border:2px solid #1b120c; }
+.scr{ position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 132px); overflow-y:auto; z-index:2; }
+.scr.on{ display:flex; }
+.scr > *{ flex-shrink:0; } /* the page scrolls, nothing gets squeezed */
+.card{ background:var(--cream); color:var(--txt); border:3px solid var(--ink); border-radius:22px; box-shadow:0 5px 0 var(--ink); padding:14px; }
+h1,h2,h3{ font-family:var(--t); margin:0; }
+p{ margin:6px 0 0; font-size:14px; line-height:1.4; }
+.mute{ color:var(--mute); }
+.btn{ display:block; width:100%; border:3px solid var(--ink); border-radius:16px; box-shadow:0 5px 0 var(--ink); padding:13px 12px; font:700 18px var(--t); color:var(--txt); background:#fff; cursor:pointer; transition:transform .08s, box-shadow .08s; }
+.btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--ink); }
+.btn.go{ background:var(--green); color:#fff; text-shadow:0 2px 0 var(--green-d); }
+.btn.mango{ background:var(--mango); }
+.btn small{ display:block; font:700 12.5px var(--b); opacity:.88; text-shadow:none; margin-top:1px; }
+.row{ display:flex; gap:10px; align-items:center; }
+.top{ display:flex; align-items:center; gap:8px; }
+.pill{ display:inline-flex; align-items:center; gap:6px; background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:99px; padding:4px 12px 4px 5px; box-shadow:0 4px 0 var(--ink); font:700 17px var(--t); }
+.coin{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe48a, #e8a817 60%, #b07b0a); border:2px solid var(--ink); flex:none; }
+.round{ width:42px; height:42px; border-radius:50%; border:3px solid var(--ink); background:#fff; box-shadow:0 4px 0 var(--ink); display:grid; place-items:center; font:700 20px var(--t); color:var(--txt); flex:none; cursor:pointer; }
+.av{ border-radius:50%; border:3px solid var(--ink); background:#fdeee0 center / cover no-repeat; flex:none; box-shadow:0 3px 0 var(--ink); }
+.logo{ width:min(52vw, 200px); align-self:center; margin:2px 0 -2px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
+.lbl{ font:800 11px var(--b); letter-spacing:.12em; text-transform:uppercase; color:#ffd9a0; opacity:.85; margin:16px 2px 8px; }
+/* the account band: one line, the reason, one button */
+.acct{ display:flex; gap:10px; align-items:center; margin-top:10px; background:#2b1c12; border:2px solid #6b4a2a; border-radius:16px; padding:9px 10px; color:#ffe6bd; }
+.acct b{ font:700 14px var(--t); color:#fff; display:block; }
+.acct span{ font:700 12px/1.3 var(--b); opacity:.9; flex:1; }
+.acct button{ border:2.5px solid var(--ink); border-radius:12px; background:var(--mango); color:var(--txt); font:700 14px var(--t); padding:7px 10px; box-shadow:0 3px 0 var(--ink); flex:none; cursor:pointer; }
+/* « ta place cette semaine » */
+.place{ margin-top:12px; padding:12px 14px; cursor:pointer; }
+.place .rk{ font:700 44px/1 var(--t); color:var(--txt); min-width:74px; text-align:center; }
+.place .rk small{ font-size:18px; vertical-align:top; position:relative; top:4px; }
+.place .up{ display:block; font:800 12px var(--b); color:var(--green-d); margin-top:2px; text-align:center; }
+.place .who{ flex:1; min-width:0; }
+.place .who b{ font:700 17px var(--t); display:flex; align-items:center; gap:5px; }
+.place .who em{ font-style:normal; font:800 11.5px var(--b); background:var(--cream2); border:2px solid var(--ink); border-radius:99px; padding:1px 8px; display:inline-block; margin-top:4px; }
+.cert{ display:inline-grid; place-items:center; width:18px; height:18px; border-radius:50%; background:#2f80ed; color:#fff; font:900 11px var(--b); border:2px solid var(--ink); }
+.cert.no{ background:#cfc2a8; }
+.crest{ width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--c1) 0 62%, var(--c2) 0); border:3px solid var(--ink); position:relative; flex:none; }
+.crest::before{ content:''; position:absolute; inset:6px; border-radius:50%; background:#1e1a3a; }
+.crest b{ position:relative; font:700 12px var(--t); color:#fff; }
+.bar{ height:10px; border-radius:99px; background:var(--cream2); border:2px solid var(--ink); overflow:hidden; margin-top:10px; }
+.bar i{ display:block; height:100%; background:linear-gradient(90deg, var(--mango), #ff9f2e); }
+.place .tip{ display:flex; justify-content:space-between; font:800 12px var(--b); color:var(--mute); margin-top:5px; }
+/* the play button of the home screen, with the painted champions */
+.hero{ position:relative; margin-top:14px; display:flex; align-items:center; gap:10px; padding:14px; border-radius:24px; border:3px solid var(--ink); box-shadow:0 6px 0 var(--ink);
+  background:radial-gradient(120% 120% at 0% 0%, #43c27e, #1f8a50 60%, #176b3e); color:#fff; text-align:left; cursor:pointer; overflow:hidden; }
+.hero .faces{ display:flex; }
+.hero .faces .av{ width:58px; height:58px; }
+.hero .faces .av + .av{ margin-left:-16px; }
+.hero b{ font:700 28px var(--t); text-shadow:0 3px 0 #145c35; display:block; line-height:1; }
+.hero small{ font:800 12.5px var(--b); opacity:.95; }
+.hero .chev{ margin-left:auto; font:700 30px var(--t); }
+.tiles{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px; }
+.tile{ background:var(--cream); color:var(--txt); border:3px solid var(--ink); border-radius:18px; box-shadow:0 4px 0 var(--ink); padding:10px 8px; text-align:center; cursor:pointer; }
+.tile i{ font-style:normal; font-size:24px; display:block; }
+.tile b{ font:700 14px var(--t); display:block; margin-top:2px; }
+.tile small{ font:700 11px var(--b); color:var(--mute); }
+.big2{ margin-top:12px; display:flex; gap:12px; align-items:center; padding:12px 14px; border-radius:22px; border:3px solid var(--ink); box-shadow:0 5px 0 var(--ink); cursor:pointer; }
+.big2.lg{ background:linear-gradient(135deg, #0e1838, #1c2f7a); color:#fff; }
+.big2.qz{ background:linear-gradient(135deg, #3a1a52, #6b2b7a); color:#fff; }
+.big2 b{ font:700 18px var(--t); display:block; }
+.big2 small{ font:700 12.5px var(--b); opacity:.9; }
+.ball{ width:46px; height:46px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #cfd8ff 40%, #6f86e8); border:3px solid var(--ink); flex:none; display:grid; place-items:center; font:800 13px var(--t); color:#0e1838; }
+.install{ margin-top:12px; display:flex; gap:12px; align-items:center; padding:12px 14px; cursor:pointer; }
+.install .ico{ width:44px; height:44px; border-radius:12px; border:3px solid var(--ink); background:#1a120c; display:grid; place-items:center; flex:none; overflow:hidden; }
+.tabbar{ position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 50px); z-index:4; display:flex; justify-content:space-around; background:#1c1611; border:2px solid #4a3a2a; border-radius:22px; padding:6px; }
+.tabbar span{ font:800 10.5px var(--b); color:#bfae92; text-align:center; padding:4px 6px; border-radius:14px; }
+.tabbar span i{ display:block; font-style:normal; font-size:17px; }
+.tabbar span.on{ background:var(--mango); color:var(--txt); }
+/* the Play page */
+.head{ display:flex; align-items:center; gap:10px; }
+.head h2{ font-size:26px; flex:1; }
+.quick{ margin-top:12px; padding:0; overflow:hidden; }
+.quick .in{ display:flex; gap:12px; align-items:center; padding:14px 14px 4px; }
+.quick .av{ width:76px; height:76px; }
+.quick h3{ font-size:21px; }
+.stars{ color:#e8a817; font-size:14px; letter-spacing:1px; }
+.chipsrow{ display:flex; gap:6px; padding:10px 14px 0; flex-wrap:wrap; }
+.chip{ border:2.5px solid var(--ink); border-radius:99px; background:var(--cream2); padding:5px 10px; font:800 13px var(--b); color:var(--txt); cursor:pointer; display:inline-flex; align-items:center; gap:4px; }
+.chip.on{ background:var(--mango); }
+.chip .coin{ width:15px; height:15px; border-width:1.5px; }
+.quick .go2{ padding:12px 14px 14px; }
+.opps{ display:flex; gap:10px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none; }
+.opp{ flex:none; width:118px; background:var(--cream); color:var(--txt); border:3px solid var(--ink); border-radius:20px; box-shadow:0 4px 0 var(--ink); padding:10px 8px; text-align:center; cursor:pointer; }
+.opp .av{ display:block; width:72px; height:72px; margin:0 auto; }
+.opp b{ font:700 15px var(--t); display:block; margin-top:6px; }
+.opp small{ font:800 11px var(--b); color:var(--mute); display:block; }
+.opp .rec{ font:800 11px var(--b); color:var(--green-d); margin-top:3px; }
+.opp.lock{ background:#2a1d14; color:#cdb895; border-color:#5a4632; box-shadow:0 4px 0 #000; }
+.opp.lock .av{ background:#3a2a1e; filter:grayscale(1) brightness(.5); display:grid; place-items:center; font-size:26px; }
+.mode{ display:flex; gap:12px; align-items:center; margin-top:10px; padding:12px 14px; cursor:pointer; }
+.mode .ic{ width:52px; height:52px; border-radius:16px; border:3px solid var(--ink); display:grid; place-items:center; font-size:24px; flex:none; }
+.mode b{ font:700 17px var(--t); display:block; }
+.mode small{ font:700 12.5px var(--b); color:var(--mute); }
+.mode .lock{ margin-left:auto; font:800 11px var(--b); background:#2f80ed; color:#fff; border:2px solid var(--ink); border-radius:99px; padding:2px 8px; white-space:nowrap; }
+.seats{ display:flex; }
+.seats .av{ width:34px; height:34px; border-width:2.5px; }
+.seats .av + .av{ margin-left:-10px; }
+/* sheets */
+.sheet{ position:fixed; left:0; right:0; bottom:0; z-index:6; background:var(--cream); color:var(--txt); border-top:3px solid var(--ink); border-radius:26px 26px 0 0; padding:10px 16px calc(env(safe-area-inset-bottom) + 60px); box-shadow:0 -10px 30px rgba(0,0,0,.5); max-height:88%; overflow-y:auto; }
+.sheet .grip{ width:44px; height:5px; border-radius:9px; background:#cdbb98; margin:0 auto 10px; }
+.dim{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:5; }
+.seg{ display:flex; gap:6px; background:var(--cream2); border:2.5px solid var(--ink); border-radius:14px; padding:4px; margin-top:10px; }
+.seg span{ flex:1; text-align:center; padding:7px 4px; border-radius:10px; font:800 13px var(--b); cursor:pointer; }
+.seg span.on{ background:#fff; box-shadow:0 2px 0 var(--ink); border:2px solid var(--ink); }
+.why{ display:flex; gap:10px; align-items:flex-start; margin-top:10px; font:700 14px/1.35 var(--b); }
+.why i{ font-style:normal; width:30px; height:30px; border-radius:10px; background:#fff; border:2.5px solid var(--ink); display:grid; place-items:center; flex:none; font-size:15px; }
+.steps{ counter-reset:s; margin-top:8px; }
+.stp{ display:flex; gap:12px; align-items:center; margin-top:12px; }
+.stp .n{ width:30px; height:30px; border-radius:50%; background:var(--mango); border:2.5px solid var(--ink); display:grid; place-items:center; font:700 15px var(--t); flex:none; }
+.stp .ill{ width:88px; height:62px; border-radius:12px; background:#fff; border:2.5px solid var(--ink); display:grid; place-items:center; flex:none; position:relative; overflow:hidden; }
+.stp div:last-child{ font:700 14px/1.35 var(--b); }
+.pulse{ animation:pulse 1.6s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+.fx{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px; }
+.fx span{ background:#fff; border:2.5px solid var(--ink); border-radius:14px; padding:8px 4px; text-align:center; font:800 12px var(--b); cursor:pointer; }
+.fx span i{ display:block; font-style:normal; font-size:22px; }
+.fx span.on{ background:var(--mango); box-shadow:0 3px 0 var(--ink); }
+.fx span.locked{ opacity:.45; }
+.tables{ display:flex; gap:8px; overflow-x:auto; padding:4px 0 6px; }
+.tbl{ flex:none; width:96px; height:66px; border-radius:14px; border:3px solid var(--ink); position:relative; cursor:pointer; }
+.tbl b{ position:absolute; left:6px; bottom:4px; font:800 11px var(--b); color:#fff; text-shadow:0 1px 2px #000; }
+.tbl.on{ box-shadow:0 0 0 4px var(--mango); }
+/* the reviewer's guide (not part of the game) */
+.guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:5px; justify-content:center; align-items:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.82); font:700 11px var(--b); color:#bbb; }
+.guide button{ background:#333; color:#ddd; border:0; border-radius:8px; padding:5px 8px; font:800 11px var(--b); cursor:pointer; }
+.guide button.on{ background:var(--mango); color:#111; }
+.hidden{ display:none !important; }
+@media (max-height:740px){ .logo{ width:150px; } .place .rk{ font-size:38px; } .hero b{ font-size:24px; } .hero .faces .av{ width:50px; height:50px; } .quick .av{ width:64px; height:64px; } }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style></head>
+<body>
+<div class="wall"></div><div class="bulb"></div>
+
+<!-- 1. THE HOME SCREEN -->
+<section class="scr on" id="s1">
+  <div class="top"><span class="pill"><span class="coin"></span>4 250</span><span style="flex:1"></span><span class="round">🔔</span><span class="round">👤</span></div>
+  <div id="logo1"></div>
+  <!-- the account, suggested with its reason, until it is saved -->
+  <div class="acct" data-go="s5"><span><b>Ton compte n’est pas sauvegardé</b>Change de téléphone et tu perds tes 4 250 jetons et ta place.</span><button>Sauvegarder</button></div>
+  <!-- what used to be « Petit joueur · 1 j · 0 rép. »: your real place this week -->
+  <div class="card place" data-go="s1">
+    <div class="row">
+      <div><div class="rk">27<small>e</small></div><span class="up">▲ 3 places</span></div>
+      <div class="who"><b>Le Boss <span class="cert no" title="Compte non sauvegardé">✓</span></b><span class="mute" style="font:800 12.5px var(--b)">Nkolbisson · 128 points</span><br><em>⭐ Petit joueur</em></div>
+      <span class="crest" style="--c1:#00897b;--c2:#ffd54f"><b>NKB</b></span>
+    </div>
+    <div class="bar"><i style="width:62%"></i></div>
+    <div class="tip"><span>Encore 40 pts pour passer 20e</span><span>Nkolbisson : 9e / 32</span></div>
+  </div>
+  <!-- the big play button: the painted champions -->
+  <button class="hero" data-go="s2">
+    <span class="faces"><span class="av" style="background-image:url('../art/zh/rall.webp')"></span><span class="av" style="background-image:url('../art/zh/penalty.webp')"></span><span class="av" style="background-image:url('../art/zh/christelle.webp')"></span></span>
+    <span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span><span class="chev">›</span>
+  </button>
+  <div class="big2 lg"><span class="ball">FF</span><span><small>Saison 1 · tu joues pour Nkolbisson</small><b>FAP·FAP LEAGUE</b><small>Huitièmes de finale dans 2 jours</small></span></div>
+  <div class="big2 qz"><span style="font-size:30px">👑</span><span><small>Le quartier cette semaine</small><b>Tout le quartier</b><small>Le Roi : Mola · fin dans 4 j 6 h</small></span></div>
+  <div class="tiles">
+    <div class="tile"><i>📅</i><b>Défi du jour</b><small>même donne pour tous</small></div>
+    <div class="tile"><i>🎓</i><b>La leçon</b><small>avec Maître Tsala</small></div>
+    <div class="tile"><i>📖</i><b>Les règles</b><small>CORA, Passe…</small></div>
+  </div>
+  <!-- installing the game: shown until it is done, with its own tutorial -->
+  <div class="card install" data-go="s4"><span class="ico"><svg viewBox="0 0 40 40" width="34"><circle cx="20" cy="20" r="17" fill="#16100b" stroke="#e9b94e" stroke-width="3"/><text x="20" y="27" text-anchor="middle" font-family="Cinzel,serif" font-weight="800" font-size="16" fill="#f1c257">FF</text></svg></span>
+    <span style="flex:1"><b style="font:700 16px var(--t)">Mets Fap Fap sur ton écran</b><br><span class="mute" style="font:700 12.5px var(--b)">Il s’ouvre d’un toucher, en plein écran, et te prévient quand on te dépasse.</span></span><span style="font:700 24px var(--t)">›</span></div>
+  <div style="height:8px"></div>
+</section>
+
+<!-- 2. THE PLAY PAGE -->
+<section class="scr" id="s2">
+  <div class="head"><span class="round" data-go="s1">‹</span><h2>Jouer</h2><span class="pill"><span class="coin"></span>4 250</span></div>
+  <!-- one tap: the next opponent, the stake already chosen -->
+  <div class="card quick">
+    <div class="in"><span class="av" style="background-image:url('../art/zh/rall.webp')"></span>
+      <div style="flex:1"><span class="mute" style="font:800 11px var(--b);letter-spacing:.1em;text-transform:uppercase">Partie rapide</span><h3>RALL</h3><span class="stars">★★☆</span> <span class="mute" style="font:800 12px var(--b)">le roi du bluff · cote ×1,5</span></div></div>
+    <div class="chipsrow"><span class="chip"><span class="coin"></span>100</span><span class="chip on"><span class="coin"></span>500</span><span class="chip"><span class="coin"></span>1 000</span><span class="chip"><span class="coin"></span>5 000</span><span class="chip">1 manche ▾</span></div>
+    <div class="go2"><button class="btn go">Jouer contre RALL<small>Gagne 750 jetons · perds 500</small></button></div>
+  </div>
+  <div class="lbl">Le quartier · choisis ton adversaire</div>
+  <div class="opps">
+    <div class="opp" data-sheet="1"><span class="av" style="background-image:url('../art/zh/christelle.webp')"></span><b>Christelle</b><small>★☆☆ · facile</small><div class="rec">3 V · 1 D</div></div>
+    <div class="opp" data-sheet="1"><span class="av" style="background-image:url('../art/zh/rall.webp')"></span><b>RALL</b><small>★★☆ · bluff</small><div class="rec">1 V · 2 D</div></div>
+    <div class="opp" data-sheet="1"><span class="av" style="background-image:url('../art/zh/penalty.webp')"></span><b>Penalty</b><small>★★★ · le maître</small><div class="rec" style="color:var(--mute)">jamais battu</div></div>
+    <div class="opp lock"><span class="av">🔒</span><b>+ 7 champions</b><small style="color:#bfa47e">Bats-les en League pour les débloquer</small></div>
+  </div>
+  <div class="lbl">Contre de vrais joueurs</div>
+  <div class="card mode" data-go="s5"><span class="ic" style="background:#dff0ff">🌍</span><span style="flex:1"><b>Avec un ami</b><small>Invite-le par WhatsApp. Tu héberges : tu choisis la table.</small></span><span class="lock">✓ Compte requis</span></div>
+  <div class="card mode"><span class="ic" style="background:#ffe9c7">🔑</span><span style="flex:1"><b>Rejoindre avec un code</b><small>Ton ami t’a envoyé 4 lettres</small></span></div>
+  <div class="lbl">Entre amis ou contre le quartier</div>
+  <div class="card mode"><span class="ic" style="background:#ffe0e8">🃏</span><span style="flex:1"><b>Carré la Pute</b><small>À 4 : le vainqueur de chaque manche élimine qui il veut</small></span>
+    <span class="seats"><span class="av" style="background-image:url('../art/zh/penalty.webp')"></span><span class="av" style="background-image:url('../art/zh/rall.webp')"></span><span class="av" style="background-image:url('../art/zh/christelle.webp')"></span></span></div>
+</section>
+
+<!-- 3. A TAP ON AN OPPONENT: one sheet with everything before the cards -->
+<section class="scr" id="s3"></section>
+
+<!-- 4. INSTALLING THE GAME, step by step (iPhone / Android) -->
+<section class="scr" id="s4">
+  <div class="head"><span class="round" data-go="s1">‹</span><h2>Installer le jeu</h2></div>
+  <div class="card" style="margin-top:12px">
+    <p style="margin:0;font-weight:800">Une fois installé, Fap Fap s’ouvre comme une vraie application : en plein écran, sans la barre du navigateur, et il peut te prévenir quand on te dépasse au classement.</p>
+    <div class="seg" id="osSeg"><span class="on" data-os="ios">iPhone</span><span data-os="and">Android</span></div>
+    <div id="osIos" class="steps">
+      <div class="stp"><span class="n">1</span><span class="ill"><svg viewBox="0 0 88 62" width="88"><rect x="6" y="40" width="76" height="18" rx="4" fill="#eee" stroke="#1b120c" stroke-width="2"/><g class="pulse" style="transform-origin:44px 49px"><rect x="36" y="42" width="16" height="14" rx="3" fill="#3D7FD9"/><path d="M44 52 V45 M40.5 48 L44 44.5 L47.5 48" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g></svg></span><div>Ouvre le jeu dans <b>Safari</b>, puis touche le bouton <b>Partager</b> en bas de l’écran.</div></div>
+      <div class="stp"><span class="n">2</span><span class="ill"><svg viewBox="0 0 88 62" width="88"><rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><rect x="14" y="16" width="60" height="12" rx="3" fill="#fff" stroke="#ccc"/><g class="pulse" style="transform-origin:44px 40px"><rect x="14" y="33" width="60" height="14" rx="3" fill="#FFC93C" stroke="#1b120c"/><text x="44" y="43" text-anchor="middle" font-size="6.2" font-weight="800" font-family="Nunito">Sur l’écran d’accueil</text></g></svg></span><div>Fais défiler et touche <b>« Sur l’écran d’accueil »</b>.</div></div>
+      <div class="stp"><span class="n">3</span><span class="ill"><svg viewBox="0 0 88 62" width="88"><rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><text x="76" y="21" text-anchor="end" font-size="8" font-weight="800" fill="#3D7FD9" font-family="Nunito" class="pulse" style="transform-origin:64px 18px">Ajouter</text><circle cx="26" cy="36" r="10" fill="#16100b" stroke="#e9b94e" stroke-width="2"/><text x="26" y="40" text-anchor="middle" font-size="9" font-weight="800" fill="#f1c257" font-family="Cinzel">FF</text></svg></span><div>Touche <b>Ajouter</b> en haut à droite. L’icône Fap Fap apparaît sur ton écran : ouvre le jeu depuis elle.</div></div>
+    </div>
+    <div id="osAnd" class="steps hidden">
+      <div class="stp"><span class="n">1</span><span class="ill"><svg viewBox="0 0 88 62" width="88"><rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><g class="pulse" style="transform-origin:44px 31px"><rect x="18" y="22" width="52" height="18" rx="9" fill="#2FB36B" stroke="#1b120c"/><text x="44" y="34" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff" font-family="Nunito">Installer</text></g></svg></span><div>Touche le bouton <b>Installer</b> ci-dessous : Chrome te demande de confirmer.</div></div>
+      <div class="stp"><span class="n">2</span><span class="ill"><svg viewBox="0 0 88 62" width="88"><rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><text x="72" y="20" font-size="12" font-weight="900" text-anchor="end" font-family="Nunito" class="pulse" style="transform-origin:66px 17px">⋮</text><rect x="22" y="28" width="56" height="12" rx="3" fill="#FFC93C" stroke="#1b120c"/><text x="50" y="37" text-anchor="middle" font-size="7" font-weight="800" font-family="Nunito">Installer l’application</text></svg></span><div>Pas de bouton ? Ouvre le menu <b>⋮</b> de Chrome, puis <b>« Installer l’application »</b>.</div></div>
+    </div>
+    <button class="btn go" style="margin-top:14px" id="instGo">J’ai compris</button>
+  </div>
+  <p style="color:#d9c3a0;font-weight:800;text-align:center;margin-top:12px">Sur iPhone, les notifications ne marchent qu’une fois le jeu installé.</p>
+</section>
+
+<!-- 5. SAVING THE ACCOUNT: why, then the two ways that exist (Google, a code by e-mail) -->
+<section class="scr" id="s5">
+  <div class="head"><span class="round" data-go="s1">‹</span><h2>Ton compte</h2></div>
+  <div class="card" style="margin-top:12px">
+    <div class="row"><span class="av" style="width:56px;height:56px;background:#3D7FD9;display:grid;place-items:center;font:700 22px var(--t);color:#fff">LB</span>
+      <div><b style="font:700 19px var(--t)">Le Boss <span class="cert">✓</span></b><br><span class="mute" style="font:800 12.5px var(--b)">Le badge bleu « Certifié » : tout le monde le voit à côté de ton nom</span></div></div>
+    <div class="why"><i>💰</i><span><b>Tes jetons ne se perdent jamais</b> : téléphone cassé, volé ou changé, tu retrouves tout.</span></div>
+    <div class="why"><i>🌍</i><span><b>Le jeu en ligne et la League en ligne</b> sont réservés aux comptes sauvegardés (contre les tricheurs et les doubles comptes).</span></div>
+    <div class="why"><i>👑</i><span><b>Ta place au classement</b> et ton quartier te suivent partout.</span></div>
+    <div class="why"><i>🎁</i><span><b>+500 jetons</b> offerts à la sauvegarde.</span></div>
+    <button class="btn" style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:10px"><svg viewBox="0 0 24 24" width="22"><path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z" fill="#4285F4"/><path d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z" fill="#34A853"/><path d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14z" fill="#FBBC05"/><path d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.8 9.4 6 12 6z" fill="#EA4335"/></svg>Continuer avec Google</button>
+    <button class="btn" style="margin-top:10px">✉️ Recevoir un code par e-mail</button>
+    <p class="mute" style="text-align:center;font-weight:800">Ton pseudo, tes jetons et ton quartier restent les mêmes.</p>
+  </div>
+</section>
+
+<!-- 6. SETTINGS: the default effects, and the table of the host -->
+<section class="scr" id="s6">
+  <div class="head"><span class="round" data-go="s1">‹</span><h2>Mon style</h2></div>
+  <div class="card" style="margin-top:12px">
+    <h3 style="font-size:18px">Effet du CORA, par défaut</h3>
+    <p class="mute" style="margin-top:2px">Il éclate à chacun de tes CORA. Les autres s’achètent à la Boutique.</p>
+    <div class="fx" data-g="cora"><span class="on"><i>☄️</i>Météorite</span><span><i>⚡</i>La foudre</span><span><i>🎲</i>Au hasard</span><span class="locked"><i>💸</i>Pluie de billets</span><span class="locked"><i>🎆</i>Feu d’artifice</span><span class="locked"><i>🕳️</i>Trou noir</span></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3 style="font-size:18px">Effet de la claque, par défaut</h3>
+    <div class="fx" data-g="claque"><span class="on"><i>👋</i>Clac !</span><span><i>🌊</i>Onde de choc</span><span><i>🎲</i>Au hasard</span><span class="locked"><i>🔥</i>Cartes en feu</span><span class="locked"><i>🌩️</i>Éclair bleu</span></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3 style="font-size:18px">Quand tu héberges : ta table</h3>
+    <p class="mute" style="margin-top:2px">Ton ami joue sur la table que tu choisis ici. En League, la table est tirée au sort parmi toutes celles du jeu.</p>
+    <div class="tables" data-g="tbl">
+      <span class="tbl on" style="background:radial-gradient(#2fae6a,#17673d)"><b>Tapis vert</b></span>
+      <span class="tbl" style="background:repeating-linear-gradient(45deg,#7a4a22 0 8px,#6a3e1a 8px 16px)"><b>Bois du bar</b></span>
+      <span class="tbl" style="background:radial-gradient(#1d2f7a,#0d1638)"><b>Velours bleu</b></span>
+      <span class="tbl" style="background:repeating-linear-gradient(90deg,#e8a817 0 10px,#c8283a 10px 20px,#1f8a50 20px 30px)"><b>Wax</b></span>
+    </div>
+  </div>
+</section>
+
+<div class="dim hidden" id="dim"></div>
+<div class="sheet hidden" id="sheet">
+  <div class="grip"></div>
+  <div class="row"><span class="av" style="width:72px;height:72px;background-image:url('../art/zh/penalty.webp')"></span>
+    <div style="flex:1"><h3 style="font-size:22px">Penalty</h3><span class="stars">★★★</span> <span class="mute" style="font:800 12.5px var(--b)">le maître du quartier</span><p class="mute" style="margin-top:2px">« Assieds-toi, petit. Ici, c’est moi qui distribue. »</p></div></div>
+  <div class="seg"><span class="on">Partie unique</span><span>En 3 manches</span></div>
+  <p style="font-weight:800;margin-top:12px">Ta mise</p>
+  <div class="chipsrow" style="padding:6px 0 0"><span class="chip"><span class="coin"></span>100</span><span class="chip"><span class="coin"></span>500</span><span class="chip on"><span class="coin"></span>1 000</span><span class="chip"><span class="coin"></span>5 000</span><span class="chip"><span class="coin"></span>10 000</span></div>
+  <p class="mute" style="font-weight:800">Cote ×2 contre Penalty : tu gagnes 2 000, tu perds 1 000. Un CORA double tout.</p>
+  <button class="btn go" style="margin-top:12px">Jouer contre Penalty</button>
+</div>
+
+<nav class="tabbar" id="tabbar"><span class="on"><i>🏠</i>Accueil</span><span><i>👤</i>Profil</span><span><i>🛍️</i>Boutique</span><span><i>🎨</i>Décors</span><span data-go="s6"><i>⚙️</i>Réglages</span></nav>
+<nav class="guide" id="guide"></nav>
+
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]fast\b/.test(location.search);
+const A = (el, kf, o)=> el && !reduce ? el.animate(kf, Object.assign({duration:420, easing:'cubic-bezier(.2,.8,.2,1)', fill:'both'}, o)) : null;
+// the new logo, as in the game (v82)
+$('logo1').outerHTML = '<svg class="logo" viewBox="0 0 400 340" role="img" aria-label="Fap-Fap"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient><linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient><radialGradient id="d" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient><linearGradient id="p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient><linearGradient id="bd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient><g id="c"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="url(#p)" stroke="#1b120c" stroke-width="3"/></g></defs><circle cx="200" cy="158" r="138" fill="url(#d)" stroke="url(#r)" stroke-width="7"/><g transform="translate(168 262) rotate(-22)"><use href="#c"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26">3</text><text x="1" y="-48" font-size="54" text-anchor="middle">♠</text></g><g transform="translate(232 262) rotate(22)"><use href="#c"/><text x="37" y="-122" text-anchor="end" font-family="Fredoka" font-weight="700" font-size="24" fill="#c8283a">10</text><text x="1" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♦</text></g><g transform="translate(200 254)"><use href="#c"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#c8283a">3</text><text x="1" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♥</text></g><g transform="translate(200 206)"><circle r="35" fill="#120d09" stroke="url(#r)" stroke-width="4"/><circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/><circle r="21" fill="#1a130d" stroke="url(#r)" stroke-width="2.5"/><text y="10" font-size="28" text-anchor="middle" fill="url(#g)">♠</text></g><path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="url(#bd)" stroke="url(#r)" stroke-width="4" stroke-linejoin="round"/><text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" fill="url(#g)" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text></svg>';
+const ORDER = ['s1','s2','s3','s4','s5','s6'];
+const names = ['Accueil','Jouer','Fiche adversaire','Installer','Compte','Mon style'];
+let cur = 's1';
+function show(id){
+  if(id==='s3'){ if(cur!=='s2') show('s2'); openSheet(); cur = 's3'; guide(); return; }
+  closeSheet();
+  if(id===cur) return;
+  $(cur).classList.remove('on'); $(id).classList.add('on'); $(id).scrollTop = 0; cur = id;
+  [...$(id).querySelectorAll('.card, .hero, .big2, .tile, .opp, .acct, .head')].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:380, delay:40 + i*45, fill:'backwards'}));
+  $('tabbar').classList.toggle('hidden', id!=='s1'); guide();
+}
+function openSheet(){ $('dim').classList.remove('hidden'); $('sheet').classList.remove('hidden'); A($('sheet'), [{transform:'translateY(100%)'}, {transform:'none'}], {duration:360, fill:'none'}); }
+function closeSheet(){ $('dim').classList.add('hidden'); $('sheet').classList.add('hidden'); if(cur==='s3') cur = 's2'; }
+$('dim').addEventListener('click', ()=>{ closeSheet(); guide(); });
+document.addEventListener('click', e=>{
+  const g = e.target.closest('[data-go]'); if(g){ show(g.dataset.go); return; }
+  if(e.target.closest('[data-sheet]')){ show('s3'); return; }
+  const c = e.target.closest('.chip'); if(c && c.parentElement){ [...c.parentElement.children].forEach(x=> x.classList.toggle('on', x===c)); }
+  const s = e.target.closest('.seg span'); if(s){ [...s.parentElement.children].forEach(x=> x.classList.toggle('on', x===s)); if(s.dataset.os){ $('osIos').classList.toggle('hidden', s.dataset.os!=='ios'); $('osAnd').classList.toggle('hidden', s.dataset.os!=='and'); } }
+  const f = e.target.closest('.fx span:not(.locked), .tbl'); if(f){ [...f.parentElement.children].forEach(x=> x.classList.toggle('on', x===f)); }
+  if(e.target.id==='instGo') show('s1');
+});
+function guide(){ $('guide').innerHTML = ORDER.map((id, i)=> '<button class="'+(id===cur ? 'on' : '')+'" data-g="'+id+'">'+(i+1)+'</button>').join('')+'<span style="margin-left:4px">'+names[ORDER.indexOf(cur)]+'</span>'; }
+$('guide').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(b){ e.stopPropagation(); show(b.dataset.g); } });
+guide();
+})();
+</script>
+</body></html>
