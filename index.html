@@ -2671,9 +2671,32 @@
   .lg-txt > span:not(.lg-cta){ font:700 12.5px/1.4 'Manrope', sans-serif; color:#c3cbef !important; }
   .lg-cta{ margin-top:12px; border-radius:999px; padding:10px 16px; font:700 11px 'Unbounded', sans-serif; letter-spacing:.08em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02 !important; }
   @media (prefers-reduced-motion: reduce){ .lg-ball, .lg-ball b{ animation:none; } }
+  /* the week's ranking on the home screen (v81): the podium, your place, the live news of the quarter */
+  #btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier.qz-home{ position:relative; width:100%; margin-top:12px; border-radius:22px !important; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:0; padding:14px 14px 16px; text-align:left; cursor:pointer;
+    background:radial-gradient(120% 80% at 50% 120%, #1d3aa8 0%, #0b1850 45%, #040824 85%) !important; border:1px solid rgba(242,199,106,.45) !important; box-shadow:0 14px 34px rgba(3,6,25,.55), inset 0 1px 0 rgba(255,255,255,.08) !important; color:#eef1ff !important; }
+  .qz-tick{ display:block; overflow:hidden; white-space:nowrap; padding:7px 0; margin:0 -2px 10px; border-radius:12px; background:rgba(255,255,255,.06); }
+  .qz-tick span{ display:inline-block; padding-left:100%; animation:qzTick var(--dur, 26s) linear infinite; font:700 11.5px 'Manrope', sans-serif; color:#cfd5f5 !important; }
+  .qz-tick b{ color:#f2c76a; }
+  @keyframes qzTick{ to{ transform:translateX(-100%); } }
+  .qz-head{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .qz-head small{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#f2c76a !important; }
+  .qz-head em{ font:800 10.5px 'Manrope', sans-serif; font-style:normal; letter-spacing:.08em; color:#8f9bcf !important; }
+  .qz-pod{ display:flex; align-items:flex-end; justify-content:center; gap:8px; margin:20px 0 4px; min-height:40px; }
+  .qz-pd{ display:flex; flex-direction:column; align-items:center; gap:4px; width:84px; text-align:center; }
+  .qz-av{ --s:42px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; position:relative; font:800 14px 'Manrope', sans-serif; color:#fff !important; background:linear-gradient(150deg, var(--a1), #0a1446); box-shadow:0 0 0 2.5px #f2c76a, 0 0 14px rgba(242,199,106,.45); }
+  .qz-pd.p1 .qz-av{ --s:52px; }
+  .qz-av i{ position:absolute; top:-21px; left:50%; translate:-50% 0; font-style:normal; font-size:20px; }
+  .qz-nm{ font:700 11.5px/1.2 'Manrope', sans-serif; max-width:84px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#eef1ff !important; }
+  .qz-pt{ font:800 10.5px 'Manrope', sans-serif; color:#f2c76a !important; }
+  .qz-step{ width:100%; border-radius:10px 10px 3px 3px; display:grid; place-items:center; font:800 16px 'Unbounded', sans-serif; color:rgba(255,255,255,.85) !important; background:linear-gradient(180deg, rgba(242,199,106,.35), rgba(242,199,106,.06)); }
+  .qz-pd.p1 .qz-step{ height:52px; } .qz-pd.p2 .qz-step{ height:36px; background:linear-gradient(180deg, rgba(200,210,240,.3), rgba(200,210,240,.05)); } .qz-pd.p3 .qz-step{ height:28px; background:linear-gradient(180deg, rgba(205,140,90,.32), rgba(205,140,90,.05)); }
+  .qz-me{ display:block; margin-top:12px; padding:10px 12px; border-radius:14px; background:rgba(242,199,106,.1); box-shadow:inset 0 0 0 1px rgba(242,199,106,.32); font:700 12.5px/1.45 'Manrope', sans-serif; color:#eef1ff !important; }
+  .qz-me b{ color:#f2c76a; font:800 20px 'Unbounded', sans-serif; margin-right:6px; vertical-align:-2px; }
+  .qz-cta{ align-self:flex-start; margin-top:12px; border-radius:999px; padding:10px 16px; font:700 11px 'Unbounded', sans-serif; letter-spacing:.08em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02 !important; }
+  @media (prefers-reduced-motion: reduce){ .qz-tick span{ animation:none; } }
   /* the phone of the story, full screen above the game */
-  #zhOverlay{ position:fixed; inset:0; z-index:90; background:#030619; }
-  #zhOverlay iframe{ width:100%; height:100%; border:0; display:block; }
+  #zhOverlay, #qOverlay{ position:fixed; inset:0; z-index:90; background:#030619; }
+  #zhOverlay iframe, #qOverlay iframe{ width:100%; height:100%; border:0; display:block; }
   /* the road: each opponent in a photograph, at their place */
   .opp-card{ display:grid !important; grid-template-columns:96px 1fr; gap:14px; align-items:stretch !important; padding:12px !important; border-radius:18px !important; background:#15110d !important; border:1px solid rgba(255,255,255,.1) !important; box-shadow:none !important; }
   .opp-card:last-child{ border-color:rgba(214,171,82,.6) !important; background:linear-gradient(160deg, #241a0c, #15110d 60%) !important; }
@@ -4578,6 +4601,7 @@
 </div>
 
 <div class="hidden" id="zhOverlay"><iframe id="zhFrame" title="Fap-Fap League" allow="autoplay"></iframe></div>
+<div class="hidden" id="qOverlay"><iframe id="qFrame" title="Tout le quartier"></iframe></div>
 
 <div class="overlay modal hidden" id="playerSheet">
   <div class="sheet ps-sheet">
@@ -4720,6 +4744,14 @@
         <span class="hx-bar"><i id="hxHomeBar"></i></span><span class="hx-cta" id="hxHomeTag">Commencer l’enquête</span></span>
     </button>
 
+    <!-- v81: the week's competition between the real players (quartier.html, opened in #qFrame above the game) -->
+    <button class="qz-home press" id="btnQuartier" style="--d:2">
+      <span class="qz-tick"><span id="qzTick">Le quartier se réveille…</span></span>
+      <span class="qz-head"><small>Le quartier cette semaine</small><em id="qzEnd"></em></span>
+      <span class="qz-pod" id="qzPod"></span>
+      <span class="qz-me" id="qzMe">Gagne une partie en ligne pour entrer au classement de la semaine.</span>
+      <span class="qz-cta">Voir le classement</span>
+    </button>
     <!-- v80: the Fap-Fap League replaces the story modes (league.html, opened in #zhFrame above the game) -->
     <button class="lg-home press" id="btnLeague" style="--d:2">
       <span class="lg-ball" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>FF</b></span>
@@ -6237,6 +6269,7 @@
       oppNameVal = String(msg.name || 'Ton ami').slice(0,16);
       oppUid = typeof msg.uid==='string' ? msg.uid : null;
       applyOppNameToUI();
+      if(window.qzKingCheck) window.qzKingCheck();
       if(mpIsHost && !mpMatchStarted) mpOfferStake(msg.chips);
       return;
     }
@@ -9076,6 +9109,7 @@
     if(open('sugg')){ closeSuggest(); return true; }
     if(open('betaNote')){ document.getElementById('bnOk').click(); return true; }
     if(typeof ZH!=='undefined' && ZH.open){ zhPost({zh:'back'}); return true; }
+    if(typeof QZ!=='undefined' && QZ.open){ qPost({zh:'back'}); return true; }
     if(open('friendInviteOverlay')){ document.getElementById('fiNo').click(); return true; }
     if(open('playerSheet')){ document.getElementById('psClose').click(); return true; }
     if(open('confirmRestartOverlay')){ document.getElementById('btnConfirmRestartNo').click(); return true; }
@@ -9137,7 +9171,7 @@
   function pageShown(id){
     if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
-    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); }
+    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); if(window.qzHomeShown) window.qzHomeShown(); }
     else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='bellPage'){ if(window.renderBell) window.renderBell(); }
@@ -12797,7 +12831,8 @@
     btn.classList.add('claimed');
     setTimeout(()=>{ btn.classList.remove('claimed'); renderChips(before); }, 450);
   });
-  document.getElementById('btnRich').addEventListener('click', ()=> Nav.go('richPage'));
+  // the crown of the home screen: the week's ranking of Tout le quartier (the all-time riches stay one tap further)
+  document.getElementById('btnRich').addEventListener('click', ()=>{ ensureAudio(); qOpen(); });
   // the stake picker (on the opponents page and in the online lobby)
   function renderStakePicks(){
     document.querySelectorAll('.stake-pick').forEach(box=>{
@@ -13040,7 +13075,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v80';
+  const APP_VERSION = 'v81';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -13317,6 +13352,7 @@
       if(won){ profile.onlineWins = (profile.onlineWins||0)+1; repAdd(80, 'Victoire en ligne'); unlockTrophy('premiere'); unlockTrophy('en_ligne'); }
       else repAdd(25, 'Match en ligne');
       saveProfile(); checkExploits();
+      qzOnlineDuel(won);
     }
     document.getElementById('matchOverTitle').textContent = TARGET_SCORE===1
       ? (won ? 'Tu gagnes la partie !' : oppName()+' gagne la partie.')
@@ -14202,7 +14238,7 @@
       chipsAdd(back); res.delta += back - matchStake;
       res.line = 'Mise '+fmtChips(matchStake)+(inn ? ' · +'+fmtChips(matchStake*inn)+' de tes éliminés' : '')+(out ? ' · −'+fmtChips(matchStake*out)+(out===4 ? ' (double CORA ×4)' : out===2 ? ' (CORA ×2)' : '') : '');
     }
-    if(sq && (sq.online || sq.remote)) mpLogAdd({k:'carre', o: won ? nPlayers+' joueurs' : champName, s:matchStake, d:res.delta - (won ? 50 : 0), r: won ? 'V' : 'D'});
+    if(sq && (sq.online || sq.remote)){ mpLogAdd({k:'carre', o: won ? nPlayers+' joueurs' : champName, s:matchStake, d:res.delta - (won ? 50 : 0), r: won ? 'V' : 'D'}); qzOnlineCarre(won, nPlayers); }
     matchStake = 0;
     showChipsResult(res);
     refreshRematchUI(); refreshFriendBtnMo();
@@ -15805,6 +15841,244 @@
     }catch(e){}
   }
   renderLeagueHome();
+
+  // ===================== Tout le quartier (v81): the week's competition between the real players =====================
+  // quartier.html in #qFrame shows it; the game reads the server (fapfap_week_top, fapfap_quartiers…) and keeps the
+  // week in the profile: profile.wk = {id, pts, qpts, games, nights} (qpts: what counts for the neighbourhood, derbies
+  // excluded), profile.prevWk the week before. The phone writes its points like its chips: virtual, not cheat-proof.
+  const QZ = {open:false, top:null, feed:null, fetched:0, cerTried:false};
+  const QUARTIERS = ['Mokolo','Briqueterie','Mvog-Ada','Mvog-Mbi','Essos','Nkolbisson','Biyem-Assi','Obili','Melen','Mendong','Ekounou','Emana','Nkoldongo','Etoudi','Mimboman','Madagascar','Cité Verte','Elig-Edzoa','Mvan','Tsinga','Messa','Nlongkak','Bastos','Odza','New-Bell','Akwa','Deïdo','Bépanda','Ndokotti','Bonabéri','Makepe','Village'];
+  const QZ_COLORS = ['#e23b3b','#2bb673','#7b3fe4','#ff8a1f','#1e88e5','#00897b','#c2185b','#3949ab','#43a047','#f4511e','#8e24aa','#fdd835','#d32f2f','#00acc1','#6d4c41','#e91e63','#2e7d32','#5e35b1','#ef6c00','#0277bd','#ad1457','#558b2f','#212121','#00838f','#1565c0','#c62828','#2e7d32','#6a1b9a','#ff6f00','#00695c','#283593','#4e342e'];
+  // the week, Monday 0 h to Sunday midnight, Yaoundé / Douala time (UTC+1): "2026-W44"
+  function weekOf(t){
+    const d = new Date((t || Date.now()) + 3600e3), x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())), day = x.getUTCDay() || 7;
+    x.setUTCDate(x.getUTCDate() + 4 - day);
+    const y = x.getUTCFullYear();
+    return y+'-W'+String(Math.ceil(((x - Date.UTC(y, 0, 1)) / 864e5 + 1) / 7)).padStart(2, '0');
+  }
+  function wkRoll(){
+    const w = weekOf();
+    if(!profile.wk || profile.wk.id!==w){
+      if(profile.wk && profile.wk.id) profile.prevWk = {id:profile.wk.id, pts:profile.wk.pts||0, qpts:profile.wk.qpts||0};
+      profile.wk = {id:w, pts:0, qpts:0, games:0, nights:0}; saveProfile();
+    }
+    return profile.wk;
+  }
+  // ×2 for an hour from the Friday box, +20 % for two weeks after joining a neighbourhood that lacks players
+  function weekBonus(){ let k = 1; if((profile.dblUntil||0) > Date.now()) k *= 2; if((profile.qBonusUntil||0) > Date.now()) k *= 1.2; return k; }
+  function weekAdd(n, derby){
+    if(!n) return 0;
+    const w = wkRoll(), x = Math.round(n * weekBonus());
+    w.pts = Math.min(1e6, (w.pts||0) + x); if(!derby) w.qpts = Math.min(1e6, (w.qpts||0) + x);
+    profile.lastPlay = Date.now(); saveProfile(); cloudSchedule();
+    return x;
+  }
+  function weekGame(){ const w = wkRoll(); w.games = (w.games||0) + 1; profile.lastPlay = Date.now(); saveProfile(); cloudSchedule(); }
+  async function qzReady(){ if(!CLOUD_ON) return false; const ok = await cloudInit(); if(Cloud.pullP) await Cloud.pullP; return !!ok && !!Cloud.user; }
+  async function qzFeed(kind, other, n){ try{ if(await qzReady()) await supaClient.rpc('fapfap_feed_add', {kind, other: other || null, n: n || 0}); }catch(e){} }
+  // an online duel just ended: +10 a hand won (×2 CORA, ×4 33 Glacée); a derby counts for the player, not the neighbourhood
+  async function qzOnlineDuel(won){
+    weekGame();
+    profile.onlineStreak = won ? (profile.onlineStreak||0) + 1 : 0; saveProfile();
+    if(!won) return;
+    const mine = matchManches.filter(m=> m.you), pts = mine.reduce((s, m)=> s + 10 * m.mult, 0) || 10, best = Math.max(1, ...mine.map(m=> m.mult));
+    const opp = oppUid, oppName = oppNameVal;
+    let derby = false;
+    if(opp && profile.quartier!=null){ try{ if(await qzReady()){ const { data } = await supaClient.rpc('fapfap_players', { ids:[opp] }); derby = !!(data && data[0] && data[0].quartier===profile.quartier); } }catch(e){} }
+    const x = weekAdd(pts, derby);
+    showToast('+'+x+' points de la semaine', derby ? 'Derby : ça compte pour toi, pas pour ton quartier.' : 'Tout le quartier te voit monter.', {ms:2600});
+    if(best>=2) qzFeed('cora', oppName, best);
+    if([3, 5, 10].includes(profile.onlineStreak)) qzFeed('serie', null, profile.onlineStreak);
+  }
+  function qzOnlineCarre(won, n){
+    weekGame();
+    if(!won) return;
+    const x = weekAdd(10 * Math.max(1, n - 1) * ((sq && sq.lastMult) || 1));
+    showToast('+'+x+' points de la semaine', 'Le dernier debout fait parler le quartier.', {ms:2600});
+  }
+
+  // ---- the Friday box: Friday 18 h to Sunday midnight, after 5 games and 1 League evening won that week ----
+  function mysState(){
+    const w = wkRoll(), l = new Date(Date.now() + 3600e3), dow = l.getUTCDay(), h = l.getUTCHours();
+    const open = (dow===5 && h>=18) || dow===6 || dow===0, done = !!(profile.mys && profile.mys.wk===w.id);
+    const games = w.games||0, nights = w.nights||0;
+    return {open, done, games, nights, ready: open && !done && games>=5 && nights>=1};
+  }
+  function mysOpen(){
+    const s = mysState();
+    if(!s.ready) return {error: s.done ? 'Déjà ouvert cette semaine.' : 'Le coffre n’est pas encore prêt.'};
+    profile.mys = {wk: wkRoll().id, at: Date.now()};
+    const r = Math.random(); let out;
+    if(r<.60){ const c = 500 + Math.floor(Math.random()*16) * 100; chipsAdd(c); out = {label:'+ '+fmtChips(c)+' 🪙'}; }
+    else if(r<.80){ profile.dblUntil = Date.now() + 3600e3; out = {label:'Points ×2\npendant 1 heure ⚡'}; }
+    else if(r<.92){
+      shopEnsure();
+      const own = profile.owned.back = profile.owned.back || [], b = SKINS.back.find(x=> ['verre','neonb','ivoire','ndop','deco'].includes(x.id) && !own.includes(x.id));
+      if(b){ own.push(b.id); out = {label:'Dos rare :\n'+b.name}; } else { chipsAdd(3000); out = {label:'+ 3 000 🪙'}; }
+    }
+    else if(r<.99){ chipsAdd(5000); out = {label:'+ 5 000 🪙'}; }
+    else {
+      chipsAdd(25000); out = {label:'JACKPOT !\n+ 25 000 🪙', jackpot:true};
+      (async ()=>{ try{ if(await qzReady()){ await cloudPush(); await supaClient.rpc('fapfap_jackpot_win'); } }catch(e){} qzFeed('jackpot'); })();
+    }
+    saveProfile(); cloudSchedule(); renderChips();
+    return out;
+  }
+  // a jackpot touched by someone of the neighbourhood: 500 for everyone in it, once each
+  async function qzJackpotClaims(){
+    if(profile.quartier==null) return;
+    try{
+      if(!(await qzReady())) return;
+      const { data } = await supaClient.rpc('fapfap_jackpots', { q: profile.quartier });
+      const got = profile.jpGot = profile.jpGot || [];
+      (data || []).forEach(j=>{ if(got.includes(j.id)) return; got.push(j.id); chipsAdd(500); showToast('Jackpot à '+QUARTIERS[profile.quartier]+' !', (j.name || 'Un voisin')+' a touché le jackpot du vendredi : +500 jetons pour tout le quartier.', {ms:4200}); });
+      if(got.length>50) got.splice(0, got.length - 50);
+      saveProfile(); renderChips();
+    }catch(e){}
+  }
+
+  // ---- Monday: last week's place, and its reward (once) ----
+  async function qzCeremony(){
+    const pv = profile.prevWk;
+    if(!pv || !pv.pts || profile.cerWk===pv.id || wkRoll().id===pv.id) return null;
+    if(!(await qzReady())) return null;
+    await cloudPush();
+    const { data, error } = await supaClient.rpc('fapfap_week_top', { lim:200, wk:pv.id });
+    if(error) return null;
+    const me = (data || []).find(r=> r.me), king = data && data[0] ? data[0].name : '';
+    profile.cerWk = pv.id;
+    let reward = '';
+    if(me){
+      if(me.pos===1){ chipsAdd(10000); reward = '👑 Roi du quartier · 10 000 jetons'; }
+      else if(me.pos<=10){ chipsAdd(3000); reward = '✨ Cadre doré pour la semaine · 3 000 jetons'; }
+      else if(me.pos<=50){ chipsAdd(2000); reward = '2 000 jetons'; }
+    }
+    saveProfile(); cloudSchedule(); renderChips();
+    return me ? {pos:me.pos, pts:me.pts, week:pv.id, king, reward} : null;
+  }
+
+  // ---- the page and its bridge ----
+  function qPost(m){ const f = document.getElementById('qFrame'); try{ if(f.contentWindow) f.contentWindow.postMessage(m, location.origin); }catch(e){} }
+  function qOpen(mode){
+    const f = document.getElementById('qFrame');
+    f.setAttribute('src', 'quartier.html' + (mode ? '?'+mode : '')); // fresh data at each opening
+    document.getElementById('qOverlay').classList.remove('hidden'); QZ.open = true;
+  }
+  function qClose(){ document.getElementById('qOverlay').classList.add('hidden'); QZ.open = false; renderChips(); qzRefreshHome(true); }
+  function qzState(){
+    const s = mysState(), dbl = Math.max(0, Math.ceil(((profile.dblUntil||0) - Date.now()) / 60000));
+    const ios = typeof isIOS!=='undefined' && isIOS && !isStandalone(), can = pushReady() && !ios;
+    const lockUntil = profile.quartierAt ? profile.quartierAt + 30 * 864e5 : 0;
+    return { chips: profile.chips, quartier: profile.quartier==null ? null : profile.quartier, week: wkRoll().id, online: CLOUD_ON && navigator.onLine!==false,
+      named: !!(prefs.name||'').trim(), mys: s, dbl,
+      qLocked: lockUntil > Date.now() ? new Date(lockUntil).toLocaleDateString('fr-FR', {day:'numeric', month:'long'}) : null,
+      notif: { on: !!prefs.push && 'Notification' in window && Notification.permission==='granted', can, level: prefs.notifLevel || 'important',
+        why: ios ? 'Sur iPhone : ajoute d’abord le jeu à l’écran d’accueil (Partager, puis « Sur l’écran d’accueil »), et ouvre-le depuis son icône.' : 'Ce téléphone ne reçoit pas les notifications du jeu.' } };
+  }
+  async function qzRpc(name, args){
+    if(!(await qzReady())) return {error:'Pas de connexion au serveur. Réessaie quand tu as du réseau.'};
+    const { data, error } = await supaClient.rpc(name, args || {});
+    return error ? {error:'Le classement ne répond pas pour le moment.'} : {rows: data || []};
+  }
+  async function qzAnswer(d){
+    let data = null;
+    try{
+      if(d.what==='state'){ data = qzState(); qzJackpotClaims(); }
+      else if(d.what==='week'){ if(await qzReady()) await cloudPush(); data = await qzRpc('fapfap_week_top', {lim:100}); if(data.rows) QZ.top = data.rows; }
+      else if(d.what==='quartiers') data = await qzRpc('fapfap_quartiers');
+      else if(d.what==='members') data = await qzRpc('fapfap_quartier_members', {q: d.q|0, lim:30});
+      else if(d.what==='feed'){ const r = await qzRpc('fapfap_feed', {lim:10}); data = r.rows || []; }
+      else if(d.what==='riches'){ const r = await qzRpc('fapfap_top', {lim:50}); data = r.rows ? {rows: r.rows.map(x=> ({pos:x.pos, pid:x.pid, name:x.name, pts:x.chips, chips:x.chips, rep:x.rep, me:x.me, saved:x.saved}))} : r; }
+      else if(d.what==='amis'){
+        const ids = friendList().map(f=> f.id).filter(Boolean).slice(0, 100), me = {pid: Cloud && Cloud.user ? Cloud.user.id : null, name:(prefs.name||'Toi').trim() || 'Toi', quartier:profile.quartier, pts: wkRoll().pts||0, me:true};
+        let rows = [me];
+        if(ids.length){ const r = await qzRpc('fapfap_players', {ids}); if(r.rows) rows = rows.concat(r.rows.map(x=> ({pid:x.pid, name:x.name || 'Ami', quartier:x.quartier, pts:x.pts||0, chips:x.chips, rep:x.rep}))); }
+        rows.sort((a, b)=> b.pts - a.pts).forEach((r, i)=> r.pos = i + 1);
+        data = {rows};
+      }
+      else if(d.what==='setq'){
+        const q = d.q|0, lockUntil = profile.quartierAt ? profile.quartierAt + 30 * 864e5 : 0;
+        if(q<0 || q>31) data = {error:'Quartier inconnu.'};
+        else if(profile.quartier!=null && profile.quartier!==q && lockUntil > Date.now()) data = {error:'Un seul changement de quartier par mois.'};
+        else {
+          // changing neighbourhood: the points already given to the old one stay there
+          if(profile.quartier!=null && profile.quartier!==q){ const w = wkRoll(); w.qpts = 0; }
+          if(profile.quartier!==q){ profile.quartier = q; profile.quartierAt = Date.now(); if(d.bonus) profile.qBonusUntil = Date.now() + 14 * 864e5; }
+          saveProfile(); if(await qzReady()) await cloudPush();
+          data = {ok:1};
+        }
+      }
+      else if(d.what==='mystery') data = mysOpen();
+      else if(d.what==='ceremony') data = await qzCeremony();
+    }catch(e){ data = {error:'Le serveur ne répond pas. Réessaie.'}; }
+    qPost({zh:'compData', id:d.id, data});
+  }
+  window.addEventListener('message', e=>{
+    const f = document.getElementById('qFrame');
+    if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
+    const d = e.data || {};
+    if(d.zh==='hello') qPost({zh:'chips', chips:profile.chips});
+    if(d.zh==='close') qClose();
+    if(d.zh==='comp') qzAnswer(d);
+    if(d.zh==='player' && d.pid){ qClose(); openPlayerSheet({id:String(d.pid), name:String(d.name||'').slice(0, 16), rep:+d.rep||0, chips:+d.chips||0, saved:!!d.saved}); }
+    if(d.zh==='notif'){ prefs.notifLevel = ['all','important','none'].includes(d.level) ? d.level : 'important'; savePrefs(); cloudSchedule(); }
+    if(d.zh==='push') pushEnable();
+    if(d.zh==='newsSeen'){ prefs.newsLeague = 1; savePrefs(); }
+    if(d.zh==='openLeague'){ qClose(); zhOpen(); }
+    if(d.zh==='richPage'){ qClose(); Nav.go('richPage'); }
+  });
+  document.getElementById('btnQuartier').addEventListener('click', ()=>{ ensureAudio(); qOpen(); });
+
+  // ---- the home card: podium, your place, the news of the quarter ----
+  function renderQuartierHome(){
+    const pod = document.getElementById('qzPod'), meEl = document.getElementById('qzMe'), tick = document.getElementById('qzTick'), end = document.getElementById('qzEnd');
+    if(!pod) return;
+    const now = Date.now(), l = new Date(now + 3600e3), dow = l.getUTCDay() || 7;
+    const left = Math.max(0, Date.UTC(l.getUTCFullYear(), l.getUTCMonth(), l.getUTCDate() + (8 - dow)) - 3600e3 - now);
+    end.textContent = 'fin dans '+(left>=864e5 ? Math.floor(left/864e5)+' j ' : '')+Math.floor(left%864e5/36e5)+' h';
+    const top = (QZ.top || []).filter(r=> r.pos<=3), me = (QZ.top || []).find(r=> r.me), esc = s=> String(s||'').replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const pd = (r, k)=> r ? '<span class="qz-pd p'+k+'"><span class="qz-av" style="--a1:'+(QZ_COLORS[r.quartier] || '#5b6bd6')+'">'+(k===1 ? '<i>👑</i>' : '')+esc(String(r.name).slice(0, 2).toUpperCase())+'</span><span class="qz-nm">'+esc(r.name)+'</span><span class="qz-pt">'+fmtChips(r.pts)+' pts</span><span class="qz-step">'+k+'</span></span>' : '';
+    pod.innerHTML = top.length ? pd(top[1], 2)+pd(top[0], 1)+pd(top[2], 3) : '';
+    const w = wkRoll();
+    meEl.innerHTML = me ? '<b>'+me.pos+(me.pos===1 ? 'ᵉʳ' : 'ᵉ')+'</b>'+(me.pos===1 ? 'Tu es le Roi du quartier. Tiens jusqu’à dimanche minuit !' : 'cette semaine avec '+fmtChips(me.pts)+' points. '+(top[0] ? esc(top[0].name)+' porte la couronne.' : ''))
+      : w.pts ? 'Tu as '+fmtChips(w.pts)+' points cette semaine. Ouvre le classement pour voir ta place.'
+      : 'Personne ne te voit encore cette semaine. <b style="font:inherit;color:#f2c76a">Gagne une partie en ligne</b> pour entrer au classement.';
+    const items = (QZ.feed || []).map(f=> '⚡ '+esc(f.txt));
+    if(top[0]) items.push('👑 <b>'+esc(top[0].name)+'</b> est Roi du quartier');
+    const ms = mysState();
+    items.push(ms.done ? '🎁 Ton coffre du vendredi est ouvert' : ms.open ? '🎁 Le Mystère du vendredi est ouvert jusqu’à dimanche' : '🎁 Le Mystère du vendredi : '+Math.min(ms.games, 5)+'/5 parties');
+    if(profile.quartier!=null) items.push('🏟️ Tu représentes <b>'+esc(QUARTIERS[profile.quartier])+'</b>');
+    tick.innerHTML = items.join(' &nbsp;·&nbsp; ');
+    tick.style.setProperty('--dur', Math.max(16, tick.textContent.length / 8)+'s');
+  }
+  async function qzRefreshHome(force){
+    renderQuartierHome();
+    if(!CLOUD_ON || (!force && QZ.fetched && Date.now() - QZ.fetched < 60000)) return;
+    QZ.fetched = Date.now();
+    try{
+      if(!(await qzReady())) return;
+      await cloudPush();
+      const [t, f] = await Promise.all([supaClient.rpc('fapfap_week_top', {lim:3}), supaClient.rpc('fapfap_feed', {lim:8})]);
+      if(!t.error) QZ.top = t.data || []; if(!f.error) QZ.feed = f.data || [];
+    }catch(e){}
+    renderQuartierHome();
+  }
+  // on the home screen: the League's announcement once, then Monday's ceremony once a week
+  function qzAutoOpen(){
+    if(!inHome() || QZ.open || ZH.open) return;
+    const busy = document.getElementById('launch') || ['betaNote','sugg'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
+    if(busy){ setTimeout(qzAutoOpen, 2000); return; }
+    if(!prefs.newsLeague){ qOpen('annonce'); return; }
+    const pv = profile.prevWk;
+    if(pv && pv.pts>0 && profile.cerWk!==pv.id && wkRoll().id!==pv.id && !QZ.cerTried){ QZ.cerTried = true; qOpen('ceremonie'); }
+  }
+  function qzHomeShown(){ qzRefreshHome().catch(()=>{}); clearTimeout(QZ.autoT); QZ.autoT = setTimeout(qzAutoOpen, 1800); }
+  // an online opponent who wears the crown
+  function qzKingCheck(){ if(oppUid && QZ.top && QZ.top[0] && QZ.top[0].pid===oppUid) setTimeout(()=> showToast('👑 Tu affrontes le Roi du quartier', 'Bats-le et sa couronne vacille.', {ms:3200}), 1200); }
+  window.qzHomeShown = qzHomeShown; window.qzKingCheck = qzKingCheck; window.qzOpen = qOpen;
+  // a notification of the quarter (or ?quartier=1) opens the page
+  // (after the start: the cloud's constants are declared further down)
+  setTimeout(()=>{ if(/[?&]quartier=1\b/.test(location.search)) qOpen(); else if(inHome()) qzHomeShown(); }, 1500);
   window.addEventListener('message', e=>{
     const f = $id('zhFrame');
     if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
@@ -15818,6 +16092,14 @@
     if(d.zh==='suggest') openSuggest('league');
     // a champion beaten in the League joins the road of the quarter and the Carré (what the stories used to open)
     if(d.zh==='beat' && DUEL_PERSONAS[d.persona]){ profile.leagueBeat = profile.leagueBeat || {}; if(!profile.leagueBeat[d.persona]){ profile.leagueBeat[d.persona] = 1; saveProfile(); } }
+    // Tout le quartier: an evening won (+5, opens the Friday box) or the title (+50); the season's neighbourhood becomes the player's if none yet
+    if(d.zh==='pts'){
+      const n = Math.max(0, Math.min(50, d.n|0));
+      if(d.night){ const w = wkRoll(); w.nights = (w.nights||0) + 1; saveProfile(); }
+      if(n){ const x = weekAdd(n); showToast('+'+x+' points de la semaine', d.title ? 'Champion de la League : tout le quartier le sait.' : 'Soirée gagnée pour le quartier.', {ms:2400}); }
+      if(d.title) qzFeed('league');
+    }
+    if(d.zh==='quartier' && profile.quartier==null){ const q = d.q|0; if(q>=0 && q<=31){ profile.quartier = q; profile.quartierAt = Date.now(); saveProfile(); cloudSchedule(); } }
   });
   function zhPlay(d){
     const known = (d.persona && DUEL_PERSONAS[d.persona]) ? d.persona : ZH_OPP[d.opp], P = ZH_PERSONAS[d.opp];
@@ -15864,6 +16146,7 @@
       run.done = true;
       if(won){ sfxMatchWin(); bigImpact(); } else sfxMatchLose();
       touchDayStreak();
+      if(run.league) weekGame(); // a League hand counts toward the Friday box (5 games)
       showToast(won ? 'Victoire !' : 'Défaite…', run.league ? (won ? 'Le quartier chante ton nom !' : 'La soirée continue…') : (won ? 'Ton téléphone vibre…' : 'Ça fait mal au portefeuille.'), {big:true, celebrate:won, ms:1700});
       const you = scores.you, them = scores.ai;
       // for the League: who survived the Carré, and what the deciding hand was worth (×2 CORA, ×4 33 Glacée)
@@ -17677,14 +17960,27 @@
     clearTimeout(Cloud.pushT); Cloud.pushT = null;
     if(!Cloud.user || Cloud.hold || !supaClient || profile.acct!==Cloud.user.id) return;
     const sp = {}; SYNC_PREFS.forEach(k=>{ if(prefs[k]!==undefined) sp[k] = prefs[k]; });
-    const { error } = await supaClient.from('players').upsert({
+    const row = {
       id: Cloud.user.id,
       name: (prefs.name||'').trim().slice(0,16) || null,
       chips: Math.max(0, Math.round(profile.chips||0)),
       rep: Math.max(0, Math.round(profile.rep||0)),
       data: { v:1, rev: profile.rev||Date.now(), profile, prefs: sp },
       updated_at: new Date().toISOString()
-    });
+    };
+    // Tout le quartier (v81): the week's points, the neighbourhood, the notifications wanted (left out if the server lacks the columns)
+    if(Cloud.comp!==false){
+      const w = wkRoll(), pv = profile.prevWk, pts = n=> Math.max(0, Math.min(1e6, Math.round(n||0)));
+      Object.assign(row, { quartier: profile.quartier==null ? null : profile.quartier, quartier_at: profile.quartierAt ? new Date(profile.quartierAt).toISOString() : null,
+        week_id: w.id, week_pts: pts(w.pts), week_qpts: pts(w.qpts), prev_week_id: pv ? pv.id : null, prev_week_pts: pv ? pts(pv.pts) : 0, prev_week_qpts: pv ? pts(pv.qpts) : 0,
+        notif_level: ['all','important','none'].includes(prefs.notifLevel) ? prefs.notifLevel : 'important', last_play: profile.lastPlay ? new Date(profile.lastPlay).toISOString() : null });
+    }
+    let { error } = await supaClient.from('players').upsert(row);
+    if(error && Cloud.comp!==false && /column|schema cache/i.test(error.message||'')){
+      Cloud.comp = false;
+      ['quartier','quartier_at','week_id','week_pts','week_qpts','prev_week_id','prev_week_pts','prev_week_qpts','notif_level','last_play'].forEach(k=> delete row[k]);
+      ({ error } = await supaClient.from('players').upsert(row));
+    }
     Cloud.error = error ? error.message : null;
   }
   document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden' && Cloud.pushT) cloudPush(); });
@@ -18581,6 +18877,7 @@
     navigator.serviceWorker.addEventListener('message', e=>{
       const d = e.data || {};
       if(d.type==='amis'){ if(!inGame() && !mpNet) Nav.go('bellPage'); else bellRefresh(); }
+      if(d.type==='quartier' && !inGame() && !mpNet && window.qzOpen) window.qzOpen();
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
     });
   }

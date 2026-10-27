@@ -768,6 +768,7 @@ $('chEyebrow').textContent = 'Saison '+nextSeasonN;
 $('toDraw').addEventListener('click', async ()=>{
   if(pickQ==null) return;
   S = newSeason(nextSeasonN, pickQ); save();
+  post({zh:'quartier', q:pickQ}); // Tout le quartier: the player's neighbourhood, if they have none yet
   L.lastSeason = S.n; lpSave();
   $('pick').classList.remove('on');
   await show('draw'); startDraw();
@@ -1061,7 +1062,7 @@ function finishNight(){
   }
   const gains = [];
   C.m.forEach((x, i)=>{ if(x.r==='me') gains.push(['Manche '+(i+1)+(x.x>1 ? ' (×'+x.x+')' : ''), PRIME.manche * x.x]); });
-  if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Soirée gagnée', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); }
+  if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Soirée gagnée', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); post({zh:'pts', n:5, night:1}); }
   else lpAdd(-12);
   S.history.push({k:C.key, me:sc.me, th:sc.th, w:wonNight});
   S.cur = null;
@@ -1072,7 +1073,7 @@ function finishNight(){
     const rr = rng(S.seed + 7000 + S.leg * 13 + Object.keys(S.ko).length * 977);
     S.ko[S.round].forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, rr, s.neutral); } });
     const was = S.round; msgs = advanceKO();
-    if(S.champion===S.me){ pay(PRIME.f); S.earned += PRIME.f; gains.push(['Titre de champion', PRIME.f]); lpAdd(200); }
+    if(S.champion===S.me){ pay(PRIME.f); S.earned += PRIME.f; gains.push(['Titre de champion', PRIME.f]); lpAdd(200); post({zh:'pts', n:50, title:1}); }
     msgs.forEach(x=>{ if(x.k==='through'){ pay(PRIME[was]); S.earned += PRIME[was]; gains.push([ROUND[was]+' passés', PRIME[was]]); } });
   }
   msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les huitièmes', PRIME.qualif]); } });

@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030619">
+<title>Tout le quartier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* « Tout le quartier » — the competition between the real players, opened above the game (index.html, #qFrame).
+   The page only shows: the game reads the server (Supabase) and keeps the chips. {zh:'comp'} asks for data,
+   {zh:'compData'} brings it; taps go back as {zh:'player'}, {zh:'setq'}, {zh:'mystery'}, {zh:'notif'}, {zh:'push'}.
+   Same voice as the League: Unbounded + Manrope, night blue and gold; transform/opacity only. */
+:root{
+  --night:#030619; --ink:#eef1ff; --mute:#8f9bcf; --gold:#f2c76a; --gold-d:#a87a24; --good:#92e8b0; --bad:#ffb4a6;
+  --disp:'Unbounded','Manrope',system-ui,sans-serif; --ui:'Manrope',system-ui,sans-serif;
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:var(--night); color:var(--ink); font:600 15px/1.4 var(--ui); overflow:hidden; -webkit-font-smoothing:antialiased; overscroll-behavior:none; }
+button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; touch-action:manipulation; }
+.sky{ position:fixed; inset:0; background:radial-gradient(130% 75% at 50% 112%, #2443b8 0%, #0d1c5c 34%, var(--night) 70%); }
+.scene{ position:fixed; inset:0; display:none; flex-direction:column; }
+.scene.on{ display:flex; }
+.scroll{ flex:1; overflow:auto; padding:4px 16px calc(var(--bot) + 24px); scrollbar-width:none; -webkit-overflow-scrolling:touch; min-height:0; }
+.scroll::-webkit-scrollbar{ display:none; }
+.hd{ padding:calc(var(--top) + 12px) 16px 10px; display:flex; align-items:center; gap:12px; flex:none; }
+.round{ width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.07); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); display:grid; place-items:center; flex:none; font:500 24px/1 var(--ui); padding-bottom:3px; }
+.hd .grow{ flex:1; min-width:0; }
+.eyebrow{ display:block; color:var(--gold); font:800 10.5px var(--ui); letter-spacing:.22em; text-transform:uppercase; margin-bottom:3px; }
+.hd h2{ margin:0; font:700 18px/1.1 var(--disp); text-transform:uppercase; }
+.chips{ display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:20px; background:rgba(255,255,255,.07); font:800 12.5px var(--ui); white-space:nowrap; }
+.chips i{ width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff1c4, var(--gold) 55%, var(--gold-d)); }
+.card{ border-radius:24px; background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); padding:16px; margin-bottom:14px; }
+.card h3{ margin:0 0 12px; font:800 10.5px var(--ui); letter-spacing:.22em; color:var(--gold); text-transform:uppercase; display:flex; justify-content:space-between; gap:8px; }
+.card h3 span{ color:var(--mute); letter-spacing:.1em; }
+.note{ color:var(--mute); font:600 12px/1.5 var(--ui); margin:10px 0 0; }
+.cta{ padding:14px 22px; border-radius:40px; font:700 11.5px var(--disp); letter-spacing:.1em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,var(--gold) 55%,#c9973b); color:#2b1a02; box-shadow:0 10px 26px rgba(242,199,106,.3), inset 0 1px 0 rgba(255,255,255,.7); transition:scale .12s; }
+.cta.wide{ width:100%; } .cta[disabled]{ opacity:.45; pointer-events:none; }
+.ghost{ padding:11px 16px; border-radius:30px; background:rgba(255,255,255,.07); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); font:700 12.5px var(--ui); transition:scale .12s; }
+.cta:active, .ghost:active, .tabs4 button:active, .lrow.tap:active, .crest-b:active, .round:active{ scale:.97; }
+.av{ --s:40px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; flex:none; position:relative; font:800 calc(var(--s)*.34) var(--ui); color:#fff;
+  background:linear-gradient(150deg, var(--a1,#5b6bd6), var(--a2,#2a3380)); box-shadow:0 0 0 2px rgba(255,255,255,.85); }
+.av.gold{ box-shadow:0 0 0 2.5px var(--gold), 0 0 14px rgba(242,199,106,.5); }
+.av .crown{ position:absolute; top:calc(var(--s) * -.44); left:50%; translate:-50% 0; font-size:calc(var(--s)*.42); filter:drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+.av .cap{ position:absolute; bottom:-5px; right:-6px; font:800 7.5px var(--ui); background:var(--gold); color:#2b1a02; border-radius:6px; padding:1px 4px; letter-spacing:.06em; }
+.qtag{ font:800 9.5px var(--ui); letter-spacing:.08em; color:var(--mute); text-transform:uppercase; }
+.up{ color:var(--good); font:800 11px var(--ui); } .down{ color:var(--bad); font:800 11px var(--ui); } .same{ color:var(--mute); font:800 11px var(--ui); } .new{ color:var(--gold); font:800 9px var(--ui); letter-spacing:.06em; }
+.crest{ --s:30px; width:var(--s); height:var(--s); border-radius:50%; position:relative; flex:none; background:conic-gradient(from 200deg, var(--c1) 0 50%, var(--c2) 0 100%); box-shadow:0 0 0 2px rgba(255,255,255,.9); display:grid; place-items:center; }
+.crest::before{ content:''; position:absolute; inset:15%; border-radius:50%; background:radial-gradient(circle at 34% 28%, #1c2c74, #060b2b); box-shadow:inset 0 0 0 1.5px var(--c1); }
+.crest b{ position:relative; font:700 calc(var(--s) * .2) var(--disp); color:#fff; }
+.crest.sm b{ display:none; }
+.empty{ text-align:center; color:var(--mute); font:600 13px/1.5 var(--ui); padding:18px 6px; }
+.toast{ position:fixed; left:12px; right:12px; top:calc(var(--top) + 10px); z-index:40; padding:13px 15px; border-radius:20px; background:rgba(14,24,72,.97); box-shadow:0 16px 40px rgba(0,0,0,.55), inset 0 0 0 1px rgba(242,199,106,.45); font:700 13px/1.4 var(--ui); opacity:0; pointer-events:none; }
+.confetti{ position:fixed; inset:0; pointer-events:none; z-index:35; overflow:hidden; } .confetti i{ position:absolute; top:-20px; width:8px; height:14px; border-radius:2px; }
+
+/* hub */
+.me-card{ display:flex; align-items:center; gap:14px; }
+.me-card .big{ font:800 32px/1 var(--disp); color:var(--gold); } .me-card .big small{ font:700 12px var(--ui); color:var(--mute); }
+.me-card .tx{ flex:1; font:700 12.5px/1.45 var(--ui); }
+.me-card .tx b{ color:var(--gold); }
+.ticker{ margin:0 0 12px; padding:9px 0; border-radius:14px; background:rgba(255,255,255,.05); overflow:hidden; white-space:nowrap; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+.ticker div{ display:inline-block; padding-left:100%; animation:tick var(--dur, 30s) linear infinite; font:700 12px var(--ui); color:#cfd5f5; }
+.ticker b{ color:var(--gold); }
+@keyframes tick{ to{ transform:translateX(-100%); } }
+.tabs4{ display:flex; gap:3px; padding:4px; border-radius:16px; background:rgba(255,255,255,.06); margin-bottom:12px; }
+.tabs4 button{ flex:1; padding:9px 2px; border-radius:12px; font:800 11.5px var(--ui); color:var(--mute); transition:background .2s, color .2s, scale .12s; }
+.tabs4 button.on{ background:var(--gold); color:#2b1a02; }
+.countdown{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-radius:18px; background:linear-gradient(90deg, rgba(242,199,106,.16), rgba(242,199,106,.04)); box-shadow:inset 0 0 0 1px rgba(242,199,106,.3); margin-bottom:12px; }
+.countdown b{ font:700 13px var(--disp); } .countdown span{ font:800 14px var(--ui); color:var(--gold); font-variant-numeric:tabular-nums; }
+.rewards{ display:flex; gap:6px; margin-bottom:12px; }
+.rewards div{ flex:1; padding:9px 6px; border-radius:14px; background:rgba(0,0,0,.25); text-align:center; font:700 10.5px/1.3 var(--ui); color:#dfe4ff; }
+.rewards div b{ display:block; font:800 10px var(--ui); color:var(--gold); letter-spacing:.1em; margin-bottom:2px; }
+.podium{ display:flex; align-items:flex-end; justify-content:center; gap:10px; margin:24px 0 6px; }
+.pd{ display:flex; flex-direction:column; align-items:center; gap:6px; width:92px; text-align:center; min-width:0; }
+.pd .nm{ font:700 12px/1.2 var(--ui); max-width:92px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .pd .pt{ font:800 11px var(--ui); color:var(--gold); }
+.pd .step{ width:100%; border-radius:12px 12px 4px 4px; display:grid; place-items:center; font:800 20px var(--disp); color:rgba(255,255,255,.85); background:linear-gradient(180deg, rgba(242,199,106,.35), rgba(242,199,106,.06)); box-shadow:inset 0 1px 0 rgba(255,255,255,.25); transform-origin:50% 100%; }
+.pd.p1 .step{ height:72px; } .pd.p2 .step{ height:50px; background:linear-gradient(180deg, rgba(200,210,240,.3), rgba(200,210,240,.05)); } .pd.p3 .step{ height:38px; background:linear-gradient(180deg, rgba(205,140,90,.32), rgba(205,140,90,.05)); }
+.pd.p1 .av{ --s:56px; } .pd .av{ --s:44px; }
+.lrow{ display:flex; align-items:center; gap:10px; padding:9px 6px; border-radius:14px; }
+.lrow + .lrow{ border-top:1px solid rgba(255,255,255,.05); }
+.lrow .pos{ width:26px; font:700 12px var(--disp); color:var(--mute); text-align:center; }
+.lrow .av{ --s:34px; }
+.lrow .n{ flex:1; min-width:0; font:700 13.5px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lrow .n small{ display:block; }
+.lrow .pts{ font:800 13.5px var(--ui); font-variant-numeric:tabular-nums; }
+.lrow .mv{ width:30px; text-align:right; }
+.lrow.me{ background:rgba(242,199,106,.12); box-shadow:inset 0 0 0 1.5px var(--gold); }
+.lrow.me .n{ color:var(--gold); }
+.lrow.tap{ transition:scale .12s; }
+.stickme{ position:sticky; bottom:-24px; margin:10px -4px -4px; padding:4px; border-radius:18px; background:rgba(10,18,58,.97); box-shadow:0 -10px 30px rgba(3,6,25,.8); }
+.counts{ font:800 8.5px var(--ui); letter-spacing:.06em; padding:4px 6px; border-radius:8px; background:rgba(110,220,150,.15); color:var(--good); white-space:nowrap; }
+.counts.no{ background:rgba(255,255,255,.07); color:var(--mute); }
+.qbar{ display:flex; align-items:center; gap:10px; padding:9px 4px; }
+.qbar + .qbar{ border-top:1px solid rgba(255,255,255,.05); }
+.qbar .pos{ width:22px; font:700 12px var(--disp); color:var(--mute); }
+.qbar .info{ flex:1; min-width:0; }
+.qbar .info b{ display:flex; justify-content:space-between; gap:8px; font:700 13px var(--ui); }
+.qbar .info b span{ font-variant-numeric:tabular-nums; color:var(--gold); }
+.qbar .info small{ color:var(--mute); font:700 11px var(--ui); }
+.qbar .track{ height:5px; border-radius:5px; background:rgba(255,255,255,.07); margin-top:5px; overflow:hidden; }
+.qbar .track i{ display:block; height:100%; border-radius:5px; background:linear-gradient(90deg, var(--c1), var(--c2)); transform-origin:0 50%; }
+.qbar.mine{ background:rgba(242,199,106,.08); border-radius:14px; }
+.qhead{ display:flex; align-items:center; gap:14px; }
+.qhead .crest{ --s:60px; }
+.qhead .t b{ display:block; font:700 18px var(--disp); } .qhead .t small{ color:var(--mute); font:700 12px var(--ui); }
+.lvl{ display:flex; gap:6px; margin-top:10px; } .lvl button{ flex:1; padding:10px 4px; border-radius:12px; background:rgba(0,0,0,.25); font:800 11.5px var(--ui); color:var(--mute); }
+.lvl button.on{ background:var(--gold); color:#2b1a02; }
+
+/* choose */
+.grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-content:start; }
+.crest-b{ display:flex; flex-direction:column; align-items:center; gap:7px; padding:12px 4px 10px; border-radius:20px; background:rgba(255,255,255,.04); box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); transition:scale .12s; }
+.crest-b .crest{ --s:52px; }
+.crest-b > span:not(.crest){ font:700 11.5px/1.15 var(--ui); text-align:center; }
+.crest-b small{ font:800 9px var(--ui); color:var(--good); letter-spacing:.04em; }
+
+/* mystère */
+#mys .scroll{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+.mys-k{ font:800 11px var(--ui); letter-spacing:.3em; color:var(--gold); }
+.mys-t{ font:800 24px/1.15 var(--disp); margin:8px 0 6px; }
+.mys-s{ color:#cfd5f5; font:600 13.5px/1.5 var(--ui); max-width:330px; margin:0; }
+.chest{ width:170px; height:150px; position:relative; margin:84px 0 18px; }
+.chest .glow{ position:absolute; inset:-40px; border-radius:50%; background:radial-gradient(circle, rgba(242,199,106,.45), transparent 62%); opacity:.5; }
+.chest .body{ position:absolute; left:0; right:0; bottom:0; height:96px; border-radius:16px; background:linear-gradient(180deg, #7b3fe4, #3b1a8a); box-shadow:inset 0 0 0 3px var(--gold), 0 18px 40px rgba(0,0,0,.5); }
+.chest .lid{ position:absolute; left:-6px; right:-6px; top:16px; height:44px; border-radius:18px 18px 8px 8px; background:linear-gradient(180deg, #9a63ff, #5a2bc4); box-shadow:inset 0 0 0 3px var(--gold); transform-origin:50% 100%; }
+.chest .lock{ position:absolute; left:50%; top:46px; width:34px; height:38px; margin-left:-17px; border-radius:8px; background:linear-gradient(180deg, #fff1c4, var(--gold) 50%, var(--gold-d)); display:grid; place-items:center; font:800 18px var(--disp); color:#3a2405; z-index:2; }
+.prize{ position:absolute; left:50%; top:40px; translate:-50% 0; font:800 22px/1.2 var(--disp); color:var(--gold); white-space:nowrap; opacity:0; text-shadow:0 4px 20px rgba(242,199,106,.6); z-index:3; }
+.steps, .odds{ width:100%; max-width:360px; text-align:left; }
+.step-r{ display:flex; align-items:center; gap:10px; padding:10px 4px; border-top:1px solid rgba(255,255,255,.06); font:700 13px var(--ui); }
+.step-r:first-of-type{ border-top:0; }
+.step-r .ok{ width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:12px; background:rgba(110,220,150,.18); color:var(--good); flex:none; }
+.step-r .ok.no{ background:rgba(255,255,255,.07); color:var(--mute); }
+.odds .o{ display:flex; justify-content:space-between; gap:10px; padding:7px 2px; font:700 12.5px var(--ui); border-top:1px solid rgba(255,255,255,.05); }
+.odds .o:first-of-type{ border-top:0; } .odds b{ color:var(--gold); white-space:nowrap; }
+
+/* annonce */
+.news-hero{ border-radius:26px; padding:22px 18px; text-align:center; background:radial-gradient(120% 90% at 50% 120%, #2443b8 0%, #0d1c5c 45%, #050a2a 80%); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); margin-bottom:14px; }
+.news-hero .k{ font:800 10.5px var(--ui); letter-spacing:.3em; color:var(--gold); }
+.news-hero h1{ margin:10px 0 4px; font:800 28px/1 var(--disp); } .news-hero h1 em{ display:block; font:300 13px var(--disp); font-style:normal; letter-spacing:.55em; color:var(--gold); margin-top:8px; }
+.news-hero p{ color:#cfd5f5; font:600 13.5px/1.5 var(--ui); margin:12px 0 0; }
+.howto{ display:flex; gap:12px; padding:10px 2px; border-top:1px solid rgba(255,255,255,.06); }
+.howto:first-of-type{ border-top:0; }
+.howto .n{ width:28px; height:28px; border-radius:10px; display:grid; place-items:center; flex:none; background:rgba(242,199,106,.16); color:var(--gold); font:800 12px var(--disp); }
+.howto b{ display:block; font:700 13.5px var(--ui); } .howto small{ display:block; color:var(--mute); font:600 12.5px/1.45 var(--ui); margin-top:2px; }
+.ptable .o{ display:flex; justify-content:space-between; gap:10px; padding:8px 2px; border-top:1px solid rgba(255,255,255,.06); font:700 12.5px var(--ui); }
+.ptable .o:first-of-type{ border-top:0; } .ptable b{ color:var(--gold); text-align:right; }
+
+/* cérémonie */
+#cer{ align-items:center; justify-content:center; text-align:center; padding:calc(var(--top) + 20px) 22px calc(var(--bot) + 26px); }
+.cer-k{ font:800 11px var(--ui); letter-spacing:.3em; color:var(--gold); }
+.cer-pos{ font:800 64px/1 var(--disp); margin:18px 0 6px; color:var(--gold); }
+.cer-pos small{ font-size:22px; }
+.cer-t{ font:700 18px/1.3 var(--disp); }
+.cer-s{ color:#cfd5f5; font:600 14px/1.5 var(--ui); max-width:320px; margin:10px auto 0; }
+.cer-r{ margin:18px auto 0; padding:14px 18px; border-radius:18px; background:rgba(242,199,106,.12); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); font:700 14px var(--ui); }
+.cer-r b{ color:var(--gold); }
+@media (prefers-reduced-motion: reduce){ .ticker div{ animation:none; } }
+</style>
+</head>
+<body>
+<div class="sky"></div>
+
+<!-- LE QUARTIER (hub) -->
+<section class="scene on" id="hub">
+  <div class="hd"><button class="round" id="close" aria-label="Retour au jeu">‹</button><div class="grow"><span class="eyebrow" id="hubEye">Cette semaine</span><h2>Tout le quartier</h2></div><span class="chips"><i></i><span id="chips">—</span></span></div>
+  <div class="scroll" id="hubScroll">
+    <div class="ticker" id="ticker"><div id="tickTx">Le quartier arrive…</div></div>
+    <div class="card" id="meCard"><div class="empty">Chargement…</div></div>
+    <div class="tabs4" id="tabs4"><button class="on" data-t="joueurs">Joueurs</button><button data-t="quartiers">Quartiers</button><button data-t="amis">Amis</button><button data-t="riches">Les riches</button></div>
+    <div id="tabBody"><div class="empty">Chargement…</div></div>
+    <div class="card" id="notifCard"></div>
+  </div>
+</section>
+
+<!-- CHOISIR SON QUARTIER -->
+<section class="scene" id="choose">
+  <div class="hd"><button class="round" data-back aria-label="Retour">‹</button><div class="grow"><span class="eyebrow">Tu représentes</span><h2>Ton quartier</h2></div></div>
+  <div class="scroll"><p class="note" id="chooseNote" style="margin:0 0 12px">Tes points de la semaine comptent pour ton quartier. Tu pourras en changer une fois par mois.</p><div class="grid" id="grid"></div></div>
+</section>
+
+<!-- LE MYSTÈRE DU VENDREDI -->
+<section class="scene" id="mys">
+  <div class="hd"><button class="round" data-back aria-label="Retour">‹</button><div class="grow"><span class="eyebrow">Chaque vendredi · 18 h</span><h2>Le Mystère</h2></div></div>
+  <div class="scroll">
+    <div class="mys-t">Le Mystère<br>du vendredi</div>
+    <p class="mys-s">Un coffre gratuit, une fois par semaine. Pour l’ouvrir, il faut avoir joué. Ce qu’il y a dedans, personne ne le sait.</p>
+    <div class="chest" id="chest"><div class="glow" id="glow"></div><div class="body"></div><div class="lid" id="lid"></div><div class="lock" id="lockI">?</div><div class="prize" id="prize"></div></div>
+    <button class="cta" id="openChest">Ouvrir le coffre</button>
+    <div class="card steps" style="margin-top:18px" id="steps"></div>
+    <div class="card odds"><h3>Ce que le coffre peut contenir<span>chances</span></h3>
+      <div class="o"><span>500 à 2 000 jetons</span><b>60 %</b></div>
+      <div class="o"><span>Points de la semaine ×2 pendant 1 heure</span><b>20 %</b></div>
+      <div class="o"><span>Un dos de cartes rare</span><b>12 %</b></div>
+      <div class="o"><span>5 000 jetons</span><b>7 %</b></div>
+      <div class="o"><span>👑 Jackpot : 25 000 jetons + 500 pour tout ton quartier</span><b>1 %</b></div>
+    </div>
+    <p class="note" style="max-width:340px;text-align:center">Gratuit : on ne paie jamais pour ouvrir le coffre, et on ne peut pas acheter de coffre.</p>
+  </div>
+</section>
+
+<!-- L'ANNONCE DE LA LEAGUE -->
+<section class="scene" id="news">
+  <div class="hd"><button class="round" data-back aria-label="Fermer">‹</button><div class="grow"><span class="eyebrow">Nouveau dans Fap Fap</span><h2>La League</h2></div></div>
+  <div class="scroll">
+    <div class="news-hero">
+      <div class="k">NOUVEAU DANS FAP FAP</div>
+      <h1>FAP·FAP<em>LEAGUE</em></h1>
+      <p>32 quartiers de Yaoundé et Douala. Une saison comme la Ligue des champions. Un seul roi.</p>
+      <button class="cta" id="newsLeague" style="margin-top:16px">Entrer dans la League</button>
+    </div>
+    <div class="card"><h3>Comment ça marche</h3>
+      <div class="howto"><span class="n">1</span><div><b>Choisis ton quartier</b><small>Tu le défends toute la saison. Le tirage au sort te place dans une poule de 4.</small></div></div>
+      <div class="howto"><span class="n">2</span><div><b>6 soirées de poule, en aller-retour</b><small>Chaque soirée se joue en 3 manches : jeu à 2, jeu à 3, Carré la Pute. Égalité ? Le quiz Fap Fap départage.</small></div></div>
+      <div class="howto"><span class="n">3</span><div><b>Les 2 premiers passent</b><small>Huitièmes, quarts, demies en aller-retour, puis la finale au Grand Carrefour.</small></div></div>
+      <div class="howto"><span class="n">4</span><div><b>Bats les champions</b><small>Chaque personnage battu en League rejoint ta Route du quartier.</small></div></div>
+    </div>
+    <div class="card ptable"><h3>Ce que tu gagnes en League</h3>
+      <div class="o"><span>Manche gagnée</span><b>200 jetons (×2 CORA, ×4 double)</b></div>
+      <div class="o"><span>Soirée gagnée</span><b>800 jetons</b></div>
+      <div class="o"><span>Qualifié pour les huitièmes</span><b>2 500 jetons</b></div>
+      <div class="o"><span>Huitièmes · quarts · demies passés</span><b>3 000 · 5 000 · 8 000</b></div>
+      <div class="o"><span>Champion de la saison</span><b>20 000 jetons</b></div>
+    </div>
+    <div class="card ptable"><h3>Tout le quartier : le classement de la semaine</h3>
+      <div class="o"><span>Victoire en ligne</span><b>+10 pts (×2 CORA, ×4 double)</b></div>
+      <div class="o"><span>Soirée de League gagnée · titre</span><b>+5 · +50 pts</b></div>
+      <div class="o"><span>Le 1er de la semaine</span><b>👑 Roi du quartier + 10 000</b></div>
+      <div class="o"><span>Top 10 · top 50</span><b>cadre doré · 2 000 jetons</b></div>
+      <div class="o"><span>Remise à zéro</span><b>chaque lundi</b></div>
+    </div>
+    <div class="card ptable"><h3>Ce qui change aussi</h3>
+      <div class="o"><span>Une partie se joue en une seule manche, comme au quartier (3 manches en option)</span></div>
+      <div class="o"><span>CORA : gain ×2 · 33 Glacée : gain ×4, pour tout le monde</span></div>
+      <div class="o"><span>Le Mystère du vendredi : un coffre gratuit chaque semaine</span></div>
+      <div class="o"><span>Les modes histoire laissent la place à la League</span></div>
+    </div>
+    <button class="cta wide" id="newsOk">J’ai compris</button>
+  </div>
+</section>
+
+<!-- LA CÉRÉMONIE DU LUNDI -->
+<section class="scene" id="cer">
+  <div class="cer-k" id="cerK">LA SEMAINE EST TERMINÉE</div>
+  <div class="cer-pos" id="cerPos"></div>
+  <div class="cer-t" id="cerT"></div>
+  <p class="cer-s" id="cerS"></p>
+  <div class="cer-r" id="cerR"></div>
+  <button class="cta" id="cerGo" style="margin-top:24px">Voir la nouvelle semaine</button>
+</section>
+
+<div class="toast" id="toast"></div>
+<div class="confetti" id="confetti"></div>
+
+<script>
+(()=>{
+'use strict';
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]fast\b/.test(location.search);
+const OUT = 'cubic-bezier(.16,1,.3,1)', IN = 'cubic-bezier(.55,0,1,.45)', BACK = 'cubic-bezier(.34,1.56,.64,1)';
+function A(el, f, o){ if(!el) return Promise.resolve(); const a = el.animate(f, Object.assign({duration:420, easing:OUT, fill:'both'}, o, reduce ? {duration:1, delay:0} : {})); if(reduce) try{ a.finish(); }catch(e){} return a.finished.then(()=> a, ()=> a); }
+const sleep = ms=> new Promise(r=> setTimeout(r, reduce ? 0 : ms));
+const fmt = n=> Math.round(n||0).toLocaleString('fr-FR');
+const esc = s=> String(s==null ? '' : s).replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const buzz = p=>{ if(navigator.vibrate) try{ navigator.vibrate(p); }catch(e){} };
+function toast(msg, ms){ const t = $('toast'); t.textContent = msg; A(t, [{opacity:0, transform:'translateY(-10px)'}, {opacity:1, transform:'none', offset:.1}, {opacity:1, transform:'none', offset:.88}, {opacity:0}], {duration:ms || 3400, fill:'none'}); }
+function confetti(colors){
+  if(reduce) return;
+  const box = $('confetti');
+  for(let i = 0; i<40; i++){
+    const c = document.createElement('i'); c.style.left = (Math.random()*100)+'%'; c.style.background = colors[i % colors.length]; box.appendChild(c);
+    c.animate([{transform:'translate(0,0) rotate(0)'}, {transform:'translate('+((Math.random()*2-1)*80)+'px,'+(innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)'}], {duration:1700 + Math.random()*1200, delay:Math.random()*400, easing:'cubic-bezier(.3,.6,.5,1)', fill:'forwards'}).finished.then(()=> c.remove(), ()=> c.remove());
+  }
+}
+
+// the 32 neighbourhoods (same order and colours as the League)
+const Q = [
+  ['Mokolo','MOK','Y','#e23b3b','#f2c76a'], ['Briqueterie','BRQ','Y','#2bb673','#ffffff'], ['Mvog-Ada','MVA','Y','#7b3fe4','#f2c76a'], ['Mvog-Mbi','MVM','Y','#ff8a1f','#1b1b1b'],
+  ['Essos','ESS','Y','#1e88e5','#ffffff'], ['Nkolbisson','NKB','Y','#00897b','#ffd54f'], ['Biyem-Assi','BYA','Y','#c2185b','#ffffff'], ['Obili','OBL','Y','#3949ab','#ff7043'],
+  ['Melen','MLN','Y','#43a047','#1b1b1b'], ['Mendong','MDG','Y','#f4511e','#ffffff'], ['Ekounou','EKN','Y','#8e24aa','#80deea'], ['Emana','EMN','Y','#fdd835','#1b1b1b'],
+  ['Nkoldongo','NKD','Y','#d32f2f','#1b1b1b'], ['Etoudi','ETD','Y','#00acc1','#f2c76a'], ['Mimboman','MMB','Y','#6d4c41','#ffcc80'], ['Madagascar','MDC','Y','#e91e63','#ffeb3b'],
+  ['Cité Verte','CVT','Y','#2e7d32','#c5e1a5'], ['Elig-Edzoa','ELE','Y','#5e35b1','#ffffff'], ['Mvan','MVN','Y','#ef6c00','#4fc3f7'], ['Tsinga','TSG','Y','#0277bd','#f2c76a'],
+  ['Messa','MES','Y','#ad1457','#1b1b1b'], ['Nlongkak','NLK','Y','#558b2f','#ffffff'], ['Bastos','BST','Y','#212121','#f2c76a'], ['Odza','ODZ','Y','#00838f','#ff8a65'],
+  ['New-Bell','NBL','D','#1565c0','#ffd600'], ['Akwa','AKW','D','#c62828','#ffffff'], ['Deïdo','DEI','D','#2e7d32','#ffd600'], ['Bépanda','BEP','D','#6a1b9a','#ffffff'],
+  ['Ndokotti','NDK','D','#ff6f00','#1b1b1b'], ['Bonabéri','BNB','D','#00695c','#ffffff'], ['Makepe','MKP','D','#283593','#ef5350'], ['Village','VLG','D','#4e342e','#ffd54f']
+].map(([name, code, city, c1, c2], i)=> ({i, name, code, city, c1, c2}));
+const qOf = i=> (i!=null && Q[i]) ? Q[i] : null;
+const crest = (q, sm)=> q ? '<span class="crest'+(sm ? ' sm' : '')+'" style="--c1:'+q.c1+';--c2:'+q.c2+'"><b>'+q.code+'</b></span>' : '';
+// a face for each player: their initials on their neighbourhood's colours
+const initials = n=> String(n||'?').trim().slice(0, 2).toUpperCase();
+function av(name, qi, opts){
+  const q = qOf(qi), a1 = q ? q.c1 : '#5b6bd6', a2 = q ? '#0a1446' : '#2a3380';
+  return '<span class="av'+(opts && opts.gold ? ' gold' : '')+'" style="--a1:'+a1+';--a2:'+a2+(opts && opts.s ? ';--s:'+opts.s+'px' : '')+'">'+(opts && opts.crown ? '<span class="crown">👑</span>' : '')+(opts && opts.cap ? '<span class="cap">CAPITAINE</span>' : '')+esc(initials(name))+'</span>';
+}
+
+// ===================== the bridge with the game =====================
+const host = window.parent!==window ? window.parent : null;
+const params = new URLSearchParams(location.search);
+let ST = null; // the player's state, sent by the game
+const waiting = {};
+function post(m){ if(host) try{ host.postMessage(m, location.origin); }catch(e){} }
+function ask(what, extra){ return new Promise(res=>{ const id = what+':'+Math.random().toString(36).slice(2, 8); waiting[id] = res; post(Object.assign({zh:'comp', what, id}, extra || {})); setTimeout(()=>{ if(waiting[id]){ delete waiting[id]; res(null); } }, 12000); }); }
+window.addEventListener('message', e=>{
+  if(e.origin!==location.origin || !host || e.source!==host) return;
+  const d = e.data || {};
+  if(d.zh==='compData' && waiting[d.id]){ const r = waiting[d.id]; delete waiting[d.id]; r(d.data); }
+  if(d.zh==='chips'){ $('chips').textContent = fmt(d.chips); }
+  if(d.zh==='back') goBack();
+});
+post({zh:'hello'});
+
+// ===================== scenes =====================
+let cur = 'hub';
+async function show(id, back){
+  const from = $(cur), to = $(id); if(from===to) return;
+  cur = id;
+  await A(from, [{opacity:1, transform:'none'}, {opacity:0, transform:'translateX('+(back ? 26 : -26)+'px)'}], {duration:180, easing:IN});
+  from.classList.remove('on'); from.getAnimations().forEach(a=> a.cancel());
+  to.classList.add('on');
+  A(to, [{opacity:0, transform:'translateX('+(back ? -26 : 26)+'px)'}, {opacity:1, transform:'none'}], {duration:340, fill:'none'});
+}
+function goBack(){
+  if(cur==='hub') return post({zh:'close'});
+  if(cur==='news'){ post({zh:'newsSeen'}); if(params.has('annonce')) return post({zh:'close'}); }
+  if(cur==='cer') return;
+  show('hub', true).then(()=> loadHub());
+}
+$('close').addEventListener('click', ()=> post({zh:'close'}));
+document.querySelectorAll('[data-back]').forEach(b=> b.addEventListener('click', goBack));
+function stagger(sel, root){ [...(root || document).querySelectorAll(sel)].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:440, delay:Math.min(i*55, 400), fill:'backwards'})); }
+
+// ===================== the hub =====================
+let tab = ['joueurs','quartiers','amis','riches'].includes(params.get('tab')) ? params.get('tab') : 'joueurs', week = null, quartiers = null;
+document.querySelectorAll('#tabs4 button').forEach(x=> x.classList.toggle('on', x.dataset.t===tab));
+document.querySelectorAll('#tabs4 button').forEach(b=> b.addEventListener('click', ()=>{ if(tab===b.dataset.t) return; tab = b.dataset.t; document.querySelectorAll('#tabs4 button').forEach(x=> x.classList.toggle('on', x===b)); renderTab(true); }));
+// where everyone stood yesterday, kept on the phone: the ▲▼ of the list
+function moves(rows){
+  const day = new Date(Date.now() + 3600e3).toISOString().slice(0, 10);
+  let snap = null; try{ snap = JSON.parse(localStorage.getItem('fapfap_q_moves') || 'null'); }catch(e){}
+  if(!snap || snap.week!==ST.week){ snap = {week:ST.week, day, ref:{}, today:{}}; }
+  if(snap.day!==day){ snap.ref = snap.today; snap.today = {}; snap.day = day; }
+  rows.forEach(r=>{ snap.today[r.pid] = r.pos; });
+  try{ localStorage.setItem('fapfap_q_moves', JSON.stringify(snap)); }catch(e){}
+  return pid=>{ const a = snap.ref[pid], b = snap.today[pid]; if(a==null) return '<span class="new">NOUV.</span>'; const d = a - b; return d>0 ? '<span class="up">▲'+d+'</span>' : d<0 ? '<span class="down">▼'+(-d)+'</span>' : '<span class="same">—</span>'; };
+}
+function countdown(){
+  // the week ends on Sunday at midnight, Yaoundé time (UTC+1)
+  const now = Date.now(), l = new Date(now + 3600e3), dow = l.getUTCDay() || 7;
+  const end = Date.UTC(l.getUTCFullYear(), l.getUTCMonth(), l.getUTCDate() + (8 - dow)) - 3600e3;
+  const s = Math.max(0, Math.floor((end - now) / 1000)), d = Math.floor(s/86400), h = Math.floor(s%86400/3600), m = Math.floor(s%3600/60);
+  return (d ? d+' j ' : '')+h+' h '+String(m).padStart(2, '0')+' min';
+}
+setInterval(()=>{ const c = $('cd'); if(c) c.textContent = countdown(); }, 30000);
+async function loadHub(first){
+  ST = await ask('state');
+  if(!ST){ $('meCard').innerHTML = '<div class="empty">Pas de connexion au jeu. Ouvre « Tout le quartier » depuis Fap Fap.</div>'; $('tabBody').innerHTML = ''; return; }
+  $('chips').textContent = fmt(ST.chips);
+  if(ST.quartier==null && first){ return openChoose(true); }
+  renderMe(); renderNotif();
+  week = await ask('week');
+  renderMe(); renderTab(first);
+  loadTicker();
+  if(first){ stagger('#hub .card, #hub .tabs4, #hub .ticker'); }
+}
+function myRow(){ return week && week.rows ? week.rows.find(r=> r.me) : null; }
+function renderMe(){
+  const q = qOf(ST.quartier), me = myRow(), rows = (week && week.rows) || [];
+  $('hubEye').textContent = (q ? q.name+' · ' : '')+'fin dans '+countdown();
+  let line;
+  if(!ST.online) line = 'Pas de réseau : le classement revient dès que tu es connecté.';
+  else if(!ST.named) line = 'Choisis ton pseudo dans « Mon compte » pour apparaître dans le classement.';
+  else if(!me) line = 'Pas encore classé cette semaine. <b>Gagne une partie en ligne</b> ou une soirée de League pour entrer au classement.';
+  else {
+    const above = rows.find(r=> r.pos===me.pos - 1);
+    line = me.pos===1 ? '👑 Tu es le <b>Roi du quartier</b>. Tiens jusqu’à dimanche minuit !'
+      : 'Plus que <b>'+(above.pts - me.pts + 1)+' points</b> pour dépasser '+esc(above.name)+(me.pos - 1===1 ? ' et prendre la couronne.' : '.');
+    if(ST.dbl) line += '<br>⚡ Points ×2 encore '+ST.dbl+' min.';
+  }
+  const mys = ST.mys;
+  const mysLine = mys.done ? '🎁 Coffre ouvert cette semaine. Prochain vendredi 18 h.' : mys.open ? (mys.ready ? '🎁 <b>Ton coffre est prêt</b> : ouvre-le !' : '🎁 Le coffre est ouvert : '+mys.games+'/5 parties, '+(mys.nights ? '1' : '0')+'/1 soirée gagnée.') : '🎁 Mystère du vendredi : '+Math.min(mys.games, 5)+'/5 parties cette semaine.';
+  $('meCard').innerHTML = '<div class="me-card">'+(me ? '<div class="big">'+me.pos+'<small>'+(me.pos===1 ? 'ᵉʳ' : 'ᵉ')+'</small></div>' : '<div class="big">–</div>')+'<div class="tx">'+line+'</div></div>'+
+    '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">'+(q ? '<button class="ghost" id="myQ"><span class="crest sm" style="--s:18px;--c1:'+q.c1+';--c2:'+q.c2+';display:inline-grid;vertical-align:middle;margin-right:6px"></span>'+esc(q.name)+'</button>' : '<button class="ghost" id="myQ">Choisir mon quartier</button>')+
+    '<button class="ghost" id="goMys">'+(mys.open && !mys.done ? '🎁 Le coffre' : '🎁 Mystère')+'</button></div><p class="note">'+mysLine+'</p>';
+  $('myQ').addEventListener('click', ()=>{ if(q){ tab = 'quartiers'; document.querySelectorAll('#tabs4 button').forEach(x=> x.classList.toggle('on', x.dataset.t==='quartiers')); renderTab(true); $('tabs4').scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'}); } else openChoose(); });
+  $('goMys').addEventListener('click', openMystery);
+}
+async function loadTicker(){
+  const feed = (await ask('feed')) || [];
+  const items = feed.map(f=> '⚡ '+esc(f.txt));
+  const rows = (week && week.rows) || [];
+  if(rows[0]) items.push('👑 <b>'+esc(rows[0].name)+'</b> est Roi du quartier cette semaine');
+  if(rows[1]) items.push('🔥 <b>'+esc(rows[1].name)+'</b> n’est qu’à '+(rows[0].pts - rows[1].pts)+' points de la couronne');
+  if(ST.mys.open && !ST.mys.done) items.push('🎁 Le Mystère du vendredi est ouvert jusqu’à dimanche minuit');
+  else items.push('🎁 Le Mystère du vendredi ouvre vendredi à 18 h');
+  $('tickTx').innerHTML = items.join(' &nbsp;·&nbsp; ');
+  $('tickTx').style.setProperty('--dur', Math.max(18, items.join('').length / 9)+'s');
+}
+function row(r, mv, opts){
+  const tapable = !r.me && r.pid;
+  return '<div class="lrow'+(r.me ? ' me' : '')+(tapable ? ' tap' : '')+'"'+(tapable ? ' data-pid="'+esc(r.pid)+'"' : '')+'><span class="pos">'+r.pos+'</span>'+av(r.name, r.quartier, {gold:r.gold || r.pos===1, crown:r.pos===1 && !(opts && opts.noCrown), cap:opts && opts.cap && r.pos===1})+
+    '<span class="n">'+esc(r.name)+(r.me ? ' (toi)' : '')+(r.gold ? ' ✨' : '')+'<small class="qtag">'+esc(qOf(r.quartier) ? qOf(r.quartier).name : (opts && opts.sub) || '')+'</small></span>'+
+    (opts && opts.counts!=null ? '<span class="counts'+(opts.counts ? '' : ' no')+'">'+(opts.counts ? 'COMPTE' : 'NE COMPTE PAS')+'</span>' : '')+
+    '<span class="pts">'+fmt(r.pts)+(opts && opts.unit ? opts.unit : '')+'</span>'+(mv ? '<span class="mv">'+mv(r.pid)+'</span>' : '')+'</div>';
+}
+function bindRows(root, rows){
+  root.querySelectorAll('[data-pid]').forEach(el=> el.addEventListener('click', ()=>{ const r = rows.find(x=> x.pid===el.dataset.pid); if(r) post({zh:'player', pid:r.pid, name:r.name, rep:r.rep||0, chips:r.chips||0, saved:!!r.saved}); }));
+}
+async function renderTab(anim){
+  const body = $('tabBody');
+  if(tab==='joueurs'){
+    const rows = (week && week.rows) || [];
+    let h = '<div class="countdown"><b>Semaine '+esc(String(ST.week).split('-W')[1] || '')+'</b><span id="cd">'+countdown()+'</span></div>'+
+      '<div class="rewards"><div><b>1ᵉʳ</b>👑 + 10 000</div><div><b>TOP 10</b>✨ cadre doré</div><div><b>TOP 50</b>2 000 jetons</div></div>';
+    if(!rows.length) h += '<div class="card"><div class="empty">'+(week && week.error ? esc(week.error) : 'Personne n’a encore marqué cette semaine.<br>Gagne une partie en ligne et prends la couronne !')+'</div></div>';
+    else {
+      const mv = moves(rows), top = rows.filter(r=> r.pos<=3), meR = rows.find(r=> r.me), list = rows.filter(r=> r.pos>3 && r.pos<=100 && !(r.me && r.pos>100));
+      const pd = (r, k)=> r ? '<div class="pd p'+k+'">'+av(r.name, r.quartier, {gold:true, crown:k===1})+'<span class="nm">'+esc(r.name)+'<br><span class="qtag">'+esc(qOf(r.quartier) ? qOf(r.quartier).name : '')+'</span></span><span class="pt">'+fmt(r.pts)+' pts</span><div class="step">'+k+'</div></div>' : '<div class="pd p'+k+'"></div>';
+      h += '<div class="card" style="padding:8px 8px 4px"><div class="podium">'+pd(top[1], 2)+pd(top[0], 1)+pd(top[2], 3)+'</div>';
+      h += '<div id="list">'+list.filter(r=> !r.me || r.pos<=100).map(r=> row(r, mv)).join('')+'</div>';
+      if(meR) h += '<div class="stickme">'+row(meR, mv)+'</div>';
+      h += '</div><p class="note">Victoire en ligne +10 (×2 CORA, ×4 double) · soirée de League gagnée +5. Tout le monde repart de zéro le lundi. Touche un joueur pour le défier.</p>';
+    }
+    body.innerHTML = h;
+    bindRows(body, rows);
+    if(anim){ document.querySelectorAll('#tabBody .pd').forEach((p, i)=>{ const o = [1, 0, 2][i]; A(p.querySelector('.step'), [{transform:'scaleY(0)'}, {transform:'scaleY(1)'}], {duration:600, delay:200 + o*150}); A(p.querySelector('.av'), [{opacity:0, transform:'translateY(14px) scale(.7)'}, {opacity:1, transform:'none'}], {duration:520, delay:400 + o*150, easing:BACK}); }); stagger('#tabBody .lrow'); }
+  } else if(tab==='quartiers'){
+    body.innerHTML = '<div class="card"><div class="empty">Chargement…</div></div>';
+    quartiers = await ask('quartiers');
+    const list = (quartiers && quartiers.rows) || [], max = Math.max(1, ...list.map(x=> +x.pts || 0));
+    let h = '<div class="countdown"><b>Les 32 quartiers</b><span>semaine '+esc(String(ST.week).split('-W')[1] || '')+'</span></div>';
+    const mineI = list.findIndex(x=> x.quartier===ST.quartier);
+    if(!list.length) h += '<div class="card"><div class="empty">Aucun quartier n’a encore marqué cette semaine.</div></div>';
+    else h += '<div class="card" style="padding:10px">'+list.map((x, i)=>{ const q = qOf(x.quartier); if(!q) return ''; const few = x.members<5;
+      return '<div class="qbar'+(x.quartier===ST.quartier ? ' mine' : '')+'"><span class="pos">'+(i+1)+'</span>'+crest(q, 1)+'<div class="info"><b>'+esc(q.name)+'<span>'+fmt(x.pts)+'</span></b><small>'+x.active+' actif'+(x.active>1 ? 's' : '')+' sur '+x.members+(x.captain ? ' · capitaine : '+esc(x.captain) : '')+(few ? ' · +20 % 🔥' : '')+'</small><div class="track"><i style="--c1:'+q.c1+';--c2:'+q.c2+';transform:scaleX('+((+x.pts||0)/max).toFixed(3)+')"></i></div></div></div>'; }).join('')+'</div>';
+    h += '<p class="note">Seuls les 10 meilleurs joueurs de chaque quartier comptent : un petit quartier peut battre un grand. Les parties entre deux joueurs du même quartier (derbys) ne comptent pas pour le quartier. Un quartier de moins de 5 joueurs donne +20 % de points à ceux qui le rejoignent.</p>';
+    const q = qOf(ST.quartier);
+    let memRows = [];
+    if(q){
+      const mem = await ask('members', {q:ST.quartier});
+      const rows = memRows = (mem && mem.rows) || [], mine = list[mineI];
+      const meR = rows.find(r=> r.me);
+      let gapTxt = '';
+      if(mineI>0){ const ahead = list[mineI - 1]; gapTxt = '<b style="color:var(--gold)">'+fmt(ahead.pts - mine.pts + 1)+' points</b> de plus et '+esc(q.name)+' passe '+esc(qOf(ahead.quartier).name)+'.'; }
+      else if(mineI===0) gapTxt = esc(q.name)+' est 1ᵉʳ des quartiers. Défendez la place !';
+      h += '<div class="card"><h3>'+esc(q.name)+' · ton quartier<span>'+(mineI>=0 ? (mineI+1)+(mineI===0 ? 'ᵉʳ' : 'ᵉ') : '—')+'</span></h3><div class="qhead">'+crest(q)+'<div class="t"><b>'+esc(q.name)+'</b><small>'+(mine ? mine.members : rows.length)+' joueurs'+(meR ? ' · tu es '+meR.pos+(meR.pos===1 ? 'ᵉʳ' : 'ᵉ')+' du quartier' : '')+'</small></div></div>'+
+        (gapTxt ? '<p class="note" style="color:#dfe4ff">'+gapTxt+'</p>' : '')+
+        '<div style="margin-top:10px" id="memList">'+(rows.length ? rows.map(r=> row(r, null, {cap:true, noCrown:true, counts:r.counts})).join('') : '<div class="empty">Personne n’a encore marqué pour '+esc(q.name)+' cette semaine.</div>')+'</div>'+
+        '<p class="note">Le 1ᵉʳ de la semaine devient Capitaine du quartier. On ne change de quartier qu’une fois par mois.</p>'+
+        '<button class="ghost" id="changeQ" style="margin-top:8px">Changer de quartier</button></div>';
+    }
+    body.innerHTML = h;
+    const memRoot = $('memList'); if(memRoot) bindRows(memRoot, memRows);
+    const cq = $('changeQ'); if(cq) cq.addEventListener('click', ()=>{ if(ST.qLocked) toast('Tu pourras changer de quartier à partir du '+ST.qLocked+'.'); else openChoose(); });
+    if(anim){ stagger('#tabBody .qbar'); document.querySelectorAll('#tabBody .track i').forEach((t, i)=> A(t, [{transform:'scaleX(0)'}, {transform:t.style.transform}], {duration:800, delay:150 + i*40, fill:'backwards'})); }
+  } else if(tab==='amis'){
+    body.innerHTML = '<div class="card"><div class="empty">Chargement…</div></div>';
+    const fr = await ask('amis'), rows = (fr && fr.rows) || [];
+    body.innerHTML = rows.length ? '<div class="card" style="padding:8px">'+rows.map(r=> row(r, null, {noCrown:true})).join('')+'</div><p class="note">Tes amis et toi, par points de la semaine. Touche un ami pour le défier.</p>'
+      : '<div class="card"><div class="empty">Tu n’as pas encore d’amis ici.<br>Touche un joueur du classement pour lui demander d’être ton ami.</div></div>';
+    bindRows(body, rows);
+    if(anim) stagger('#tabBody .lrow');
+  } else {
+    body.innerHTML = '<div class="card"><div class="empty">Chargement…</div></div>';
+    const ri = await ask('riches'), rows = (ri && ri.rows) || [];
+    body.innerHTML = rows.length ? '<div class="card" style="padding:8px">'+rows.map(r=> row(r, null, {noCrown:true, unit:' 🪙', sub:'jetons de tous les temps'})).join('')+'</div><p class="note">Le classement des jetons de tous les temps.</p>'
+      : '<div class="card"><div class="empty">'+(ri && ri.error ? esc(ri.error) : 'Personne encore.')+'</div></div>';
+    body.innerHTML += '<button class="ghost" id="richFull" style="margin-top:8px">Le classement complet des riches</button>';
+    $('richFull').addEventListener('click', ()=> post({zh:'richPage'}));
+    bindRows(body, rows);
+    if(anim) stagger('#tabBody .lrow');
+  }
+}
+function renderNotif(){
+  const n = ST.notif, lv = n.level;
+  $('notifCard').innerHTML = '<h3>Les notifications<span>'+(n.on ? 'activées' : 'désactivées')+'</span></h3>'+
+    '<p class="note" style="margin:0">'+(n.on ? 'Le jeu te prévient quand on te dépasse, quand le Roi tombe, quand le coffre ouvre. 3 par jour au plus, jamais entre 22 h et 8 h.'
+      : n.can ? 'Active-les pour savoir quand quelqu’un te passe devant ou quand le coffre du vendredi ouvre.' : n.why)+'</p>'+
+    (n.on ? '<div class="lvl" id="lvl"><button data-l="all"'+(lv==='all' ? ' class="on"' : '')+'>Toutes</button><button data-l="important"'+(lv==='important' ? ' class="on"' : '')+'>Importantes</button><button data-l="none"'+(lv==='none' ? ' class="on"' : '')+'>Aucune</button></div>'
+      : n.can ? '<button class="cta wide" id="pushOn" style="margin-top:12px">Activer les notifications</button>' : '');
+  const l = $('lvl'); if(l) l.addEventListener('click', e=>{ const b = e.target.closest('[data-l]'); if(!b) return; l.querySelectorAll('button').forEach(x=> x.classList.toggle('on', x===b)); post({zh:'notif', level:b.dataset.l}); ST.notif.level = b.dataset.l; });
+  const p = $('pushOn'); if(p) p.addEventListener('click', ()=> post({zh:'push'}));
+}
+
+// ===================== choosing the neighbourhood =====================
+async function openChoose(firstTime){
+  quartiers = quartiers || await ask('quartiers');
+  const count = {}; ((quartiers && quartiers.rows) || []).forEach(x=> count[x.quartier] = x.members);
+  $('chooseNote').textContent = (firstTime ? 'Avant tout : quel quartier tu représentes ? ' : '')+'Tes points de la semaine comptent pour ton quartier. Tu pourras en changer une fois par mois.';
+  $('grid').innerHTML = Q.map(q=>{ const n = count[q.i] || 0, few = n<5; return '<button class="crest-b" data-q="'+q.i+'">'+crest(q)+'<span>'+esc(q.name)+'</span><small>'+(few ? '+20 % · '+n+' joueur'+(n>1 ? 's' : '') : n+' joueurs')+'</small></button>'; }).join('');
+  await show('choose');
+  stagger('#grid .crest-b');
+}
+$('grid').addEventListener('click', async e=>{
+  const b = e.target.closest('[data-q]'); if(!b) return;
+  const qi = +b.dataset.q, n = ((quartiers && quartiers.rows) || []).find(x=> x.quartier===qi);
+  const res = await ask('setq', {q:qi, bonus: !n || n.members<5});
+  if(res && res.error){ toast(res.error); return; }
+  buzz(15); toast('Tu représentes '+Q[qi].name+' !'+((!n || n.members<5) ? ' +20 % de points pendant 2 semaines.' : ''), 3200);
+  await show('hub', true); loadHub();
+});
+
+// ===================== the Friday box =====================
+async function openMystery(){
+  const m = ST.mys;
+  $('steps').innerHTML = '<h3>Pour l’ouvrir cette semaine</h3>'+
+    '<div class="step-r"><span class="ok'+(m.games>=5 ? '' : ' no')+'">'+(m.games>=5 ? '✓' : '·')+'</span>Jouer 5 parties en ligne ou en League ('+Math.min(m.games, 5)+'/5)</div>'+
+    '<div class="step-r"><span class="ok'+(m.nights ? '' : ' no')+'">'+(m.nights ? '✓' : '·')+'</span>Gagner au moins 1 soirée de League</div>'+
+    '<div class="step-r"><span class="ok'+(m.open ? '' : ' no')+'">'+(m.open ? '✓' : '·')+'</span>Venir entre vendredi 18 h et dimanche minuit</div>';
+  const btn = $('openChest');
+  btn.disabled = !m.ready || m.done;
+  btn.textContent = m.done ? 'Déjà ouvert cette semaine' : m.ready ? 'Ouvrir le coffre' : m.open ? 'Pas encore prêt' : 'Ouvre vendredi à 18 h';
+  ['lid','lockI','glow','prize'].forEach(id=> $(id).getAnimations().forEach(a=> a.cancel()));
+  await show('mys');
+  stagger('#mys .card');
+}
+$('openChest').addEventListener('click', async ()=>{
+  const btn = $('openChest'); btn.disabled = true;
+  const r = await ask('mystery');
+  if(!r || r.error){ toast((r && r.error) || 'Le coffre ne répond pas. Réessaie.'); btn.disabled = false; return; }
+  const chest = $('chest');
+  await A(chest, [{transform:'rotate(0)'}, {transform:'rotate(-4deg)'}, {transform:'rotate(4deg)'}, {transform:'rotate(-3deg)'}, {transform:'rotate(3deg)'}, {transform:'rotate(0)'}], {duration:700, easing:'ease-in-out', fill:'none'});
+  A($('lockI'), [{opacity:1, transform:'scale(1)'}, {opacity:0, transform:'scale(1.6)'}], {duration:300});
+  A($('lid'), [{transform:'none'}, {transform:'translate(-90px,-30px) rotate(-38deg)', opacity:0}], {duration:600});
+  A($('glow'), [{opacity:.5, transform:'scale(.8)'}, {opacity:1, transform:'scale(1.3)'}], {duration:700});
+  $('prize').innerHTML = esc(r.label).replace(/\n/g, '<br>');
+  await A($('prize'), [{opacity:0, transform:'translateY(30px) scale(.6)'}, {opacity:1, transform:'translateY(-80px) scale(1)'}], {duration:700, delay:200, easing:BACK});
+  confetti(r.jackpot ? ['#f2c76a', '#ffffff', '#e23b3b', '#9a63ff'] : ['#f2c76a', '#9a63ff', '#ffffff']);
+  buzz(r.jackpot ? [40, 60, 40, 60, 140] : [30, 50, 90]);
+  btn.textContent = 'Reviens vendredi prochain';
+  ST.mys.done = true;
+});
+
+// ===================== the announcement, the Monday ceremony =====================
+$('newsLeague').addEventListener('click', ()=>{ post({zh:'newsSeen'}); post({zh:'openLeague'}); });
+$('newsOk').addEventListener('click', ()=>{ post({zh:'newsSeen'}); if(params.has('annonce')) post({zh:'close'}); else show('hub', true).then(()=> loadHub()); });
+async function ceremony(){
+  const c = await ask('ceremony');
+  if(!c || !c.pos){ return loadHub(true); }
+  $('cerPos').innerHTML = c.pos+'<small>'+(c.pos===1 ? 'ᵉʳ' : 'ᵉ')+'</small>';
+  $('cerT').textContent = c.pos===1 ? 'Tu as fini Roi du quartier !' : 'Tu finis '+c.pos+(c.pos===1 ? 'ᵉʳ' : 'ᵉ')+' du quartier';
+  $('cerS').textContent = 'Semaine '+String(c.week).split('-W')[1]+' : '+fmt(c.pts)+' points.'+(c.king && c.pos!==1 ? ' Le Roi de la semaine : '+c.king+'.' : '');
+  $('cerR').innerHTML = c.reward ? 'Ta récompense : <b>'+esc(c.reward)+'</b>' : 'Entre dans le top 50 la semaine prochaine pour gagner une récompense.';
+  await show('cer');
+  ['cerK','cerPos','cerT','cerS','cerR','cerGo'].forEach((id, i)=> A($(id), [{opacity:0, transform:id==='cerPos' ? 'scale(.6)' : 'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:600, delay:150 + i*140, easing:id==='cerPos' ? BACK : OUT}));
+  if(c.pos<=10) setTimeout(()=> confetti(['#f2c76a', '#ffffff', '#9a63ff']), 700);
+}
+$('cerGo').addEventListener('click', async ()=>{ await show('hub', true); loadHub(true); });
+
+// ===================== start =====================
+if(params.has('annonce')){ $('hub').classList.remove('on'); $('news').classList.add('on'); cur = 'news'; stagger('#news .card'); }
+else if(params.has('ceremonie')){ ceremony(); }
+else loadHub(true);
+})();
+</script>
+</body>
+</html>

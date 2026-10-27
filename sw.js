@@ -1,6 +1,6 @@
 // Fap Fap â€” service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v80';
+const CACHE = 'fapfap-v81';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
 self.addEventListener('install', (event)=>{
@@ -39,7 +39,9 @@ self.addEventListener('notificationclick', (event)=>{
     const open = list.find(c=> c.url && c.url.startsWith(self.registration.scope));
     if(open){
       // a friend request opens the bell, a challenge opens the room
-      open.postMessage(d.kind === 'ami' ? {type:'amis'} : {type:'defi', code: d.code, name: d.name});
+      // a reminder of Tout le quartier opens its ranking (an announcement just brings the game forward)
+      if(d.kind === 'rappel'){ if(/[?&]quartier=1\b/.test(url)) open.postMessage({type:'quartier'}); }
+      else open.postMessage(d.kind === 'ami' ? {type:'amis'} : {type:'defi', code: d.code, name: d.name});
       return open.focus();
     }
     return self.clients.openWindow(url);
