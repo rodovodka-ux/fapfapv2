@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030619">
+<title>League en ligne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Maquette : la Fap-Fap League EN LIGNE (formule B). Même nuit, mêmes polices que la League solo. */
+:root{ --night:#030619; --navy:#0a1546; --ink:#eef1ff; --mute:#8f9bcf; --gold:#f2c76a; --gold-d:#a87a24; --good:#92e8b0; --bad:#ffb4a6; --live:#ff5a6a;
+  --disp:'Unbounded', 'Manrope', system-ui, sans-serif; --ui:'Manrope', system-ui, sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:var(--night); color:var(--ink); font:600 15px/1.4 var(--ui); overflow:hidden; }
+button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; }
+.sky{ position:fixed; inset:0; background:radial-gradient(130% 75% at 50% 112%, #2443b8 0%, #0d1c5c 34%, var(--night) 70%); }
+.sky i{ position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.35; }
+.scr{ position:fixed; inset:0; display:none; flex-direction:column; overflow-y:auto; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 60px); z-index:1; }
+.scr.on{ display:flex; }
+.scr > *{ flex-shrink:0; }
+.hd{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.round{ width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.07); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); display:grid; place-items:center; font:500 24px/1 var(--ui); flex:none; }
+.eyebrow{ display:block; color:var(--gold); font:800 10.5px var(--ui); letter-spacing:.22em; text-transform:uppercase; margin-bottom:3px; }
+.hd h2{ margin:0; font:700 18px/1.1 var(--disp); text-transform:uppercase; }
+.grow{ flex:1; min-width:0; }
+.chips{ display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:20px; background:rgba(255,255,255,.07); font:800 12.5px var(--ui); white-space:nowrap; }
+.coin{ width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff1c4, var(--gold) 55%, var(--gold-d)); display:inline-block; flex:none; }
+.cta{ display:block; width:100%; padding:16px 20px; border-radius:40px; font:700 12.5px var(--disp); letter-spacing:.1em; text-transform:uppercase; text-align:center;
+  background:linear-gradient(180deg,#ffe6a6,var(--gold) 55%,#c9973b); color:#2b1a02; box-shadow:0 12px 32px rgba(242,199,106,.3), inset 0 1px 0 rgba(255,255,255,.7); }
+.cta small{ display:block; font:700 11.5px var(--ui); letter-spacing:0; text-transform:none; opacity:.8; margin-top:3px; }
+.ghost{ padding:10px 14px; border-radius:30px; background:rgba(255,255,255,.08); box-shadow:inset 0 0 0 1px rgba(255,255,255,.1); font:700 12.5px var(--ui); white-space:nowrap; }
+.ghost.gold{ background:rgba(242,199,106,.16); color:var(--gold); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); }
+.card{ border-radius:24px; background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08); padding:16px; margin-bottom:14px; }
+.card h3{ margin:0 0 12px; font:800 10.5px var(--ui); letter-spacing:.22em; color:var(--gold); text-transform:uppercase; display:flex; justify-content:space-between; gap:8px; }
+.card h3 span{ color:var(--mute); letter-spacing:.12em; }
+.mute{ color:var(--mute); }
+p{ margin:6px 0 0; font-size:13.5px; line-height:1.45; }
+.crest{ --s:34px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; flex:none; position:relative; background:conic-gradient(var(--c1) 0 62%, var(--c2) 0); box-shadow:0 0 0 2px rgba(255,255,255,.18); }
+.crest::before{ content:''; position:absolute; inset:calc(var(--s) * .14); border-radius:50%; background:#0a1546; }
+.crest b{ position:relative; font:700 calc(var(--s) * .27) var(--disp); color:#fff; }
+/* the hero of the season */
+.hero{ text-align:center; padding:10px 0 4px; }
+.ball{ width:84px; height:84px; margin:0 auto 10px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, #cfd8ff 40%, #6f86e8); box-shadow:0 0 40px rgba(150,180,255,.45); display:grid; place-items:center; font:800 20px var(--disp); color:#0a1546; position:relative; }
+.ball::after{ content:'EN LIGNE'; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%); background:var(--live); color:#fff; font:800 9px var(--ui); letter-spacing:.14em; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+.hero h1{ margin:8px 0 0; font:800 24px/1.05 var(--disp); text-transform:uppercase; letter-spacing:.01em; }
+.hero h1 em{ font-style:normal; color:var(--gold); display:block; font-size:15px; letter-spacing:.2em; margin-top:4px; }
+.stats{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin:14px 0; }
+.stat{ text-align:center; border-radius:18px; background:rgba(255,255,255,.06); padding:10px 4px; }
+.stat b{ display:block; font:700 18px var(--disp); }
+.stat span{ font:700 10.5px var(--ui); color:var(--mute); letter-spacing:.06em; text-transform:uppercase; }
+.pod{ display:flex; align-items:flex-end; justify-content:center; gap:8px; }
+.pod > div{ flex:1; text-align:center; border-radius:16px 16px 6px 6px; padding:10px 4px; }
+.pod b{ display:block; font:700 15px var(--disp); }
+.pod small{ display:block; font:700 11px/1.3 var(--ui); color:var(--mute); margin-top:3px; }
+.p1{ background:linear-gradient(180deg, rgba(242,199,106,.35), rgba(242,199,106,.08)); padding-top:18px !important; }
+.p2{ background:rgba(205,214,240,.14); }
+.p3{ background:rgba(205,140,80,.16); }
+.pod i{ font-style:normal; font-size:22px; display:block; }
+.chk{ display:flex; gap:10px; align-items:center; padding:8px 0; border-top:1px solid rgba(255,255,255,.07); font:700 13.5px var(--ui); }
+.chk:first-of-type{ border-top:0; }
+.chk i{ font-style:normal; width:24px; height:24px; border-radius:50%; display:grid; place-items:center; background:rgba(146,232,176,.18); color:var(--good); font-size:13px; flex:none; }
+.chk i.no{ background:rgba(255,180,166,.16); color:var(--bad); }
+.tl{ position:relative; padding-left:18px; }
+.tl::before{ content:''; position:absolute; left:5px; top:6px; bottom:6px; width:2px; background:rgba(255,255,255,.12); }
+.tl div{ position:relative; padding:4px 0 10px; }
+.tl div::before{ content:''; position:absolute; left:-17px; top:9px; width:10px; height:10px; border-radius:50%; background:#2443b8; box-shadow:0 0 0 2px var(--night); }
+.tl div.now::before{ background:var(--gold); box-shadow:0 0 0 2px var(--night), 0 0 12px var(--gold); }
+.tl b{ font:700 13px var(--disp); display:block; }
+.tl span{ font:600 12.5px var(--ui); color:var(--mute); }
+/* tables of players */
+.rows{ display:flex; flex-direction:column; gap:2px; }
+.r{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:14px; font:700 13.5px var(--ui); }
+.r .n{ width:22px; text-align:center; font:700 12px var(--disp); color:var(--mute); }
+.r .nm{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.r .nm small{ display:block; font:600 11.5px var(--ui); color:var(--mute); }
+.r .pt{ font:700 13px var(--disp); }
+.r.me{ background:rgba(242,199,106,.14); box-shadow:inset 0 0 0 1px rgba(242,199,106,.35); }
+.cut{ display:flex; align-items:center; gap:8px; margin:4px 0; font:800 10px var(--ui); letter-spacing:.14em; color:var(--good); text-transform:uppercase; }
+.cut::before, .cut::after{ content:''; flex:1; height:1px; background:rgba(146,232,176,.4); }
+.dot{ width:8px; height:8px; border-radius:50%; background:var(--good); box-shadow:0 0 8px var(--good); flex:none; }
+.mecard{ display:flex; gap:12px; align-items:center; }
+.mecard .big{ font:800 34px/1 var(--disp); }
+.mecard .big small{ font-size:15px; }
+/* groups, calendar */
+.groups{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.grp{ border-radius:18px; background:rgba(255,255,255,.05); padding:10px; }
+.grp h4{ margin:0 0 6px; font:800 10px var(--ui); letter-spacing:.2em; color:var(--gold); }
+.grp .p{ display:flex; gap:6px; align-items:center; font:700 12px var(--ui); padding:3px 0; white-space:nowrap; overflow:hidden; }
+.grp .p .crest{ --s:22px; }
+.grp.mine{ box-shadow:inset 0 0 0 1.5px var(--gold); background:rgba(242,199,106,.08); }
+.m{ border-radius:18px; background:rgba(255,255,255,.05); padding:12px; margin-top:10px; }
+.m .vs{ display:flex; align-items:center; gap:8px; font:700 14px var(--ui); }
+.m .vs .sc{ margin-left:auto; font:700 16px var(--disp); }
+.m .when{ font:700 12px var(--ui); color:var(--mute); margin-top:6px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.tag{ font:800 10px var(--ui); letter-spacing:.12em; text-transform:uppercase; padding:3px 8px; border-radius:20px; }
+.tag.win{ background:rgba(146,232,176,.18); color:var(--good); }
+.tag.todo{ background:rgba(242,199,106,.18); color:var(--gold); }
+.tag.live{ background:var(--live); color:#fff; }
+.tag.risk{ background:rgba(255,180,166,.18); color:var(--bad); }
+.slots{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.slot{ padding:7px 11px; border-radius:20px; background:rgba(255,255,255,.07); font:700 12px var(--ui); }
+.slot.on{ background:var(--gold); color:#2b1a02; }
+.gt{ width:100%; border-collapse:collapse; font:700 12.5px var(--ui); }
+.gt th{ font:800 10px var(--ui); letter-spacing:.12em; color:var(--mute); text-align:center; padding:4px; }
+.gt th:nth-child(2){ text-align:left; }
+.gt td{ padding:6px 4px; text-align:center; border-top:1px solid rgba(255,255,255,.06); }
+.gt td:nth-child(2){ text-align:left; }
+.gt tr.me td{ color:var(--gold); }
+.gt tr.q td:first-child{ color:var(--good); }
+/* the live match */
+.face{ text-align:center; flex:1; }
+.av{ width:76px; height:76px; border-radius:50%; margin:0 auto 6px; display:grid; place-items:center; font:800 24px var(--disp); background:#2443b8; position:relative; box-shadow:0 0 0 3px rgba(255,255,255,.15); }
+.av .ok{ position:absolute; right:-2px; bottom:-2px; width:24px; height:24px; border-radius:50%; background:var(--good); color:#06301a; font:800 13px var(--ui); display:grid; place-items:center; box-shadow:0 0 0 3px var(--night); }
+.vsbig{ display:flex; align-items:center; gap:6px; margin:10px 0 4px; }
+.vsbig .x{ font:800 15px var(--disp); color:var(--mute); }
+.manches{ display:flex; justify-content:center; gap:10px; margin-top:12px; }
+.manches span{ width:86px; padding:8px 4px; border-radius:14px; background:rgba(255,255,255,.06); text-align:center; font:700 11px var(--ui); color:var(--mute); }
+.manches span b{ display:block; font:700 14px var(--disp); color:var(--ink); }
+.manches span.won{ background:rgba(146,232,176,.14); }
+.manches span.won b{ color:var(--good); }
+.count{ font:800 34px var(--disp); text-align:center; color:var(--gold); margin:6px 0 0; }
+/* the bracket */
+.br{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; align-items:center; }
+.col{ display:flex; flex-direction:column; gap:8px; justify-content:space-around; height:100%; }
+.col h4{ margin:0; text-align:center; font:800 9.5px var(--ui); letter-spacing:.16em; color:var(--gold); }
+.tie{ border-radius:12px; background:rgba(255,255,255,.06); padding:6px 7px; font:700 11px var(--ui); }
+.tie div{ display:flex; justify-content:space-between; gap:4px; white-space:nowrap; overflow:hidden; }
+.tie div.w{ color:var(--good); }
+.tie.me{ box-shadow:inset 0 0 0 1.5px var(--gold); }
+.tie.final{ background:linear-gradient(180deg, rgba(242,199,106,.25), rgba(242,199,106,.06)); }
+/* v2 — pour ne jamais être perdu : où j'en suis, quoi faire maintenant, une aide en 3 phrases */
+.steps{ display:flex; align-items:flex-start; margin:0 0 14px; padding:0 2px; }
+.steps .st{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; font:800 9.5px/1.15 var(--ui); color:var(--mute); text-align:center; letter-spacing:.02em; }
+.steps .st::before{ content:''; position:absolute; top:10px; right:50%; width:100%; height:2px; background:rgba(255,255,255,.12); z-index:0; }
+.steps .st:first-child::before{ display:none; }
+.steps .st i{ position:relative; z-index:1; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font:800 11px var(--ui); font-style:normal; background:#141d4a; box-shadow:inset 0 0 0 2px rgba(255,255,255,.16); color:var(--mute); }
+.steps .st.done{ color:var(--good); } .steps .st.done i{ background:var(--good); color:#06301a; box-shadow:none; } .steps .st.done::before{ background:var(--good); }
+.steps .st.now{ color:var(--gold); } .steps .st.now i{ background:var(--gold); color:#2b1a02; box-shadow:0 0 0 4px rgba(242,199,106,.22), 0 0 14px rgba(242,199,106,.6); } .steps .st.now::before{ background:linear-gradient(90deg,var(--good),var(--gold)); }
+.next{ border-radius:24px; padding:14px; margin-bottom:14px; background:linear-gradient(160deg, rgba(242,199,106,.22), rgba(242,199,106,.05) 70%); box-shadow:inset 0 0 0 1.5px rgba(242,199,106,.55); }
+.next .lbl{ font:800 10px var(--ui); letter-spacing:.22em; color:var(--gold); text-transform:uppercase; display:flex; align-items:center; gap:6px; }
+.next .lbl::before{ content:''; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px var(--gold); animation:blink 1.6s ease-in-out infinite; }
+@keyframes blink{ 50%{ opacity:.25; } }
+.next b.t{ display:block; font:700 16px/1.25 var(--disp); margin:6px 0 2px; }
+.next p{ margin:0 0 12px; color:#d6dcf7; }
+.next .cta{ padding:13px 16px; }
+.help{ width:40px; height:40px; border-radius:50%; background:rgba(242,199,106,.14); color:var(--gold); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); font:800 17px var(--disp); flex:none; }
+.how{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.how div{ border-radius:18px; background:rgba(255,255,255,.05); padding:10px 8px; text-align:center; font:700 11.5px/1.3 var(--ui); color:#d6dcf7; }
+.how div b{ display:grid; place-items:center; width:30px; height:30px; margin:0 auto 6px; border-radius:50%; background:#2443b8; font:700 14px var(--disp); color:#fff; }
+.gap{ display:flex; align-items:center; gap:8px; margin-top:10px; padding:9px 11px; border-radius:14px; background:rgba(146,232,176,.1); font:700 12.5px var(--ui); color:var(--good); }
+.gap.warn{ background:rgba(255,180,166,.1); color:var(--bad); }
+.meter{ height:8px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:8px; }
+.meter i{ display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,var(--gold),#ffe6a6); }
+.sheet-bg{ position:fixed; inset:0; z-index:20; background:rgba(2,4,16,.66); display:none; align-items:flex-end; }
+.sheet-bg.on{ display:flex; animation:fadeIn .2s ease; }
+.sheet{ width:100%; border-radius:28px 28px 0 0; background:#0d1640; box-shadow:0 -1px 0 rgba(255,255,255,.12); padding:10px 18px calc(env(safe-area-inset-bottom) + 18px); animation:up .28s cubic-bezier(.2,.8,.2,1); max-height:86%; overflow-y:auto; }
+.sheet::before{ content:''; display:block; width:40px; height:5px; border-radius:3px; background:rgba(255,255,255,.2); margin:0 auto 12px; }
+.sheet h4{ margin:0 0 8px; font:700 17px var(--disp); }
+.sheet ol{ margin:8px 0 14px; padding-left:20px; } .sheet li{ margin:6px 0; font:600 14px/1.4 var(--ui); color:#d6dcf7; }
+.sheet .row2{ display:flex; gap:8px; } .sheet .row2 > *{ flex:1; }
+.sum{ border-radius:18px; background:rgba(255,255,255,.05); padding:4px 12px; margin:6px 0 14px; }
+.sum div{ display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid rgba(255,255,255,.07); font:700 13px var(--ui); } .sum div:first-child{ border-top:0; }
+.sum div span:first-child{ color:var(--mute); }
+@keyframes up{ from{ transform:translateY(40px); opacity:0; } }
+@keyframes fadeIn{ from{ opacity:0; } }
+/* the reviewer's guide (not part of the game) */
+.guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:5px; justify-content:center; align-items:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.82); font:700 11px var(--ui); color:#bbb; }
+.guide button{ background:#333; color:#ddd; border-radius:8px; padding:5px 8px; font:800 11px var(--ui); }
+.guide button.on{ background:var(--gold); color:#111; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style></head>
+<body>
+<div class="sky" id="sky"></div>
+
+<!-- 1. REGISTRATION -->
+<section class="scr on" id="s1">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Saison 1 · en ligne</span><h2>La League des vrais</h2></div><span class="chips"><span class="coin"></span>12 400</span></div>
+  <div class="hero"><div class="ball">FF</div><h1>Fap·Fap League<em>contre de vrais joueurs</em></h1>
+    <p class="mute">Que des vrais joueurs, pas d’ordinateur. Trois semaines pour devenir le champion du Cameroun.</p></div>
+  <div class="stats"><div class="stat"><b>54</b><span>inscrits</span></div><div class="stat"><b style="color:var(--gold)">243 000</b><span>cagnotte</span></div><div class="stat"><b>3 j 14 h</b><span>pour s’inscrire</span></div></div>
+  <div class="card"><h3>Comment ça marche <span>30 secondes</span></h3>
+    <div class="how"><div><b>1</b>Tu paies 5 000 jetons pour entrer</div><div><b>2</b>Tu joues tes matchs quand tu veux, en 48 h</div><div><b>3</b>Les meilleurs se partagent la cagnotte</div></div>
+    <p class="mute" style="text-align:center">On te prévient par notification à chaque match. Tu n’as rien à surveiller.</p></div>
+  <div class="card"><h3>Ce qu’on gagne <span>top 3</span></h3>
+    <div class="pod">
+      <div class="p2"><i>🥈</i><b>72 900</b><small>jetons<br>+ 2 000 F de crédit</small></div>
+      <div class="p1"><i>🏆</i><b>145 800</b><small>jetons<br>+ 5 000 F de crédit<br>+ le t-shirt champion</small></div>
+      <div class="p3"><i>🥉</i><b>24 300</b><small>jetons<br>+ 1 000 F de crédit</small></div>
+    </div>
+    <p class="mute" style="text-align:center">La cagnotte = toutes les entrées, moins 10 % pour la maison. Elle grossit à chaque inscription. Le quartier du champion reçoit son badge pour la saison.</p></div>
+  <div class="card"><h3>Pour t’inscrire</h3>
+    <div class="chk"><i>✓</i>Un compte certifié (sauvegardé)</div>
+    <div class="chk"><i>✓</i>5 000 jetons d’entrée</div>
+    <div class="chk"><i>✓</i>Un numéro de téléphone pour recevoir les lots (un seul compte par numéro)</div></div>
+  <div class="card"><h3>Le déroulé <span>3 semaines</span></h3>
+    <div class="tl">
+      <div class="now"><b>Semaine 1 · Les qualifications</b><span>Inscris-toi, puis joue jusqu’à 10 matchs contre d’autres inscrits. Les 16 meilleurs sont qualifiés dimanche à 21 h.</span></div>
+      <div><b>Semaine 2 · Les poules</b><span>4 poules de 4, matchs aller et retour. Les 2 premiers de chaque poule passent.</span></div>
+      <div><b>Semaine 3 · La phase finale</b><span>Quarts et demies en aller-retour, puis la finale en direct samedi à 20 h.</span></div>
+    </div>
+    <p class="mute">Un match = une soirée de 3 manches en duel. Tu as 48 h pour le jouer ; sinon, forfait. Au-delà de 64 inscrits, on passe à 32 qualifiés.</p></div>
+  <button class="cta" id="btnJoin">M’inscrire<small>5 000 jetons · on te montre tout avant de payer</small></button>
+</section>
+
+<!-- 2. QUALIFICATIONS -->
+<section class="scr" id="s2">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Semaine 1 · jusqu’à dim. 21 h</span><h2>Qualifications</h2></div></div>
+  <div class="card"><div class="mecard"><div class="big">12<small>e</small></div><div class="grow"><b>Le Boss</b> <span class="mute" style="font-size:12.5px">· Nkolbisson</span><p class="mute" style="margin-top:2px">4 matchs sur 10 · 9 points · encore 6 matchs pour grimper</p></div><span class="crest" style="--c1:#00897b;--c2:#ffd54f;--s:40px"><b>NKB</b></span></div>
+    <div class="meter"><i style="width:40%"></i></div>
+    <div class="gap">▲ Tu es dans les 16 : tu serais qualifié si ça s’arrêtait maintenant.</div>
+    <p style="margin-top:10px">Victoire <b>3 pts</b> · défaite <b>1 pt</b> · CORA gagnant <b>+1</b>. Ne pas jouer = 0.</p></div>
+  <div class="next"><span class="lbl">À faire maintenant</span><b class="t">Joue ton 5e match</b><p>Même une défaite rapporte 1 point. Une victoire te met à l’abri (12e → ~8e).</p>
+    <button class="cta">Trouver un adversaire<small>5 inscrits en ligne · une soirée de 3 manches, ~15 min</small></button></div>
+  <div class="card"><h3>En ligne maintenant <span>inscrits</span></h3>
+    <div class="rows">
+      <div class="r"><span class="dot"></span><span class="crest" style="--c1:#c62828;--c2:#fff"><b>AKW</b></span><span class="nm">Mola<small>Akwa · 6e</small></span><button class="ghost gold">Défier</button></div>
+      <div class="r"><span class="dot"></span><span class="crest" style="--c1:#e23b3b;--c2:#f2c76a"><b>MOK</b></span><span class="nm">La Machine<small>Mokolo · 15e</small></span><button class="ghost gold">Défier</button></div>
+      <div class="r"><span class="dot"></span><span class="crest" style="--c1:#6a1b9a;--c2:#fff"><b>BEP</b></span><span class="nm">Dja Boy<small>Bépanda · 22e</small></span><button class="ghost gold">Défier</button></div>
+    </div>
+    <p class="mute">Un défi part en notification. S’il accepte, la table s’ouvre pour vous deux.</p></div>
+  <div class="card"><h3>Le classement <span>54 inscrits</span></h3>
+    <div class="rows">
+      <div class="r"><span class="n">1</span><span class="crest" style="--c1:#1e88e5;--c2:#fff"><b>ESS</b></span><span class="nm">Grand Frère<small>Essos · 7 matchs</small></span><span class="pt">19</span></div>
+      <div class="r"><span class="n">2</span><span class="crest" style="--c1:#43a047;--c2:#1b1b1b"><b>MLN</b></span><span class="nm">Petit Kora<small>Melen · 6 matchs</small></span><span class="pt">17</span></div>
+      <div class="r"><span class="n">…</span><span class="nm mute">…</span></div>
+      <div class="r me"><span class="n">12</span><span class="crest" style="--c1:#00897b;--c2:#ffd54f"><b>NKB</b></span><span class="nm">Le Boss (toi)<small>Nkolbisson · 4 matchs</small></span><span class="pt">9</span></div>
+      <div class="r"><span class="n">16</span><span class="crest" style="--c1:#e23b3b;--c2:#f2c76a"><b>MOK</b></span><span class="nm">La Machine<small>Mokolo · 5 matchs</small></span><span class="pt">8</span></div>
+      <div class="cut">ligne de qualification</div>
+      <div class="r"><span class="n">17</span><span class="crest" style="--c1:#ff8a1f;--c2:#1b1b1b"><b>MVM</b></span><span class="nm">Tonton Pala<small>Mvog-Mbi · 6 matchs</small></span><span class="pt">7</span></div>
+    </div></div>
+</section>
+
+<!-- 3. THE DRAW OF THE GROUPS -->
+<section class="scr" id="s3">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Dimanche 21 h · en direct</span><h2>Le tirage des poules</h2></div></div>
+  <div class="card" style="text-align:center"><p style="margin:0;font:700 14px var(--ui)">Tu es <b style="color:var(--gold)">qualifié</b> ! 11e sur 54.</p><p class="mute">Tirage à 4 chapeaux, comme dans la League : les 4 premiers sont têtes de série.</p></div>
+  <div class="groups" id="groups"></div>
+  <p class="mute" style="text-align:center;margin-top:12px">Les 2 premiers de chaque poule passent en quarts de finale.</p>
+  <div class="next" style="margin-top:6px"><span class="lbl">Et maintenant ?</span><b class="t">Rien à faire ce soir</b><p>Ton 1er match ouvre lundi à 8 h. Tu recevras une notification avec ton adversaire.</p>
+    <button class="cta">Voir mon calendrier<small>3 matchs aller · 3 matchs retour</small></button></div>
+</section>
+
+<!-- 4. MY CALENDAR -->
+<section class="scr" id="s4">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Semaine 2 · Groupe B</span><h2>Mes matchs</h2></div></div>
+  <div class="next"><span class="lbl">Ton prochain match · encore 26 h</span>
+    <div class="vs" style="display:flex;align-items:center;gap:8px;font:700 15px var(--ui);margin:8px 0 4px"><span class="crest" style="--c1:#c2185b;--c2:#fff"><b>BYA</b></span>Ma Lucie · aller<span class="tag" style="margin-left:auto;background:rgba(146,232,176,.18);color:var(--good)">● en ligne</span></div>
+    <p>Elle est connectée : vous pouvez jouer tout de suite. Sinon, propose une heure.</p>
+    <button class="cta">Jouer maintenant<small>premier à 2 manches · ~15 min</small></button>
+    <div class="slots"><span class="slot">Ce soir 20 h</span><span class="slot">Ce soir 22 h</span><span class="slot">Demain 13 h</span></div></div>
+  <div class="card"><h3>Groupe B <span>2 qualifiés</span></h3>
+    <table class="gt"><tr><th>#</th><th>Joueur</th><th>J</th><th>V</th><th>D</th><th>Pts</th></tr>
+      <tr class="q"><td>1</td><td>Mola · AKW</td><td>3</td><td>3</td><td>0</td><td>9</td></tr>
+      <tr class="q me"><td>2</td><td>Le Boss · NKB</td><td>2</td><td>1</td><td>1</td><td>3</td></tr>
+      <tr><td>3</td><td>Dja Boy · BEP</td><td>3</td><td>1</td><td>2</td><td>3</td></tr>
+      <tr><td>4</td><td>Ma Lucie · BYA</td><td>2</td><td>0</td><td>2</td><td>0</td></tr></table>
+    <div class="gap">▲ 2e du groupe : une victoire de plus et tu es en quarts.</div></div>
+  <h3 style="margin:2px 4px 0;font:800 10.5px var(--ui);letter-spacing:.22em;color:var(--gold)">TOUS MES MATCHS</h3>
+  <div class="m"><div class="vs"><span class="crest" style="--c1:#6a1b9a;--c2:#fff"><b>BEP</b></span>Dja Boy · aller<span class="sc" style="color:var(--good)">2 – 1</span></div><div class="when"><span class="tag win">Gagné</span>mardi 20 h 40 · un CORA à la 3e manche</div></div>
+  <div class="m"><div class="vs"><span class="crest" style="--c1:#c62828;--c2:#fff"><b>AKW</b></span>Mola · aller<span class="sc" style="color:var(--bad)">0 – 2</span></div><div class="when"><span class="tag" style="background:rgba(255,180,166,.16);color:var(--bad)">Perdu</span>mercredi 21 h 10</div></div>
+  <div class="m"><div class="vs"><span class="crest" style="--c1:#c2185b;--c2:#fff"><b>BYA</b></span>Ma Lucie · aller<span class="sc mute">—</span></div>
+    <div class="when"><span class="tag todo">À jouer</span>avant jeudi 21 h · un rappel part 30 min avant l’heure choisie</div></div>
+  <div class="m"><div class="vs"><span class="crest" style="--c1:#6a1b9a;--c2:#fff"><b>BEP</b></span>Dja Boy · retour<span class="sc mute">—</span></div><div class="when"><span class="tag risk">Ouvre vendredi</span>48 h pour le jouer, sinon forfait (0 – 2)</div></div>
+</section>
+
+<!-- 5. THE LIVE MATCH -->
+<section class="scr" id="s5">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Groupe B · aller</span><h2>Soirée en direct</h2></div><span class="tag live">● En direct</span></div>
+  <div class="card">
+    <div class="vsbig"><div class="face"><div class="av">LB<span class="ok">✓</span></div><b>Le Boss</b><p class="mute" style="margin:0;font-size:12px">Nkolbisson</p></div><span class="x">VS</span><div class="face"><div class="av" style="background:#c2185b">ML<span class="ok">✓</span></div><b>Ma Lucie</b><p class="mute" style="margin:0;font-size:12px">Biyem-Assi</p></div></div>
+    <div class="count">1 – 0</div>
+    <div class="manches"><span class="won"><b>Manche 1</b>gagnée ×2 CORA</span><span><b>Manche 2</b>en cours</span><span><b>Manche 3</b>si besoin</span></div>
+    <p class="mute" style="text-align:center;margin-top:12px">Premier à 2 manches. Chaque manche gagnée rapporte 200 jetons, ×2 sur un CORA, ×4 sur une 33 Glacée. La victoire : 3 points de poule.</p></div>
+  <button class="cta">Retourner à la table<small>Manche 2 · c’est à toi de commander</small></button>
+  <div class="card" style="margin-top:14px"><h3>Règles du direct</h3>
+    <div class="chk"><i>⏱</i>Si un joueur quitte la table plus d’une minute : forfait de la manche</div>
+    <div class="chk"><i>📶</i>Coupure de réseau : 3 minutes pour revenir, la partie t’attend</div>
+    <div class="chk"><i>🧾</i>Chaque résultat est enregistré par le serveur, pas par le téléphone</div></div>
+</section>
+
+<!-- 6. THE FINAL STAGE -->
+<section class="scr" id="s6">
+  <div class="hd"><span class="round">‹</span><div class="grow"><span class="eyebrow">Semaine 3</span><h2>Phase finale</h2></div></div>
+  <div class="card"><div class="br">
+    <div class="col"><h4>QUARTS</h4>
+      <div class="tie"><div class="w"><span>Mola</span><b>4</b></div><div><span>Petit Kora</span><b>2</b></div></div>
+      <div class="tie me"><div class="w"><span>Le Boss</span><b>3</b></div><div><span>Grand Frère</span><b>3*</b></div></div>
+      <div class="tie"><div class="w"><span>La Machine</span><b>4</b></div><div><span>Dja Boy</span><b>1</b></div></div>
+      <div class="tie"><div><span>Tonton Pala</span><b>2</b></div><div class="w"><span>Ya Bibi</span><b>4</b></div></div></div>
+    <div class="col"><h4>DEMIES</h4>
+      <div class="tie"><div><span>Mola</span><b>—</b></div><div><span>Le Boss</span><b>—</b></div></div>
+      <div class="tie"><div><span>La Machine</span><b>—</b></div><div><span>Ya Bibi</span><b>—</b></div></div></div>
+    <div class="col"><h4>FINALE</h4><div class="tie final"><div><span>?</span><b></b></div><div><span>?</span><b></b></div></div><p class="mute" style="text-align:center;font-size:11px;margin:0">samedi 20 h<br>en direct</p></div>
+  </div>
+  <p class="mute" style="margin-top:10px">* Égalité sur l’aller-retour : le plus de CORA passe, puis le quiz du Fap Fap, comme dans la League.</p></div>
+  <div class="next"><span class="lbl">À faire · ouvre mardi 8 h</span><b class="t">Ta demi-finale contre Mola</b><p>Aller mardi, retour jeudi. Celui qui marque le plus de manches sur les deux matchs va en finale.</p>
+    <button class="cta">Me rappeler mardi<small>une notification à l’ouverture du match</small></button></div>
+  <div class="card"><h3>La finale en direct <span>samedi 20 h</span></h3>
+    <p style="margin-top:0">Tous les inscrits reçoivent une notification. Pendant la finale, l’accueil du jeu affiche le score manche par manche, et le fil de « Tout le quartier » annonce le champion.</p>
+    <button class="ghost gold" style="margin-top:10px">🔔 Me prévenir pour la finale</button></div>
+</section>
+
+<!-- 7. THE CHAMPION -->
+<section class="scr" id="s7">
+  <div class="hero" style="padding-top:20px"><div style="font-size:64px;line-height:1">🏆</div>
+    <span class="eyebrow" style="margin-top:12px">Champion · Saison 1</span><h1 style="margin-top:4px">Mola<em>Akwa</em></h1>
+    <p class="mute">2 – 1 en finale contre La Machine, sur un CORA à la dernière manche.</p></div>
+  <div class="card" style="margin-top:14px"><h3>La cagnotte <span>243 000 jetons</span></h3>
+    <div class="rows">
+      <div class="r"><span class="n">🏆</span><span class="nm">Mola<small>Akwa · + t-shirt champion · 5 000 F de crédit</small></span><span class="pt" style="color:var(--gold)">145 800</span></div>
+      <div class="r"><span class="n">🥈</span><span class="nm">La Machine<small>Mokolo · 2 000 F de crédit</small></span><span class="pt">72 900</span></div>
+      <div class="r"><span class="n">🥉</span><span class="nm">Le Boss (toi)<small>Nkolbisson · 1 000 F de crédit</small></span><span class="pt">24 300</span></div>
+    </div>
+    <p class="mute">Les crédits téléphoniques sont envoyés sur le numéro du compte sous 48 h. Le t-shirt : on contacte le champion.</p></div>
+  <div class="card" style="text-align:center"><span class="crest" style="--c1:#c62828;--c2:#fff;--s:64px;margin:0 auto"><b>AKW</b></span>
+    <p style="margin-top:10px"><b>Akwa</b> porte le badge de quartier champion jusqu’à la saison 2.</p></div>
+  <button class="cta">Saison 2 : inscriptions dans 7 jours</button>
+</section>
+
+<div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+<nav class="guide" id="guide"></nav>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+// stars
+for(let i = 0; i < 60; i++){ const s = document.createElement('i'); s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*70+'%'; $('sky').appendChild(s); }
+// the four groups, drawn one by one
+const G = [['A', [['Grand Frère','ESS','#1e88e5','#fff'],['Tonton Pala','MVM','#ff8a1f','#1b1b1b'],['Ya Bibi','ODZ','#00838f','#ff8a65'],['Ndolè King','NBL','#1565c0','#ffd600']]],
+  ['B', [['Mola','AKW','#c62828','#fff'],['Le Boss (toi)','NKB','#00897b','#ffd54f'],['Dja Boy','BEP','#6a1b9a','#fff'],['Ma Lucie','BYA','#c2185b','#fff']]],
+  ['C', [['Petit Kora','MLN','#43a047','#1b1b1b'],['Sapeur','BST','#212121','#f2c76a'],['Mami Nyanga','EKN','#8e24aa','#80deea'],['Kongossa','ETD','#00acc1','#f2c76a']]],
+  ['D', [['La Machine','MOK','#e23b3b','#f2c76a'],['Bobo','DEI','#2e7d32','#ffd600'],['Chef','MVA','#7b3fe4','#f2c76a'],['Atangana','TSG','#0277bd','#f2c76a']]]];
+$('groups').innerHTML = G.map(([g, ps])=> '<div class="grp'+(g==='B' ? ' mine' : '')+'"><h4>GROUPE '+g+'</h4>'+ps.map(p=> '<div class="p"><span class="crest" style="--c1:'+p[2]+';--c2:'+p[3]+'"><b>'+p[1]+'</b></span>'+p[0]+'</div>').join('')+'</div>').join('');
+function drawGroups(){ document.querySelectorAll('#groups .p').forEach((p, i)=>{ if(matchMedia('(prefers-reduced-motion: reduce)').matches) return; p.animate([{opacity:0, transform:'scale(.6) rotateY(90deg)'}, {opacity:1, transform:'none'}], {duration:420, delay:(i%4)*600 + Math.floor(i/4)*150, fill:'backwards', easing:'cubic-bezier(.2,.8,.2,1)'}); }); }
+const ORDER = ['s1','s2','s3','s4','s5','s6','s7'], names = ['Inscription','Qualifs','Tirage','Mes matchs','En direct','Phase finale','Champion'];
+let cur = 's1';
+function show(id){ $(cur).classList.remove('on'); $(id).classList.add('on'); $(id).scrollTop = 0; cur = id; guide(); if(id==='s3') drawGroups(); }
+function guide(){ $('guide').innerHTML = ORDER.map((id, i)=> '<button class="'+(id===cur ? 'on' : '')+'" data-g="'+id+'">'+(i+1)+'</button>').join('')+'<span style="margin-left:4px">'+names[ORDER.indexOf(cur)]+'</span>'; }
+$('guide').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(b) show(b.dataset.g); });
+document.addEventListener('click', e=>{ const s = e.target.closest('.slot'); if(s){ [...s.parentElement.children].forEach(x=> x.classList.toggle('on', x===s)); } });
+// v2: on every screen, where you are in the season and a « ? » that explains the screen in three sentences
+const STAGES = ['Inscription','Qualifs','Poules','Phase finale','Champion'], AT = {s1:0, s2:1, s3:2, s4:2, s5:2, s6:3, s7:4};
+const HELP = {
+  s1:['La League en ligne, c’est quoi ?', ['Une compétition de 3 semaines contre de vrais joueurs, pas contre l’ordinateur.', 'L’entrée coûte 5 000 jetons. Toutes les entrées forment la cagnotte, partagée entre les 3 premiers.', 'Tu joues tes matchs quand tu veux dans un délai de 48 h. On te prévient à chaque fois.']],
+  s2:['Les qualifications', ['Pendant 7 jours, joue jusqu’à 10 matchs contre d’autres inscrits.', 'Victoire 3 points, défaite 1 point, CORA gagnant +1. Jouer rapporte toujours.', 'Dimanche à 21 h, les 16 premiers sont qualifiés pour les poules.']],
+  s3:['Le tirage', ['Les 16 qualifiés sont répartis en 4 poules de 4.', 'Les 4 meilleurs des qualifs sont têtes de série : ils ne se croisent pas.', 'Tu n’as rien à faire : regarde, et attends lundi.']],
+  s4:['Les poules', ['Tu joues chaque adversaire de ta poule deux fois : aller et retour.', 'Chaque match s’ouvre 48 h. Pas joué à temps : défaite 0 – 2.', 'Les 2 premiers de la poule vont en quarts de finale.']],
+  s5:['Un match en direct', ['Une soirée = premier à 2 manches gagnées.', 'Si ton réseau coupe, tu as 3 minutes pour revenir.', 'Le résultat est enregistré par le serveur : personne ne peut tricher.']],
+  s6:['La phase finale', ['Quarts et demies se jouent en aller-retour.', 'On additionne les manches des deux matchs. Égalité : le plus de CORA, puis le quiz.', 'La finale est un seul match, en direct, samedi à 20 h.']],
+  s7:['La fin de la saison', ['Les jetons de la cagnotte arrivent tout de suite sur ton compte.', 'Les crédits téléphoniques partent sous 48 h sur ton numéro.', 'La saison 2 ouvre ses inscriptions 7 jours plus tard.']]
+};
+document.querySelectorAll('.scr').forEach(s=>{
+  const hd = s.querySelector('.hd'); if(!hd) return;
+  const b = document.createElement('button'); b.className = 'help'; b.textContent = '?'; b.setAttribute('aria-label', 'Comment ça marche'); b.dataset.help = s.id; hd.appendChild(b);
+  const at = AT[s.id], st = document.createElement('div'); st.className = 'steps';
+  st.innerHTML = STAGES.map((n, i)=> '<div class="st '+(i < at ? 'done' : i===at ? 'now' : '')+'"><i>'+(i < at ? '✓' : i+1)+'</i>'+n+'</div>').join('');
+  hd.after(st);
+});
+// s7 has no header: its steps go on top
+{ const s = $('s7'), st = document.createElement('div'); st.className = 'steps'; st.innerHTML = STAGES.map((n, i)=> '<div class="st '+(i < 4 ? 'done' : 'now')+'"><i>'+(i < 4 ? '✓' : 5)+'</i>'+n+'</div>').join(''); s.prepend(st); }
+const sheet = (html)=>{ $('sheet').innerHTML = html; $('sheetBg').classList.add('on'); };
+$('sheetBg').addEventListener('click', e=>{ if(e.target===$('sheetBg') || e.target.closest('[data-close]')) $('sheetBg').classList.remove('on'); });
+document.addEventListener('click', e=>{
+  const h = e.target.closest('[data-help]');
+  if(h){ const [t, l] = HELP[h.dataset.help]; sheet('<h4>'+t+'</h4><ol>'+l.map(x=> '<li>'+x+'</li>').join('')+'</ol><button class="cta" data-close>J’ai compris</button>'); }
+  if(e.target.closest('#btnJoin')) sheet('<h4>Confirmer ton inscription</h4><div class="sum"><div><span>Tu paies</span><b>5 000 jetons</b></div><div><span>Ton solde après</span><b>7 400 jetons</b></div><div><span>Tu t’engages à</span><b>~3 matchs par semaine</b></div><div><span>Tu peux gagner</span><b style="color:var(--gold)">jusqu’à 145 800</b></div></div>'
+    +'<p class="mute" style="margin:0 0 14px">Pas remboursable une fois la saison lancée. Avant lundi, tu peux te désinscrire et récupérer tes 5 000 jetons.</p><div class="row2"><button class="ghost" data-close style="padding:14px">Annuler</button><button class="cta" data-close style="padding:14px">Je m’inscris</button></div>');
+});
+guide();
+})();
+</script>
+</body></html>
