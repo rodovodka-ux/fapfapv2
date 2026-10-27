@@ -134,6 +134,15 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
 .tile{ border:3px solid var(--k); border-radius:16px; background:#fff; overflow:hidden; text-align:center; color:var(--txt); }
 .tile b{ display:block; background:var(--k); color:#fff; font:800 11.5px var(--b); padding:4px 2px; text-shadow:0 1px 0 rgba(0,0,0,.25); }
 .tile span{ display:block; font:700 20px var(--t); padding:8px 2px; }
+/* small phones (iPhone SE, mini): everything a little tighter so the lesson and the crests fit */
+@media (max-height:740px){
+  .tutor{ margin-top:6px; } .tutor img{ width:62px; } .say{ font-size:13.5px; padding:8px 10px; margin-bottom:14px; }
+  .lq{ font-size:19px; margin:8px 0 8px; } .opts{ gap:8px; } .opt{ padding:10px 12px; font-size:15px; }
+  .felt .play{ min-height:84px; margin:2px 0 6px; } .k{ width:50px; height:72px; font-size:16px; } .k::after{ font-size:22px; }
+  .plis span{ width:40px; height:50px; } .fb p{ margin-bottom:8px; font-size:13.5px; } .lbtm .btn{ padding:12px; }
+  .qgrid{ max-height:min(300px, 40vh); } .host img{ width:104px; }
+  #sD .win img{ width:110px !important; } .tiles{ margin-top:10px; }
+}
 /* the reviewer's guide (not part of the game) */
 .guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:6px; justify-content:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.72); font:700 11px var(--b); color:#bbb; }
 .guide button{ background:#333; color:#ddd; border:0; border-radius:8px; padding:5px 8px; font:800 11px var(--b); cursor:pointer; }
@@ -205,7 +214,7 @@ input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
   <h2 class="lq" id="lq"></h2>
   <div id="lx"></div>
   <div class="grow"></div>
-  <div style="height:96px"></div>
+  <div id="lpad" style="flex:none;height:130px"></div>
 </section>
 <div class="lbtm" id="lb"><div class="fb" id="lfb"></div><button class="btn go" id="lgo" disabled>Vérifier</button></div>
 
@@ -389,6 +398,7 @@ function lessonDraw(){
   else if(e.ask) h += '<p style="font-weight:800">'+e.ask+'</p>';
   $('lx').innerHTML = h;
   $('lb').className = 'lbtm on'; $('lfb').innerHTML = ''; $('lgo').textContent = 'Vérifier'; $('lgo').disabled = true;
+  $('sL').scrollTop = 0; fitSheet();
   [...$('lx').children].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:380, delay:i*60, fill:'backwards'}));
 }
 $('lx').addEventListener('click', ev=>{
@@ -421,12 +431,17 @@ $('lgo').addEventListener('click', ()=>{
       if(picked) picked.classList.add('shake');
     }
     L.lastOk = ok;
+    // the verdict sheet grows: the answer just given must stay in sight above it
+    fitSheet(); const seen = picked && picked.classList.contains('opt') ? picked : $('lx').querySelector('.felt'); if(seen) seen.scrollIntoView({block:'nearest', behavior: reduce ? 'auto' : 'smooth'});
     return;
   }
   // continue: a wrong exercise comes back at the end of the lesson, like Duolingo
   const i = L.queue.shift(); if(!L.lastOk) L.queue.push(i);
   L.queue.length ? lessonDraw() : show('sD');
 });
+// the bottom of the lesson always leaves room for the sheet, whatever its height on this phone
+function fitSheet(){ const h = $('lb').offsetHeight + 10; $('lpad').style.height = h+'px'; $('sL').style.scrollPaddingBottom = h+'px'; }
+addEventListener('resize', ()=>{ if(cur==='sL') fitSheet(); });
 function lessonEnd(){
   if(!L.t0) return;
   const s = Math.round((Date.now() - L.t0) / 1000);
