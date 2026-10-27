@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bienvenue au quartier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@800&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{ --ink:#1B120C; --cream:#FFF6DC; --cream2:#FBE9BC; --mango:#FFC93C; --mango-d:#E8A817; --red:#E24B4A; --green:#2FB36B; --green-d:#1F8A50;
+  --blue:#3D7FD9; --txt:#2A1D12; --mute:#7A6650; --night:#1d1940; --t:'Fredoka', system-ui, sans-serif; --b:'Nunito', system-ui, sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; background:#140d08; color:#FFF1D6; font-family:var(--b); overflow:hidden; }
+/* the bar at night, behind every screen */
+.bg{ position:fixed; inset:0; background:radial-gradient(120% 70% at 50% 0%, rgba(255,190,110,.22), transparent 60%), url('art/d/lieu-yaounde.svg') 50% 100% / cover no-repeat, #1a120c; }
+.bg::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,13,8,.55), rgba(20,13,8,.88) 60%, #140d08); }
+.scr{ position:fixed; inset:0; display:none; flex-direction:column; padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 20px); overflow-y:auto; }
+.scr.on{ display:flex; }
+.hidden{ display:none !important; }
+.tag{ align-self:center; font:700 11px var(--b); letter-spacing:.12em; text-transform:uppercase; color:#ffd9a0; opacity:.8; margin-bottom:6px; }
+.card{ background:var(--cream); color:var(--txt); border:3px solid var(--ink); border-radius:22px; box-shadow:0 5px 0 var(--ink); padding:18px; }
+h1,h2,h3{ font-family:var(--t); margin:0; }
+h1{ font-size:28px; line-height:1.1; }
+h2{ font-size:24px; line-height:1.15; }
+p{ margin:8px 0 0; font-size:15px; line-height:1.45; }
+.mute{ color:var(--mute); }
+.btn{ display:block; width:100%; border:3px solid var(--ink); border-radius:16px; box-shadow:0 5px 0 var(--ink); padding:15px 14px; font:700 19px var(--t); color:var(--txt); background:#fff; cursor:pointer; transition:transform .08s, box-shadow .08s; }
+.btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--ink); }
+.btn.go{ background:var(--green); color:#fff; text-shadow:0 2px 0 var(--green-d); }
+.btn.mango{ background:var(--mango); }
+.btn small{ display:block; font:700 13px var(--b); opacity:.85; text-shadow:none; margin-top:2px; }
+.link{ background:none; border:0; color:#e9d6b6; font:800 14px var(--b); text-decoration:underline; padding:12px; cursor:pointer; align-self:center; }
+.stack{ display:flex; flex-direction:column; gap:14px; }
+.grow{ flex:1; }
+/* the logo's black background melts into the night */
+.logo{ width:min(84%, 320px); align-self:center; margin:0 0 -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
+.beta{ display:inline-block; background:var(--red); color:#fff; font:800 11px var(--b); letter-spacing:.08em; padding:4px 10px; border-radius:99px; border:2px solid var(--ink); }
+/* Penalty and his speech bubble */
+.host{ display:flex; align-items:flex-end; gap:6px; margin-top:6px; }
+.host img{ width:132px; height:auto; flex:none; filter:drop-shadow(0 6px 0 rgba(0,0,0,.35)); }
+.bubble{ position:relative; background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:18px; box-shadow:0 4px 0 var(--ink); padding:12px 14px; font:700 16px/1.35 var(--b); margin-bottom:40px; }
+.bubble::after{ content:''; position:absolute; left:-12px; bottom:18px; width:16px; height:16px; background:#fff; border-left:3px solid var(--ink); border-bottom:3px solid var(--ink); transform:rotate(45deg); }
+.bubble b{ font-family:var(--t); color:#B83333; display:block; font-size:12px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:2px; }
+/* the table of the first game */
+.table{ position:relative; height:340px; border:3px solid var(--ink); border-radius:26px; box-shadow:0 5px 0 var(--ink); background:radial-gradient(90% 70% at 50% 45%, #2fae6a, #17673d); overflow:hidden; }
+.table .opp{ position:absolute; top:14px; left:50%; transform:translateX(-50%); text-align:center; font:700 13px var(--t); }
+.av{ width:52px; height:52px; border-radius:50%; border:3px solid var(--ink); background:#ffd9a0 center 12% / 120% auto no-repeat; margin:0 auto 4px; box-shadow:0 3px 0 var(--ink); }
+.hand{ position:absolute; bottom:16px; left:0; right:0; display:flex; justify-content:center; }
+.c{ width:52px; height:74px; border-radius:9px; background:#fff; border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); color:#1b1b1b; font:700 20px var(--t); display:flex; align-items:flex-start; justify-content:flex-start; padding:5px 6px; margin:0 -6px; }
+.c.r{ color:#c8283a; }
+.mid{ position:absolute; top:100px; left:50%; transform:translateX(-50%); display:flex; gap:14px; }
+.hint{ position:absolute; bottom:102px; left:50%; transform:translateX(-50%); background:var(--mango); color:var(--txt); border:2.5px solid var(--ink); border-radius:12px; font:800 13px var(--b); padding:6px 10px; white-space:nowrap; box-shadow:0 3px 0 var(--ink); }
+.pill{ display:inline-flex; align-items:center; gap:6px; background:rgba(0,0,0,.35); border:2px solid rgba(255,255,255,.18); border-radius:99px; padding:5px 11px; font:800 13px var(--b); color:#ffe6bd; }
+/* the victory and the name */
+.win{ text-align:center; }
+.win .big{ font:700 44px var(--t); color:var(--mango); text-shadow:0 4px 0 var(--ink), 0 0 30px rgba(255,201,60,.4); }
+.coins{ display:inline-flex; gap:8px; align-items:center; font:700 22px var(--t); background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:99px; padding:6px 16px; box-shadow:0 4px 0 var(--ink); margin-top:10px; }
+.coin{ width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe48a, #e8a817 60%, #b07b0a); border:2px solid var(--ink); }
+input.name{ width:100%; margin-top:12px; border:3px solid var(--ink); border-radius:14px; padding:13px 14px; font:700 20px var(--t); color:var(--txt); background:#fff; outline:none; }
+input.name:focus{ box-shadow:0 0 0 4px rgba(255,201,60,.6); }
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.chip{ border:2.5px solid var(--ink); border-radius:99px; background:var(--cream2); padding:6px 11px; font:800 13px var(--b); color:var(--txt); cursor:pointer; }
+.chip.on{ background:var(--mango); }
+/* the neighbourhood crests */
+.qgrid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px 6px; margin-top:12px; max-height:300px; overflow-y:auto; padding:4px 2px 8px; }
+.qb{ background:none; border:0; padding:0; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; font:800 11px var(--b); color:var(--txt); }
+.crest{ width:54px; height:54px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--c1) 0 62%, var(--c2) 0); border:3px solid var(--ink); box-shadow:0 3px 0 var(--ink); position:relative; transition:transform .15s; }
+.crest::before{ content:''; position:absolute; inset:7px; border-radius:50%; background:#1e1a3a; }
+.crest b{ position:relative; font:700 13px var(--t); color:#fff; letter-spacing:.02em; }
+.qb.on .crest{ transform:scale(1.12); box-shadow:0 0 0 4px var(--mango), 0 3px 0 var(--ink); }
+.search{ width:100%; margin-top:12px; border:2.5px solid var(--ink); border-radius:12px; padding:10px 12px; font:700 15px var(--b); background:#fff; color:var(--txt); }
+/* the rank reveal */
+.rank{ text-align:center; padding:22px 18px; }
+.rank .pos{ font:700 64px var(--t); line-height:1; color:var(--txt); }
+.rank .pos small{ font-size:26px; vertical-align:top; position:relative; top:6px; }
+/* the next steps on the home screen */
+.home-top{ display:flex; justify-content:space-between; align-items:center; }
+.bal{ display:inline-flex; gap:8px; align-items:center; background:#fff; color:var(--txt); border:3px solid var(--ink); border-radius:99px; padding:5px 12px 5px 6px; box-shadow:0 4px 0 var(--ink); font:700 17px var(--t); }
+.steps h3{ font-size:19px; display:flex; justify-content:space-between; align-items:center; }
+.steps h3 span{ font:800 12px var(--b); color:var(--mute); }
+.st{ display:flex; gap:12px; align-items:center; padding:11px 0; border-top:2px dashed #e7d3a6; }
+.st:first-of-type{ border-top:0; }
+.st i{ flex:none; width:30px; height:30px; border-radius:50%; border:2.5px solid var(--ink); display:grid; place-items:center; font:700 15px var(--t); font-style:normal; background:#fff; }
+.st.done i{ background:var(--green); color:#fff; }
+.st.now i{ background:var(--mango); }
+.st div{ flex:1; font:800 15px/1.3 var(--b); }
+.st small{ display:block; font:700 12.5px var(--b); color:var(--mute); }
+.st em{ font:700 13px var(--t); font-style:normal; color:var(--green-d); white-space:nowrap; }
+.bar{ height:10px; border-radius:99px; background:var(--cream2); border:2px solid var(--ink); overflow:hidden; margin-top:6px; }
+.bar i{ display:block; height:100%; width:34%; background:var(--mango); }
+.later{ opacity:.55; }
+/* the lesson, like Duolingo: progress at the top, one exercise, the verdict sheet at the bottom */
+.scr.lesson{ background:#FFF8E6; color:var(--txt); }
+.ltop{ display:flex; align-items:center; gap:12px; }
+.x{ background:none; border:0; font:700 24px var(--t); color:#b8a582; padding:0 4px; cursor:pointer; }
+.prog{ flex:1; height:16px; border-radius:99px; background:#eadcbc; overflow:hidden; }
+.prog i{ display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(#63d593, var(--green)); box-shadow:inset 0 4px 0 rgba(255,255,255,.35); transition:width .6s cubic-bezier(.2,.8,.2,1); }
+.streak{ font:800 15px var(--b); color:#e0802a; min-width:44px; text-align:right; }
+.tutor{ display:flex; align-items:flex-end; gap:6px; margin-top:12px; }
+.tutor img{ width:86px; flex:none; }
+.say{ position:relative; flex:1; background:#fff; border:2.5px solid #e2d3b0; border-radius:16px; padding:10px 12px; font:700 14.5px/1.35 var(--b); margin-bottom:22px; }
+.say::after{ content:''; position:absolute; left:-9px; bottom:14px; width:13px; height:13px; background:#fff; border-left:2.5px solid #e2d3b0; border-bottom:2.5px solid #e2d3b0; transform:rotate(45deg); }
+.lq{ font-size:22px; margin:12px 0 10px; }
+.opts{ display:flex; flex-direction:column; gap:10px; }
+.opt{ text-align:left; border:2.5px solid #e2d3b0; border-radius:16px; box-shadow:0 4px 0 #e2d3b0; background:#fff; padding:13px 14px; font:800 16px var(--b); color:var(--txt); cursor:pointer; transition:transform .08s; }
+.opt.sel{ border-color:var(--blue); box-shadow:0 4px 0 var(--blue); background:#e8f1ff; }
+.felt{ position:relative; border:3px solid var(--ink); border-radius:22px; background:radial-gradient(90% 80% at 50% 40%, #2fae6a, #17673d); padding:12px 10px 14px; box-shadow:0 4px 0 var(--ink); color:#fff; }
+.felt .who{ display:flex; align-items:center; gap:8px; font:700 13px var(--t); }
+.felt .who .av{ width:38px; height:38px; margin:0; background-size:cover; background-position:center 30%; }
+.felt .play{ display:flex; justify-content:center; align-items:center; gap:10px; min-height:96px; margin:4px 0 8px; font:800 13px var(--b); color:#d8f5e3; }
+.felt .mine{ display:flex; justify-content:center; gap:8px; }
+.felt .note{ position:absolute; right:10px; top:12px; font:800 11.5px var(--b); background:rgba(0,0,0,.3); border-radius:99px; padding:4px 9px; }
+.k{ position:relative; width:56px; height:80px; border-radius:10px; background:#fff; border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); color:#1b1b1b; font:700 18px/1 var(--t); padding:5px 6px; flex:none; transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s; }
+.k.r{ color:#c8283a; }
+.k::after{ content:attr(data-s); position:absolute; right:6px; bottom:5px; font-size:26px; }
+.k.t{ cursor:pointer; }
+.k.sel{ transform:translateY(-12px); box-shadow:0 0 0 4px var(--mango), 0 3px 0 var(--ink); }
+.k.dim{ opacity:.45; }
+.plis{ display:flex; gap:6px; justify-content:center; margin:2px 0 4px; }
+.plis span{ width:44px; height:58px; border-radius:9px; border:2.5px solid var(--ink); background:#fff; color:var(--txt); display:grid; place-items:center; font:800 11px var(--b); text-align:center; line-height:1.15; }
+.plis span.last{ background:var(--mango); transform:scale(1.12); box-shadow:0 3px 0 var(--ink); }
+.stamp{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) rotate(-8deg); font:700 34px var(--t); color:var(--mango); text-shadow:0 3px 0 var(--ink); pointer-events:none; }
+.lbtm{ position:fixed; left:0; right:0; bottom:0; z-index:5; display:none; padding:14px 16px calc(env(safe-area-inset-bottom) + 14px); background:#FFF8E6; border-top:2px solid #eadcbc; transition:background .25s; }
+.lbtm.on{ display:block; }
+.lbtm.ok{ background:#d9f7c4; border-color:#b5e69a; }
+.lbtm.ko{ background:#ffe0de; border-color:#f5bdb8; }
+.lbtm .btn:disabled{ background:#e6dcc6; color:#a8977a; text-shadow:none; box-shadow:0 5px 0 #cbbd9f; border-color:#cbbd9f; cursor:default; }
+.lbtm.ko .btn{ background:var(--red); text-shadow:0 2px 0 #a83232; }
+.fb h4{ margin:0; font:700 20px var(--t); }
+.lbtm.ok .fb h4{ color:var(--green-d); }
+.lbtm.ko .fb h4{ color:#b83333; }
+.fb p{ margin:4px 0 12px; font:700 14.5px/1.4 var(--b); color:#4a3a28; }
+@keyframes shake{ 0%,100%{ transform:none; } 25%{ transform:translateX(-6px); } 75%{ transform:translateX(6px); } }
+.shake{ animation:shake .3s 2; }
+.tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; }
+.tile{ border:3px solid var(--k); border-radius:16px; background:#fff; overflow:hidden; text-align:center; color:var(--txt); }
+.tile b{ display:block; background:var(--k); color:#fff; font:800 11.5px var(--b); padding:4px 2px; text-shadow:0 1px 0 rgba(0,0,0,.25); }
+.tile span{ display:block; font:700 20px var(--t); padding:8px 2px; }
+/* small phones (iPhone SE, mini): everything a little tighter so the lesson and the crests fit */
+@media (max-height:740px){
+  .tutor{ margin-top:6px; } .tutor img{ width:62px; } .say{ font-size:13.5px; padding:8px 10px; margin-bottom:14px; }
+  .lq{ font-size:19px; margin:8px 0 8px; } .opts{ gap:8px; } .opt{ padding:10px 12px; font-size:15px; }
+  .felt .play{ min-height:84px; margin:2px 0 6px; } .k{ width:50px; height:72px; font-size:16px; } .k::after{ font-size:22px; }
+  .plis span{ width:40px; height:50px; } .fb p{ margin-bottom:8px; font-size:13.5px; } .lbtm .btn{ padding:12px; }
+  .qgrid{ max-height:min(300px, 40vh); } .host img{ width:104px; }
+  #sD .win img{ width:110px !important; } .tiles{ margin-top:10px; }
+}
+/* the reviewer's guide (not part of the game) */
+.guide{ position:fixed; left:0; right:0; bottom:0; z-index:9; display:flex; gap:6px; justify-content:center; padding:6px 8px calc(env(safe-area-inset-bottom) + 6px); background:rgba(0,0,0,.72); font:700 11px var(--b); color:#bbb; }
+.guide button{ background:#333; color:#ddd; border:0; border-radius:8px; padding:5px 8px; font:800 11px var(--b); cursor:pointer; }
+.guide button.on{ background:var(--mango); color:#111; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style></head>
+<body>
+<div class="bg"></div>
+
+<!-- 1. One screen instead of three: the age, the beta, the welcome -->
+<section class="scr" id="s1">
+  <div class="grow"></div>
+  <svg class="logo" viewBox="0 0 400 340" role="img" aria-label="Fap-Fap">
+    <defs>
+      <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>
+      <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient>
+      <radialGradient id="disc" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient>
+      <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient>
+      <linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient>
+      <g id="cardF"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="url(#paper)" stroke="#1b120c" stroke-width="3"/></g>
+    </defs>
+    <!-- the medallion -->
+    <circle cx="200" cy="158" r="138" fill="url(#disc)" stroke="url(#rim)" stroke-width="7"/>
+    <circle cx="200" cy="158" r="126" fill="none" stroke="#c99a3e" stroke-opacity=".35" stroke-width="1.5"/>
+    <!-- three cards in a fan: the two 3s of the CORA and a 10 -->
+    <g transform="translate(168 262) rotate(-22)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#1b1b1b">3</text><text x="-38" y="-100" font-size="18" fill="#1b1b1b">♠</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#1b1b1b">♠</text></g>
+    <g transform="translate(232 262) rotate(22)"><use href="#cardF"/><text x="37" y="-122" text-anchor="end" font-family="Fredoka" font-weight="700" font-size="24" fill="#c8283a">10</text><text x="37" y="-100" text-anchor="end" font-size="18" fill="#c8283a">♦</text><text x="2" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♦</text></g>
+    <g transform="translate(200 254)"><use href="#cardF"/><text x="-37" y="-122" font-family="Fredoka" font-weight="700" font-size="26" fill="#c8283a">3</text><text x="-37" y="-100" font-size="18" fill="#c8283a">♥</text><text x="0" y="-48" font-size="54" text-anchor="middle" fill="#c8283a">♥</text></g>
+    <!-- the chip -->
+    <g transform="translate(200 206)">
+      <circle r="35" fill="#120d09" stroke="url(#rim)" stroke-width="4"/>
+      <circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/>
+      <circle r="21" fill="#1a130d" stroke="url(#rim)" stroke-width="2.5"/>
+      <text y="10" font-size="28" text-anchor="middle" fill="url(#gold)">♠</text>
+    </g>
+    <!-- the banner and the name -->
+    <path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="url(#band)" stroke="url(#rim)" stroke-width="4" stroke-linejoin="round"/>
+    <text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" letter-spacing="1" fill="url(#gold)" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>
+    <text x="200" y="322" text-anchor="middle" font-size="20" fill="url(#gold)">♠</text>
+  </svg>
+  <div class="card stack" style="margin-top:14px" id="ageCard">
+    <div><span class="beta">VERSION BÊTA</span></div>
+    <h1>Bienvenue au quartier.</h1>
+    <p class="mute" style="margin-top:0">Fap Fap se joue avec des jetons, jamais avec de l’argent. Le jeu est réservé aux adultes. C’est une version de test : une idée, un bug ? La boîte à suggestions est sur l’accueil.</p>
+    <button class="btn go" id="ageYes">J’ai 18 ans ou plus, on joue !</button>
+    <button class="link" id="ageNo" style="color:var(--mute)">Je n’ai pas 18 ans</button>
+  </div>
+  <div class="card stack hidden" style="margin-top:14px;text-align:center" id="ageClosed">
+    <h1>Le jeu est fermé</h1>
+    <p class="mute" style="margin-top:0">Reviens quand tu auras 18 ans.</p>
+  </div>
+  <div class="grow"></div>
+</section>
+
+<!-- 2. Maître Tsala asks one question: the lesson, or the cards straight away -->
+<section class="scr" id="s2">
+  <div class="tag">Première visite</div>
+  <div class="host">
+    <img src="art/zh/buste-tsala.webp" alt="">
+    <div class="bubble"><b>Maître Tsala</b>Assieds-toi. Tu connais déjà le Fap Fap, ou je dois tout t’apprendre&nbsp;?</div>
+  </div>
+  <div class="grow"></div>
+  <div class="stack">
+    <button class="btn mango" id="learn">Je découvre<small>La leçon de Maître Tsala · 7 petits exercices · 2 minutes</small></button>
+    <button class="btn go" id="know">Je connais, je joue<small>Partie directe contre Christelle · mise offerte</small></button>
+  </div>
+</section>
+
+<!-- 3. The lesson, like Duolingo: one idea per exercise, the player answers, the answer is explained -->
+<section class="scr lesson" id="sL">
+  <div class="ltop"><button class="x" data-go="s2" aria-label="Quitter">✕</button><div class="prog"><i id="lp"></i></div><span class="streak" id="lst">🔥 0</span></div>
+  <div class="tutor"><img src="art/zh/buste-tsala.webp" alt=""><div class="say" id="lsay"></div></div>
+  <h2 class="lq" id="lq"></h2>
+  <div id="lx"></div>
+  <div class="grow"></div>
+  <div id="lpad" style="flex:none;height:130px"></div>
+</section>
+<div class="lbtm" id="lb"><div class="fb" id="lfb"></div><button class="btn go" id="lgo" disabled>Vérifier</button></div>
+
+<!-- 4. The end of the lesson: what was learned, the reward, then the real game -->
+<section class="scr" id="sD">
+  <div class="grow"></div>
+  <div class="win"><img src="art/zh/buste-tsala.webp" alt="" style="width:150px;display:block;margin:0 auto -6px"><div class="big" style="font-size:36px">Leçon terminée&nbsp;!</div></div>
+  <div class="tiles">
+    <div class="tile" style="--k:#FFC93C"><b>Précision</b><span id="dacc">100 %</span></div>
+    <div class="tile" style="--k:#ff9a3c"><b>Meilleure série</b><span id="dst">🔥 7</span></div>
+    <div class="tile" style="--k:#3D7FD9"><b>Temps</b><span id="dtm">1:42</span></div>
+  </div>
+  <div class="card" style="margin-top:16px;text-align:center;padding:14px">
+    <div class="coins" style="margin-top:0"><span class="coin"></span>+ 200 jetons</div>
+    <p style="margin-top:10px"><b>Badge « Élève de Maître Tsala »</b><br><span class="mute">« Pas mal. Maintenant, montre-moi ça contre Christelle. »</span></p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go first" style="margin-top:16px">Ma première vraie partie</button>
+</section>
+
+<!-- (the first game itself is played on the real table of the game, with Maître Tsala's hints above the hand) -->
+
+<!-- 5. After the first game (or for a player without a name): the name, asked at the best moment -->
+<section class="scr" id="s4">
+  <div class="win" style="margin-top:10px" id="winHead">
+    <div class="big" id="winBig">GAGNÉ !</div>
+    <div class="coins" id="winCoins"><span class="coin"></span>+ 500 jetons</div>
+    <p id="winSub" style="color:#e9d6b6;font-weight:800;margin-top:10px"></p>
+  </div>
+  <div class="card" style="margin-top:22px">
+    <h2>Comment on t’appelle au quartier&nbsp;?</h2>
+    <p class="mute">C’est le nom que tout le monde verra au classement.</p>
+    <input class="name" id="nm" maxlength="16" placeholder="Ton pseudo" autocomplete="off">
+    <div class="chips" id="sugg"></div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go" id="nmOk" style="margin-top:16px">C’est mon nom</button>
+</section>
+
+<!-- 5. The neighbourhood, chosen once, right after the name -->
+<section class="scr" id="s5">
+  <div class="card">
+    <h2>Tu joues pour quel quartier&nbsp;?</h2>
+    <p class="mute">Tes victoires comptent pour lui chaque semaine. Tu pourras changer une fois par mois.</p>
+    <input class="search" id="qs" placeholder="Chercher : Mokolo, Akwa…">
+    <div class="qgrid" id="qg"></div>
+  </div>
+  <div class="grow"></div>
+  <p id="qErr" style="color:#ffb4a8;font-weight:800;text-align:center;margin:10px 0 0"></p>
+  <button class="btn go" id="qok" style="margin-top:12px">Je représente <span id="qn">Mokolo</span></button>
+</section>
+
+<!-- 6. Seen at once in the ranking, and the notifications asked when they make sense -->
+<section class="scr" id="s6">
+  <div class="tag">Tout le quartier · cette semaine</div>
+  <div class="card rank">
+    <p class="mute" style="margin:0;font-weight:800" id="rkHead">Te voilà au classement</p>
+    <div class="pos" id="pos">…</div>
+    <p style="margin-top:6px"><b id="who">—</b> de <b id="whereq">—</b><span id="rkPts"></span></p>
+    <p class="mute" style="margin-top:4px" id="rkTip"></p>
+  </div>
+  <div class="card" style="margin-top:16px" id="notifCard">
+    <h3 style="font-size:19px">Je te préviens quand quelqu’un te dépasse&nbsp;?</h3>
+    <p class="mute">3 messages par jour au plus, jamais la nuit.</p>
+    <div class="stack" style="margin-top:12px">
+      <button class="btn go" id="notifYes">Oui, préviens-moi</button>
+      <button class="link done" style="color:var(--mute)">Plus tard</button>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <button class="btn go done hidden" id="rkGo" style="margin-top:16px">C’est parti&nbsp;!</button>
+</section>
+
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]fast\b/.test(location.search);
+const A = (el, kf, o)=> el && !reduce ? el.animate(kf, Object.assign({duration:420, easing:'cubic-bezier(.2,.8,.2,1)', fill:'both'}, o)) : null;
+// ---- the bridge with the game (same origin, like league.html and quartier.html) ----
+const params = new URLSearchParams(location.search);
+const host = window.parent!==window ? window.parent : null;
+const post = m=>{ try{ if(host) host.postMessage(m, location.origin); }catch(e){} };
+const waiting = {}; let reqN = 0;
+// a question to the game (its state, the week's ranking, the neighbourhood to keep): answered by {zh:'compData'}
+const ask = (what, extra)=> new Promise(res=>{ const id = 'b'+(++reqN); waiting[id] = res; post(Object.assign({zh:'comp', what, id}, extra || {})); setTimeout(()=>{ if(waiting[id]){ delete waiting[id]; res({error:'Pas de réponse.'}); } }, 12000); });
+addEventListener('message', e=>{
+  if(e.origin!==location.origin || !host || e.source!==host) return;
+  const d = e.data || {};
+  if(d.zh==='compData' && waiting[d.id]){ const r = waiting[d.id]; delete waiting[d.id]; r(d.data); }
+  if(d.zh==='back') goBack();
+});
+const START = params.get('start') || 'age', WON = params.get('won')==='1';
+let ST = {}; // the game's state: name, neighbourhood, notifications
+let cur = 's1';
+function show(id){
+  if(id===cur) return;
+  const from = $(cur), to = $(id);
+  const a = A(from, [{opacity:1, transform:'none'}, {opacity:0, transform:'translateX(-24px)'}], {duration:180, easing:'ease-in'});
+  const swap = ()=>{ from.classList.remove('on'); from.getAnimations().forEach(x=> x.cancel()); to.classList.add('on'); to.scrollTop = 0; cur = id; enter(to); };
+  a ? a.finished.then(swap) : swap();
+}
+function enter(s){
+  A(s, [{opacity:0, transform:'translateX(24px)'}, {opacity:1, transform:'none'}], {duration:320, fill:'none'});
+  [...s.querySelectorAll('.card, .btn, .host, .table, .win')].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:420, delay:80 + i*70, fill:'backwards'}));
+  if(s.id==='s4' && START==='after'){ A(s.querySelector('.big'), [{transform:'scale(.4)', opacity:0}, {transform:'scale(1.12)', opacity:1, offset:.7}, {transform:'scale(1)'}], {duration:620, easing:'ease-out'}); if(WON) confetti(); }
+  if(s.id==='s6'){ rank(); }
+  if(s.id==='sL') lessonStart();
+  if(s.id==='sD') lessonEnd();
+  $('lb').classList.toggle('on', s.id==='sL');
+}
+
+// ---- the lesson: one idea per exercise, checked, explained; a mistake comes back at the end ----
+const SUIT = {'♠':'Black', '♣':'Tchaka', '♥':'Coubie', '♦':'Zing'};
+const card = (c, cls)=>{ const s = c.slice(-1); return '<div class="k'+(/[♥♦]/.test(s) ? ' r' : '')+(cls ? ' '+cls : '')+'" data-c="'+c+'" data-s="'+s+'">'+c.slice(0, -1)+'</div>'; };
+const val = c=> +c.slice(0, -1), suit = c=> c.slice(-1);
+const XAV = '<div class="av" style="background-image:url(\'art/zh/christelle.webp\')"></div>';
+const EX = [
+  { say:'Écoute bien, c’est la règle la plus importante.', q:'Une manche se joue en 5 plis. Seul le dernier compte.',
+    art:'<div class="plis"><span>1<br>toi</span><span>2<br>toi</span><span>3<br>toi</span><span>4<br>toi</span><span class="last">5<br>elle</span></div>',
+    ask:'Tu gagnes les 4 premiers plis, Christelle gagne le 5e. Qui gagne la manche ?',
+    opts:['Moi, j’ai gagné 4 plis', 'Christelle', 'Personne, on rejoue'], ok:1,
+    good:'Exact. Au Fap Fap, seul le 5e pli compte. Les 4 premiers servent à préparer la fin.',
+    bad:'C’est Christelle. Seul le 5e pli compte, même si tu as gagné tous les autres.' },
+  { say:'Les cartes vont du 3 au 10, en 4 couleurs : Black ♠, Tchaka ♣, Coubie ♥ et Zing ♦.', q:'Touche la carte la plus forte.',
+    hand:['4♥','9♥','6♥','3♥'], ok:c=> c==='9♥',
+    good:()=> '9♥ est la plus forte. Dans une même couleur, la plus grosse valeur gagne.',
+    bad:c=> c==='3♥' ? 'Le 3 est la plus petite carte… mais garde-le en tête, il cache un secret. La bonne réponse était 9♥.' : 'Presque ! La plus forte était 9♥ : dans une même couleur, la plus grosse valeur gagne.' },
+  { say:'Quand l’adversaire pose une carte, tu dois répondre dans sa couleur.', q:'Christelle joue 7♥. Réponds-lui.',
+    opp:'7♥', hand:['3♠','10♥','5♦','8♣','4♥'], ok:c=> suit(c)==='♥',
+    good:c=> c==='10♥' ? '10♥ bat 7♥ : tu prends la main, c’est toi qui commandes le pli suivant.' : 'Bien, tu as fourni du Coubie. Ton 4 est plus petit que son 7, donc elle garde la main.',
+    bad:()=> 'Tu as du Coubie ♥ en main, tu es obligé de fournir. Le jeu bloquera toujours ce coup.' },
+  { say:'Prendre la main, c’est choisir la couleur du pli suivant. Il faut la plus forte carte de sa couleur.', q:'Christelle joue 6♣. Prends-lui la main.',
+    opp:'6♣', hand:['4♣','9♣','10♦'], ok:c=> c==='9♣',
+    good:()=> '9♣ bat 6♣. Le 10♦ ne servait à rien : il n’est pas de la bonne couleur.',
+    bad:c=> c==='10♦' ? 'Le 10 est fort, mais en Zing. Il fallait du Tchaka ♣ plus fort que son 6 : le 9♣.' : 'Ton 4♣ est plus petit que son 6♣. Il fallait le 9♣.' },
+  { say:'Et si tu n’as pas sa couleur ?', q:'Christelle joue 8♦. Tu n’as aucun Zing.',
+    opp:'8♦', show:['5♠','7♣','3♥'],
+    ask:'Que se passe-t-il ?', opts:['Je joue la carte de mon choix et je perds le pli', 'Je gagne avec ma plus forte carte', 'Je passe mon tour'], ok:0,
+    good:'Oui. Sans sa couleur, tu poses ce que tu veux, mais tu perds le pli. Astuce : jette ta plus petite carte et garde ton 3.',
+    bad:'Sans sa couleur, tu poses la carte de ton choix et tu perds le pli. Astuce : jette ta plus petite et garde ton 3.' },
+  { say:'Voici le secret du 3. Gagne le dernier pli avec un 3, et c’est un CORA : il vaut double.', q:'Dernier pli. C’est toi qui commandes. Fais un CORA.',
+    note:'Il lui reste : 8♥', hand:['3♠','10♥'], ok:c=> c==='3♠', cora:true, reply:'8♥',
+    good:()=> 'CORA ! Christelle n’a pas de Black, elle ne peut pas répondre à ton 3♠. Tu gagnes le dernier pli avec un 3 : 2 points.',
+    bad:()=> 'Tu gagnes avec ton 10♥, mais ça ne vaut qu’1 point. Avec le 3♠, elle ne pouvait pas répondre : c’était un CORA à 2 points.' },
+  { say:'Dernière question, et je te laisse jouer.', q:'Une partie se joue en 5 points.',
+    ask:'Tu gagnes une manche en faisant un CORA. Combien de points ?', opts:['1 point', '2 points', '5 points'], ok:1,
+    good:'2 points. Une manche normale vaut 1 point, un CORA en vaut 2. Le premier à 5 points gagne la partie.',
+    bad:'Un CORA vaut 2 points (une manche normale, 1). Le premier à 5 points gagne la partie.' }
+];
+const L = {};
+function lessonStart(){
+  Object.assign(L, { queue:EX.map((_, i)=> i), done:0, streak:0, best:0, tries:0, miss:0, t0:Date.now(), sel:null, state:'ask' });
+  lessonDraw();
+}
+function lessonDraw(){
+  const e = EX[L.queue[0]];
+  L.sel = null; L.state = 'ask';
+  $('lp').style.width = (L.done / EX.length * 100)+'%';
+  $('lst').textContent = '🔥 '+L.streak;
+  $('lsay').textContent = e.say; $('lq').textContent = e.q;
+  let h = e.art || '';
+  if(e.opp || e.hand || e.show){
+    h += '<div class="felt">'+'<div class="who">'+XAV+'Christelle</div>'+(e.note ? '<span class="note">'+e.note+'</span>' : '')
+      +'<div class="play">'+(e.opp ? card(e.opp) : 'À toi de commander')+'</div>'
+      +'<div class="mine">'+(e.hand || e.show).map(c=> card(c, e.hand ? 't' : 'dim')).join('')+'</div></div>';
+  }
+  if(e.opts) h += '<p style="font-weight:800;margin:12px 0 10px">'+e.ask+'</p><div class="opts">'+e.opts.map((o, i)=> '<button class="opt" data-o="'+i+'">'+o+'</button>').join('')+'</div>';
+  else if(e.ask) h += '<p style="font-weight:800">'+e.ask+'</p>';
+  $('lx').innerHTML = h;
+  $('lb').className = 'lbtm on'; $('lfb').innerHTML = ''; $('lgo').textContent = 'Vérifier'; $('lgo').disabled = true;
+  $('sL').scrollTop = 0; fitSheet();
+  [...$('lx').children].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:380, delay:i*60, fill:'backwards'}));
+}
+$('lx').addEventListener('click', ev=>{
+  if(L.state!=='ask') return;
+  const k = ev.target.closest('.k.t'), o = ev.target.closest('.opt');
+  if(!k && !o) return;
+  tone(520, .05);
+  [...$('lx').querySelectorAll('.k.t, .opt')].forEach(x=> x.classList.toggle('sel', x===(k || o)));
+  L.sel = k ? k.dataset.c : +o.dataset.o; $('lgo').disabled = false;
+});
+$('lgo').addEventListener('click', ()=>{
+  const e = EX[L.queue[0]];
+  if(L.state==='ask'){
+    if(L.sel===null) return;
+    const ok = e.opts ? L.sel===e.ok : e.ok(L.sel);
+    L.tries++; L.state = 'told';
+    const say = ok ? e.good : e.bad, txt = typeof say==='function' ? say(L.sel) : say;
+    $('lb').className = 'lbtm on '+(ok ? 'ok' : 'ko');
+    $('lfb').innerHTML = '<h4>'+(ok ? ['Bravo !','Parfait !','Exactement !','Bien joué !'][L.tries % 4] : 'Pas tout à fait…')+'</h4><p>'+txt+'</p>';
+    $('lgo').textContent = 'Continuer';
+    A($('lb'), [{transform:'translateY(30px)', opacity:.6}, {transform:'none', opacity:1}], {duration:260, fill:'none'});
+    const picked = $('lx').querySelector('.sel');
+    if(ok){
+      L.streak++; L.best = Math.max(L.best, L.streak); L.done++; tone(660, .09); setTimeout(()=> tone(880, .12), 110);
+      $('lp').style.width = (L.done / EX.length * 100)+'%'; $('lst').textContent = '🔥 '+L.streak;
+      if(e.cora && !reduce){ const f = $('lx').querySelector('.felt'), s = document.createElement('div'); s.className = 'stamp'; s.textContent = 'CORA !'; f.appendChild(s); A(s, [{opacity:0, transform:'translate(-50%,-50%) rotate(-8deg) scale(.6)'}, {opacity:1, transform:'translate(-50%,-50%) rotate(-8deg) scale(1)'}], {duration:500, easing:'cubic-bezier(.3,1.5,.5,1)'}); }
+      if(picked && picked.classList.contains('k')){ const play = $('lx').querySelector('.play'); if(play){ play.querySelector('.k') ? play.insertAdjacentHTML('beforeend', card(L.sel)) : (play.innerHTML = card(L.sel)); picked.style.visibility = 'hidden'; if(e.reply) setTimeout(()=>{ play.insertAdjacentHTML('beforeend', card(e.reply)); A(play.lastChild, [{opacity:0, transform:'translateY(-30px)'}, {opacity:1, transform:'none'}], {duration:320}); }, 380); } }
+    } else {
+      L.streak = 0; L.miss++; tone(220, .14); $('lst').textContent = '🔥 0';
+      if(picked) picked.classList.add('shake');
+    }
+    L.lastOk = ok;
+    // the verdict sheet grows: the answer just given must stay in sight above it
+    fitSheet(); const seen = picked && picked.classList.contains('opt') ? picked : $('lx').querySelector('.felt'); if(seen) seen.scrollIntoView({block:'nearest', behavior: reduce ? 'auto' : 'smooth'});
+    return;
+  }
+  // continue: a wrong exercise comes back at the end of the lesson, like Duolingo
+  const i = L.queue.shift(); if(!L.lastOk) L.queue.push(i);
+  if(L.queue.length) return lessonDraw();
+  // the lesson is over: the game pays the 200 chips and the badge (once), and counts it
+  const secs = Math.round((Date.now() - L.t0) / 1000);
+  post({zh:'pv', step:'lesson', acc:Math.round(EX.length / Math.max(1, L.tries) * 100), best:L.best, secs});
+  show('sD');
+});
+// the bottom of the lesson always leaves room for the sheet, whatever its height on this phone
+function fitSheet(){ const h = $('lb').offsetHeight + 10; $('lpad').style.height = h+'px'; $('sL').style.scrollPaddingBottom = h+'px'; }
+addEventListener('resize', ()=>{ if(cur==='sL') fitSheet(); });
+function lessonEnd(){
+  if(!L.t0) return;
+  const s = Math.round((Date.now() - L.t0) / 1000);
+  $('dacc').textContent = Math.round(EX.length / Math.max(1, L.tries) * 100)+' %';
+  $('dst').textContent = '🔥 '+L.best;
+  $('dtm').textContent = Math.floor(s / 60)+':'+String(s % 60).padStart(2, '0');
+}
+// soft sounds, never loud
+let AC = null;
+function tone(f, d){ try{ AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(.08, AC.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d + .15); o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + d + .2); }catch(e){} }
+document.addEventListener('click', e=>{ const b = e.target.closest('[data-go]'); if(b) show(b.dataset.go); });
+// 1. the age (the beta is said on the same card)
+$('ageYes').addEventListener('click', ()=>{ post({zh:'pv', step:'age'}); show('s2'); });
+$('ageNo').addEventListener('click', ()=>{ $('ageCard').classList.add('hidden'); $('ageClosed').classList.remove('hidden'); post({zh:'pv', step:'no18'}); });
+// 2. the lesson, or the cards straight away
+$('learn').addEventListener('click', ()=>{ post({zh:'pv', step:'learn'}); show('sL'); });
+$('know').addEventListener('click', ()=>{ post({zh:'pv', step:'know'}); post({zh:'first'}); });
+document.querySelectorAll('.first').forEach(b=> b.addEventListener('click', ()=> post({zh:'first'})));
+// the phone's back: the lesson goes back to the question, the rest stays (the game is not left half-way)
+function goBack(){ if(cur==='sL' || cur==='sD') show('s2'); }
+// 5. the name: typed or picked, never empty, never more than 16 letters
+$('nmOk').addEventListener('click', ()=>{
+  const n = $('nm').value.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
+  if(n.length < 2){ $('nm').classList.add('shake'); setTimeout(()=> $('nm').classList.remove('shake'), 700); $('nm').focus(); return; }
+  post({zh:'pvName', name:n}); ST.name = n;
+  show(ST.quartier==null ? 's5' : 's6');
+});
+// 6. the neighbourhood, kept by the game (one change a month afterwards)
+$('qok').addEventListener('click', async ()=>{
+  $('qok').disabled = true; $('qErr').textContent = '';
+  const r = await ask('setq', {q:pick});
+  $('qok').disabled = false;
+  if(r && r.error){ $('qErr').textContent = r.error; return; }
+  ST.quartier = pick; post({zh:'pv', step:'q', q:pick}); post({zh:'pvWelcome'});
+  show('s6');
+});
+// 7. the ranking, then the notifications, then home
+$('notifYes').addEventListener('click', ()=>{ post({zh:'push'}); post({zh:'pv', step:'notif'}); done(); });
+document.querySelectorAll('.done').forEach(b=> b.addEventListener('click', done));
+function done(){ post({zh:'pvDone'}); }
+// name suggestions, in the neighbourhood's own words
+const SUG = ['Le Boss', 'Petit Kora', 'Grand Frère', 'Mola', 'La Machine', 'Dja Boy'];
+$('sugg').innerHTML = SUG.map(s=> '<button class="chip">'+s+'</button>').join('');
+$('sugg').addEventListener('click', e=>{ const c = e.target.closest('.chip'); if(!c) return; $('nm').value = c.textContent; [...$('sugg').children].forEach(x=> x.classList.toggle('on', x===c)); });
+// the 32 neighbourhoods, as in the League
+const Q = [['Mokolo','MOK','#e23b3b','#f2c76a'],['Briqueterie','BRQ','#2bb673','#ffffff'],['Mvog-Ada','MVA','#7b3fe4','#f2c76a'],['Mvog-Mbi','MVM','#ff8a1f','#1b1b1b'],['Essos','ESS','#1e88e5','#ffffff'],['Nkolbisson','NKB','#00897b','#ffd54f'],['Biyem-Assi','BYA','#c2185b','#ffffff'],['Obili','OBL','#3949ab','#ff7043'],['Melen','MLN','#43a047','#1b1b1b'],['Mendong','MDG','#f4511e','#ffffff'],['Ekounou','EKN','#8e24aa','#80deea'],['Emana','EMN','#fdd835','#1b1b1b'],['Nkoldongo','NKD','#d32f2f','#1b1b1b'],['Etoudi','ETD','#00acc1','#f2c76a'],['Mimboman','MMB','#6d4c41','#ffcc80'],['Madagascar','MDC','#e91e63','#ffeb3b'],['Cité Verte','CVT','#2e7d32','#c5e1a5'],['Elig-Edzoa','ELE','#5e35b1','#ffffff'],['Mvan','MVN','#ef6c00','#4fc3f7'],['Tsinga','TSG','#0277bd','#f2c76a'],['Messa','MES','#ad1457','#1b1b1b'],['Nlongkak','NLK','#558b2f','#ffffff'],['Bastos','BST','#212121','#f2c76a'],['Odza','ODZ','#00838f','#ff8a65'],['New-Bell','NBL','#1565c0','#ffd600'],['Akwa','AKW','#c62828','#ffffff'],['Deïdo','DEI','#2e7d32','#ffd600'],['Bépanda','BEP','#6a1b9a','#ffffff'],['Ndokotti','NDK','#ff6f00','#1b1b1b'],['Bonabéri','BNB','#00695c','#ffffff'],['Makepe','MKP','#283593','#ef5350'],['Village','VLG','#4e342e','#ffd54f']];
+let pick = 0;
+function drawQ(f){
+  const n = (f||'').toLowerCase();
+  $('qg').innerHTML = Q.map((q, i)=> !n || q[0].toLowerCase().includes(n) ? '<button class="qb'+(i===pick ? ' on' : '')+'" data-q="'+i+'"><span class="crest" style="--c1:'+q[2]+';--c2:'+q[3]+'"><b>'+q[1]+'</b></span>'+q[0]+'</button>' : '').join('');
+}
+drawQ();
+$('qs').addEventListener('input', e=> drawQ(e.target.value));
+$('qg').addEventListener('click', e=>{ const b = e.target.closest('[data-q]'); if(!b) return; pick = +b.dataset.q; $('qn').textContent = Q[pick][0]; drawQ($('qs').value); A(b.querySelector('.crest'), [{transform:'scale(1)'}, {transform:'scale(1.25)'}, {transform:'scale(1.12)'}], {duration:300}); });
+// the real place in « Tout le quartier » this week, counted down from the bottom of the list
+async function rank(){
+  $('who').textContent = ST.name || 'Toi'; $('whereq').textContent = ST.quartier!=null ? Q[ST.quartier][0] : '—';
+  const n = ST.notif || {};
+  const ask4 = n.can && !n.on;
+  $('notifCard').classList.toggle('hidden', !ask4); $('rkGo').classList.toggle('hidden', ask4);
+  const r = await ask('week'), rows = (r && r.rows) || [], me = rows.find(x=> x.me);
+  if(!me){
+    $('rkHead').textContent = 'Ta place t’attend';
+    $('pos').innerHTML = '🏟️'; $('rkPts').textContent = '';
+    $('rkTip').textContent = r && r.error ? 'Ton nom entre au classement dès que ton téléphone a du réseau.' : 'Gagne une partie en ligne et ton nom entre au classement de la semaine.';
+    return;
+  }
+  $('rkPts').textContent = ' · '+me.pts+' point'+(me.pts>1 ? 's' : '');
+  const top20 = rows.find(x=> x.pos===20);
+  $('rkTip').textContent = me.pos<=20 ? 'Tu es déjà dans le top 20. Tiens ta place jusqu’à dimanche minuit !'
+    : top20 ? 'Encore '+(top20.pts - me.pts + 1)+' points et tu entres dans le top 20. Les parties en ligne en rapportent.' : 'Gagne des parties en ligne pour monter.';
+  const el = $('pos'), from = Math.max(me.pos, rows.length, 2), end = me.pos, t0 = performance.now(), d = reduce ? 0 : 1100;
+  const step = now=>{ const k = d ? Math.min(1, (now - t0) / d) : 1, e = 1 - Math.pow(1 - k, 3), v = Math.round(from + (end - from) * e); el.innerHTML = v+'<small>'+(v===1 ? 'er' : 'e')+'</small>'; if(k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function confetti(){
+  if(reduce) return;
+  const cols = ['#FFC93C','#2FB36B','#E24B4A','#ffffff','#3D7FD9'];
+  for(let i = 0; i < 40; i++){
+    const p = document.createElement('i'); const x = Math.random() * innerWidth;
+    p.style.cssText = 'position:fixed;top:-12px;left:'+x+'px;width:8px;height:12px;border-radius:2px;z-index:8;background:'+cols[i % cols.length];
+    document.body.appendChild(p);
+    p.animate([{transform:'translate(0,0) rotate(0)'}, {transform:'translate('+(Math.random()*120-60)+'px,'+(innerHeight+40)+'px) rotate('+(Math.random()*720)+'deg)'}], {duration:1400 + Math.random()*900, delay:Math.random()*300, easing:'cubic-bezier(.3,.6,.5,1)'}).finished.then(()=> p.remove());
+  }
+}
+// ---- where the visit starts: the age (a new phone), the question (age already said), after the first game, or the name alone ----
+async function boot(){
+  const st = await ask('state');
+  ST = st && !st.error ? st : {};
+  if(ST.quartier!=null) pick = ST.quartier;
+  $('qn').textContent = Q[pick][0]; drawQ();
+  if(ST.nameVal) $('nm').value = ST.nameVal;
+  if(START==='after'){
+    $('winBig').textContent = WON ? 'GAGNÉ !' : 'Belle partie !';
+    $('winCoins').classList.toggle('hidden', !WON);
+    $('winSub').textContent = WON ? '' : 'Christelle a eu le dernier pli. Ta revanche t’attend sur l’accueil.';
+  } else if(START==='pseudo'){
+    $('winBig').textContent = 'Une dernière chose'; $('winBig').style.fontSize = '32px';
+    $('winCoins').classList.add('hidden');
+    $('winSub').textContent = 'Le quartier a un classement maintenant. Il lui faut ton nom.';
+  }
+  const first = START==='question' ? 's2' : START==='after' || START==='pseudo' ? 's4' : 's1';
+  $(first).classList.add('on'); cur = first;
+  enter($(cur));
+}
+post({zh:'hello'});
+boot();
+})();
+</script>
+</body></html>

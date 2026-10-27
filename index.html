@@ -2696,7 +2696,33 @@
   @media (prefers-reduced-motion: reduce){ .qz-tick span{ animation:none; } }
   /* the phone of the story, full screen above the game */
   #zhOverlay, #qOverlay{ position:fixed; inset:0; z-index:90; background:#030619; }
-  #zhOverlay iframe, #qOverlay iframe{ width:100%; height:100%; border:0; display:block; }
+  #zhOverlay iframe, #qOverlay iframe, #pvOverlay iframe{ width:100%; height:100%; border:0; display:block; }
+  /* the first visit (bienvenue.html): above everything, the credits included */
+  #pvOverlay{ position:fixed; inset:0; z-index:1150; background:#140d08; }
+  /* « Tes premiers pas »: the new player's next step, at the top of the home screen (v82) */
+  .pv-steps{ margin:10px 0 4px; background:#FFF6DC; color:#2A1D12; border:3px solid #1B120C; border-radius:22px; box-shadow:0 5px 0 #1B120C; padding:14px 16px; text-align:left; }
+  .pv-steps h3{ margin:0; font:700 19px Fredoka, system-ui, sans-serif; display:flex; justify-content:space-between; align-items:center; color:#2A1D12; }
+  .pv-steps h3 span{ font:800 12px Nunito, system-ui, sans-serif; color:#7A6650; }
+  .pv-st{ display:flex; gap:12px; align-items:center; padding:10px 0; border-top:2px dashed #e7d3a6; }
+  .pv-st:first-of-type{ border-top:0; }
+  .pv-st i{ flex:none; width:30px; height:30px; border-radius:50%; border:2.5px solid #1B120C; display:grid; place-items:center; font:700 15px Fredoka, system-ui, sans-serif; font-style:normal; background:#fff; }
+  .pv-st.done i{ background:#2FB36B; color:#fff; } .pv-st.now i{ background:#FFC93C; }
+  .pv-st div{ flex:1; font:800 15px/1.3 Nunito, system-ui, sans-serif; }
+  .pv-st small{ display:block; font:700 12.5px Nunito, system-ui, sans-serif; color:#7A6650; }
+  .pv-st em{ font:700 13px Fredoka, system-ui, sans-serif; font-style:normal; color:#1F8A50; white-space:nowrap; }
+  .pv-st.later{ opacity:.55; } .pv-st.done div{ text-decoration:line-through; text-decoration-color:rgba(42,29,18,.35); }
+  .pv-bar{ display:block; height:9px; border-radius:99px; background:#FBE9BC; border:2px solid #1B120C; overflow:hidden; margin-top:6px; }
+  .pv-bar i{ display:block; height:100%; background:#FFC93C; transition:width .6s; }
+  /* above the night theme's lit buttons (body.noir.ui-d:not(#z):not(#y):not(#x) …) */
+  body:not(#z):not(#y):not(#x):not(#w) #pvSteps .pv-go{ background:#2FB36B !important; color:#fff !important; border:3px solid #1B120C !important; box-shadow:0 5px 0 #1B120C !important; opacity:1 !important; filter:none !important; }
+  body:not(#z) #pvSteps{ background:#FFF6DC !important; color:#2A1D12 !important; filter:none !important; }
+  .pv-go{ display:block; width:100%; margin-top:10px; border:3px solid #1B120C; border-radius:16px; box-shadow:0 5px 0 #1B120C; padding:13px 12px; font:700 19px Fredoka, system-ui, sans-serif; color:#fff; background:#2FB36B; text-shadow:0 2px 0 #1F8A50; cursor:pointer; }
+  .pv-go:active{ transform:translateY(4px); box-shadow:0 1px 0 #1B120C; }
+  /* the new logo (v82): medallion, three cards, the chip, the gold banner */
+  .ff-logo{ display:block; width:min(62vw, 250px); margin:0 auto -4px; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(241,194,87,.18)); }
+  body:not(#z) #menuOverlay .home-top:has(.ff-logo) #glassLogo, body:not(#z) #menuOverlay .home-top:has(.ff-logo) h2.logo.neon-logo, body:not(#z) #menuOverlay .home-top:has(.ff-logo) .logo-d{ display:none !important; }
+  .ln-logo .ff-logo{ width:min(72vw, 320px); }
+  .ag-card .ff-logo{ width:min(240px, 64vw); }
   /* the road: each opponent in a photograph, at their place */
   .opp-card{ display:grid !important; grid-template-columns:96px 1fr; gap:14px; align-items:stretch !important; padding:12px !important; border-radius:18px !important; background:#15110d !important; border:1px solid rgba(255,255,255,.1) !important; box-shadow:none !important; }
   .opp-card:last-child{ border-color:rgba(214,171,82,.6) !important; background:linear-gradient(160deg, #241a0c, #15110d 60%) !important; }
@@ -4602,6 +4628,7 @@
 
 <div class="hidden" id="zhOverlay"><iframe id="zhFrame" title="Fap-Fap League" allow="autoplay"></iframe></div>
 <div class="hidden" id="qOverlay"><iframe id="qFrame" title="Tout le quartier"></iframe></div>
+<div class="hidden" id="pvOverlay"><iframe id="pvFrame" title="Bienvenue au quartier"></iframe></div>
 
 <div class="overlay modal hidden" id="playerSheet">
   <div class="sheet ps-sheet">
@@ -4730,6 +4757,8 @@
       <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le masque du Ngonzormorrr"></div>
       <div class="og-bubble" id="ogBubble"><span class="who">Le Ngonzormorrr</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span><button class="og-dare" id="ogDare">Ose me défier ›</button></div>
     </section>
+
+    <section class="pv-steps hidden" id="pvSteps" aria-label="Tes premiers pas"></section>
 
     <div class="gl solid gl-card menu-rank og deep" id="menuRank" style="--og-r:22px"></div>
 
@@ -9108,6 +9137,7 @@
     if(document.getElementById('launch')){ document.getElementById('launch').click(); return true; }
     if(open('sugg')){ closeSuggest(); return true; }
     if(open('betaNote')){ document.getElementById('bnOk').click(); return true; }
+    if(PV.open){ pvPost({zh:'back'}); return true; }
     if(typeof ZH!=='undefined' && ZH.open){ zhPost({zh:'back'}); return true; }
     if(typeof QZ!=='undefined' && QZ.open){ qPost({zh:'back'}); return true; }
     if(open('friendInviteOverlay')){ document.getElementById('fiNo').click(); return true; }
@@ -9140,7 +9170,7 @@
   const armIn = doc=> ['touchend', 'click', 'keydown'].forEach(t=> doc.addEventListener(t, armBack, {capture:true, passive:true}));
   armIn(document);
   // touches inside the League and Tout le quartier frames count too
-  ['zhFrame', 'qFrame'].forEach(id=>{ const f = document.getElementById(id); if(f) f.addEventListener('load', ()=>{ try{ armIn(f.contentDocument); }catch(e){} }); });
+  ['zhFrame', 'qFrame', 'pvFrame'].forEach(id=>{ const f = document.getElementById(id); if(f) f.addEventListener('load', ()=>{ try{ armIn(f.contentDocument); }catch(e){} }); });
   window.addEventListener('popstate', (e)=>{
     if(e.state && e.state.ffTop) return; // forward again onto our own entry: nothing to do
     let stay = true;
@@ -9176,7 +9206,7 @@
   function pageShown(id){
     if(id==='bookPage'){ Book.shown(); return; }
     if(!Nav.fromPause) Music.play(id==='skinsOverlay' ? currentTableId() : (id==='storyScene' || id==='storyPage') ? 'soussol' : 'home');
-    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); if(window.qzHomeShown) window.qzHomeShown(); }
+    if(id==='menuOverlay'){ migrateTables(); announceStoryOpps(); Rig.setLight({dx:-.6, dy:-.8, I:1, col:[1,.9,.78], amb:[.42,.4,.48], rim:[1,.9,.75], rimI:.35}); renderMenuRank(); renderChips(); playHomeIntro(); renderAccountDot(); renderStoryHome(); if(window.homeTabsReset) window.homeTabsReset(); if(window.bellRefresh) window.bellRefresh(); if(window.qzHomeShown) window.qzHomeShown(); if(window.pvHomeShown) window.pvHomeShown(); }
     else if(id==='storyPage') renderStory();
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='bellPage'){ if(window.renderBell) window.renderBell(); }
@@ -10937,7 +10967,7 @@
     handLabel.classList.toggle('your-turn', yourTurn);
     handLabel.textContent = state.handOver ? 'Ta main'
       : dumping ? 'Pose tes 2 cartes'
-      : yourTurn ? (state.leadSuit ? 'À toi de répondre' : 'À toi de commander')
+      : yourTurn ? (storyRun && storyRun.first ? pvHint(state) : state.leadSuit ? 'À toi de répondre' : 'À toi de commander')
       : oppName()+' réfléchit…';
 
     const handEl = document.getElementById('playerHand');
@@ -13058,11 +13088,177 @@
   renderMenuRank();
   playHomeIntro();
 
+  // ---- The logo (v82): a medallion, the two 3s of the CORA and a 10, the chip, the gold banner. Drawn, so it stays
+  // sharp at any size; each copy gets its own gradient ids (a hidden copy must not take the others' colours with it).
+  // The League keeps its own opening logo.
+  let ffLogoN = 0;
+  function ffLogo(cls){
+    const k = 'ffl'+(++ffLogoN), u = id=> 'url(#'+k+id+')';
+    const crd = (tr, v, s, col, right)=> '<g transform="'+tr+'"><use href="#'+k+'c"/><text x="'+(right ? 37 : -37)+'" y="-122"'+(right ? ' text-anchor="end"' : '')+' font-family="Fredoka" font-weight="700" font-size="'+(v.length>1 ? 24 : 26)+'" fill="'+col+'">'+v+'</text><text x="'+(right ? 37 : -37)+'" y="-100"'+(right ? ' text-anchor="end"' : '')+' font-size="18" fill="'+col+'">'+s+'</text><text x="1" y="-48" font-size="54" text-anchor="middle" fill="'+col+'">'+s+'</text></g>';
+    return '<svg class="ff-logo'+(cls ? ' '+cls : '')+'" viewBox="0 0 400 340" role="img" aria-label="Fap-Fap"><defs>'
+      +'<linearGradient id="'+k+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>'
+      +'<linearGradient id="'+k+'r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient>'
+      +'<radialGradient id="'+k+'d" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient>'
+      +'<linearGradient id="'+k+'p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient>'
+      +'<linearGradient id="'+k+'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient>'
+      +'<g id="'+k+'c"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="'+u('p')+'" stroke="#1b120c" stroke-width="3"/></g></defs>'
+      +'<circle cx="200" cy="158" r="138" fill="'+u('d')+'" stroke="'+u('r')+'" stroke-width="7"/><circle cx="200" cy="158" r="126" fill="none" stroke="#c99a3e" stroke-opacity=".35" stroke-width="1.5"/>'
+      +crd('translate(168 262) rotate(-22)', '3', '♠', '#1b1b1b')+crd('translate(232 262) rotate(22)', '10', '♦', '#c8283a', true)+crd('translate(200 254)', '3', '♥', '#c8283a')
+      +'<g transform="translate(200 206)"><circle r="35" fill="#120d09" stroke="'+u('r')+'" stroke-width="4"/><circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/><circle r="21" fill="#1a130d" stroke="'+u('r')+'" stroke-width="2.5"/><text y="10" font-size="28" text-anchor="middle" fill="'+u('g')+'">♠</text></g>'
+      +'<path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="'+u('b')+'" stroke="'+u('r')+'" stroke-width="4" stroke-linejoin="round"/>'
+      +'<text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" letter-spacing="1" fill="'+u('g')+'" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>'
+      +'<text x="200" y="322" text-anchor="middle" font-size="20" fill="'+u('g')+'">♠</text></svg>';
+  }
+  { const h = document.querySelector('#menuOverlay .home-top'); if(h) h.insertAdjacentHTML('afterbegin', ffLogo());
+    document.querySelectorAll('.ln-logo img, img.ag-logo').forEach(img=> img.outerHTML = ffLogo(img.classList.contains('ag-logo') ? 'ag-logo' : '')); }
+
+  // ---- The first visit (v82, bienvenue.html above the game): one welcome screen (age + beta), Maître Tsala's question,
+  // his lesson in the manner of Duolingo, a first real game against Christelle with hints, then the name at the best
+  // moment, the neighbourhood (the same one as the League and « Tout le quartier »), the ranking, the notifications.
+  // Afterwards « Tes premiers pas » stays at the top of the home screen until its four steps are done.
+  const PV = {open:false};
+  const PV_STEPS = [
+    {t:'Gagner ta première partie', s:'Contre Christelle', r:'+500', go:'Jouer contre Christelle'},
+    {t:'Gagner 3 parties contre le quartier', s:'', r:'+1 000', chips:1000, go:'Jouer'},
+    {t:'Battre un vrai joueur en ligne', s:'Ton nom monte au classement', r:'+2 000', chips:2000, go:'Jouer en ligne'},
+    {t:'Entrer dans la Fap-Fap League', s:'Défends ton quartier', r:'Cadre d’or', frame:'or', go:'Ouvrir la League'}
+  ];
+  const pvAiWins = ()=> Object.values(profile.ladder || {}).reduce((s, r)=> s + ((r && r.w) || 0), 0);
+  const pvLeague = ()=>{ try{ return !!localStorage.getItem('fapfap_league_v1'); }catch(e){ return false; } };
+  function pvAgeOk(){ try{ return localStorage.getItem('fapfap_age_ok')==='1'; }catch(e){ return false; } }
+  // a new phone, or a player who never finished a game and has no name: the whole visit
+  function pvNeedsVisit(){
+    if(profile.pv) return profile.pv.flow!=='done'; // left half-way: it picks up where it stopped
+    return !pvAgeOk() || (!(profile.gamesPlayed > 0) && !(profile.onlineGames > 0) && !(prefs.name||'').trim());
+  }
+  function pvPost(m){ const f = document.getElementById('pvFrame'); try{ if(f.contentWindow) f.contentWindow.postMessage(m, location.origin); }catch(e){} }
+  function pvOpen(start, won){
+    const f = document.getElementById('pvFrame');
+    f.setAttribute('src', 'bienvenue.html?start='+start+(won==null ? '' : '&won='+(won ? 1 : 0)));
+    document.getElementById('pvOverlay').classList.remove('hidden'); PV.open = true;
+  }
+  function pvClose(){ document.getElementById('pvOverlay').classList.add('hidden'); PV.open = false; renderChips(); renderPvSteps(); }
+  // at the end of the opening credits: the visit if it is due, otherwise false (and the beta note does its usual job)
+  function pvMaybeOpen(){
+    if(DEV_HOST && /[?&]debug\b/.test(location.search)) return false;
+    if(pvNeedsVisit()){
+      if(!profile.pv){ profile.pv = {at:Date.now(), base:{ai:pvAiWins(), on:profile.onlineWins||0}, c:[], flow:'visit'}; saveProfile(); track('pv_start', {age:pvAgeOk() ? 1 : 0}); }
+      // the League's announcement is one of the four steps: it does not jump at a newcomer
+      prefs.newsLeague = 1; savePrefs();
+      try{ localStorage.setItem('fapfap_beta_seen', APP_VERSION); }catch(e){}
+      const start = !pvAgeOk() ? 'age' : profile.pv.played ? 'after' : 'question';
+      pvOpen(start, start==='after' ? !!profile.pv.w1 : null);
+      return true;
+    }
+    // an older player without a name: asked once, so that the ranking has names
+    if(!(prefs.name||'').trim() && !prefs.pvAsked && pvAgeOk()){ prefs.pvAsked = 1; savePrefs(); track('pv_pseudo_ask'); pvOpen('pseudo'); return true; }
+    return false;
+  }
+  // the first game: Christelle (the easy brain), her painted portrait, a single game, nothing to stake
+  function pvFirstGame(){
+    ensureAudio();
+    storyRun = {first:true, bet:0, odds:1, rule:null, m:{}, target0:TARGET_SCORE, art:{gervais:ART_FILE.gervais}, sqp:{}, table:null};
+    ART_FILE.gervais = 'zh/christelle';
+    document.getElementById('pvOverlay').classList.add('hidden'); PV.open = false;
+    duelOpp = 'gervais'; mode = 'ai'; TARGET_SCORE = 1;
+    enterGame(); applyOppNameToUI(); newMatch();
+    document.querySelector('header .sub').textContent = 'Ta première partie · Toi contre '+oppName();
+    track('pv_game_start');
+  }
+  function pvFirstEnd(won){
+    const p = profile.pv || (profile.pv = {at:Date.now(), base:{ai:pvAiWins(), on:profile.onlineWins||0}, c:[], flow:'done'});
+    profile.gamesPlayed = (profile.gamesPlayed||0) + 1;
+    const rec = profile.ladder.gervais || (profile.ladder.gervais = {w:0, l:0});
+    if(won){ rec.w++; repAdd(oppPersona().repWin, 'Victoire contre '+oppName()); unlockTrophy('premiere'); unlockTrophy('beat_gervais'); }
+    else { rec.l++; repAdd(20, 'Match joué'); }
+    p.played = 1;
+    if(won && !p.w1){ p.w1 = 1; chipsAdd(500); }
+    saveProfile(); checkExploits();
+    track('pv_game', {won: won ? 1 : 0});
+    return p.flow!=='done';
+  }
+  // Maître Tsala's word above the hand, during the first game only
+  function pvHint(st){
+    const hand = st.playerHand || [], has3 = hand.some(c=> +c.rank===3);
+    if(st.leadSuit){
+      if(!hasSuit(hand, st.leadSuit)) return 'Pas de '+st.leadSuit+' : jette ta plus petite carte';
+      return 'Réponds en '+st.leadSuit+' · la plus forte prend la main';
+    }
+    if(hand.length===1) return +hand[0].rank===3 ? 'Joue ton 3 : sans sa couleur, c’est un CORA !' : 'Dernier pli : à toi de commander';
+    return has3 ? 'À toi de commander · garde ton 3 pour la fin' : 'À toi de commander · ta plus forte couleur';
+  }
+  // « Tes premiers pas » on the home screen: a step done pays at once, the four done close the card
+  function renderPvSteps(){
+    const el = document.getElementById('pvSteps'), p = profile.pv;
+    if(!el) return;
+    // back on the home screen with the visit unfinished (the first game left half-way): the visit picks up again
+    if(p && p.flow!=='done' && !PV.open){ clearTimeout(PV.resumeT); PV.resumeT = setTimeout(()=>{ if(!PV.open && inHome() && !document.getElementById('launch')) pvMaybeOpen(); }, 700); }
+    if(!p || p.allDone || p.flow!=='done'){ el.classList.add('hidden'); return; }
+    const ai = Math.max(0, pvAiWins() - ((p.base && p.base.ai) || 0)), on = Math.max(0, (profile.onlineWins||0) - ((p.base && p.base.on) || 0));
+    const done = [!!p.w1, ai>=3, on>=1, pvLeague()];
+    p.c = p.c || [];
+    done.forEach((d, i)=>{
+      if(!d || p.c.includes(i)) return;
+      p.c.push(i); const S = PV_STEPS[i];
+      if(S.chips) chipsAdd(S.chips);
+      if(S.frame){ shopEnsure(); const own = profile.owned.frame = profile.owned.frame || []; if(!own.includes(S.frame)) own.push(S.frame); }
+      if(i) setTimeout(()=> showToast('Étape réussie : '+S.t, S.chips ? '+'+fmtChips(S.chips)+' jetons' : 'Le Cadre d’or est à toi (Boutique, Cadres).', {big:true, celebrate:true, ms:2600}), 600);
+      track('pv_step', {n:i + 1});
+      saveProfile(); renderChips();
+    });
+    if(done.every(Boolean)){ p.allDone = 1; saveProfile(); el.classList.add('hidden'); setTimeout(()=> showToast('Tes premiers pas sont faits', 'Le quartier te connaît maintenant.', {big:true, celebrate:true, ms:2600}), 3300); return; }
+    const now = done.indexOf(false), n = done.filter(Boolean).length;
+    el.innerHTML = '<h3>Tes premiers pas<span>'+n+' / 4</span></h3>' + PV_STEPS.map((S, i)=>{
+      const cls = done[i] ? 'done' : i===now ? 'now' : 'later';
+      const sub = i===1 && !done[1] ? Math.min(ai, 3)+' / 3<span class="pv-bar"><i style="width:'+Math.round(Math.min(ai, 3)/3*100)+'%"></i></span>' : S.s;
+      return '<div class="pv-st '+cls+'"><i>'+(done[i] ? '✓' : i + 1)+'</i><div>'+S.t+'<small>'+sub+'</small></div><em>'+S.r+'</em></div>';
+    }).join('') + '<button class="pv-go" id="pvGo">'+PV_STEPS[now].go+'</button>';
+    el.classList.remove('hidden');
+    document.getElementById('pvGo').onclick = ()=>{
+      ensureAudio(); track('pv_go', {n:now + 1});
+      if(now===0) pvFirstGame();
+      else if(now===1) document.getElementById('btnGoPlay').click();
+      else if(now===2) document.getElementById('modeMP').click();
+      else zhOpen();
+    };
+  }
+  window.pvHomeShown = renderPvSteps;
+  setTimeout(()=>{ if(inHome()) renderPvSteps(); }, 1600); // the game opens on the home screen without « showing » it
+  window.addEventListener('message', e=>{
+    const f = document.getElementById('pvFrame');
+    if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
+    const d = e.data || {};
+    if(d.zh==='comp') qzAnswer(d, pvPost);
+    if(d.zh==='first') pvFirstGame();
+    if(d.zh==='push') pushEnable();
+    if(d.zh==='pv'){
+      const step = String(d.step||'').replace(/\W/g, '').slice(0, 12);
+      if(step==='age'){ try{ localStorage.setItem('fapfap_age_ok', '1'); localStorage.setItem('fapfap_beta_seen', APP_VERSION); }catch(e){} ensureAudio(); }
+      if(step==='no18'){ try{ Music.stop(); if(audioCtx) audioCtx.suspend(); }catch(err){} setTimeout(()=>{ try{ window.close(); }catch(err){} }, 1200); }
+      // the lesson pays once: 200 chips and the badge of Maître Tsala's pupil
+      if(step==='lesson' && profile.pv && !profile.pv.lesson){ profile.pv.lesson = 1; chipsAdd(200); saveProfile(); }
+      track('pv_'+step, step==='lesson' ? {acc:d.acc|0, best:d.best|0, secs:d.secs|0} : step==='q' ? {q:d.q|0} : null);
+    }
+    if(d.zh==='pvName'){
+      const n = String(d.name||'').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
+      if(n.length>=2){ prefs.name = n; myName = n; savePrefs(); cloudSchedule(); track('pv_name'); }
+    }
+    // the welcome points: the new name shows in this week's ranking at once (given once)
+    if(d.zh==='pvWelcome' && profile.pv && !profile.pv.welcome){ profile.pv.welcome = 1; weekAdd(10); saveProfile(); }
+    if(d.zh==='pvDone'){
+      if(profile.pv){ profile.pv.flow = 'done'; saveProfile(); }
+      track('pv_done'); pvClose();
+      if(!inHome()) goToMainMenu();
+    }
+  });
+
   // ---- Age check, asked until it's answered "yes" once on this phone; "no" closes the game ----
   (function ageGate(){
     const AGE_KEY = 'fapfap_age_ok';
     let ok = false; try{ ok = localStorage.getItem(AGE_KEY)==='1'; }catch(e){}
     if(ok || (DEV_HOST && /[?&]debug\b/.test(location.search))) return;
+    // a new phone: the welcome screen of the first visit asks the age itself
+    if(pvNeedsVisit()) return;
     const gate = document.getElementById('ageGate');
     gate.classList.remove('hidden');
     document.getElementById('agYes').addEventListener('click', ()=>{
@@ -13080,14 +13276,14 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v81';
+  const APP_VERSION = 'v82';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
     let i = -1, t = 0, over = false;
     // the home screen plays its entrance as the credits fade, so the player sees it arrive instead of finding it there
     const end = ()=>{ if(over) return; over = true; clearTimeout(t); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
-      if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); betaNotice(); };
+      if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); if(!pvMaybeOpen()) betaNotice(); };
     const next = ()=>{ if(i >= 0) shots[i].classList.remove('on'); i++; if(i >= shots.length) return end(); shots[i].classList.add('on'); t = setTimeout(next, i===shots.length - 1 ? 2200 : 1900); };
     el.addEventListener('click', end);
     setTimeout(next, 250);
@@ -13168,7 +13364,7 @@
     bind(document);
     // the League and Tout le quartier live in full-screen frames of the same site: their touches never reach this page,
     // so the gesture is listened to inside them too (each new page loaded in the frame gets it)
-    ['zhFrame', 'qFrame'].forEach(id=>{ const f = document.getElementById(id); if(!f) return;
+    ['zhFrame', 'qFrame', 'pvFrame'].forEach(id=>{ const f = document.getElementById(id); if(!f) return;
       f.addEventListener('load', ()=>{ try{ bind(f.contentDocument); }catch(err){} }); });
   })();
 
@@ -14890,13 +15086,15 @@
   function flushEvents(){
     if(!evQueue.length) return;
     const rows = evQueue.splice(0);
-    if(prefs.noEvents === SUPABASE_URL) return;   // the table is not there on this server: stop knocking
+    // the table was not there on this server: stop knocking, until the next version of the game (it may exist by then)
+    const noKey = SUPABASE_URL+'|'+APP_VERSION;
+    if(prefs.noEvents === noKey) return;
     try{
       fetch(SUPABASE_URL+'/rest/v1/events', {
         method:'POST', keepalive:true,
         headers:{'apikey': SUPABASE_ANON_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'},
         body: JSON.stringify(rows)
-      }).then(r=>{ if(r.status === 404){ prefs.noEvents = SUPABASE_URL; savePrefs(); } }).catch(()=>{});
+      }).then(r=>{ if(r.status === 404){ prefs.noEvents = noKey; savePrefs(); } }).catch(()=>{});
     }catch(e){}
   }
   window.addEventListener('pagehide', flushEvents);
@@ -15987,7 +16185,7 @@
     const ios = typeof isIOS!=='undefined' && isIOS && !isStandalone(), can = pushReady() && !ios;
     const lockUntil = profile.quartierAt ? profile.quartierAt + 30 * 864e5 : 0;
     return { chips: profile.chips, quartier: profile.quartier==null ? null : profile.quartier, week: wkRoll().id, online: CLOUD_ON && navigator.onLine!==false,
-      named: !!(prefs.name||'').trim(), mys: s, dbl,
+      named: !!(prefs.name||'').trim(), nameVal: (prefs.name||'').trim(), mys: s, dbl,
       qLocked: lockUntil > Date.now() ? new Date(lockUntil).toLocaleDateString('fr-FR', {day:'numeric', month:'long'}) : null,
       notif: { on: !!prefs.push && 'Notification' in window && Notification.permission==='granted', can, level: prefs.notifLevel || 'important',
         why: ios ? 'Sur iPhone : ajoute d’abord le jeu à l’écran d’accueil (Partager, puis « Sur l’écran d’accueil »), et ouvre-le depuis son icône.' : 'Ce téléphone ne reçoit pas les notifications du jeu.' } };
@@ -15997,7 +16195,7 @@
     const { data, error } = await supaClient.rpc(name, args || {});
     return error ? {error:'Le classement ne répond pas pour le moment.'} : {rows: data || []};
   }
-  async function qzAnswer(d){
+  async function qzAnswer(d, send){
     let data = null;
     try{
       if(d.what==='state'){ data = qzState(); qzJackpotClaims(); }
@@ -16028,7 +16226,7 @@
       else if(d.what==='mystery') data = mysOpen();
       else if(d.what==='ceremony') data = await qzCeremony();
     }catch(e){ data = {error:'Le serveur ne répond pas. Réessaie.'}; }
-    qPost({zh:'compData', id:d.id, data});
+    (send || qPost)({zh:'compData', id:d.id, data});
   }
   window.addEventListener('message', e=>{
     const f = document.getElementById('qFrame');
@@ -16082,8 +16280,8 @@
   }
   // on the home screen: the League's announcement once, then Monday's ceremony once a week
   function qzAutoOpen(){
-    if(!inHome() || QZ.open || ZH.open) return;
-    const busy = document.getElementById('launch') || ['ageGate','betaNote','sugg'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
+    if(!inHome() || QZ.open || ZH.open || PV.open) return;
+    const busy = document.getElementById('launch') || ['ageGate','betaNote','sugg','pvOverlay'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
     if(busy){ setTimeout(qzAutoOpen, 2000); return; }
     if(!prefs.newsLeague){ qOpen('annonce'); return; }
     const pv = profile.prevWk;
@@ -16159,6 +16357,16 @@
 
   function storyMatchEnd(won){
     const run = storyRun;
+    // the first game of a new player: the visit goes on with the name (or the home screen if the visit is over)
+    if(run && run.first){
+      run.done = true;
+      if(won){ sfxMatchWin(); bigImpact(); burstConfetti(40); } else sfxMatchLose();
+      touchDayStreak();
+      const visit = pvFirstEnd(won);
+      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Christelle n’a rien vu venir.' : 'Christelle a eu le dernier pli.', {big:true, celebrate:won, ms:1700});
+      setTimeout(()=>{ goToMainMenu(); if(visit) pvOpen('after', won); else renderPvSteps(); }, 1900);
+      return;
+    }
     if(run && run.zh){
       run.done = true;
       if(won){ sfxMatchWin(); bigImpact(); } else sfxMatchLose();
