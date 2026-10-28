@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0a0a">
+<title>Logos Fap-Fap League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<style>
+/* Maquette : 4 logos pour la Fap-Fap League, chacun vu en grand puis posé dans la carte League de l'accueil (v86, Rouge Mboa). */
+:root{ --bg:#0e0a0a; --card:#211818; --text:#f7f2ea; --mute:#bfa9a2; --red:#e0313f; --gold:#f2c76a; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; background:var(--bg); color:var(--text); font:700 14.5px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ margin:0; font:700 24px/1.1 'Fredoka', sans-serif; } h1 small{ display:block; font:900 11px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:4px; }
+p{ margin:6px 0; } .mute{ color:var(--mute); }
+.tabs{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin:14px 0; }
+.tab{ border-radius:14px; padding:9px 4px; text-align:center; background:var(--card); border:2.5px solid #000; box-shadow:0 3px 0 #000; font:900 12px 'Nunito'; color:var(--mute); cursor:pointer; }
+.tab.on{ background:var(--red); color:#fff; }
+.stage{ border-radius:24px; border:2.5px solid #000; box-shadow:0 4px 0 #000; background:radial-gradient(90% 70% at 50% 40%, #2a1c1c, #0e0a0a 75%); padding:18px 14px; display:grid; place-items:center; min-height:300px; }
+.stage svg{ width:min(280px, 82vw); height:auto; display:block; filter:drop-shadow(0 10px 22px rgba(0,0,0,.55)); }
+.about{ margin:14px 0; } .about b.t{ display:block; font:700 19px 'Fredoka'; } .about .why{ color:var(--mute); }
+.lbl{ font:900 11px 'Nunito'; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin:18px 0 8px; }
+/* the League card of the home screen, as in the game */
+.lg-home{ position:relative; width:100%; min-height:196px; border-radius:22px; overflow:hidden; display:flex; align-items:flex-end; padding:16px;
+  background:radial-gradient(120% 90% at 85% 115%, #2443b8 0%, #0d1c5c 40%, #030619 78%); border:1px solid rgba(242,199,106,.45); box-shadow:0 14px 34px rgba(3,6,25,.55), inset 0 1px 0 rgba(255,255,255,.08); color:#eef1ff; }
+.lg-logo{ position:absolute; right:-6px; top:10px; width:150px; height:150px; }
+.lg-logo svg{ width:100%; height:100%; }
+.lg-txt{ position:relative; z-index:1; max-width:62%; display:flex; flex-direction:column; align-items:flex-start; }
+.lg-txt small{ font:800 10.5px 'Nunito'; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); }
+.lg-txt b{ display:block; font:800 24px/1 'Unbounded', sans-serif; color:#fff; margin:8px 0 6px; }
+.lg-txt span{ font:700 12.5px/1.4 'Nunito'; color:#c3cbef; }
+.lg-cta{ margin-top:12px; border-radius:999px; padding:10px 16px; font:800 11px 'Unbounded', sans-serif; letter-spacing:.08em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02; }
+.small-row{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+.small-row div{ border-radius:16px; background:var(--card); border:2.5px solid #000; padding:10px; display:grid; place-items:center; gap:6px; font:800 10.5px 'Nunito'; color:var(--mute); text-align:center; }
+.small-row svg{ width:100%; max-width:84px; height:auto; }
+.small-row div:nth-child(2) svg{ max-width:48px; } .small-row div:nth-child(3) svg{ max-width:28px; }
+.note{ margin-top:22px; font:700 12.5px/1.5 'Nunito'; color:var(--mute); } .note b{ color:var(--text); }
+/* a slow shine, never a spin */
+.shine{ animation:shine 5s ease-in-out infinite; } @keyframes shine{ 0%,70%,100%{ opacity:0; } 80%{ opacity:.55; } }
+@media (prefers-reduced-motion: reduce){ .shine{ animation:none; } }
+</style></head>
+<body>
+<h1><small>À choisir</small>Le logo de la Fap-Fap League</h1>
+<p class="mute">Quatre idées très différentes. Aucune ne tourne : elles restent posées, avec juste un reflet de temps en temps. Touche un numéro pour le voir en grand, dans la carte de l’accueil et en petit.</p>
+<div class="tabs" id="tabs"></div>
+<div class="stage" id="stage"></div>
+<div class="about" id="about"></div>
+<div class="lbl">Sur l’accueil</div>
+<div class="lg-home"><div class="lg-logo" id="homeLogo"></div><div class="lg-txt"><small>Saison 1 · 32 quartiers</small><b>Fap-Fap League</b><span>Défends ton quartier jusqu’à la finale.</span><span class="lg-cta">Ouvrir la League</span></div></div>
+<div class="lbl">En petit (classement, icône, notifications)</div>
+<div class="small-row" id="smalls"></div>
+<p class="note"><b>Mon conseil :</b> le 1, « L’Écusson », si tu veux l’esprit d’un vrai championnat de quartiers ; le 3, « Le Jeton », s’il doit se reconnaître d’un coup d’œil, même tout petit. Une fois choisi, je l’intègre partout où la League apparaît (accueil, ouverture de la League, classement), sans toucher au logo du jeu.</p>
+<script>
+(()=>{
+// the three cards of the CORA (3, 3, 10) are the thread through every logo
+const card = (x, y, r, v, s, red, w = 34)=>{ const h = w*1.42, c = red ? '#c8283a' : '#141210';
+  return '<g transform="translate('+x+' '+y+') rotate('+r+')"><rect x="'+(-w/2)+'" y="'+(-h/2)+'" width="'+w+'" height="'+h+'" rx="'+(w*.14)+'" fill="#fffaf0" stroke="#000" stroke-width="2.5"/>'
+    +'<text x="'+(-w/2 + w*.12)+'" y="'+(-h/2 + w*.42)+'" font-family="Fredoka" font-weight="700" font-size="'+(w*.36)+'" fill="'+c+'">'+v+'</text>'
+    +'<text x="0" y="'+(w*.24)+'" text-anchor="middle" font-size="'+(w*.62)+'" fill="'+c+'">'+s+'</text></g>'; };
+const L = [
+  { name:'L’Écusson', why:'Un écusson de championnat, rouge, blanc et noir : les trois cartes du CORA au centre, une étoile, et le ruban « Fap-Fap League ». Sérieux, fier, comme le blason d’un quartier.',
+    svg: k=> '<svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+k+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4b55"/><stop offset="1" stop-color="#8e0f1c"/></linearGradient><linearGradient id="'+k+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="'+k+'c"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs>'
+      +'<path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/>'
+      +'<path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#'+k+'s)" stroke="url(#'+k+'g)" stroke-width="5"/>'
+      +'<g clip-path="url(#'+k+'c)"><rect x="96" y="0" width="48" height="280" fill="#f7f2ea" opacity=".95"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="#000" stroke-width="2.5"/><path class="shine" d="M40 0 L90 0 L10 280 L-40 280 Z" fill="#fff"/></g>'
+      +'<path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#'+k+'g)" stroke="#000" stroke-width="2"/>'
+      + card(92, 142, -18, '3', '♠', 0) + card(148, 142, 18, '10', '♦', 1) + card(120, 134, 0, '3', '♥', 1)
+      +'<path d="M8 196 H232 L220 214 L232 232 H8 L20 214 Z" fill="#141210" stroke="url(#'+k+'g)" stroke-width="3"/>'
+      +'<text x="120" y="221" text-anchor="middle" font-family="Unbounded" font-weight="800" font-size="17" fill="#fff" letter-spacing="1">FAP-FAP LEAGUE</text></svg>' },
+  { name:'La Coupe', why:'Le trophée qu’on veut soulever : une coupe dorée dont le cœur est un éventail de cartes, sur un socle « League ». Parle de victoire et de finale.',
+    svg: k=> '<svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+k+'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".45" stop-color="#e9b84e"/><stop offset=".7" stop-color="#a8701a"/><stop offset="1" stop-color="#f4d27c"/></linearGradient></defs>'
+      +'<circle cx="120" cy="120" r="104" fill="#e0313f" stroke="#000" stroke-width="4"/><circle cx="120" cy="120" r="92" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="4 7"/>'
+      + card(84, 92, -30, '3', '♠', 0, 40) + card(156, 92, 30, '10', '♦', 1, 40) + card(120, 80, 0, '3', '♥', 1, 40)
+      +'<path d="M62 112 H178 C178 156 152 178 120 182 C88 178 62 156 62 112 Z" fill="url(#'+k+'g)" stroke="#000" stroke-width="4"/>'
+      +'<path d="M62 120 C38 120 34 150 62 156 M178 120 C202 120 206 150 178 156" fill="none" stroke="#000" stroke-width="9" stroke-linecap="round"/><path d="M62 120 C38 120 34 150 62 156 M178 120 C202 120 206 150 178 156" fill="none" stroke="url(#'+k+'g)" stroke-width="5" stroke-linecap="round"/>'
+      +'<path d="M108 182 H132 V204 H108 Z" fill="url(#'+k+'g)" stroke="#000" stroke-width="3.5"/><path d="M84 204 H156 L164 226 H76 Z" fill="url(#'+k+'g)" stroke="#000" stroke-width="4"/>'
+      +'<path class="shine" d="M80 116 L96 116 L82 172 L72 160 Z" fill="#fff"/>'
+      +'<rect x="40" y="230" width="160" height="38" rx="10" fill="#141210" stroke="#000" stroke-width="3"/><text x="120" y="255" text-anchor="middle" font-family="Unbounded" font-weight="800" font-size="16" fill="#f2c76a" letter-spacing="2">LEAGUE</text></svg>' },
+  { name:'Le Jeton', why:'Un gros jeton de casino aux encoches rouges et blanches, avec « FF » au centre et « League · Saison 1 » autour. Se reconnaît même minuscule, et rappelle les jetons qu’on gagne.',
+    svg: k=> { let notch = ''; for(let i = 0; i < 8; i++){ notch += '<rect x="112" y="10" width="16" height="30" rx="3" fill="#f7f2ea" stroke="#000" stroke-width="2.5" transform="rotate('+(i*45 + 22.5)+' 120 130)"/>'; }
+      return '<svg viewBox="0 0 240 260" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="'+k+'r" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#ff5a63"/><stop offset="1" stop-color="#8e0f1c"/></radialGradient><path id="'+k+'a" d="M50 130 A70 70 0 0 1 190 130"/><path id="'+k+'b" d="M44 136 A76 76 0 0 0 196 136"/></defs>'
+      +'<circle cx="120" cy="134" r="114" fill="#000"/><circle cx="120" cy="130" r="112" fill="url(#'+k+'r)" stroke="#000" stroke-width="4"/>'+notch
+      +'<circle cx="120" cy="130" r="84" fill="#141210" stroke="#f2c76a" stroke-width="4"/><circle cx="120" cy="130" r="76" fill="none" stroke="#f2c76a" stroke-opacity=".4" stroke-width="1.5" stroke-dasharray="3 5"/>'
+      +'<text font-family="Unbounded" font-weight="800" font-size="13" fill="#f2c76a" letter-spacing="3"><textPath href="#'+k+'a" startOffset="50%" text-anchor="middle">FAP-FAP LEAGUE</textPath></text>'
+      +'<text font-family="Nunito" font-weight="900" font-size="11" fill="#bfa9a2" letter-spacing="3"><textPath href="#'+k+'b" startOffset="50%" text-anchor="middle">SAISON 1 · 32 QUARTIERS</textPath></text>'
+      +'<text x="120" y="152" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="62" fill="#fff" stroke="#000" stroke-width="3" paint-order="stroke">FF</text>'
+      +'<text x="120" y="104" text-anchor="middle" font-size="22" fill="#e0313f">♥</text>'
+      +'<path class="shine" d="M60 70 Q120 30 180 70 Q120 50 60 70 Z" fill="#fff"/></svg>'; } },
+  { name:'Le Néon', why:'Le nom écrit comme une enseigne lumineuse de Bastos : « FAP FAP » en gros, « LEAGUE » en tube cyan, un pique et un cœur aux coins. Moderne, va très bien avec le thème Nuit néon.',
+    svg: k=> '<svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg"><defs><filter id="'+k+'n" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>'
+      +'<rect x="8" y="8" width="244" height="184" rx="28" fill="#0a0b16" stroke="#000" stroke-width="5"/><rect x="18" y="18" width="224" height="164" rx="20" fill="none" stroke="#ff3b5c" stroke-width="3" filter="url(#'+k+'n)"/>'
+      +'<text x="130" y="96" text-anchor="middle" font-family="Unbounded" font-weight="800" font-size="44" fill="#fff" stroke="#ff3b5c" stroke-width="2" filter="url(#'+k+'n)" letter-spacing="1">FAP FAP</text>'
+      +'<text x="130" y="146" text-anchor="middle" font-family="Unbounded" font-weight="600" font-size="26" fill="none" stroke="#25d7ff" stroke-width="2.2" filter="url(#'+k+'n)" letter-spacing="8">LEAGUE</text>'
+      +'<text x="36" y="52" font-size="22" fill="#25d7ff" filter="url(#'+k+'n)">♠</text><text x="206" y="176" font-size="22" fill="#ff3b5c" filter="url(#'+k+'n)">♥</text>'
+      +'<rect class="shine" x="18" y="18" width="224" height="164" rx="20" fill="#ff3b5c" opacity="0"/></svg>' }
+];
+const $ = id=> document.getElementById(id); let n = 0;
+function show(i){
+  $('tabs').innerHTML = L.map((l, j)=> '<div class="tab'+(j===i ? ' on' : '')+'" data-i="'+j+'">'+(j + 1)+'. '+l.name.replace('L’', '').replace('La ', '').replace('Le ', '')+'</div>').join('');
+  $('stage').innerHTML = L[i].svg('a'+(n++));
+  $('about').innerHTML = '<b class="t">'+(i + 1)+'. '+L[i].name+'</b><p class="why">'+L[i].why+'</p>';
+  $('homeLogo').innerHTML = L[i].svg('b'+(n++));
+  $('smalls').innerHTML = ['Classement', 'Icône', 'Notification'].map(t=> '<div>'+L[i].svg('c'+(n++))+t+'</div>').join('');
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-i]'); if(t) show(+t.dataset.i); });
+show(0);
+})();
+</script>
+</body></html>
