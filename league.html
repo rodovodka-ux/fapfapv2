@@ -352,6 +352,109 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .tiles b{ display:block; font:800 21px/1.1 var(--disp); color:#fff; } .tiles b sup{ font-size:11px; } .tiles small{ font:800 10px var(--ui); color:var(--mute); }
 .road{ display:flex; gap:6px; } .road span{ flex:1; text-align:center; padding:9px 2px; border-radius:12px; background:#140606; border:2px solid #000; font:800 10px var(--ui); color:#8a6a6a; white-space:nowrap; }
 .road span.done{ background:var(--gold); color:#2b1a02; } .road span.now{ color:#fff; border-color:var(--red); box-shadow:0 0 12px rgba(224,0,0,.45); }
+
+/* ===================== v89 · LA LEAGUE EN LIGNE À 16 (maquette validée « league16 ») ===================== */
+.hidden{ display:none !important; }
+.ol-door{ display:flex; align-items:center; gap:10px; width:min(320px, 86vw); padding:11px 14px 11px 10px; border-radius:20px; text-align:left; background:#140606; border:2px solid #000; box-shadow:0 4px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.4); }
+.ol-door i{ font-style:normal; flex:none; padding:4px 7px; border-radius:7px; background:var(--red); font:800 9.5px var(--ui); letter-spacing:.12em; }
+.ol-door span{ flex:1; min-width:0; } .ol-door b{ display:block; font:800 14px var(--disp); } .ol-door small{ display:block; font:700 11px var(--ui); color:var(--mute); }
+.ol-door em{ font-style:normal; font:600 26px/1 var(--ui); color:var(--gold); }
+#online .hd .ecu{ width:30px; flex:none; filter:drop-shadow(0 3px 0 #000); }
+#online .hd h2{ font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#online .hd .eyebrow{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:.16em; }
+#olBody{ padding:2px 14px calc(var(--bot) + 104px); }
+#online.notabs #olBody{ padding-bottom:calc(var(--bot) + 28px); }
+.ol-big{ text-align:center; padding:2px 0 12px; } .ol-big .ecu{ width:92px; margin:0 auto 8px; filter:drop-shadow(0 10px 16px rgba(0,0,0,.6)); }
+.ol-big b{ display:block; font:400 40px/1 'Anton', var(--disp); letter-spacing:.02em; } .ol-big b span{ color:var(--red); }
+.ol-big p{ color:var(--mute); font:800 11px var(--ui); letter-spacing:.14em; text-transform:uppercase; margin:6px 0 0; }
+.ol-count{ display:flex; align-items:baseline; justify-content:space-between; } .ol-count b{ font:900 30px var(--disp); } .ol-count b small{ font:800 14px var(--ui); color:var(--mute); } .ol-count span{ font:800 12px var(--ui); color:var(--gold); }
+.ol-bar{ height:8px; border-radius:8px; background:#0b0303; border:1.5px solid #000; overflow:hidden; margin-top:8px; } .ol-bar i{ display:block; height:100%; background:linear-gradient(90deg, var(--red), #ff5a3a); transition:width .7s cubic-bezier(.16,1,.3,1); }
+.ol-seats{ display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:6px; margin:12px 0 10px; }
+.av{ --s:34px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; flex:none; font:800 calc(var(--s)*.32) var(--disp); color:#fff; border:2px solid #000; background:var(--c, #444); box-shadow:0 2px 0 #000; text-transform:uppercase; }
+.av.me{ background:var(--red); box-shadow:0 0 0 2px var(--gold), 0 2px 0 #000; }
+.av[data-pid]{ cursor:pointer; } .av[data-pid]:active{ scale:.9; }
+.ol-seats .av{ --s:auto; width:100%; aspect-ratio:1; font-size:9px; }
+.ol-seats .av.empty{ background:transparent; border:2px dashed #5a2a2a; box-shadow:none; color:#6a4040; }
+.ol-seats .av.pop{ animation:olPop .6s cubic-bezier(.3,1.8,.5,1); } @keyframes olPop{ from{ transform:scale(.2); } }
+.ol-qn{ font:700 11.5px/1.45 var(--ui); color:var(--mute); margin:8px 0 0; } .ol-qn b{ color:var(--good); }
+.ol-potTot{ display:flex; justify-content:space-between; align-items:center; font:800 12px var(--ui); color:var(--mute); } .ol-potTot b{ font:800 22px var(--disp); color:#fff; display:flex; align-items:center; gap:6px; }
+.coin{ width:13px; height:13px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, #e6b23a 55%, #7a4a10); border:1.5px solid #000; display:inline-block; flex:none; }
+.ol-pot{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-top:10px; }
+.ol-pot div{ text-align:center; padding:9px 4px; border-radius:14px; background:#0e0404; border:1.5px solid #000; } .ol-pot b{ display:block; font:800 14px var(--disp); } .ol-pot small{ font:800 9.5px var(--ui); color:var(--mute); }
+.ol-pot div:first-child{ background:linear-gradient(180deg,#3a2a08,#1a1204); border-color:#6a5010; } .ol-pot div:first-child b{ color:var(--gold); }
+.ol-how{ display:grid; gap:9px; } .ol-how div{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:10px; align-items:center; }
+.ol-how i{ width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:var(--red); border:2px solid #000; font:800 13px var(--disp); font-style:normal; }
+.ol-how b{ display:block; font:800 13px var(--ui); } .ol-how small{ color:var(--mute); font:700 11.5px var(--ui); }
+.cta small{ display:block; font:700 10.5px var(--ui); letter-spacing:0; text-transform:none; color:#ffe0a0; margin-top:3px; }
+.cta.wa{ background:linear-gradient(180deg,#3ad46b,#1fa64a); }
+.ol-sheetBg{ position:fixed; inset:0; z-index:30; background:rgba(0,0,0,.62); display:none; align-items:flex-end; } .ol-sheetBg.on{ display:flex; }
+.ol-sheet{ width:100%; padding:18px 16px calc(var(--bot) + 22px); border-radius:26px 26px 0 0; background:#120505; border-top:2px solid var(--red); animation:olUp .35s cubic-bezier(.16,1,.3,1); } @keyframes olUp{ from{ transform:translateY(100%); } }
+.ol-sheet h4{ margin:0 0 10px; font:800 17px var(--disp); }
+.ol-sheet ul{ list-style:none; padding:0; display:grid; gap:8px; margin:0 0 14px; } .ol-sheet li{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:8px; font:700 12.5px/1.4 var(--ui); color:#f0d8d8; } .ol-sheet li i{ font-style:normal; color:var(--gold); font-weight:800; }
+.ol-sheet .ol-me{ display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px; background:#1d0808; margin-bottom:12px; } .ol-sheet .ol-me b{ font:800 14px var(--disp); } .ol-sheet .ol-me small{ display:block; color:var(--mute); font:700 11px var(--ui); }
+.ol-sheet .ghost, .ghost.wide{ display:block; width:100%; margin-top:8px; }
+.ol-ring{ position:relative; width:170px; height:170px; margin:6px auto 4px; }
+.ol-ring svg{ width:100%; height:100%; rotate:-90deg; } .ol-ring circle{ fill:none; stroke-width:12; } .ol-ring .bg{ stroke:#1d0808; } .ol-ring .fg{ stroke:var(--red); stroke-linecap:round; transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 0 6px rgba(224,0,0,.6)); }
+.ol-ring div{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; } .ol-ring b{ font:900 40px/1 var(--disp); display:block; } .ol-ring small{ font:800 11px var(--ui); color:var(--mute); }
+.ol-waitT{ text-align:center; font:800 14px var(--ui); margin:0 0 12px; } .ol-waitT b{ color:var(--gold); }
+.ol-plist{ display:grid; gap:6px; } .ol-prow{ display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 8px; border-radius:14px; background:#0e0404; }
+.ol-prow b{ display:block; font:800 13px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ol-prow small{ color:var(--mute); font:700 11px var(--ui); } .ol-prow.me{ background:rgba(224,0,0,.22); }
+.ol-dot{ width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block; box-shadow:0 0 8px var(--good); margin-right:4px; vertical-align:1px; }
+.ol-live{ display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; background:var(--red); font:800 10px var(--ui); letter-spacing:.12em; color:#fff; }
+.ol-live::before{ content:''; width:7px; height:7px; border-radius:50%; background:#fff; animation:olBlink 1s infinite; } @keyframes olBlink{ 50%{ opacity:.2; } }
+/* the draw */
+.ol-drawT{ text-align:center; padding:4px 0 12px; } .ol-drawT b{ display:block; font:400 32px 'Anton', var(--disp); } .ol-drawT small{ color:var(--mute); font:800 11px var(--ui); letter-spacing:.14em; text-transform:uppercase; }
+.ol-groups{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
+.ol-grp{ border-radius:16px; background:var(--card-bg, #170707); border:2px solid #000; box-shadow:0 3px 0 #000; padding:8px; } .ol-grp.mine{ border-color:var(--red); box-shadow:0 0 0 2px var(--red), 0 3px 0 #000; }
+.ol-grp h4{ margin:0 0 6px; font:800 12px var(--disp); color:var(--gold); display:flex; justify-content:space-between; align-items:center; } .ol-grp h4 span{ font:800 9px var(--ui); color:#fff; background:var(--red); padding:2px 6px; border-radius:6px; }
+.ol-slot{ height:30px; border-radius:9px; background:#0b0303; margin-top:4px; display:flex; align-items:center; gap:6px; padding:0 5px; font:800 11px var(--ui); overflow:hidden; white-space:nowrap; }
+.ol-slot .av{ --s:20px; font-size:7px; } .ol-slot.in{ animation:olSlot .5s cubic-bezier(.3,1.6,.5,1); } @keyframes olSlot{ from{ transform:translateY(-30px) scale(.6); opacity:0; } }
+.ol-slot.me{ background:rgba(224,0,0,.3); }
+.ol-ball{ position:fixed; left:50%; top:44%; width:150px; margin-left:-75px; padding:12px 10px; border-radius:18px; background:#fffaf0; color:#141210; text-align:center; font:800 13px var(--ui); border:2.5px solid #000; box-shadow:0 8px 0 #000; z-index:25; opacity:0; pointer-events:none; }
+.ol-ball .av{ margin:0 auto 6px; } .ol-ball small{ display:block; color:#7a5a5a; font:700 11px var(--ui); }
+.ol-ball.go{ animation:olBallGo .9s cubic-bezier(.16,1,.3,1); } @keyframes olBallGo{ 0%{ opacity:0; transform:scale(.3) rotate(-20deg); } 25%,70%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateY(-60px) scale(.6); } }
+/* my League */
+.ol-lead{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:18px; margin-bottom:12px; background:linear-gradient(90deg, #3a2a08, #170707 70%); border:2px solid #000; box-shadow:0 3px 0 #000; }
+.ol-lead svg{ width:26px; height:20px; flex:none; } .ol-lead .t{ flex:1; min-width:0; } .ol-lead small{ display:block; font:800 9.5px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); } .ol-lead b{ font:800 13.5px var(--ui); }
+.ol-lead em{ font-style:normal; font:800 11px var(--ui); color:var(--mute); text-align:right; flex:none; } .ol-lead em b{ display:block; font:900 18px var(--disp); color:#fff; }
+.ol-phase{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:4px; margin-bottom:12px; }
+.ol-phase span{ text-align:center; padding:7px 2px; border-radius:10px; font:800 10px var(--ui); color:#8a6a6a; background:#0e0404; border:1.5px solid #000; }
+.ol-phase span.now{ color:#fff; background:var(--red); } .ol-phase span.done{ color:#2b1a02; background:var(--gold); } .ol-phase span small{ display:block; font:700 9px var(--ui); opacity:.85; }
+.ol-next{ position:relative; overflow:hidden; border-radius:22px; padding:14px; margin-bottom:12px; background:linear-gradient(180deg, var(--red), var(--red-d)); border:2.5px solid #000; box-shadow:0 5px 0 #000, inset 0 1px 0 rgba(255,255,255,.3); }
+.ol-next::before{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(0,0,0,.12) 0 14px, transparent 14px 30px); pointer-events:none; } .ol-next > *{ position:relative; }
+.ol-next .k{ font:800 10px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:#ffe2e2; text-align:center; }
+.ol-vs{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:6px; margin:10px 0 8px; text-align:center; }
+.ol-vs .av{ --s:54px; margin:0 auto 6px; font-size:15px; } .ol-vs b{ display:block; font:800 13px var(--disp); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .ol-vs small{ font:700 11px var(--ui); color:#ffd0d0; } .ol-vs em{ font:400 30px 'Anton'; font-style:normal; text-shadow:0 3px 0 #000; }
+.ol-timer{ display:flex; align-items:center; justify-content:center; gap:8px; margin:4px 0 12px; font:800 12px var(--ui); color:#fff; text-align:center; }
+.ol-timer b{ font:800 13px var(--disp); background:rgba(0,0,0,.35); padding:4px 8px; border-radius:8px; white-space:nowrap; flex:none; }
+.ol-wait2{ text-align:center; font:800 12.5px/1.45 var(--ui); color:#ffe2e2; margin-top:10px; }
+.ol-tbl{ width:100%; border-collapse:collapse; font:800 12.5px var(--ui); }
+.ol-tbl th{ font:800 9.5px var(--ui); letter-spacing:.12em; color:var(--mute); text-align:right; padding:0 4px 6px; } .ol-tbl th:nth-child(2){ text-align:left; }
+.ol-tbl td{ padding:7px 4px; text-align:right; border-top:1px solid #2a0f0f; } .ol-tbl td:nth-child(1){ width:18px; color:var(--mute); text-align:left; } .ol-tbl td:nth-child(2){ text-align:left; }
+.ol-tbl .nm{ display:flex; align-items:center; gap:7px; min-width:0; } .ol-tbl .nm span:last-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .ol-tbl .av{ --s:24px; font-size:8px; } .ol-tbl b.p{ font:800 14px var(--disp); }
+.ol-tbl tr.me td{ background:var(--red); color:#fff; } .ol-tbl tr.me td:first-child{ border-radius:10px 0 0 10px; color:#fff; } .ol-tbl tr.me td:last-child{ border-radius:0 10px 10px 0; }
+.ol-tbl tr.cut td{ border-top:2px dashed var(--good); }
+.ol-feed div{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; padding:7px 0; border-top:1px solid #2a0f0f; font:700 12px/1.35 var(--ui); } .ol-feed div:first-child{ border-top:0; }
+.ol-feed i{ font-style:normal; font:800 10px var(--ui); color:var(--mute); padding-top:2px; white-space:nowrap; } .ol-feed b{ color:var(--gold); }
+.ol-prog div{ display:grid; grid-template-columns:50px minmax(0,1fr) auto; gap:8px; align-items:center; padding:7px 0; border-top:1px solid #2a0f0f; font:800 12.5px var(--ui); } .ol-prog div:first-child{ border-top:0; } .ol-prog i{ font-style:normal; font:800 10px var(--disp); color:var(--mute); }
+.tag{ display:inline-block; padding:3px 7px; border-radius:8px; font:800 9.5px var(--ui); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; }
+.tag.w{ background:rgba(126,226,162,.16); color:var(--good); } .tag.l{ background:rgba(255,120,100,.16); color:#ffb4a6; } .tag.n{ background:rgba(255,255,255,.08); color:var(--mute); } .tag.r{ background:var(--red); color:#fff; }
+.ol-toast{ position:fixed; left:12px; right:12px; top:calc(var(--top) + 10px); z-index:28; display:flex; gap:10px; align-items:center; padding:11px 12px; border-radius:18px; background:#1d0808; border:2px solid var(--red); box-shadow:0 12px 30px rgba(0,0,0,.6); font:800 12.5px/1.35 var(--ui); transform:translateY(-160%); transition:transform .45s cubic-bezier(.16,1,.3,1); }
+.ol-toast.on{ transform:none; } .ol-toast b{ color:var(--gold); } .ol-toast .av{ --s:32px; font-size:10px; }
+.ol-round{ margin-bottom:14px; } .ol-round h4{ display:flex; justify-content:space-between; font:800 12px var(--disp); color:var(--gold); margin:0 2px 8px; } .ol-round h4 span{ font:800 10px var(--ui); color:var(--mute); }
+.ol-tie{ display:grid; grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr); align-items:center; gap:6px; padding:8px; border-radius:14px; background:#140606; border:2px solid #000; margin-bottom:6px; font:800 11.5px var(--ui); }
+.ol-tie .s{ display:flex; align-items:center; gap:6px; min-width:0; } .ol-tie .s.r{ justify-content:flex-end; text-align:right; } .ol-tie .s span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ol-tie .av{ --s:22px; font-size:7px; } .ol-tie .sc{ text-align:center; font:800 12px var(--disp); color:var(--gold); white-space:nowrap; } .ol-tie.me{ border-color:var(--red); box-shadow:0 0 0 2px var(--red); } .ol-tie .out{ opacity:.4; }
+.ol-tie.final{ background:linear-gradient(180deg,#3a2a08,#170707); border-color:#6a5010; padding:12px 8px; } .ol-tie .tbd{ color:#7a5a5a; }
+.ol-pod{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); align-items:end; gap:6px; margin:6px 0 12px; }
+.ol-pod > div{ text-align:center; min-width:0; } .ol-pod .av{ --s:52px; margin:0 auto 6px; font-size:14px; } .ol-pod b{ display:block; font:800 12px var(--disp); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .ol-pod small{ display:block; font:700 10.5px var(--ui); color:var(--mute); }
+.ol-pod .st{ margin-top:8px; border-radius:12px 12px 0 0; border:2px solid #000; display:grid; place-items:center; font:400 30px 'Anton'; }
+.ol-pod .p1 .st{ height:110px; background:linear-gradient(180deg,#f2c76a,#a87a24); color:#2b1a02; } .ol-pod .p2 .st{ height:80px; background:linear-gradient(180deg,#e8e8f0,#9a9aa8); color:#222; } .ol-pod .p3 .st{ height:60px; background:linear-gradient(180deg,#e8a070,#9a5a30); color:#2b1404; }
+.ol-pod .gain{ display:inline-flex; align-items:center; gap:4px; margin-top:4px; font:800 12px var(--disp); color:var(--gold); }
+.ol-pod .p1 .av{ --s:62px; box-shadow:0 0 0 3px var(--gold), 0 0 22px rgba(242,199,106,.6); }
+.ol-empty{ text-align:center; padding:40px 18px; color:var(--mute); font:700 13.5px/1.5 var(--ui); } .ol-empty b{ display:block; font:800 17px var(--disp); color:#fff; margin-bottom:6px; }
+.ol-spin{ width:34px; height:34px; margin:0 auto 14px; border-radius:50%; border:4px solid #2a0f0f; border-top-color:var(--red); animation:olSpin 1s linear infinite; } @keyframes olSpin{ to{ rotate:360deg; } }
+@media (prefers-reduced-motion: reduce){ .ol-seats .av.pop, .ol-slot.in, .ol-ball.go, .ol-sheet{ animation:none; } }
 </style>
 </head>
 <body>
@@ -367,7 +470,9 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
   <div class="ecuwrap" id="ecuwrap"><span class="ecu" id="ecu"></span><div class="dust" id="dust"></div></div>
   <div class="unroll" id="leagueWord">SAISON 1</div>
   <div class="season" id="seasonTxt">YAOUNDÉ — DOUALA<br>32 QUARTIERS · UN SEUL ROI</div>
-  <div class="introBtns" id="introBtns"><button class="cta" id="enter">Entrer dans la League</button><button class="ghost" id="closeLg">Retour au jeu</button></div>
+  <div class="introBtns" id="introBtns"><button class="cta" id="enter">Entrer dans la League</button>
+    <button class="ol-door" id="toOnline"><i>EN LIGNE</i><span><b>La League à 16</b><small id="doorSub">16 vrais joueurs · les 3 premiers gagnent</small></span><em>›</em></button>
+    <button class="ghost" id="closeLg">Retour au jeu</button></div>
 </section>
 
 <!-- QUARTIER -->
@@ -451,6 +556,19 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
   <button class="cta" id="trGo">Nouvelle saison</button>
 </section>
 
+<!-- LA LEAGUE EN LIGNE À 16 (v89) : rendue par l16Render() selon l'état du serveur -->
+<section class="scene" id="online">
+  <div class="hd"><button class="round back" id="olBack" aria-label="Retour">‹</button><span class="ecu" id="olEcu"></span><div class="grow"><span class="eyebrow" id="olEyebrow">League en ligne</span><h2 id="olTitle">La League à 16</h2></div><span class="chips"><i></i><span id="chips3">—</span></span></div>
+  <div class="ol-toast" id="olToast"></div>
+  <div class="scroll" id="olBody"></div>
+  <nav class="tabbar hidden" id="olTabs">
+    <button class="on" data-ot="league"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>Ma League</button>
+    <button data-ot="groups"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></span>Poules</button>
+    <button data-ot="bracket"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h5v6H3M3 13h5v6H3M8 8h4v8H8M12 12h6M18 9v6"/></svg></span>Tableau</button>
+    <button data-ot="live"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></svg></span>Direct</button>
+  </nav>
+  <div class="ol-sheetBg" id="olSheet"><div class="ol-sheet" id="olSheetIn"></div></div>
+</section>
 <div class="confetti" id="confetti"></div>
 <div class="toast" id="toast"></div>
 <div class="wait" id="wait"><div><b id="waitT">La partie est sur la table…</b><span id="waitS">Le résultat arrive dès que la manche se termine.</span></div></div>
@@ -761,7 +879,7 @@ function closeLeague(){ post({zh:'close'}); }
 function goBack(){
   if(pending) return;
   if(current==='hub' || current==='intro') return closeLeague();
-  if(current==='choose') return show('intro', true);
+  if(current==='choose' || current==='online') return show('intro', true);
   if(current==='night' || current==='walk') return show('hub', true).then(renderHub);
   if(current==='draw' || current==='quiz' || current==='result' || current==='trophy') return; // these finish on their own
 }
@@ -1327,6 +1445,337 @@ if(S && S.cur && S.cur.qz==='pending') S.cur.qz = null;
 paintChips();
 // test hook (local only): window.__lg
 if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__lg = {get S(){ return S; }, set S(v){ S = v; }, newSeason, simulateToEnd, standings, renderHub, show, startNight, onResult, finishNight, lpTick, get L(){ return L; }, save};
+
+// ===================== 9. THE ONLINE LEAGUE OF 16 (v89) =====================
+// The server runs it (supabase-league16.sql); the game passes the messages: {zh:'l16', op:'state'|'join'|'ready'|'play'} out,
+// {zh:'l16', op:'state'|'error'} back. Opened alone (no game around), a demo season is played instead: ?l16=open|wait|groups|ko|done.
+const OL = {s:null, me:null, online:new Set(), tab:'league', name:'', q:null, chips:null, wait:false, drawT:[]};
+const ENTRY = 2000, BASE = 20000;
+$('olEcu').innerHTML = ecuSvg(false);
+const olName = (L, uid)=>{ const p = L && (L.players || []).find(x=> x.uid===uid); return p ? p.name : '?'; };
+const olP = (L, uid)=> L && (L.players || []).find(x=> x.uid===uid);
+function avatar(p, me){
+  const q = p && p.q!=null && Q[p.q], ini = me ? 'TOI' : String(p && p.name || '?').replace(/[^A-Za-zÀ-ÿ0-9]/g, '').slice(0, 3) || '?';
+  // touching a player's face opens their sheet in the game (their numbers and best strengths)
+  return '<span class="av'+(me ? ' me' : '')+'" style="--c:'+(q ? q.c1 : '#5a2a2a')+'"'+(p && p.uid && !me ? ' data-pid="'+esc(p.uid)+'" data-pn="'+esc(p.name || '')+'" role="button"' : '')+'>'+esc(ini)+'</span>';
+}
+$('olBody').addEventListener('click', e=>{
+  const a = e.target.closest('[data-pid]'); if(!a || e.target.closest('button')) return;
+  e.stopPropagation(); buzz(8);
+  if(host) post({zh:'player', pid:a.dataset.pid, name:a.dataset.pn});
+  else olToast(null, '<b>Démo :</b> dans le jeu, la fiche de '+esc(a.dataset.pn)+' s’ouvre ici.');
+});
+const who = (L, uid)=> uid===OL.me ? 'Toi' : esc(olName(L, uid));
+const qName = p=> p && p.q!=null && Q[p.q] ? Q[p.q].name : 'sans quartier';
+function hoursLeft(t){ const h = Math.max(0, Math.round((new Date(t) - Date.now()) / 3600000)); return h; }
+function whenTxt(t){ const d = new Date(t), now = new Date(), h = d.getHours(), day = d.toDateString()===now.toDateString() ? 'aujourd’hui' : new Date(now.getTime() + 864e5).toDateString()===d.toDateString() ? 'demain' : ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()]; return day+' '+h+' h'; }
+function ago(t){ const m = Math.max(1, Math.round((Date.now() - new Date(t)) / 60000)); return m<60 ? 'il y a '+m+' min' : m<1440 ? 'il y a '+Math.round(m/60)+' h' : 'il y a '+Math.round(m/1440)+' j'; }
+
+// the table of a group: 3 points a win, then rounds won, then CORA (as the server)
+function olTable(L, g){
+  const ps = (L.players || []).filter(p=> p.grp===g);
+  const rows = ps.map(p=>{ const r = {uid:p.uid, p, pts:0, played:0, won:0, rounds:0, coras:0, t:new Date(p.joined || 0)};
+    (L.matches || []).forEach(m=>{ if(m.stage!=='g' || (m.a!==p.uid && m.b!==p.uid) || m.status==='todo') return; r.played++;
+      if(m.winner===p.uid){ r.pts += 3; r.won++; } if(m.status==='done'){ r.rounds += m.a===p.uid ? m.ra : m.rb; r.coras += m.a===p.uid ? m.ca : m.cb; } });
+    return r; });
+  return rows.sort((a, b)=> b.pts - a.pts || b.rounds - a.rounds || b.coras - a.coras);
+}
+function olStage(L){
+  if(L.status==='done') return 'done';
+  const ms = L.matches || [];
+  if(ms.some(m=> m.stage==='f')) return 'f';
+  if(ms.some(m=> m.stage==='sf')) return 'sf';
+  if(ms.some(m=> m.stage==='qf')) return 'qf';
+  return 'g';
+}
+const STAGE_TXT = {g:'Poules', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale', p3:'La 3ᵉ place', done:'Terminée'};
+function olDay(L){ return L.started ? Math.min(7, Math.floor((Date.now() - new Date(L.started)) / 864e5) + 1) : 1; }
+
+// ---- talking to the game (or to the demo) ----
+function olAsk(op, extra){
+  if(host){ OL.wait = true; post(Object.assign({zh:'l16', op}, extra || {})); return; }
+  olDemo(op, extra || {});
+}
+window.addEventListener('message', e=>{
+  if(e.origin!==location.origin || !host || e.source!==host) return;
+  const d = e.data || {};
+  if(d.zh!=='l16') return;
+  OL.wait = false;
+  if(d.op==='error'){ olToast(null, esc(d.msg || 'Une erreur est survenue.')); return; }
+  if(d.op==='state'){
+    if(!d.ok){ OL.s = false; olRender(); return; }
+    OL.s = d.data; OL.me = d.me; OL.online = new Set(d.online || []); OL.name = d.name || ''; OL.q = d.q; if(d.chips!=null){ chips = d.chips; paintChips(); }
+    olRender();
+  }
+});
+$('toOnline').addEventListener('click', async ()=>{ buzz(8); OL.tab = 'league'; await show('online'); olRender(); olAsk('state'); });
+$('olBack').addEventListener('click', ()=> show('intro', true));
+document.querySelectorAll('[data-ot]').forEach(b=> b.addEventListener('click', ()=>{ OL.tab = b.dataset.ot; olRender(true); $('olBody').scrollTop = 0; }));
+// refreshed every 30 s while the page is open (the server moves time forward when it is read)
+setInterval(()=>{ if(current==='online' && !OL.wait && document.visibilityState==='visible') olAsk('state'); }, 30000);
+function paintChips3(){ $('chips3').textContent = chips==null ? '—' : fmt(chips); }
+
+function olToast(p, html, ms){
+  const t = $('olToast'); t.innerHTML = (p ? avatar(p) : '')+'<span>'+html+'</span>'; t.classList.add('on');
+  clearTimeout(olToast.t); olToast.t = setTimeout(()=> t.classList.remove('on'), ms || 4200);
+}
+function olSheet(html){ $('olSheetIn').innerHTML = html; $('olSheet').classList.add('on'); }
+$('olSheet').addEventListener('click', e=>{ if(e.target.id==='olSheet' || e.target.closest('[data-close]')) $('olSheet').classList.remove('on'); });
+
+// ---- the screens ----
+function olRender(anim){
+  paintChips3();
+  const body = $('olBody'), tabs = $('olTabs'), s = OL.s;
+  const setHead = (eb, t)=>{ $('olEyebrow').textContent = eb; $('olTitle').textContent = t; };
+  let showTabs = false, h = '';
+  if(s===null){ setHead('League en ligne', 'Connexion…'); h = '<div class="ol-empty"><div class="ol-spin"></div>On regarde où en est la League…</div>'; }
+  else if(s===false){ setHead('League en ligne', 'Hors ligne'); h = '<div class="ol-empty"><b>Pas de connexion</b>La League à 16 se joue en ligne. Vérifie ta connexion, puis reviens ici.</div><button class="cta wide" id="olRetry">Réessayer</button>'; }
+  else if(s.league && (s.league.status!=='done' || s.league.ended)){
+    const L = s.league;
+    if(L.status!=='open' && !olDrawSeen(L)){ olDraw(L); return; }
+    if(L.status==='done'){ setHead('League #'+L.n+' · terminée', 'Le podium'); h = olPodium(L); }
+    else { showTabs = true; h = OL.tab==='groups' ? olGroups(L) : OL.tab==='bracket' ? olBracket(L) : OL.tab==='live' ? olLive(L) : olMine(L);
+      setHead('League #'+L.n+' · jour '+olDay(L)+' / 7', OL.tab==='groups' ? 'Les 4 poules' : OL.tab==='bracket' ? 'Le tableau' : OL.tab==='live' ? 'En direct' : 'Ma League'); }
+  }
+  else if(s.open && s.open.joined){ setHead('League #'+s.open.n+' · inscrit', 'Ça se remplit'); h = olWait(s.open); }
+  else if(s.open){ setHead('League en ligne', 'Inscriptions'); h = olSignup(s.open); }
+  body.innerHTML = h;
+  $('online').classList.toggle('notabs', !showTabs);
+  tabs.classList.toggle('hidden', !showTabs);
+  document.querySelectorAll('[data-ot]').forEach(b=> b.classList.toggle('on', b.dataset.ot===OL.tab));
+  if(anim) [...body.querySelectorAll('.card, .ol-next, .ol-lead, .ol-round, .ol-phase')].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:420, delay:Math.min(i*60, 360), fill:'backwards'}));
+  olWire();
+}
+function olSignup(o){
+  const n = o.count, pot = BASE + ENTRY*n, full = BASE + ENTRY*16;
+  const seats = Array.from({length:16}, (_, i)=> i<n ? avatar(o.players[i], o.players[i] && o.players[i].uid===OL.me) : '<span class="av empty">?</span>').join('');
+  return '<div class="ol-big"><span class="ecu">'+ecuSvg(true)+'</span><b>LEAGUE <span>#'+o.n+'</span></b><p>16 joueurs · 7 jours · 3 récompensés</p></div>'
+    +'<div class="card"><div class="ol-count"><b>'+n+'<small> / 16 inscrits</small></b><span>'+(16 - n)+' place'+(16 - n>1 ? 's' : '')+' libre'+(16 - n>1 ? 's' : '')+'</span></div><div class="ol-bar"><i style="width:'+(n/16*100)+'%"></i></div>'
+    +'<div class="ol-seats">'+seats+'</div><p class="ol-qn" style="margin:0">La League démarre <b>dès que les 16 places sont prises</b>.</p></div>'
+    +'<div class="card"><h3>La cagnotte<span>que des jetons</span></h3><div class="ol-potTot"><span>À gagner aujourd’hui</span><b><i class="coin"></i>'+fmt(pot)+'</b></div>'
+    +'<div class="ol-pot"><div><b>'+fmt(pot*.6)+'</b><small>1ᵉʳ · 60 %</small></div><div><b>'+fmt(pot*.3)+'</b><small>2ᵉ · 30 %</small></div><div><b>'+fmt(pot*.1)+'</b><small>3ᵉ · 10 %</small></div></div>'
+    +'<p class="ol-qn">'+fmt(BASE)+' offerts par le jeu + '+fmt(ENTRY)+' par inscrit. À 16 joueurs : <b>'+fmt(full)+'</b>.</p></div>'
+    +'<div class="card"><h3>Comment ça se passe</h3><div class="ol-how">'
+    +'<div><i>1</i><span><b>Les poules · jours 1 à 3</b><small>4 groupes de 4. Tu joues 3 matchs. Les 2 premiers passent.</small></span></div>'
+    +'<div><i>2</i><span><b>Quarts et demies · jours 4 et 5</b><small>Un match par tour. Le perdant sort.</small></span></div>'
+    +'<div><i>3</i><span><b>La finale · jour 7</b><small>Et le match pour la 3ᵉ place, juste avant.</small></span></div></div>'
+    +'<p class="ol-qn">Un match = premier à 2 manches, contre un vrai joueur. Tu as <b>48 h</b> pour le jouer, sinon forfait.</p></div>'
+    +'<button class="cta wide" id="olJoin">M’inscrire<small>'+fmt(ENTRY)+' jetons · ils vont dans la cagnotte</small></button>';
+}
+function olWait(o){
+  const n = o.count, left = 16 - n, list = o.players.slice().reverse();
+  return '<div class="ol-ring"><svg viewBox="0 0 170 170"><circle class="bg" cx="85" cy="85" r="74"/><circle class="fg" cx="85" cy="85" r="74" stroke-dasharray="465" stroke-dashoffset="'+(465 - 465*n/16).toFixed(1)+'"/></svg><div><span><b>'+n+'</b><small>sur 16</small></span></div></div>'
+    +'<p class="ol-waitT">'+(left>0 ? 'Plus que <b>'+left+' place'+(left>1 ? 's' : '')+'</b> : la League démarre dès que c’est plein.' : '<b>C’est plein !</b> Le tirage commence…')+'</p>'
+    +'<button class="cta wa wide" id="olShare">Inviter sur WhatsApp<small>« Viens défendre ton quartier à la League #'+o.n+' »</small></button>'
+    +'<div class="card" style="margin-top:14px"><h3>Les inscrits<span>'+n+'</span></h3><div class="ol-plist">'
+    +list.map((p, k)=> '<div class="ol-prow'+(p.uid===OL.me ? ' me' : '')+'">'+avatar(p, p.uid===OL.me)+'<span><b>'+(p.uid===OL.me ? 'Toi' : esc(p.name))+'</b><small>'+esc(qName(p))+'</small></span><small>'+(OL.online.has(p.uid) ? '<span class="ol-dot"></span>en ligne' : k===0 ? 'dernier arrivé' : 'inscrit')+'</small></div>').join('')+'</div></div>'
+    +'<p class="ol-qn" style="text-align:center">Tu seras prévenu dès que la League démarre. Touche un joueur pour voir sa fiche.</p>';
+}
+// the draw, once, the first time the player sees a started League
+function olDrawSeen(L){ try{ return localStorage.getItem('fapfap_l16_draw_'+L.id)==='1'; }catch(e){ return true; } }
+function olDraw(L){
+  OL.drawT.forEach(clearTimeout); OL.drawT = [];
+  $('olEyebrow').textContent = 'League #'+L.n+' · 16 / 16'; $('olTitle').textContent = 'Le tirage';
+  $('olTabs').classList.add('hidden'); $('online').classList.add('notabs');
+  const mine = (olP(L, OL.me) || {}).grp;
+  $('olBody').innerHTML = '<div class="ol-drawT"><b>16 / 16</b><small>4 poules de 4 · les 2 premiers passent</small></div><div class="ol-groups">'
+    +'ABCD'.split('').map((g, i)=> '<div class="ol-grp'+(i===mine ? ' mine' : '')+'" data-g="'+i+'"><h4>Poule '+g+(i===mine ? '<span>TA POULE</span>' : '')+'</h4>'+'<div class="ol-slot"></div>'.repeat(4)+'</div>').join('')
+    +'</div><button class="cta wide" id="olDrawGo" style="margin-top:14px;opacity:.35;pointer-events:none">Voir ma League</button>';
+  let ball = document.querySelector('.ol-ball'); if(!ball){ ball = document.createElement('div'); ball.className = 'ol-ball'; document.body.appendChild(ball); }
+  const byG = [0, 1, 2, 3].map(g=> (L.players || []).filter(p=> p.grp===g));
+  let k = 0;
+  for(let r = 0; r<4; r++) for(let g = 0; g<4; g++){
+    const p = byG[g][r]; if(!p) continue;
+    const at = 300 + (k++)*(reduce ? 0 : 340);
+    OL.drawT.push(setTimeout(()=>{
+      ball.innerHTML = avatar(p, p.uid===OL.me)+(p.uid===OL.me ? 'Toi' : esc(p.name))+'<small>'+esc(qName(p))+' → poule '+'ABCD'[g]+'</small>';
+      ball.classList.remove('go'); void ball.offsetWidth; ball.classList.add('go'); tick(p.uid===OL.me);
+      const s = document.querySelector('.ol-grp[data-g="'+g+'"]').querySelectorAll('.ol-slot')[r];
+      s.innerHTML = avatar(p, p.uid===OL.me)+'<span>'+(p.uid===OL.me ? 'Toi' : esc(p.name))+'</span>'; s.classList.add('in'); if(p.uid===OL.me) s.classList.add('me');
+    }, at));
+  }
+  OL.drawT.push(setTimeout(()=>{ const b = $('olDrawGo'); if(b){ b.style.opacity = 1; b.style.pointerEvents = 'auto'; } }, 300 + k*(reduce ? 0 : 340) + 300));
+  $('olDrawGo').addEventListener('click', ()=>{ try{ localStorage.setItem('fapfap_l16_draw_'+L.id, '1'); }catch(e){} OL.tab = 'league'; olRender(true); });
+}
+function myNext(L){
+  const now = Date.now();
+  return (L.matches || []).filter(m=> m.status==='todo' && (m.a===OL.me || m.b===OL.me)).sort((a, b)=> new Date(a.opens) - new Date(b.opens))[0] || null;
+}
+function olLeader(L){
+  let best = null;
+  [0, 1, 2, 3].forEach(g=> olTable(L, g).forEach(r=>{ if(!best || r.pts>best.pts || (r.pts===best.pts && r.rounds>best.rounds)) best = r; }));
+  return best;
+}
+function olMine(L){
+  const st = olStage(L), me = olP(L, OL.me), g = me ? me.grp : null, tb = g!=null ? olTable(L, g) : [], pos = tb.findIndex(r=> r.uid===OL.me) + 1;
+  const lead = olLeader(L);
+  let h = '';
+  if(lead && lead.pts>0) h += '<div class="ol-lead"><svg viewBox="0 0 26 20"><path d="M2 17 L4 5 L9 11 L13 2 L17 11 L22 5 L24 17 Z" fill="#f2c76a" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/></svg><div class="t"><small>En tête de la League</small><b>'+(lead.uid===OL.me ? 'Toi' : esc(lead.p.name))+' · '+esc(qName(lead.p))+' · '+lead.pts+' pts</b></div>'+(pos ? '<em>Ta poule<b>'+pos+(pos===1 ? 'ᵉʳ' : 'ᵉ')+'</b></em>' : '')+'</div>';
+  const ph = st==='g' ? 0 : st==='f' || st==='done' ? 2 : 1;
+  h += '<div class="ol-phase">'+[['Poules','jours 1 à 3'],['Quarts · demies','jours 4 et 5'],['Finale','jour 7']].map((x, i)=> '<span class="'+(i===ph ? 'now' : i<ph ? 'done' : '')+'">'+x[0]+'<small>'+x[1]+'</small></span>').join('')+'</div>';
+  const m = myNext(L);
+  if(m){
+    const oppId = m.a===OL.me ? m.b : m.a, opp = olP(L, oppId), open = new Date(m.opens) <= new Date(), iReady = m.a===OL.me ? m.ready_a : m.ready_b, heReady = m.a===OL.me ? m.ready_b : m.ready_a;
+    const lbl = m.stage==='g' ? 'poule '+'ABCD'[m.grp]+' · match '+(tb.length ? Math.min(3, (tb.find(r=> r.uid===OL.me) || {played:0}).played + 1) : 1)+' / 3' : STAGE_TXT[m.stage].toLowerCase();
+    const on = OL.online.has(oppId);
+    h += '<div class="ol-next"><div class="k">Ton prochain match · '+lbl+'</div>'
+      +'<div class="ol-vs"><div>'+avatar(me, true)+'<b>Toi</b><small>'+esc(qName(me))+'</small></div><em>VS</em><div>'+avatar(opp)+'<b>'+esc(opp ? opp.name : '?')+'</b><small>'+(on ? '<span class="ol-dot"></span>en ligne' : esc(qName(opp)))+'</small></div></div>';
+    if(!open) h += '<div class="ol-timer"><b>'+whenTxt(m.opens)+'</b><span>ce match s’ouvre</span></div><p class="ol-wait2">En attendant, regarde les autres poules et le direct.</p>';
+    else if(m.mine_sent) h += '<p class="ol-wait2">Ton résultat est envoyé. On attend celui de '+esc(opp ? opp.name : 'ton adversaire')+' pour l’inscrire.</p>';
+    else {
+      h += '<div class="ol-timer"><b>'+hoursLeft(m.deadline)+' h</b><span>pour le jouer · avant '+whenTxt(m.deadline)+'</span></div>'
+        +'<button class="cta dark wide" id="olPlay" data-m="'+m.id+'" data-o="'+esc(oppId)+'" data-n="'+esc(opp ? opp.name : '')+'">'+(on ? 'Le défier maintenant' : 'L’appeler à jouer')+'<small>'+(on ? 'Il est en ligne : il reçoit ton défi tout de suite' : 'Il reçoit une notification sur son téléphone')+'</small></button>'
+        +(iReady ? '<p class="ol-wait2">Tu t’es dit prêt'+(heReady ? ', lui aussi : lancez la partie !' : '. S’il ne vient pas avant la fin du délai, tu gagnes par forfait.')+'</p>'
+          : '<button class="ghost wide" id="olReady" data-m="'+m.id+'" style="margin-top:10px">Je suis prêt<small style="display:block;font:700 10.5px var(--ui);color:var(--mute);margin-top:2px">s’il ne vient pas à temps, tu gagnes par forfait</small></button>');
+    }
+    h += '</div>';
+  } else if(st!=='done'){
+    h += '<div class="card"><h3>'+(me && L.matches.some(x=> x.stage!=='g' && (x.a===OL.me || x.b===OL.me)) ? 'Tu attends le prochain tour' : 'Ton parcours')+'</h3><p class="ol-qn" style="margin:0">'
+      +(olOut(L) ? 'Tu es éliminé de cette League. Suis la suite dans le Tableau, et inscris-toi à la suivante.' : 'Tous tes matchs de ce tour sont joués. Le tour suivant s’ouvre dès que les autres ont fini.')+'</p></div>';
+  }
+  if(g!=null && st==='g') h += '<div class="card"><h3>Ta poule '+'ABCD'[g]+'<span>2 premiers qualifiés</span></h3>'+olTblHtml(tb)+'<p class="ol-qn">Égalité de points : les manches gagnées, puis les CORA.</p></div>';
+  const mine = (L.matches || []).filter(x=> x.a===OL.me || x.b===OL.me).sort((a, b)=> a.id - b.id);
+  if(mine.length) h += '<div class="card"><h3>Tes matchs</h3><div class="ol-prog">'+mine.map(x=>{
+    const o = x.a===OL.me ? x.b : x.a, tag = x.status==='todo' ? (new Date(x.opens) <= new Date() ? '<span class="tag r">À jouer</span>' : '<span class="tag n">'+whenTxt(x.opens)+'</span>')
+      : x.status==='void' ? '<span class="tag n">Annulé</span>' : x.winner===OL.me ? '<span class="tag w">'+(x.status==='forfeit' ? 'Forfait gagné' : 'Gagné '+Math.max(x.ra, x.rb)+'-'+Math.min(x.ra, x.rb))+'</span>' : '<span class="tag l">'+(x.status==='forfeit' ? 'Forfait' : 'Perdu '+Math.min(x.ra, x.rb)+'-'+Math.max(x.ra, x.rb))+'</span>';
+    return '<div><i>'+(x.stage==='g' ? 'Poule' : x.stage==='qf' ? 'Quart' : x.stage==='sf' ? 'Demie' : x.stage==='p3' ? '3ᵉ pl.' : 'Finale')+'</i><span>Toi – '+who(L, o)+'</span>'+tag+'</div>'; }).join('')+'</div></div>';
+  h += olFeedCard(L, 4);
+  olOvertake(L, g, pos, tb);
+  return h;
+}
+function olOut(L){ return (L.matches || []).some(m=> m.stage!=='g' && m.stage!=='p3' && m.status!=='todo' && (m.a===OL.me || m.b===OL.me) && m.winner!==OL.me) || (olStage(L)!=='g' && !(L.matches || []).some(m=> m.stage!=='g' && (m.a===OL.me || m.b===OL.me))); }
+function olTblHtml(tb){
+  return '<table class="ol-tbl"><tr><th></th><th>Joueur</th><th>J</th><th>Pts</th></tr>'+tb.map((r, i)=> '<tr class="'+(r.uid===OL.me ? 'me ' : '')+(i===2 ? 'cut' : '')+'"><td>'+(i + 1)+'</td><td><span class="nm">'+avatar(r.p, r.uid===OL.me)+'<span>'+(r.uid===OL.me ? 'Toi' : esc(r.p.name))+'</span></span></td><td>'+r.played+'</td><td><b class="p">'+r.pts+'</b></td></tr>').join('')+'</table>';
+}
+// « X t'a dépassé » : compared with the last place this phone saw
+function olOvertake(L, g, pos, tb){
+  if(!pos) return;
+  let prev = null; const k = 'fapfap_l16_pos_'+L.id;
+  try{ prev = JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify({pos, above:tb.slice(0, pos - 1).map(r=> r.uid)})); }catch(e){}
+  if(!prev || pos<=prev.pos) { if(prev && pos<prev.pos) setTimeout(()=> olToast(olP(L, OL.me), '<b>Tu montes !</b> Te voilà '+pos+(pos===1 ? 'ᵉʳ' : 'ᵉ')+' de ta poule.'), 700); return; }
+  const passer = tb.slice(0, pos - 1).find(r=> !(prev.above || []).includes(r.uid));
+  if(passer) setTimeout(()=>{ olToast(passer.p, '<b>'+esc(passer.p.name)+' t’a dépassé.</b> Tu es '+pos+'ᵉ de ta poule'+(pos>2 ? ' : gagne ton prochain match pour repasser devant.' : '.')); buzz([30, 40, 30]); }, 700);
+}
+function olFeed(L){
+  return (L.matches || []).filter(m=> m.status==='done' || m.status==='forfeit').sort((a, b)=> new Date(b.done) - new Date(a.done)).map(m=>{
+    const w = m.winner, l = w===m.a ? m.b : m.a, wc = w===m.a ? m.ca : m.cb, stage = m.stage==='g' ? '' : ' ('+STAGE_TXT[m.stage].toLowerCase()+')';
+    return {at:m.done, html: m.status==='forfeit' ? '<b>'+who(L, w)+'</b> gagne par forfait'+stage+' : '+who(L, l)+' n’est pas venu.' : '<b>'+who(L, w)+'</b> bat '+who(L, l)+' '+Math.max(m.ra, m.rb)+'-'+Math.min(m.ra, m.rb)+(wc ? ' avec '+(wc>1 ? wc+' CORA' : 'un CORA')+' !' : '')+stage};
+  });
+}
+function olFeedCard(L, n){
+  const f = olFeed(L).slice(0, n);
+  return '<div class="card"><h3>En direct<span class="ol-live">LIVE</span></h3><div class="ol-feed">'+(f.length ? f.map(x=> '<div><i>'+ago(x.at)+'</i><span>'+x.html+'</span></div>').join('') : '<div><i>·</i><span>Les premiers résultats arrivent ici dès qu’un match est joué.</span></div>')+'</div></div>';
+}
+function olGroups(L){
+  const mine = (olP(L, OL.me) || {}).grp;
+  return [0, 1, 2, 3].map(g=> '<div class="card"><h3>Poule '+'ABCD'[g]+(g===mine ? '<span style="color:#fff">ta poule</span>' : '<span>3 journées</span>')+'</h3>'+olTblHtml(olTable(L, g))+'</div>').join('')
+    +'<p class="ol-qn" style="text-align:center">La ligne verte : au-dessus, on passe en quarts. Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre.</p>';
+}
+function olTie(L, m, cls){
+  if(!m) return '<div class="ol-tie '+(cls || '')+'"><span class="s tbd"><span>à venir</span></span><span class="sc" style="color:var(--mute)">VS</span><span class="s r tbd"><span>à venir</span></span></div>';
+  const me = m.a===OL.me || m.b===OL.me, played = m.status!=='todo';
+  const side = (u, r)=> '<span class="s'+(r ? ' r' : '')+(played && m.winner && m.winner!==u ? ' out' : '')+'">'+(r ? '<span>'+who(L, u)+'</span>'+avatar(olP(L, u), u===OL.me) : avatar(olP(L, u), u===OL.me)+'<span>'+who(L, u)+'</span>')+'</span>';
+  const sc = !played ? (new Date(m.opens) <= new Date() ? '<span style="color:var(--mute)">en cours</span>' : 'VS') : m.status==='forfeit' ? 'forfait' : m.ra+'-'+m.rb;
+  return '<div class="ol-tie'+(me ? ' me' : '')+(cls ? ' '+cls : '')+'">'+side(m.a)+'<span class="sc">'+sc+'</span>'+side(m.b, 1)+'</div>';
+}
+function olBracket(L){
+  const by = st=> (L.matches || []).filter(m=> m.stage===st).sort((a, b)=> a.slot - b.slot);
+  const qf = by('qf'), sf = by('sf'), f = by('f')[0], p3 = by('p3')[0];
+  let h = '<div class="ol-round"><h4>Quarts de finale<span>jour 4</span></h4>'+[0, 1, 2, 3].map(i=> olTie(L, qf[i])).join('')+'<p class="ol-qn" style="margin:2px 2px 0">Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre.</p></div>';
+  h += '<div class="ol-round"><h4>Demi-finales<span>jour 5</span></h4>'+[0, 1].map(i=> olTie(L, sf[i])).join('')+'</div>';
+  h += '<div class="ol-round"><h4>La 3ᵉ place<span>jour 7</span></h4>'+olTie(L, p3)+'</div>';
+  h += '<div class="ol-round"><h4>La finale<span>jour 7</span></h4>'+olTie(L, f, 'final')+'</div>';
+  if(!qf.length) h += '<p class="ol-qn" style="text-align:center">Le tableau se remplit à la fin des poules.</p>';
+  return h;
+}
+function olLive(L){
+  const all = olFeed(L);
+  const todo = (L.matches || []).filter(m=> m.status==='todo' && new Date(m.opens) <= new Date());
+  return '<div class="card"><h3>À jouer en ce moment<span>'+todo.length+'</span></h3><div class="ol-prog">'+(todo.length ? todo.map(m=> '<div><i>'+(m.stage==='g' ? 'Poule '+'ABCD'[m.grp] : STAGE_TXT[m.stage].split(' ')[0])+'</i><span>'+who(L, m.a)+' – '+who(L, m.b)+'</span><span class="tag n">'+hoursLeft(m.deadline)+' h</span></div>').join('') : '<div><i>·</i><span>Aucun match ouvert.</span><span></span></div>')+'</div></div>'
+    +'<div class="card"><h3>Tous les résultats<span class="ol-live">LIVE</span></h3><div class="ol-feed">'+(all.length ? all.map(x=> '<div><i>'+ago(x.at)+'</i><span>'+x.html+'</span></div>').join('') : '<div><i>·</i><span>Pas encore de résultat.</span></div>')+'</div></div>';
+}
+function olPodium(L){
+  const f = (L.matches || []).find(m=> m.stage==='f'), p3 = (L.matches || []).find(m=> m.stage==='p3');
+  const first = f && f.winner, second = f && (f.winner===f.a ? f.b : f.a), third = p3 && p3.winner;
+  const pot = BASE + ENTRY*(L.players || []).length;
+  const step = (cls, u, place, amount)=>{ const p = olP(L, u); return '<div class="'+cls+'">'+avatar(p, u===OL.me)+'<b>'+who(L, u)+'</b><small>'+esc(qName(p))+'</small><span class="gain"><i class="coin"></i>'+fmt(amount)+'</span><div class="st">'+place+'</div></div>'; };
+  let h = '<div class="ol-drawT" style="padding-bottom:4px"><b>CHAMPION</b><small>'+who(L, first)+' · '+esc(qName(olP(L, first)))+'</small></div>'
+    +'<div class="ol-pod">'+step('p2', second, 2, pot*.3)+step('p1', first, 1, pot*.6)+step('p3', third, 3, pot*.1)+'</div>';
+  const pz = L.prize;
+  if(pz) h += '<div class="card" style="text-align:center"><h3 style="justify-content:center">Ton gain</h3><b style="font:800 26px var(--disp);color:var(--gold)">+'+fmt(pz.amount)+' jetons</b><p class="ol-qn">'+(pz.claimed ? 'Déjà ajoutés à ton solde.' : 'Ils arrivent sur ton solde.')+'</p></div>';
+  h += olFeedCard(L, 5);
+  const o = OL.s && OL.s.open;
+  if(o) h += '<button class="cta wide" id="olNextL">S’inscrire à la League #'+o.n+'<small>'+o.count+' / 16 inscrits · elle démarre dès qu’elle est pleine</small></button>';
+  if(first===OL.me && !olPodium.cf){ olPodium.cf = 1; setTimeout(()=> confetti(['#f2c76a','#e00000','#ffffff','#ff5a3a']), 400); fanfare(true); }
+  return h;
+}
+function olWire(){
+  const j = $('olJoin'); if(j) j.onclick = ()=>{
+    const me = OL.name || 'Toi';
+    olSheet('<h4>Tu t’inscris à la League #'+OL.s.open.n+'</h4><div class="ol-me">'+avatar({name:me, q:OL.q}, true)+'<div><b>Tu joues pour '+esc(OL.q!=null && Q[OL.q] ? Q[OL.q].name : 'toi-même')+'</b><small>Ton quartier, sur ton profil</small></div></div>'
+      +'<ul><li><i>1</i>'+fmt(ENTRY)+' jetons partent dans la cagnotte. Ils ne sont pas rendus si tu abandonnes.</li><li><i>2</i>Chaque match se joue dans les 48 h, contre un vrai joueur. Le jeu te prévient.</li><li><i>3</i>Les 3 premiers se partagent la cagnotte, en jetons.</li></ul>'
+      +'<button class="cta wide" id="olJoinOk">Je m’inscris · '+fmt(ENTRY)+'</button><button class="ghost" data-close>Pas maintenant</button>');
+    $('olJoinOk').onclick = ()=>{ $('olSheet').classList.remove('on'); buzz(15); olAsk('join'); };
+  };
+  const sh = $('olShare'); if(sh) sh.onclick = ()=>{
+    const txt = 'Viens défendre ton quartier à la League #'+OL.s.open.n+' de Fap Fap ! Plus que '+(16 - OL.s.open.count)+' places, la cagnotte est en jetons : ';
+    const url = location.origin + '/';
+    if(navigator.share) navigator.share({title:'Fap-Fap League', text:txt, url}).catch(()=>{});
+    else window.open('https://wa.me/?text='+encodeURIComponent(txt + url), '_blank');
+  };
+  const p = $('olPlay'); if(p) p.onclick = ()=>{ buzz(12); olAsk('play', {match:+p.dataset.m, opp:p.dataset.o, name:p.dataset.n}); };
+  const r = $('olReady'); if(r) r.onclick = ()=>{ buzz(10); olAsk('ready', {match:+r.dataset.m}); };
+  const rt = $('olRetry'); if(rt) rt.onclick = ()=>{ OL.s = null; olRender(); olAsk('state'); };
+  const nx = $('olNextL'); if(nx) nx.onclick = ()=>{ OL.s.league = null; olRender(true); };
+}
+
+// ---- the demo (the page opened alone, or ?l16=…): a whole League played by itself ----
+function olDemo(op, x){
+  const NAMES = ['Boris','Marius','Ange','Clarisse','Junior','Patou','Sandra','Rodrigue','Yannick','Kevin','Ornella','Toi','Franck','Pélagie','Steve','Christian'];
+  const QS = [22, 0, 4, 6, 8, 2, 3, 13, 25, 7, 11, 5, 23, 26, 15, 19];
+  const mode = (location.search.match(/[?&]l16=(\w+)/) || [])[1] || 'open';
+  if(!olDemo.st){
+    const t0 = Date.now() - (mode==='open' || mode==='wait' ? 0 : mode==='groups' ? 1.2 : mode==='ko' ? 4.3 : 7.2)*864e5;
+    const players = NAMES.map((n, i)=> ({uid:'u'+i, name:n, q:QS[i], grp:null, joined:new Date(t0 - (16 - i)*3600e3).toISOString()}));
+    OL.me = 'u11'; OL.name = 'Toi'; OL.q = 5; chips = chips==null ? 12400 : chips;
+    const count = mode==='open' ? 11 : mode==='wait' ? 13 : 16;
+    const st = {me:'u11', open:{id:1, n:1, count, joined:mode==='wait', players:players.slice(0, count).filter(p=> mode==='wait' || p.uid!=='u11')}};
+    if(mode==='open') st.open.count = st.open.players.length;
+    if(!['open','wait'].includes(mode)){
+      const G = [[3, 4, 9, 6], [8, 10, 7, 13], [0, 1, 11, 2], [5, 12, 14, 15]];
+      G.forEach((g, gi)=> g.forEach(i=> players[i].grp = gi));
+      const ms = []; let id = 1;
+      const day = d=> new Date(t0 + d*864e5).toISOString();
+      const res = (a, b, wa, ca, done)=> ({ra:wa ? 2 : 1, rb:wa ? 1 : 2, ca:ca||0, cb:0, winner:wa ? a : b, status:'done', done});
+      G.forEach((g, gi)=>{ [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach(([i, j], k)=>{
+        const a = 'u'+g[i], b = 'u'+g[j], r = Math.floor(k/2), m = {id:id++, stage:'g', grp:gi, slot:k + 1, a, b, opens:day(r), deadline:day(r + 2), ready_a:false, ready_b:false, status:'todo', winner:null, ra:0, rb:0, ca:0, cb:0, done:null, mine_sent:false};
+        const played = mode==='groups' ? r===0 || (r===1 && (a!=='u11' && b!=='u11') && k % 2) : true;
+        if(played) Object.assign(m, res(a, b, (gi + k) % 3 !== 0, (k % 4===0) ? 1 : 0, day(r + .5)));
+        ms.push(m); }); });
+      if(mode!=='groups'){
+        const pairs = [['u3','u7'], ['u8','u6'], ['u0','u12'], ['u5','u11']];
+        pairs.forEach(([a, b], i)=> ms.push(Object.assign({id:id++, stage:'qf', slot:i + 1, a, b, opens:day(3.2), deadline:day(4.2), ready_a:true, ready_b:true, done:day(3.6), mine_sent:false}, res(a, b, b!=='u11', 1, day(3.6)), b==='u11' ? {winner:'u11', ra:1, rb:2} : {})));
+        ms.push({id:id++, stage:'sf', slot:1, a:'u3', b:'u0', opens:day(4.3), deadline:day(5.3), ready_a:false, ready_b:false, status:mode==='ko' ? 'todo' : 'done', winner:mode==='ko' ? null : 'u0', ra:mode==='ko' ? 0 : 1, rb:mode==='ko' ? 0 : 2, ca:0, cb:1, done:mode==='ko' ? null : day(4.8), mine_sent:false});
+        ms.push({id:id++, stage:'sf', slot:2, a:'u8', b:'u11', opens:day(4.3), deadline:day(5.3), ready_a:false, ready_b:false, status:mode==='ko' ? 'todo' : 'done', winner:mode==='ko' ? null : 'u11', ra:mode==='ko' ? 0 : 0, rb:mode==='ko' ? 0 : 2, ca:0, cb:2, done:mode==='ko' ? null : day(4.9), mine_sent:false});
+        if(mode==='done'){
+          ms.push({id:id++, stage:'f', slot:1, a:'u0', b:'u11', opens:day(6), deadline:day(7), status:'done', winner:'u0', ra:2, rb:1, ca:1, cb:0, done:day(6.8)});
+          ms.push({id:id++, stage:'p3', slot:1, a:'u3', b:'u8', opens:day(6), deadline:day(7), status:'done', winner:'u8', ra:1, rb:2, ca:0, cb:0, done:day(6.7)});
+        }
+      }
+      st.league = {id:1, n:1, status:mode==='done' ? 'done' : mode==='groups' ? 'groups' : 'ko', started:new Date(t0).toISOString(), ended:mode==='done' ? new Date().toISOString() : null, champion:mode==='done' ? 'u0' : null, players, matches:ms, prize:mode==='done' ? {place:2, amount:15600, claimed:false} : null};
+      st.open = {id:2, n:2, count:3, joined:false, players:players.slice(0, 3)};
+    }
+    olDemo.st = st;
+  }
+  const st = olDemo.st;
+  setTimeout(()=>{
+    if(op==='join' && st.open && !st.open.joined){ chips -= ENTRY; paintChips(); st.open.joined = true; st.open.players.push({uid:'u11', name:'Toi', q:5}); st.open.count++; }
+    if(op==='ready'){ const m = st.league.matches.find(m=> m.id===x.match); if(m){ if(m.a===OL.me) m.ready_a = true; else m.ready_b = true; } }
+    if(op==='play'){ olToast(null, '<b>Démo :</b> dans le jeu, ce bouton lance le duel en ligne contre '+esc(x.name)+'.'); }
+    OL.s = JSON.parse(JSON.stringify(st)); OL.online = new Set(['u1', 'u3', 'u8']); olRender(op==='state');
+  }, 350);
+}
+if(!host && /[?&]l16=/.test(location.search)) setTimeout(()=> $('toOnline').click(), 300);
 })();
 </script>
 </body>

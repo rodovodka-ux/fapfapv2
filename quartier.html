@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#030619">
+<meta name="theme-color" content="#070202">
 <title>Tout le quartier</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,6 +157,21 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .cer-r{ margin:18px auto 0; padding:14px 18px; border-radius:18px; background:rgba(242,199,106,.12); box-shadow:inset 0 0 0 1px rgba(242,199,106,.4); font:700 14px var(--ui); }
 .cer-r b{ color:var(--gold); }
 @media (prefers-reduced-motion: reduce){ .ticker div{ animation:none; } }
+
+/* v89 · aux couleurs du jeu (Stade de nuit, comme la League) : noir, rouge vif et or — fini le bleu des anciennes versions */
+:root{ --night:#070202; --ink:#fff6f2; --mute:#c9a3a3; --red:#e00000; }
+.sky{ background:radial-gradient(130% 70% at 50% -12%, #4a0000 0%, #170404 38%, var(--night) 72%); }
+.cta{ background:linear-gradient(180deg, #ff2a2a, var(--red) 55%, #a80000); color:#fff; border:2.5px solid #000; box-shadow:0 5px 0 #000, inset 0 1px 0 rgba(255,255,255,.35); }
+.cta:active{ translate:0 3px; box-shadow:0 1px 0 #000; }
+.ghost{ background:#170707; box-shadow:inset 0 0 0 1.5px #3a1212, 0 3px 0 #000; }
+.av{ background:linear-gradient(150deg, var(--a1,#c8283a), var(--a2,#3a0a0a)); }
+.crest::before{ background:radial-gradient(circle at 34% 28%, #3a1010, #0b0303); }
+.toast{ background:rgba(20,6,6,.97); box-shadow:0 16px 40px rgba(0,0,0,.55), inset 0 0 0 1.5px var(--red); }
+.stickme{ background:rgba(20,6,6,.97); box-shadow:0 -10px 30px rgba(7,2,2,.85); }
+.news-hero{ background:radial-gradient(120% 90% at 50% -10%, #5a0000 0%, #1d0404 50%, #070202 85%); box-shadow:inset 0 0 0 1.5px rgba(242,199,106,.4), 0 5px 0 #000; }
+.mys-s, .news-hero p, .cer-s, .ticker div{ color:#f0d0d0; } .rewards div{ color:#fbe4e4; }
+.chest .body{ background:linear-gradient(180deg, #e00000, #6a0000); } .chest .lid{ background:linear-gradient(180deg, #ff3a3a, #a80000); }
+.cer-r{ background:rgba(224,0,0,.16); box-shadow:inset 0 0 0 1.5px rgba(255,80,80,.5); }
 </style>
 </head>
 <body>
@@ -290,7 +305,7 @@ const crest = (q, sm)=> q ? '<span class="crest'+(sm ? ' sm' : '')+'" style="--c
 // a face for each player: their initials on their neighbourhood's colours
 const initials = n=> String(n||'?').trim().slice(0, 2).toUpperCase();
 function av(name, qi, opts){
-  const q = qOf(qi), a1 = q ? q.c1 : '#5b6bd6', a2 = q ? '#0a1446' : '#2a3380';
+  const q = qOf(qi), a1 = q ? q.c1 : '#c8283a', a2 = q ? '#1a0505' : '#3a0a0a';
   return '<span class="av'+(opts && opts.gold ? ' gold' : '')+'" style="--a1:'+a1+';--a2:'+a2+(opts && opts.s ? ';--s:'+opts.s+'px' : '')+'">'+(opts && opts.crown ? '<span class="crown">👑</span>' : '')+(opts && opts.cap ? '<span class="cap">CAPITAINE</span>' : '')+esc(initials(name))+'</span>';
 }
 

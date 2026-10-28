@@ -641,19 +641,26 @@
   /* ---- step 4: personalisation (classes on <body>: back-*, table-*, light-*) ---- */
   /* card backs */
   /* the green, red and yellow, with the star on a dark medallion */
-  body.back-lions .facedown, .facedown.back-lions{ background: linear-gradient(90deg, #00793b 0 33.4%, #c8102e 33.4% 66.6%, #f7c81e 66.6%); border-color: rgba(255,255,255,0.5); }
-  body.back-lions .facedown::after, .facedown.back-lions::after{ content:"★"; inset:auto; left:50%; top:50%; width:52%; aspect-ratio:1; transform:translate(-50%,-50%);
+  body.back-lions .facedown, .facedown.back-lions, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-lions{ background: linear-gradient(90deg, #00793b 0 33.4%, #c8102e 33.4% 66.6%, #f7c81e 66.6%); border-color: rgba(255,255,255,0.5); }
+  body.back-lions .facedown::after, .facedown.back-lions::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-lions::after{ content:"★"; inset:auto; left:50%; top:50%; width:52%; aspect-ratio:1; transform:translate(-50%,-50%);
     border-radius:50%; background:#1a1208; box-shadow:0 0 0 1px rgba(247,200,30,0.8); color:#f7c81e; font-size:9px; text-shadow:none; }
   /* the round motifs of a market wax print */
-  body.back-wax .facedown, .facedown.back-wax{ background:
+  body.back-wax .facedown, .facedown.back-wax, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-wax{ background:
       radial-gradient(circle at 50% 50%, #f5b041 0 24%, #7a1f3d 25% 34%, transparent 35%) 0 0/10px 10px,
       radial-gradient(circle at 50% 50%, #2e86c1 0 18%, transparent 19%) 5px 5px/10px 10px, #7a1f3d;
     border-color: rgba(245,176,65,0.7); }
-  body.back-wax .facedown::after, .facedown.back-wax::after{ content:""; inset:3px; border:1px solid rgba(255,240,210,0.7); border-radius:3px; }
+  body.back-wax .facedown::after, .facedown.back-wax::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-wax::after{ content:""; inset:3px; border:1px solid rgba(255,240,210,0.7); border-radius:3px; }
   body.back-nuit .facedown{ background: repeating-linear-gradient(45deg, rgba(244,184,96,0.16) 0 1px, transparent 1px 6px), linear-gradient(160deg, #1d2a52, #0b1020); border-color: rgba(244,184,96,0.7); }
   body.back-nuit .facedown::after{ color: var(--bulb); }
   body.back-or .facedown{ background: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 7px), linear-gradient(160deg, #f6d27a, #a8741c); border-color:#fff3d6; }
   body.back-or .facedown::after{ color:#5a3a08; }
+  /* v89: the previews (shop, collection) show each back as it is, whatever back is worn */
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-classique{ background: repeating-radial-gradient(circle at 50% 50%, rgba(244,184,96,0.13) 0 1px, transparent 1px 4px), linear-gradient(160deg, #4a1219, #22080c 75%); border-color:rgba(244,184,96,0.35); }
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-classique::after{ color:rgba(244,184,96,0.55); }
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-nuit{ background: repeating-linear-gradient(45deg, rgba(244,184,96,0.16) 0 1px, transparent 1px 6px), linear-gradient(160deg, #1d2a52, #0b1020); border-color: rgba(244,184,96,0.7); }
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-nuit::after{ color: var(--bulb); }
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-or{ background: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 7px), linear-gradient(160deg, #f6d27a, #a8741c); border-color:#fff3d6; }
+  body:not(#z) :is(.si-back, .ss-backs) .facedown.back-or::after{ color:#5a3a08; }
   /* tables */
   /* every table only redefines --felt; the carvings in the wood only exist on the wooden table */
   body[class*="table-"] .table-carving{ display:none; }
@@ -2693,7 +2700,57 @@
   .lg-shine{ opacity:0; animation:lgShine 6s ease-in-out infinite; } @keyframes lgShine{ 0%,78%,100%{ opacity:0; } 86%{ opacity:.45; } }
   #btnLeague .lg-cta{ background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000) !important; color:#fff !important; border:2px solid #000; box-shadow:0 3px 0 #000; }
   #btnLeague .lg-txt > span:not(.lg-cta){ color:#f0caca !important; }
+  /* v89: the online League on the home card — whoever leads is seen by the whole game */
+  #btnLeague .lg-txt > .lg-live{ display:flex; align-items:center; gap:7px; margin-top:8px; padding:6px 10px 6px 6px; border-radius:12px; background:rgba(0,0,0,.45); font:800 11.5px 'Manrope', sans-serif; color:#fff !important; max-width:100%; }
+  #btnLeague .lg-txt > .lg-live.hidden{ display:none; }
+  .lg-live i{ font-style:normal; flex:none; padding:2px 6px; border-radius:6px; background:#e00000; font:800 9px 'Manrope', sans-serif; letter-spacing:.12em; }
+  .lg-live b{ color:#f2c76a; }
   @media (prefers-reduced-motion: reduce){ .lg-shine{ animation:none; } }
+  /* v89: a player's sheet shows their numbers and their three best strengths */
+  #playerSheet, #friendInviteOverlay{ z-index:1200; } /* above the League and the quarter: a sheet opened there, an invitation to a League match received there */
+  body:not(#z):not(#y):not(#x) #playerSheet .ps-sheet{ background:linear-gradient(180deg, color-mix(in srgb, var(--d-mango, #e0313f) 18%, #140606), #0e0404 40%) !important; border:2.5px solid #000 !important; box-shadow:0 10px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.25) !important; color:#fff6f2 !important; }
+  body:not(#z):not(#y):not(#x) #playerSheet :is(h2, #psName){ color:#fff !important; -webkit-text-fill-color:#fff !important; }
+  body:not(#z):not(#y):not(#x) #playerSheet :is(.ps-sub, .ps-status, .ps-rec){ color:#d9b9b9 !important; }
+  body:not(#z):not(#y):not(#x) #playerSheet #psFriend:not(.primary){ background:#170707 !important; color:#fff6f2 !important; border-color:#000 !important; }
+  body:not(#z):not(#y):not(#x) #playerSheet #psClose{ color:#c9a3a3 !important; }
+  #playerSheet .ps-sheet{ max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; } /* small phones: the sheet scrolls instead of leaving the screen */
+  @media (max-height:700px){ #playerSheet .ps-av{ --s:56px !important; } .ps-nums b{ font-size:15px; } .ps-atout{ padding:6px 9px; } }
+  .ps-card:empty{ display:none; }
+  .ps-card{ width:100%; display:flex; flex-direction:column; gap:10px; margin:4px 0 6px; }
+  .ps-load{ text-align:center; font:700 12.5px 'Nunito', sans-serif; color:#c9a3a3; padding:10px; }
+  .ps-tags{ display:flex; justify-content:center; gap:6px; flex-wrap:wrap; } .ps-q{ font:800 10.5px 'Nunito', sans-serif; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:20px; background:rgba(255,255,255,.08); color:#f0d0d0; }
+  .ps-nums{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
+  .ps-rate{ position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:16px; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; text-align:left; }
+  .ps-rate b{ position:relative; font:700 30px/1 'Fredoka', sans-serif; color:#f2c76a; }
+  .ps-rate span{ position:relative; font:800 13px 'Nunito', sans-serif; color:#fff; } .ps-rate small{ display:block; font:700 10.5px 'Nunito', sans-serif; color:#c9a3a3; }
+  .ps-rate i{ position:absolute; left:0; bottom:0; height:4px; width:var(--r); background:linear-gradient(90deg, var(--d-mango, #e0313f), #f2c76a); border-radius:0 4px 4px 0; animation:psBar .9s cubic-bezier(.16,1,.3,1); }
+  @keyframes psBar{ from{ width:0; } }
+  .ps-nums div{ text-align:center; padding:9px 2px; border-radius:14px; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; }
+  .ps-nums b{ display:block; font:700 17px 'Fredoka', sans-serif; color:#fff; } .ps-nums small{ font:800 9.5px 'Nunito', sans-serif; color:#c9a3a3; }
+  .ps-best h4{ margin:2px 0 6px; font:800 10.5px 'Nunito', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#f2c76a; text-align:left; }
+  .ps-atout{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:14px; margin-bottom:6px; text-align:left;
+    background:linear-gradient(90deg, rgba(242,199,106,.16), rgba(23,7,7,.9) 70%); border:1.5px solid rgba(242,199,106,.35); animation:psIn .45s cubic-bezier(.3,1.5,.5,1) calc(var(--i) * .1s) backwards; }
+  @keyframes psIn{ from{ opacity:0; transform:translateX(-14px); } }
+  .ps-ic{ width:32px; height:32px; border-radius:10px; display:grid; place-items:center; flex:none; background:var(--d-mango, #e0313f); color:#fff; border:2px solid #000; }
+  .ps-ic svg.i{ width:18px; height:18px; margin:0; }
+  .ps-atout b{ display:block; font:700 14px 'Fredoka', sans-serif; color:#fff; } .ps-atout small{ font:800 11px 'Nunito', sans-serif; color:#f2c76a; }
+  .ps-none, .ps-week{ margin:0; font:700 12px/1.4 'Nunito', sans-serif; color:#c9a3a3; text-align:center; }
+  @media (prefers-reduced-motion: reduce){ .ps-atout{ animation:none; } }
+  /* v89: the main buttons of the pages follow the game's colours (red in Rouge Mboa and Nuit néon), not the green of the old daylight theme;
+     WhatsApp keeps its own green */
+  body:is(.pal-mboa, .pal-neon).ui-d:not(#z):not(#y) :is(#menuOverlay, .overlay.page, .overlay.modal) button.primary:not(.whatsapp){ background:var(--d-mango) !important; }
+  /* v89: the daily challenge's result, as a score card (it had not followed the game's look for many versions) */
+  body:not(#z):not(#y) #dailyOverlay .page-body{ gap:14px; padding-top:10px; }
+  .dy-card{ width:100%; max-width:360px; display:flex; flex-direction:column; align-items:center; gap:10px; padding:18px 14px 16px; border-radius:24px;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--d-mango, #e0313f) 22%, #170707), #120606); border:2.5px solid #000; box-shadow:0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,.12); }
+  .dy-k{ font:800 10.5px 'Nunito', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#f2c76a; text-align:center; }
+  #dailyOverlay .mark{ animation:dyMark .55s cubic-bezier(.3,1.7,.5,1) backwards; } #dailyOverlay .mark:nth-child(2){ animation-delay:.12s; } #dailyOverlay .mark:nth-child(3){ animation-delay:.24s; }
+  @keyframes dyMark{ from{ opacity:0; transform:scale(.3) rotate(-14deg); } }
+  body:not(#z):not(#y) #dailyOverlay .dy-score{ margin:0; font:700 20px/1.25 'Fredoka', sans-serif !important; color:#fff !important; text-align:center; }
+  body:not(#z):not(#y) #dailyOverlay .dy-rep{ margin:0; padding:5px 12px; border-radius:20px; background:rgba(0,0,0,.4); font:800 12px 'Nunito', sans-serif !important; color:#f2c76a !important; }
+  body:not(#z):not(#y) #dailyOverlay .dy-rep:empty{ display:none; }
+  body:not(#z):not(#y) #dailyOverlay .dy-next{ margin:0; padding:8px 14px; border-radius:14px; background:#170707; border:1.5px solid #2a0f0f; font:800 12px/1.4 'Nunito', sans-serif !important; color:#c9a3a3 !important; text-align:center; max-width:360px; }
+  @media (prefers-reduced-motion: reduce){ #dailyOverlay .mark{ animation:none; } }
   /* v88: the blue card of the week's ranking leaves the home screen (asked by the owner); the ranking stays one tap away on the « Ta place » card */
   #btnQuartier{ display:none !important; }
   /* the week's ranking on the home screen (v81): the podium, your place, the live news of the quarter */
@@ -3141,21 +3198,21 @@
   @keyframes flameLick{ to{ transform: scaleY(1.2) translateY(-4px); opacity:.8; } }
   .claque-volt .card.played.slam{ box-shadow: 0 0 0 2px #9fd2ff, 0 0 22px 6px rgba(110,170,255,0.8), 0 3px 8px rgba(0,0,0,0.5); animation: slamDown .42s cubic-bezier(.2,.9,.3,1.25) both, voltBuzz .12s linear 6; }
   /* card backs from the shop (also as plain classes, for the shop's preview) */
-  body.back-verre .facedown, .facedown.back-verre{ background: linear-gradient(160deg, rgba(255,255,255,0.75), rgba(190,220,230,0.45)), repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0 2px, transparent 2px 7px); border-color: rgba(255,255,255,0.8); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-  body.back-verre .facedown::after, .facedown.back-verre::after{ color: rgba(40,80,90,0.7); }
-  body.back-neonb .facedown, .facedown.back-neonb{ background: linear-gradient(160deg, #120625, #05020c); border-color:#22d3ee; box-shadow: 0 0 8px rgba(34,211,238,0.6), inset 0 0 0 2px rgba(217,70,239,0.6); }
-  body.back-neonb .facedown::after, .facedown.back-neonb::after{ color:#f0abfc; text-shadow: 0 0 6px #d946ef; }
-  body.back-ivoire .facedown, .facedown.back-ivoire{ background: radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(200,160,70,0.6) 31% 34%, transparent 35%), linear-gradient(160deg, #fbf6ea, #e8dcc0); border-color:#c9a24a; }
-  body.back-ivoire .facedown::after, .facedown.back-ivoire::after{ color:#a5822e; }
+  body.back-verre .facedown, .facedown.back-verre, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-verre{ background: linear-gradient(160deg, rgba(255,255,255,0.75), rgba(190,220,230,0.45)), repeating-linear-gradient(45deg, rgba(255,255,255,0.25) 0 2px, transparent 2px 7px); border-color: rgba(255,255,255,0.8); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  body.back-verre .facedown::after, .facedown.back-verre::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-verre::after{ color: rgba(40,80,90,0.7); }
+  body.back-neonb .facedown, .facedown.back-neonb, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-neonb{ background: linear-gradient(160deg, #120625, #05020c); border-color:#22d3ee; box-shadow: 0 0 8px rgba(34,211,238,0.6), inset 0 0 0 2px rgba(217,70,239,0.6); }
+  body.back-neonb .facedown::after, .facedown.back-neonb::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-neonb::after{ color:#f0abfc; text-shadow: 0 0 6px #d946ef; }
+  body.back-ivoire .facedown, .facedown.back-ivoire, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-ivoire{ background: radial-gradient(circle at 50% 50%, transparent 0 30%, rgba(200,160,70,0.6) 31% 34%, transparent 35%), linear-gradient(160deg, #fbf6ea, #e8dcc0); border-color:#c9a24a; }
+  body.back-ivoire .facedown::after, .facedown.back-ivoire::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-ivoire::after{ color:#a5822e; }
   /* Ndop: the indigo and white cloth of the Grassfields, a grid of lozenges and circles */
-  body.back-ndop .facedown, .facedown.back-ndop{ background-color:#18245e; border-color: rgba(238,241,255,0.55);
+  body.back-ndop .facedown, .facedown.back-ndop, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-ndop{ background-color:#18245e; border-color: rgba(238,241,255,0.55);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23eef1ff' stroke-width='1.3' opacity='.85'%3E%3Cpath d='M12 2 L22 12 L12 22 L2 12 Z'/%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='24' cy='0' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='0' cy='24' r='1.6' fill='%23eef1ff'/%3E%3Ccircle cx='24' cy='24' r='1.6' fill='%23eef1ff'/%3E%3C/svg%3E");
     background-size: 10px 10px; background-position:center; }
   .ss-backs .facedown.back-ndop, .si-back .facedown.back-ndop{ background-size:16px 16px; }
-  body.back-ndop .facedown::after, .facedown.back-ndop::after{ content:""; inset:3px; border:1px solid rgba(238,241,255,0.75); border-radius:3px; }
+  body.back-ndop .facedown::after, .facedown.back-ndop::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-ndop::after{ content:""; inset:3px; border:1px solid rgba(238,241,255,0.75); border-radius:3px; }
   /* Noir & or: black lacquer, a gold art-deco fan, the monogram in gold */
-  body.back-deco .facedown, .facedown.back-deco{ background: repeating-radial-gradient(circle at 50% 115%, rgba(217,164,65,0.5) 0 1px, transparent 1px 4px), linear-gradient(170deg, #1c1a17, #070606); border-color:#c9973a; }
-  body.back-deco .facedown::after, .facedown.back-deco::after{ color:#e7c374; font-family:'Playfair Display', Georgia, serif; }
+  body.back-deco .facedown, .facedown.back-deco, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-deco{ background: repeating-radial-gradient(circle at 50% 115%, rgba(217,164,65,0.5) 0 1px, transparent 1px 4px), linear-gradient(170deg, #1c1a17, #070606); border-color:#c9973a; }
+  body.back-deco .facedown::after, .facedown.back-deco::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-deco::after{ color:#e7c374; font-family:'Playfair Display', Georgia, serif; }
 
   /* ---- card faces (shop): a class on each card, f-<style> ---- */
   /* Ivoire gravé: thick ivory stock, serif numerals, a fine gold rule inside the edge */
@@ -3291,7 +3348,8 @@
   .sx-tile .sx-tag{ position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:8.5px; padding:2px 6px; white-space:nowrap; }
   .sx-tile b{ font:700 12.5px/1.15 Fredoka, sans-serif; color:#fff2dc; min-height:29px; display:flex; align-items:center; overflow-wrap:anywhere; }
   .sx-tile .sx-st{ font-size:12.5px; }
-  .sx-vis{ height:64px; display:grid; place-items:center; max-width:100%; } .sx-vis .si-back .facedown{ width:40px; height:58px; margin:0; } .sx-vis .si-face{ display:flex; gap:2px; } .sx-vis .si-face .card{ zoom:.6; }
+  .sx-listen{ display:flex; flex-direction:column; align-items:center; gap:3px; } .sx-listen i{ font-style:normal; font:800 9.5px 'Nunito', sans-serif; padding:2px 7px; border-radius:8px; background:rgba(0,0,0,.45); color:#f2c76a; white-space:nowrap; }
+  .sx-vis{ height:64px; display:grid; place-items:center; max-width:100%; } .sx-vis .si-back .facedown{ display:block; width:40px; height:58px; margin:0; } /* v89: a span ignores its size unless it is a block — the backs had no preview */ .sx-vis .si-face{ display:flex; gap:2px; } .sx-vis .si-face .card{ zoom:.6; }
   .sx-vis .si-trail{ display:block; width:52px; height:52px; } .sx-vis .my-title{ font-size:9.5px; white-space:normal; text-align:center; }
   .sx-ic svg.ia{ width:46px; height:46px; filter:drop-shadow(0 2px 0 #0d0806); }
   .sx-bub{ background:#fff7e6; color:#2a1606; border:2.5px solid #1B120C; border-radius:14px 14px 14px 3px; padding:5px 8px; font:800 11px/1.25 Nunito, sans-serif; max-width:100%; }
@@ -3331,14 +3389,14 @@
   @keyframes sxNeon{ 0%{ opacity:1 } 12%{ opacity:.25 } 20%{ opacity:1 } 34%{ opacity:.4 } 40%{ opacity:1 } }
   .sx-entrance.or span{ background:linear-gradient(#fff7cf 10%,#ffd23c 46%,#f08a1c 54%,#ffcf3a 90%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-stroke:2px #1B120C; filter:drop-shadow(0 5px 0 #1B120C); }
   /* the new backs, faces and frames */
-  body.back-toghu .facedown, .facedown.back-toghu{ background: radial-gradient(circle at 50% 50%, #ffd23c 0 2px, transparent 3px) 0 0/12px 12px, repeating-linear-gradient(45deg, transparent 0 5px, rgba(200,40,58,.75) 5px 7px), repeating-linear-gradient(-45deg, transparent 0 5px, rgba(200,40,58,.75) 5px 7px), #0d0a0b; border-color:#c8283a; }
-  body.back-toghu .facedown::after, .facedown.back-toghu::after{ color:#ffd23c; }
-  body.back-lions26 .facedown, .facedown.back-lions26{ background: radial-gradient(circle at 50% 50%, #fcd116 0 7%, transparent 8%), linear-gradient(90deg, #007a3d 0 33%, #ce1126 33% 66%, #fcd116 66%); border-color:#fff; }
-  body.back-lions26 .facedown::after, .facedown.back-lions26::after{ color:#fff; text-shadow:0 1px 2px #000; }
-  body.back-neonbastos .facedown, .facedown.back-neonbastos{ background: linear-gradient(160deg, #120625, #05020c); border-color:#ff4fae; box-shadow: 0 0 10px rgba(255,79,174,.7), 0 0 18px rgba(37,215,255,.45), inset 0 0 0 2px rgba(37,215,255,.5); }
-  body.back-neonbastos .facedown::after, .facedown.back-neonbastos::after{ color:#8beeff; text-shadow:0 0 6px #25d7ff; }
-  body.back-quartier .facedown, .facedown.back-quartier{ background: repeating-linear-gradient(135deg, var(--qb1,#c8283a) 0 8px, var(--qb2,#FFF6DC) 8px 11px); border-color:var(--qb2,#FFF6DC); }
-  body.back-quartier .facedown::after, .facedown.back-quartier::after{ color:#fff; text-shadow:0 1px 2px #000; }
+  body.back-toghu .facedown, .facedown.back-toghu, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-toghu{ background: radial-gradient(circle at 50% 50%, #ffd23c 0 2px, transparent 3px) 0 0/12px 12px, repeating-linear-gradient(45deg, transparent 0 5px, rgba(200,40,58,.75) 5px 7px), repeating-linear-gradient(-45deg, transparent 0 5px, rgba(200,40,58,.75) 5px 7px), #0d0a0b; border-color:#c8283a; }
+  body.back-toghu .facedown::after, .facedown.back-toghu::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-toghu::after{ color:#ffd23c; }
+  body.back-lions26 .facedown, .facedown.back-lions26, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-lions26{ background: radial-gradient(circle at 50% 50%, #fcd116 0 7%, transparent 8%), linear-gradient(90deg, #007a3d 0 33%, #ce1126 33% 66%, #fcd116 66%); border-color:#fff; }
+  body.back-lions26 .facedown::after, .facedown.back-lions26::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-lions26::after{ color:#fff; text-shadow:0 1px 2px #000; }
+  body.back-neonbastos .facedown, .facedown.back-neonbastos, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-neonbastos{ background: linear-gradient(160deg, #120625, #05020c); border-color:#ff4fae; box-shadow: 0 0 10px rgba(255,79,174,.7), 0 0 18px rgba(37,215,255,.45), inset 0 0 0 2px rgba(37,215,255,.5); }
+  body.back-neonbastos .facedown::after, .facedown.back-neonbastos::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-neonbastos::after{ color:#8beeff; text-shadow:0 0 6px #25d7ff; }
+  body.back-quartier .facedown, .facedown.back-quartier, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-quartier{ background: repeating-linear-gradient(135deg, var(--qb1,#c8283a) 0 8px, var(--qb2,#FFF6DC) 8px 11px); border-color:var(--qb2,#FFF6DC); }
+  body.back-quartier .facedown::after, .facedown.back-quartier::after, body:not(#z) :is(.si-back, .ss-backs) .facedown.back-quartier::after{ color:#fff; text-shadow:0 1px 2px #000; }
   .card.f-massif{ background: linear-gradient(160deg, #fff4c2, #ffd36b 55%, #e0a12c); box-shadow: 0 3px 7px rgba(0,0,0,.45), inset 0 0 0 1.2px #a8741c; }
   .card.f-massif.suit-Coubie, .card.f-massif.suit-Zing{ color:#8a1a14; } .card.f-massif.suit-Black, .card.f-massif.suit-Tchaka{ color:#3a2604; }
   .card.f-fneon{ background: linear-gradient(160deg, #141a3a, #0a0e22); box-shadow: 0 3px 7px rgba(0,0,0,.6), inset 0 0 0 1.4px #ff4fae, 0 0 8px rgba(255,79,174,.45); }
@@ -4580,6 +4638,7 @@
     <p class="ps-sub" id="psSub"></p>
     <p class="ps-status" id="psStatus"></p>
     <p class="ps-rec hidden" id="psRec"></p>
+    <div class="ps-card" id="psCard"></div>
     <div class="btnrow ps-btns">
       <button class="primary" id="psChallenge"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Défier</button>
       <button id="psWrite" class="hidden"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Écrire</button>
@@ -4730,6 +4789,7 @@
     <button class="lg-home press" id="btnLeague" style="--d:2">
       <span class="lg-ecu" aria-hidden="true"><svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgEcuS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff1414"/><stop offset=".6" stop-color="#e00000"/><stop offset="1" stop-color="#b00000"/></linearGradient><linearGradient id="lgEcuG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="lgEcuC"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs><path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#lgEcuS)" stroke="url(#lgEcuG)" stroke-width="5"/><g clip-path="url(#lgEcuC)"><rect x="96" y="0" width="48" height="280" fill="#0b0b0b"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="url(#lgEcuG)" stroke-width="2"/><path class="lg-shine" d="M40 0 L90 0 L10 280 L-40 280 Z" fill="#fff"/></g><path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#lgEcuG)" stroke="#000" stroke-width="2"/><g transform="translate(92 142) rotate(-18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#141210">♠</text></g><g transform="translate(148 142) rotate(18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♦</text></g><g transform="translate(120 134)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♥</text></g></svg></span>
       <span class="lg-txt"><small id="lgHomeTag">Nouveau · Saison 1</small><b>FAP·FAP<em>LEAGUE</em></b><span id="lgHomeSub">32 quartiers de Yaoundé et Douala. Un seul roi.</span>
+        <span class="lg-live hidden" id="lgHomeLive"></span>
         <span class="lg-cta" id="lgHomeCta">Entrer dans la League</span></span>
     </button>
 
@@ -4825,40 +4885,6 @@
   <div class="bk-panel hidden" id="bkPhone"><div class="bk-ph"><div class="crack"></div><div class="top"><span>Orange CM</span><span>23:58</span></div><div class="scr" id="bkPhS"></div><button class="close" id="bkPhC" type="button">Continuer</button></div></div>
 </div>
 
-<div class="overlay page hidden" id="storyPage">
-  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La Nuit des 33</h2><span class="ph-spacer"></span></header>
-  <div class="page-body">
-    <div class="hx-hero">
-      <div class="hx-cast" id="hxCast"></div>
-      <div class="hx-hero-txt">
-        <small>Yaoundé · saison des pluies</small>
-        <b>Le Cercle</b>
-        <p>Chaque année, dans le sous-sol du Royal, à Melen, 32 joueurs s’assoient pour un tournoi clandestin de Fap Fap. Un seul ressort avec la Couronne. Bobo, ton frère de cœur, est descendu il y a trois jours. Il n’est pas remonté.</p>
-      </div>
-    </div>
-    <button class="gl solid tinted hx-go press" id="hxGo"><b id="hxGoT">Commencer</b><small id="hxGoS"></small></button>
-    <div class="hx-list" id="hxList"></div>
-    <div class="hx-ends" id="hxEnds"></div>
-    <p class="small-note">Joue d’une traite ou reprends quand tu veux : ta progression est gardée. Tes choix comptent, certains ne se rattrapent pas. Les mises en jetons sont réelles.</p>
-  </div>
-</div>
-
-<div class="hx-scene hidden" id="storyScene" data-place="rue">
-  <div class="hx-bg" aria-hidden="true"></div>
-  <div class="hx-rain" aria-hidden="true"></div>
-  <div class="hx-flash" id="hxFlash" aria-hidden="true"></div>
-  <div class="hx-top">
-    <button class="gl solid gl-round press" id="hxClose" aria-label="Quitter la scène">‹</button>
-    <span class="hx-chap" id="hxChap"></span>
-    <button class="gl solid gl-round press" id="hxSkip" aria-label="Avance rapide">»</button>
-  </div>
-  <div class="hx-stage" id="hxStage"><img class="hx-portrait" id="hxPortrait" alt=""></div>
-  <div class="hx-title hidden" id="hxTitle"><small id="hxTitleK"></small><b id="hxTitleB"></b><span id="hxTitleS"></span></div>
-  <div class="hx-box gl" id="hxBox"><span class="hx-name" id="hxName"></span><p class="hx-text" id="hxText"></p><span class="hx-tap">▼</span></div>
-  <div class="hx-choices" id="hxChoices"></div>
-  <div class="hx-panel gl hidden" id="hxPanel"></div>
-</div>
-
 <div class="overlay page hidden" id="playPage">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Jouer</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
@@ -4891,30 +4917,17 @@
   <div class="page-body" id="styleBody"></div>
 </div>
 
-<div class="overlay page hidden" id="oppSelectOverlay">
-  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>La route du quartier</h2><span class="ph-spacer"></span></header>
-  <div class="page-body">
-    <div class="format-pick" role="radiogroup" aria-label="Format de la partie">
-      <button class="fmt" data-q="1" role="radio"><b>Partie unique</b><small>Une manche, comme au quartier</small></button>
-      <button class="fmt" data-q="0" role="radio"><b>En 3 manches</b><small>Le premier à 2 gagne</small></button>
-    </div>
-    <div class="stake-pick">
-      <div class="sp-head"><span>Ta mise</span><span class="sp-have"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg><span class="sp-bal"></span></span></div>
-      <div class="sp-row"></div>
-    </div>
-    <p class="page-intro">Choisis ton adversaire.</p>
-    <div class="opp-list" id="oppList"></div>
-  </div>
-</div>
-
 <div class="overlay page hidden" id="dailyOverlay">
   <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2 id="dailyTitle">Défi du jour</h2><span class="ph-spacer"></span></header>
   <div class="page-body center">
-    <div class="daily-marks" id="dailyMarks"></div>
-    <p id="dailyScore"></p>
-    <p id="dailyRep" class="rematch-info"></p>
+    <div class="dy-card">
+      <span class="dy-k">Ton résultat · même donne pour tout le monde</span>
+      <div class="daily-marks" id="dailyMarks"></div>
+      <p id="dailyScore" class="dy-score"></p>
+      <p id="dailyRep" class="dy-rep"></p>
+    </div>
     <button class="primary big whatsapp" id="btnDailyShare"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager mon résultat</button>
-    <p id="dailyNext" class="small-note"></p>
+    <p id="dailyNext" class="dy-next"></p>
     <button class="ghost" id="btnDailyMenu">Retour à l'accueil</button>
   </div>
 </div>
@@ -6254,7 +6267,7 @@
   function startMpMatch(){
     if(mpMatchStarted) return;
     mpMatchStarted = true; mpForfeit = false; mpOffer = null;
-    if(mpIsHost){ setMatchLength(quickPref()); mpStake = Math.min(mpStake||0, profile.chips); } // the format and the accepted stake apply to both
+    if(mpIsHost){ setMatchLength(window.L16cur ? false : quickPref()); mpStake = Math.min(mpStake||0, profile.chips); } // the format and the accepted stake apply to both (a League match: always the first to 2)
     startMatchTracking();
     if(mpIsHost) takeMpStake();
     mode = 'mp';
@@ -6268,7 +6281,7 @@
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
       mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null, ent: (profile.equip && profile.equip.entree) || ''}); // so the guest knows who they're facing
-      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake, table: currentTableId()}); // flip perspective for the other side; the host's table for both
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake, table: currentTableId(), l16: (window.L16cur && window.L16cur.id) || 0}); // flip perspective for the other side; the host's table for both; a League match tells its number
       beginHand();
     }
     // guest waits for the 'start' message to know who deals first
@@ -6296,6 +6309,7 @@
       mpMatchStarted = true; mpForfeit = false;
       TARGET_SCORE = msg.target===1 ? 1 : 2; // the host chose the format
       mpStake = Math.max(0, msg.stake|0);   // …and the stake
+      if((msg.l16|0)>0) window.L16cur = {id:msg.l16|0, opp:oppUid, name:oppNameVal}; // …and whether it's a match of the online League (v89)
       if(tableExists(msg.table)){ guestTable = msg.table; wearTable(guestTable); } // …and the table
       startMatchTracking();
       takeMpStake();
@@ -8528,8 +8542,8 @@
 
   const TROPHIES = [
     {id:'premiere',     icon:'medal', name:'Première victoire',         desc:'Gagner ton premier match.'},
-    {id:'cora',         icon:'three', name:'Chapitre 5',                desc:'Réussir un CORA.'},
-    {id:'glacee',       icon:'snow', name:'La Nuit de la 33 Glacée',   desc:'Réussir une 33 Glacée.'},
+    {id:'cora',         icon:'three', name:'Premier CORA',              desc:'Réussir un CORA.'},
+    {id:'glacee',       icon:'snow', name:'Première 33 Glacée',        desc:'Réussir une 33 Glacée.'},
     {id:'auto',         icon:'zap', name:'Victoire sur table',        desc:'Annoncer une victoire automatique.'},
     {id:'quad',         icon:'cards', name:'Les 4 symboles',            desc:'Gagner avec la même valeur dans les 4 couleurs.'},
     {id:'passe',        icon:'hand', name:'L’art de différer',      desc:'Gagner une manche après avoir passé.'},
@@ -8574,6 +8588,10 @@
     {id:'x_days14',  icon:'calcheck',name:'Deux semaines au quartier',desc:'Jouer 14 jours d’affilée.',              test:p=> (p.dayStreak||0)>=14},
     {id:'x_days30',  icon:'calcheck',name:'Un mois sans manquer',     desc:'Jouer 30 jours d’affilée.',               test:p=> (p.dayStreak||0)>=30},
     {id:'x_legend',  icon:'star',    name:'Légende de Melen',         desc:'Atteindre le plus haut rang.',            test:p=> rankIndex(p.rep||0)>=RANKS.length-1},
+    // ---- the online League of 16 (v89) ----
+    {id:'x_l16in',   icon:'globe',   name:'Dans l’arène',             desc:'T’inscrire à une League en ligne.',       test:p=> (p.l16Joined||0)>=1},
+    {id:'x_l16pod',  icon:'medal',   name:'Sur le podium',            desc:'Finir dans les 3 premiers d’une League.', test:p=> (p.l16Podiums||0)>=1},
+    {id:'x_l16win',  icon:'crown',   name:'Champion de la League',    desc:'Gagner une League en ligne.',             test:p=> (p.l16Titles||0)>=1},
     {id:'x_shop5',   icon:'bag',     name:'Collectionneur',           desc:'Posséder 5 objets de la boutique.',       test:p=> ownedCount(p)>=5},
     {id:'x_shop15',  icon:'palette', name:'Grand collectionneur',     desc:'Posséder 15 objets de la boutique.',      test:p=> ownedCount(p)>=15},
   ];
@@ -8584,6 +8602,15 @@
   const lw = (p, id)=> (p.ladder && p.ladder[id] && p.ladder[id].w) || 0;
   const totalWins = p=> ['gervais','aristide','penalty','mbarga'].reduce((s, id)=> s + lw(p, id), 0) + (p.squareWins||0) + (p.onlineWins||0);
   const ownedCount = p=> Object.values(p.owned||{}).reduce((s, l)=> s + (Array.isArray(l) ? l.length : 0), 0);
+  // v89: what other players see when they touch you — your wins and your exploits, nothing else of your profile
+  function publicCard(){
+    const p = profile, eq = p.equip || {};
+    const played = (p.gamesPlayed||0) + (p.squareGamesPlayed||0) + (p.onlineGames||0);
+    return {w:totalWins(p), g:played, cora:st_(p,'coras'), glacee:st_(p,'glacees'), claque:st_(p,'claques'), auto:st_(p,'autos'),
+      carre:p.squareWins||0, online:p.onlineWins||0, streak:p.dayStreak||0, best:p.bestWinStreak||p.winStreak||0, tr:trophyCount(p),
+      title:eq.title||'', frame:eq.frame||'', lp:p.l16Podiums||0, lt:p.l16Titles||0};
+  }
+  window.publicCard = publicCard;
   const bk = p=> p.book || {};
   // a career counter went up (a CORA, a claque…): count it, then see if an exploit is earned
   function stat(k, n){ profile.stats = profile.stats || {}; profile.stats[k] = (profile.stats[k]||0) + (n||1); checkExploits(); }
@@ -9291,6 +9318,8 @@
     document.getElementById('confirmTitle').textContent = title;
     document.getElementById('confirmQuitText').textContent = text;
     document.getElementById('btnConfirmRestartYes').textContent = yesLabel;
+    // v89: outside a game (shop, profile…) the other answer is « Annuler », not « Continuer à jouer »
+    document.getElementById('btnConfirmRestartNo').textContent = inGame() ? 'Continuer à jouer' : 'Annuler';
     confirmYes = onYes;
     show('confirmRestartOverlay');
   }
@@ -13206,7 +13235,7 @@
   // online: the agreed stake. The host proposes it, the friend accepts it, and it is lowered to what the poorer
   // player can pay, so both put exactly the same amount in the pot
   var mpStake = 0;
-  function mpStakeChoice(){ const s = prefs.mpStake!=null ? prefs.mpStake : (prefs.stake||0); return Math.min(s||0, profile.chips); }
+  function mpStakeChoice(){ if(window.L16cur) return 0; const s = prefs.mpStake!=null ? prefs.mpStake : (prefs.stake||0); return Math.min(s||0, profile.chips); } // a League match is played for the League, not for a stake
   // the record of every online game played for chips (kept on the account, shown on the profile)
   function mpLogAdd(e){
     profile.mpLog = Array.isArray(profile.mpLog) ? profile.mpLog : [];
@@ -13251,6 +13280,12 @@
       // online: the same rule, between the two players, hand by hand
       if(matchStake>0){ const p = payHands(matchStake, 1); res.delta = p.delta; res.line = p.line; }
       mpLogAdd({k:'duel', o:oppNameVal, u:oppUid||undefined, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
+      // a match of the online League (v89): each phone sends the score; the server keeps it when both agree
+      if(window.L16cur && window.l16Report){
+        const mine = matchManches.filter(m=> m.you).length, theirs = matchManches.length - mine;
+        window.l16Report(mpForfeit ? (won ? 2 : 0) : Math.min(2, mine), mpForfeit ? (won ? 0 : 2) : Math.min(2, theirs),
+          matchManches.filter(m=> m.you && m.mult>=2).length, matchManches.filter(m=> !m.you && m.mult>=2).length);
+      }
     }
     saveProfile();
     matchStake = 0;
@@ -13289,7 +13324,6 @@
   if(prefs.fmtUnique!==1){ prefs.quick = true; prefs.fmtUnique = 1; savePrefs(); }
   refreshFormatPick();
   document.getElementById('btnGoPlay').addEventListener('click', ()=>{ ensureAudio(); Nav.go('playPage'); });
-  document.getElementById('modeAI').addEventListener('click', ()=>{ ensureAudio(); Nav.go('oppSelectOverlay'); });
   document.getElementById('btnShowRules').addEventListener('click', ()=> Nav.go('rulesOverlay'));
   document.getElementById('btnShowSettings').addEventListener('click', ()=> goTab('settingsPage'));
   document.getElementById('btnProfTrophies').addEventListener('click', ()=> Nav.go('trophiesOverlay'));
@@ -13812,7 +13846,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v88';
+  const APP_VERSION = 'v89';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
@@ -14089,7 +14123,7 @@
         if(theirs===0 && !quick) unlockTrophy('sans_appel');
         if(matchMaxDeficit>=3) unlockTrophy('remontada');
         if(profile.lastDuel && profile.lastDuel.opp===duelOpp && !profile.lastDuel.won) unlockTrophy('revanche');
-        profile.winStreak = (profile.winStreak||0)+1;
+        profile.winStreak = (profile.winStreak||0)+1; profile.bestWinStreak = Math.max(profile.bestWinStreak||0, profile.winStreak);
         if(profile.winStreak>=3) unlockTrophy('serie3');
         unlockedMbarga = firstWinVsPenalty;
       } else {
@@ -15888,6 +15922,8 @@
     if(it.kind==='react') return '<span class="sx-bub">'+escHtml(it.text)+'</span>';
     if(it.kind==='trail') return '<span class="si-trail" style="--c:'+it.col+'"></span>';
     if(it.kind==='entree' && it.id) return '<span class="sx-ent '+it.id+'">'+escHtml((prefs.name||'Toi').slice(0, 10))+'</span>';
+    // the voices and musics are heard, not seen: the tile says so
+    if((it.kind==='voix' || it.kind==='musique') && it.id) return '<span class="sx-ic sx-listen">'+icA(SX_IC(it))+'<i>▶ Écouter</i></span>';
     return '<span class="sx-ic">'+icA(SX_IC(it))+'</span>';
   }
   function sxTag(it){ return it===weekDeal() ? '<span class="sx-tag sale">−30 %</span>' : it.isNew ? '<span class="sx-tag new">Nouveau</span>' : it.up ? '<span class="sx-tag up">Refait</span>' : ''; }
@@ -16027,11 +16063,12 @@
     if(!it) return;
     if(it.kind==='table'){ renderShopTable(it.id); Nav.go('shopTablePage'); return; }
     if(['cora','claque','victoire'].includes(it.kind) && !onPrice){ SX.fx = it.kind; renderShopFx(); Nav.go('shopFxPage'); setTimeout(()=> playShopFx(it.id), 420); return; }
-    if(it.kind==='voix' && it.id && !onPrice){ voixSay(it.id, 'CORA !'); }
-    if(it.kind==='musique' && !onPrice && it.track){ Music.play(it.track); showToast(it.name, 'Écoute… touche le prix pour l’acheter.', {ms:1800}); return; }
+    if(it.kind==='voix' && it.id && !onPrice){ voixSay(it.id, 'CORA !', true); }
+    // (v89: a music you own is equipped by the same touch; one you don't own plays AND opens its purchase — before, it only played)
+    if(it.kind==='musique' && !onPrice && it.track){ Music.play(it.track); }
     if(it.kind==='trail' && !onPrice){ trailPreview = it.id==='table' ? null : it.id; Trail.readColors(); showToast(it.name, 'Glisse ton doigt sur l’écran pour la voir.', {ms:1800}); }
     if(shopHas(it)){ if(!shopEquipped(it) && it.kind!=='react'){ shopEquip(it); vibrate(12); showToast('Équipé', it.name, {ms:1200}); shopRefresh(); } return; }
-    if(onPrice || !['voix','trail'].includes(it.kind)) shopBuy(it);
+    if(onPrice || it.kind!=='trail') shopBuy(it); // (the trail is tried with the finger first: its price opens the purchase)
   }
   function sxClick(e){
     const t = e.target;
@@ -16053,7 +16090,11 @@
 
   // ---- the voices that shout « CORA ! » for you (the phone's own French voice, pitched for each character) ----
   const VOIX = {penalty:{pitch:.55, rate:.92}, christelle:{pitch:1.5, rate:1.05}, tsala:{pitch:.8, rate:.72}};
-  function voixSay(id, txt){ try{ const v = VOIX[id]; if(!v || !window.speechSynthesis || prefs.muted) return; const u = new SpeechSynthesisUtterance(id==='tsala' ? txt.replace('CORA', 'CO-RA') : txt);
+  function voixSay(id, txt, preview){ try{ const v = VOIX[id];
+    // in the shop, a voice that can't be heard says why (before: silence, as if it were broken)
+    if(preview && prefs.mute){ showToast('Le son est coupé', 'Active le son pour écouter la voix.', {ms:2000}); return; }
+    if(preview && !window.speechSynthesis){ showToast('Pas de voix sur ce téléphone', 'Ton navigateur ne sait pas parler : la voix ne s’entendra pas ici.', {ms:2600}); return; }
+    if(!v || !window.speechSynthesis || prefs.mute) return; const u = new SpeechSynthesisUtterance(id==='tsala' ? txt.replace('CORA', 'CO-RA') : txt);
     u.lang = 'fr-FR'; u.pitch = v.pitch; u.rate = v.rate; u.volume = Math.min(1, (typeof sfxLevel==='function' ? sfxLevel() : 1) + .2); const fr = speechSynthesis.getVoices().find(x=> /^fr/i.test(x.lang)); if(fr) u.voice = fr; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
   window.v85Voice = glacee=>{ const id = profile.equip && profile.equip.voix; if(id) voixSay(id, glacee ? '33 Glacée !' : 'CORA !'); };
   // ---- the music bought in the shop replaces the music of every table ----
@@ -16159,6 +16200,24 @@
   document.getElementById('btnLeague').addEventListener('click', ()=>{ ensureAudio(); zhOpen(); });
   // the home card tells where the player's season stands (read from the League's own save)
   function renderLeagueHome(){
+    // v89: the online League of 16 on the card — your next match, or who leads, or how many seats are left
+    try{
+      const L = window.l16Get && window.l16Get(), live = document.getElementById('lgHomeLive');
+      if(live){
+        let h = '';
+        const nm = s=> String(s||'').replace(/[<>&"]/g, '');
+        if(L && L.league && L.league.status!=='done'){
+          const me = L.me, next = (L.league.matches || []).find(m=> m.status==='todo' && (m.a===me || m.b===me) && new Date(m.opens) <= new Date());
+          const opp = next && (L.league.players || []).find(p=> p.uid===(next.a===me ? next.b : next.a));
+          h = '<i>LIVE</i><span>League #'+L.league.n+' · '+(opp ? 'ton match contre <b>'+nm(opp.name)+'</b> t’attend' : 'ta League est en cours')+'</span>';
+        } else if(L && L.live && L.live.leader){
+          h = '<i>LIVE</i><span>League #'+L.live.n+' · <b>'+nm(L.live.leader.name)+'</b> est en tête</span>';
+        } else if(L && L.open){
+          h = '<i>EN LIGNE</i><span>League #'+L.open.n+' · <b>'+L.open.count+' / 16</b> inscrits'+(L.open.joined ? ' · tu en es' : '')+'</span>';
+        }
+        live.innerHTML = h; live.classList.toggle('hidden', !h);
+      }
+    }catch(e){}
     try{
       const s = JSON.parse(localStorage.getItem('fapfap_league_v1') || 'null');
       if(!s || s.v!==1) return;
@@ -16404,7 +16463,7 @@
     const pv = profile.prevWk;
     if(pv && pv.pts>0 && profile.cerWk!==pv.id && wkRoll().id!==pv.id && !QZ.cerTried){ QZ.cerTried = true; qOpen('ceremonie'); }
   }
-  function qzHomeShown(){ qzRefreshHome().catch(()=>{}); clearTimeout(QZ.autoT); QZ.autoT = setTimeout(qzAutoOpen, 1800); }
+  function qzHomeShown(){ qzRefreshHome().catch(()=>{}); if(window.l16Home) window.l16Home(); clearTimeout(QZ.autoT); QZ.autoT = setTimeout(qzAutoOpen, 1800); }
   // an online opponent who wears the crown
   function qzKingCheck(){ if(oppUid && QZ.top && QZ.top[0] && QZ.top[0].pid===oppUid) setTimeout(()=> showToast('👑 Tu affrontes le Roi du quartier', 'Bats-le et sa couronne vacille.', {ms:3200}), 1200); }
   window.qzHomeShown = qzHomeShown; window.qzKingCheck = qzKingCheck; window.qzOpen = qOpen;
@@ -16420,6 +16479,8 @@
     if(d.zh==='tx'){ const n = Math.max(-1e6, Math.min(1e6, Math.round(+d.amount||0))); if(n) chipsAdd(n); zhSendChips(); }
     if(d.zh==='set'){ const n = Math.max(0, Math.min(1e6, Math.round(+d.chips||0))); if(profile.chips==null) chipsInit(); chipsAdd(n - profile.chips); zhSendChips(); }
     if(d.zh==='play') zhPlay(d);
+    if(d.zh==='l16' && window.l16FromLeague) window.l16FromLeague(d); // the online League of 16 (v89)
+    if(d.zh==='player' && d.pid && typeof openPlayerSheet==='function') openPlayerSheet({id:String(d.pid), name:String(d.name||'').slice(0, 16)}); // a player touched in the League: their sheet, above it
     if(d.zh==='close') zhClose();
     if(d.zh==='suggest') openSuggest('league');
     // a champion beaten in the League joins the road of the quarter and the Carré (what the stories used to open)
@@ -16864,7 +16925,7 @@
       name: (prefs.name||'').trim().slice(0,16) || null,
       chips: Math.max(0, Math.round(profile.chips||0)),
       rep: Math.max(0, Math.round(profile.rep||0)),
-      data: { v:1, rev: profile.rev||Date.now(), profile, prefs: sp },
+      data: { v:1, rev: profile.rev||Date.now(), profile, prefs: sp, pub: publicCard() }, // pub: the only part other players can see (their sheet of you, v89)
       updated_at: new Date().toISOString()
     };
     // Tout le quartier (v81): the week's points, the neighbourhood, the notifications wanted (left out if the server lacks the columns)
@@ -17571,6 +17632,53 @@
     Lobby.sheet = Object.assign({}, p);
     renderPlayerSheet();
     show('playerSheet');
+    psLoadCard(p.id);
+  }
+  // v89: the player's card — their numbers and their three best strengths, read from the server (fapfap_player_card)
+  const PS_CARDS = {};
+  async function psLoadCard(id){
+    const box = $id('psCard'); if(!box) return;
+    if(id===myUid()){ PS_CARDS[id] = {name:(prefs.name||'').trim(), chips:profile.chips, rep:profile.rep, q:profile.quartier, pub:publicCard(), l16:{titles:profile.l16Titles||0, podiums:profile.l16Podiums||0}}; }
+    if(PS_CARDS[id]){ psRenderCard(PS_CARDS[id]); return; }
+    box.innerHTML = '<div class="ps-load">Ses exploits arrivent…</div>';
+    try{
+      if(!(await cloudInit()) || !supaClient) throw 0;
+      const r = await supaClient.rpc('fapfap_player_card', {p_id:id});
+      if(r.error || !r.data) throw 0;
+      PS_CARDS[id] = r.data;
+      if(Lobby.sheet && Lobby.sheet.id===id) psRenderCard(r.data);
+    }catch(e){ if(Lobby.sheet && Lobby.sheet.id===id) box.innerHTML = ''; }
+  }
+  // the strengths: each exploit gets a weight, the three strongest are shown (with what they say about the player)
+  function psStrengths(c){
+    const p = c.pub || {}, L = c.l16 || {}, rate = p.g>=8 ? Math.round(p.w / p.g * 100) : null;
+    const all = [
+      {s:(L.titles||p.lt||0)*12, ic:'crown', t:'Champion de la League', v:'×'+(L.titles||p.lt||0)},
+      {s:(L.podiums||p.lp||0)*5, ic:'medal', t:'Podium de la League', v:(L.podiums||p.lp||0)+' fois'},
+      {s:(p.cora||0)/6, ic:'three', t:'Roi du CORA', v:(p.cora||0)+' CORA'},
+      {s:(p.glacee||0)/1.5, ic:'snow', t:'Le Glacial', v:(p.glacee||0)+' 33 Glacée'+((p.glacee||0)>1 ? 's' : '')},
+      {s:(p.claque||0)/6, ic:'zap', t:'Main lourde', v:(p.claque||0)+' claques'},
+      {s:(p.online||0)/3, ic:'globe', t:'Redoutable en ligne', v:(p.online||0)+' victoires'},
+      {s:(p.carre||0)/3, ic:'home', t:'Survivant du Carré', v:(p.carre||0)+' Carrés gagnés'},
+      {s:(p.best||0)/2, ic:'flame', t:'Série de victoires', v:(p.best||0)+' d’affilée'},
+      {s:(p.streak||0)/2, ic:'calcheck', t:'Fidèle au quartier', v:(p.streak||0)+' jours de suite'},
+      {s:rate!=null && rate>=50 ? (rate - 40)/6 : 0, ic:'target', t:'Gagne souvent', v:rate+' % de victoires'},
+      {s:(p.auto||0)/2, ic:'sparkle', t:'Béni des cartes', v:(p.auto||0)+' victoires sur table'}
+    ];
+    return all.filter(x=> x.s>=1).sort((a, b)=> b.s - a.s).slice(0, 3);
+  }
+  function psRenderCard(c){
+    const box = $id('psCard'), p = c.pub || {}; if(!box) return;
+    const q = c.q!=null && typeof QUARTIERS!=='undefined' ? QUARTIERS[c.q] : null;
+    const rate = p.g ? Math.round((p.w||0) / p.g * 100) : 0, best = psStrengths(c);
+    const tl = p.title && typeof myTitle==='function' ? (SHOP_ITEMS.find(i=> i.kind==='title' && i.id===p.title) || {}).name : '';
+    box.innerHTML = (tl || q ? '<div class="ps-tags">'+(tl ? '<span class="my-title">'+escHtml(tl)+'</span>' : '')+(q ? '<span class="ps-q">'+escHtml(q)+'</span>' : '')+'</div>' : '')
+      // the win rate stands out, first and in gold; the losses are never shown on someone's sheet
+      +'<div class="ps-rate"><b>'+rate+' %</b><span>de victoires<small>sur '+fmtChips(p.g||0)+' partie'+((p.g||0)>1 ? 's' : '')+'</small></span><i style="--r:'+rate+'%"></i></div>'
+      +'<div class="ps-nums"><div><b>'+fmtChips(p.w||0)+'</b><small>victoires</small></div><div><b>'+fmtChips(p.cora||0)+'</b><small>CORA</small></div><div><b>'+(p.tr||0)+'</b><small>trophées</small></div></div>'
+      +'<div class="ps-best"><h4>Ses meilleurs atouts</h4>'+(best.length ? best.map((x, i)=> '<div class="ps-atout" style="--i:'+i+'"><span class="ps-ic">'+ico(x.ic)+'</span><span><b>'+x.t+'</b><small>'+escHtml(String(x.v))+'</small></span></div>').join('')
+        : '<p class="ps-none">Pas encore d’exploit marquant : il débute. Défie-le avant qu’il progresse !</p>')+'</div>'
+      +(c.pts ? '<p class="ps-week">'+fmtChips(c.pts)+' points cette semaine</p>' : '');
   }
   function renderPlayerSheet(){
     const p = Lobby.sheet; if(!p) return;
@@ -17586,7 +17694,8 @@
     $id('psWrite').classList.toggle('hidden', !fr);
     const h = headToHead(p);
     rec.classList.toggle('hidden', !fr && !(h.w + h.l));
-    rec.innerHTML = (h.w + h.l) ? 'Entre vous : <b class="w">'+h.w+' victoire'+(h.w>1 ? 's' : '')+'</b> · <b class="l">'+h.l+' défaite'+(h.l>1 ? 's' : '')+'</b>' : 'Pas encore de partie en ligne entre vous';
+    // v89: between you, the share of games you won — never the losses
+    rec.innerHTML = (h.w + h.l) ? 'Entre vous : tu gagnes <b class="w">'+Math.round(h.w / (h.w + h.l) * 100)+' %</b> de vos duels' : 'Pas encore de partie en ligne entre vous';
   }
   $id('psClose').addEventListener('click', ()=>{ hide('playerSheet'); Lobby.sheet = null; });
   $id('psWrite').addEventListener('click', ()=>{ const p = Lobby.sheet; if(p) openChat(friendList().find(f=> f.id===p.id) || p); });
@@ -17622,7 +17731,7 @@
       return;
     }
     Lobby.pending = {id:f.id, name:f.name, code};
-    const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code, stake: mpStakeChoice()});
+    const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code, stake: mpStakeChoice(), l16: (window.L16cur && window.L16cur.id) || 0});
     send();
     st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
     let n = 0;
@@ -17645,8 +17754,9 @@
     if(Lobby.incoming && Lobby.incoming.code===p.code) return; // the same challenge, sent again
     if(inGame() || mpNet || storyRun){ lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'busy'}); return; }
     Lobby.incoming = p;
-    $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+' te défie !';
-    $id('fiText').textContent = (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?';
+    $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+((p.l16|0)>0 ? ' : ton match de League !' : ' te défie !');
+    $id('fiText').textContent = (p.l16|0)>0 ? 'Votre match de la League en ligne : le premier à 2 manches gagne. Il t’attend maintenant, tu y vas ?'
+      : (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?';
     Photos.fill($id('fiAvatar'), p.from, p.name);
     show('friendInviteOverlay');
     vibrate([60,80,60]);
@@ -17657,6 +17767,8 @@
   $id('fiYes').addEventListener('click', ()=>{
     const p = Lobby.incoming; hide('friendInviteOverlay'); if(!p) return;
     ensureAudio();
+    window.L16cur = (p.l16|0)>0 ? {id:p.l16|0, opp:p.from, name:String(p.name||'').slice(0,16), at:Date.now()} : null;
+    if(ZH.open) zhClose();
     myName = (prefs.name||'').trim() || 'Toi';
     $id('mpCodeInput').value = p.code;
     $id('mpJoinStatus').textContent = '';
@@ -17669,6 +17781,93 @@
     const p = Lobby.incoming; hide('friendInviteOverlay');
     if(p) lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'no'});
   });
+
+  // ===================== The online League of 16 (v89) =====================
+  // league.html (in #zhFrame) shows it; the game talks to the server (fapfap_l16_*) and plays the matches online.
+  // A League match = the online duel, first to 2 rounds, no stake; window.L16cur says which match is on the table.
+  const L16 = {state:null, at:0, busy:false};
+  window.L16cur = null;
+  async function l16Rpc(fn, args){
+    if(!(await cloudInit()) || !supaClient) throw new Error('offline');
+    const r = await supaClient.rpc(fn, args || {});
+    if(r.error) throw r.error;
+    return r.data;
+  }
+  async function l16State(){
+    try{ L16.state = await l16Rpc('fapfap_l16_state'); L16.at = Date.now(); l16Claim(); }catch(e){}
+    renderLeagueHome();
+    return L16.state;
+  }
+  // the podium's chips, credited once on the winner's phone
+  async function l16Claim(){
+    try{
+      const rows = await l16Rpc('fapfap_l16_claim');
+      (rows || []).forEach((z, i)=>{
+        chipsAdd(z.amount|0); profile.l16Podiums = (profile.l16Podiums||0) + 1; if(z.place===1) profile.l16Titles = (profile.l16Titles||0) + 1;
+        saveProfile(); renderChips(); cloudSchedule(); if(typeof checkExploits==='function') checkExploits();
+        setTimeout(()=> trophyPop({icon:'crown', name:'+'+fmtChips(z.amount|0)+' jetons', kind:(z.place===1 ? 'Champion' : (z.place)+'ᵉ place')+' de la League #'+z.league}), 900 + i*2600);
+      });
+    }catch(e){}
+  }
+  const l16Post = (op, extra)=> zhPost(Object.assign({zh:'l16', op}, extra || {}));
+  async function l16Send(){
+    const s = await l16State();
+    l16Post('state', {data:s, ok:!!s, me:myUid(), online:[...Lobby.online], name:(prefs.name||'').trim(), q:profile.quartier, chips:profile.chips});
+  }
+  async function l16FromLeague(d){
+    if(!CLOUD_ON){ l16Post('state', {ok:false}); return; }
+    try{
+      if(d.op==='state'){ await lobbyJoin(); await l16Send(); return; }
+      if(d.op==='join'){
+        if(L16.busy) return; L16.busy = true;
+        try{
+          if(!(prefs.name||'').trim()){ l16Post('error', {msg:'Choisis d’abord ton pseudo dans ton profil.'}); return; }
+          if((profile.chips||0) < 2000){ l16Post('error', {msg:'Il te faut 2 000 jetons pour t’inscrire.'}); return; }
+          chipsAdd(-2000); saveProfile(); zhSendChips();
+          let r = null;
+          try{ r = await l16Rpc('fapfap_l16_join', {p_name:(prefs.name||'').trim(), p_quartier: profile.quartier==null ? -1 : profile.quartier}); }catch(e){ r = {error:'Le serveur ne répond pas. Tes jetons sont rendus.'}; }
+          if(!r || r.error){ chipsAdd(2000); saveProfile(); zhSendChips(); l16Post('error', {msg:(r && r.error) || 'Inscription impossible.'}); }
+          else { profile.l16Joined = (profile.l16Joined||0) + 1; saveProfile(); cloudSchedule(); track('l16_join'); if(typeof checkExploits==='function') checkExploits(); }
+          await l16Send();
+        } finally { L16.busy = false; }
+        return;
+      }
+      if(d.op==='ready'){ await l16Rpc('fapfap_l16_ready', {p_match:d.match|0}); await l16Send(); return; }
+      if(d.op==='play'){
+        if(!d.opp) return;
+        try{ await l16Rpc('fapfap_l16_ready', {p_match:d.match|0}); }catch(e){}
+        window.L16cur = {id:d.match|0, opp:String(d.opp), name:String(d.name || 'Ton adversaire').slice(0, 16), at:Date.now()};
+        zhClose();
+        challengeFriend({id:String(d.opp), name:window.L16cur.name});
+        return;
+      }
+    }catch(e){ l16Post('error', {msg:'Le serveur ne répond pas. Réessaie dans un instant.'}); }
+  }
+  window.l16FromLeague = l16FromLeague;
+  // the score of a League match, sent at the end of the game (kept for later if the network is down)
+  window.l16Report = async (me, them, cme, cthem)=>{
+    const c = window.L16cur; window.L16cur = null;
+    if(!c) return;
+    const send = ()=> l16Rpc('fapfap_l16_report', {p_match:c.id, p_me:me, p_them:them, p_cme:cme, p_cthem:cthem});
+    try{
+      const r = await send();
+      showToast(me>them ? 'Victoire enregistrée dans la League' : 'Match enregistré dans la League', r && r.closed ? 'Le classement est à jour.' : r && r.dispute ? 'Vos deux résultats ne collent pas : le délai tranchera.' : 'En attente du résultat de '+c.name+'.', {ms:2800});
+      L16.at = 0;
+    }catch(e){
+      profile.l16Pending = {id:c.id, me, them, cme, cthem}; saveProfile();
+      showToast('Résultat gardé', 'Il partira dès que le réseau revient.', {ms:2400});
+    }
+  };
+  async function l16Flush(){
+    const p = profile.l16Pending; if(!p) return;
+    try{ await l16Rpc('fapfap_l16_report', {p_match:p.id, p_me:p.me, p_them:p.them, p_cme:p.cme, p_cthem:p.cthem}); delete profile.l16Pending; saveProfile(); }catch(e){}
+  }
+  // a normal online game is never counted as a League match
+  $id('modeMP').addEventListener('click', ()=>{ window.L16cur = null; }, true);
+  // the home card: refreshed at most once a minute
+  window.l16Home = ()=>{ if(CLOUD_ON && Date.now() - L16.at > 60000){ L16.at = Date.now(); l16Flush().then(l16State).catch(()=>{}); } };
+  window.l16Get = ()=> L16.state;
+  setTimeout(()=> window.l16Home && window.l16Home(), 2500);
   // after an online duel: add the opponent as a friend in one touch
   function refreshFriendBtnMo(){
     const b = $id('btnAddFriendMo');
@@ -17790,7 +17989,7 @@
 
   // test hook, only with ?debug in the URL: lets automated checks drive the rules engine directly
   if(DEV_HOST && /[?&]debug\b/.test(location.search)){
-    window.__ff = { DScene, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
+    window.__ff = { DScene, Nav, getProfile: ()=> profile, psRenderCard, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
       myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openPlayerSheet, pushChallenge, pushFriendReq,
