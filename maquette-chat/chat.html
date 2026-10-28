@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0907">
+<title>Chat en partie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : parler à son adversaire pendant une partie en ligne, sans jamais cacher la table ni sa main.
+   Trois façons, de la plus rapide à la plus riche : une réaction (1 geste), un message court, une note vocale de 10 s. */
+:root{ --ink:#0d0806; --cream:#fff2dc; --mute:#c9b49a; --card:#2a1f18; --card2:#33261d; --gold:#FFC93C; --red:#e5484d; --green:#2FB36B; --disp:'Fredoka','Trebuchet MS',sans-serif; --ui:'Nunito',system-ui,sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; height:100%; overflow:hidden; background:#0e0907; color:var(--cream); font:700 14px/1.4 var(--ui); }
+button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; padding:0; }
+/* the game behind (always visible) */
+.game{ position:fixed; inset:0; display:flex; flex-direction:column; padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 10px);
+  background:radial-gradient(circle at 50% 38%, #3a2716, #120c08 70%); }
+.score{ display:flex; justify-content:space-between; align-items:center; background:rgba(42,31,24,.9); border:2.5px solid var(--ink); border-radius:16px; padding:6px 12px; font:800 12px var(--ui); }
+.score b{ font:700 20px var(--disp); } .score b.me{ color:var(--gold); }
+.opp{ position:relative; display:flex; align-items:center; gap:8px; margin:10px 0 4px; }
+.av{ width:52px; height:52px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #c58a5a, #6b4424); border:3px solid var(--ink); flex:none; position:relative; }
+.av.me{ background:radial-gradient(circle at 40% 35%, #8fb3e8, #2f5c9a); }
+.opp .nm b{ display:block; font:700 15px var(--disp); } .opp .nm small{ font:800 11px var(--ui); color:var(--mute); }
+.typing{ position:absolute; left:58px; top:-6px; background:#fff7e6; color:#2a1606; border:2.5px solid var(--ink); border-radius:12px 12px 12px 3px; padding:2px 8px; font:900 14px var(--ui); letter-spacing:2px; display:none; }
+.typing.on{ display:block; animation:pop .2s; }
+.felt{ flex:1; margin:6px 0; border-radius:26px; border:3px solid #000; background:radial-gradient(ellipse at 50% 45%, #2f8a52, #1e5c36 72%); box-shadow:inset 0 0 0 5px #b8923e, inset 0 0 0 8px #000; display:flex; align-items:center; justify-content:center; gap:16px; position:relative; }
+.pc{ width:62px; height:88px; border-radius:9px; background:#fff7e6; border:2.5px solid #000; box-shadow:3px 6px 9px rgba(0,0,0,.45); font:700 24px var(--disp); padding:3px 6px; color:#c0272d; }
+.pc.b{ color:#141210; transform:rotate(6deg); } .felt .pc:first-child{ transform:rotate(-5deg); }
+.turn{ text-align:center; font:800 13px var(--ui); color:var(--gold); margin-bottom:6px; }
+.hand{ display:flex; justify-content:center; padding:10px 6px 12px; background:rgba(42,31,24,.92); border:2.5px solid var(--ink); border-radius:20px; position:relative; }
+.hand .pc{ width:52px; height:76px; font-size:20px; margin:0 -4px; } .hand .pc:nth-child(3){ transform:translateY(-10px); box-shadow:0 0 0 3px var(--gold), 3px 6px 9px rgba(0,0,0,.45); }
+.mebar{ display:flex; align-items:center; gap:8px; margin-top:8px; }
+.mebar .av{ width:40px; height:40px; }
+/* ---- the chat, all of it lives at the edges ---- */
+/* 1. the opponent's bubble comes out of their portrait and fades by itself */
+.bub{ position:absolute; z-index:20; left:66px; top:-2px; max-width:68%; background:#fff7e6; color:#2a1606; border:2.5px solid var(--ink); box-shadow:0 4px 0 var(--ink); border-radius:16px 16px 16px 4px; padding:7px 11px; font:800 14px/1.3 var(--ui);
+  transform-origin:0 50%; animation:pop .25s cubic-bezier(.2,1.4,.4,1); }
+.bub.out{ animation:fade .4s forwards; }
+.bub.mine{ left:auto; right:0; top:auto; bottom:52px; border-radius:16px 16px 4px 16px; background:var(--gold); transform-origin:100% 100%; }
+.bub .re{ font-size:22px; }
+@keyframes pop{ from{ transform:scale(.4); opacity:0; } } @keyframes fade{ to{ opacity:0; transform:translateY(-8px); } }
+/* a voice note, inside a bubble */
+.vn{ display:flex; align-items:center; gap:8px; min-width:180px; }
+.vn .play{ width:30px; height:30px; border-radius:50%; background:#2a1606; color:#fff; display:grid; place-items:center; font-size:12px; flex:none; }
+.vn .wave{ flex:1; display:flex; align-items:center; gap:2px; height:24px; } .vn .wave i{ flex:1; background:#2a1606; border-radius:2px; opacity:.35; } .vn .wave i.on{ opacity:1; }
+.vn small{ font:900 11px var(--ui); }
+/* 2. the chat button: one round button next to your portrait, its badge counts what you haven't seen */
+.chatbtn{ position:relative; width:46px; height:46px; border-radius:50%; background:var(--card); border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); display:grid; place-items:center; font-size:20px; flex:none; }
+.chatbtn .bd{ position:absolute; top:-5px; right:-5px; min-width:20px; height:20px; border-radius:10px; background:var(--red); color:#fff; font:900 11px/16px var(--ui); border:2px solid var(--ink); text-align:center; padding:0 4px; }
+.mebar .sp{ flex:1; font:800 12px var(--ui); color:var(--mute); }
+/* 3. the quick strip: reactions in one tap, a field, the microphone — it sits on top of your hand, never over the table */
+.strip{ position:fixed; left:10px; right:10px; z-index:30; bottom:calc(env(safe-area-inset-bottom) + 66px); background:rgba(42,31,24,.97); border:2.5px solid var(--ink); box-shadow:0 6px 0 var(--ink); border-radius:22px; padding:8px; display:none; animation:up .22s cubic-bezier(.2,.8,.2,1); }
+.strip.on{ display:block; } @keyframes up{ from{ transform:translateY(30px); opacity:0; } }
+.reacts{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:6px; } .reacts::-webkit-scrollbar{ display:none; }
+.reacts button{ flex:none; padding:7px 10px; border-radius:14px; background:#fff7e6; color:#2a1606; border:2px solid var(--ink); font:800 13px var(--ui); white-space:nowrap; }
+.reacts button.em{ font-size:20px; padding:4px 8px; }
+.line{ display:flex; gap:6px; align-items:center; }
+.line input{ flex:1; min-width:0; height:44px; border-radius:14px; border:2.5px solid var(--ink); background:#fff7e6; color:#2a1606; font:800 15px var(--ui); padding:0 12px; outline:none; }
+.line .send{ width:44px; height:44px; border-radius:50%; background:var(--gold); border:2.5px solid var(--ink); font-size:18px; display:grid; place-items:center; flex:none; }
+.mic{ width:44px; height:44px; border-radius:50%; background:var(--red); color:#fff; border:2.5px solid var(--ink); font-size:18px; display:grid; place-items:center; flex:none; position:relative; touch-action:none; -webkit-user-select:none; user-select:none; }
+.hint{ text-align:center; font:800 11px var(--ui); color:var(--mute); margin-top:6px; }
+/* 4. recording: a ring that fills in 10 s, slide left to cancel */
+.rec{ position:fixed; left:10px; right:10px; z-index:31; bottom:calc(env(safe-area-inset-bottom) + 66px); background:#3a1210; border:2.5px solid var(--ink); box-shadow:0 6px 0 var(--ink); border-radius:22px; padding:10px 12px; display:none; align-items:center; gap:10px; }
+.rec.on{ display:flex; }
+.ring{ width:52px; height:52px; flex:none; } .ring circle{ fill:none; stroke-width:6; } .ring .bg{ stroke:rgba(255,255,255,.15); } .ring .fg{ stroke:var(--red); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; }
+.rec .t b{ display:block; font:700 20px var(--disp); } .rec .t small{ font:800 11.5px var(--ui); color:#ffb4a6; }
+.rec .lv{ flex:1; display:flex; align-items:center; gap:2px; height:30px; } .rec .lv i{ flex:1; background:#ff8a80; border-radius:2px; }
+/* 5. the history: half the screen, the table stays visible above */
+.hist{ position:fixed; left:0; right:0; bottom:0; z-index:40; height:52%; background:var(--card); border-top:2.5px solid var(--ink); border-radius:24px 24px 0 0; display:none; flex-direction:column; padding:8px 12px calc(env(safe-area-inset-bottom) + 10px); animation:up .25s; }
+.hist.on{ display:flex; }
+.hist::before{ content:''; display:block; width:40px; height:5px; border-radius:3px; background:rgba(255,255,255,.2); margin:0 auto 8px; }
+.hist h4{ margin:0 0 6px; font:700 17px var(--disp); display:flex; justify-content:space-between; align-items:center; } .hist h4 button{ font:800 12px var(--ui); color:var(--mute); }
+.msgs{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:4px 0; }
+.m{ max-width:80%; padding:7px 10px; border-radius:14px 14px 14px 4px; background:#fff7e6; color:#2a1606; font:800 13.5px/1.3 var(--ui); border:2px solid var(--ink); } .m.mine{ align-self:flex-end; background:var(--gold); border-radius:14px 14px 4px 14px; }
+.m small{ display:block; font:800 10px var(--ui); opacity:.6; }
+/* 6. the settings of the chat */
+.set{ position:fixed; inset:auto 0 0 0; z-index:41; background:var(--card); border-top:2.5px solid var(--ink); border-radius:24px 24px 0 0; padding:12px 14px calc(env(safe-area-inset-bottom) + 14px); display:none; animation:up .25s; }
+.set.on{ display:block; } .set h4{ margin:0 0 8px; font:700 17px var(--disp); }
+.sw{ display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid rgba(255,255,255,.07); } .sw:first-of-type{ border-top:0; } .sw span{ flex:1; } .sw small{ display:block; color:var(--mute); font-size:11.5px; }
+.tg{ width:46px; height:28px; border-radius:16px; background:#4a3a2e; border:2px solid var(--ink); position:relative; flex:none; } .tg::after{ content:''; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#fff; transition:.2s; } .tg.on{ background:var(--green); } .tg.on::after{ left:20px; }
+.toast{ position:fixed; left:50%; top:calc(env(safe-area-inset-top) + 62px); transform:translateX(-50%); z-index:60; background:var(--cream); color:#2a1606; border:2.5px solid var(--ink); border-radius:14px; padding:7px 12px; font:800 12.5px var(--ui); display:none; white-space:nowrap; }
+.toast.on{ display:block; animation:pop .2s; }
+/* the guide of the mockup (not part of the game) */
+.guide{ position:fixed; left:0; right:0; top:0; z-index:90; display:flex; gap:5px; justify-content:center; align-items:center; padding:calc(env(safe-area-inset-top) + 4px) 8px 4px; background:rgba(0,0,0,.85); font:700 11px var(--ui); color:#bbb; }
+.guide button{ background:#333; color:#ddd; border-radius:8px; padding:4px 8px; font:800 11px var(--ui); } .guide button.on{ background:var(--gold); color:#111; }
+.game{ padding-top:calc(env(safe-area-inset-top) + 124px); }
+.explain{ position:fixed; z-index:89; left:10px; right:10px; top:calc(env(safe-area-inset-top) + 36px); background:rgba(13,8,6,.92); border:2px solid var(--gold); border-radius:14px; padding:7px 10px; font:800 12px/1.35 var(--ui); color:var(--cream); }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style></head>
+<body>
+<nav class="guide" id="guide"></nav>
+<div class="explain" id="explain"></div>
+<div class="game">
+  <div class="score"><span>Toi <b class="me">1</b></span><span>Manche 2 · premier à 2</span><span>Mola <b>0</b></span></div>
+  <div class="opp" id="opp"><span class="av"></span><span class="nm"><b>Mola</b><small>Akwa · en ligne</small></span><span class="typing" id="typing">•••</span></div>
+  <div class="felt"><span class="pc">3</span><span class="pc b">9</span></div>
+  <div class="turn">À toi de jouer · il demande du Cœur</div>
+  <div class="hand"><span class="pc">7</span><span class="pc b">10</span><span class="pc">5</span><span class="pc b">4</span><span class="pc">8</span></div>
+  <div class="mebar" id="mebar"><span class="av me"></span><span class="sp">Toi</span><button class="chatbtn" id="chatBtn" aria-label="Parler à Mola">💬<span class="bd" id="badge">2</span></button></div>
+</div>
+<div class="strip" id="strip">
+  <div class="reacts" id="reacts"><button class="em">😂</button><button class="em">🔥</button><button class="em">😱</button><button class="em">👏</button><button class="em">🙄</button><button>Bien joué !</button><button>Yékiii ! 😱</button><button>Tchip 😒</button><button>On dit quoi ? 😏</button><button>Allez, joue ! ⏳</button><button>Ashia 🤲</button></div>
+  <div class="line"><input id="inp" maxlength="80" placeholder="Écris à Mola… (80 caractères)" enterkeyhint="send"><button class="send" id="send" aria-label="Envoyer">➤</button><button class="mic" id="mic" aria-label="Maintenir pour parler">🎙</button></div>
+  <div class="hint">Une réaction part en un geste · maintiens 🎙 pour parler, 10 s au plus</div>
+</div>
+<div class="rec" id="rec"><svg class="ring" viewBox="0 0 52 52"><circle class="bg" cx="26" cy="26" r="22"/><circle class="fg" id="ringFg" cx="26" cy="26" r="22" stroke-dasharray="138.2" stroke-dashoffset="138.2"/></svg>
+  <span class="t"><b id="recT">0,0 s</b><small>← glisse pour annuler · relâche pour envoyer</small></span><span class="lv" id="lv"></span></div>
+<div class="hist" id="hist"><h4>Mola <button id="openSet">Réglages</button></h4><div class="msgs" id="msgs"></div>
+  <div class="line"><input placeholder="Écris à Mola…"><button class="send">➤</button><button class="mic">🎙</button></div></div>
+<div class="set" id="set"><h4>Le chat de cette partie</h4>
+  <div class="sw"><span>Son des messages<small>Un petit « tic » quand un message arrive</small></span><span class="tg on"></span></div>
+  <div class="sw"><span>Lire les notes vocales tout seul<small>Sinon, touche la bulle pour écouter</small></span><span class="tg on"></span></div>
+  <div class="sw"><span>Pas de bulles pendant mon tour<small>Elles attendent la fin de ton coup</small></span><span class="tg"></span></div>
+  <div class="sw"><span>Rendre Mola muet<small>Plus rien de lui jusqu’à la fin de la partie</small></span><span class="tg"></span></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const SCREENS = [
+  ['Message reçu', 'Le message de l’adversaire sort de son portrait, en haut, et s’efface tout seul en 4 s. La table et ta main restent libres.', ()=>{ say('Tu vas perdre ce 3, mon frère 😏'); }],
+  ['Réactions', 'Touche 💬 : une bande s’ouvre au-dessus de ta main. Une réaction = un geste, elle part et la bande se referme. Tu continues ta partie.', ()=>{ open(true); }],
+  ['Écrire', 'Le champ fait une ligne, 80 caractères. Entrée = envoyé, la bande se referme. Si c’est ton tour, ton brouillon reste là pendant que tu joues.', ()=>{ open(true); $('inp').value = 'Laisse-moi réfléchir'; }],
+  ['Note vocale', 'Maintiens 🎙 : un anneau se remplit en 10 s. Relâche pour envoyer, glisse à gauche pour annuler. Essaie : maintiens le bouton rouge.', ()=>{ open(true); demoRec(); }],
+  ['Note reçue', 'La note arrive dans une bulle avec sa forme d’onde. Elle se lit toute seule (réglable) sans couper le son du jeu, qui baisse un instant.', ()=>{ voice(); }],
+  ['Historique', 'Touche une bulle ou garde le doigt sur 💬 : l’historique ouvre la moitié de l’écran, la table reste visible au-dessus.', ()=>{ $('hist').classList.add('on'); }],
+  ['Réglages', 'Son, lecture automatique, « pas de bulles pendant mon tour », et rendre l’adversaire muet : tout est à un geste.', ()=>{ $('hist').classList.add('on'); $('set').classList.add('on'); }]
+];
+let cur = 0;
+const HIST = [['Mola', 'On dit quoi ? 😏'], ['me', 'Bien joué !'], ['Mola', 'Tu vas perdre ce 3, mon frère 😏'], ['me', '🎙 Note vocale · 6 s'], ['Mola', 'Yékiii ! 😱']];
+function reset(){ document.querySelectorAll('.bub').forEach(b=> b.remove()); ['strip','rec','hist','set'].forEach(id=> $(id).classList.remove('on')); $('typing').classList.remove('on'); $('inp').value = ''; clearTimeout(reset.t); }
+function show(i){ cur = i; reset(); $('explain').innerHTML = '<b>'+(i + 1)+'. '+SCREENS[i][0]+'</b> — '+SCREENS[i][1]; SCREENS[i][2](); guide(); }
+function guide(){ $('guide').innerHTML = SCREENS.map((s, i)=> '<button class="'+(i===cur ? 'on' : '')+'" data-g="'+i+'">'+(i + 1)+'</button>').join('')+'<span style="margin-left:4px">'+SCREENS[cur][0]+'</span>'; }
+$('guide').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(b) show(+b.dataset.g); });
+function bubble(html, mine, ms){ const b = document.createElement('div'); b.className = 'bub'+(mine ? ' mine' : ''); b.innerHTML = html; (mine ? $('mebar') : $('opp')).appendChild(b); b.addEventListener('click', ()=> $('hist').classList.add('on'));
+  setTimeout(()=>{ b.classList.add('out'); setTimeout(()=> b.remove(), 400); }, ms || 4000); return b; }
+function say(t){ $('typing').classList.add('on'); setTimeout(()=>{ $('typing').classList.remove('on'); bubble(esc(t)); tic(); }, 900); }
+const esc = s=> s.replace(/[&<>]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function open(on){ $('strip').classList.toggle('on', on); if(on) $('badge').style.display = 'none'; }
+$('chatBtn').addEventListener('click', ()=> open(!$('strip').classList.contains('on')));
+let lp; $('chatBtn').addEventListener('pointerdown', ()=>{ lp = setTimeout(()=>{ open(false); $('hist').classList.add('on'); }, 500); }); $('chatBtn').addEventListener('pointerup', ()=> clearTimeout(lp));
+$('reacts').addEventListener('click', e=>{ const b = e.target.closest('button'); if(!b) return; bubble(b.classList.contains('em') ? '<span class="re">'+b.textContent+'</span>' : esc(b.textContent), true, 2600); open(false); toast('Envoyé à Mola'); });
+function sendTxt(){ const v = $('inp').value.trim(); if(!v) return; bubble(esc(v), true, 3000); $('inp').value = ''; open(false); setTimeout(()=> say('Ha ! On va voir 😤'), 1600); }
+$('send').addEventListener('click', sendTxt); $('inp').addEventListener('keydown', e=>{ if(e.key==='Enter') sendTxt(); });
+// the voice note: hold to record (here it is simulated), 10 s at most, slide left to cancel
+let rt = null, t0 = 0, sx = 0, cancel = false;
+for(let i = 0; i < 26; i++) $('lv').appendChild(document.createElement('i'));
+function recStart(x){ cancel = false; sx = x || 0; t0 = performance.now(); $('strip').classList.remove('on'); $('rec').classList.add('on'); (function tick(){ const s = (performance.now() - t0)/1000; $('recT').textContent = s.toFixed(1).replace('.', ',')+' s'; $('ringFg').style.strokeDashoffset = 138.2*(1 - Math.min(1, s/10));
+  [...$('lv').children].forEach((b, i)=> b.style.height = (20 + Math.abs(Math.sin(s*7 + i*.7))*80)+'%'); if(s >= 10){ recEnd(); return; } rt = requestAnimationFrame(tick); })(); }
+function recEnd(){ if(!$('rec').classList.contains('on')) return; cancelAnimationFrame(rt); $('rec').classList.remove('on'); const s = Math.min(10, (performance.now() - t0)/1000);
+  if(cancel || s < .6){ toast(cancel ? 'Note annulée' : 'Maintiens plus longtemps'); return; } bubble(vnHtml(s, true), true, 3500); toast('Note vocale envoyée · '+s.toFixed(0)+' s'); }
+function demoRec(){ /* nothing to do: the user holds the button */ }
+document.querySelectorAll('.mic').forEach(m=>{ m.addEventListener('pointerdown', e=>{ e.preventDefault(); m.setPointerCapture(e.pointerId); recStart(e.clientX); });
+  m.addEventListener('pointermove', e=>{ if($('rec').classList.contains('on')){ cancel = e.clientX < sx - 70; $('rec').style.opacity = cancel ? .5 : 1; } });
+  m.addEventListener('pointerup', recEnd); m.addEventListener('pointercancel', ()=>{ cancel = true; recEnd(); }); });
+function vnHtml(s, mine){ return '<div class="vn"><span class="play">▶</span><span class="wave">'+Array.from({length:22}, (_, i)=> '<i style="height:'+(25 + Math.abs(Math.sin(i*1.3))*75)+'%"></i>').join('')+'</span><small>'+Math.round(s)+' s</small></div>'; }
+function voice(){ const b = bubble(vnHtml(6), false, 7000); tic(); const bars = [...b.querySelectorAll('.wave i')]; let k = 0; const iv = setInterval(()=>{ if(k < bars.length) bars[k++].classList.add('on'); else clearInterval(iv); }, 6000/22); b.querySelector('.play').textContent = '❚❚'; }
+function tic(){ try{ const c = tic.c || (tic.c = new (window.AudioContext || window.webkitAudioContext)()), o = c.createOscillator(), g = c.createGain(); o.frequency.value = 1400; g.gain.setValueAtTime(.06, c.currentTime); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + .08); o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + .1); }catch(e){} }
+function toast(t){ const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(()=> el.classList.remove('on'), 1500); }
+$('msgs').innerHTML = HIST.map(([w, t])=> '<div class="m'+(w==='me' ? ' mine' : '')+'"><small>'+(w==='me' ? 'Toi' : w)+'</small>'+esc(t)+'</div>').join('');
+$('openSet').addEventListener('click', ()=> $('set').classList.add('on'));
+document.querySelectorAll('.tg').forEach(t=> t.addEventListener('click', ()=> t.classList.toggle('on')));
+document.addEventListener('click', e=>{ if($('set').classList.contains('on') && !e.target.closest('#set') && !e.target.closest('#openSet')) $('set').classList.remove('on'); });
+show(0);
+})();
+</script>
+</body></html>
