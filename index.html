@@ -2694,6 +2694,8 @@
   #btnLeague .lg-cta{ background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000) !important; color:#fff !important; border:2px solid #000; box-shadow:0 3px 0 #000; }
   #btnLeague .lg-txt > span:not(.lg-cta){ color:#f0caca !important; }
   @media (prefers-reduced-motion: reduce){ .lg-shine{ animation:none; } }
+  /* v88: the blue card of the week's ranking leaves the home screen (asked by the owner); the ranking stays one tap away on the « Ta place » card */
+  #btnQuartier{ display:none !important; }
   /* the week's ranking on the home screen (v81): the podium, your place, the live news of the quarter */
   #btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier.qz-home{ position:relative; width:100%; margin-top:12px; border-radius:22px !important; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:0; padding:14px 14px 16px; text-align:left; cursor:pointer;
     background:radial-gradient(120% 80% at 50% 120%, #1d3aa8 0%, #0b1850 45%, #040824 85%) !important; border:1px solid rgba(242,199,106,.45) !important; box-shadow:0 14px 34px rgba(3,6,25,.55), inset 0 1px 0 rgba(255,255,255,.08) !important; color:#eef1ff !important; }
@@ -13810,7 +13812,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v87';
+  const APP_VERSION = 'v88';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
