@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070202">
+<title>League à 16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fredoka:wght@700&family=Unbounded:wght@500;700;800;900&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Maquette : la League en ligne à 16 joueurs, aux couleurs de la League (Stade de nuit : noir, rouge vif, or).
+   9 écrans, cliquables : s'inscrire, attendre que ce soit plein, le tirage, ta League au quotidien, les poules,
+   le tableau final, la finale en direct, le podium, et la carte de l'accueil. */
+:root{ --night:#070202; --card:#170707; --line:#2a0f0f; --ink:#fff6f2; --mute:#c9a3a3; --red:#e00000; --red-d:#8f0000; --gold:#f2c76a; --good:#7ee2a2;
+  --disp:'Unbounded', system-ui, sans-serif; --ui:'Manrope', system-ui, sans-serif; }
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:var(--ink); font:700 14px/1.4 var(--ui); }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ font:800 21px/1.15 var(--disp); } h1 small{ display:block; font:800 10.5px var(--ui); letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+.lead{ color:var(--mute); margin:6px 0 12px; font-size:13px; }
+.steps{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; margin:0 -14px 12px; padding:2px 14px 6px; } .steps::-webkit-scrollbar{ display:none; }
+.steps span{ flex:none; padding:8px 11px; border-radius:12px; background:var(--card); border:2px solid #000; box-shadow:0 3px 0 #000; font:800 11.5px var(--ui); color:var(--mute); cursor:pointer; white-space:nowrap; }
+.steps span.on{ background:var(--red); color:#fff; }
+.what{ font:700 12.5px/1.45 var(--ui); color:var(--mute); margin:0 0 12px; min-height:36px; } .what b{ color:var(--ink); }
+
+/* the phone */
+.phone{ position:relative; width:min(370px, 100%); margin:0 auto; aspect-ratio:9/19.3; border-radius:42px; border:4px solid #000; overflow:hidden; isolation:isolate;
+  background:radial-gradient(130% 60% at 50% -12%, #4a0000 0%, #170404 40%, #070202 75%); box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; }
+.scr{ position:absolute; inset:0; display:none; flex-direction:column; }
+.scr.on{ display:flex; animation:scrIn .35s cubic-bezier(.16,1,.3,1); } @keyframes scrIn{ from{ opacity:0; transform:translateX(24px); } }
+.body{ flex:1; overflow-y:auto; scrollbar-width:none; padding:4px 14px 96px; } .body::-webkit-scrollbar{ display:none; }
+.hd{ display:flex; align-items:center; gap:10px; padding:42px 14px 10px; flex:none; }
+.hd .back{ width:38px; height:38px; border-radius:50%; display:grid; place-items:center; background:var(--card); border:2px solid #000; box-shadow:0 3px 0 #000; font:600 22px/1 var(--ui); padding-bottom:3px; flex:none; }
+.hd .ecu{ width:30px; flex:none; filter:drop-shadow(0 3px 0 #000); }
+.hd .t{ flex:1; min-width:0; } .hd .t small{ display:block; font:800 9.5px var(--ui); letter-spacing:.18em; text-transform:uppercase; color:var(--gold); } .hd .t b{ display:block; font:800 15px var(--disp); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chips{ display:flex; align-items:center; gap:5px; padding:6px 10px; border-radius:20px; background:#1d0a0a; border:1.5px solid #3a1212; font:800 12px var(--ui); flex:none; }
+.coin{ width:12px; height:12px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, #e6b23a 55%, #7a4a10); border:1.5px solid #000; display:inline-block; flex:none; }
+.ecu svg{ display:block; width:100%; height:auto; }
+.card{ border-radius:20px; background:var(--card); border:2px solid #000; box-shadow:0 4px 0 #000; padding:14px; margin-bottom:12px; }
+.card h3{ display:flex; justify-content:space-between; gap:8px; font:800 10.5px var(--ui); letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; } .card h3 span{ color:var(--mute); letter-spacing:.08em; }
+.cta{ display:block; width:100%; text-align:center; padding:15px 12px; border-radius:18px; font:800 13.5px var(--disp); letter-spacing:.03em; color:#fff; cursor:pointer;
+  background:linear-gradient(180deg, #ff2a2a, var(--red) 55%, #a80000); border:2.5px solid #000; box-shadow:0 5px 0 #000, inset 0 1px 0 rgba(255,255,255,.35); }
+.cta small{ display:block; font:800 10.5px var(--ui); color:#ffe0a0; margin-top:3px; letter-spacing:0; }
+.cta:active{ translate:0 3px; box-shadow:0 2px 0 #000; }
+.cta.dark{ background:#0b0b0b; box-shadow:0 5px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.5); } .cta.wa{ background:linear-gradient(180deg,#3ad46b,#1fa64a); }
+.ghost{ display:block; width:100%; text-align:center; padding:12px; border-radius:16px; background:var(--card); border:2px solid #000; box-shadow:0 3px 0 #000; font:800 12.5px var(--ui); color:var(--ink); cursor:pointer; }
+.av{ --s:34px; width:var(--s); height:var(--s); border-radius:50%; display:grid; place-items:center; flex:none; font:800 calc(var(--s)*.34) var(--disp); color:#fff; border:2px solid #000; background:var(--c, #444); box-shadow:0 2px 0 #000; }
+.av.me{ background:var(--red); box-shadow:0 0 0 2px var(--gold), 0 2px 0 #000; }
+.tag{ display:inline-block; padding:3px 7px; border-radius:8px; font:800 9.5px var(--ui); letter-spacing:.06em; text-transform:uppercase; }
+.tag.w{ background:rgba(126,226,162,.16); color:var(--good); } .tag.l{ background:rgba(255,120,100,.16); color:#ffb4a6; } .tag.n{ background:rgba(255,255,255,.08); color:var(--mute); } .tag.r{ background:var(--red); color:#fff; }
+.tabbar{ position:absolute; left:10px; right:10px; bottom:12px; z-index:6; display:grid; grid-template-columns:repeat(4,1fr); gap:4px; padding:6px; border-radius:22px; background:#0b0303; border:2px solid var(--line); box-shadow:0 14px 30px rgba(0,0,0,.6); }
+.tabbar span{ display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 0 6px; border-radius:16px; font:800 10px var(--ui); color:#8a6a6a; cursor:pointer; }
+.tabbar span.on{ background:var(--red); color:#fff; } .tabbar svg{ width:20px; height:20px; }
+.dot{ width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block; box-shadow:0 0 8px var(--good); }
+.live{ display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; background:var(--red); font:800 10px var(--ui); letter-spacing:.12em; }
+.live::before{ content:''; width:7px; height:7px; border-radius:50%; background:#fff; animation:blink 1s infinite; } @keyframes blink{ 50%{ opacity:.2; } }
+
+/* 1 · sign up */
+.big{ text-align:center; padding:4px 0 10px; } .big .ecu{ display:block; width:96px; margin:0 auto 8px; filter:drop-shadow(0 10px 16px rgba(0,0,0,.6)); }
+.big b{ display:block; font:400 40px/1 'Anton', var(--disp); letter-spacing:.02em; } .big b span{ color:var(--red); -webkit-text-stroke:1px #000; }
+.big p{ color:var(--mute); font:800 11px var(--ui); letter-spacing:.14em; text-transform:uppercase; margin-top:6px; }
+.seats{ display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:6px; margin:4px 0 10px; }
+.seat{ aspect-ratio:1; border-radius:50%; display:grid; place-items:center; font:800 9.5px var(--disp); color:#fff; border:2px solid #000; background:var(--c,#333); box-shadow:0 2px 0 #000; }
+.seat.empty{ background:transparent; border:2px dashed #5a2a2a; box-shadow:none; color:#6a4040; }
+.seat.me{ background:var(--red); box-shadow:0 0 0 2px var(--gold); } .seat.pop{ animation:pop .6s cubic-bezier(.3,1.8,.5,1); } @keyframes pop{ from{ transform:scale(.2); } }
+.count{ display:flex; align-items:baseline; justify-content:space-between; } .count b{ font:900 30px var(--disp); } .count b small{ font:800 14px var(--ui); color:var(--mute); } .count span{ font:800 12px var(--ui); color:var(--gold); }
+.bar{ height:8px; border-radius:8px; background:#0b0303; border:1.5px solid #000; overflow:hidden; margin-top:8px; } .bar i{ display:block; height:100%; background:linear-gradient(90deg, var(--red), #ff5a3a); transition:width .6s cubic-bezier(.16,1,.3,1); }
+.pot{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-top:10px; }
+.pot div{ text-align:center; padding:9px 4px; border-radius:14px; background:#0e0404; border:1.5px solid #000; } .pot b{ display:block; font:800 14px var(--disp); } .pot small{ font:800 9.5px var(--ui); color:var(--mute); }
+.pot div:first-child{ background:linear-gradient(180deg,#3a2a08,#1a1204); border-color:#6a5010; } .pot div:first-child b{ color:var(--gold); }
+.potTot{ display:flex; justify-content:space-between; align-items:center; font:800 12px var(--ui); color:var(--mute); } .potTot b{ font:800 22px var(--disp); color:#fff; display:flex; align-items:center; gap:6px; }
+.how{ display:grid; gap:8px; }
+.how div{ display:grid; grid-template-columns:30px minmax(0,1fr); gap:10px; align-items:center; }
+.how i{ width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:var(--red); border:2px solid #000; font:800 13px var(--disp); font-style:normal; }
+.how b{ display:block; font:800 13px var(--ui); } .how small{ color:var(--mute); font:700 11.5px var(--ui); }
+.sheetBg{ position:absolute; inset:0; z-index:20; background:rgba(0,0,0,.6); display:none; align-items:flex-end; } .sheetBg.on{ display:flex; }
+.sheet{ width:100%; padding:16px 16px 26px; border-radius:26px 26px 0 0; background:#120505; border-top:2px solid var(--red); animation:up .35s cubic-bezier(.16,1,.3,1); } @keyframes up{ from{ transform:translateY(100%); } }
+.sheet h4{ font:800 17px var(--disp); margin-bottom:10px; }
+.sheet ul{ list-style:none; padding:0; display:grid; gap:8px; margin:0 0 14px; } .sheet li{ display:grid; grid-template-columns:22px minmax(0,1fr); gap:8px; font:700 12.5px/1.4 var(--ui); color:#f0d8d8; } .sheet li i{ font-style:normal; color:var(--gold); font-weight:800; }
+.sheet .me{ display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px; background:#1d0808; margin-bottom:12px; } .sheet .me b{ font:800 14px var(--disp); } .sheet .me small{ display:block; color:var(--mute); font:700 11px var(--ui); }
+
+/* 2 · waiting */
+.ring{ position:relative; width:170px; height:170px; margin:8px auto 4px; }
+.ring svg{ width:100%; height:100%; rotate:-90deg; } .ring circle{ fill:none; stroke-width:12; } .ring .bg{ stroke:#1d0808; } .ring .fg{ stroke:var(--red); stroke-linecap:round; transition:stroke-dashoffset .8s cubic-bezier(.16,1,.3,1); filter:drop-shadow(0 0 6px rgba(224,0,0,.6)); }
+.ring div{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; } .ring b{ font:900 40px/1 var(--disp); display:block; } .ring small{ font:800 11px var(--ui); color:var(--mute); }
+.waitT{ text-align:center; font:800 14px var(--ui); margin-bottom:12px; } .waitT b{ color:var(--gold); }
+.plist{ display:grid; gap:6px; } .prow{ display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 8px; border-radius:14px; background:#0e0404; }
+.prow b{ display:block; font:800 13px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .prow small{ color:var(--mute); font:700 11px var(--ui); } .prow.new{ animation:pop .6s cubic-bezier(.3,1.8,.5,1); } .prow.me{ background:rgba(224,0,0,.22); }
+.toggle{ display:flex; justify-content:space-between; align-items:center; font:800 12.5px var(--ui); } .sw{ width:44px; height:26px; border-radius:20px; background:var(--good); border:2px solid #000; position:relative; } .sw::after{ content:''; position:absolute; right:2px; top:2px; width:18px; height:18px; border-radius:50%; background:#fff; }
+.demo{ display:block; width:100%; margin-top:10px; padding:10px; border-radius:14px; border:1.5px dashed #6a3a3a; background:transparent; color:var(--mute); font:800 11.5px var(--ui); cursor:pointer; text-align:center; }
+
+/* 3 · the draw */
+.drawT{ text-align:center; padding:6px 0 12px; } .drawT b{ display:block; font:400 30px 'Anton', var(--disp); } .drawT small{ color:var(--mute); font:800 11px var(--ui); letter-spacing:.14em; text-transform:uppercase; }
+.groups{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
+.grp{ border-radius:16px; background:var(--card); border:2px solid #000; box-shadow:0 3px 0 #000; padding:8px; } .grp.mine{ border-color:var(--red); box-shadow:0 0 0 2px var(--red), 0 3px 0 #000; }
+.grp h4{ font:800 12px var(--disp); color:var(--gold); margin-bottom:6px; display:flex; justify-content:space-between; } .grp h4 span{ font:800 9px var(--ui); color:#fff; background:var(--red); padding:2px 6px; border-radius:6px; }
+.slot{ height:30px; border-radius:9px; background:#0b0303; margin-top:4px; display:flex; align-items:center; gap:6px; padding:0 5px; font:800 11px var(--ui); overflow:hidden; white-space:nowrap; }
+.slot .av{ --s:20px; font-size:7px; } .slot.in{ animation:slotIn .5s cubic-bezier(.3,1.6,.5,1); } @keyframes slotIn{ from{ transform:translateY(-30px) scale(.6); opacity:0; } }
+.slot.me{ background:rgba(224,0,0,.3); }
+.drawBall{ position:absolute; left:50%; top:46%; width:120px; margin-left:-60px; padding:10px; border-radius:18px; background:#fffaf0; color:#141210; text-align:center; font:800 12px var(--ui); border:2.5px solid #000; box-shadow:0 8px 0 #000; z-index:9; opacity:0; pointer-events:none; }
+.drawBall.go{ animation:ball .9s cubic-bezier(.16,1,.3,1); } @keyframes ball{ 0%{ opacity:0; transform:scale(.3) rotate(-20deg); } 25%,70%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateY(-60px) scale(.6); } }
+
+/* 4 · my League */
+.lead1{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:18px; margin-bottom:12px; background:linear-gradient(90deg, #3a2a08, #170707 70%); border:2px solid #000; box-shadow:0 3px 0 #000; }
+.lead1 .crown{ width:26px; height:20px; flex:none; } .lead1 .t{ flex:1; min-width:0; } .lead1 small{ display:block; font:800 9.5px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); } .lead1 b{ font:800 13.5px var(--ui); }
+.lead1 em{ font-style:normal; font:800 11px var(--ui); color:var(--mute); text-align:right; } .lead1 em b{ display:block; font:900 18px var(--disp); color:#fff; }
+.phase{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:4px; margin-bottom:12px; }
+.phase span{ text-align:center; padding:7px 2px; border-radius:10px; font:800 10px var(--ui); color:#8a6a6a; background:#0e0404; border:1.5px solid #000; }
+.phase span.now{ color:#fff; background:var(--red); } .phase span small{ display:block; font:700 9px var(--ui); opacity:.8; }
+.next{ position:relative; overflow:hidden; border-radius:22px; padding:14px; margin-bottom:12px; background:linear-gradient(180deg, var(--red), var(--red-d)); border:2.5px solid #000; box-shadow:0 5px 0 #000, inset 0 1px 0 rgba(255,255,255,.3); }
+.next::before{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(0,0,0,.12) 0 14px, transparent 14px 30px); } .next > *{ position:relative; }
+.next .k{ font:800 10px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:#ffe2e2; text-align:center; }
+.vs{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:6px; margin:10px 0 8px; text-align:center; }
+.vs .av{ --s:54px; margin:0 auto 6px; font-size:16px; } .vs b{ display:block; font:800 13px var(--disp); } .vs small{ font:700 11px var(--ui); color:#ffd0d0; } .vs em{ font:400 30px 'Anton'; font-style:normal; text-shadow:0 3px 0 #000; }
+.timer{ display:flex; align-items:center; justify-content:center; gap:8px; margin:4px 0 12px; font:800 12px var(--ui); color:#fff; }
+.timer b{ font:800 13px var(--disp); background:rgba(0,0,0,.35); padding:4px 8px; border-radius:8px; white-space:nowrap; flex:none; }
+.slots2{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-top:8px; }
+.slots2 span{ text-align:center; padding:9px 2px; border-radius:12px; background:rgba(0,0,0,.35); font:800 12px var(--ui); cursor:pointer; border:1.5px solid transparent; } .slots2 span.on{ border-color:#fff; background:rgba(0,0,0,.6); }
+table{ width:100%; border-collapse:collapse; font:800 12.5px var(--ui); }
+th{ font:800 9.5px var(--ui); letter-spacing:.12em; color:var(--mute); text-align:right; padding:0 4px 6px; } th:nth-child(2){ text-align:left; }
+td{ padding:7px 4px; text-align:right; border-top:1px solid #2a0f0f; } td:nth-child(1){ width:18px; color:var(--mute); text-align:left; } td:nth-child(2){ text-align:left; }
+td .nm{ display:flex; align-items:center; gap:7px; } td .av{ --s:24px; font-size:8px; } td b.p{ font:800 14px var(--disp); }
+tr.me td{ background:var(--red); color:#fff; } tr.me td:first-child{ border-radius:10px 0 0 10px; color:#fff; } tr.me td:last-child{ border-radius:0 10px 10px 0; }
+tr.cut td{ border-top:2px dashed var(--good); }
+.qn{ font:700 11px var(--ui); color:var(--mute); margin-top:8px; } .qn b{ color:var(--good); }
+.feed div{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px; padding:7px 0; border-top:1px solid #2a0f0f; font:700 12px/1.35 var(--ui); } .feed div:first-child{ border-top:0; }
+.feed i{ font-style:normal; font:800 10px var(--ui); color:var(--mute); padding-top:2px; } .feed b{ color:var(--gold); }
+.prog div{ display:grid; grid-template-columns:44px minmax(0,1fr) auto; gap:8px; align-items:center; padding:7px 0; border-top:1px solid #2a0f0f; font:800 12.5px var(--ui); } .prog div:first-child{ border-top:0; } .prog i{ font-style:normal; font:800 10px var(--disp); color:var(--mute); }
+.toast{ position:absolute; left:12px; right:12px; top:44px; z-index:15; display:flex; gap:10px; align-items:center; padding:11px 12px; border-radius:18px; background:#1d0808; border:2px solid var(--red); box-shadow:0 12px 30px rgba(0,0,0,.6); font:800 12.5px/1.35 var(--ui); transform:translateY(-140%); transition:transform .45s cubic-bezier(.16,1,.3,1); }
+.toast.on{ transform:none; } .toast b{ color:var(--gold); } .toast .av{ --s:32px; font-size:10px; }
+
+/* 6 · bracket */
+.round{ margin-bottom:14px; } .round h4{ display:flex; justify-content:space-between; font:800 12px var(--disp); color:var(--gold); margin:0 2px 8px; } .round h4 span{ font:800 10px var(--ui); color:var(--mute); }
+.tie{ display:grid; grid-template-columns:minmax(0,1fr) 54px minmax(0,1fr); align-items:center; gap:6px; padding:8px; border-radius:14px; background:var(--card); border:2px solid #000; margin-bottom:6px; font:800 11.5px var(--ui); }
+.tie .s{ display:flex; align-items:center; gap:6px; min-width:0; } .tie .s.r{ justify-content:flex-end; text-align:right; } .tie .s span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tie .av{ --s:22px; font-size:7px; } .tie .sc{ text-align:center; font:800 12px var(--disp); color:var(--gold); white-space:nowrap; } .tie.me{ border-color:var(--red); box-shadow:0 0 0 2px var(--red); } .tie .out{ opacity:.4; }
+.tie.tbd{ color:#6a4a4a; } .tie.final{ background:linear-gradient(180deg,#3a2a08,#170707); border-color:#6a5010; padding:12px 8px; }
+
+/* 7 · the final, live */
+.board{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:6px; padding:12px; border-radius:20px; background:linear-gradient(180deg, var(--red), var(--red-d)); border:2.5px solid #000; box-shadow:0 5px 0 #000; text-align:center; margin-bottom:10px; }
+.board .av{ --s:46px; margin:0 auto 4px; font-size:14px; } .board b{ font:800 12px var(--disp); display:block; } .board .sc{ font:400 44px/1 'Anton'; text-shadow:0 3px 0 #000; } .board .sc small{ display:block; font:800 9.5px var(--ui); letter-spacing:.12em; }
+.watch{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font:800 11.5px var(--ui); color:var(--mute); }
+.mini{ position:relative; height:190px; border-radius:20px; overflow:hidden; border:2.5px solid #000; box-shadow:0 4px 0 #000; margin-bottom:10px;
+  background:radial-gradient(70% 70% at 50% 45%, #8a1010, #3a0606 70%), repeating-linear-gradient(45deg, rgba(0,0,0,.08) 0 6px, transparent 6px 12px); }
+.mini .c{ position:absolute; width:38px; height:54px; border-radius:6px; background:#fffaf0; border:2px solid #000; box-shadow:0 3px 0 #000; display:grid; place-items:center; font:800 15px var(--disp); }
+.mini .c.r{ color:#c8283a; } .mini .c.b{ color:#141210; } .mini .c.back{ background:repeating-linear-gradient(45deg,#c8283a 0 4px,#8a0f1c 4px 8px); }
+.mini .who{ position:absolute; font:800 10.5px var(--ui); background:rgba(0,0,0,.55); padding:3px 8px; border-radius:8px; }
+.react{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.react span{ text-align:center; padding:10px 2px; border-radius:14px; background:var(--card); border:2px solid #000; box-shadow:0 3px 0 #000; font:800 11.5px var(--ui); cursor:pointer; } .react span:active{ translate:0 2px; box-shadow:0 1px 0 #000; }
+.fly{ position:absolute; z-index:12; pointer-events:none; white-space:nowrap; font:800 13px var(--disp); color:#fff; padding:5px 10px; border-radius:12px; background:var(--red); border:2px solid #000; animation:fly 2.2s ease-out forwards; }
+@keyframes fly{ 0%{ opacity:0; transform:translateY(20px) scale(.6); } 15%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateY(-160px); } }
+
+/* 8 · podium */
+.pod{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); align-items:end; gap:6px; margin:6px 0 12px; }
+.pod > div{ text-align:center; } .pod .av{ --s:52px; margin:0 auto 6px; font-size:15px; } .pod b{ display:block; font:800 12px var(--disp); } .pod small{ display:block; font:700 10.5px var(--ui); color:var(--mute); }
+.pod .st{ margin-top:8px; border-radius:12px 12px 0 0; border:2px solid #000; display:grid; place-items:center; font:400 30px 'Anton'; }
+.pod .p1 .st{ height:110px; background:linear-gradient(180deg,#f2c76a,#a87a24); color:#2b1a02; } .pod .p2 .st{ height:80px; background:linear-gradient(180deg,#e8e8f0,#9a9aa8); color:#222; } .pod .p3 .st{ height:60px; background:linear-gradient(180deg,#e8a070,#9a5a30); color:#2b1404; }
+.pod .gain{ display:inline-flex; align-items:center; gap:4px; margin-top:4px; font:800 12px var(--disp); color:var(--gold); }
+.pod .p1 .av{ --s:62px; box-shadow:0 0 0 3px var(--gold), 0 0 22px rgba(242,199,106,.6); }
+.title{ display:flex; align-items:center; gap:10px; padding:10px; border-radius:16px; background:#0e0404; border:2px solid #6a5010; margin-bottom:10px; } .title b{ font:800 13px var(--disp); color:var(--gold); } .title small{ display:block; font:700 11px var(--ui); color:var(--mute); }
+.confetti{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:11; } .confetti i{ position:absolute; top:-14px; width:7px; height:12px; border-radius:2px; animation:fall var(--d) linear var(--dl) forwards; }
+@keyframes fall{ to{ transform:translateY(860px) rotate(540deg); } }
+
+/* 9 · home card */
+.homeTop{ padding:44px 14px 10px; display:flex; justify-content:space-between; align-items:center; }
+.lgHome{ position:relative; overflow:hidden; border-radius:22px; padding:14px; margin-bottom:12px; background:radial-gradient(110% 80% at 85% -10%, #5a0000 0%, #1d0404 45%, #070202 80%); border:2px solid #000; box-shadow:0 6px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.35); }
+.lgHome .ecu{ position:absolute; right:-6px; top:8px; width:92px; opacity:.95; }
+.lgHome small.k{ font:800 10px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:6px; }
+.lgHome h5{ font:400 30px/1 'Anton'; margin:6px 0 10px; max-width:70%; } .lgHome h5 span{ color:var(--red); }
+.lgHome .ld{ display:flex; align-items:center; gap:8px; padding:8px; border-radius:14px; background:rgba(0,0,0,.4); margin-bottom:8px; max-width:78%; font:800 12px var(--ui); } .lgHome .ld .av{ --s:28px; font-size:9px; }
+.lgHome .ld small{ display:block; font:700 10.5px var(--ui); color:var(--mute); }
+.lgHome .row3{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-bottom:10px; } .lgHome .row3 div{ text-align:center; padding:7px 2px; border-radius:12px; background:rgba(0,0,0,.4); } .lgHome .row3 b{ display:block; font:800 15px var(--disp); } .lgHome .row3 small{ font:700 9.5px var(--ui); color:var(--mute); }
+.ghostCard{ height:90px; border-radius:20px; background:#140808; border:2px solid #000; margin-bottom:12px; opacity:.6; display:grid; place-items:center; color:#6a4a4a; font:800 11px var(--ui); }
+.note{ margin-top:18px; font:700 12.5px/1.55 var(--ui); color:var(--mute); } .note b{ color:var(--ink); }
+@media (prefers-reduced-motion: reduce){ *{ animation-duration:.01s !important; transition-duration:.01s !important; } }
+</style></head>
+<body>
+<h1><small>Maquette · à valider</small>La League en ligne à 16</h1>
+<p class="lead">Neuf écrans, du premier toucher jusqu’au podium. Touche un écran, ou utilise les boutons dans le téléphone : la maquette se joue comme le vrai mode.</p>
+<div class="steps" id="steps"></div>
+<p class="what" id="what"></p>
+<div class="phone" id="phone">
+
+  <!-- 1 · S'INSCRIRE -->
+  <section class="scr" data-s="0">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League en ligne</small><b>Inscriptions</b></div><span class="chips"><i class="coin"></i>12 400</span></div>
+    <div class="body">
+      <div class="big"><span class="ecu" data-ecu="1"></span><b>LEAGUE <span>#1</span></b><p>16 joueurs · 7 jours · 3 récompensés</p></div>
+      <div class="card"><div class="count"><b id="cnt">11<small> / 16 inscrits</small></b><span id="left">Plus que 5 places</span></div><div class="bar"><i id="barI" style="width:68.75%"></i></div>
+        <div class="seats" id="seats" style="margin-top:12px"></div><p class="qn" style="margin:0">La League démarre <b>dès que les 16 places sont prises</b>.</p></div>
+      <div class="card"><h3>La cagnotte<span>que des jetons</span></h3><div class="potTot"><span>À gagner aujourd’hui</span><b><i class="coin"></i><span id="pot">42 000</span></b></div>
+        <div class="pot"><div><b id="p1">25 200</b><small>1ᵉʳ · 60 %</small></div><div><b id="p2">12 600</b><small>2ᵉ · 30 %</small></div><div><b id="p3">4 200</b><small>3ᵉ · 10 %</small></div></div>
+        <p class="qn">20 000 offerts par le jeu + 2 000 par inscrit. À 16 joueurs : <b>52 000</b>.</p></div>
+      <div class="card"><h3>Comment ça se passe</h3><div class="how">
+        <div><i>1</i><span><b>Les poules · jours 1 à 3</b><small>4 groupes de 4. Tu joues 3 matchs. Les 2 premiers passent.</small></span></div>
+        <div><i>2</i><span><b>Quarts et demies · jours 4 et 5</b><small>Un match par tour. Le perdant sort.</small></span></div>
+        <div><i>3</i><span><b>La finale en direct · jour 7, 20 h</b><small>Tout le jeu peut la regarder.</small></span></div></div>
+        <p class="qn">Un match = premier à 2 manches. Tu as <b>48 h</b> pour le jouer, sinon forfait.</p></div>
+      <span class="cta" id="btnJoin">M’inscrire<small>2 000 jetons · ils vont dans la cagnotte</small></span>
+    </div>
+    <div class="sheetBg" id="sheetJoin"><div class="sheet"><h4>Tu t’inscris à la League #1</h4>
+      <div class="me"><span class="av me">TOI</span><div><b>Tu joues pour Nkolbisson</b><small>Ton quartier, sur ton profil</small></div></div>
+      <ul><li><i>1</i>2 000 jetons partent dans la cagnotte. Ils ne sont pas rendus si tu abandonnes.</li><li><i>2</i>Chaque match se joue dans les 48 h. Le jeu te propose des heures, et te prévient.</li><li><i>3</i>Les 3 premiers se partagent la cagnotte. Les autres gardent leur rang sur leur profil.</li></ul>
+      <span class="cta" id="btnJoinOk">Je m’inscris · 2 000</span><span class="ghost" style="margin-top:8px" id="btnJoinNo">Pas maintenant</span></div></div>
+  </section>
+
+  <!-- 2 · L'ATTENTE -->
+  <section class="scr" data-s="1">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League #1 · inscrit</small><b>Ça se remplit</b></div><span class="chips"><i class="coin"></i>10 400</span></div>
+    <div class="body">
+      <div class="ring"><svg viewBox="0 0 170 170"><circle class="bg" cx="85" cy="85" r="74"/><circle class="fg" id="ringFg" cx="85" cy="85" r="74" stroke-dasharray="465" stroke-dashoffset="116"/></svg><div><span><b id="ringN">12</b><small>sur 16</small></span></div></div>
+      <p class="waitT" id="waitT">Plus que <b>4 places</b> : la League démarre dès que c’est plein.</p>
+      <span class="cta wa">Inviter sur WhatsApp<small>« Viens défendre ton quartier à la League #1 »</small></span>
+      <div class="card" style="margin-top:12px"><h3>Les inscrits<span id="plN">12</span></h3><div class="plist" id="plist"></div></div>
+      <div class="card"><div class="toggle"><span>Me prévenir dès que ça démarre</span><span class="sw"></span></div></div>
+      <span class="demo" id="btnFill">Pour la maquette : faire arriver les 4 derniers ›</span>
+    </div>
+  </section>
+
+  <!-- 3 · LE TIRAGE -->
+  <section class="scr" data-s="2">
+    <div class="hd"><div class="t" style="padding-left:4px"><small>League #1 · c’est plein !</small><b>Le tirage des poules</b></div></div>
+    <div class="body">
+      <div class="drawT"><b>16 / 16</b><small>4 poules de 4 · les 2 premiers passent</small></div>
+      <div class="groups" id="groups"></div>
+      <span class="cta" id="btnSeeLg" style="margin-top:12px;opacity:.35;pointer-events:none">Voir ma League</span>
+    </div>
+    <div class="drawBall" id="drawBall"></div>
+  </section>
+
+  <!-- 4 · MA LEAGUE -->
+  <section class="scr" data-s="3">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League #1 · jour 2 / 7</small><b>Ma League</b></div><span class="chips"><i class="coin"></i>10 400</span></div>
+    <div class="toast" id="toast"><span class="av" style="--c:#212121">BOR</span><span><b>Boris t’a dépassé aux manches.</b> Tu es 3ᵉ de ta poule : gagne contre Marius pour repasser devant.</span></div>
+    <div class="body">
+      <div class="lead1"><svg class="crown" viewBox="0 0 26 20"><path d="M2 17 L4 5 L9 11 L13 2 L17 11 L22 5 L24 17 Z" fill="#f2c76a" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <div class="t"><small>En tête de la League</small><b>Clarisse · Biyem-Assi · 6 pts</b></div><em>Ta poule<b>3ᵉ</b></em></div>
+      <div class="phase"><span class="now">Poules<small>jusqu’à jeudi</small></span><span>Quarts · demies<small>ven · sam</small></span><span>Finale<small>dim 20 h</small></span></div>
+      <div class="next"><div class="k">Ton prochain match · poule C · 2 / 3</div>
+        <div class="vs"><div><span class="av me">TOI</span><b>Toi</b><small>Nkolbisson</small></div><em>VS</em><div><span class="av" style="--c:#e23b3b">MAR</span><b>Marius</b><small><span class="dot"></span> en ligne</small></div></div>
+        <div class="timer"><b>31 h</b><span>pour le jouer · avant demain 18 h</span></div>
+        <span class="cta dark">Le défier maintenant<small>Il est en ligne : il reçoit ton défi tout de suite</small></span>
+        <div class="slots2"><span>19 h</span><span class="on">20 h</span><span>21 h</span></div>
+        <p class="qn" style="color:#ffe2e2;text-align:center">Ou propose une heure : il reçoit une notification.</p></div>
+      <div class="card"><h3>Ta poule C<span>2 premiers qualifiés</span></h3>
+        <table><tr><th></th><th>Joueur</th><th>J</th><th>Pts</th></tr>
+          <tr><td>1</td><td><span class="nm"><span class="av" style="--c:#e23b3b">MAR</span>Marius</span></td><td>1</td><td><b class="p">3</b></td></tr>
+          <tr><td>2</td><td><span class="nm"><span class="av" style="--c:#212121">BOR</span>Boris</span></td><td>2</td><td><b class="p">3</b></td></tr>
+          <tr class="me cut"><td>3</td><td><span class="nm"><span class="av me">TOI</span>Toi</span></td><td>1</td><td><b class="p">3</b></td></tr>
+          <tr><td>4</td><td><span class="nm"><span class="av" style="--c:#1e88e5">ESS</span>Ange</span></td><td>2</td><td><b class="p">0</b></td></tr></table>
+        <p class="qn">Égalité de points : on regarde les manches gagnées, puis les CORA.</p></div>
+      <div class="card"><h3>Tes matchs</h3><div class="prog">
+        <div><i>Lun</i><span>Toi – Ange</span><span class="tag w">Gagné 2-1</span></div>
+        <div><i>Mar</i><span>Toi – Marius</span><span class="tag r">À jouer</span></div>
+        <div><i>Mer</i><span>Toi – Boris</span><span class="tag n">Ouvre demain</span></div></div></div>
+      <div class="card"><h3><span style="color:var(--gold);letter-spacing:.18em">En direct</span><span class="live">LIVE</span></h3><div class="feed">
+        <div><i>il y a 2 min</i><span><b>Boris</b> bat Ange 2-0 avec un CORA !</span></div>
+        <div><i>il y a 9 min</i><span><b>Clarisse</b> prend la tête de la poule A.</span></div>
+        <div><i>il y a 21 min</i><span><b>Junior</b> gagne par forfait : Kevin n’est pas venu.</span></div></div></div>
+    </div>
+    <div class="tabbar" data-tabbar="0"></div>
+  </section>
+
+  <!-- 5 · LES POULES -->
+  <section class="scr" data-s="4">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League #1 · jour 3 sur 7</small><b>Les 4 poules</b></div></div>
+    <div class="body"><div id="allGroups"></div><p class="qn" style="text-align:center">La ligne verte : au-dessus, tu passes en quarts.</p></div>
+    <div class="tabbar" data-tabbar="1"></div>
+  </section>
+
+  <!-- 6 · LE TABLEAU -->
+  <section class="scr" data-s="5">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League #1 · jour 5 sur 7</small><b>Le tableau final</b></div></div>
+    <div class="body">
+      <div class="round"><h4>Quarts de finale<span>vendredi · joués</span></h4>
+        <div class="tie"><span class="s"><span class="av" style="--c:#c2185b">CLA</span><span>Clarisse</span></span><span class="sc">2-0</span><span class="s r out"><span>Rodrigue</span><span class="av" style="--c:#00acc1">ROD</span></span></div>
+        <div class="tie me"><span class="s"><span class="av me">TOI</span><span>Toi</span></span><span class="sc">2-1</span><span class="s r out"><span>Patou</span><span class="av" style="--c:#7b3fe4">PAT</span></span></div>
+        <div class="tie"><span class="s"><span class="av" style="--c:#212121">BOR</span><span>Boris</span></span><span class="sc">2-1</span><span class="s r out"><span>Franck</span><span class="av" style="--c:#00838f">FRA</span></span></div>
+        <div class="tie"><span class="s out"><span class="av" style="--c:#ff8a1f">SAN</span><span>Sandra</span></span><span class="sc">0-2</span><span class="s r"><span>Yannick</span><span class="av" style="--c:#c62828">YAN</span></span></div>
+        <p class="qn" style="margin:2px 2px 0">Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre.</p></div>
+      <div class="round"><h4>Demi-finales<span>samedi · 1 jouée</span></h4>
+        <div class="tie me"><span class="s"><span class="av me">TOI</span><span>Toi</span></span><span class="sc">2-0</span><span class="s r out"><span>Clarisse</span><span class="av" style="--c:#c2185b">CLA</span></span></div>
+        <div class="tie"><span class="s"><span class="av" style="--c:#212121">BOR</span><span>Boris</span></span><span class="sc" style="color:var(--mute)">ce soir</span><span class="s r"><span>Yannick</span><span class="av" style="--c:#c62828">YAN</span></span></div></div>
+      <div class="round"><h4>La 3ᵉ place<span>dimanche · 19 h</span></h4>
+        <div class="tie tbd"><span class="s"><span class="av" style="--c:#c2185b">CLA</span><span>Clarisse</span></span><span class="sc" style="color:var(--mute)">VS</span><span class="s r"><span>perdant de ce soir</span></span></div></div>
+      <div class="round"><h4>La finale<span>dimanche · 20 h · en direct</span></h4>
+        <div class="tie final me"><span class="s"><span class="av me">TOI</span><span>Toi</span></span><span class="sc">VS</span><span class="s r"><span>Boris ou Yannick</span></span></div></div>
+      <p class="qn" style="text-align:center">Ton chemin est en rouge. Tu es déjà en finale !</p>
+    </div>
+    <div class="tabbar" data-tabbar="2"></div>
+  </section>
+
+  <!-- 7 · LA FINALE EN DIRECT -->
+  <section class="scr" data-s="6">
+    <div class="hd"><span class="back">‹</span><span class="ecu" data-ecu></span><div class="t"><small>League #1 · la finale</small><b>En direct</b></div><span class="live">LIVE</span></div>
+    <div class="body" id="finalBody">
+      <div class="board"><div><span class="av" style="--c:#212121">BOR</span><b>Boris</b></div><div class="sc">1 – 1<small>MANCHE 3 · DÉCISIVE</small></div><div><span class="av me">TOI</span><b>Toi</b></div></div>
+      <div class="watch"><span><span class="dot"></span> 214 personnes regardent</span><span>Vainqueur : 31 200 jetons</span></div>
+      <div class="mini"><span class="who" style="left:10px;top:10px">Boris · 3 cartes</span><span class="who" style="right:10px;bottom:10px">Toi · 3 cartes</span>
+        <span class="c back" style="left:40%;top:16px"></span><span class="c back" style="left:52%;top:16px"></span>
+        <span class="c r" style="left:38%;top:70px;rotate:-8deg">10<br>♦</span><span class="c b" style="left:52%;top:74px;rotate:6deg">8<br>♦</span>
+        <span class="who" style="left:50%;top:136px;translate:-50% 0;background:var(--red)">Boris commande du Zing</span></div>
+      <div class="react" id="react"><span>Allez !</span><span>Waaah</span><span>CORA !</span><span>Doucement</span></div>
+      <div class="card"><h3>Pronostics<span>qui va gagner ?</span></h3><div style="display:grid;grid-template-columns:62% 38%;border-radius:10px;overflow:hidden;font:800 12px var(--ui)"><span style="background:#212121;padding:8px">Boris 62 %</span><span style="background:var(--red);padding:8px;text-align:right">38 % Toi</span></div>
+        <p class="qn">Pronostic juste = 500 jetons. Gratuit, une fois par finale.</p></div>
+    </div>
+  </section>
+
+  <!-- 8 · LE PODIUM -->
+  <section class="scr" data-s="7">
+    <div class="confetti" id="confetti"></div>
+    <div class="hd"><div class="t" style="padding-left:4px"><small>League #1 · terminée</small><b>Le podium</b></div></div>
+    <div class="body">
+      <div class="drawT" style="padding-bottom:4px"><b>CHAMPION</b><small>Boris · Bastos</small></div>
+      <div class="pod"><div class="p2"><span class="av me">TOI</span><b>Toi</b><small>Nkolbisson</small><span class="gain"><i class="coin"></i>15 600</span><div class="st">2</div></div>
+        <div class="p1"><span class="av" style="--c:#212121">BOR</span><b>Boris</b><small>Bastos</small><span class="gain"><i class="coin"></i>31 200</span><div class="st">1</div></div>
+        <div class="p3"><span class="av" style="--c:#c62828">YAN</span><b>Yannick</b><small>Akwa</small><span class="gain"><i class="coin"></i>5 200</span><div class="st">3</div></div></div>
+      <div class="title"><span class="ecu" data-ecu style="width:30px"></span><div><b>Finaliste League #1</b><small>Ton titre, visible dans toutes tes parties en ligne.</small></div></div>
+      <div class="card"><h3>Ta League</h3><div class="prog"><div><i>Poule</i><span>2ᵉ de la poule C</span><span class="tag w">2 V · 1 D</span></div><div><i>Final</i><span>Quart, demie, finale</span><span class="tag w">Finaliste</span></div><div><i>Gain</i><span>+15 600 jetons</span><span class="tag r">2ᵉ</span></div></div></div>
+      <span class="cta">S’inscrire à la League #2<small>3 / 16 inscrits · elle démarre dès qu’elle est pleine</small></span>
+    </div>
+  </section>
+
+  <!-- 9 · L'ACCUEIL -->
+  <section class="scr" data-s="8">
+    <div class="homeTop"><span class="chips"><i class="coin"></i>10 400</span><span style="font:800 11px var(--ui);color:var(--mute)">Accueil du jeu</span></div>
+    <div class="body">
+      <div class="ghostCard">Ta place · Jouer (comme aujourd’hui)</div>
+      <div class="lgHome"><span class="ecu" data-ecu></span>
+        <small class="k"><span class="live">LIVE</span> League #1 · jour 2</small>
+        <h5>FAP-FAP <span>LEAGUE</span></h5>
+        <div class="ld"><span class="av" style="--c:#c2185b">CLA</span><span><b>Clarisse est en tête</b><small>Biyem-Assi · 6 points</small></span></div>
+        <div class="row3"><div><b>3ᵉ</b><small>de ta poule</small></div><div><b>1</b><small>match à jouer</small></div><div><b>52 000</b><small>la cagnotte</small></div></div>
+        <span class="cta" style="padding:12px">Jouer contre Marius<small>avant demain 18 h</small></span></div>
+      <div class="ghostCard">Défi du jour · La leçon</div>
+      <p class="qn" style="text-align:center">Tous les joueurs voient qui est en tête, même ceux qui ne sont pas inscrits.<br>Pas inscrit : la carte montre « League #2 · 3 / 16 · S’inscrire ».</p>
+    </div>
+  </section>
+</div>
+<p class="note"><b>À retenir :</b> 16 inscrits, ça démarre tout seul. 3 matchs de poule, puis quarts, demies et la finale en direct le dimanche à 20 h. Un match = premier à 2 manches, 48 h pour le jouer. Les 3 premiers se partagent la cagnotte en jetons. Le leader se voit partout, et on est prévenu dès qu’on se fait dépasser.</p>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+let ecuN = 0;
+function ecuSvg(ribbon){
+  const k = 'e'+(ecuN++);
+  const card = (x, y, r, v, s, red)=>{ const c = red ? '#c8283a' : '#141210'; return '<g transform="translate('+x+' '+y+') rotate('+r+')"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="-13" y="-10" font-family="Fredoka" font-weight="700" font-size="12" fill="'+c+'">'+v+'</text><text x="0" y="8" text-anchor="middle" font-size="21" fill="'+c+'">'+s+'</text></g>'; };
+  return '<svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+k+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff1414"/><stop offset=".6" stop-color="#e00000"/><stop offset="1" stop-color="#b00000"/></linearGradient><linearGradient id="'+k+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="'+k+'c"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs>'
+    +'<path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#'+k+'s)" stroke="url(#'+k+'g)" stroke-width="5"/>'
+    +'<g clip-path="url(#'+k+'c)"><rect x="96" y="0" width="48" height="280" fill="#0b0b0b"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="url(#'+k+'g)" stroke-width="2"/></g>'
+    +'<path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#'+k+'g)" stroke="#000" stroke-width="2"/>'
+    +card(92, 142, -18, '3', '♠', 0)+card(148, 142, 18, '10', '♦', 1)+card(120, 134, 0, '3', '♥', 1)
+    +(ribbon ? '<path d="M8 196 H232 L220 214 L232 232 H8 L20 214 Z" fill="#141210" stroke="url(#'+k+'g)" stroke-width="3"/><text x="120" y="221" text-anchor="middle" font-family="Unbounded" font-weight="800" font-size="17" fill="#fff" letter-spacing="1">FAP-FAP LEAGUE</text>' : '')+'</svg>';
+}
+document.querySelectorAll('[data-ecu]').forEach(e=> e.innerHTML = ecuSvg(e.dataset.ecu==='1'));
+
+// the 16 players of League #1
+const P = [
+  ['Boris','Bastos','#212121'], ['Marius','Mokolo','#e23b3b'], ['Ange','Essos','#1e88e5'], ['Clarisse','Biyem-Assi','#c2185b'], ['Junior','Melen','#43a047'],
+  ['Patou','Mvog-Ada','#7b3fe4'], ['Sandra','Mvog-Mbi','#ff8a1f'], ['Rodrigue','Etoudi','#00acc1'], ['Yannick','Akwa','#c62828'], ['Kevin','Obili','#3949ab'], ['Ornella','Emana','#8d6e00'],
+  ['TOI','Nkolbisson','me'], ['Franck','Odza','#00838f'], ['Pélagie','Deïdo','#2e7d32'], ['Steve','Madagascar','#e91e63'], ['Christian','Tsinga','#0277bd']
+];
+const ini = n=> n==='TOI' ? 'TOI' : n.slice(0, 3).toUpperCase();
+const av = (p, cls)=> '<span class="av'+(p[2]==='me' ? ' me' : '')+(cls ? ' '+cls : '')+'" style="--c:'+p[2]+'">'+ini(p[0])+'</span>';
+const fmt = n=> n.toLocaleString('fr-FR');
+let joined = 11;
+function paintSeats(pop){
+  $('seats').innerHTML = Array.from({length:16}, (_, i)=>{ if(i>=joined) return '<span class="seat empty">?</span>'; const p = i<11 ? P[i] : P[i===11 ? 11 : i]; return '<span class="seat'+(p[2]==='me' ? ' me' : '')+(pop && i===joined - 1 ? ' pop' : '')+'" style="--c:'+p[2]+'">'+ini(p[0])+'</span>'; }).join('');
+  $('cnt').innerHTML = joined+'<small> / 16 inscrits</small>'; $('left').textContent = joined>=16 ? 'C’est plein !' : 'Plus que '+(16 - joined)+' place'+(16 - joined>1 ? 's' : '');
+  $('barI').style.width = (joined/16*100)+'%';
+  const pot = 20000 + 2000*joined; $('pot').textContent = fmt(pot); $('p1').textContent = fmt(Math.round(pot*.6)); $('p2').textContent = fmt(Math.round(pot*.3)); $('p3').textContent = fmt(Math.round(pot*.1));
+}
+paintSeats();
+$('btnJoin').onclick = ()=> $('sheetJoin').classList.add('on');
+$('btnJoinNo').onclick = ()=> $('sheetJoin').classList.remove('on');
+$('btnJoinOk').onclick = ()=>{ $('sheetJoin').classList.remove('on'); joined = 12; paintSeats(true); setTimeout(()=> go(1), 1100); };
+
+// waiting: the list, the ring
+let wn = 12;
+function paintWait(newI){
+  const order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].slice(0, wn); // order of arrival: the newest end up on top
+  $('plist').innerHTML = order.map((i, k)=>{ const p = P[i]; return '<div class="prow'+(p[2]==='me' ? ' me' : '')+(k===newI ? ' new' : '')+'">'+av(p)+'<span><b>'+(p[0]==='TOI' ? 'Toi' : p[0])+'</b><small>'+p[1]+'</small></span><small>'+(k===wn - 1 ? 'à l’instant' : 'inscrit')+'</small></div>'; }).reverse().join('');
+  $('ringN').textContent = wn; $('plN').textContent = wn; $('ringFg').setAttribute('stroke-dashoffset', 465 - 465*wn/16);
+  $('waitT').innerHTML = wn>=16 ? '<b>C’est plein !</b> Le tirage commence…' : 'Plus que <b>'+(16 - wn)+' place'+(16 - wn>1 ? 's' : '')+'</b> : la League démarre dès que c’est plein.';
+}
+$('btnFill').onclick = ()=>{ const t = setInterval(()=>{ wn++; paintWait(wn - 1); if(wn>=16){ clearInterval(t); setTimeout(()=> go(2), 1300); } }, 650); };
+
+// the draw
+const GR = [[3, 4, 9, 6], [8, 10, 7, 13], [0, 1, 11, 2], [5, 12, 14, 15]];
+let drawT = [];
+function runDraw(){
+  drawT.forEach(clearTimeout); drawT = [];
+  $('groups').innerHTML = 'ABCD'.split('').map((g, i)=> '<div class="grp'+(i===2 ? ' mine' : '')+'" id="g'+i+'"><h4>Poule '+g+(i===2 ? '<span>TA POULE</span>' : '')+'</h4>'+'<div class="slot"></div>'.repeat(4)+'</div>').join('');
+  const btn = $('btnSeeLg'); btn.style.opacity = .35; btn.style.pointerEvents = 'none';
+  let k = 0;
+  for(let r = 0; r<4; r++) for(let g = 0; g<4; g++){
+    const i = GR[g][r], p = P[i], at = 300 + (k++)*360;
+    drawT.push(setTimeout(()=>{
+      const b = $('drawBall'); b.innerHTML = av(p)+'<div style="margin-top:6px">'+(p[0]==='TOI' ? 'Toi' : p[0])+'</div><small style="color:#7a5a5a">'+p[1]+' → poule '+'ABCD'[g]+'</small>'; b.querySelector('.av').style.margin = '0 auto'; b.classList.remove('go'); void b.offsetWidth; b.classList.add('go');
+      const s = $('g'+g).querySelectorAll('.slot')[r]; s.innerHTML = av(p)+(p[0]==='TOI' ? 'Toi' : p[0]); s.classList.add('in'); if(p[2]==='me') s.classList.add('me');
+    }, at));
+  }
+  drawT.push(setTimeout(()=>{ btn.style.opacity = 1; btn.style.pointerEvents = 'auto'; }, 300 + k*360 + 400));
+}
+$('btnSeeLg').onclick = ()=> go(3);
+
+// all groups
+// end of the groups (3 matches each, 3 points a win): ties are split by the rounds won
+const TB = [[[3,9],[6,6],[4,3],[9,0]], [[8,9],[7,6],[10,3],[13,0]], [[0,6],[11,6],[1,6],[2,0]], [[5,9],[12,6],[14,3],[15,0]]];
+$('allGroups').innerHTML = TB.map((g, gi)=> '<div class="card"><h3>Poule '+'ABCD'[gi]+(gi===2 ? '<span style="color:#fff">ta poule</span>' : '<span>3 journées</span>')+'</h3><table><tr><th></th><th>Joueur</th><th>Pts</th></tr>'+g.map(([i, pts], r)=>{ const p = P[i]; return '<tr class="'+(p[2]==='me' ? 'me ' : '')+(r===2 ? 'cut' : '')+'"><td>'+(r + 1)+'</td><td><span class="nm">'+av(p)+(p[0]==='TOI' ? 'Toi' : p[0])+'</span></td><td><b class="p">'+pts+'</b></td></tr>'; }).join('')+'</table></div>').join('');
+
+// tab bars
+const ICO = ['<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h5v6H3M3 13h5v6H3M8 8h4v8H8M12 12h6M18 9v6"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></svg>'];
+const TABS = [['Ma League', 3], ['Poules', 4], ['Tableau', 5], ['Direct', 6]];
+document.querySelectorAll('[data-tabbar]').forEach(t=>{ const on = +t.dataset.tabbar; t.innerHTML = TABS.map(([n, s], i)=> '<span class="'+(i===on ? 'on' : '')+'" data-go="'+s+'">'+ICO[i]+n+'</span>').join(''); });
+document.addEventListener('click', e=>{ const g = e.target.closest('[data-go]'); if(g) go(+g.dataset.go); });
+
+// the final: reactions fly up
+$('react').addEventListener('click', e=>{ const s = e.target.closest('span'); if(!s) return; const f = document.createElement('span'); f.className = 'fly'; f.textContent = s.textContent; f.style.left = (20 + Math.random()*55)+'%'; f.style.top = '330px'; $('phone').appendChild(f); setTimeout(()=> f.remove(), 2300); });
+let reactT;
+function crowd(){ clearInterval(reactT); const words = ['Allez Boris !', 'Waaah', 'CORA !', 'Nkolbisson !', 'Doucement']; reactT = setInterval(()=>{ if(cur!==6) return clearInterval(reactT); const f = document.createElement('span'); f.className = 'fly'; f.textContent = words[Math.floor(Math.random()*words.length)]; f.style.left = (10 + Math.random()*65)+'%'; f.style.top = '340px'; f.style.background = Math.random()<.5 ? '#212121' : '#e00000'; $('phone').appendChild(f); setTimeout(()=> f.remove(), 2300); }, 900); }
+function confetti(){ const c = $('confetti'); c.innerHTML = Array.from({length:40}, ()=> '<i style="left:'+(Math.random()*100)+'%;background:'+['#f2c76a','#e00000','#fff','#ff5a3a'][Math.floor(Math.random()*4)]+';--d:'+(2 + Math.random()*1.6)+'s;--dl:'+(Math.random()*.8)+'s"></i>').join(''); }
+
+// the screens
+const S = [
+  ['1. S’inscrire', 'Le joueur voit <b>combien de places restent</b>, ce qu’il peut gagner et comment se passe la semaine, avant de payer. Touche « M’inscrire ».'],
+  ['2. L’attente', 'Inscrit : il <b>suit le compteur</b> et peut inviter ses amis sur WhatsApp pour que ça démarre plus vite.'],
+  ['3. Le tirage', 'À 16, <b>le tirage se fait tout seul</b>, joueur par joueur, sous les yeux de tous. Ta poule est entourée de rouge.'],
+  ['4. Ma League', 'L’écran de tous les jours : <b>qui est en tête</b>, l’étape en cours, <b>ton prochain match</b> avec le temps restant, ta poule, le direct. Une alerte arrive quand on te dépasse.'],
+  ['5. Les poules', 'Les 4 poules d’un coup d’œil. <b>La ligne verte</b> sépare ceux qui passent de ceux qui sortent.'],
+  ['6. Le tableau', 'Quarts, demies, finale : <b>ton chemin en rouge</b>, les éliminés grisés.'],
+  ['7. La finale', 'Le show : ce que <b>tout le jeu voit</b> pendant ta finale contre Boris. Le score en direct, les spectateurs, leurs réactions qui montent, les pronostics.'],
+  ['8. Le podium', 'Les 3 récompensés, <b>leurs jetons</b>, ton titre gardé sur ton profil, et la League suivante déjà ouverte.'],
+  ['9. L’accueil', 'Sur l’accueil du jeu, <b>tout le monde voit le leader</b>. L’inscrit voit sa place et son match à jouer.']
+];
+let cur = 0;
+$('steps').innerHTML = S.map((s, i)=> '<span data-s="'+i+'">'+s[0]+'</span>').join('');
+$('steps').addEventListener('click', e=>{ const s = e.target.closest('[data-s]'); if(s) go(+s.dataset.s); });
+function go(i){
+  cur = i;
+  document.querySelectorAll('.scr').forEach(s=> s.classList.toggle('on', +s.dataset.s===i));
+  document.querySelectorAll('#steps span').forEach(s=> s.classList.toggle('on', +s.dataset.s===i));
+  $('what').innerHTML = S[i][1];
+  const st = document.querySelector('#steps span.on'); if(st) st.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+  if(i===0){ joined = 11; paintSeats(); }
+  if(i===1){ wn = 12; paintWait(11); }
+  if(i===2) runDraw();
+  if(i===3){ const t = $('toast'); t.classList.remove('on'); setTimeout(()=> cur===3 && t.classList.add('on'), 1400); setTimeout(()=> t.classList.remove('on'), 6500); }
+  if(i===6) crowd();
+  if(i===7) confetti();
+}
+go(0);
+})();
+</script>
+</body></html>
