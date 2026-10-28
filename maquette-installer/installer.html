@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0a0a">
+<title>Installer le jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : l'installation du jeu, visible dès le début, et un tutoriel animé léger
+   (seulement des déplacements et des fondus : rien de lourd pour le téléphone). */
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:#fff6f2; font:700 14px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:900 10.5px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+.lead{ color:#c9a3a3; margin:6px 0 12px; font-size:13px; }
+.tabs{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.tab{ padding:9px 4px; border-radius:14px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11.5px 'Nunito'; color:#c9a3a3; cursor:pointer; }
+.tab.on{ background:#e00000; color:#fff; }
+.what{ color:#c9a3a3; font-size:13px; margin-bottom:12px; } .what b{ color:#fff; }
+.note{ margin-top:16px; color:#c9a3a3; font-size:12.5px; line-height:1.5; } .note b{ color:#fff; }
+.phone{ position:relative; width:min(370px, 100%); margin:0 auto; aspect-ratio:9/19.3; border-radius:42px; border:4px solid #000; overflow:hidden; background:radial-gradient(120% 55% at 30% 0%, #3a1a10 0%, #120606 45%, #070202 80%); box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; }
+.scr{ position:absolute; inset:0; display:none; padding:44px 14px 20px; overflow:hidden; }
+.scr.on{ display:block; }
+.coin{ width:12px; height:12px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, #e6b23a 55%, #7a4a10); border:1.5px solid #000; display:inline-block; }
+.top{ display:flex; gap:6px; align-items:center; } .pill{ display:flex; align-items:center; gap:5px; padding:6px 10px; border-radius:20px; background:#170707; border:2px solid #000; font:800 12px 'Nunito'; } .rnd{ width:32px; height:32px; border-radius:50%; background:#170707; border:2px solid #000; margin-left:auto; } .rnd + .rnd{ margin-left:0; }
+
+/* 1 · the banner, at the top of the home screen */
+.inst{ display:flex; align-items:center; gap:10px; margin:12px 0; padding:10px 12px; border-radius:18px; background:linear-gradient(90deg, #e00000, #8f0000); border:2.5px solid #000; box-shadow:0 4px 0 #000; position:relative; overflow:hidden; cursor:pointer; }
+.inst::after{ content:''; position:absolute; top:0; bottom:0; width:40%; left:-50%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent); animation:sheen 3.2s ease-in-out infinite; }
+@keyframes sheen{ 0%,60%{ left:-50%; } 100%{ left:120%; } }
+.inst .ic{ width:38px; height:38px; border-radius:11px; background:#16100b; border:2px solid #e9b94e; display:grid; place-items:center; font:700 13px 'Fredoka'; color:#f1c257; flex:none; animation:hop 2.4s ease-in-out infinite; }
+@keyframes hop{ 0%,70%,100%{ transform:none; } 78%{ transform:translateY(-5px); } 86%{ transform:none; } 92%{ transform:translateY(-2px); } }
+.inst span b{ display:block; font:700 15px 'Fredoka'; } .inst span small{ font:800 11px 'Nunito'; color:#ffd8d8; }
+.inst em{ margin-left:auto; font-style:normal; padding:6px 10px; border-radius:12px; background:#fff; color:#111; font:900 11.5px 'Nunito'; border:2px solid #000; flex:none; }
+.logo{ text-align:center; margin:14px 0 6px; font:700 44px 'Fredoka'; color:#ffd88a; text-shadow:0 0 20px rgba(255,170,60,.5), 0 4px 0 #000; }
+.ghost{ height:64px; border-radius:18px; background:#170707; border:2px solid #000; margin-bottom:10px; opacity:.55; display:grid; place-items:center; color:#7a5a5a; font:800 11px 'Nunito'; }
+.ghost.play{ height:90px; background:#e00000; opacity:.5; color:#fff; }
+
+/* 2 · the invitation, once, right after the opening */
+.sheetBg{ position:absolute; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; }
+.sheet{ width:100%; padding:20px 16px 26px; border-radius:26px 26px 0 0; background:#120505; border-top:2px solid #e00000; text-align:center; animation:up .45s cubic-bezier(.16,1,.3,1); }
+@keyframes up{ from{ transform:translateY(100%); } }
+.appic{ width:72px; height:72px; margin:0 auto 10px; border-radius:18px; background:#16100b; border:3px solid #e9b94e; display:grid; place-items:center; font:700 24px 'Fredoka'; color:#f1c257; box-shadow:0 8px 20px rgba(0,0,0,.5); animation:land 2.6s ease-in-out infinite; }
+@keyframes land{ 0%{ transform:translateY(-14px) scale(.9); opacity:0; } 20%,80%{ transform:none; opacity:1; } 100%{ transform:none; opacity:1; } }
+.sheet h4{ font:700 19px 'Fredoka'; } .sheet p{ color:#d9b9b9; font-size:13px; margin:6px 0 12px; }
+.perks{ display:grid; gap:7px; margin-bottom:14px; text-align:left; } .perks div{ display:flex; gap:9px; align-items:center; font:800 12.5px 'Nunito'; } .perks i{ width:24px; height:24px; border-radius:8px; background:#e00000; display:grid; place-items:center; font-style:normal; font-size:12px; flex:none; border:2px solid #000; }
+.cta{ display:block; padding:14px; border-radius:16px; background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); border:2.5px solid #000; box-shadow:0 5px 0 #000; font:700 16px 'Fredoka'; color:#fff; cursor:pointer; }
+.later{ display:block; margin-top:10px; color:#c9a3a3; font:800 12.5px 'Nunito'; }
+
+/* 3 · the animated tutorial: a mini phone, a finger that shows each touch, on a loop */
+.seg{ display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; border-radius:14px; background:#170707; border:2px solid #000; margin-bottom:12px; }
+.seg span{ text-align:center; padding:8px; border-radius:10px; font:900 12.5px 'Nunito'; color:#c9a3a3; cursor:pointer; } .seg span.on{ background:#e00000; color:#fff; }
+.demo{ position:relative; width:190px; height:300px; margin:0 auto 10px; border-radius:26px; border:3px solid #000; background:#f4f1ea; overflow:hidden; box-shadow:0 10px 24px rgba(0,0,0,.5); }
+.demo .page{ position:absolute; inset:0 0 34px; background:linear-gradient(180deg, #2a0a0a, #0e0404); display:grid; place-items:center; font:700 22px 'Fredoka'; color:#ffd88a; }
+.demo .bar{ position:absolute; left:0; right:0; bottom:0; height:34px; background:#f4f1ea; border-top:1px solid #ccc; display:flex; justify-content:space-around; align-items:center; }
+.demo .bar i{ width:16px; height:16px; border-radius:4px; background:#c9c9c9; } .demo .bar i.share{ background:#3D7FD9; position:relative; }
+.demo .bar i.share::after{ content:'↑'; position:absolute; inset:0; color:#fff; font:900 12px/16px 'Nunito'; text-align:center; }
+.demo .menu{ position:absolute; left:6px; right:6px; bottom:6px; border-radius:14px; background:#fff; border:1px solid #ccc; padding:8px; transform:translateY(120%); }
+.demo .menu div{ padding:8px; border-radius:8px; font:800 10px 'Nunito'; color:#333; background:#f2f2f2; margin-top:5px; } .demo .menu div.hit{ background:#ffd8d8; color:#a00; }
+.demo .home{ position:absolute; inset:0; background:linear-gradient(160deg, #3a6ea8, #1b3558); opacity:0; display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding:30px 14px; align-content:start; }
+.demo .home i{ aspect-ratio:1; border-radius:10px; background:rgba(255,255,255,.35); } .demo .home i.ff{ background:#16100b; border:2px solid #e9b94e; display:grid; place-items:center; font:700 11px 'Fredoka'; color:#f1c257; font-style:normal; transform:scale(0); }
+.finger{ position:absolute; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.85); border:2px solid #000; box-shadow:0 4px 10px rgba(0,0,0,.4); z-index:5; left:50%; top:110%; }
+.finger::after{ content:''; position:absolute; inset:-8px; border-radius:50%; border:3px solid rgba(255,255,255,.9); opacity:0; }
+/* the iPhone loop (6 s): tap Share → the menu rises → tap « Sur l'écran d'accueil » → the icon lands on the home screen */
+.ios .finger{ animation:fIos 6s ease-in-out infinite; } .ios .finger::after{ animation:tapA 6s ease-out infinite; }
+@keyframes fIos{ 0%{ left:60%; top:110%; } 14%{ left:44%; top:89%; } 32%{ left:44%; top:89%; } 46%{ left:40%; top:72%; } 62%{ left:40%; top:72%; } 80%,100%{ left:60%; top:110%; } }
+@keyframes tapA{ 0%,16%{ opacity:0; transform:scale(.6); } 20%{ opacity:1; transform:scale(1); } 26%,48%{ opacity:0; transform:scale(1.5); } 52%{ opacity:1; transform:scale(1); } 58%,100%{ opacity:0; transform:scale(1.5); } }
+.ios .menu{ animation:menuUp 6s cubic-bezier(.16,1,.3,1) infinite; } @keyframes menuUp{ 0%,22%{ transform:translateY(120%); } 30%,64%{ transform:none; } 70%,100%{ transform:translateY(120%); } }
+.ios .menu .hit{ animation:hit 6s steps(1) infinite; } @keyframes hit{ 0%,50%{ background:#f2f2f2; color:#333; } 52%,64%{ background:#ffd8d8; color:#a00; } 66%,100%{ background:#f2f2f2; color:#333; } }
+.ios .home, .and .home{ animation:homeIn 6s ease infinite; } @keyframes homeIn{ 0%,66%{ opacity:0; } 72%,96%{ opacity:1; } 100%{ opacity:0; } }
+.ios .home .ff, .and .home .ff{ animation:icon 6s cubic-bezier(.3,1.6,.5,1) infinite; } @keyframes icon{ 0%,72%{ transform:scale(0); } 80%,96%{ transform:scale(1); } 100%{ transform:scale(0); } }
+/* the Android loop: tap « Installer » → confirm → the icon */
+.demo .and-btn{ position:absolute; left:20px; right:20px; top:45%; padding:10px; border-radius:20px; background:#2FB36B; border:2px solid #000; color:#fff; text-align:center; font:900 12px 'Nunito'; }
+.demo .confirm{ position:absolute; left:12px; right:12px; top:30%; padding:12px; border-radius:14px; background:#fff; color:#222; font:800 10.5px 'Nunito'; box-shadow:0 8px 20px rgba(0,0,0,.4); opacity:0; }
+.demo .confirm b{ display:block; text-align:right; color:#1a73e8; margin-top:8px; }
+.and .finger{ animation:fAnd 6s ease-in-out infinite; } .and .finger::after{ animation:tapA 6s ease-out infinite; }
+@keyframes fAnd{ 0%{ left:60%; top:110%; } 14%{ left:44%; top:47%; } 32%{ left:44%; top:47%; } 46%{ left:72%; top:44%; } 62%{ left:72%; top:44%; } 80%,100%{ left:60%; top:110%; } }
+.and .confirm{ animation:conf 6s ease infinite; } @keyframes conf{ 0%,24%{ opacity:0; transform:scale(.9); } 30%,62%{ opacity:1; transform:none; } 68%,100%{ opacity:0; } }
+.steps{ display:grid; gap:8px; }
+.st{ display:flex; gap:10px; align-items:center; padding:9px 10px; border-radius:14px; background:#170707; border:2px solid #000; font:800 12.5px/1.35 'Nunito'; opacity:.45; transition:opacity .3s, border-color .3s; }
+.st i{ width:24px; height:24px; border-radius:50%; background:#2a1010; display:grid; place-items:center; font-style:normal; font:900 12px 'Nunito'; flex:none; }
+.st.on{ opacity:1; border-color:#e00000; } .st.on i{ background:#e00000; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; } .demo .home, .demo .home .ff{ opacity:1; transform:none; } }
+</style></head>
+<body>
+<h1><small>Maquette · à valider</small>Installer le jeu</h1>
+<p class="lead">L’installation se voit dès le début, et le tutoriel montre chaque geste avec un doigt animé. Seulement des déplacements et des fondus : rien de lourd pour le téléphone.</p>
+<div class="tabs" id="tabs"><div class="tab on" data-s="0">1. Sur l’accueil</div><div class="tab" data-s="1">2. Au démarrage</div><div class="tab" data-s="3">3. Le tutoriel</div></div>
+<p class="what" id="what"></p>
+<div class="phone">
+  <section class="scr on" data-s="0">
+    <div class="top"><span class="pill"><i class="coin"></i>12 400</span><span class="rnd"></span><span class="rnd"></span></div>
+    <div class="inst" data-go="3"><span class="ic">FF</span><span><b>Installe Fap Fap</b><small>Plein écran, et on te prévient quand on te dépasse</small></span><em>2 gestes</em></div>
+    <div class="logo">FAP FAP</div>
+    <div class="ghost">Ta place</div><div class="ghost play">Jouer</div><div class="ghost">La League</div>
+  </section>
+  <section class="scr" data-s="1">
+    <div class="top"><span class="pill"><i class="coin"></i>12 400</span><span class="rnd"></span><span class="rnd"></span></div>
+    <div class="logo">FAP FAP</div><div class="ghost">Ta place</div><div class="ghost play">Jouer</div>
+    <div class="sheetBg"><div class="sheet"><span class="appic">FF</span><h4>Mets Fap Fap sur ton téléphone</h4><p>Comme une vraie application, à côté de WhatsApp.</p>
+      <div class="perks"><div><i>⤢</i>En plein écran, sans la barre du navigateur</div><div><i>🔔</i>Prévenu quand on te défie ou te dépasse</div><div><i>⚡</i>Il s’ouvre tout de suite, même sans réseau</div></div>
+      <span class="cta" data-go="3">Voir comment (2 gestes)</span><span class="later">Plus tard · c’est aussi en haut de l’accueil</span></div></div>
+  </section>
+  <section class="scr" data-s="3">
+    <div class="seg" id="seg"><span class="on" data-os="ios">iPhone</span><span data-os="and">Android</span></div>
+    <div class="demo ios" id="demo"></div>
+    <div class="steps" id="steps"></div>
+  </section>
+</div>
+<p class="note"><b>Comment ça marche :</b> la bannière en haut de l’accueil reste tant que le jeu n’est pas installé (elle disparaît toute seule après). L’invitation du démarrage ne s’affiche qu’une fois, après la cinématique. Sur Android, le bouton installe vraiment le jeu en un geste quand le téléphone le permet.</p>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const WHAT = ['<b>Sur l’accueil</b> : une bannière rouge, en haut, tant que le jeu n’est pas installé. L’icône sautille de temps en temps, un reflet passe.', '<b>Au démarrage</b> : une seule fois, juste après la cinématique, une invitation explique ce qu’on y gagne.', '', '<b>Le tutoriel animé</b> : un doigt montre chaque toucher sur un petit téléphone, en boucle. L’étape en cours s’allume en dessous.'];
+let os = 'ios', tT = [];
+function demo(){
+  const d = $('demo'); d.className = 'demo '+os;
+  d.innerHTML = os==='ios'
+    ? '<div class="page">FAP FAP</div><div class="bar"><i></i><i></i><i class="share"></i><i></i><i></i></div><div class="menu"><div>Copier</div><div class="hit">Sur l’écran d’accueil  ⊞</div><div>Signets</div></div><div class="home">'+'<i></i>'.repeat(6)+'<i class="ff">FF</i></div><span class="finger"></span>'
+    : '<div class="page">FAP FAP</div><div class="and-btn">Installer Fap Fap</div><div class="confirm">Installer l’application ?<b>INSTALLER</b></div><div class="home">'+'<i></i>'.repeat(6)+'<i class="ff">FF</i></div><span class="finger"></span>';
+  const S = os==='ios' ? ['Touche <b>Partager</b> en bas de Safari', 'Touche « <b>Sur l’écran d’accueil</b> »', 'Fap Fap est sur ton téléphone !'] : ['Touche « <b>Installer Fap Fap</b> »', 'Confirme : <b>Installer</b>', 'Fap Fap est sur ton téléphone !'];
+  $('steps').innerHTML = S.map((s, i)=> '<div class="st" data-k="'+i+'"><i>'+(i + 1)+'</i><span>'+s+'</span></div>').join('');
+  // the step lights up in time with the finger (the loop lasts 6 s)
+  tT.forEach(clearInterval); tT = [];
+  const light = ()=>{ const t = (performance.now() - start) % 6000, k = t<2600 ? 0 : t<4100 ? 1 : 2; document.querySelectorAll('.st').forEach((e, i)=> e.classList.toggle('on', i===k)); };
+  const start = performance.now(); light(); tT.push(setInterval(light, 200));
+}
+$('seg').addEventListener('click', e=>{ const s = e.target.closest('[data-os]'); if(!s) return; os = s.dataset.os; document.querySelectorAll('#seg span').forEach(x=> x.classList.toggle('on', x===s)); demo(); });
+function go(s){
+  document.querySelectorAll('.scr').forEach(x=> x.classList.toggle('on', +x.dataset.s===s));
+  document.querySelectorAll('#tabs .tab').forEach(x=> x.classList.toggle('on', +x.dataset.s===s));
+  $('what').innerHTML = WHAT[s];
+  if(s===3) demo();
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-s]'); if(t) go(+t.dataset.s); });
+document.addEventListener('click', e=>{ const g = e.target.closest('[data-go]'); if(g) go(+g.dataset.go); });
+go(0);
+})();
+</script>
+</body></html>
