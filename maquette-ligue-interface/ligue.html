@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0a0a">
+<title>Interfaces Fap-Fap League</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&family=Unbounded:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : 4 interfaces pour la Fap-Fap League. Chaque direction a ses couleurs, sa disposition de l'écran « Ma saison »
+   et sa propre entrée animée (rejouable). L'écusson rouge et noir choisi est partout. */
+:root{ --bg:#0e0a0a; --card:#211818; --text:#f7f2ea; --mute:#bfa9a2; --red:#e00000; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; margin:0; }
+html,body{ background:var(--bg); color:var(--text); font:700 14.5px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ font:700 24px/1.1 'Fredoka', sans-serif; } h1 small{ display:block; font:900 11px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#ff3b3b; margin-bottom:4px; }
+.lead{ color:var(--mute); margin:6px 0 0; }
+.tabs{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin:14px 0 10px; }
+.tab{ border-radius:14px; padding:9px 2px; text-align:center; background:var(--card); border:2.5px solid #000; box-shadow:0 3px 0 #000; font:900 11.5px 'Nunito'; color:var(--mute); cursor:pointer; }
+.tab.on{ background:var(--red); color:#fff; }
+.about b.t{ display:block; font:700 19px 'Fredoka'; } .about p{ color:var(--mute); margin:4px 0 0; }
+.replay{ display:block; margin:12px auto; padding:10px 18px; border-radius:14px; border:2.5px solid #000; box-shadow:0 3px 0 #000; background:#fff; color:#111; font:900 13px 'Nunito'; cursor:pointer; }
+.note{ margin-top:18px; font:700 12.5px/1.5 'Nunito'; color:var(--mute); } .note b{ color:var(--text); }
+
+/* the phone */
+.phone{ position:relative; width:min(360px, 100%); margin:0 auto; aspect-ratio:9/19; border-radius:40px; border:4px solid #000; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; isolation:isolate; }
+.scr{ position:absolute; inset:0; overflow-y:auto; scrollbar-width:none; padding:44px 14px 86px; } .scr::-webkit-scrollbar{ display:none; }
+.intro{ position:absolute; inset:0; z-index:20; overflow:hidden; pointer-events:none; }
+.intro.gone{ animation:introOut .6s ease forwards; } @keyframes introOut{ to{ opacity:0; visibility:hidden; } }
+.nav{ position:absolute; left:10px; right:10px; bottom:12px; z-index:5; display:grid; grid-template-columns:repeat(4,1fr); border-radius:22px; padding:6px; }
+.nav span{ display:flex; flex-direction:column; align-items:center; gap:3px; font:800 10px 'Nunito'; padding:6px 0; border-radius:16px; }
+.nav i{ width:20px; height:20px; display:block; }
+.crest svg{ display:block; width:100%; height:auto; }
+
+/* ============ 1 · STADE DE NUIT (noir, rouge vif, or) ============ */
+.d1{ background:radial-gradient(120% 60% at 50% -10%, #3a0000 0%, #120404 45%, #070202 80%); color:#fff; }
+.d1 .top{ display:flex; align-items:center; gap:10px; }
+.d1 .top .crest{ width:38px; } .d1 .top b{ font:900 15px 'Unbounded'; letter-spacing:.02em; flex:1; } .d1 .top b small{ display:block; font:800 10px 'Nunito'; letter-spacing:.16em; color:#f2c76a; }
+.d1 .chip{ display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:20px; background:#1d0a0a; border:1.5px solid #3a1212; font:900 12px 'Nunito'; }
+.d1 .chip i{ width:12px; height:12px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, #e6b23a 55%, #7a4a10); border:1.5px solid #000; }
+.d1 .hero{ margin-top:14px; border-radius:24px; padding:16px 14px 14px; background:linear-gradient(180deg, #e00000, #8f0000); border:3px solid #000; box-shadow:0 6px 0 #000, inset 0 1px 0 rgba(255,255,255,.3); position:relative; overflow:hidden; }
+.d1 .hero::before{ content:""; position:absolute; inset:0; background:repeating-linear-gradient(115deg, rgba(0,0,0,.12) 0 14px, transparent 14px 30px); }
+.d1 .hero > *{ position:relative; }
+.d1 .kick{ font:900 10.5px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; opacity:.85; text-align:center; }
+.d1 .vs{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin:12px 0; text-align:center; }
+.d1 .vs b{ display:block; font:900 13px 'Unbounded'; margin-top:6px; }
+.d1 .vs em{ font:400 34px 'Anton'; font-style:normal; color:#fff; text-shadow:0 3px 0 #000; }
+.d1 .badge{ width:58px; height:58px; margin:0 auto; border-radius:50%; display:grid; place-items:center; font:900 17px 'Unbounded'; border:3px solid #000; box-shadow:0 4px 0 #000; }
+.d1 .go{ display:block; text-align:center; padding:13px; border-radius:16px; background:#0b0b0b; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:900 15px 'Unbounded'; color:#fff; }
+.d1 .go small{ display:block; font:800 10.5px 'Nunito'; color:#f2c76a; margin-top:2px; }
+.d1 .tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.d1 .tiles div{ border-radius:16px; padding:10px 6px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; }
+.d1 .tiles b{ display:block; font:900 20px 'Unbounded'; color:#fff; } .d1 .tiles small{ font:800 10px 'Nunito'; color:#c9a3a3; }
+.d1 h3{ font:900 11px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#f2c76a; margin:16px 2px 8px; }
+.d1 table{ width:100%; border-collapse:collapse; border-radius:16px; overflow:hidden; background:#170707; border:2px solid #000; font:800 12.5px 'Nunito'; }
+.d1 td{ padding:9px 8px; border-bottom:1px solid #2a0f0f; } .d1 td:last-child{ text-align:right; font-weight:900; } .d1 td:first-child{ width:22px; color:#c9a3a3; }
+.d1 tr.me td{ background:#e00000; color:#fff; } .d1 tr.me td:first-child{ color:#fff; }
+.d1 .road{ display:flex; gap:6px; } .d1 .road span{ flex:1; text-align:center; padding:8px 2px; border-radius:12px; background:#170707; border:2px solid #000; font:900 10px 'Nunito'; color:#8a6a6a; }
+.d1 .road span.on{ background:#f2c76a; color:#2b1a02; } .d1 .road span.next{ color:#fff; border-color:#e00000; }
+.d1 .nav{ background:#0b0303; border:2px solid #2a0f0f; color:#8a6a6a; } .d1 .nav span.on{ background:#e00000; color:#fff; }
+/* entrance 1: the floodlights switch on, the crest drops with a thud, the ribbon unrolls */
+.d1 .intro{ background:#030101; }
+.d1 .lamp{ position:absolute; top:-40px; width:160px; height:520px; transform-origin:50% 0; opacity:0; background:linear-gradient(180deg, rgba(255,240,220,.85), rgba(255,60,40,.0) 75%); clip-path:polygon(44% 0, 56% 0, 100% 100%, 0 100%); filter:blur(2px); }
+.d1 .lamp.a{ left:-50px; rotate:-24deg; } .d1 .lamp.b{ right:-50px; rotate:24deg; } .d1 .lamp.c{ left:30px; rotate:-8deg; } .d1 .lamp.d{ right:30px; rotate:8deg; }
+.d1 .intro.play .lamp{ animation:lampOn .18s steps(2) forwards; } .d1 .intro.play .lamp.a{ animation-delay:.15s; } .d1 .intro.play .lamp.b{ animation-delay:.45s; } .d1 .intro.play .lamp.c{ animation-delay:.75s; } .d1 .intro.play .lamp.d{ animation-delay:1.05s; }
+@keyframes lampOn{ 0%{ opacity:0; } 50%{ opacity:.9; } 100%{ opacity:.55; } }
+.d1 .ic{ position:absolute; left:50%; top:32%; width:170px; margin-left:-85px; opacity:0; }
+.d1 .intro.play .ic{ animation:drop .55s cubic-bezier(.5,0,.75,0) 1.4s forwards, thud .35s ease-out 1.95s; }
+@keyframes drop{ from{ opacity:1; transform:translateY(-420px) scale(1.25); } to{ opacity:1; transform:none; } }
+@keyframes thud{ 30%{ transform:scale(.94, 1.05); } 60%{ transform:scale(1.04, .96); } }
+.d1 .dust{ position:absolute; left:50%; top:62%; width:260px; height:40px; margin-left:-130px; border-radius:50%; background:radial-gradient(ellipse, rgba(255,220,200,.5), transparent 70%); opacity:0; }
+.d1 .intro.play .dust{ animation:dust .8s ease-out 1.95s; } @keyframes dust{ 0%{ opacity:.9; transform:scaleX(.4); } 100%{ opacity:0; transform:scaleX(1.5); } }
+.d1 .shake{ position:absolute; inset:0; } .d1 .intro.play .shake{ animation:shk .3s 1.95s; } @keyframes shk{ 25%{ transform:translate(-5px,4px); } 50%{ transform:translate(4px,-3px); } 75%{ transform:translate(-2px,2px); } }
+.d1 .sub{ position:absolute; left:0; right:0; top:66%; text-align:center; font:900 13px 'Unbounded'; letter-spacing:.3em; color:#f2c76a; clip-path:inset(0 50% 0 50%); }
+.d1 .intro.play .sub{ animation:unroll .6s ease-out 2.2s forwards; } @keyframes unroll{ to{ clip-path:inset(0 0 0 0); } }
+.d1 .sub small{ display:block; margin-top:8px; font:800 11px 'Nunito'; letter-spacing:.18em; color:#fff; }
+
+/* ============ 2 · L'AFFICHE (papier crème, noir, rouge) ============ */
+.d2{ background:#efe4cf; color:#111; background-image:radial-gradient(rgba(0,0,0,.07) 1px, transparent 1.4px); background-size:7px 7px; }
+.d2 .mast{ text-align:center; border-bottom:4px solid #111; padding-bottom:8px; }
+.d2 .mast small{ font:800 10px 'Nunito'; letter-spacing:.24em; } .d2 .mast b{ display:block; font:400 52px/0.9 'Anton'; letter-spacing:.01em; text-transform:uppercase; }
+.d2 .mast b span{ color:#e00000; } .d2 .mast em{ display:block; font-style:normal; font:400 15px 'Bebas Neue'; letter-spacing:.3em; margin-top:4px; }
+.d2 .ticket{ margin-top:14px; display:grid; grid-template-columns:minmax(0,1fr) 62px; background:#fff8ea; border:3px solid #111; border-radius:6px; position:relative; box-shadow:5px 5px 0 #111; }
+.d2 .ticket .l{ padding:12px; border-right:3px dashed #111; } .d2 .ticket .l small{ font:400 13px 'Bebas Neue'; letter-spacing:.2em; color:#e00000; }
+.d2 .ticket .l b{ display:block; font:400 23px/1.05 'Anton'; text-transform:uppercase; margin:4px 0; } .d2 .ticket .l b i{ font-style:normal; color:#e00000; font-size:16px; vertical-align:3px; margin-right:6px; }
+.d2 .ticket .l p{ font:800 11.5px 'Nunito'; color:#5a4a3a; }
+.d2 .ticket .r{ display:grid; place-items:center; background:#e00000; color:#fff; text-align:center; font:400 22px/1 'Anton'; text-transform:uppercase; writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:.06em; }
+.d2 .row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.d2 .box{ border:3px solid #111; background:#fff8ea; padding:10px; box-shadow:4px 4px 0 #111; }
+.d2 .box small{ font:400 12px 'Bebas Neue'; letter-spacing:.2em; } .d2 .box b{ display:block; font:400 34px/1 'Anton'; } .d2 .box b.red{ color:#e00000; }
+.d2 h3{ font:400 22px 'Anton'; text-transform:uppercase; margin:16px 0 6px; border-bottom:3px solid #111; display:flex; justify-content:space-between; align-items:baseline; } .d2 h3 small{ font:400 12px 'Bebas Neue'; letter-spacing:.2em; }
+.d2 table{ width:100%; border-collapse:collapse; font:800 13px 'Nunito'; } .d2 td{ padding:7px 4px; border-bottom:1.5px solid #111; } .d2 td:last-child{ text-align:right; font:400 18px 'Anton'; } .d2 td:first-child{ width:24px; font:400 18px 'Anton'; }
+.d2 tr.me td{ background:#111; color:#efe4cf; } .d2 tr.me td:last-child{ color:#ff4a4a; }
+.d2 .stamps{ display:flex; gap:6px; flex-wrap:wrap; } .d2 .stamps span{ padding:4px 8px; border:2.5px solid #111; font:400 14px 'Bebas Neue'; letter-spacing:.12em; transform:rotate(var(--r,0deg)); background:#fff8ea; }
+.d2 .stamps span.on{ background:#e00000; color:#fff; border-color:#e00000; } .d2 .stamps span.off{ opacity:.45; }
+.d2 .nav{ background:#111; color:#a89a86; border-radius:10px; } .d2 .nav span.on{ background:#e00000; color:#fff; border-radius:6px; }
+/* entrance 2: a poster slaps onto the wall, the tape, then the red stamp */
+.d2 .intro{ background:#3a3530; background-image:linear-gradient(90deg, rgba(0,0,0,.18) 1px, transparent 1px), linear-gradient(rgba(0,0,0,.18) 1px, transparent 1px); background-size:46px 23px; }
+.d2 .poster{ position:absolute; left:12%; right:12%; top:16%; bottom:22%; background:#efe4cf; border:3px solid #111; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; opacity:0; padding:16px; text-align:center; box-shadow:10px 14px 0 rgba(0,0,0,.4); }
+.d2 .poster .crest{ width:110px; } .d2 .poster b{ font:400 44px/0.9 'Anton'; text-transform:uppercase; color:#111; } .d2 .poster b span{ color:#e00000; } .d2 .poster small{ font:400 15px 'Bebas Neue'; letter-spacing:.25em; color:#111; }
+.d2 .intro.play .poster{ animation:slap .5s cubic-bezier(.2,1.6,.4,1) .3s forwards; }
+@keyframes slap{ from{ opacity:1; transform:translateY(-140%) rotate(-14deg) scale(1.3); } to{ opacity:1; transform:rotate(-2deg); } }
+.d2 .tape{ position:absolute; width:70px; height:22px; background:rgba(255,248,220,.75); opacity:0; } .d2 .tape.a{ left:6%; top:14%; rotate:-30deg; } .d2 .tape.b{ right:6%; top:14%; rotate:28deg; }
+.d2 .intro.play .tape{ animation:tape .15s ease .85s forwards; } .d2 .intro.play .tape.b{ animation-delay:1s; } @keyframes tape{ to{ opacity:1; } }
+.d2 .stamp{ position:absolute; left:50%; top:69%; padding:6px 14px; margin-left:-80px; width:160px; text-align:center; border:4px solid #e00000; color:#e00000; font:400 26px 'Anton'; letter-spacing:.05em; opacity:0; rotate:-12deg; mix-blend-mode:multiply; }
+.d2 .intro.play .stamp{ animation:stamp .3s cubic-bezier(.3,1.8,.5,1) 1.4s forwards; } @keyframes stamp{ from{ opacity:0; transform:scale(2.6); } to{ opacity:.95; transform:none; } }
+
+/* ============ 3 · LA TÉLÉ (bleu nuit, rouge, blanc — graphismes de match) ============ */
+.d3{ background:linear-gradient(180deg, #0a1433, #050a1c 60%); color:#fff; }
+.d3 .live{ display:flex; align-items:center; gap:8px; font:400 15px 'Bebas Neue'; letter-spacing:.14em; }
+.d3 .live .dot{ padding:2px 8px; background:#e00000; border-radius:3px; display:flex; align-items:center; gap:5px; } .d3 .live .dot::before{ content:""; width:7px; height:7px; border-radius:50%; background:#fff; animation:blink 1s infinite; }
+@keyframes blink{ 50%{ opacity:.2; } } .d3 .live .t{ margin-left:auto; opacity:.7; }
+.d3 .head{ display:flex; align-items:center; gap:10px; margin-top:10px; } .d3 .head .crest{ width:44px; } .d3 .head b{ font:400 30px/0.95 'Bebas Neue'; letter-spacing:.04em; } .d3 .head b small{ display:block; font:800 10.5px 'Nunito'; letter-spacing:.14em; color:#9fb0e6; }
+.d3 .board{ margin-top:14px; display:grid; grid-template-columns:1fr 64px 1fr; align-items:stretch; clip-path:polygon(4% 0, 96% 0, 100% 100%, 0 100%); }
+.d3 .board > div{ padding:10px 6px; text-align:center; font:400 26px 'Bebas Neue'; letter-spacing:.06em; }
+.d3 .board .h{ background:#fff; color:#0a1433; } .d3 .board .a{ background:#e00000; } .d3 .board .m{ background:#0b0b0b; font-size:22px; display:grid; place-items:center; line-height:1; } .d3 .board .m small{ display:block; font:800 9px 'Nunito'; letter-spacing:.1em; color:#9fb0e6; }
+.d3 .board .h small, .d3 .board .a small{ display:block; font:800 9.5px 'Nunito'; letter-spacing:.12em; opacity:.8; }
+.d3 .lower{ background:#0b0b0b; border-left:5px solid #e00000; padding:8px 10px; font:800 12px 'Nunito'; display:flex; justify-content:space-between; align-items:center; }
+.d3 .lower b{ font:400 16px 'Bebas Neue'; letter-spacing:.12em; padding:4px 12px; background:#e00000; }
+.d3 h3{ font:400 18px 'Bebas Neue'; letter-spacing:.18em; color:#9fb0e6; margin:16px 0 8px; }
+.d3 .phases{ display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:0 -14px; padding:0 14px 4px; } .d3 .phases::-webkit-scrollbar{ display:none; }
+.d3 .ph{ flex:0 0 112px; padding:10px; background:#101c44; clip-path:polygon(8% 0, 100% 0, 92% 100%, 0 100%); } .d3 .ph b{ display:block; font:400 20px 'Bebas Neue'; letter-spacing:.06em; } .d3 .ph small{ font:800 10px 'Nunito'; color:#9fb0e6; }
+.d3 .ph.on{ background:#e00000; } .d3 .ph.on small{ color:#ffdede; } .d3 .ph.lock{ opacity:.5; }
+.d3 table{ width:100%; border-collapse:collapse; font:800 12.5px 'Nunito'; } .d3 th{ font:400 13px 'Bebas Neue'; letter-spacing:.14em; color:#9fb0e6; text-align:left; padding:4px 8px; } .d3 th:last-child, .d3 td:last-child{ text-align:right; }
+.d3 td{ padding:8px; background:#0e1a40; border-top:2px solid #050a1c; } .d3 tr:nth-child(odd) td{ background:#122152; } .d3 td:first-child{ width:22px; font:400 17px 'Bebas Neue'; }
+.d3 tr.me td{ background:#fff; color:#0a1433; } .d3 td:last-child{ font:400 18px 'Bebas Neue'; }
+.d3 .ticker{ position:absolute; left:0; right:0; bottom:78px; z-index:4; background:#e00000; overflow:hidden; white-space:nowrap; font:800 11.5px 'Nunito'; padding:6px 0; }
+.d3 .ticker span{ display:inline-block; padding-left:100%; animation:tick 18s linear infinite; } @keyframes tick{ to{ transform:translateX(-100%); } }
+.d3 .nav{ background:#050a1c; border:2px solid #16245a; color:#6f80b8; border-radius:0; clip-path:polygon(3% 0, 97% 0, 100% 100%, 0 100%); } .d3 .nav span.on{ background:#fff; color:#0a1433; border-radius:0; }
+/* entrance 3: TV wipes, the crest flips in once, the lower third slides */
+.d3 .intro{ background:#050a1c; }
+.d3 .bar{ position:absolute; left:-30%; width:160%; height:90px; transform:translateX(-110%) skewY(-12deg); }
+.d3 .bar.a{ top:22%; background:#e00000; } .d3 .bar.b{ top:40%; background:#fff; } .d3 .bar.c{ top:58%; background:#0b0b0b; }
+.d3 .intro.play .bar{ animation:wipe 1.1s cubic-bezier(.7,0,.3,1) forwards; } .d3 .intro.play .bar.b{ animation-delay:.12s; } .d3 .intro.play .bar.c{ animation-delay:.24s; }
+@keyframes wipe{ 0%{ transform:translateX(-110%) skewY(-12deg); } 45%,55%{ transform:translateX(0) skewY(-12deg); } 100%{ transform:translateX(110%) skewY(-12deg); } }
+.d3 .ic{ position:absolute; left:50%; top:24%; width:150px; margin-left:-75px; opacity:0; perspective:600px; }
+.d3 .intro.play .ic{ animation:flipIn .8s cubic-bezier(.2,1.3,.4,1) 1.05s forwards; } @keyframes flipIn{ from{ opacity:1; transform:rotateY(-180deg) scale(.4); } to{ opacity:1; transform:none; } }
+.d3 .lt{ position:absolute; left:0; right:14%; top:64%; background:#0b0b0b; border-left:8px solid #e00000; padding:10px 14px; transform:translateX(-105%); }
+.d3 .lt b{ display:block; font:400 30px/1 'Bebas Neue'; letter-spacing:.05em; } .d3 .lt small{ font:800 11px 'Nunito'; letter-spacing:.14em; color:#9fb0e6; }
+.d3 .intro.play .lt{ animation:ltIn .5s cubic-bezier(.2,1,.3,1) 1.6s forwards; } @keyframes ltIn{ to{ transform:none; } }
+.d3 .onair{ position:absolute; right:14px; top:44px; padding:3px 9px; background:#e00000; font:400 14px 'Bebas Neue'; letter-spacing:.14em; opacity:0; }
+.d3 .intro.play .onair{ animation:tape .1s 2s forwards, blink 1s 2.1s infinite; }
+
+/* ============ 4 · NÉON DE QUARTIER (nuit bleue, rouge néon, cyan) ============ */
+.d4{ background:radial-gradient(90% 50% at 50% 0%, #1a1240 0%, #0a0b16 60%); color:#eef1ff; }
+.d4 .sign{ text-align:center; padding:10px 0 4px; } .d4 .sign .crest{ display:block; width:84px; margin:0 auto; filter:drop-shadow(0 0 10px rgba(255,40,60,.7)); }
+.d4 .sign b{ display:block; font:900 24px 'Unbounded'; color:#fff; text-shadow:0 0 6px #ff2b48, 0 0 18px #ff2b48; margin-top:6px; } .d4 .sign small{ font:700 12px 'Unbounded'; letter-spacing:.5em; color:#8ff0ff; text-shadow:0 0 8px #25d7ff; }
+.d4 .next{ margin-top:14px; border-radius:20px; padding:14px; border:2px solid #ff2b48; box-shadow:0 0 14px rgba(255,43,72,.55), inset 0 0 14px rgba(255,43,72,.25); background:#0d0f22; }
+.d4 .next small{ font:800 10.5px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#8ff0ff; } .d4 .next b{ display:block; font:900 17px 'Unbounded'; margin:6px 0 10px; } .d4 .next b em{ font-style:normal; color:#ff6a80; font-size:13px; margin:0 6px; }
+.d4 .go{ display:block; text-align:center; padding:12px; border-radius:14px; background:#ff2b48; color:#fff; font:900 14px 'Unbounded'; box-shadow:0 0 18px rgba(255,43,72,.7); }
+.d4 h3{ font:800 11px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#8ff0ff; margin:18px 2px 8px; }
+.d4 .tree{ position:relative; height:250px; border-radius:20px; background:#0d0f22; border:1.5px solid #20264f; }
+.d4 .tree svg{ position:absolute; inset:0; width:100%; height:100%; }
+.d4 .grp{ display:grid; grid-template-columns:1fr 1fr; gap:8px; } .d4 .grp div{ border-radius:14px; padding:9px 10px; background:#0d0f22; border:1.5px solid #20264f; font:800 12px 'Nunito'; display:flex; justify-content:space-between; }
+.d4 .grp div.me{ border-color:#25d7ff; box-shadow:0 0 12px rgba(37,215,255,.45); } .d4 .grp b{ font-family:'Unbounded'; }
+.d4 .nav{ background:#0a0b16; border:1.5px solid #20264f; color:#6a73a8; } .d4 .nav span.on{ color:#fff; text-shadow:0 0 8px #ff2b48; } .d4 .nav span.on i{ filter:drop-shadow(0 0 5px #ff2b48); }
+/* entrance 4: the neon tubes buzz on, the crest outline draws itself */
+.d4 .intro{ background:#05060e; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+.d4 .ol{ width:150px; } .d4 .ol path{ stroke-dasharray:900; stroke-dashoffset:900; }
+.d4 .intro.play .ol path{ animation:draw 1.2s ease-in-out .2s forwards; } @keyframes draw{ to{ stroke-dashoffset:0; } }
+.d4 .nl{ font:900 30px 'Unbounded'; color:#2a1018; } .d4 .nl span{ display:inline-block; }
+.d4 .intro.play .nl span{ animation:buzz .7s steps(1) forwards; } @keyframes buzz{ 0%{ color:#2a1018; text-shadow:none; } 20%{ color:#fff; text-shadow:0 0 8px #ff2b48, 0 0 22px #ff2b48; } 30%{ color:#2a1018; text-shadow:none; } 45%,100%{ color:#fff; text-shadow:0 0 8px #ff2b48, 0 0 22px #ff2b48; } }
+.d4 .nl2{ font:700 16px 'Unbounded'; letter-spacing:.6em; color:#0b2a33; } .d4 .intro.play .nl2{ animation:buzz2 .8s steps(1) 2.3s forwards; }
+@keyframes buzz2{ 0%{ color:#0b2a33; } 25%{ color:#dffaff; text-shadow:0 0 8px #25d7ff, 0 0 20px #25d7ff; } 35%{ color:#0b2a33; text-shadow:none; } 50%,100%{ color:#dffaff; text-shadow:0 0 8px #25d7ff, 0 0 20px #25d7ff; } }
+@media (prefers-reduced-motion: reduce){ .intro *{ animation-duration:.01s !important; animation-delay:0s !important; } }
+</style></head>
+<body>
+<h1><small>À choisir</small>L’interface de la League</h1>
+<p class="lead">Quatre directions, chacune avec ses couleurs, sa disposition et son entrée. Touche un numéro : l’entrée se joue, puis l’écran « Ma saison » apparaît. Tu peux faire défiler le téléphone.</p>
+<div class="tabs" id="tabs"></div>
+<div class="about" id="about"></div>
+<button class="replay" id="replay">↻ Rejouer l’entrée</button>
+<div class="phone" id="phone"></div>
+<p class="note"><b>Ce qui reste dans les quatre :</b> ton quartier, le prochain match en premier, la poule, la route jusqu’à la finale, les jetons à gagner, et les 4 onglets (Ma saison, Poules, Tableau, Joueurs) sans émoji. Le tirage, la soirée, le quiz et le trophée prendront le style choisi.<br><br><b>Mon conseil :</b> le 1, « Stade de nuit », pour coller au rouge et noir de l’écusson et au thème Rouge Mboa ; ou le 3, « La télé », si tu veux l’ambiance d’un vrai match retransmis.</p>
+<script>
+(()=>{
+// the crest chosen: very red, black band, gold star, the three cards of the CORA, the ribbon
+let n = 0;
+const cardS = (x, y, r, v, s, red, w = 34)=>{ const h = w*1.42, c = red ? '#c8283a' : '#141210';
+  return '<g transform="translate('+x+' '+y+') rotate('+r+')"><rect x="'+(-w/2)+'" y="'+(-h/2)+'" width="'+w+'" height="'+h+'" rx="'+(w*.14)+'" fill="#fffaf0" stroke="#000" stroke-width="2.5"/>'
+    +'<text x="'+(-w/2 + w*.12)+'" y="'+(-h/2 + w*.42)+'" font-family="Fredoka" font-weight="700" font-size="'+(w*.36)+'" fill="'+c+'">'+v+'</text><text x="0" y="'+(w*.24)+'" text-anchor="middle" font-size="'+(w*.62)+'" fill="'+c+'">'+s+'</text></g>'; };
+const crest = (ribbon = true)=>{ const k = 'k'+(n++);
+  return '<svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="'+k+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff1414"/><stop offset=".6" stop-color="#e00000"/><stop offset="1" stop-color="#b00000"/></linearGradient><linearGradient id="'+k+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="'+k+'c"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs>'
+    +'<path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/>'
+    +'<path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#'+k+'s)" stroke="url(#'+k+'g)" stroke-width="5"/>'
+    +'<g clip-path="url(#'+k+'c)"><rect x="96" y="0" width="48" height="280" fill="#0b0b0b"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="url(#'+k+'g)" stroke-width="2"/></g>'
+    +'<path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#'+k+'g)" stroke="#000" stroke-width="2"/>'
+    + cardS(92, 142, -18, '3', '♠', 0) + cardS(148, 142, 18, '10', '♦', 1) + cardS(120, 134, 0, '3', '♥', 1)
+    +(ribbon ? '<path d="M8 196 H232 L220 214 L232 232 H8 L20 214 Z" fill="#141210" stroke="url(#'+k+'g)" stroke-width="3"/><text x="120" y="221" text-anchor="middle" font-family="Unbounded" font-weight="800" font-size="17" fill="#fff" letter-spacing="1">FAP-FAP LEAGUE</text>' : '')+'</svg>'; };
+// the crest's outline only, for the neon entrance
+const crestLine = ()=> '<svg class="ol" viewBox="0 0 240 280"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="none" stroke="#ff2b48" stroke-width="6" stroke-linejoin="round" style="filter:drop-shadow(0 0 6px #ff2b48) drop-shadow(0 0 16px #ff2b48)"/><path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="none" stroke="#25d7ff" stroke-width="4" style="filter:drop-shadow(0 0 6px #25d7ff)"/><path d="M96 90 V250 M144 90 V250" stroke="#ff2b48" stroke-width="3" fill="none" style="filter:drop-shadow(0 0 5px #ff2b48)"/></svg>';
+// the 4 tabs' icons, drawn (no emoji)
+const ico = {
+  saison:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+  poules:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+  tableau:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h5v6H3M3 13h5v6H3M8 8h4v8H8M12 12h6M18 9v6"/></svg>',
+  joueurs:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>' };
+const nav = ()=> '<div class="nav">'+[['saison','Ma saison'],['poules','Poules'],['tableau','Tableau'],['joueurs','Joueurs']].map(([k, t], i)=> '<span class="'+(i ? '' : 'on')+'"><i>'+ico[k]+'</i>'+t+'</span>').join('')+'</div>';
+const G = [['Biyem-Assi', 6], ['Nkolbisson', 3], ['Mokolo', 3], ['Essos', 0]];
+const D = [
+  { k:'d1', name:'Stade de nuit', why:'Noir, rouge vif et or, comme l’écusson. Le prochain match en grand, face à face, puis tes chiffres, ta poule et la route jusqu’à la finale. Entrée : les projecteurs s’allument un par un, l’écusson tombe sur la pelouse avec un choc, le ruban se déroule.',
+    intro:()=> '<div class="shake"><i class="lamp a"></i><i class="lamp b"></i><i class="lamp c"></i><i class="lamp d"></i><div class="dust"></div><div class="ic crest">'+crest()+'</div><div class="sub">SAISON 1<small>32 quartiers · un seul roi</small></div></div>',
+    hub:()=> '<div class="top"><span class="crest">'+crest(false)+'</span><b>FAP-FAP LEAGUE<small>Saison 1 · Poule C</small></b><span class="chip"><i></i>12 400</span></div>'
+      +'<div class="hero"><div class="kick">Journée 2 · ce soir · 20 h</div><div class="vs"><div><span class="badge" style="background:#fff;color:#e00000">NKB</span><b>Nkolbisson</b></div><em>VS</em><div><span class="badge" style="background:#0b0b0b;color:#f2c76a">MKL</span><b>Mokolo</b></div></div><span class="go">Jouer le match<small>+4 000 jetons si tu gagnes</small></span></div>'
+      +'<div class="tiles"><div><b>2<sup style="font-size:11px">e</sup></b><small>de la poule</small></div><div><b>3</b><small>points</small></div><div><b>1/3</b><small>matchs joués</small></div></div>'
+      +'<h3>Poule C</h3><table>'+G.map((r, i)=> '<tr class="'+(r[0]==='Nkolbisson' ? 'me' : '')+'"><td>'+(i + 1)+'</td><td>'+r[0]+'</td><td>'+r[1]+' pts</td></tr>').join('')+'</table>'
+      +'<h3>La route</h3><div class="road"><span class="on">Poules</span><span class="next">8es</span><span>Quarts</span><span>Demi</span><span>Finale</span></div>'+nav() },
+  { k:'d2', name:'L’affiche', why:'Une affiche de match collée au mur du quartier : papier crème, gros titres noirs, rouge pour l’essentiel. Le prochain match est un billet à déchirer, le classement se lit comme dans le journal. Entrée : l’affiche est plaquée au mur, scotchée, puis tamponnée « Saison 1 ».',
+    intro:()=> '<div class="poster"><span class="crest">'+crest(false)+'</span><b>Fap-Fap<br><span>League</span></b><small>Yaoundé · Douala</small></div><i class="tape a"></i><i class="tape b"></i><div class="stamp">SAISON 1</div>',
+    hub:()=> '<div class="mast"><small>LE JOURNAL DU QUARTIER · SAISON 1</small><b>Fap-Fap <span>League</span></b><em>Nkolbisson défend son nom</em></div>'
+      +'<div class="ticket"><div class="l"><small>Billet · Poule C · Journée 2</small><b>Nkolbisson<br><i>contre</i>Mokolo</b><p>Ce soir, 20 h · Mise 500 jetons · Gain 4 000</p></div><div class="r">Jouer</div></div>'
+      +'<div class="row2"><div class="box"><small>Ta place</small><b class="red">2<sup style="font-size:16px">e</sup></b></div><div class="box"><small>Tes points</small><b>3</b></div></div>'
+      +'<h3>Le classement <small>Poule C</small></h3><table>'+G.map((r, i)=> '<tr class="'+(r[0]==='Nkolbisson' ? 'me' : '')+'"><td>'+(i + 1)+'</td><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'
+      +'<h3>La route <small>jusqu’à la finale</small></h3><div class="stamps"><span class="on" style="--r:-3deg">Poules</span><span style="--r:2deg">8es</span><span class="off" style="--r:-2deg">Quarts</span><span class="off" style="--r:3deg">Demi</span><span class="off" style="--r:-4deg">Finale</span></div>'+nav() },
+  { k:'d3', name:'La télé', why:'Comme un match retransmis : bandeau « En direct », tableau des scores, phases qui défilent de côté et résultats des autres quartiers qui passent en bas. Entrée : trois bandes de couleur balaient l’écran, l’écusson se retourne une seule fois, puis le titre glisse comme à la télé.',
+    intro:()=> '<i class="bar a"></i><i class="bar b"></i><i class="bar c"></i><div class="ic crest">'+crest()+'</div><div class="lt"><b>FAP-FAP LEAGUE</b><small>SAISON 1 · EN DIRECT DE YAOUNDÉ</small></div><span class="onair">● EN DIRECT</span>',
+    hub:()=> '<div class="live"><span class="dot">EN DIRECT</span><span>JOURNÉE 2</span><span class="t">19:42</span></div>'
+      +'<div class="head"><span class="crest">'+crest(false)+'</span><b>FAP-FAP LEAGUE<small>SAISON 1 · POULE C</small></b></div>'
+      +'<div class="board"><div class="h">NKB<small>NKOLBISSON</small></div><div class="m">20:00<small>CE SOIR</small></div><div class="a">MKL<small>MOKOLO</small></div></div>'
+      +'<div class="lower"><span>+4 000 jetons au vainqueur</span><b>JOUER</b></div>'
+      +'<h3>LES PHASES</h3><div class="phases"><div class="ph on"><b>POULES</b><small>J2 sur 3</small></div><div class="ph"><b>8ES</b><small>dans 3 jours</small></div><div class="ph lock"><b>QUARTS</b><small>à venir</small></div><div class="ph lock"><b>DEMI</b><small>à venir</small></div><div class="ph lock"><b>FINALE</b><small>dimanche</small></div></div>'
+      +'<h3>CLASSEMENT · POULE C</h3><table><tr><th>#</th><th>QUARTIER</th><th>PTS</th></tr>'+G.map((r, i)=> '<tr class="'+(r[0]==='Nkolbisson' ? 'me' : '')+'"><td>'+(i + 1)+'</td><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'
+      +'</div><div class="ticker"><span>BIYEM-ASSI 2–1 ESSOS · BASTOS 0–2 MVOG-MBI · AKWA 1–1 BONABERI (quiz) · NGOA-EKELLE 3–0 ETOUDI · DEÏDO 2–0 BALI</span></div>'+nav()+'<div>' },
+  { k:'d4', name:'Néon de quartier', why:'La nuit de Bastos : bleu nuit, rouge néon et cyan, comme le thème Nuit néon. L’écusson est une enseigne lumineuse, le tableau jusqu’à la finale est un arbre de néons où ton chemin s’allume. Entrée : le contour de l’écusson se dessine, puis les lettres grésillent et s’allument une à une.',
+    intro:()=> crestLine()+'<div class="nl">'+'FAP FAP'.split('').map((c, i)=> '<span style="animation-delay:'+(1.2 + i*.12).toFixed(2)+'s">'+(c===' ' ? '&nbsp;' : c)+'</span>').join('')+'</div><div class="nl2">LEAGUE</div>',
+    hub:()=> '<div class="sign"><span class="crest">'+crest(false)+'</span><b>FAP-FAP</b><small>LEAGUE</small></div>'
+      +'<div class="next"><small>Ce soir · 20 h · Poule C</small><b>Nkolbisson<em>contre</em>Mokolo</b><span class="go">Jouer · +4 000</span></div>'
+      +'<h3>Ton chemin vers la finale</h3><div class="tree"><svg viewBox="0 0 320 250" preserveAspectRatio="none">'
+      +'<g stroke="#2a3168" stroke-width="2" fill="none"><path d="M30 30 H80 V70 H130 M30 110 H80 V70 M30 150 H80 V190 H130 M30 230 H80 V190 M130 70 V130 H190 M130 190 V130 M190 130 H250"/></g>'
+      +'<g stroke="#ff2b48" stroke-width="3" fill="none" style="filter:drop-shadow(0 0 4px #ff2b48)"><path d="M30 110 H80 V70 H130 V130 H190 H250"/></g>'
+      +'<g font-family="Nunito" font-weight="800" font-size="11" fill="#9aa3d8"><text x="6" y="26">Biyem-Assi</text><text x="6" y="106" fill="#fff">Nkolbisson</text><text x="6" y="146">Mokolo</text><text x="6" y="226">Essos</text><text x="200" y="122" fill="#8ff0ff">Finale</text></g>'
+      +'<circle cx="250" cy="130" r="9" fill="#0a0b16" stroke="#25d7ff" stroke-width="3" style="filter:drop-shadow(0 0 6px #25d7ff)"/><circle cx="30" cy="110" r="5" fill="#ff2b48" style="filter:drop-shadow(0 0 6px #ff2b48)"/></svg></div>'
+      +'<h3>Poule C</h3><div class="grp">'+G.map(r=> '<div class="'+(r[0]==='Nkolbisson' ? 'me' : '')+'"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('')+'</div>'+nav() }
+];
+const $ = id=> document.getElementById(id); let cur = 0, tOut;
+function show(i){
+  cur = i; clearTimeout(tOut); const d = D[i];
+  $('tabs').innerHTML = D.map((x, j)=> '<div class="tab'+(j===i ? ' on' : '')+'" data-i="'+j+'">'+(j + 1)+'. '+x.name.replace('L’', '').replace('La ', '').replace(' de quartier', '').replace(' de nuit', '')+'</div>').join('');
+  $('about').innerHTML = '<b class="t">'+(i + 1)+'. '+d.name+'</b><p>'+d.why+'</p>';
+  $('phone').className = 'phone '+d.k;
+  $('phone').innerHTML = '<div class="scr">'+d.hub()+'</div><div class="intro">'+d.intro()+'</div>';
+  const intro = $('phone').querySelector('.intro'); void intro.offsetWidth; intro.classList.add('play');
+  tOut = setTimeout(()=> intro.classList.add('gone'), d.k==='d4' ? 3600 : 3200);
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-i]'); if(t) show(+t.dataset.i); });
+$('replay').addEventListener('click', ()=> show(cur));
+show(0);
+})();
+</script>
+</body></html>
