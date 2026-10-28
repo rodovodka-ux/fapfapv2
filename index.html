@@ -2686,6 +2686,14 @@
   .lg-txt > span:not(.lg-cta){ font:700 12.5px/1.4 'Manrope', sans-serif; color:#c3cbef !important; }
   .lg-cta{ margin-top:12px; border-radius:999px; padding:10px 16px; font:700 11px 'Unbounded', sans-serif; letter-spacing:.08em; text-transform:uppercase; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02 !important; }
   @media (prefers-reduced-motion: reduce){ .lg-ball, .lg-ball b{ animation:none; } }
+  /* v87: the League's crest (red, black band) in place of the turning ball, on a red stadium at night — it holds still, a shine now and then */
+  #btnLeague#btnLeague#btnLeague#btnLeague#btnLeague#btnLeague.lg-home{ background:radial-gradient(110% 80% at 85% -10%, #5a0000 0%, #1d0404 45%, #070202 80%) !important; border:2px solid #000 !important; box-shadow:0 6px 0 #000, 0 14px 30px rgba(0,0,0,.5), inset 0 0 0 1.5px rgba(242,199,106,.35) !important; }
+  .lg-ecu{ position:absolute; right:4px; top:12px; width:118px; filter:drop-shadow(0 10px 16px rgba(0,0,0,.6)); }
+  .lg-ecu svg{ display:block; width:100%; height:auto; }
+  .lg-shine{ opacity:0; animation:lgShine 6s ease-in-out infinite; } @keyframes lgShine{ 0%,78%,100%{ opacity:0; } 86%{ opacity:.45; } }
+  #btnLeague .lg-cta{ background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000) !important; color:#fff !important; border:2px solid #000; box-shadow:0 3px 0 #000; }
+  #btnLeague .lg-txt > span:not(.lg-cta){ color:#f0caca !important; }
+  @media (prefers-reduced-motion: reduce){ .lg-shine{ animation:none; } }
   /* the week's ranking on the home screen (v81): the podium, your place, the live news of the quarter */
   #btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier#btnQuartier.qz-home{ position:relative; width:100%; margin-top:12px; border-radius:22px !important; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:0; padding:14px 14px 16px; text-align:left; cursor:pointer;
     background:radial-gradient(120% 80% at 50% 120%, #1d3aa8 0%, #0b1850 45%, #040824 85%) !important; border:1px solid rgba(242,199,106,.45) !important; box-shadow:0 14px 34px rgba(3,6,25,.55), inset 0 1px 0 rgba(255,255,255,.08) !important; color:#eef1ff !important; }
@@ -4718,7 +4726,7 @@
     </button>
     <!-- v80: the Fap-Fap League replaces the story modes (league.html, opened in #zhFrame above the game) -->
     <button class="lg-home press" id="btnLeague" style="--d:2">
-      <span class="lg-ball" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>FF</b></span>
+      <span class="lg-ecu" aria-hidden="true"><svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgEcuS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff1414"/><stop offset=".6" stop-color="#e00000"/><stop offset="1" stop-color="#b00000"/></linearGradient><linearGradient id="lgEcuG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="lgEcuC"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs><path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#lgEcuS)" stroke="url(#lgEcuG)" stroke-width="5"/><g clip-path="url(#lgEcuC)"><rect x="96" y="0" width="48" height="280" fill="#0b0b0b"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="url(#lgEcuG)" stroke-width="2"/><path class="lg-shine" d="M40 0 L90 0 L10 280 L-40 280 Z" fill="#fff"/></g><path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#lgEcuG)" stroke="#000" stroke-width="2"/><g transform="translate(92 142) rotate(-18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#141210">♠</text></g><g transform="translate(148 142) rotate(18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♦</text></g><g transform="translate(120 134)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♥</text></g></svg></span>
       <span class="lg-txt"><small id="lgHomeTag">Nouveau · Saison 1</small><b>FAP·FAP<em>LEAGUE</em></b><span id="lgHomeSub">32 quartiers de Yaoundé et Douala. Un seul roi.</span>
         <span class="lg-cta" id="lgHomeCta">Entrer dans la League</span></span>
     </button>
@@ -13802,7 +13810,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v86';
+  const APP_VERSION = 'v87';
   (function launch(){
     const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
     if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
