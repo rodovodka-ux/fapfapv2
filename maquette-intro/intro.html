@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050304">
+<title>Cinématique d'entrée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@700;800&family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&family=Unbounded:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : trois cinématiques d'entrée pour Fap Fap (environ 8 secondes chacune, son original généré en direct,
+   « Passer » à tout moment). Les crédits du générique actuel et son logo sont gardés. */
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:#fff6f2; font:700 14px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:900 10.5px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+.lead{ color:#c9a3a3; margin:6px 0 12px; font-size:13px; }
+.tabs{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.tab{ padding:9px 4px; border-radius:14px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11.5px 'Nunito'; color:#c9a3a3; cursor:pointer; }
+.tab.on{ background:#e00000; color:#fff; }
+.about b{ display:block; font:700 18px 'Fredoka'; } .about p{ color:#c9a3a3; margin:4px 0 10px; font-size:13px; }
+.ctrl{ display:flex; gap:8px; margin-bottom:12px; } .ctrl span{ flex:1; text-align:center; padding:10px; border-radius:14px; background:#fff; color:#111; border:2.5px solid #000; box-shadow:0 3px 0 #000; font:900 13px 'Nunito'; cursor:pointer; } .ctrl span.snd{ background:#170707; color:#fff; } .ctrl span.snd.on{ background:#e00000; }
+.note{ margin-top:16px; color:#c9a3a3; font-size:12.5px; line-height:1.5; } .note b{ color:#fff; }
+
+/* the phone, and the stage inside */
+.phone{ position:relative; width:min(370px, 100%); margin:0 auto; aspect-ratio:9/19.3; border-radius:42px; border:4px solid #000; overflow:hidden; background:#050304; box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; isolation:isolate; }
+.stage{ position:absolute; inset:0; overflow:hidden; }
+.skip{ position:absolute; top:42px; right:14px; z-index:50; font:800 12px 'Nunito'; color:rgba(255,255,255,.6); padding:6px 10px; cursor:pointer; }
+.fade{ position:absolute; inset:0; z-index:40; background:#000; opacity:1; pointer-events:none; }
+.play .fade{ animation:fadeIn 1s ease forwards; } @keyframes fadeIn{ to{ opacity:0; } }
+.grain{ position:absolute; inset:0; z-index:39; pointer-events:none; opacity:.08; background-image:repeating-radial-gradient(circle at 17% 32%, #fff 0 .6px, transparent .8px 3px), repeating-radial-gradient(circle at 71% 64%, #fff 0 .5px, transparent .7px 4px); animation:grain .9s steps(3) infinite; }
+@keyframes grain{ 33%{ transform:translate(-2%,1%); } 66%{ transform:translate(1%,-2%); } }
+.bars::before, .bars::after{ content:''; position:absolute; left:0; right:0; height:9%; background:#000; z-index:38; }
+.bars::before{ top:0; } .bars::after{ bottom:0; }
+/* credits as film lower-thirds */
+.cred{ position:absolute; left:8%; z-index:30; opacity:0; } .cred small{ display:block; font:800 10px 'Nunito'; letter-spacing:.3em; text-transform:uppercase; color:#f2c76a; } .cred b{ display:block; font:700 24px/1.05 'Cinzel', serif; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.8); }
+.cred::before{ content:''; position:absolute; left:-12px; top:2px; bottom:2px; width:3px; background:#e00000; }
+.logo{ position:absolute; left:50%; top:50%; width:78%; translate:-50% -58%; z-index:25; opacity:0; }
+.logo svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 0 30px rgba(255,201,60,.3)); }
+.tag{ position:absolute; left:0; right:0; top:66%; z-index:25; text-align:center; font:800 11px 'Nunito'; letter-spacing:.32em; text-transform:uppercase; color:#f2c76a; opacity:0; }
+.flash{ position:absolute; inset:0; z-index:34; background:#fff; opacity:0; pointer-events:none; }
+.ring{ position:absolute; left:50%; top:46%; width:40px; height:40px; margin:-20px; border-radius:50%; border:4px solid #fff6d8; z-index:26; opacity:0; }
+.spark{ position:absolute; left:50%; top:46%; width:5px; height:5px; margin:-2.5px; border-radius:50%; background:#ffe08a; box-shadow:0 0 8px #ffb000; z-index:27; opacity:0; }
+.shake{ animation:shk .45s cubic-bezier(.3,.7,.4,1); } @keyframes shk{ 10%{ transform:translate(-8px,6px) rotate(-.6deg); } 25%{ transform:translate(7px,-6px) rotate(.5deg); } 40%{ transform:translate(-5px,-3px); } 60%{ transform:translate(4px,4px); } 80%{ transform:translate(-2px,1px); } }
+
+/* ===== 1 · LA NUIT DE YAOUNDÉ : la caméra survole la ville, plonge dans l'ampoule d'un maquis, les cartes jaillissent ===== */
+.s1{ background:linear-gradient(180deg, #05060f 0%, #120a1e 45%, #3a0d10 78%, #1a0505 100%); }
+.s1 .world{ position:absolute; inset:0; transform-origin:52% 70%; }
+.play.s1 .world{ animation:fly 4.6s cubic-bezier(.55,.05,.75,.4) forwards; } @keyframes fly{ 0%{ transform:scale(1) translateY(0); } 100%{ transform:scale(9) translateY(-4%); } }
+.s1 .stars i{ position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:.6; animation:tw 2s ease-in-out infinite alternate; } @keyframes tw{ to{ opacity:.15; } }
+.s1 .moon{ position:absolute; right:14%; top:14%; width:46px; height:46px; border-radius:50%; background:radial-gradient(circle at 40% 40%, #fff8e0, #e8d6a8 60%, #b8a070); box-shadow:0 0 40px rgba(255,240,200,.5); }
+.s1 svg.city{ position:absolute; left:-5%; width:110%; height:46%; bottom:0; }
+.s1 .moto{ position:absolute; bottom:12%; height:2px; width:70px; border-radius:2px; background:linear-gradient(90deg, transparent, #ffcf6a); filter:blur(.5px); opacity:0; }
+.play.s1 .moto{ animation:moto 1.6s linear infinite; } @keyframes moto{ 0%{ opacity:0; transform:translateX(-120px); } 15%{ opacity:1; } 100%{ opacity:0; transform:translateX(420px); } }
+.s1 .bulb{ position:absolute; left:52%; top:70%; width:14px; height:14px; margin:-7px; border-radius:50%; background:#fff6d8; box-shadow:0 0 18px 8px rgba(255,214,140,.9), 0 0 60px 20px rgba(255,170,60,.5); }
+.play.s1 .bulb{ animation:bulbOn 4.6s ease-in forwards; } @keyframes bulbOn{ 0%,40%{ opacity:.7; } 45%{ opacity:.2; } 50%,100%{ opacity:1; } }
+.play.s1 .flash{ animation:flash1 .9s ease-out 4.4s forwards; } @keyframes flash1{ 0%{ opacity:0; } 20%{ opacity:1; } 100%{ opacity:0; } }
+.s1 .burst{ position:absolute; inset:0; z-index:24; }
+.s1 .burst .c{ position:absolute; left:50%; top:46%; width:46px; height:66px; margin:-33px -23px; border-radius:6px; background:#fffaf0; border:2.5px solid #000; box-shadow:0 6px 14px rgba(0,0,0,.6); display:grid; place-items:center; font:700 22px 'Fredoka'; color:#c8283a; opacity:0; }
+.s1 .burst .c.b{ color:#141210; }
+.play.s1 .burst .c{ animation:cardOut 1.6s cubic-bezier(.16,1,.3,1) forwards, cardIn .5s cubic-bezier(.6,0,.9,.5) forwards; animation-delay:4.6s, 5.9s; }
+@keyframes cardOut{ 0%{ opacity:1; transform:translate(0,0) scale(.2) rotate(0); } 100%{ opacity:1; transform:translate(var(--x), var(--y)) scale(1) rotate(var(--r)); } }
+@keyframes cardIn{ from{ opacity:1; transform:translate(var(--x), var(--y)) scale(1) rotate(var(--r)); } to{ opacity:0; transform:translate(0,0) scale(.3) rotate(0); } }
+.play.s1 .logo{ animation:logoHit .7s cubic-bezier(.2,1.5,.4,1) 6.35s forwards; } @keyframes logoHit{ from{ opacity:0; transform:scale(2.4); } to{ opacity:1; transform:scale(1); } }
+.play.s1 .ring{ animation:ring .8s ease-out 6.45s forwards; } @keyframes ring{ from{ opacity:1; transform:scale(.5); } to{ opacity:0; transform:scale(14); border-width:1px; } }
+.play.s1 .spark{ animation:spark 1s cubic-bezier(.16,1,.3,1) 6.45s forwards; } @keyframes spark{ from{ opacity:1; transform:translate(0,0); } to{ opacity:0; transform:translate(var(--x), var(--y)); } }
+.play.s1 .tag{ animation:tagIn .8s ease 7.2s forwards; } @keyframes tagIn{ from{ opacity:0; letter-spacing:.8em; } to{ opacity:1; letter-spacing:.32em; } }
+.play.s1 .cred{ animation:cred 1.25s ease forwards; } @keyframes cred{ 0%{ opacity:0; transform:translateX(-14px); } 20%,80%{ opacity:1; transform:none; } 100%{ opacity:0; transform:translateX(10px); } }
+
+/* ===== 2 · LE CLAC : gros plan sur la table, une main claque un 3, les crédits sont sur les cartes qui se retournent ===== */
+.s2{ background:radial-gradient(70% 55% at 50% 48%, #8a1414 0%, #3a0606 55%, #0a0202 100%); }
+.s2 .felt{ position:absolute; inset:0; background:repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 6px, transparent 6px 12px); }
+.s2 .cone{ position:absolute; left:50%; top:-10%; width:120%; height:80%; margin-left:-60%; background:radial-gradient(50% 60% at 50% 0%, rgba(255,236,200,.35), transparent 70%); opacity:0; }
+.play.s2 .cone{ animation:coneOn .25s steps(3) .2s forwards; } @keyframes coneOn{ 0%{ opacity:0; } 50%{ opacity:1; } 70%{ opacity:.3; } 100%{ opacity:1; } }
+.s2 .slam{ position:absolute; left:50%; top:46%; width:120px; height:170px; margin:-85px -60px; border-radius:12px; background:#fffaf0; border:3px solid #000; box-shadow:0 14px 30px rgba(0,0,0,.6); z-index:22; opacity:0; display:grid; place-items:center; }
+.s2 .slam b{ font:700 70px/1 'Fredoka'; color:#c8283a; } .s2 .slam i{ position:absolute; left:10px; top:6px; font:700 28px 'Fredoka'; font-style:normal; color:#c8283a; }
+.play.s2 .slam{ animation:slam .5s cubic-bezier(.6,0,1,.6) .9s forwards, slamOut .5s ease 2.2s forwards; }
+@keyframes slam{ from{ opacity:1; transform:translateY(-160px) scale(2.6) rotate(-18deg); } to{ opacity:1; transform:rotate(-4deg); } }
+@keyframes slamOut{ to{ opacity:0; transform:rotate(-4deg) scale(.85) translateY(30px); } }
+.s2 .clac{ position:absolute; left:0; right:0; top:22%; text-align:center; font:400 64px 'Anton'; color:#fff; -webkit-text-stroke:2px #000; text-shadow:0 6px 0 #000, 0 0 30px rgba(255,80,40,.8); z-index:28; opacity:0; }
+.play.s2 .clac{ animation:clac .9s cubic-bezier(.2,1.6,.4,1) 1.4s forwards; } @keyframes clac{ 0%{ opacity:0; transform:scale(.3) rotate(-10deg); } 30%{ opacity:1; transform:scale(1.15) rotate(3deg); } 70%{ opacity:1; transform:scale(1) rotate(0); } 100%{ opacity:0; transform:scale(1.1); } }
+.play.s2 .ring{ animation:ring .7s ease-out 1.4s forwards; } .play.s2 .spark{ animation:spark .9s cubic-bezier(.16,1,.3,1) 1.4s forwards; }
+.play.s2 .flash{ animation:flash2 .3s ease-out 1.4s forwards; } @keyframes flash2{ 0%{ opacity:0; } 30%{ opacity:.7; } 100%{ opacity:0; } }
+.s2 .deal{ position:absolute; left:50%; top:47%; width:150px; height:210px; margin:-105px -75px; perspective:900px; z-index:23; opacity:0; }
+.s2 .deal .in{ position:absolute; inset:0; transform-style:preserve-3d; }
+.s2 .deal .f, .s2 .deal .bk{ position:absolute; inset:0; border-radius:14px; border:3px solid #000; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px; }
+.s2 .deal .bk{ background:repeating-radial-gradient(circle, rgba(242,199,106,.25) 0 1px, transparent 1px 5px), linear-gradient(160deg, #4a1219, #22080c); }
+.s2 .deal .bk::after{ content:'FF'; font:900 26px 'Unbounded'; color:rgba(242,199,106,.6); }
+.s2 .deal .f{ background:#fffaf0; color:#141210; transform:rotateY(180deg); } .s2 .deal .f small{ font:900 9.5px 'Nunito'; letter-spacing:.2em; text-transform:uppercase; color:#c8283a; } .s2 .deal .f b{ font:700 22px/1.1 'Cinzel', serif; margin-top:8px; }
+.play.s2 .deal{ animation:dealIn .45s cubic-bezier(.16,1,.3,1) forwards, dealOut .4s ease-in forwards; }
+@keyframes dealIn{ from{ opacity:1; transform:translate(-260px, 40px) rotate(-30deg) scale(.6); } to{ opacity:1; transform:none; } }
+@keyframes dealOut{ to{ opacity:0; transform:translate(260px, -30px) rotate(25deg) scale(.7); } }
+.play.s2 .deal .in{ animation:flip .5s cubic-bezier(.3,1.3,.5,1) forwards; } @keyframes flip{ to{ transform:rotateY(180deg); } }
+.s2 .fan{ position:absolute; left:50%; top:54%; z-index:21; }
+.s2 .fan i{ position:absolute; width:56px; height:80px; margin:-80px -28px 0; border-radius:8px; background:#fffaf0; border:2.5px solid #000; transform-origin:50% 140%; opacity:0; box-shadow:0 6px 12px rgba(0,0,0,.5); }
+.play.s2 .fan i{ animation:fan .6s cubic-bezier(.2,1.4,.4,1) 6.2s forwards; } @keyframes fan{ from{ opacity:0; transform:rotate(0) translateY(40px); } to{ opacity:1; transform:rotate(var(--r)); } }
+.play.s2 .logo{ animation:logoRise .9s cubic-bezier(.16,1,.3,1) 6.5s forwards; } @keyframes logoRise{ from{ opacity:0; transform:translateY(60px) scale(.7); } to{ opacity:1; transform:none; } }
+.play.s2 .logo svg{ animation:shine .8s ease-in-out 7.3s; } @keyframes shine{ 50%{ filter:drop-shadow(0 0 30px rgba(255,201,60,.3)) brightness(1.6); } }
+.play.s2 .tag{ animation:tagIn .8s ease 7.5s forwards; }
+
+/* ===== 3 · LE NÉON SOUS LA PLUIE : une rue la nuit, l'enseigne grésille et s'allume, son reflet dans la flaque ===== */
+.s3{ background:linear-gradient(180deg, #04050d 0%, #0b0d1e 55%, #050508 100%); }
+.s3 canvas.rain{ position:absolute; inset:0; width:100%; height:100%; z-index:20; pointer-events:none; }
+.s3 .wall{ position:absolute; left:0; right:0; top:0; height:62%; background:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 2px, transparent 2px 26px), repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 2px, transparent 2px 52px), #0c0d18; }
+.s3 .ground{ position:absolute; left:0; right:0; bottom:0; height:38%; background:linear-gradient(180deg, #0a0b14, #030305); }
+.s3 .sign{ position:absolute; left:0; right:0; top:22%; text-align:center; z-index:22; }
+.s3 .sign .w{ display:block; font:900 40px/1 'Unbounded'; letter-spacing:.02em; }
+.s3 .sign .w span{ color:#2a0c12; display:inline-block; }
+.play.s3 .sign .w span{ animation:buzz .9s steps(1) forwards; }
+@keyframes buzz{ 0%{ color:#2a0c12; text-shadow:none; } 18%{ color:#fff; text-shadow:0 0 8px #ff2b48, 0 0 26px #ff2b48, 0 0 60px #ff2b48; } 28%{ color:#2a0c12; text-shadow:none; } 42%,100%{ color:#fff; text-shadow:0 0 8px #ff2b48, 0 0 26px #ff2b48, 0 0 60px #ff2b48; } }
+.s3 .sign .sub{ display:block; margin-top:12px; font:700 15px 'Unbounded'; letter-spacing:.7em; color:#0b2a33; padding-left:.7em; }
+.play.s3 .sign .sub{ animation:buzz2 1s steps(1) 2.6s forwards; }
+@keyframes buzz2{ 0%{ color:#0b2a33; } 25%{ color:#dffaff; text-shadow:0 0 8px #25d7ff, 0 0 24px #25d7ff; } 35%{ color:#0b2a33; text-shadow:none; } 55%,100%{ color:#dffaff; text-shadow:0 0 8px #25d7ff, 0 0 24px #25d7ff; } }
+.s3 .refl{ position:absolute; left:0; right:0; top:62%; text-align:center; z-index:21; transform:scaleY(-1); opacity:0; filter:blur(2px); -webkit-mask-image:linear-gradient(0deg, rgba(0,0,0,.7), transparent 75%); mask-image:linear-gradient(0deg, rgba(0,0,0,.7), transparent 75%); }
+.s3 .refl span{ font:900 40px/1 'Unbounded'; color:#fff; text-shadow:0 0 20px #ff2b48; }
+.play.s3 .refl{ animation:refl 1s ease 2s forwards; } @keyframes refl{ to{ opacity:.55; } }
+.s3 .glow{ position:absolute; left:10%; right:10%; top:14%; height:30%; border-radius:50%; background:radial-gradient(closest-side, rgba(255,43,72,.35), transparent); opacity:0; z-index:19; }
+.play.s3 .glow{ animation:refl 1.2s ease 1.8s forwards; }
+.s3 .cam{ position:absolute; inset:0; transform-origin:50% 40%; }
+.play.s3 .cam{ animation:pull 8s cubic-bezier(.3,0,.2,1) forwards; } @keyframes pull{ from{ transform:scale(1.35); } to{ transform:scale(1); } }
+.play.s3 .sign, .play.s3 .refl, .play.s3 .glow{ animation-fill-mode:forwards; }
+.s3 .out{ position:absolute; inset:0; z-index:23; }
+.play.s3 .out{ animation:outSign .6s ease 5.6s forwards; } @keyframes outSign{ to{ opacity:0; transform:scale(1.15); filter:blur(4px); } }
+.play.s3 .logo{ animation:logoHit .8s cubic-bezier(.2,1.4,.4,1) 6s forwards; }
+.play.s3 .tag{ animation:tagIn .8s ease 6.9s forwards; }
+.play.s3 .flash{ animation:flash2 .35s ease-out 5.9s forwards; }
+@media (prefers-reduced-motion: reduce){ .stage *{ animation-duration:.01s !important; animation-delay:0s !important; } }
+</style></head>
+<body>
+<h1><small>Maquette · à choisir</small>La cinématique d’entrée</h1>
+<p class="lead">Trois vraies ouvertures de jeu, environ 8 secondes chacune, avec leur son. Active le son, puis touche un numéro. On peut toujours « Passer ».</p>
+<div class="tabs" id="tabs"></div>
+<div class="about" id="about"></div>
+<div class="ctrl"><span id="replay">↻ Rejouer</span><span class="snd" id="snd">🔇 Son coupé</span></div>
+<div class="phone"><div class="stage" id="stage"></div><span class="skip" id="skip">Passer ›</span></div>
+<p class="note"><b>Ce qui reste dans les trois :</b> les crédits (Yowalé Distribution, Nitcheu Roland, Franck Lado), le logo du générique, le bouton « Passer », et une version courte (2 secondes) à partir de la deuxième ouverture de la journée, pour ne pas lasser.<br><br><b>Mon conseil :</b> la 2, « Le clac », parce qu’elle montre le jeu lui-même dès la première seconde ; la 1 si tu veux le plus grand spectacle.</p>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+// the opening credits' logo (the medallion), as in the game
+let n = 0;
+function ffLogo(){
+  const k = 'ffl'+(++n), u = id=> 'url(#'+k+id+')';
+  const crd = (tr, v, s, col, right)=> '<g transform="'+tr+'"><use href="#'+k+'c"/><text x="'+(right ? 37 : -37)+'" y="-122"'+(right ? ' text-anchor="end"' : '')+' font-family="Fredoka" font-weight="700" font-size="'+(v.length>1 ? 24 : 26)+'" fill="'+col+'">'+v+'</text><text x="'+(right ? 37 : -37)+'" y="-100"'+(right ? ' text-anchor="end"' : '')+' font-size="18" fill="'+col+'">'+s+'</text><text x="1" y="-48" font-size="54" text-anchor="middle" fill="'+col+'">'+s+'</text></g>';
+  return '<svg viewBox="0 0 400 340"><defs>'
+    +'<linearGradient id="'+k+'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".38" stop-color="#f1c257"/><stop offset=".62" stop-color="#b47b1c"/><stop offset=".82" stop-color="#f4d27c"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>'
+    +'<linearGradient id="'+k+'r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a0"/><stop offset=".5" stop-color="#a8701a"/><stop offset="1" stop-color="#f6d27e"/></linearGradient>'
+    +'<radialGradient id="'+k+'d" cx=".5" cy=".38" r=".7"><stop offset="0" stop-color="#3a2c1f"/><stop offset=".7" stop-color="#16100b"/><stop offset="1" stop-color="#0a0705"/></radialGradient>'
+    +'<linearGradient id="'+k+'p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#eadcc0"/></linearGradient>'
+    +'<linearGradient id="'+k+'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1f16"/><stop offset="1" stop-color="#0b0806"/></linearGradient>'
+    +'<g id="'+k+'c"><rect x="-46" y="-152" width="92" height="130" rx="10" fill="'+u('p')+'" stroke="#1b120c" stroke-width="3"/></g></defs>'
+    +'<circle cx="200" cy="158" r="138" fill="'+u('d')+'" stroke="'+u('r')+'" stroke-width="7"/><circle cx="200" cy="158" r="126" fill="none" stroke="#c99a3e" stroke-opacity=".35" stroke-width="1.5"/>'
+    +crd('translate(168 262) rotate(-22)', '3', '♠', '#1b1b1b')+crd('translate(232 262) rotate(22)', '10', '♦', '#c8283a', true)+crd('translate(200 254)', '3', '♥', '#c8283a')
+    +'<g transform="translate(200 206)"><circle r="35" fill="#120d09" stroke="'+u('r')+'" stroke-width="4"/><circle r="31" fill="none" stroke="#e9b94e" stroke-width="7" stroke-dasharray="12 12.35"/><circle r="21" fill="#1a130d" stroke="'+u('r')+'" stroke-width="2.5"/><text y="10" font-size="28" text-anchor="middle" fill="'+u('g')+'">♠</text></g>'
+    +'<path d="M18 238 L58 226 Q200 210 342 226 L382 238 L366 268 L382 298 L342 296 Q200 282 58 296 L18 298 L34 268 Z" fill="'+u('b')+'" stroke="'+u('r')+'" stroke-width="4" stroke-linejoin="round"/>'
+    +'<text x="200" y="283" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="54" letter-spacing="1" fill="'+u('g')+'" stroke="#3a2608" stroke-width="1.6" paint-order="stroke">FAP-FAP</text>'
+    +'<text x="200" y="322" text-anchor="middle" font-size="20" fill="'+u('g')+'">♠</text></svg>';
+}
+const CREDITS = [['Yowalé Distribution', 'présente'], ['Une création de', 'Nitcheu Roland'], ['Direction artistique', 'Franck Lado']];
+const sparks = (k)=> Array.from({length:k}, (_, i)=>{ const a = i/k*Math.PI*2, d = 90 + Math.random()*90; return '<i class="spark" style="--x:'+Math.round(Math.cos(a)*d)+'px;--y:'+Math.round(Math.sin(a)*d)+'px"></i>'; }).join('');
+const common = '<div class="fade"></div><div class="grain"></div><div class="flash"></div><i class="ring"></i>';
+
+// ---- the sound: made live (no file), original ----
+let ac = null, soundOn = false;
+const A = ()=>{ if(!ac){ try{ ac = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} } return ac; };
+function noise(t, dur, f0, f1, vol, q){ const c = A(); if(!c || !soundOn) return; const b = c.createBuffer(1, c.sampleRate*dur, c.sampleRate), d = b.getChannelData(0); for(let i = 0; i<d.length; i++) d[i] = Math.random()*2 - 1;
+  const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = q || 1.2; f.frequency.setValueAtTime(f0, c.currentTime + t); f.frequency.exponentialRampToValueAtTime(f1, c.currentTime + t + dur);
+  g.gain.setValueAtTime(.0001, c.currentTime + t); g.gain.exponentialRampToValueAtTime(vol, c.currentTime + t + dur*.4); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + t + dur); s.connect(f); f.connect(g); g.connect(c.destination); s.start(c.currentTime + t); }
+function boom(t, vol){ const c = A(); if(!c || !soundOn) return; const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(140, c.currentTime + t); o.frequency.exponentialRampToValueAtTime(38, c.currentTime + t + .5);
+  g.gain.setValueAtTime(vol || .9, c.currentTime + t); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + t + .8); o.connect(g); g.connect(c.destination); o.start(c.currentTime + t); o.stop(c.currentTime + t + .9); noise(t, .25, 3000, 400, .5, .7); }
+function tone(t, f, dur, vol, type){ const c = A(); if(!c || !soundOn) return; const o = c.createOscillator(), g = c.createGain(); o.type = type || 'triangle'; o.frequency.value = f;
+  g.gain.setValueAtTime(.0001, c.currentTime + t); g.gain.exponentialRampToValueAtTime(vol, c.currentTime + t + .02); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + t + dur); o.connect(g); g.connect(c.destination); o.start(c.currentTime + t); o.stop(c.currentTime + t + dur + .05); }
+function pad(t, notes, dur, vol){ notes.forEach(f=>{ tone(t, f, dur, vol, 'sawtooth'); tone(t, f*1.005, dur, vol*.7, 'sawtooth'); }); }
+function chord(t){ [392, 494, 587, 784].forEach((f, i)=> tone(t + i*.04, f, 1.6, .06)); tone(t, 98, 1.8, .2, 'sine'); }
+function buzz(t, dur){ const c = A(); if(!c || !soundOn) return; const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.value = 100; f.type = 'lowpass'; f.frequency.value = 900;
+  g.gain.setValueAtTime(.0001, c.currentTime + t); for(let i = 0; i<6; i++) g.gain.setValueAtTime(i % 2 ? .0001 : .06, c.currentTime + t + i*dur/6); g.gain.setValueAtTime(.04, c.currentTime + t + dur); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + t + dur + 2.5); o.connect(f); f.connect(g); g.connect(c.destination); o.start(c.currentTime + t); o.stop(c.currentTime + t + dur + 2.6); }
+function rain(t, dur){ noise(t, dur, 5000, 4000, .05, .4); }
+
+const D = [
+  { name:'La nuit de Yaoundé', why:'La caméra survole les collines de Yaoundé la nuit, des motos filent en bas, puis elle plonge dans l’ampoule d’un maquis. Flash : les cartes jaillissent de la lumière, se rassemblent, et le logo tombe avec une onde de choc. Les crédits passent comme au cinéma.',
+    html:()=>{ let st = ''; for(let i = 0; i<50; i++) st += '<i style="left:'+(Math.random()*100)+'%;top:'+(Math.random()*55)+'%;animation-delay:'+(Math.random()*2).toFixed(2)+'s"></i>';
+      let win = ''; for(let i = 0; i<70; i++){ const x = 10 + Math.random()*380, y = 60 + Math.random()*90; win += '<rect x="'+x.toFixed(0)+'" y="'+y.toFixed(0)+'" width="3" height="4" fill="'+(Math.random()<.7 ? '#ffcf6a' : '#ff6a4a')+'" opacity="'+(.5 + Math.random()*.5).toFixed(2)+'"/>'; }
+      const cards = ['3♥','3♠','10♦','7♣','9♥','3♦','10♠','5♥'].map((c, i)=>{ const a = i/8*Math.PI*2; return '<span class="c'+(/[♠♣]/.test(c) ? ' b' : '')+'" style="--x:'+Math.round(Math.cos(a)*120)+'px;--y:'+Math.round(Math.sin(a)*170)+'px;--r:'+Math.round((Math.random() - .5)*60)+'deg">'+c+'</span>'; }).join('');
+      return '<div class="world"><div class="stars">'+st+'</div><span class="moon"></span>'
+        +'<svg class="city" viewBox="0 0 400 220" preserveAspectRatio="none"><path d="M0 120 Q60 70 120 100 T240 85 T400 95 V220 H0Z" fill="#150c1c"/><path d="M0 150 L30 140 L30 120 L55 120 L55 135 L80 135 L80 110 L110 110 L110 140 L150 140 L150 125 L180 125 L180 145 L215 145 L215 118 L250 118 L250 140 L290 140 L290 128 L320 128 L320 146 L360 146 L360 122 L400 122 V220 H0Z" fill="#0d0710"/>'+win+'<path d="M0 185 Q200 160 400 185 V220 H0Z" fill="#070407"/></svg>'
+        +'<i class="moto" style="animation-delay:.4s"></i><i class="moto" style="bottom:9%;animation-delay:1.3s"></i><span class="bulb"></span></div>'
+        +CREDITS.map((c, i)=> '<div class="cred" style="top:'+(70 + i*0)+'%;animation-delay:'+(.6 + i*1.25)+'s"><small>'+c[0]+'</small><b>'+c[1]+'</b></div>').join('')
+        +'<div class="burst">'+cards+'</div><div class="logo">'+ffLogo()+'</div>'+sparks(18)+'<div class="tag">Yaoundé · la nuit · les cartes</div>'+common; },
+    sound:()=>{ pad(0, [55, 82.4], 4.6, .03); noise(.3, 4.3, 300, 2400, .12, .8); [0.6, 1.85, 3.1].forEach(t=> tone(t, 880, .25, .05)); noise(4.4, .5, 6000, 800, .5, .6); [4.7, 4.75, 4.8, 4.85].forEach(t=> noise(t, .25, 2500, 1200, .2, 2)); noise(5.9, .45, 600, 3000, .25, 1); boom(6.4, 1); chord(6.5); } },
+  { name:'Le clac', why:'Gros plan sur une table rouge, une lampe s’allume en grésillant. Une main claque un 3 sur la table : « CLAC ! », onde de choc, étincelles. Puis trois cartes sont distribuées et se retournent, chacune porte un crédit. Enfin l’éventail s’ouvre et le logo monte, avec un reflet d’or.',
+    html:()=> '<div class="felt"></div><div class="cone"></div><div class="slam"><i>3</i><b>♥</b></div><div class="clac">CLAC !</div>'+sparks(16)
+      + CREDITS.map((c, i)=> '<div class="deal" style="animation-delay:'+(2.5 + i*1.2)+'s,'+(3.5 + i*1.2)+'s"><div class="in" style="animation-delay:'+(2.75 + i*1.2)+'s"><div class="bk"></div><div class="f"><small>'+c[0]+'</small><b>'+c[1]+'</b></div></div></div>').join('')
+      +'<div class="fan">'+[-30, -15, 0, 15, 30].map(r=> '<i style="--r:'+r+'deg"></i>').join('')+'</div><div class="logo">'+ffLogo()+'</div><div class="tag">Yaoundé · la nuit · les cartes</div>'+common,
+    sound:()=>{ buzz(.2, .3); noise(.9, .45, 400, 2500, .15, .7); boom(1.4, 1.1); [2.5, 3.7, 4.9].forEach(t=>{ noise(t, .25, 3000, 1500, .25, 2); tone(t + .3, 660, .3, .05); }); [6.2, 6.25, 6.3, 6.35, 6.4].forEach(t=> noise(t, .15, 2500, 1500, .15, 2)); chord(6.6); tone(7.3, 1568, .6, .05); } },
+  { name:'Le néon sous la pluie', why:'Une rue de quartier sous la pluie. L’enseigne « FAP FAP » grésille et s’allume lettre par lettre en rouge, « YAOUNDÉ » en cyan, et elle se reflète dans la flaque. Les crédits passent sous l’enseigne. Puis l’enseigne s’efface dans un éclair et le logo apparaît.',
+    html:()=> '<div class="cam"><div class="wall"></div><div class="ground"></div><div class="glow"></div><div class="out"><div class="sign"><span class="w">'+'FAP FAP'.split('').map((c, i)=> '<span style="animation-delay:'+(.8 + i*.14).toFixed(2)+'s">'+(c===' ' ? '&nbsp;' : c)+'</span>').join('')+'</span><span class="sub">YAOUNDÉ</span></div><div class="refl"><span>FAP FAP</span></div></div></div>'
+      +'<canvas class="rain" id="rainCv"></canvas>'
+      + CREDITS.map((c, i)=> '<div class="cred" style="top:72%;animation:cred 1.2s ease '+(2.4 + i*1.1)+'s forwards"><small>'+c[0]+'</small><b>'+c[1]+'</b></div>').join('')
+      +'<div class="logo">'+ffLogo()+'</div><div class="tag">Yaoundé · la nuit · les cartes</div>'+common,
+    sound:()=>{ rain(0, 8); [.8, .94, 1.08, 1.22, 1.36, 1.5, 1.64].forEach(t=> buzz(t, .25)); buzz(2.6, .4); [2.4, 3.5, 4.6].forEach(t=> tone(t, 523, .3, .04)); noise(5.6, .5, 600, 4000, .3, .8); boom(6, .8); chord(6.1); } }
+];
+let cur = 0, rainRaf = 0;
+function rainStart(){
+  const cv = $('rainCv'); if(!cv) return; const r = cv.getBoundingClientRect(); cv.width = r.width*2; cv.height = r.height*2; const c = cv.getContext('2d');
+  const drops = Array.from({length:120}, ()=> ({x:Math.random()*cv.width, y:Math.random()*cv.height, v:14 + Math.random()*14}));
+  cancelAnimationFrame(rainRaf);
+  (function f(){ c.clearRect(0, 0, cv.width, cv.height); c.strokeStyle = 'rgba(180,200,255,.35)'; c.lineWidth = 2; c.beginPath();
+    drops.forEach(d=>{ c.moveTo(d.x, d.y); c.lineTo(d.x - 3, d.y + 18); d.y += d.v; d.x -= 1; if(d.y > cv.height){ d.y = -20; d.x = Math.random()*cv.width; } }); c.stroke(); rainRaf = requestAnimationFrame(f); })();
+}
+function show(i){
+  cur = i; const d = D[i];
+  $('tabs').innerHTML = D.map((x, j)=> '<div class="tab'+(j===i ? ' on' : '')+'" data-i="'+j+'">'+(j + 1)+'. '+x.name.split(' ').slice(0, 2).join(' ')+'</div>').join('');
+  $('about').innerHTML = '<b>'+(i + 1)+'. '+d.name+'</b><p>'+d.why+'</p>';
+  const st = $('stage'); st.className = 'stage bars s'+(i + 1); st.innerHTML = d.html(); void st.offsetWidth; st.classList.add('play');
+  if(i===2) rainStart(); else cancelAnimationFrame(rainRaf);
+  // the screen shakes on each impact
+  const hits = i===0 ? [6.4] : i===1 ? [1.4] : [6];
+  hits.forEach(t=> setTimeout(()=>{ if(cur!==i) return; st.classList.remove('shake'); void st.offsetWidth; st.classList.add('shake'); if(navigator.vibrate) navigator.vibrate(40); }, t*1000));
+  if(soundOn){ const c = A(); if(c && c.state==='suspended') c.resume(); d.sound(); }
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-i]'); if(t) show(+t.dataset.i); });
+$('replay').onclick = ()=> show(cur);
+$('snd').onclick = ()=>{ soundOn = !soundOn; $('snd').textContent = soundOn ? '🔊 Son activé' : '🔇 Son coupé'; $('snd').classList.toggle('on', soundOn); if(soundOn){ A(); show(cur); } };
+$('skip').onclick = ()=>{ const st = $('stage'); st.getAnimations({subtree:true}).forEach(a=>{ try{ a.finish(); }catch(e){} }); };
+show(0);
+})();
+</script>
+</body></html>
