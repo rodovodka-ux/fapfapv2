@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0a0a">
+<title>Palettes Fap Fap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : les palettes de base du jeu. Chaque palette repeint le même accueil et la même table ; la lumière (ampoule, néon,
+   coupure) passe par-dessus, comme dans le jeu, pour voir comment les couleurs tiennent sous les jeux de lumière. */
+:root{ --disp:'Fredoka','Trebuchet MS',sans-serif; --ui:'Nunito',system-ui,sans-serif; }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; min-height:100%; font:700 14.5px/1.4 var(--ui); }
+body{ background:var(--bg); color:var(--text); transition:background .4s, color .4s; padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 24px); overflow-x:hidden; }
+h1{ margin:0; font:700 24px/1.1 var(--disp); }
+h1 small{ display:block; font:800 11px var(--ui); letter-spacing:.16em; text-transform:uppercase; color:var(--primary); margin-bottom:4px; }
+p{ margin:6px 0; }
+.mute{ color:var(--mute); }
+/* the picker */
+.pick{ display:flex; gap:8px; overflow-x:auto; margin:14px -16px 6px; padding:2px 16px 8px; scrollbar-width:none; } .pick::-webkit-scrollbar{ display:none; }
+.pk{ flex:0 0 auto; border-radius:16px; padding:8px 10px; background:var(--card); border:2.5px solid var(--ink); box-shadow:0 3px 0 var(--ink); cursor:pointer; color:var(--text); font:800 12.5px var(--ui); text-align:left; }
+.pk.on{ outline:3px solid var(--primary); outline-offset:2px; }
+.pk .sw{ display:flex; gap:3px; margin-bottom:5px; } .pk .sw i{ width:18px; height:18px; border-radius:50%; border:2px solid #000; display:block; }
+.lights{ display:flex; gap:6px; margin:6px 0 14px; } .lights button{ flex:1; padding:9px 4px; border-radius:14px; border:2.5px solid var(--ink); background:var(--card); color:var(--mute); font:800 12.5px var(--ui); cursor:pointer; }
+.lights button.on{ background:var(--primary); color:var(--primary-text); }
+.about{ background:var(--card); border:2.5px solid var(--ink); box-shadow:0 4px 0 var(--ink); border-radius:20px; padding:12px 14px; margin-bottom:14px; }
+.about b.t{ display:block; font:700 18px var(--disp); }
+.chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; } .chip{ display:flex; align-items:center; gap:6px; font:800 11.5px var(--ui); color:var(--mute); }
+.chip i{ width:22px; height:22px; border-radius:7px; border:2px solid #000; display:block; }
+.grade{ display:inline-block; margin-top:8px; font:900 11px var(--ui); padding:3px 9px; border-radius:20px; background:var(--card2); color:var(--text); border:2px solid var(--ink); }
+/* the two phones */
+.phones{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.ph{ position:relative; border-radius:26px; overflow:hidden; border:3px solid #000; aspect-ratio:9/17; background:var(--bg); box-shadow:0 10px 30px rgba(0,0,0,.35); isolation:isolate; }
+.ph .cap{ position:absolute; left:0; right:0; bottom:-24px; text-align:center; font:800 11px var(--ui); color:var(--mute); }
+.light{ position:absolute; inset:0; pointer-events:none; z-index:5; mix-blend-mode:multiply; transition:background .5s; }
+.glow{ position:absolute; inset:0; pointer-events:none; z-index:6; mix-blend-mode:screen; transition:background .5s, opacity .5s; }
+body.l-bulb .light{ background:radial-gradient(circle at 14% 7%, #fff3d6 0%, #ffe0a8 22%, rgba(150,110,80,.92) 55%, rgba(40,30,30,.95) 100%); }
+body.l-bulb .glow{ background:radial-gradient(circle at 14% 7%, rgba(255,214,150,.45), transparent 40%); }
+body.l-neon .light{ background:linear-gradient(180deg, rgba(255,120,200,.95), rgba(150,170,255,.9) 60%, rgba(40,60,120,.95)); }
+body.l-neon .glow{ background:radial-gradient(ellipse at 50% 0%, rgba(255,79,174,.35), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(37,215,255,.3), transparent 55%); }
+body.l-cut .light{ background:radial-gradient(circle at 60% 55%, rgba(230,235,255,.95) 0 12%, rgba(30,30,45,.97) 34%, rgba(8,8,14,.99) 70%); }
+body.l-cut .glow{ background:radial-gradient(circle at 60% 55%, rgba(220,230,255,.25), transparent 30%); }
+/* the home, drawn with the palette */
+.hm{ position:absolute; inset:0; padding:14px 10px; display:flex; flex-direction:column; gap:8px; }
+.hm .top{ display:flex; gap:5px; align-items:center; }
+.hm .pill{ display:flex; align-items:center; gap:4px; padding:4px 8px; border-radius:20px; background:var(--card); border:2px solid var(--ink); font:800 10px var(--ui); color:var(--text); }
+.hm .coin{ width:12px; height:12px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, var(--coin) 55%, #7a4a10); border:1.5px solid #000; }
+.hm .rnd{ width:22px; height:22px; border-radius:50%; background:var(--card); border:2px solid var(--ink); margin-left:auto; } .hm .rnd + .rnd{ margin-left:0; }
+.hm .logo{ text-align:center; font:700 34px/1 var(--disp); letter-spacing:.02em; margin:8px 0 2px; color:var(--logo); -webkit-text-stroke:2px #000; text-shadow:0 0 14px var(--logo-glow), 0 4px 0 #000; }
+.hm .tag{ text-align:center; font:800 9px var(--ui); color:var(--mute); }
+.hm .beta{ align-self:center; font:900 8px var(--ui); letter-spacing:.14em; padding:3px 8px; border-radius:20px; background:var(--primary); color:var(--primary-text); border:1.5px solid #000; }
+.hm .card{ background:var(--card); border:2px solid var(--ink); box-shadow:0 3px 0 var(--ink); border-radius:14px; padding:8px; }
+.hm .place{ display:flex; gap:7px; align-items:center; } .hm .place b{ font:700 18px var(--disp); } .hm .place small{ display:block; font:800 9px var(--ui); color:var(--mute); }
+.hm .bar{ height:5px; border-radius:5px; background:var(--card2); margin-top:6px; overflow:hidden; } .hm .bar i{ display:block; width:42%; height:100%; background:var(--primary); }
+.hm .play{ background:var(--play); color:var(--play-text); border:2px solid #000; box-shadow:0 4px 0 #000; border-radius:16px; padding:12px 10px; display:flex; align-items:center; justify-content:space-between; }
+.hm .play b{ font:700 22px var(--disp); -webkit-text-stroke:1px #000; } .hm .play span{ width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,.25); }
+.hm .row{ display:grid; grid-template-columns:1fr 1fr; gap:6px; } .hm .row .card{ height:52px; }
+.hm .ic{ width:18px; height:18px; border-radius:6px; background:var(--accent); border:1.5px solid #000; margin-bottom:4px; }
+.hm .row b{ font:700 10px var(--disp); }
+.hm .tabs{ margin-top:auto; display:flex; justify-content:space-around; background:var(--card); border:2px solid var(--ink); border-radius:16px; padding:5px; }
+.hm .tabs i{ width:30px; height:22px; border-radius:9px; display:block; background:var(--card2); } .hm .tabs i.on{ background:var(--primary); }
+/* the table, drawn with the palette */
+.tb{ position:absolute; inset:0; padding:14px 10px; display:flex; flex-direction:column; gap:8px; }
+.tb .score{ display:flex; justify-content:space-between; align-items:center; background:var(--card); border:2px solid var(--ink); border-radius:12px; padding:5px 9px; font:800 9.5px var(--ui); }
+.tb .score b{ font:700 15px var(--disp); } .tb .score b.me{ color:var(--primary); }
+.tb .felt{ flex:1; border-radius:22px; border:3px solid #000; background:radial-gradient(ellipse at 50% 45%, var(--felt-hi), var(--felt) 70%); box-shadow:inset 0 0 0 4px var(--felt-rim), inset 0 0 0 7px #000; display:flex; align-items:center; justify-content:center; gap:10px; position:relative; }
+.pc{ width:40px; height:58px; border-radius:7px; background:#fff7e6; border:2px solid #000; box-shadow:2px 4px 6px rgba(0,0,0,.4); font:700 17px var(--disp); padding:2px 4px; color:#c0272d; position:relative; }
+.pc.b{ color:#141210; transform:rotate(7deg); } .pc:first-child{ transform:rotate(-6deg); }
+.pc.back{ background:var(--back); }
+.tb .demand{ position:absolute; top:10px; left:50%; transform:translateX(-50%); font:800 9px var(--ui); padding:3px 8px; border-radius:20px; background:var(--card); border:1.5px solid var(--ink); color:var(--text); white-space:nowrap; }
+.tb .hand{ display:flex; justify-content:center; gap:-8px; background:var(--card); border:2px solid var(--ink); border-radius:16px; padding:8px 4px; }
+.tb .hand .pc{ width:30px; height:44px; font-size:13px; margin:0 -3px; } .tb .hand .pc:nth-child(2){ box-shadow:0 0 0 2px var(--primary); transform:translateY(-6px); }
+.tb .turn{ text-align:center; font:800 10px var(--ui); color:var(--primary); }
+.tb .btn{ align-self:center; padding:6px 14px; border-radius:12px; background:var(--primary); color:var(--primary-text); border:2px solid #000; box-shadow:0 3px 0 #000; font:700 12px var(--disp); }
+.note{ margin-top:36px; font:700 12.5px/1.45 var(--ui); color:var(--mute); }
+.note b{ color:var(--text); }
+</style></head>
+<body class="l-bulb">
+<h1><small>À choisir</small>La couleur de base du jeu</h1>
+<p class="mute">Choisis une palette, puis change la lumière : l’ampoule du tripot, les néons, une coupure de courant. Une bonne palette reste belle et lisible sous les trois.</p>
+<div class="pick" id="pick"></div>
+<div class="lights" id="lights"><button data-l="bulb" class="on">💡 Ampoule</button><button data-l="neon">🌈 Néon</button><button data-l="cut">🔦 Coupure</button></div>
+<div class="about" id="about"></div>
+<div class="phones">
+  <div class="ph"><div class="hm">
+    <div class="top"><span class="pill"><span class="coin"></span>12 400</span><span class="rnd"></span><span class="rnd"></span></div>
+    <div class="logo">FAP FAP</div><div class="tag">Yaoundé · la nuit · les cartes</div><span class="beta">VERSION BÊTA</span>
+    <div class="card"><div class="place"><b>12<small style="display:inline;font-size:9px">e</small></b><span><b style="font-size:12px">Le Boss</b><small>Nkolbisson · 340 pts</small></span></div><div class="bar"><i></i></div></div>
+    <div class="play"><b>Jouer</b><span></span></div>
+    <div class="row"><div class="card"><div class="ic"></div><b>Défi du jour</b></div><div class="card"><div class="ic"></div><b>La leçon</b></div></div>
+    <div class="tabs"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+  </div><div class="light"></div><div class="glow"></div><span class="cap">L’accueil</span></div>
+  <div class="ph"><div class="tb">
+    <div class="score"><span>Toi <b class="me">1</b></span><span>Partie unique</span><span>RALL <b>0</b></span></div>
+    <div class="felt"><span class="demand">Il demande du Cœur</span><span class="pc">3</span><span class="pc b">9</span></div>
+    <div class="turn">À toi de jouer</div>
+    <div class="hand"><span class="pc back"></span><span class="pc">7</span><span class="pc b">10</span><span class="pc">5</span><span class="pc b">4</span></div>
+    <span class="btn">Claquer</span>
+  </div><div class="light"></div><div class="glow"></div><span class="cap">À table</span></div>
+</div>
+<p class="note">Ce qui ne change pas, quelle que soit la palette : le contour noir et l’ombre nette des dessins, les cartes crème, les pièces dorées (c’est leur matière, pas une couleur d’interface), et les lumières propres à chaque table. Seules changent les couleurs de l’interface : fonds, cartes, boutons, onglets, accents.<br><br><b>Mon conseil :</b> la palette 1, « Rouge Mboa », pour un jeu qui a du caractère sans jaune ; ou la 4, « Nuit néon », si tu veux mettre en avant le lounge et les nouvelles tables de nuit.</p>
+<script>
+(()=>{
+// each palette: [name, a line on why it works, contrast verdict, the colours]
+const P = [
+  ['Rouge Mboa', 'Noir, rouge et blanc : fort, chaleureux, très camerounais. Le rouge prend feu sous l’ampoule et reste lisible dans le noir d’une coupure.', 'Lisibilité excellente',
+    {bg:'#0e0a0a', card:'#211818', card2:'#3a2626', ink:'#000', text:'#f7f2ea', mute:'#bfa9a2', primary:'#e0313f', 'primary-text':'#fff', play:'#e0313f', 'play-text':'#fff', accent:'#f7f2ea', logo:'#ff4b55', 'logo-glow':'rgba(255,60,70,.75)', coin:'#e6b23a', felt:'#7a1422', 'felt-hi':'#a3202f', 'felt-rim':'#2a1010', back:'linear-gradient(160deg,#c8283a,#5a0f1e)'}],
+  ['Rouge et ivoire', 'Des cartes ivoire sur fond sombre, le rouge en accent. Plus doux, très lisible au soleil comme le soir.', 'Lisibilité excellente',
+    {bg:'#171313', card:'#efe6d6', card2:'#d9cbb3', ink:'#000', text:'#1b1412', mute:'#6e5f55', primary:'#c4202f', 'primary-text':'#fff', play:'#c4202f', 'play-text':'#fff', accent:'#c4202f', logo:'#fff4e6', 'logo-glow':'rgba(255,90,90,.7)', coin:'#e6b23a', felt:'#244a3a', 'felt-hi':'#2f6b52', 'felt-rim':'#efe6d6', back:'linear-gradient(160deg,#c4202f,#6a0d18)'}],
+  ['Bordeaux et cuivre', 'Le luxe du salon d’or et du club : bordeaux profond, cuivre, crème. Élégant, se marie avec les lustres et le velours.', 'Lisibilité très bonne',
+    {bg:'#140a0d', card:'#2e1419', card2:'#4a2128', ink:'#000', text:'#f6e9de', mute:'#c8a598', primary:'#d07a45', 'primary-text':'#1a0a05', play:'#8c1c32', 'play-text':'#fff', accent:'#d07a45', logo:'#f3b07e', 'logo-glow':'rgba(208,122,69,.7)', coin:'#e6b23a', felt:'#4a0f1e', 'felt-hi':'#6e1a2d', 'felt-rim':'#d07a45', back:'repeating-linear-gradient(45deg,#4a0f1e 0 5px,#5a1424 5px 10px)'}],
+  ['Nuit néon', 'Noir bleuté, rouge néon et cyan : la nuit de Bastos. Brille sous les néons, se lit encore à la torche.', 'Lisibilité bonne (cyan à doser)',
+    {bg:'#0a0b16', card:'#161a2e', card2:'#242a48', ink:'#000', text:'#eef1ff', mute:'#99a2cf', primary:'#ff3b5c', 'primary-text':'#fff', play:'#ff3b5c', 'play-text':'#fff', accent:'#25d7ff', logo:'#ffffff', 'logo-glow':'rgba(255,59,92,.85)', coin:'#e6b23a', felt:'#13183a', 'felt-hi':'#1f2760', 'felt-rim':'#25d7ff', back:'linear-gradient(160deg,#120625,#05020c)'}],
+  ['Vert des Lions', 'Vert profond, rouge et blanc : les couleurs du pays, avec très peu de jaune. Va de soi avec le feutre vert des tables.', 'Lisibilité excellente',
+    {bg:'#08140e', card:'#12271c', card2:'#1d3a2a', ink:'#000', text:'#f2f6ef', mute:'#a6bfa9', primary:'#d42a35', 'primary-text':'#fff', play:'#1f8a4c', 'play-text':'#fff', accent:'#d42a35', logo:'#f2f6ef', 'logo-glow':'rgba(212,42,53,.7)', coin:'#e6b23a', felt:'#1f6b3a', 'felt-hi':'#2b8a4c', 'felt-rim':'#d42a35', back:'linear-gradient(90deg,#007a3d 0 33%,#ce1126 33% 66%,#fcd116 66%)'}],
+  ['Terre de Yaoundé', 'Latérite, brun, sable et un vert de feuille : la couleur des rues. Chaud et naturel sous l’ampoule.', 'Lisibilité très bonne',
+    {bg:'#160d08', card:'#2b1a12', card2:'#43291c', ink:'#000', text:'#f4e6cc', mute:'#c4a888', primary:'#c4532f', 'primary-text':'#fff', play:'#c4532f', 'play-text':'#fff', accent:'#4f9a5c', logo:'#f4e6cc', 'logo-glow':'rgba(196,83,47,.75)', coin:'#e6b23a', felt:'#5a2e1a', 'felt-hi':'#7a4128', 'felt-rim':'#c4532f', back:'linear-gradient(160deg,#b5462e,#5a2214)'}]
+];
+const $ = id=> document.getElementById(id);
+let cur = 0;
+function apply(i){ cur = i; const [n, why, grade, c] = P[i]; Object.entries(c).forEach(([k, v])=> document.documentElement.style.setProperty('--'+k, v));
+  document.querySelector('meta[name=theme-color]').content = c.bg;
+  $('pick').innerHTML = P.map(([nm, , , cc], j)=> '<button class="pk'+(j===i ? ' on' : '')+'" data-p="'+j+'"><span class="sw">'+[cc.bg, cc.card, cc.primary, cc.text].map(x=> '<i style="background:'+x+'"></i>').join('')+'</span>'+(j + 1)+'. '+nm+'</button>').join('');
+  $('about').innerHTML = '<b class="t">'+(i + 1)+'. '+n+'</b><p class="mute">'+why+'</p><div class="chips">'+[['Fond', c.bg], ['Cartes', c.card], ['Bouton', c.primary], ['Texte', c.text], ['Accent', c.accent], ['Feutre', c.felt]].map(([l, v])=> '<span class="chip"><i style="background:'+v+'"></i>'+l+'</span>').join('')+'</div><span class="grade">'+grade+'</span>'; }
+$('pick').addEventListener('click', e=>{ const b = e.target.closest('[data-p]'); if(b) apply(+b.dataset.p); });
+$('lights').addEventListener('click', e=>{ const b = e.target.closest('[data-l]'); if(!b) return; [...$('lights').children].forEach(x=> x.classList.toggle('on', x===b)); document.body.className = 'l-'+b.dataset.l; });
+apply(0);
+})();
+</script>
+</body></html>
