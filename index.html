@@ -14325,7 +14325,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v96';
+  const APP_VERSION = 'v97';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14347,10 +14347,14 @@
     if(!short && filmAt < 1400) T.push(setTimeout(()=>{ stage.classList.remove('l2-shake'); void stage.offsetWidth; stage.classList.add('l2-shake'); }, 1400 - filmAt));
     // the sound, made live (no file): only where the phone lets a page play sound before a first touch
     if(prefs.mute) return;
+    // (v97: the sound can never stop the game from loading — whatever fails here is only silence)
+    try{ launchSound(); }catch(e){}
+    function launchSound(){
     let c = null; try{ c = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return; }
     if(!c || c.state!=='running'){ try{ c && c.close(); }catch(e){} return; }
-    // (v95: on the film's clock, which started with the page; a sound whose moment has already passed is skipped)
-    const now = c.currentTime - filmAt/1000, past = t=> now + t < c.currentTime - .05;
+    // (v95: on the film's clock, which started with the page; a sound whose moment has already passed is skipped —
+    // v97: and never a time before the audio clock's start, which the browser refuses)
+    const now = c.currentTime - filmAt/1000, past = t=> now + t < c.currentTime + .02 || now + t < 0;
     const noise = (t, dur, f0, f1, vol, q)=>{ if(past(t)) return; const b = c.createBuffer(1, c.sampleRate*dur, c.sampleRate), d = b.getChannelData(0); for(let i = 0; i<d.length; i++) d[i] = Math.random()*2 - 1;
       const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = q || 1.2; f.frequency.setValueAtTime(f0, now + t); f.frequency.exponentialRampToValueAtTime(f1, now + t + dur);
       g.gain.setValueAtTime(.0001, now + t); g.gain.exponentialRampToValueAtTime(vol, now + t + dur*.4); g.gain.exponentialRampToValueAtTime(.0001, now + t + dur); s.connect(f); f.connect(g); g.connect(c.destination); s.start(now + t); };
@@ -14364,6 +14368,7 @@
     [10.2, 10.25, 10.3, 10.35, 10.4].forEach(t=> noise(t + k, .15, 2500, 1500, .15, 2));
     chord(10.6 + k); tone(11.3 + k, 1568, .6, .05);
     setTimeout(()=>{ try{ c.close(); }catch(e){} }, short ? 4000 : 14500);
+    }
   })();
   function betaNotice(force){
     let seen = ''; try{ seen = localStorage.getItem('fapfap_beta_seen') || ''; }catch(e){}
