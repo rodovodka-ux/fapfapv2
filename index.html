@@ -1289,6 +1289,29 @@
   #matchOverOverlay .mo-row #btnRematch{ min-width:0; flex:1.2; margin-top:6px !important; }
   #matchOverOverlay .mo-row .mo-other{ flex:1; margin-top:6px; padding:12px 10px; border-radius:16px; background:#1e0f0b; color:#fff; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 15px 'Fredoka', sans-serif; }
   #matchOverOverlay .mo-row .mo-other.hidden{ display:none; }
+  /* v98 · Jouer, « Ce soir au maquis » (his choice C) */
+  #playPage .pl-modes{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin:2px 0 12px; }
+  #playPage .pl-modes > div{ padding:9px 2px; border-radius:14px; background:#1e0f0b; border:2px solid #000; box-shadow:0 3px 0 #000; text-align:center; font:900 10.5px 'Nunito', sans-serif; color:#ffe2d8; cursor:pointer; }
+  #playPage .pl-modes i{ display:block; font-style:normal; font:700 18px 'Fredoka', sans-serif; color:#fff; }
+  #playPage .pl-hot{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; margin-bottom:14px; padding:14px 12px 14px; border-radius:22px; border:2.5px solid #000; box-shadow:0 5px 0 #000; background:radial-gradient(90% 70% at 50% 20%, #8a1414, #2a0606); }
+  #playPage .pl-hot > small{ font:900 9.5px 'Nunito', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#f1c257; margin-bottom:4px; }
+  #playPage .pl-hot .pl-av{ border:3px solid #000; box-shadow:0 0 0 4px rgba(255,255,255,.12); }
+  #playPage .pl-bub{ position:relative; max-width:280px; margin:8px auto 10px; padding:9px 13px; border-radius:16px; background:#fffaf0; color:#141210; border:2.5px solid #000; font:800 13.5px/1.35 'Nunito', sans-serif; }
+  #playPage .pl-bub::before{ content:''; position:absolute; left:50%; top:-9px; margin-left:-8px; border:8px solid transparent; border-top:0; border-bottom-color:#000; }
+  body:not(#z):not(#y) #playPage .pl-go{ display:block; width:100%; padding:13px 10px; border-radius:16px; border:2.5px solid #000; box-shadow:0 4px 0 #000; background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); color:#fff; font:700 16px 'Fredoka', sans-serif; cursor:pointer; }
+  #playPage .pl-go small{ display:block; font:800 11px 'Nunito', sans-serif; opacity:.9; margin-top:1px; }
+  #playPage .pl-lbl{ font:900 10.5px 'Nunito', sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#ff4a4a; margin:6px 0 8px; }
+  #playPage .pl-card{ display:flex; gap:10px; align-items:center; margin-bottom:9px; padding:10px 11px; border-radius:18px; border:2.5px solid #000; box-shadow:0 4px 0 #000; background:linear-gradient(160deg, #2a0d0b, #160606); cursor:pointer; }
+  #playPage .pl-card .pl-av{ flex:none; border:2.5px solid #000; }
+  #playPage .pl-tx{ flex:1; min-width:0; } #playPage .pl-tx small{ display:block; font:900 9.5px 'Nunito', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#f1c257; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #playPage .pl-tx b{ display:block; font:700 15px/1.2 'Fredoka', sans-serif; color:#fff; margin:2px 0; } #playPage .pl-tx span{ display:block; font:700 11.5px/1.3 'Nunito', sans-serif; color:#d9b9b9; }
+  #playPage .pl-card em{ flex:none; font-style:normal; padding:7px 10px; border-radius:12px; background:#e00000; border:2px solid #000; color:#fff; font:900 11px 'Nunito', sans-serif; }
+  body:not(#z):not(#y):not(#x) #playPage .pl-tx b{ color:#fff !important; } body:not(#z):not(#y):not(#x) #playPage .pl-tx span{ color:#d9b9b9 !important; }
+  body:not(#z):not(#y):not(#x) #playPage .pl-tx small{ color:#f1c257 !important; } body:not(#z):not(#y):not(#x) #playPage .pl-card em{ color:#fff !important; background:#e00000 !important; }
+  body:not(#z):not(#y):not(#x) #playPage .pl-card, body:not(#z):not(#y):not(#x) #playPage .pl-hot{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  #playPage .pl-faces{ flex:none; display:flex; } #playPage .pl-faces .pl-av{ margin-left:-12px; } #playPage .pl-faces .pl-av:first-child{ margin-left:0; }
+  #playPage .pl-ic, #playPage .pl-q{ flex:none; width:58px; height:58px; border-radius:50%; border:2.5px solid #000; display:grid; place-items:center; background:#1d3373; color:#fff; font:700 24px 'Fredoka', sans-serif; }
+  #playPage .pl-q{ border-style:dashed; border-color:#fff; } #playPage .pl-ic svg{ width:28px; height:28px; } #playPage .pl-ic.lock{ background:#1e0f0b; }
   /* v96 · « Mes amis »: its own page, in the game's dark colours (no more tabs of the old « Les plus riches » page) */
   #richPage.fr-mode .rich-tabs, #richPage.fr-mode #richWorldBox, #richPage.fr-mode #richLocalBox, #richPage.fr-mode #richBest, #richPage.fr-mode #richFriendsIntro, #richPage.fr-mode .page-body > .small-note{ display:none !important; }
   #richPage.fr-mode #richFriendsBox{ display:block !important; }
@@ -14136,6 +14159,10 @@
     // the old cards stay in the page, hidden: their buttons still open the online lobby and the Carré
     let box = document.getElementById('v3PlayBox');
     if(!box){ [...body.children].forEach(c=> c.classList.add('hidden')); box = document.createElement('div'); box.id = 'v3PlayBox'; body.appendChild(box); }
+    // v98 (his choice, C « Ce soir au maquis »): the page talks to you — someone provokes you at the top, then who is
+    // waiting for you, then the online play; the four modes stay as shortcuts. Same actions as before (the sheet for
+    // the stake and the length, the Carré, the online lobby, the code), so nothing is lost.
+    if(window.FFP){ renderPlayTonight(box); return; }
     const nx = v3Next(), P = DUEL_PERSONAS[nx], s = v3Stake(), guest = typeof isGuest==='function' && isGuest();
     const ids = v3Opps(), more = Math.max(0, 11 - ids.length);
     box.innerHTML = '<div class="v3-quick"><div class="v3-q-in">'+v3Face(nx)+'<div><span class="v3-kick">Partie rapide</span><b>'+escHtml(P.name)+'</b>'+v3Stars(nx)+'<small>'+escHtml(P.tagline||'')+'</small></div></div>'
@@ -14149,6 +14176,40 @@
       +'<div role="button" tabindex="0" class="v3-mode" data-act="code">'+icA('code')+'<span><b>Rejoindre avec un code</b><small>Ton ami t’a envoyé 4 lettres</small></span></div>'
       +'<div class="v3-lbl">À quatre</div>'
       +'<div role="button" tabindex="0" class="v3-mode" data-act="carre">'+icA('carre')+'<span><b>Carré la Pute</b><small>Le vainqueur de chaque manche élimine qui il veut</small></span><span class="v3-seats">'+v3Face('penalty')+v3Face('aristide')+v3Face('gervais')+'</span></div>';
+    fillAllAvatars(box);
+  }
+  function renderPlayTonight(box){
+    const ids = v3Opps(), guest = typeof isGuest==='function' && isGuest(), more = Math.max(0, 15 - ids.length);
+    const face = (id, s)=> '<span class="avatar pl-av" data-char="'+id+'" style="--s:'+(s||58)+'px"></span>';
+    const pick = arr=> arr[Math.floor(Math.random()*arr.length)];
+    const nm = id=> escHtml(DUEL_PERSONAS[id].name);
+    // who provokes you tonight: the last one who beat you (a rematch), otherwise the next one on your road
+    const ld = profile.lastDuel, revenge = ld && !ld.won && ids.includes(ld.opp) ? ld.opp : null;
+    const hot = revenge || v3Next(), HL = DUEL_PERSONAS[hot].lines || {};
+    const said = pick((revenge ? HL.rematch : null) || HL.behind || HL.control || ['Assieds-toi.']);
+    const rec = id=>{ const r = profile.ladder[id] || {w:0, l:0}; return r.w + r.l ? 'Toi '+r.w+' · '+escHtml(DUEL_PERSONAS[id].name)+' '+r.l : 'Jamais affronté'; };
+    const others = ids.filter(id=> id!==hot);
+    const sq = ids.filter(id=> id!==hot).concat(ids).filter((v, i, a)=> a.indexOf(v)===i).slice(0, 3);
+    const card = (kick, title, sub, act, em, faceHtml)=> '<div role="button" tabindex="0" class="pl-card" '+act+'>'+faceHtml+'<span class="pl-tx"><small>'+kick+'</small><b>'+title+'</b><span>'+sub+'</span></span><em>'+em+'</em></div>';
+    const icon = (ic, cls)=> '<span class="pl-ic '+(cls||'')+'">'+icA(ic)+'</span>';
+    let h = '<div class="pl-modes">'
+      +'<div role="button" tabindex="0" data-opp="'+v3Next()+'"><i>1v1</i>Duel</div>'
+      +'<div role="button" tabindex="0" data-act="carre"><i>4</i>Carré</div>'
+      +'<div role="button" tabindex="0" data-act="mp"><i>⚡</i>En ligne</div>'
+      +'<div role="button" tabindex="0" data-act="league"><i>🏆</i>League</div></div>';
+    h += '<div class="pl-hot"><small>Ce soir au maquis</small>'+face(hot, 92)+'<div class="pl-bub">« '+escHtml(said)+' »</div>'
+      +'<div role="button" tabindex="0" class="pl-go" data-opp="'+hot+'">'+(revenge ? 'Relever le défi de '+nm(hot) : 'Affronter '+nm(hot))+'<small>'+(revenge ? 'Revanche · ' : '')+rec(hot)+'</small></div></div>';
+    h += '<div class="pl-lbl">Ils t’attendent</div>';
+    h += card('Carré la Pute', 'Une place à la table', sq.map(nm).join(', ')+' jouent déjà', 'data-act="carre"', 'S’asseoir', '<span class="pl-faces">'+sq.map(id=> face(id, 40)).join('')+'</span>');
+    others.forEach(id=>{ const P = DUEL_PERSONAS[id];
+      h += card(rec(id), nm(id), escHtml((P.tagline || '').split('.')[0]), 'data-opp="'+id+'"', 'Jouer', face(id)); });
+    if(more) h += card('Fap-Fap League', '+ '+more+' champions à débloquer', 'Bats-les en League : ils viennent ensuite jouer ici', 'data-act="league"', 'Voir', icon('cadenas', 'lock'));
+    h += card('Défi du jour', 'La même donne pour tout le monde', 'Mr Kamga a préparé la donne de ce soir', 'data-act="daily"', 'Jouer', face('tchinda'));
+    h += '<div class="pl-lbl">En ligne</div>';
+    h += card('Avec un ami', 'Invite un ami', 'Par WhatsApp : tu héberges, il joue sur ta table', 'data-act="mp"', guest ? 'Compte' : 'Inviter', '<span class="pl-q">?</span>');
+    h += card('Un code', 'Rejoindre une partie', 'Ton ami t’a envoyé 4 lettres', 'data-act="code"', 'Entrer', icon('code'));
+    h += card('Tes amis', 'Mes amis', 'Qui est en ligne, défie-les en un geste', 'data-act="friends"', 'Voir', icon('enligne'));
+    box.innerHTML = h;
     fillAllAvatars(box);
   }
   // one sheet before the cards: the opponent, the format, the stake, what can be won
@@ -14176,6 +14237,9 @@
     if(t.closest('[data-lock]')){ showToast('Les champions de la League', 'Bats-les en Fap-Fap League : ils viennent ensuite jouer ici.', {ms:2600}); return; }
     const a = t.closest('[data-act]'); if(!a) return;
     if(a.dataset.act==='carre') document.getElementById('modeSquare').click();
+    else if(a.dataset.act==='league') document.getElementById('btnLeague').click();
+    else if(a.dataset.act==='daily') document.getElementById('modeDaily').click();
+    else if(a.dataset.act==='friends') window.openFriends();
     else if(!v3NeedAccount()) document.getElementById('modeMP').click();
   }
   document.getElementById('playPage').addEventListener('click', v3PlayClick);
@@ -14325,7 +14389,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v97';
+  const APP_VERSION = 'v98';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
