@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0505">
+<title>L’écran Jouer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&family=Anton&display=swap" rel="stylesheet">
+<script src="persos.js"></script>
+<style>
+/* Maquette : trois façons de refaire l'écran « Jouer » (partie rapide, le quartier, en ligne, Carré la Pute),
+   avec les 16 visages. Rien n'est codé dans le jeu. */
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:#fff6f2; font:700 14px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; max-width:760px; margin:0 auto; }
+h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:900 10.5px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+.lead{ color:#c9a3a3; margin:6px 0 12px; font-size:13px; } .lead b{ color:#fff; }
+.tabs{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.tab{ padding:9px 4px; border-radius:14px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11.5px 'Nunito'; color:#c9a3a3; cursor:pointer; }
+.tab.on{ background:#e00000; color:#fff; }
+.what{ color:#c9a3a3; font-size:13px; margin-bottom:12px; } .what b{ color:#fff; }
+.phone{ position:relative; width:min(370px, 100%); margin:0 auto; height:760px; border-radius:40px; border:4px solid #000; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; background:radial-gradient(120% 55% at 30% 0%, #3a1a10 0%, #120606 45%, #070202 80%); }
+.scr{ position:absolute; inset:0; overflow-y:auto; padding:16px 12px 90px; scrollbar-width:none; } .scr::-webkit-scrollbar{ display:none; }
+.hd{ display:flex; align-items:center; gap:10px; margin-bottom:10px; } .hd i{ width:34px; height:34px; border-radius:50%; background:#1e0f0b; border:2px solid #000; display:grid; place-items:center; font-style:normal; font:900 16px 'Nunito'; } .hd b{ font:700 22px 'Fredoka'; } .hd .chips{ margin-left:auto; padding:5px 10px; border-radius:20px; background:#1e0f0b; border:2px solid #000; font:900 12px 'Nunito'; }
+.f{ position:relative; overflow:hidden; border-radius:50%; } .f .ffp-f{ position:absolute; inset:0; display:block; overflow:hidden; border-radius:inherit; } .f .ffp-f svg{ position:absolute; width:150%; left:-25%; top:-10%; }
+.lock{ filter:brightness(0) opacity(.55); }
+.note{ margin-top:16px; color:#c9a3a3; font-size:12.5px; line-height:1.5; } .note b{ color:#fff; }
+.btn{ display:block; width:100%; padding:13px; border-radius:16px; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 16px 'Fredoka'; text-align:center; color:#fff; cursor:pointer; }
+.btn.red{ background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); } .btn.dark{ background:#1e0f0b; } .btn.gold{ background:linear-gradient(180deg, #ffd34a, #e8a817); color:#1b120c; }
+.btn small{ display:block; font:800 11px 'Nunito'; opacity:.85; }
+.stakes{ display:flex; gap:5px; overflow-x:auto; padding:2px 0 6px; scrollbar-width:none; } .stakes span{ flex:none; padding:6px 10px; border-radius:12px; background:#1e0f0b; border:2px solid #000; font:900 12px 'Nunito'; } .stakes span.on{ background:#ffd34a; color:#1b120c; }
+.sec{ font:900 10.5px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#ff4a4a; margin:14px 0 7px; }
+
+/* A · le vestiaire des adversaires */
+.a-hero{ position:relative; border-radius:24px; border:2.5px solid #000; box-shadow:0 5px 0 #000; padding:12px; text-align:center; background:radial-gradient(90% 70% at 50% 25%, var(--c2), var(--c3)); }
+.a-hero .f{ width:150px; height:150px; margin:0 auto; border:3px solid #000; box-shadow:0 0 0 4px rgba(255,255,255,.12); }
+.a-hero b{ display:block; margin-top:8px; font:700 25px 'Fredoka'; text-shadow:0 3px 0 #000; } .a-hero .tag{ display:inline-block; margin-top:3px; padding:3px 10px; border-radius:20px; background:#000; font:900 11px 'Nunito'; }
+.a-hero .rec{ display:flex; justify-content:center; gap:14px; margin-top:8px; font:800 11.5px 'Nunito'; color:#ffe2d8; } .a-hero .rec b{ display:inline; font:900 14px 'Nunito'; margin:0; text-shadow:none; }
+.a-grid{ display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:5px; margin:12px 0; }
+.a-grid .f{ aspect-ratio:1; border:2px solid #000; cursor:pointer; } .a-grid .f.on{ box-shadow:0 0 0 3px #ffd34a; }
+.a-modes{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.a-modes .btn{ font-size:14px; padding:11px 6px; }
+
+/* B · les tables du maquis */
+.b-t{ position:relative; margin-bottom:12px; border-radius:24px; padding:12px; border:2.5px solid #000; box-shadow:0 5px 0 #000; background:#1e0f0b; cursor:pointer; }
+.b-t h3{ font:700 18px 'Fredoka'; } .b-t p{ font:700 12px 'Nunito'; color:#d9b9b9; }
+.felt{ position:relative; height:120px; margin:10px 0 4px; border-radius:60px; border:4px solid #5a2a14; box-shadow:inset 0 0 0 3px #2a1208, inset 0 10px 30px rgba(0,0,0,.45); background:radial-gradient(70% 70% at 50% 50%, var(--fl, #2f8a52), var(--fd, #13402a)); }
+.felt .seat{ position:absolute; width:46px; height:46px; margin:-23px; border:2.5px solid #000; box-shadow:0 0 0 3px var(--c, #fff); }
+.felt .you{ position:absolute; width:46px; height:46px; margin:-23px; border-radius:50%; border:2.5px solid #000; background:#3d8bff; display:grid; place-items:center; font:900 11px 'Nunito'; box-shadow:0 0 0 3px #fff; }
+.felt .q{ position:absolute; width:46px; height:46px; margin:-23px; border-radius:50%; border:2.5px dashed #fff; background:rgba(0,0,0,.35); display:grid; place-items:center; font:700 20px 'Fredoka'; }
+.felt .cards{ position:absolute; left:50%; top:50%; translate:-50% -50%; display:flex; gap:3px; } .felt .cards i{ width:18px; height:26px; border-radius:4px; background:#fffaf0; border:2px solid #000; }
+.b-t .go{ position:absolute; right:12px; top:12px; padding:5px 10px; border-radius:12px; background:#e00000; border:2px solid #000; font:900 11px 'Nunito'; }
+.sheet{ position:absolute; left:0; right:0; bottom:0; padding:16px 14px 22px; border-radius:26px 26px 0 0; background:#120505; border-top:2px solid #e00000; box-shadow:0 -10px 40px rgba(0,0,0,.6); }
+.sheet h4{ font:700 19px 'Fredoka'; margin-bottom:8px; } .opp-row{ display:flex; gap:8px; overflow-x:auto; padding:4px 2px 8px; scrollbar-width:none; }
+.opp-row div{ flex:none; width:70px; text-align:center; font:800 10px 'Nunito'; } .opp-row .f{ width:60px; height:60px; margin:0 auto 3px; border:2.5px solid #000; } .opp-row .on .f{ box-shadow:0 0 0 3px #ffd34a; }
+.dim{ position:absolute; inset:0; background:rgba(0,0,0,.55); }
+
+/* C · ce soir au maquis */
+.c-card{ position:relative; display:flex; gap:10px; align-items:center; margin-bottom:10px; padding:12px; border-radius:20px; border:2.5px solid #000; box-shadow:0 4px 0 #000; background:linear-gradient(160deg, #2a0d0b, #160606); }
+.c-card .f{ flex:none; width:60px; height:60px; border:2.5px solid #000; }
+.c-card .tx{ flex:1; min-width:0; } .c-card small{ display:block; font:900 9.5px 'Nunito'; letter-spacing:.14em; text-transform:uppercase; color:#f1c257; } .c-card b{ display:block; font:700 15px/1.2 'Fredoka'; margin:2px 0; } .c-card span{ display:block; font:700 11.5px 'Nunito'; color:#d9b9b9; }
+.c-card em{ flex:none; font-style:normal; padding:7px 10px; border-radius:12px; background:#e00000; border:2px solid #000; font:900 11px 'Nunito'; }
+.c-card.big{ flex-direction:column; align-items:stretch; text-align:center; background:radial-gradient(90% 70% at 50% 20%, #8a1414, #2a0606); }
+.c-card.big .bub{ position:relative; margin:4px auto 10px; max-width:260px; padding:8px 12px; border-radius:16px; background:#fffaf0; color:#141210; border:2.5px solid #000; font:800 13px 'Nunito'; }
+.c-faces{ display:flex; justify-content:center; } .c-faces .f{ width:52px; height:52px; border:2.5px solid #000; margin-left:-12px; } .c-faces .f:first-child{ margin-left:0; }
+.c-modes{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.c-modes div{ padding:9px 2px; border-radius:14px; background:#1e0f0b; border:2px solid #000; text-align:center; font:900 10.5px 'Nunito'; color:#ffe2d8; } .c-modes div i{ display:block; font-style:normal; font:700 18px 'Fredoka'; color:#fff; }
+.tb{ position:absolute; left:8px; right:8px; bottom:8px; height:48px; border-radius:18px; background:#1e0f0b; border:2px solid #000; display:flex; justify-content:space-around; align-items:center; } .tb i{ width:22px; height:22px; border-radius:6px; background:#4a3530; } .tb i.on{ background:#e00000; }
+</style></head>
+<body>
+<h1><small>Maquette · à choisir</small>L’écran « Jouer »</h1>
+<p class="lead">Aujourd’hui, c’est une liste de cartes les unes sous les autres. Trois façons de le rendre vivant, avec <b>les 16 personnages</b> au centre. Les mêmes choix qu’aujourd’hui (partie rapide, la mise, le quartier, en ligne, Carré la Pute) : seule la façon de les présenter change.</p>
+<div class="tabs" id="tabs"><div class="tab on" data-s="0">A. Le vestiaire</div><div class="tab" data-s="1">B. Les tables</div><div class="tab" data-s="2">C. Ce soir</div></div>
+<p class="what" id="what"></p>
+<div class="phone"><div class="scr" id="scr"></div><div class="tb"><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
+<p class="note"><b>Dans les trois :</b> les visages déjà débloqués en couleur, les autres en silhouette (on les débloque en League). La mise et « 1 manche ou 3 manches » restent, au même endroit pour tous les modes.</p>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const F = (id, cls)=>{ const P = FFP.info(id); return '<span class="f '+(cls||'')+'" style="background:radial-gradient(90% 80% at 50% 28%, '+P.c2+', '+P.c3+')"><span class="ffp-f">'+FFP.face(id)+'</span></span>'; };
+const ORDER = ['penalty','rall','kamga','alida','eva','daryck','nassim','tiko','push','banquier','systeme','dila','pampam','rosine','ngobassa','masque'];
+const OPEN = ['penalty','rall','alida','eva','daryck','kamga'];
+const STYLE = {penalty:'Le calculateur', rall:'Le menteur', kamga:'Le patient', alida:'La contre-attaque', eva:'L’imprévisible', daryck:'Le flambeur', nassim:'Le mur', tiko:'Le spectacle', push:'L’usure', banquier:'L’écraseur', systeme:'Le lecteur', dila:'Le mauvais perdant', pampam:'La vengeance', rosine:'La gardienne', ngobassa:'Le règlement', masque:'Le boss'};
+const stakes = '<div class="stakes"><span>Amical</span><span class="on">100</span><span>500</span><span>1 000</span><span>5 000</span><span>1 manche ▾</span></div>';
+const HD = '<div class="hd"><i>‹</i><b>Jouer</b><span class="chips">● 12 400</span></div>';
+let pick = 'rall';
+function A(){
+  const P = FFP.info(pick);
+  return HD+'<div class="a-hero" style="--c2:'+P.c2+';--c3:'+P.c3+'">'+F(pick)+'<b>'+P.name+'</b><span class="tag">'+STYLE[pick]+'</span><div class="rec"><span>Toi <b>3</b> victoires</span><span>Lui <b>5</b></span><span>Gain <b>×2</b></span></div></div>'
+    +'<div class="a-grid">'+ORDER.map(id=> F(id, (OPEN.includes(id) ? '' : 'lock')+(id===pick ? ' on' : '')).replace('class="f', 'data-p="'+id+'" class="f')).join('')+'</div>'
+    +stakes
+    +'<div class="btn red" style="margin-top:6px">Jouer contre '+P.name+'<small>Mise 100 · tu touches 200 si tu gagnes</small></div>'
+    +'<div class="a-modes"><div class="btn dark">Carré la Pute<small>Choisis tes 3 adversaires</small></div><div class="btn dark">Avec un ami<small>En ligne ou par code</small></div></div>';
+}
+function B(){
+  const t = (title, sub, felt, seats, go)=> '<div class="b-t"><span class="go">'+go+'</span><h3>'+title+'</h3><p>'+sub+'</p><div class="felt" style="'+felt+'">'+seats+'<span class="cards"><i></i><i></i><i></i></span></div></div>';
+  const at = (x, y, html)=> html.replace('class="', 'style="left:'+x+'%;top:'+y+'%;--c:'+'#ffd34a'+'" class="');
+  return HD
+    +t('Le duel', '1 contre 1 · ton adversaire et ta mise', '', '<span class="you" style="left:20%;top:50%">TOI</span>'+at(80, 50, F('rall', 'seat')), 'Rall ›')
+    +t('Carré la Pute', 'À 4 · le vainqueur de chaque manche élimine qui il veut', '--fl:#8a1414;--fd:#3a0606', '<span class="you" style="left:50%;top:92%">TOI</span>'+at(14, 50, F('pampam', 'seat'))+at(50, 8, F('systeme', 'seat'))+at(86, 50, F('dila', 'seat')), 'À 4 ›')
+    +t('Avec un ami', 'En ligne · chacun sur son téléphone', '--fl:#1d3373;--fd:#060f26', '<span class="you" style="left:20%;top:50%">TOI</span><span class="q" style="left:80%;top:50%">?</span>', 'Inviter ›')
+    +'<div class="dim"></div><div class="sheet"><h4>Le duel · qui affrontes-tu ?</h4><div class="opp-row">'+ORDER.slice(0, 8).map(id=> '<div class="'+(id==='rall' ? 'on' : '')+'">'+F(id, OPEN.includes(id) ? '' : 'lock')+FFP.info(id).name.split(' ')[0]+'</div>').join('')+'</div>'+stakes+'<div class="btn red">S’asseoir à la table</div></div>';
+}
+function C(){
+  return HD
+    +'<div class="c-modes"><div><i>1v1</i>Duel</div><div><i>4</i>Carré</div><div><i>⚡</i>En ligne</div><div><i>🏆</i>League</div></div>'
+    +'<div class="c-card big"><small style="font:900 9.5px Nunito;letter-spacing:.14em;color:#f1c257">CE SOIR AU MAQUIS</small>'+'<div class="c-faces" style="margin:8px 0 4px">'+F('rall')+'</div><div class="bub">« Tu as fui la dernière fois, mola. Assieds-toi. »</div><div class="btn red">Relever le défi de Rall<small>Revanche · mise 500</small></div></div>'
+    +'<div class="sec">Ils t’attendent</div>'
+    +'<div class="c-card">'+F('pampam')+'<div class="tx"><small>Carré la Pute</small><b>Une place à la table</b><span>Pam-Pam, Système et Dila jouent déjà</span></div><em>S’asseoir</em></div>'
+    +'<div class="c-card">'+F('eva')+'<div class="tx"><small>Nouvelle</small><b>Eva veut te tester</b><span>« Penalty dit que tu es fort. On va voir. »</span></div><em>Jouer</em></div>'
+    +'<div class="c-card">'+F('kamga')+'<div class="tx"><small>Défi du jour</small><b>La même donne pour tout le monde</b><span>Mr Kamga a préparé la donne de ce soir</span></div><em>Jouer</em></div>'
+    +'<div class="sec">En ligne</div>'
+    +'<div class="c-card"><span class="f" style="width:60px;height:60px;border:2.5px dashed #fff;background:#1d3373;display:grid;place-items:center;font:700 22px Fredoka">?</span><div class="tx"><small>Avec un ami</small><b>Invite un ami</b><span>WhatsApp ou un code de 4 lettres</span></div><em>Inviter</em></div>';
+}
+const S = [
+  {f:A, what:'<b>A · Le vestiaire.</b> Comme l’écran de choix des personnages d’un jeu de combat : le grand visage de ton adversaire en haut (son style, ton bilan contre lui, le gain), les 16 visages en dessous, la mise, et un gros bouton. Carré et en ligne en deux boutons sous le duel. <b>Le plus rapide pour jouer.</b>'},
+  {f:B, what:'<b>B · Les tables du maquis.</b> Chaque mode est une table vue d’en haut, avec ses places : le duel (toi et l’adversaire), le Carré (4 places, les visages déjà assis), un ami (une place « ? »). Touche une table : le choix s’ouvre en bas (adversaire, mise). <b>Le plus « jeu ».</b>'},
+  {f:C, what:'<b>C · Ce soir au maquis.</b> L’écran te parle : un personnage te provoque en haut (une revanche, un défi), puis ceux qui t’attendent (une place au Carré, un nouveau qui veut te tester, le défi du jour), et les amis en ligne. Les 4 modes restent en raccourci tout en haut. <b>Le plus vivant</b> : il change à chaque visite.'}
+];
+let cur = 0;
+function go(i){ cur = i; document.querySelectorAll('#tabs .tab').forEach(t=> t.classList.toggle('on', +t.dataset.s===i)); $('what').innerHTML = S[i].what; $('scr').innerHTML = S[i].f(); $('scr').scrollTop = 0; }
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-s]'); if(t) go(+t.dataset.s); });
+$('scr').addEventListener('click', e=>{ const p = e.target.closest('[data-p]'); if(p && cur===0 && OPEN.includes(p.dataset.p)){ pick = p.dataset.p; go(0); } });
+go(0);
+})();
+</script>
+</body></html>
