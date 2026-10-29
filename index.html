@@ -1265,6 +1265,44 @@
      the animated tutorial. Only moves and fades. (The home theme styles its buttons with many ids: these need more.) */
   #instBand#instBand#instBand#instBand#instBand#instBand.inst-band{ display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 4px; padding:10px 12px; border-radius:18px; background:linear-gradient(90deg, #e00000, #8f0000) !important; border:2.5px solid #000 !important; box-shadow:0 4px 0 #000 !important; position:relative; overflow:hidden; color:#fff !important; text-align:left; font:inherit; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   #instBand#instBand#instBand#instBand#instBand#instBand.inst-band.hidden{ display:none; }
+  /* v92 (audit, lot 3) · the end of the game in the game's dark colours (same layout), the « Pourquoi » line,
+     and « Autre adversaire » next to the rematch */
+  body:not(#z):not(#y) #matchOverOverlay .mo-panel{ background:linear-gradient(180deg, #2a0d0b, #160606) !important; color:#fff6f2 !important; border:2.5px solid #000 !important; box-shadow:0 5px 0 #000, inset 0 0 0 1.5px #5a1a14 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body:not(#z):not(#y) #matchOverOverlay .mo-title{ color:#fff !important; }
+  body:not(#z):not(#y) #matchOverOverlay .mo-text{ color:#d9b9b9 !important; }
+  body:not(#z):not(#y) #matchOverOverlay .mo-kicker{ color:#ff4a4a !important; }
+  body:not(#z):not(#y) #matchOverOverlay .mo-suits span{ color:#7a5a5a !important; } body:not(#z):not(#y) #matchOverOverlay .mo-suits span.r{ color:#c8283a !important; }
+  body:not(#z):not(#y) #matchOverOverlay :is(.rep-panel, .chips-result){ background:#1e0f0b !important; color:#fff6f2 !important; border:2.5px solid #000 !important; box-shadow:0 4px 0 #000 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body:not(#z):not(#y) #matchOverOverlay :is(.rep-next, .rep-lines, .cr-body small){ color:#c9a3a3 !important; }
+  body:not(#z):not(#y) #matchOverOverlay .rep-bar{ background:#3a2a20 !important; }
+  .mo-why{ display:flex; gap:9px; align-items:flex-start; margin-top:12px; padding:9px 10px; border-radius:14px; background:#000; border:1.5px solid #5a1a14; text-align:left; font:800 12.5px/1.4 'Nunito', sans-serif; color:#fff6f2; }
+  .mo-why.hidden{ display:none; }
+  .mo-why small{ display:block; color:#f1c257; font:900 9.5px 'Nunito', sans-serif; letter-spacing:.14em; text-transform:uppercase; margin-bottom:2px; }
+  .mo-why b{ color:#fff; }
+  .mo-why .mw-c{ flex:none; width:32px; height:44px; border-radius:6px; background:#fffaf0; border:2px solid #000; display:grid; place-items:center; align-content:center; color:#141210; font:700 14px/1 'Fredoka', sans-serif; }
+  .mo-why .mw-c i{ font-style:normal; font-size:13px; } .mo-why .mw-c.r{ color:#c8283a; }
+  #matchOverOverlay .mo-row{ display:flex; gap:8px; justify-content:center; align-items:stretch; width:100%; max-width:360px; }
+  #matchOverOverlay .mo-row #btnRematch{ min-width:0; flex:1.2; margin-top:6px !important; }
+  #matchOverOverlay .mo-row .mo-other{ flex:1; margin-top:6px; padding:12px 10px; border-radius:16px; background:#1e0f0b; color:#fff; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 15px 'Fredoka', sans-serif; }
+  #matchOverOverlay .mo-row .mo-other.hidden{ display:none; }
+  /* v92 · the goal of the day (home screen, under « Jouer ») */
+  #dayGoal#dayGoal#dayGoal#dayGoal#dayGoal#dayGoal.day-goal{ display:block; width:100%; margin:10px 0; padding:11px 12px; border-radius:18px; background:#1e0f0b !important; border:2px solid #e9b94e !important; box-shadow:0 4px 0 #000 !important; color:#fff6f2 !important; text-align:left; font:inherit; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  #dayGoal#dayGoal#dayGoal#dayGoal#dayGoal#dayGoal.day-goal.hidden{ display:none; }
+  #dayGoal.claimed{ opacity:.7; }
+  .day-goal .dg-h{ display:flex; justify-content:space-between; font:900 10px 'Nunito', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#f1c257; }
+  .day-goal b{ display:block; font:700 15px 'Fredoka', sans-serif; margin:4px 0 7px; color:#fff; }
+  .day-goal .dg-bar{ display:block; height:8px; border-radius:6px; background:#000; overflow:hidden; } .day-goal .dg-bar i{ display:block; height:100%; background:linear-gradient(90deg, #f1c257, #ff8a00); transition:width .5s; }
+  .day-goal .dg-r{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; font:800 11px 'Nunito', sans-serif; color:#c9a3a3; }
+  .day-goal .dg-r em{ font-style:normal; color:#fff; display:flex; gap:4px; align-items:center; } .day-goal .dg-r em .coin-big{ width:14px; height:14px; display:inline-grid; }
+  .day-goal .dg-r em .coin-big svg{ width:14px; height:14px; }
+  .day-goal .dg-r em.dg-go{ padding:6px 10px; border-radius:12px; background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11.5px 'Nunito', sans-serif; animation:dgPulse 1.6s ease-in-out infinite; }
+  @keyframes dgPulse{ 50%{ transform:scale(1.05); } }
+  @media (prefers-reduced-motion: reduce){ .day-goal .dg-r em.dg-go{ animation:none; } }
+  /* v92 · Ma collection: the tabs stuck at the top */
+  .sx-jump{ position:sticky; top:0; z-index:6; display:flex; gap:6px; margin:0 -2px 6px; padding:8px 2px; background:linear-gradient(180deg, #120606 70%, rgba(18,6,6,0)); }
+  .sx-jump span{ flex:1; text-align:center; padding:8px 4px; border-radius:13px; background:#1e0f0b; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 12px 'Nunito', sans-serif; color:#c9a3a3; cursor:pointer; white-space:nowrap; }
+  .sx-jump span small{ font:800 10px 'Nunito', sans-serif; opacity:.8; margin-left:4px; }
+  .sx-jump span.on{ background:#e00000; color:#fff; }
   /* (audit 29/10: the old « Installer le jeu » card at the bottom of the home screen did the same as the band) */
   #menuOverlay #btnInstall{ display:none !important; }
   .inst-band::after{ content:''; position:absolute; top:0; bottom:0; width:40%; left:-50%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent); animation:ibSheen 3.2s ease-in-out infinite; pointer-events:none; }
@@ -1273,6 +1311,12 @@
   .inst-band .ib-ic{ width:38px; height:38px; border-radius:11px; animation:ibHop 2.4s ease-in-out infinite; }
   @keyframes ibHop{ 0%,70%,100%{ transform:none; } 78%{ transform:translateY(-5px); } 86%{ transform:none; } 92%{ transform:translateY(-2px); } }
   .inst-band .ib-t{ min-width:0; } .inst-band .ib-t b{ display:block; font:700 15px 'Fredoka', sans-serif; color:#fff; } .inst-band .ib-t small{ display:block; font:800 11px/1.3 'Nunito', sans-serif; color:#ffd8d8; }
+  .inst-band em + em{ margin-left:5px; }
+  /* both actions: no icon, one line of text, smaller buttons (the band stays one row high) */
+  .inst-band.two .ib-ic{ display:none; }
+  .inst-band.two em{ padding:6px 8px; font-size:11px; }
+  .inst-band.two .ib-t b{ font-size:14px; white-space:nowrap; }
+  .inst-band em.ib-save{ background:#ffd34a; }
   .inst-band em{ margin-left:auto; font-style:normal; padding:6px 10px; border-radius:12px; background:#fff; color:#111; font:900 11.5px 'Nunito', sans-serif; border:2px solid #000; flex:none; }
   .inst-inv{ position:fixed; inset:0; z-index:1050; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; animation:veil .3s ease both; }
   .inst-inv.hidden{ display:none; }
@@ -4148,12 +4192,20 @@
   body.ui-d:not(#z) #choiceOverlay .ritual-card{ background:#fff !important; color:#1B120C !important; border:3px solid #1B120C !important; border-radius:22px !important; box-shadow:0 6px 0 #000 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   body.ui-d:not(#z) #choiceOverlay .ritual-card :is(b, span, small, p){ color:#1B120C !important; text-shadow:none !important; }
   body.ui-d:not(#z) #choiceOverlay .ritual-card.primary, body.ui-d:not(#z) #choiceOverlay .ritual-card:first-of-type{ background:var(--d-mango,#FFC93C) !important; }
-  body.ui-d:not(#z) #matchOverOverlay :is(.mo-panel, .rep-panel, .chips-result){ background:#fff !important; color:#1B120C !important; border:3px solid #1B120C !important; border-radius:22px !important; box-shadow:0 6px 0 #000 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
-  body.ui-d:not(#z) #matchOverOverlay .mo-panel :is(.mo-title){ color:#1B120C !important; -webkit-text-fill-color:#1B120C !important; text-shadow:none !important; }
-  body.ui-d:not(#z) #matchOverOverlay :is(.mo-panel, .rep-panel, .chips-result) :is(p, span, small, b, div){ color:#1B120C !important; text-shadow:none !important; }
-  body.ui-d:not(#z) #matchOverOverlay .mo-kicker{ color:#B83333 !important; font:800 12px var(--d-b) !important; letter-spacing:.12em; }
+  /* v92 (audit, lot 3): the panels of the end of the game are dark now, like the rest of the game (same layout) */
+  body.ui-d:not(#z) #matchOverOverlay :is(.mo-panel, .rep-panel, .chips-result){ background:linear-gradient(180deg, #2a0d0b, #160606) !important; color:#fff6f2 !important; border:2.5px solid #000 !important; border-radius:22px !important; box-shadow:0 6px 0 #000, inset 0 0 0 1.5px #5a1a14 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  body.ui-d:not(#z) #matchOverOverlay .mo-panel :is(.mo-title){ color:#fff !important; -webkit-text-fill-color:#fff !important; text-shadow:0 3px 0 #000 !important; }
+  body.ui-d:not(#z) #matchOverOverlay :is(.mo-panel, .rep-panel, .chips-result) :is(p, span, small, b, div){ color:#fff6f2 !important; text-shadow:none !important; }
+  body.ui-d:not(#z):not(#y) #matchOverOverlay :is(.mo-text, .rep-next, .rep-lines, .cr-body small){ color:#d9b9b9 !important; }
+  body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-why small{ color:#f1c257 !important; }
+  body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-why .mw-c, body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-why .mw-c i{ color:#141210 !important; }
+  body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-why .mw-c.r, body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-why .mw-c.r i{ color:#c8283a !important; }
+  body.ui-d:not(#z) #matchOverOverlay .mo-why{ background:#000 !important; }
+  body.ui-d:not(#z) #matchOverOverlay .mo-suits span{ color:#7a5a5a !important; } body.ui-d:not(#z) #matchOverOverlay .mo-suits span.r{ color:#e0303a !important; }
+  body.ui-d:not(#z) #matchOverOverlay button.mo-other{ background:#1e0f0b !important; color:#fff !important; }
+  body.ui-d:not(#z):not(#y) #matchOverOverlay .mo-kicker{ color:#ff4a4a !important; font:800 12px var(--d-b) !important; letter-spacing:.12em; }
   body.ui-d:not(#z) #matchOverOverlay .mo-glow{ display:none !important; }
-  body.ui-d:not(#z) #matchOverOverlay .rep-bar{ background:#FBE9BC; border:2.5px solid #1B120C; } body.ui-d:not(#z) #matchOverOverlay .rep-bar > div{ background:var(--d-mango,#FFC93C) !important; box-shadow:none !important; }
+  body.ui-d:not(#z) #matchOverOverlay .rep-bar{ background:#3a2a20; border:2.5px solid #000; } body.ui-d:not(#z) #matchOverOverlay .rep-bar > div{ background:var(--d-mango,#FFC93C) !important; box-shadow:none !important; }
   body.ui-d:not(#z) #matchOverOverlay .winner-face .avatar{ border:3px solid #1B120C; box-shadow:0 5px 0 #000 !important; }
   body.ui-d:not(#z) #revealOverlay .sheet :is(.rv-kicker){ color:#B83333 !important; }
 
@@ -4183,7 +4235,10 @@
   #homeScene{ position:fixed; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
   body.in-game #homeScene{ display:none; }
   body:not(.in-game) #dScene{ visibility:hidden; }
-  #glassLogo{ display:block; width:100%; height:140px; touch-action:manipulation; cursor:pointer; }
+  #glassLogo{ display:block; width:100%; height:100px; touch-action:manipulation; cursor:pointer; }
+  /* v92 (audit, lot 2): the tagline and the beta pill on one line */
+  #menuOverlay .home-top .home-tag{ display:inline-block; vertical-align:middle; margin:0 6px 0 0 !important; }
+  #menuOverlay .home-top #betaTag{ vertical-align:middle; margin-top:0; padding:2px 8px; font-size:9.5px; }
   body.ui-d:not(#z) #menuOverlay :is(.logo-d, .neon-logo){ display:none !important; }
   body.ui-d:not(#z) :is(#menuOverlay, .overlay.page){ background:transparent !important; background-image:none !important; --d-txt:#FFF1D6; --d-mute:#dcc6a2; color:#FFF1D6; }
   body.ui-d:not(#z) :is(#menuOverlay, .overlay.page) :is(.gl, .set-row, .opp-card, .trophy, .rich-row, .profile-card, .acct-card, .cp-n, .rm-player, .skin-opt, .level-btn, .rules-box, .shop-item, .shop-stage, .stats-block, .mode-card, .hcard, .hero-play, .menu-rank, .quote-bar, .og-bubble, .rep-panel, .card-box, .panel, input, select, textarea, button:not(.tab):not(.back-btn):not(.ghost)){ --d-txt:#2A1D12; --d-mute:#7A6650; }
@@ -4817,6 +4872,7 @@
     <h2 id="matchOverTitle" class="mo-title">Victoire !</h2>
     <p id="matchOverText" class="mo-text"></p>
     <div class="mo-suits" aria-hidden="true"><span>♠</span><span class="r">♥</span><span class="r">♦</span><span>♣</span></div>
+    <div class="mo-why hidden" id="moWhy"></div>
   </div>
   <div class="chips-result hidden" id="chipsResult">
     <span class="cr-coin"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span>
@@ -4830,7 +4886,7 @@
     <div class="rep-trophies" id="repTrophies"></div>
   </div>
   <p id="rematchInfo" class="rematch-info"></p>
-  <button class="primary big" id="btnRematch" style="margin-top:6px;"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg> Revanche</button>
+  <div class="mo-row"><button class="primary big" id="btnRematch" style="margin-top:6px;"><svg class="i" aria-hidden="true"><use href="#i-repeat"/></svg> Revanche</button><button class="mo-other hidden" id="btnOtherOpp">Autre adversaire</button></div>
   <button class="hidden" id="btnAddFriendMo"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> <span>Ajouter en ami</span></button>
   <button class="whatsapp hidden" id="btnShareWin"><svg class="i" aria-hidden="true"><use href="#i-share"/></svg> Partager ma victoire</button>
   <button class="ghost" id="btnToMenu">Retour à l'accueil</button>
@@ -4866,8 +4922,6 @@
       <button class="gl solid gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
       <button class="gl solid gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
     </div>
-    <!-- v90: installing the game, at the top while it is not installed -->
-    <button class="inst-band hidden" id="instBand"><span class="ib-ic">FF</span><span class="ib-t"><b>Installe Fap Fap</b><small>Plein écran, et on te prévient quand on te dépasse</small></span><em>2 gestes</em></button>
 
     <div class="home-top">
       <h2 class="logo neon-logo" aria-label="Fap Fap"><span class="neon-plate" id="neonPlate"><svg class="neon-sign" viewBox="0 0 400 120" aria-hidden="true"><defs><filter id="neonBlur" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="n-glow" filter="url(#neonBlur)"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-tube"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g><g class="n-gas"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow2"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-shine" transform="translate(-1.2 -1.6)"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g></svg></span></h2>
@@ -4875,6 +4929,8 @@
       <p class="home-tag">Yaoundé · la nuit · les cartes</p>
       <button class="beta-tag" id="betaTag" aria-label="Version bêta : en savoir plus">Version bêta</button>
     </div>
+    <!-- v90/v92: one red band under the logo: install the game, save the account, or both (filled by homeBand) -->
+    <button class="inst-band hidden" id="instBand"></button>
 
     <section class="og-king" id="ogKing" aria-label="Le Ngonzormorrr">
       <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le masque du Ngonzormorrr"></div>
@@ -4892,6 +4948,8 @@
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
+    <!-- v92 (audit, lot 3): the goal of the day, a small mission that changes at midnight -->
+    <button class="day-goal hidden" id="dayGoal"></button>
 
     <button class="hx-novel press" id="btnStory" style="--d:2">
       <span class="hx-home-txt"><small>Mode histoire · 18+</small><b>Pourquoi je suis mort ?</b><span id="hxHomeSub">Le roman de Penalty, à lire et à jouer.</span>
@@ -9849,7 +9907,7 @@
         const el=this.el, w=el.clientWidth, h=el.clientHeight; this.w=w; this.h=h; if(!w || !h) return;
         el.width=w*D; el.height=h*D; this.tc.width=w*D; this.tc.height=h*D;
         this.ctx=el.getContext('2d'); this.tx=this.tc.getContext('2d');
-        this.fs = Math.min(92, w/4.3);
+        this.fs = Math.min(92, w/4.3, h*.66); // (v92: the sign is shorter, so « Jouer » shows on small phones)
         this.y = h*.5 + this.fs*.36; this.x1 = w*.26; this.x2 = w*.74;
         // repérer les points bien à l'intérieur des lettres pour y visser des ampoules
         const m=document.createElement('canvas'); m.width=w; m.height=h; const mx=m.getContext('2d');
@@ -11816,7 +11874,7 @@
       if(card.suit!==leadCard.suit){ markVoid(actor, leadCard.suit); noteFeint(actor, card, leadCard.suit, actor==='you' ? state.playerHand : state.aiHand); }
       logMsg((actor==='you'?'Toi':'Penalty')+(card.suit!==leadCard.suit?' joue libre — pas de contrôle.':' suit mais reste plus faible.'));
     }
-    state.trickWinners.push({rank:winningCard.rank, winner, card:winningCard}); // contested — eligible for CORA/glacée
+    state.trickWinners.push({rank:winningCard.rank, winner, card:winningCard, lose: winner===actor ? leadCard : card}); // contested — eligible for CORA/glacée (lose: for « Pourquoi » at the end)
     rigTrick(winner);
     if(state.youSlept && winner==='ai' && !QS.sleptSaid){ QS.sleptSaid = true; quip('mistake', 700); }
     state.leader = winner;
@@ -11857,7 +11915,7 @@
       winner = leadActor; winningCard = leadCard;
       if(!best) markVoid(actor, leadCard.suit);
     }
-    state.trickWinners.push({rank:winningCard.rank, winner}); // contested — eligible for CORA
+    state.trickWinners.push({rank:winningCard.rank, winner, why:{card:winningCard, lose: winner===actor ? leadCard : (best || cards[0])}}); // contested — eligible for CORA (why: for « Pourquoi » at the end; not « card », which the feint check reads)
     rigTrick(winner);
     state.passer = null;
     state.leader = winner;
@@ -13470,8 +13528,12 @@
     const tables = SKINS.table.filter(s=> skinUnlocked('table', s.id));
     const backs = SKINS.back.filter(s=> s.req(profile)).map(s=> SHOP_ITEMS.find(i=> i.kind==='back' && i.id===s.id) || {kind:'back', id:s.id, name:s.name, price:0});
     const mine = k=> SHOP_ITEMS.filter(i=> i.kind===k && shopHas(i));
-    const grp = (t, html)=> '<div class="sx-sec">'+t+'</div>'+html;
-    box.innerHTML = grp('Mes tables <span>'+tables.length+' / '+SKINS.table.length+'</span>', '<div class="sx-tgrid">'+tables.map(s=> '<div role="button" tabindex="0" class="sx-tcard'+(currentTableId()===s.id ? ' on' : '')+'" data-open="'+s.id+'"><canvas data-tpv="'+s.id+'"></canvas><b>'+escHtml(s.name)+'</b><span class="sx-st own">'+(currentTableId()===s.id ? '✓ Sur ta table' : 'Mettre')+'</span></div>').join('')+'</div>')
+    // v92 (audit, lot 3): tabs stuck at the top jump to each part, instead of scrolling five screens
+    let gi = 0; const K = ['t', 'e', 'c', 'p'];
+    const grp = (t, html)=> '<div class="sx-sec" data-k="'+K[gi++]+'">'+t+'</div>'+html;
+    const nE = ['cora','claque','victoire'].reduce((a, k)=> a + mine(k).length, 0), nC = backs.length + mine('face').length, nP = ['frame','title','entree','voix','musique','trail'].reduce((a, k)=> a + mine(k).length, 0);
+    const jump = '<div class="sx-jump" role="tablist">'+[['t','Tables',tables.length],['e','Effets',nE],['c','Cartes',nC],['p','Profil',nP]].map(([k, n, c], i)=> '<span role="tab" data-jump="'+k+'" class="'+(i===0 ? 'on' : '')+'">'+n+'<small>'+c+'</small></span>').join('')+'</div>';
+    box.innerHTML = jump + grp('Mes tables <span>'+tables.length+' / '+SKINS.table.length+'</span>', '<div class="sx-tgrid">'+tables.map(s=> '<div role="button" tabindex="0" class="sx-tcard'+(currentTableId()===s.id ? ' on' : '')+'" data-open="'+s.id+'"><canvas data-tpv="'+s.id+'"></canvas><b>'+escHtml(s.name)+'</b><span class="sx-st own">'+(currentTableId()===s.id ? '✓ Sur ta table' : 'Mettre')+'</span></div>').join('')+'</div>')
       + grp('Mes effets', '<div class="sx-grid">'+['cora','claque','victoire'].map(k=> mine(k).map(sxTile).join('')).join('')+'</div>')
       + grp('Mes cartes', '<div class="sx-grid">'+backs.map(sxTile).join('')+mine('face').map(sxTile).join('')+'</div>')
       + grp('Mon profil', '<div class="sx-grid">'+['frame','title','entree','voix','musique','trail'].map(k=> mine(k).map(sxTile).join('')).join('')+'</div>')
@@ -13479,6 +13541,17 @@
     hookShop(box);
     box.querySelectorAll('.sx-tcard[data-open]').forEach(el=> el.addEventListener('click', e=>{ e.stopImmediatePropagation(); const id = el.dataset.open; prefs.skin = Object.assign({}, prefs.skin||{}, {table:id}); savePrefs(); applySkins(); Music.play(id); vibrate(12); renderSkins(); }, true));
     const sh = box.querySelector('[data-shop]'); if(sh) sh.addEventListener('click', ()=> goTab('shopPage'));
+    const sc = box.closest('.overlay') || document.scrollingElement, bar = box.querySelector('.sx-jump');
+    { const hd = sc.querySelector('.page-head'); if(hd && /sticky|fixed/.test(getComputedStyle(hd).position)) bar.style.top = hd.offsetHeight+'px'; }
+    const mark = k=> bar.querySelectorAll('[data-jump]').forEach(x=> x.classList.toggle('on', x.dataset.jump===k));
+    bar.addEventListener('click', e=>{ const j = e.target.closest('[data-jump]'); if(!j) return; const sec = box.querySelector('.sx-sec[data-k="'+j.dataset.jump+'"]'); if(!sec) return;
+      mark(j.dataset.jump); vibrate(8);
+      sc.scrollTo({top: sec.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - bar.offsetHeight - (parseFloat(bar.style.top) || 0) - 8, behavior: calmOn() ? 'auto' : 'smooth'}); });
+    // the tab of the part on screen lights up while scrolling
+    if(!sc.dataset.sxJump){ sc.dataset.sxJump = 1; let raf = 0;
+      sc.addEventListener('scroll', ()=>{ if(raf) return; raf = requestAnimationFrame(()=>{ raf = 0; const b = box.querySelector('.sx-jump'); if(!b) return; const lim = b.getBoundingClientRect().bottom + 40; let k = 't';
+        box.querySelectorAll('.sx-sec[data-k]').forEach(s=>{ if(s.getBoundingClientRect().top < lim) k = s.dataset.k; });
+        b.querySelectorAll('[data-jump]').forEach(x=> x.classList.toggle('on', x.dataset.jump===k)); }); }, {passive:true}); }
   }
   document.getElementById('btnShowSkins').addEventListener('click', ()=> goTab('skinsOverlay'));
   applySkins();
@@ -13773,13 +13846,26 @@
     const b = document.getElementById('v3Acct'); if(!b) return;
     // v86: only once the session is known and really anonymous — never while it is still loading or offline
     // (the band used to show to saved accounts at launch, before their session came back)
-    const show = CLOUD_ON && !!(typeof Cloud!=='undefined' && Cloud.user && Cloud.user.is_anonymous);
-    b.classList.toggle('hidden', !show); if(!show) return;
-    const rich = (profile.chips||0) >= 5000 || !!myTitle() || profile.quartier!=null && (wkRoll().pts||0) >= 50;
-    b.classList.toggle('loud', rich);
-    b.innerHTML = '<span class="v3-ab-ic">'+icA('compte')+'</span><span class="v3-ab-t"><b>'+(rich ? 'Tu as beaucoup à perdre' : 'Ton compte n’est pas sauvegardé')+'</b>'
-      +'Change de téléphone et tu perds tes '+fmtChips(profile.chips||0)+' jetons et ta place.</span><span class="v3-ab-go">Sauvegarder</span>';
+    // v92 (audit, lot 2): this band and the install band are now one red band at the top (homeBand), so « Jouer »
+    // shows without scrolling on small phones; #v3Acct stays in the page, hidden
+    b.classList.add('hidden'); homeBand();
   }
+  // the band at the top of the home screen: save the account, install the game, or both (two buttons)
+  function homeBand(){
+    const el = document.getElementById('instBand'); if(!el) return;
+    const acct = CLOUD_ON && !!(typeof Cloud!=='undefined' && Cloud.user && Cloud.user.is_anonymous);
+    let inst = false; try{ inst = !isStandalone(); }catch(e){}
+    el.classList.toggle('hidden', !acct && !inst); if(!acct && !inst) return;
+    const rich = (profile.chips||0) >= 5000 || !!myTitle() || profile.quartier!=null && (wkRoll().pts||0) >= 50;
+    const lose = 'Tout est sur ce seul téléphone';
+    const t = acct && inst ? ['Protège ta partie', lose]
+      : acct ? [rich ? 'Tu as beaucoup à perdre' : 'Ton compte n’est pas sauvegardé', 'Change de téléphone et tu perds tes '+fmtChips(profile.chips||0)+' jetons et ta place.']
+      : ['Installe Fap Fap', 'Plein écran, et on te prévient quand on te dépasse'];
+    el.innerHTML = '<span class="ib-ic">FF</span><span class="ib-t"><b>'+t[0]+'</b><small>'+t[1]+'</small></span>'
+      +(acct ? '<em class="ib-save" data-act="save">Sauvegarder</em>' : '')+(inst ? '<em data-act="inst">'+(acct ? 'Installer' : '2 gestes')+'</em>' : '');
+    el.dataset.def = acct ? 'save' : 'inst'; el.classList.toggle('two', acct && inst);
+  }
+  window.homeBand = homeBand;
   document.getElementById('v3Acct').addEventListener('click', ()=>{ ensureAudio(); track('v3_acct_band'); Nav.go('accountPage'); });
   // on the account page: the reasons, and the certified badge once it is saved
   window.v3Account = guest=>{
@@ -13911,7 +13997,10 @@
   });
   // the home card « Installer le jeu » now opens the tutorial (on every phone where the game is not installed yet)
   document.getElementById('btnInstall').addEventListener('click', e=>{ e.stopImmediatePropagation(); ensureAudio(); track('v3_install_open'); renderInstall(); Nav.go('installPage'); }, true);
-  document.getElementById('instBand').addEventListener('click', ()=>{ ensureAudio(); track('v90_install_band'); renderInstall(); Nav.go('installPage'); });
+  document.getElementById('instBand').addEventListener('click', e=>{
+    ensureAudio(); const a = (e.target.closest('[data-act]') || {dataset:{}}).dataset.act || e.currentTarget.dataset.def;
+    if(a==='save'){ track('v3_acct_band'); Nav.go('accountPage'); return; }
+    track('v90_install_band'); renderInstall(); Nav.go('installPage'); });
 
   // ---- « Mon style »: the default CORA and claque effects (or « au hasard »), and the table your guests play on ----
   const V3_FX_IC = {meteore:'meteorite', foudre:'foudre', billets:'billets', artifice:'artifice', trounoir:'trounoir', clac:'claque', onde:'onde', feu:'feu', eclair:'foudre',
@@ -13942,14 +14031,49 @@
   // ---- La leçon: Maître Tsala's lesson, replayable from the home screen ----
   document.getElementById('btnLesson').addEventListener('click', ()=>{ ensureAudio(); track('v3_lesson'); pvOpen('lesson'); });
 
+  // ---- v92 (audit, lot 3): the goal of the day, under « Jouer ». Its progress is read from the counters the profile
+  // already keeps (nothing hooked into the games): the counter at the start of the day, then what was added since.
+  const DAY_GOALS = [
+    {id:'win2', txt:'Gagne 2 parties', k:'w', n:2, gain:300},
+    {id:'play3', txt:'Joue 3 parties', k:'p', n:3, gain:200},
+    {id:'cora1', txt:'Réussis un CORA', k:'c', n:1, gain:400},
+    {id:'carre1', txt:'Joue une partie de Carré la Pute', k:'q', n:1, gain:250}];
+  const dgCount = p=> ({w:(p.gamesLost||0) + (p.onlineWins||0) + (p.squareWins||0), p:(p.gamesPlayed||0) + (p.onlineGames||0) + (p.squareGamesPlayed||0), c:(p.stats && p.stats.coras)||0, q:p.squareGamesPlayed||0});
+  function dayGoal(){
+    const day = new Date().toDateString(); let g = profile.dayGoal;
+    if(!g || g.day!==day){
+      let h = 0; for(const ch of day) h = (h*31 + ch.charCodeAt(0))|0;
+      const d = DAY_GOALS[Math.abs(h) % DAY_GOALS.length];
+      g = profile.dayGoal = {day, id:d.id, base:dgCount(profile)[d.k], claimed:false}; saveProfile();
+    }
+    const d = DAY_GOALS.find(x=> x.id===g.id) || DAY_GOALS[0];
+    return {g, d, n: Math.min(d.n, Math.max(0, dgCount(profile)[d.k] - g.base))};
+  }
+  function renderDayGoal(){
+    const el = document.getElementById('dayGoal'); if(!el) return;
+    const {g, d, n} = dayGoal(), done = n>=d.n;
+    const mid = new Date(); mid.setHours(24, 0, 0, 0); const hrs = Math.max(1, Math.ceil((mid - Date.now())/3600000));
+    el.classList.remove('hidden'); el.classList.toggle('ready', done && !g.claimed); el.classList.toggle('claimed', !!g.claimed);
+    el.innerHTML = '<span class="dg-h"><span>Objectif du jour</span><span>'+(g.claimed ? 'demain, un nouveau' : 'encore '+hrs+' h')+'</span></span>'
+      +'<b>'+d.txt+'</b><span class="dg-bar"><i style="width:'+Math.round(100*n/d.n)+'%"></i></span>'
+      +'<span class="dg-r"><span>'+(g.claimed ? '✓ Récupéré' : n+' / '+d.n)+'</span>'
+      +(done && !g.claimed ? '<em class="dg-go">Récupérer +'+fmtChips(d.gain)+' jetons</em>' : '<em><span class="coin-big"><svg class="i" aria-hidden="true"><use href="#i-coin"/></svg></span>+'+fmtChips(d.gain)+' jetons</em>')+'</span>';
+  }
+  document.getElementById('dayGoal').addEventListener('click', ()=>{
+    const {g, d, n} = dayGoal();
+    if(n>=d.n && !g.claimed){ g.claimed = true; chipsAdd(d.gain); saveProfile(); renderChips(); renderDayGoal(); vibrate([20, 40, 20]); track('v92_day_goal', {id:d.id});
+      showToast('Objectif du jour réussi !', '+'+fmtChips(d.gain)+' jetons. Demain, un nouvel objectif.', {big:true, celebrate:true, ms:2600}); return; }
+    if(!g.claimed) document.getElementById('btnGoPlay').click();
+  });
+
   // ---- the home screen, each time it shows ----
   window.v3Home = ()=>{
-    v3AcctBand(); renderMenuRank();
+    v3AcctBand(); renderMenuRank(); renderDayGoal();
     if(window.v85Gifts) setTimeout(window.v85Gifts, 3000); if(window.v85Quartier) window.v85Quartier();
     const shx = document.getElementById('v3Sheet'); if(shx) shx.classList.remove('on');
     const bi = document.getElementById('btnInstall');
     if(bi && typeof isStandalone==='function') bi.classList.toggle('hidden', isStandalone());
-    const ib = document.getElementById('instBand'); if(ib) ib.classList.toggle('hidden', isStandalone());
+    homeBand();
     const hf = document.querySelector('#btnGoPlay .hero-faces');
     if(hf && !hf.dataset.v3){ hf.dataset.v3 = 1; hf.innerHTML = ['aristide', 'penalty', 'gervais'].map(id=> '<span class="avatar" data-char="'+id+'" style="--s:46px"></span>').join(''); fillAllAvatars(hf); }
     const hs = document.querySelector('#btnGoPlay .hero-text small'); if(hs) hs.textContent = 'Partie rapide · le quartier · en ligne · Carré';
@@ -13981,7 +14105,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v91';
+  const APP_VERSION = 'v92';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14224,6 +14348,8 @@
 
   // ---- End of match: "Revanche" is the big obvious button, the menu is secondary ----
   document.getElementById('btnToMenu').addEventListener('click', goToMainMenu);
+  // v92: straight to the choice of opponent, without stopping at the home screen
+  document.getElementById('btnOtherOpp').addEventListener('click', ()=>{ goToMainMenu(); setTimeout(()=> document.getElementById('btnGoPlay').click(), 350); });
   document.getElementById('btnRematch').addEventListener('click', ()=>{
     if(mode==='mp'){ mpRequestRematch(); return; }
     hide('matchOverOverlay');
@@ -14275,6 +14401,24 @@
     else { info.textContent = stakeTxt ? 'Revanche'+stakeTxt+' chacun' : ''; btn.innerHTML = ico('repeat')+' Revanche'; }
   }
 
+  // v92 (audit, lot 3): one line under the result that says why the last hand went this way
+  function moWhy(won){
+    const el = document.getElementById('moWhy'); if(!el) return;
+    const tw = state && state.trickWinners, last = tw && tw[tw.length - 1];
+    let line = '';
+    const lc = last && (last.card || (last.why && last.why.card)), ll = last && (last.lose || (last.why && last.why.lose));
+    if(last && lc && !last.viaPasse){
+      const c = lc, l = ll, me = last.winner==='you', who = me ? 'Tu as' : oppName()+' a';
+      const cardTxt = 'le <b>'+c.rank+' de '+c.suit+'</b>';
+      if(last.rank===3) line = who+' fini sur un 3 avec '+cardTxt+' : CORA, la manche compte double.';
+      else if(l && l.suit!==c.suit) line = who+' gardé le contrôle avec '+cardTxt+' : '+(me ? oppName()+' n’avait plus de '+c.suit+' pour le reprendre.' : 'tu n’avais plus de '+c.suit+' pour le reprendre.');
+      else if(l) line = who+' gardé le contrôle avec '+cardTxt+' : '+(me ? 'son '+l.rank+' était trop petit.' : 'ton '+l.rank+' était trop petit pour le reprendre.');
+      else line = who+' gardé le contrôle jusqu’à la dernière carte, avec '+cardTxt+'.';
+    }
+    el.classList.toggle('hidden', !line || (mode!=='ai' && mode!=='mp'));
+    if(line) el.innerHTML = '<span class="mw-c'+(/Coubie|Zing/.test(lc.suit) ? ' r' : '')+'">'+lc.rank+'<i>'+({Black:'♠', Tchaka:'♣', Coubie:'♥', Zing:'♦'}[lc.suit] || '')+'</i></span><span><small>Pourquoi</small>'+line+'</span>';
+    document.getElementById('btnOtherOpp').classList.toggle('hidden', mode!=='ai');
+  }
   function showMatchOver(who){
     const won = who==='you'; QS.last = won ? 'won' : 'lost';
     if(storyRun && mode==='ai'){ storyMatchEnd(won); return; }
@@ -14338,6 +14482,7 @@
       text = oppName()+' a quitté la partie ('+mine+' à '+theirs+'). Le pot est pour toi.';
     }
     document.getElementById('matchOverText').textContent = text;
+    moWhy(won);
     document.getElementById('moKicker').textContent = won ? 'Victoire' : 'Défaite';
     track('match_end', {mode, opp: mode==='ai' ? duelOpp : null, won, score: mine+'-'+theirs});
     touchDayStreak();
@@ -15186,6 +15331,8 @@
     const mo = document.getElementById('matchOverOverlay');
     mo.dataset.result = won ? 'win' : 'lose';
     const face = document.getElementById('matchOverFace'); if(face) face.innerHTML = '';
+    // (v92: the « Pourquoi » line and « Autre adversaire » belong to the duels)
+    document.getElementById('moWhy').classList.add('hidden'); document.getElementById('btnOtherOpp').classList.add('hidden');
     // the stake: what the hands booked (see sqBook), never more than the balance can lose
     const res = {stake:matchStake, delta:0, mult:nPlayers, bonus:0};
     if(won){ chipsAdd(50); res.delta += 50; }
@@ -15865,7 +16012,7 @@
   window.addEventListener('appinstalled', ()=>{
     track('install');
     installPrompt = null;
-    document.getElementById('btnInstall').classList.add('hidden'); document.getElementById('instBand').classList.add('hidden');
+    document.getElementById('btnInstall').classList.add('hidden'); if(window.homeBand) window.homeBand();
     showToast('Fap Fap est installé !', 'Retrouve-le sur ton écran d’accueil.', {ms:2600});
   });
   // iPhones never fire beforeinstallprompt: explain the Safari steps instead
