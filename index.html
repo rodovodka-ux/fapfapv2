@@ -1289,6 +1289,17 @@
   #matchOverOverlay .mo-row #btnRematch{ min-width:0; flex:1.2; margin-top:6px !important; }
   #matchOverOverlay .mo-row .mo-other{ flex:1; margin-top:6px; padding:12px 10px; border-radius:16px; background:#1e0f0b; color:#fff; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 15px 'Fredoka', sans-serif; }
   #matchOverOverlay .mo-row .mo-other.hidden{ display:none; }
+  /* v96 · « Mes amis »: its own page, in the game's dark colours (no more tabs of the old « Les plus riches » page) */
+  #richPage.fr-mode .rich-tabs, #richPage.fr-mode #richWorldBox, #richPage.fr-mode #richLocalBox, #richPage.fr-mode #richBest, #richPage.fr-mode #richFriendsIntro, #richPage.fr-mode .page-body > .small-note{ display:none !important; }
+  #richPage.fr-mode #richFriendsBox{ display:block !important; }
+  #richPage .fr-top{ display:grid; gap:10px; margin:4px 0 14px; padding:14px; border-radius:20px; background:linear-gradient(160deg, #2a0d0b, #160606); border:2.5px solid #000; box-shadow:0 4px 0 #000; color:#fff6f2; }
+  #richPage .fr-top b{ display:block; font:700 17px 'Fredoka', sans-serif; } #richPage .fr-top small{ display:block; margin-top:3px; font:700 12.5px/1.4 'Nunito', sans-serif; color:#d9b9b9; }
+  body:not(#z):not(#y):not(#x) #richPage#richPage .fr-find{ display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; border-radius:16px !important; background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000) !important; border:2.5px solid #000 !important; box-shadow:0 4px 0 #000 !important; color:#fff !important; font:700 15px 'Fredoka', sans-serif !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  #richPage .fr-find svg{ width:18px; height:18px; }
+  #richPage.fr-mode .rich-empty{ padding:16px; border-radius:18px; background:#1e0f0b; border:2px solid #000; color:#d9b9b9; font:700 13px/1.5 'Nunito', sans-serif; text-align:left; }
+  #richPage.fr-mode .rich-empty b{ display:block; color:#fff; font:700 15px 'Fredoka', sans-serif; margin-bottom:4px; }
+  body:not(#z):not(#y) #richPage.fr-mode .rich-row{ background:#1e0f0b !important; border:2px solid #000 !important; box-shadow:0 3px 0 #000 !important; color:#fff6f2 !important; border-radius:16px !important; }
+  #richPage.fr-mode .bell-sec h3{ color:#ff4a4a; font:900 10.5px 'Nunito', sans-serif; letter-spacing:.16em; text-transform:uppercase; margin:14px 0 6px; }
   /* v94 · Réglages: how much the opponents talk */
   #talkPick.talk-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; cursor:default; }
   #talkPick .talk-seg{ display:flex; gap:4px; padding:3px; border-radius:12px; background:rgba(0,0,0,.35); }
@@ -14314,7 +14325,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v95';
+  const APP_VERSION = 'v96';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -16122,7 +16133,8 @@
     return '<section class="pf-card" style="--d:7"><div class="pf-h"><span class="pf-ic">'+ico('globe')+'</span>Tes mises en ligne<small>'+(log.length ? (net>=0 ? '+' : '−')+fmtChips(Math.abs(net))+' au total' : '')+'</small></div>'+
       (rows ? '<div class="pf-log">'+rows+'</div>' : '<div class="pf-row"><span>Aucune partie en ligne pour l’instant. Défie un ami !</span></div>')+'</section>';
   }
-  document.getElementById('btnProfFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
+  // v96: the friends open in their own page (the old « Les plus riches » page is no longer reached from here)
+  document.getElementById('btnProfFriends').addEventListener('click', ()=> window.openFriends());
   document.getElementById('btnShowStats').addEventListener('click', ()=> goTab('statsOverlay'));
 
   // Carré la Pute: choose 2, 3 or 4 players (and the stake), or open a table online with friends
@@ -17718,6 +17730,19 @@
     fillMe($id('acctAvatar'), prefs.name.trim() || 'Toi');
   });
 
+  // v96: « Mes amis » is its own page now (it used to open the old « Les plus riches » page on its friends tab, with that
+  // page's old tabs and texts): the same list, in the game's colours, with a way to find new friends
+  function openFriends(){
+    prefs.richTab = 'friends'; savePrefs();
+    const p = $id('richPage'); p.classList.add('fr-mode');
+    p.querySelector('.page-head h2').textContent = 'Mes amis';
+    if(!$id('frFind')){
+      $id('richFriendsBox').insertAdjacentHTML('afterbegin', '<div class="fr-top"><div><b>Joue avec tes amis</b><small>Touche un ami pour voir sa fiche, écris-lui ou défie-le en un geste. Ceux qui sont en ligne passent en premier.</small></div><button type="button" class="fr-find" id="frFind">'+ico('users')+' Trouver des joueurs</button></div>');
+      $id('frFind').addEventListener('click', ()=>{ ensureAudio(); qOpen(); });
+    }
+    Nav.go('richPage');
+  }
+  window.openFriends = openFriends;
   // ---- worldwide leaderboard ----
   function showRichTab(t){
     if(prefs.richTab!==t){ prefs.richTab = t; savePrefs(); }
@@ -17983,7 +18008,7 @@
     if(!box.children.length) box.innerHTML = '<div class="rich-empty">Rien de neuf pour le moment.<br>Les demandes d’ami, les messages et les défis manqués s’affichent ici.</div>';
     const more = document.createElement('button');
     more.className = 'ghost'; more.innerHTML = ico('users')+' Mes amis';
-    more.addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
+    more.addEventListener('click', ()=> window.openFriends());
     box.appendChild(more);
     if(Nav.cur()==='bellPage' && !document.hidden) bellMarkSeen();
   }
@@ -18163,7 +18188,7 @@
       return r;
     }));
     const h = list.querySelector('.bell-sec h3'); if(h && !h.textContent) h.remove();
-    if(!list.children.length) list.innerHTML = '<div class="rich-empty">Tu n’as pas encore d’amis ici.<br>Va dans « Tout le quartier » et touche un joueur pour lui demander d’être ton ami. Après une partie en ligne, tu peux aussi l’envoyer à ton adversaire.</div>';
+    if(!list.children.length) list.innerHTML = '<div class="rich-empty"><b>Pas encore d’amis ici.</b>Touche « Trouver des joueurs », puis un joueur du classement pour lui demander d’être ton ami. Après une partie en ligne, tu peux aussi l’ajouter depuis l’écran de fin.</div>';
     if(quick) return;
     setTimeout(pushNudge, 900);
     lobbyJoin();
@@ -18250,7 +18275,7 @@
     else addFriend(p.id, p.name);
   });
   $id('psChallenge').addEventListener('click', ()=>{ const p = Lobby.sheet; hide('playerSheet'); Lobby.sheet = null; if(p) challengeFriend(p); });
-  $id('btnMpFriends').addEventListener('click', ()=>{ prefs.richTab = 'friends'; Nav.go('richPage'); });
+  $id('btnMpFriends').addEventListener('click', ()=> window.openFriends());
 
   // challenging: a room is created as usual, and the friend's phone is told the code
   async function challengeFriend(f){
