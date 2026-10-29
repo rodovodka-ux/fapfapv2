@@ -1265,6 +1265,8 @@
      the animated tutorial. Only moves and fades. (The home theme styles its buttons with many ids: these need more.) */
   #instBand#instBand#instBand#instBand#instBand#instBand.inst-band{ display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 4px; padding:10px 12px; border-radius:18px; background:linear-gradient(90deg, #e00000, #8f0000) !important; border:2.5px solid #000 !important; box-shadow:0 4px 0 #000 !important; position:relative; overflow:hidden; color:#fff !important; text-align:left; font:inherit; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   #instBand#instBand#instBand#instBand#instBand#instBand.inst-band.hidden{ display:none; }
+  /* (audit 29/10: the old « Installer le jeu » card at the bottom of the home screen did the same as the band) */
+  #menuOverlay #btnInstall{ display:none !important; }
   .inst-band::after{ content:''; position:absolute; top:0; bottom:0; width:40%; left:-50%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent); animation:ibSheen 3.2s ease-in-out infinite; pointer-events:none; }
   @keyframes ibSheen{ 0%,60%{ left:-50%; } 100%{ left:120%; } }
   .inst-band .ib-ic, .inst-inv .ii-ic{ display:grid; place-items:center; background:#16100b; border:2px solid #e9b94e; font:700 13px 'Fredoka', sans-serif; color:#f1c257; flex:none; }
@@ -4725,7 +4727,7 @@
       <button class="primary" id="btnResume"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-play"/></svg></span>Reprendre</button>
       <button id="btnRestartMatch"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-restart"/></svg></span>Recommencer la partie</button>
       <button id="btnOpenRules"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>Les règles du jeu</button>
-      <button id="btnOpenSettings"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span>Paramètres</button>
+      <button id="btnOpenSettings"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-sliders"/></svg></span>Réglages</button>
       <button class="danger" id="btnQuitGame"><span class="mi"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg></span>Quitter vers l'accueil</button>
     </div>
   </div>
@@ -5058,7 +5060,7 @@
     <div class="pf-actions">
       <button id="btnProfTrophies"><svg class="i" aria-hidden="true"><use href="#i-trophy"/></svg><b>Trophées</b><small id="pfTrophSub"></small></button>
       <button id="btnProfFriends"><svg class="i" aria-hidden="true"><use href="#i-users"/></svg><b>Amis</b><small id="pfFriendSub"></small></button>
-      <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg><b>Décors</b><small id="pfSkinSub">Ton style</small></button>
+      <button id="btnProfSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg><b>Collection</b><small id="pfSkinSub">Ton style</small></button>
     </div>
     <div id="statsContent"></div>
   </div>
@@ -5281,7 +5283,7 @@
 </div>
 
 <div class="overlay page hidden" id="settingsPage">
-  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Paramètres</h2><span class="ph-spacer"></span></header>
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Réglages</h2><span class="ph-spacer"></span></header>
   <div class="page-body">
     <div class="v3-row" id="btnMyStyle" role="button" tabindex="0"><span class="v3-ic" data-ic="meteorite"></span><span><b>Mon style</b><small>Tes effets de CORA et de claque, la table de tes invités</small></span><span class="v3-chev">›</span></div>
     <div class="set-group">
@@ -5292,7 +5294,7 @@
       <label class="set-row set-slider"><span>Volume de la musique</span><input type="range" id="musicVol" min="0" max="100" step="5"></label>
       <label class="set-row set-slider"><span>Volume des effets</span><input type="range" id="sfxVol" min="0" max="100" step="5"></label>
       <p class="small-note now-playing" id="nowPlaying"></p>
-      <p class="small-note">Chaque table a sa propre musique : change de table dans « Décors ».</p>
+      <p class="small-note">Chaque table a sa propre musique : change de table dans « Collection ».</p>
     </div>
     <div class="set-group">
       <h3>Jeu</h3>
@@ -8888,7 +8890,7 @@
       const key = kind+':'+s.id;
       if(s.req(profile) && !known.includes(key)){
         known.push(key); changed = true;
-        if(s.hint) trophyPop({icon:'palette', name:SKIN_LABEL[kind]+' : '+s.name, kind:'Nouveau décor débloqué'});
+        if(s.hint) trophyPop({icon:'palette', name:SKIN_LABEL[kind]+' : '+s.name, kind:'Nouveau dans ta collection'});
       }
     }));
     if(changed){ prefs.knownSkins = known; savePrefs(); }
@@ -13979,7 +13981,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v90';
+  const APP_VERSION = 'v91';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -15668,7 +15670,8 @@
     const played = (p.gamesPlayed||0) + (p.onlineGames||0) + (p.squareGamesPlayed||0);
     const pct = (a, b)=> b>0 ? Math.round(100*a/b) : 0;
     const nTroph = trophyCount(p), st = p.stats || {};
-    const signed = typeof myUid==='function' && !!myUid();
+    // (a guest session has an id too: only a real, saved account counts as « sauvegardé »)
+    const signed = typeof myUid==='function' && !!myUid() && !(typeof Cloud!=='undefined' && Cloud.user && Cloud.user.is_anonymous);
     // the hero: face, name, rank and the three numbers people look at first
     const card = document.getElementById('profileCard');
     card.style.setProperty('--d', 0);
