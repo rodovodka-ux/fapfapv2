@@ -7256,8 +7256,9 @@
   }
   const Music = {
     inst:null, want:'home',
-    // (a music bought in the shop replaces the music of every table — v85)
-    play(id){ const m = window.v85Music && window.v85Music(id); if(m) id = m; this.want = TRACKS[id] ? id : 'home'; this.kick(); },
+    // (a music bought in the shop replaces the music of every table — v85 — and, since v93, the home theme too;
+    // preview = listening to a table or a piece in the shop, which plays as it is until you leave)
+    play(id, preview){ const m = !preview && window.v85Music && window.v85Music(id); if(m) id = m; this.want = TRACKS[id] ? id : 'home'; this.kick(); },
     kick(){
       if(!audioCtx || !musicBus) return;
       if(prefs.noMusic || !soundOn){ this.stop(); return; }
@@ -7279,7 +7280,10 @@
   };
   function refreshNowPlaying(){
     const tr = TRACKS[Music.want] || TRACKS.home;
-    const txt = prefs.noMusic ? ico('volx')+' Musique coupée' : ico('music')+' '+tr.name+' — '+tr.mood;
+    // v93: an equipped music is named as in the shop (« Makossa », not the name of the table it comes from)
+    const eq = typeof shopItem==='function' && profile.equip && profile.equip.musique ? shopItem('musique', profile.equip.musique) : null;
+    const nm = eq && eq.track===Music.want ? eq.name : tr.name;
+    const txt = prefs.noMusic ? ico('volx')+' Musique coupée' : ico('music')+' '+nm+' — '+tr.mood;
     ['nowPlaying','pauseMusic'].forEach(id=>{ const el = document.getElementById(id); if(el) el.innerHTML = txt; });
   }
 
@@ -9426,7 +9430,7 @@
     else if(id==='chatPage'){ if(window.renderChat) window.renderChat(); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='shopPage') renderShop();
-    else if(id==='shopTablePage') Music.play(SX.table); // hear the table you are looking at
+    else if(id==='shopTablePage') Music.play(SX.table, true); // hear the table you are looking at
     else if(id==='shopFxPage') document.body.classList.add('sx-fxon');
     else if(id==='carrePage'){ refreshCarrePick(); renderStakePicks(); fillAllAvatars(document.getElementById('carrePage')); }
     else if(id==='carreHostPage') renderRoomLobby();
@@ -14105,7 +14109,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v92';
+  const APP_VERSION = 'v93';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -16385,7 +16389,7 @@
     if(['cora','claque','victoire'].includes(it.kind) && !onPrice){ SX.fx = it.kind; renderShopFx(); Nav.go('shopFxPage'); setTimeout(()=> playShopFx(it.id), 420); return; }
     if(it.kind==='voix' && it.id && !onPrice){ voixSay(it.id, 'CORA !', true); }
     // (v89: a music you own is equipped by the same touch; one you don't own plays AND opens its purchase — before, it only played)
-    if(it.kind==='musique' && !onPrice && it.track){ Music.play(it.track); }
+    if(it.kind==='musique' && !onPrice && it.track){ Music.play(it.track, true); }
     if(it.kind==='trail' && !onPrice){ trailPreview = it.id==='table' ? null : it.id; Trail.readColors(); showToast(it.name, 'Glisse ton doigt sur l’écran pour la voir.', {ms:1800}); }
     if(shopHas(it)){ if(!shopEquipped(it) && it.kind!=='react'){ shopEquip(it); vibrate(12); showToast('Équipé', it.name, {ms:1200}); shopRefresh(); } return; }
     if(onPrice || it.kind!=='trail') shopBuy(it); // (the trail is tried with the finger first: its price opens the purchase)
@@ -16418,7 +16422,10 @@
     u.lang = 'fr-FR'; u.pitch = v.pitch; u.rate = v.rate; u.volume = Math.min(1, (typeof sfxLevel==='function' ? sfxLevel() : 1) + .2); const fr = speechSynthesis.getVoices().find(x=> /^fr/i.test(x.lang)); if(fr) u.voice = fr; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){} }
   window.v85Voice = glacee=>{ const id = profile.equip && profile.equip.voix; if(id) voixSay(id, glacee ? '33 Glacée !' : 'CORA !'); };
   // ---- the music bought in the shop replaces the music of every table ----
-  window.v85Music = id=>{ const m = profile.equip && profile.equip.musique; if(!m || id==='home' || !SKINS.table.some(s=> s.id===id)) return null; const it = shopItem('musique', m); return it && it.track; };
+  // v93 (his rule): the music you equip plays everywhere, the home screen included, and replaces the tables' own
+  window.v85Music = id=>{ const m = profile.equip && profile.equip.musique; if(!m || !(id==='home' || SKINS.table.some(s=> s.id===id))) return null; const it = shopItem('musique', m); return it && it.track; };
+  // (the home screen asked for its music before this rule existed, at the start: ask again)
+  if(Music.want==='home') Music.play('home');
   // ---- the entrance at an online table: your name in neon or in gold, and your opponent's ----
   window.v85Entrance = ()=>{
     const mine = profile.equip && profile.equip.entree, show = (name, st, delay)=> setTimeout(()=>{ if(!st || calmOn()) return; const el = document.createElement('div'); el.className = 'sx-entrance '+st; el.innerHTML = '<span></span><small>entre à la table</small>'; el.firstChild.textContent = name; document.body.appendChild(el);

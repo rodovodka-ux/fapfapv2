@@ -1552,6 +1552,8 @@ function olSignup(o){
   return '<div class="ol-big"><span class="ecu">'+ecuSvg(true)+'</span><b>LEAGUE <span>#'+o.n+'</span></b><p>16 joueurs · 7 jours · 3 récompensés</p></div>'
     +'<div class="card"><div class="ol-count"><b>'+n+'<small> / 16 inscrits</small></b><span>'+(16 - n)+' place'+(16 - n>1 ? 's' : '')+' libre'+(16 - n>1 ? 's' : '')+'</span></div><div class="ol-bar"><i style="width:'+(n/16*100)+'%"></i></div>'
     +'<div class="ol-seats">'+seats+'</div><p class="ol-qn" style="margin:0">La League démarre <b>dès que les 16 places sont prises</b>.</p></div>'
+    // v93: who is already in, by name (the seats alone only showed initials)
+    +(n ? '<div class="card"><h3>Déjà inscrits<span>'+n+'</span></h3><div class="ol-plist">'+olRows(o.players)+'</div></div>' : '')
     +'<div class="card"><h3>La cagnotte<span>que des jetons</span></h3><div class="ol-potTot"><span>À gagner aujourd’hui</span><b><i class="coin"></i>'+fmt(pot)+'</b></div>'
     +'<div class="ol-pot"><div><b>'+fmt(pot*.6)+'</b><small>1ᵉʳ · 60 %</small></div><div><b>'+fmt(pot*.3)+'</b><small>2ᵉ · 30 %</small></div><div><b>'+fmt(pot*.1)+'</b><small>3ᵉ · 10 %</small></div></div>'
     +'<p class="ol-qn">'+fmt(BASE)+' offerts par le jeu + '+fmt(ENTRY)+' par inscrit. À 16 joueurs : <b>'+fmt(full)+'</b>.</p></div>'
@@ -1562,13 +1564,17 @@ function olSignup(o){
     +'<p class="ol-qn">Un match = premier à 2 manches, contre un vrai joueur. Tu as <b>48 h</b> pour le jouer, sinon forfait.</p></div>'
     +'<button class="cta wide" id="olJoin">M’inscrire<small>'+fmt(ENTRY)+' jetons · ils vont dans la cagnotte</small></button>';
 }
+// the players already in, the last one first: face, name, neighbourhood, online now or not
+function olRows(players){
+  return (players || []).slice().reverse().map((p, k)=> '<div class="ol-prow'+(p.uid===OL.me ? ' me' : '')+'">'+avatar(p, p.uid===OL.me)+'<span><b>'+(p.uid===OL.me ? 'Toi' : esc(p.name))+'</b><small>'+esc(qName(p))+'</small></span><small>'+(OL.online.has(p.uid) ? '<span class="ol-dot"></span>en ligne' : k===0 ? 'dernier arrivé' : 'inscrit')+'</small></div>').join('');
+}
 function olWait(o){
-  const n = o.count, left = 16 - n, list = o.players.slice().reverse();
+  const n = o.count, left = 16 - n;
   return '<div class="ol-ring"><svg viewBox="0 0 170 170"><circle class="bg" cx="85" cy="85" r="74"/><circle class="fg" cx="85" cy="85" r="74" stroke-dasharray="465" stroke-dashoffset="'+(465 - 465*n/16).toFixed(1)+'"/></svg><div><span><b>'+n+'</b><small>sur 16</small></span></div></div>'
     +'<p class="ol-waitT">'+(left>0 ? 'Plus que <b>'+left+' place'+(left>1 ? 's' : '')+'</b> : la League démarre dès que c’est plein.' : '<b>C’est plein !</b> Le tirage commence…')+'</p>'
     +'<button class="cta wa wide" id="olShare">Inviter sur WhatsApp<small>« Viens défendre ton quartier à la League #'+o.n+' »</small></button>'
     +'<div class="card" style="margin-top:14px"><h3>Les inscrits<span>'+n+'</span></h3><div class="ol-plist">'
-    +list.map((p, k)=> '<div class="ol-prow'+(p.uid===OL.me ? ' me' : '')+'">'+avatar(p, p.uid===OL.me)+'<span><b>'+(p.uid===OL.me ? 'Toi' : esc(p.name))+'</b><small>'+esc(qName(p))+'</small></span><small>'+(OL.online.has(p.uid) ? '<span class="ol-dot"></span>en ligne' : k===0 ? 'dernier arrivé' : 'inscrit')+'</small></div>').join('')+'</div></div>'
+    +olRows(o.players)+'</div></div>'
     +'<p class="ol-qn" style="text-align:center">Tu seras prévenu dès que la League démarre. Touche un joueur pour voir sa fiche.</p>';
 }
 // the draw, once, the first time the player sees a started League
