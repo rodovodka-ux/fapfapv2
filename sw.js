@@ -1,4 +1,4 @@
-﻿// Fap Fap Ã¢â‚¬â€ service worker: lets the installed game open instantly and play against the AI without network.
+// Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
 const CACHE = 'fapfap-v90';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
@@ -10,18 +10,18 @@ self.addEventListener('install', (event)=>{
 self.addEventListener('activate', (event)=>{
   event.waitUntil(
     caches.keys()
-      // only the game's own old caches go: the local AI's models (webllm/â€¦) stay on the phone between versions
+      // only the game's own old caches go: the local AI's models (webllm/…) stay on the phone between versions
       .then(keys=> Promise.all(keys.filter(k=> k!==CACHE && k.startsWith('fapfap-')).map(k=> caches.delete(k))))
       .then(()=> self.clients.claim())
   );
 });
 
-// a friend's challenge, even with the game closed: show itÃ¢â‚¬Â¦
+// a friend's challenge, even with the game closed: show it…
 self.addEventListener('push', (event)=>{
   let d = {};
   try{ d = event.data ? event.data.json() : {}; }catch(e){ d = {body: event.data ? event.data.text() : ''}; }
   event.waitUntil(self.registration.showNotification(d.title || 'Fap Fap', {
-    body: d.body || 'Une partie tÃ¢â‚¬â„¢attend.',
+    body: d.body || 'Une partie t’attend.',
     icon: './icon-192.png',
     badge: './icon-192.png',
     tag: d.tag || 'fapfap',
@@ -30,7 +30,7 @@ self.addEventListener('push', (event)=>{
     data: { url: d.url || './', code: d.code || '', name: d.name || '', kind: d.kind || 'defi' }
   }));
 });
-// Ã¢â‚¬Â¦and a touch on it opens the game on the invitation (the open game if there is one, a new window otherwise)
+// …and a touch on it opens the game on the invitation (the open game if there is one, a new window otherwise)
 self.addEventListener('notificationclick', (event)=>{
   event.notification.close();
   const d = event.notification.data || {};
