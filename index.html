@@ -1216,6 +1216,8 @@
      the day, a short version (the fan and the logo, 2.5 s). Only transforms and fades: light for any phone. */
   .ln2{ background:radial-gradient(70% 55% at 50% 48%, #8a1414 0%, #3a0606 55%, #0a0202 100%); }
   .ln2::before{ display:none; }
+  /* v95: no film grain on the red felt — on phones its fine rings drew a moiré net over the whole screen */
+  .ln2::after{ display:none !important; }
   .ln2 .ln-skip{ z-index:60; }
   .l2-stage{ position:absolute; inset:0; overflow:hidden; }
   .l2-stage.l2-shake{ animation:l2Shk .45s cubic-bezier(.3,.7,.4,1); }
@@ -4554,6 +4556,12 @@
   </div>
   <button class="ln-skip" id="lnSkip">Passer ›</button>
 </div>
+<script>
+// v95: the full film or the short one is decided here, before the first frame — the game's script arrives seconds
+// later on a phone, and deciding then let the slam and the « CLAC ! » flash before vanishing
+(function(){ try{ var d = new Date().toDateString(), s = localStorage.getItem('fapfap_intro_day');
+  if(s===d && !/[?&]intro=(full|hold)\b/.test(location.search)) document.getElementById('launch').classList.add('short'); }catch(e){} })();
+</script>
 <div class="inst-inv hidden" id="instInvite" role="dialog" aria-modal="true" aria-labelledby="iiT">
   <div class="ii-sheet"><span class="ii-ic">FF</span><h4 id="iiT">Mets Fap Fap sur ton téléphone</h4><p>Comme une vraie application, à côté de WhatsApp.</p>
     <div class="ii-perks"><div><i>⤢</i>En plein écran, sans la barre du navigateur</div><div><i>🔔</i>Prévenu quand on te défie ou te dépasse</div><div><i>⚡</i>Il s’ouvre tout de suite, même sans réseau</div></div>
@@ -14306,14 +14314,14 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v94';
+  const APP_VERSION = 'v95';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
     // the full film once a day, then the short one (the fan and the logo)
     const day = new Date().toDateString(); let seen = ''; try{ seen = localStorage.getItem('fapfap_intro_day') || ''; }catch(e){}
-    const short = seen===day && !/[?&]intro=full\b/.test(location.search); try{ localStorage.setItem('fapfap_intro_day', day); }catch(e){}
-    if(short) el.classList.add('short');
+    // (decided by the little script right after the film, before its first frame)
+    const short = el.classList.contains('short'); try{ localStorage.setItem('fapfap_intro_day', day); }catch(e){}
     stage.querySelector('.l2-sparks').innerHTML = Array.from({length:16}, (_, i)=>{ const a = i/16*Math.PI*2, d = 90 + Math.random()*90; return '<i style="--x:'+Math.round(Math.cos(a)*d)+'px;--y:'+Math.round(Math.sin(a)*d)+'px"></i>'; }).join('');
     const T = [];
     let over = false;
@@ -14321,19 +14329,23 @@
     const end = ()=>{ if(over) return; over = true; T.forEach(clearTimeout); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
       if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); if(!pvMaybeOpen()){ if(!betaNotice()) setTimeout(installInvite, 500); } };
     el.addEventListener('click', end);
-    T.push(setTimeout(end, short ? 2600 : 12900));
-    if(!short) T.push(setTimeout(()=>{ stage.classList.remove('l2-shake'); void stage.offsetWidth; stage.classList.add('l2-shake'); }, 1400));
+    // v95: the film's clock started with the page, not with this script (seconds later on a phone): the end and the
+    // shake follow the film, so the logo never stays frozen and the shake lands on the « CLAC ! »
+    const filmAt = performance.now();
+    if(!/[?&]intro=hold\b/.test(location.search)) T.push(setTimeout(end, Math.max(700, (short ? 2600 : 12900) - filmAt))); // (hold: tests look at it frame by frame)
+    if(!short && filmAt < 1400) T.push(setTimeout(()=>{ stage.classList.remove('l2-shake'); void stage.offsetWidth; stage.classList.add('l2-shake'); }, 1400 - filmAt));
     // the sound, made live (no file): only where the phone lets a page play sound before a first touch
     if(prefs.mute) return;
     let c = null; try{ c = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return; }
     if(!c || c.state!=='running'){ try{ c && c.close(); }catch(e){} return; }
-    const now = c.currentTime;
-    const noise = (t, dur, f0, f1, vol, q)=>{ const b = c.createBuffer(1, c.sampleRate*dur, c.sampleRate), d = b.getChannelData(0); for(let i = 0; i<d.length; i++) d[i] = Math.random()*2 - 1;
+    // (v95: on the film's clock, which started with the page; a sound whose moment has already passed is skipped)
+    const now = c.currentTime - filmAt/1000, past = t=> now + t < c.currentTime - .05;
+    const noise = (t, dur, f0, f1, vol, q)=>{ if(past(t)) return; const b = c.createBuffer(1, c.sampleRate*dur, c.sampleRate), d = b.getChannelData(0); for(let i = 0; i<d.length; i++) d[i] = Math.random()*2 - 1;
       const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = q || 1.2; f.frequency.setValueAtTime(f0, now + t); f.frequency.exponentialRampToValueAtTime(f1, now + t + dur);
       g.gain.setValueAtTime(.0001, now + t); g.gain.exponentialRampToValueAtTime(vol, now + t + dur*.4); g.gain.exponentialRampToValueAtTime(.0001, now + t + dur); s.connect(f); f.connect(g); g.connect(c.destination); s.start(now + t); };
-    const tone = (t, fr, dur, vol, type)=>{ const o = c.createOscillator(), g = c.createGain(); o.type = type || 'triangle'; o.frequency.value = fr;
+    const tone = (t, fr, dur, vol, type)=>{ if(past(t)) return; const o = c.createOscillator(), g = c.createGain(); o.type = type || 'triangle'; o.frequency.value = fr;
       g.gain.setValueAtTime(.0001, now + t); g.gain.exponentialRampToValueAtTime(vol, now + t + .02); g.gain.exponentialRampToValueAtTime(.0001, now + t + dur); o.connect(g); g.connect(c.destination); o.start(now + t); o.stop(now + t + dur + .05); };
-    const boom = (t, vol)=>{ const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(140, now + t); o.frequency.exponentialRampToValueAtTime(38, now + t + .5);
+    const boom = (t, vol)=>{ if(past(t)) return; const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(140, now + t); o.frequency.exponentialRampToValueAtTime(38, now + t + .5);
       g.gain.setValueAtTime(vol, now + t); g.gain.exponentialRampToValueAtTime(.0001, now + t + .8); o.connect(g); g.connect(c.destination); o.start(now + t); o.stop(now + t + .9); noise(t, .25, 3000, 400, .5, .7); };
     const chord = t=>{ [392, 494, 587, 784].forEach((f, i)=> tone(t + i*.04, f, 1.6, .06)); tone(t, 98, 1.8, .2, 'sine'); };
     const k = short ? -10 : 0; // the short version keeps only the fan and the chord
