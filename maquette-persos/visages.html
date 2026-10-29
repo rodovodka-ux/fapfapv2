@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0505">
+<title>Visages tests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : 4 visages tests dans un seul style (formes simples, contour noir épais, 3 tons, grands yeux),
+   le même langage que les boutons du jeu (contour noir + ombre nette). Dessins originaux, en SVG. */
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:#fff6f2; font:700 14px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; max-width:760px; margin:0 auto; }
+h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:900 10.5px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+h2{ font:700 18px 'Fredoka'; margin:22px 0 4px; } .sub{ color:#c9a3a3; font-size:13px; margin-bottom:10px; }
+.lead{ color:#c9a3a3; margin:6px 0 12px; font-size:13px; }
+.tabs{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin:12px 0 10px; }
+.tab{ padding:8px 2px; border-radius:14px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11px 'Nunito'; color:#c9a3a3; cursor:pointer; }
+.tab.on{ background:var(--c, #e00000); color:#141210; }
+.hero{ position:relative; border-radius:24px; border:2.5px solid #000; box-shadow:0 5px 0 #000; background:radial-gradient(90% 70% at 50% 30%, var(--c2), var(--c3)); padding:14px 14px 16px; text-align:center; overflow:hidden; }
+.hero .big{ width:min(230px, 70%); margin:0 auto; display:block; animation:bob 3.2s ease-in-out infinite; }
+@keyframes bob{ 50%{ transform:translateY(-4px); } }
+.hero .nm{ font:700 26px 'Fredoka'; color:#fff; text-shadow:0 3px 0 #000; -webkit-text-stroke:1px #000; }
+.hero .rl{ display:inline-block; margin-top:4px; padding:3px 10px; border-radius:20px; background:#000; font:900 11px 'Nunito'; letter-spacing:.06em; }
+.hero .st{ color:#ffd34a; letter-spacing:2px; margin-left:6px; }
+.hero .say{ margin:10px auto 0; max-width:300px; padding:8px 12px; border-radius:16px; background:#fffaf0; color:#141210; border:2.5px solid #000; font:800 13px 'Nunito'; position:relative; }
+.why{ margin-top:10px; padding:10px 12px; border-radius:16px; background:#1e0f0b; border:2px solid #000; font:700 12.5px/1.45 'Nunito'; color:#e8d0cc; } .why b{ color:#fff; }
+.ex{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin-top:10px; }
+.ex div{ border-radius:14px; background:#1e0f0b; border:2px solid #000; padding:4px 2px 6px; text-align:center; font:900 10px 'Nunito'; color:#c9a3a3; } .ex svg{ width:100%; height:auto; display:block; }
+.row4{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; }
+.sil{ border-radius:14px; background:#f4e9d8; border:2px solid #000; padding:6px 4px; text-align:center; font:900 10px 'Nunito'; color:#141210; } .sil svg{ width:100%; height:auto; display:block; filter:brightness(0); }
+.ctx{ display:grid; gap:10px; }
+.ctxc{ border-radius:18px; background:#1e0f0b; border:2px solid #000; padding:10px; } .ctxc small{ display:block; font:900 10px 'Nunito'; letter-spacing:.14em; text-transform:uppercase; color:#f1c257; margin-bottom:8px; }
+.av{ width:46px; height:46px; border-radius:50%; overflow:hidden; border:2.5px solid #000; background:var(--c2); flex:none; } .av svg{ width:150%; height:auto; margin:-6% 0 0 -25%; display:block; }
+.home{ display:flex; align-items:center; gap:10px; padding:12px; border-radius:18px; background:linear-gradient(160deg, #ff2a2a, #b00000); border:2.5px solid #000; box-shadow:0 4px 0 #000; }
+.home .fc{ display:flex; } .home .fc .av{ margin-left:-12px; } .home .fc .av:first-child{ margin-left:0; } .home b{ font:700 22px 'Fredoka'; }
+.table{ position:relative; height:240px; border-radius:18px; background:radial-gradient(70% 60% at 50% 50%, #2f8a52, #13402a); border:2.5px solid #000; }
+.seat{ position:absolute; text-align:center; width:80px; } .seat .av{ display:block; width:58px; height:58px; margin:0 auto; border-width:3px; box-shadow:0 0 0 3px var(--c); } .seat > span:not(.av){ display:inline-block; margin-top:6px; padding:1px 8px; border-radius:10px; background:#000; font:900 10px 'Nunito'; }
+.bubble{ position:absolute; left:50%; top:66%; translate:-50% -50%; padding:6px 10px; border-radius:14px; background:#fffaf0; color:#141210; border:2px solid #000; font:800 11px 'Nunito'; max-width:180px; text-align:center; }
+.list{ display:grid; gap:6px; }
+.li{ display:grid; grid-template-columns:30px 1fr; gap:8px; align-items:center; padding:8px 10px; border-radius:14px; background:#1e0f0b; border:2px solid #000; }
+.li i{ width:30px; height:30px; border-radius:50%; border:2px solid #000; background:var(--c); display:grid; place-items:center; font:700 13px 'Fredoka'; font-style:normal; color:#141210; }
+.li b{ font:800 13px 'Nunito'; } .li b em{ font-style:normal; color:#ffd34a; letter-spacing:1px; font-size:11px; margin-left:4px; } .li small{ display:block; font:700 11.5px/1.35 'Nunito'; color:#c9a3a3; } .li small u{ text-decoration:none; color:#ff8a8a; font-weight:900; }
+.grp{ font:900 10.5px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#ff4a4a; margin:12px 0 2px; }
+.note{ margin-top:16px; color:#c9a3a3; font-size:12.5px; line-height:1.5; } .note b{ color:#fff; }
+.prob{ display:grid; gap:6px; } .prob div{ padding:8px 10px; border-radius:12px; background:#2a0d0b; border:1.5px solid #5a1a14; font:700 12.5px/1.4 'Nunito'; color:#e8d0cc; } .prob b{ color:#fff; }
+/* eyes blink, light: only the open eyes, every few seconds */
+.blink{ transform-origin:100px 98px; animation:blink 5s infinite; } @keyframes blink{ 0%,93%,100%{ transform:scaleY(1); } 95%{ transform:scaleY(.1); } }
+@media (prefers-reduced-motion: reduce){ .hero .big, .blink{ animation:none; } }
+</style></head>
+<body>
+<h1><small>Maquette · à valider</small>Visages tests : 4 sur 16</h1>
+<p class="lead">Un seul style pour toute la troupe : formes simples, contour noir épais et ombre nette (comme les boutons du jeu), 3 tons par couleur, grands yeux. Chaque personnage a sa silhouette, sa couleur et ses traits à lui. Dessins originaux, en SVG (légers, nets à toutes les tailles).</p>
+
+<div class="tabs" id="tabs"></div>
+<div id="card"></div>
+
+<h2>Reconnaissables en un coup d’œil</h2>
+<p class="sub">Le test des silhouettes : tout en noir, on doit encore savoir qui est qui.</p>
+<div class="row4" id="sils"></div>
+
+<h2>Le même visage partout</h2>
+<p class="sub">Accueil, table, fin de partie : une seule image par personnage, dans tout le jeu.</p>
+<div class="ctx">
+  <div class="ctxc"><small>Accueil · bouton Jouer</small><div class="home"><span class="fc" id="hfc"></span><span><b>Jouer</b><br><span style="font:800 11px Nunito;color:#ffd8d8">Partie rapide · le quartier · en ligne · Carré</span></span></div></div>
+  <div class="ctxc"><small>Carré la Pute · la table</small><div class="table" id="tbl"><div class="bubble">« Tu es né hier ou bien ? »</div></div></div>
+</div>
+
+<h2>Le désordre d’aujourd’hui</h2>
+<p class="sub">Ce que j’ai trouvé en relisant tout le jeu.</p>
+<div class="prob">
+  <div><b>4 styles de visages mélangés</b> : portraits peints (Christelle, RALL, Penalty, Tsala), anciens dessins (Mami Ange, Caroline, Cobra, Ismaël, Tchinda, Mballa, Stéphane), dessins légers, personnage animé à la table. Le même personnage n’a pas la même tête partout.</div>
+  <div><b>Christelle a deux caractères</b> : en duel, une femme en deuil (« Il serait fier », « Tu joues comme lui, ça me fait mal ») ; au Carré, une joueuse maladroite et superstitieuse (« Ma prière a marché ! »).</div>
+  <div><b>Penalty est vivant et mort</b> : adversaire en chair et en os, mais aussi le narrateur de « Pourquoi je suis mort ? », et Christelle parle de lui comme d’un disparu.</div>
+  <div><b>Stéphane est deux personnes</b> : le joueur dans le roman (« Tu es Stéphane ») et un champion de la League.</div>
+  <div><b>Les noms internes ne sont pas les vrais</b> : dans le code, Christelle s’appelle « gervais », RALL « aristide », le masque « mbarga ». D’où des erreurs (mauvais visage, mauvaise réplique) à chaque ajout.</div>
+  <div><b>Des visages de vraies personnes</b> dans les fichiers (le créateur, le distributeur) et des personnages de l’ancienne enquête (Mado, l’homme en costume / Armand Ondoua) qui traînent sans rôle clair.</div>
+</div>
+
+<h2>La troupe proposée : 16 personnages</h2>
+<p class="sub">Un rôle, une couleur, un caractère, partout le même. <u style="text-decoration:none;color:#ff8a8a">En rouge</u> : ce qui change et pourquoi.</p>
+<div class="list" id="list"></div>
+<p class="note"><b>Les règles de la troupe :</b> 1 personnage = 1 nom = 1 identifiant dans le code = 1 visage. Chaque visage a 4 expressions (neutre, content, vexé, CORA). Une couleur signature par personnage (son cadre, sa bulle, sa lumière à la table). Des teints de peau variés, des coiffures et des habits d’ici. Les anciens portraits peints sont gardés en archive, pas jetés.</p>
+
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const INK = '#1b120c', SW = 5;
+let uid = 0;
+// ---- one face, four expressions ----
+function face(P, ex, opts){
+  const k = 'f'+(++uid), o = opts || {};
+  const S = P.skin, D = P.shade;
+  // eyes
+  const eye = (x)=>{
+    if(ex==='happy') return '<path d="M'+(x-10)+' 101 Q'+x+' 88 '+(x+10)+' 101" fill="none" stroke="'+INK+'" stroke-width="5.5" stroke-linecap="round"/>';
+    if(ex==='cora') return '<ellipse cx="'+x+'" cy="97" rx="12" ry="14" fill="#fff" stroke="'+INK+'" stroke-width="4"/><circle cx="'+x+'" cy="99" r="4" fill="'+INK+'"/>';
+    const look = P.look || 0;
+    let g = '<ellipse cx="'+x+'" cy="98" rx="9.5" ry="11.5" fill="#fff" stroke="'+INK+'" stroke-width="4"/><circle cx="'+(x+look)+'" cy="100" r="5.2" fill="'+INK+'"/><circle cx="'+(x+look+1.8)+'" cy="97.5" r="1.7" fill="#fff"/>';
+    if(ex==='vexed') g += '<path d="M'+(x-12)+' 86 L'+(x+12)+' 86 L'+(x+12)+' 97 Q'+x+' 93 '+(x-12)+' 97 Z" fill="'+S+'" stroke="none"/><path d="M'+(x-11)+' 97 Q'+x+' 93 '+(x+11)+' 97" fill="none" stroke="'+INK+'" stroke-width="4" stroke-linecap="round"/>';
+    if(P.lashes && ex!=='happy') g += '<path d="M'+(x-9)+' 88 l-4 -4 M'+(x+9)+' 88 l4 -4 M'+(x+(x<100?-5:5))+' 86 l'+(x<100?-2:2)+' -5" stroke="'+INK+'" stroke-width="3" stroke-linecap="round"/>';
+    return g;
+  };
+  // brows
+  const bw = P.brow || 6;
+  const brows = ex==='vexed' ? '<path d="M70 82 L90 88 M130 82 L110 88" stroke="'+(P.browC||INK)+'" stroke-width="'+bw+'" stroke-linecap="round"/>'
+    : ex==='cora' ? '<path d="M68 76 Q80 68 91 75 M109 75 Q120 68 132 76" fill="none" stroke="'+(P.browC||INK)+'" stroke-width="'+bw+'" stroke-linecap="round"/>'
+    : ex==='happy' ? '<path d="M70 80 Q80 74 90 79 M110 79 Q120 74 130 80" fill="none" stroke="'+(P.browC||INK)+'" stroke-width="'+bw+'" stroke-linecap="round"/>'
+    : (P.oneBrow ? '<path d="M70 78 Q80 70 90 76 M110 84 L130 82" fill="none" stroke="'+(P.browC||INK)+'" stroke-width="'+bw+'" stroke-linecap="round"/>'
+      : '<path d="M70 83 Q80 78 90 82 M110 82 Q120 78 130 83" fill="none" stroke="'+(P.browC||INK)+'" stroke-width="'+bw+'" stroke-linecap="round"/>');
+  // mouth
+  const lip = P.lip || '#5a1a10';
+  const mouth = ex==='happy' ? '<path d="M84 124 Q100 122 116 124 Q114 144 100 145 Q86 144 84 124 Z" fill="#5a1010" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/><path d="M87 125 Q100 124 113 125 L112 130 Q100 129 88 130 Z" fill="#fff"/><path d="M93 140 Q100 136 107 140" fill="#e2585a"/>'
+    : ex==='cora' ? '<ellipse cx="100" cy="133" rx="10" ry="12" fill="#5a1010" stroke="'+INK+'" stroke-width="4"/><path d="M93 140 Q100 136 107 140" fill="#e2585a"/>'
+    : ex==='vexed' ? '<path d="M88 136 Q100 127 112 136" fill="none" stroke="'+INK+'" stroke-width="5" stroke-linecap="round"/>'
+    : P.smirk ? '<path d="M88 130 Q100 134 110 127 Q114 125 116 122" fill="none" stroke="'+INK+'" stroke-width="5" stroke-linecap="round"/>'
+    : '<path d="M88 129 Q100 136 112 129" fill="'+(P.lipFill ? lip : 'none')+'" stroke="'+INK+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>';
+  const blush = P.blush && ex!=='vexed' ? '<ellipse cx="70" cy="118" rx="9" ry="5" fill="'+P.blush+'" opacity=".55"/><ellipse cx="130" cy="118" rx="9" ry="5" fill="'+P.blush+'" opacity=".55"/>' : '';
+  const nose = '<path d="M97 106 Q93 116 99 118 Q104 119 105 115" fill="none" stroke="'+D+'" stroke-width="4" stroke-linecap="round"/>';
+  const head = '<ellipse cx="100" cy="102" rx="'+(P.rx||50)+'" ry="'+(P.ry||55)+'"/>';
+  return '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="'+k+'h">'+head+'</clipPath></defs>'
+    + (P.back || '')
+    // body
+    + '<path d="M28 200 Q32 166 70 158 L130 158 Q168 166 172 200 Z" fill="'+P.cloth+'" stroke="'+INK+'" stroke-width="'+SW+'" stroke-linejoin="round"/>'
+    + '<path d="M30 200 Q36 176 58 166 L60 200 Z" fill="'+P.clothD+'"/>'
+    + (P.body || '')
+    + '<path d="M84 140 L84 162 Q100 172 116 162 L116 140 Z" fill="'+D+'" stroke="'+INK+'" stroke-width="'+SW+'" stroke-linejoin="round"/>'
+    + (P.collar || '')
+    // ears
+    + '<circle cx="'+(100-(P.rx||50)+2)+'" cy="106" r="10" fill="'+S+'" stroke="'+INK+'" stroke-width="'+SW+'"/><circle cx="'+(100+(P.rx||50)-2)+'" cy="106" r="10" fill="'+S+'" stroke="'+INK+'" stroke-width="'+SW+'"/>'
+    + (P.earring || '')
+    // head with its shade (3 tones: base, shade, light)
+    + '<g clip-path="url(#'+k+'h)"><rect x="40" y="40" width="120" height="130" fill="'+S+'"/><ellipse cx="150" cy="120" rx="40" ry="60" fill="'+D+'"/><ellipse cx="78" cy="78" rx="16" ry="10" fill="#fff" opacity=".14"/>'+(P.jaw || '')+'</g>'
+    + head.replace('/>', ' fill="none" stroke="'+INK+'" stroke-width="'+SW+'"/>')
+    + (P.hair || '')
+    + blush
+    + '<g class="'+(ex==='neutral' || ex==='vexed' ? 'blink' : '')+'">'+eye(80)+eye(120)+'</g>'
+    + brows + (P.glasses || '') + nose + (P.beard ? P.beard(ex) : '') + mouth + (P.extra ? P.extra(ex) : '')
+    + (P.hat || '')
+    + '</svg>';
+}
+
+// ---- the four test characters ----
+const C = [
+  { id:'tsala', name:'Maître Tsala', role:'Le guide', stars:'', c:'#3fbf6a', c2:'#2b7a47', c3:'#0e2a18',
+    say:'« Doucement. Le 3 attend son heure. »',
+    why:'<b>Pourquoi lui :</b> le jeu a besoin d’<b>une seule voix qui explique</b> (la leçon, les conseils au bon moment, l’objectif du jour, la série). Tsala existe déjà pour la leçon : il devient le guide partout. <b>Silhouette :</b> chéchia rouge, lunettes rondes, barbe blanche. <b>Couleur :</b> vert, la couleur des conseils.',
+    skin:'#7a4a2c', shade:'#5e3620', cloth:'#2f9d58', clothD:'#227a43', look:1,
+    collar:'<path d="M78 160 L100 186 L122 160" fill="none" stroke="#e9b94e" stroke-width="5" stroke-linejoin="round"/><path d="M86 168 L100 182 L114 168" fill="none" stroke="#e9b94e" stroke-width="3"/>',
+    hair:'<path d="M52 92 Q48 112 56 122 L62 118 Q56 104 60 94 Z M148 92 Q152 112 144 122 L138 118 Q144 104 140 94 Z" fill="#f2efe8" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/>',
+    browC:'#f2efe8', brow:7,
+    glasses:'<circle cx="80" cy="98" r="15" fill="rgba(255,255,255,.12)" stroke="'+INK+'" stroke-width="4"/><circle cx="120" cy="98" r="15" fill="rgba(255,255,255,.12)" stroke="'+INK+'" stroke-width="4"/><path d="M95 97 Q100 93 105 97" fill="none" stroke="'+INK+'" stroke-width="4"/>',
+    beard: ex=> '<path d="M62 118 Q64 150 100 160 Q136 150 138 118 Q130 128 118 126 Q100 140 82 126 Q70 128 62 118 Z" fill="#f2efe8" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/>',
+    hat:'<path d="M70 60 L76 22 Q100 16 124 22 L130 60 Q100 68 70 60 Z" fill="#c8283a" stroke="'+INK+'" stroke-width="5" stroke-linejoin="round"/><path d="M74 50 Q100 56 126 50" fill="none" stroke="#e9b94e" stroke-width="3.5"/><path d="M78 34 Q100 39 122 34" fill="none" stroke="#e9b94e" stroke-width="2.5"/><path d="M100 18 Q114 10 118 26" fill="none" stroke="'+INK+'" stroke-width="3" stroke-linecap="round"/><circle cx="118" cy="30" r="5" fill="#e9b94e" stroke="'+INK+'" stroke-width="3"/>' },
+  { id:'christelle', name:'Christelle', role:'La débutante', stars:'★', c:'#ff5fa8', c2:'#c23a7c', c3:'#3a0a22',
+    say:'« Ma prière a marché ! Attends… j’ai gagné ? »',
+    why:'<b>Pourquoi elle :</b> le premier adversaire doit être <b>gentil et drôle</b>, pas triste. Je garde la Christelle du Carré (rieuse, superstitieuse) et je retire celle en deuil, qui contredisait Penalty vivant. <b>Silhouette :</b> deux grosses boules de cheveux et un nœud rose. <b>Couleur :</b> rose.',
+    skin:'#a86a45', shade:'#8a5233', cloth:'#ff5fa8', clothD:'#d9408a', lashes:true, blush:'#ff6f91', rx:48, ry:53, lipFill:true, lip:'#b03050',
+    back:'<circle cx="54" cy="52" r="30" fill="#2a1a14" stroke="'+INK+'" stroke-width="5"/><circle cx="146" cy="52" r="30" fill="#2a1a14" stroke="'+INK+'" stroke-width="5"/><circle cx="46" cy="44" r="7" fill="#fff" opacity=".1"/>',
+    hair:'<path d="M52 96 Q50 52 100 48 Q150 52 148 96 Q140 70 100 66 Q60 70 52 96 Z" fill="#2a1a14" stroke="'+INK+'" stroke-width="5" stroke-linejoin="round"/><path d="M88 46 L76 36 L78 56 Z M112 46 L124 36 L122 56 Z" fill="#ff5fa8" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/><circle cx="100" cy="46" r="7" fill="#ff5fa8" stroke="'+INK+'" stroke-width="4"/>',
+    earring:'<circle cx="52" cy="122" r="8" fill="none" stroke="#e9b94e" stroke-width="4"/><circle cx="148" cy="122" r="8" fill="none" stroke="#e9b94e" stroke-width="4"/>',
+    collar:'<path d="M74 160 Q100 176 126 160" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="186" r="4" fill="#fff"/><circle cx="150" cy="184" r="4" fill="#fff"/><circle cx="138" cy="196" r="4" fill="#fff"/>' },
+  { id:'rall', name:'RALL', role:'Le bluffeur', stars:'★★', c:'#ffc93c', c2:'#c99410', c3:'#2e2004',
+    say:'« Tu es né hier ou bien ? »',
+    why:'<b>Pourquoi lui :</b> le deuxième palier, celui qui <b>ment sur sa main</b>. Son visage doit dire « je te mens » avant même qu’il parle : un sourcil levé en permanence. <b>Silhouette :</b> casquette à l’envers, chaîne en or, cure-dent. <b>Couleur :</b> jaune.',
+    skin:'#5a3420', shade:'#42251a', cloth:'#1f1f1f', clothD:'#111', oneBrow:true, smirk:true, look:2,
+    back:'<path d="M70 52 Q66 26 100 22 Q134 26 130 52 Z" fill="#e8a817" stroke="'+INK+'" stroke-width="5" stroke-linejoin="round"/><path d="M78 40 Q100 30 122 40" fill="none" stroke="#c98a0a" stroke-width="3"/>',
+    hair:'<path d="M50 96 Q48 44 100 40 Q152 44 150 96 Q148 80 140 72 L60 72 Q52 80 50 96 Z" fill="#ffc93c" stroke="'+INK+'" stroke-width="5" stroke-linejoin="round"/><path d="M82 72 Q100 60 118 72 Z" fill="#2a1a14" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/><path d="M78 72 L122 72" stroke="'+INK+'" stroke-width="5"/><circle cx="100" cy="41" r="5" fill="#e8a817" stroke="'+INK+'" stroke-width="3"/><path d="M60 58 Q100 50 140 58" fill="none" stroke="#e8a817" stroke-width="3"/>',
+    body:'<path d="M70 160 Q100 196 130 160" fill="none" stroke="#e9b94e" stroke-width="5" stroke-dasharray="6 3"/><circle cx="100" cy="184" r="9" fill="#ffd34a" stroke="'+INK+'" stroke-width="3.5"/><text x="100" y="188" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="11" fill="'+INK+'">R</text><path d="M30 196 L60 178 M170 196 L140 178" stroke="#ffc93c" stroke-width="5"/>',
+    beard: ex=> '<path d="M92 144 Q100 152 108 144 Q104 149 100 149 Q96 149 92 144 Z" fill="#2a1a14" stroke="'+INK+'" stroke-width="3"/>',
+    extra: ex=> ex==='neutral' || ex==='vexed' ? '<path d="M113 128 L134 122" stroke="#e8d3a8" stroke-width="4" stroke-linecap="round"/><path d="M113 128 L134 122" stroke="'+INK+'" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>' : '' },
+  { id:'penalty', name:'Penalty', role:'Le maître du quartier', stars:'★★★', c:'#3d8bff', c2:'#2a5fc0', c3:'#0a1838',
+    say:'« Je compte tes cartes. Toutes. »',
+    why:'<b>Pourquoi lui :</b> le grand adversaire, <b>vivant</b> (on retire le narrateur mort de l’ancien roman, rangé depuis la v85). Calme, sûr de lui, il retient ta façon de jouer : un demi-sourire tranquille. <b>Silhouette :</b> bandeau de footballeur et maillot n°11, d’où son surnom. <b>Couleur :</b> bleu.',
+    skin:'#8a5530', shade:'#6d4024', cloth:'#3d8bff', clothD:'#2a6ad6', smirk:true,
+    back:'<path d="M146 76 Q170 70 184 56 Q176 76 162 84 Z M146 80 Q172 84 190 76 Q178 92 160 92 Z" fill="#fff" stroke="'+INK+'" stroke-width="4.5" stroke-linejoin="round"/>',
+    hair:'<path d="M52 92 Q50 46 100 44 Q150 46 148 92 Q146 70 132 62 Q100 52 68 62 Q54 70 52 92 Z" fill="#1c120d" stroke="'+INK+'" stroke-width="5" stroke-linejoin="round"/><path d="M122 52 Q134 56 140 66" fill="none" stroke="#8a5530" stroke-width="2.5"/><path d="M50 72 Q100 58 150 72 L150 84 Q100 70 50 84 Z" fill="#fff" stroke="'+INK+'" stroke-width="4.5" stroke-linejoin="round"/><path d="M52 78 Q100 64 148 78" fill="none" stroke="#3d8bff" stroke-width="4"/>',
+    jaw:'<path d="M50 120 Q60 158 100 162 Q140 158 150 120 Q140 150 100 152 Q60 150 50 120 Z" fill="#3a2316" opacity=".35"/>',
+    collar:'<path d="M80 160 L100 176 L120 160" fill="#fff" stroke="'+INK+'" stroke-width="4" stroke-linejoin="round"/><text x="140" y="194" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="20" fill="#fff" stroke="'+INK+'" stroke-width="1.5">11</text>' }
+];
+const EX = [['neutral','Neutre'],['happy','Content'],['vexed','Vexé'],['cora','CORA !']];
+function show(i){
+  const P = C[i];
+  $('tabs').innerHTML = C.map((x, j)=> '<div class="tab'+(j===i ? ' on' : '')+'" data-i="'+j+'" style="--c:'+x.c+'">'+x.name.replace('Maître ', '')+'</div>').join('');
+  $('card').innerHTML = '<div class="hero" style="--c2:'+P.c2+';--c3:'+P.c3+'"><div class="big">'+face(P, 'neutral')+'</div><div class="nm">'+P.name+'</div><span class="rl">'+P.role+'<span class="st">'+P.stars+'</span></span><div class="say">'+P.say+'</div></div>'
+    + '<div class="ex">'+EX.map(([e, n])=> '<div>'+face(P, e)+n+'</div>').join('')+'</div><div class="why">'+P.why+'</div>';
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-i]'); if(t) show(+t.dataset.i); });
+show(0);
+$('sils').innerHTML = C.map(P=> '<div class="sil">'+face(P, 'neutral')+P.name.replace('Maître ', '')+'</div>').join('');
+const av = (P, ex)=> '<span class="av" style="--c2:'+P.c2+'">'+face(P, ex || 'neutral')+'</span>';
+$('hfc').innerHTML = [C[2], C[3], C[1]].map(P=> av(P)).join('');
+const seats = [[C[3], 'left:50%;top:10px;translate:-50% 0', 'neutral'], [C[2], 'left:6px;top:38%;translate:0 -50%', 'happy'], [C[1], 'right:6px;top:38%;translate:0 -50%', 'vexed']];
+$('tbl').insertAdjacentHTML('beforeend', seats.map(([P, pos, ex])=> '<div class="seat" style="'+pos+';--c:'+P.c+'">'+av(P, ex)+'<span>'+P.name+'</span></div>').join(''));
+
+// ---- the 16 ----
+const L = [
+  ['Le guide', [['#3fbf6a','T','Maître Tsala','','Le guide : la leçon, les conseils au bon moment, l’objectif du jour, la série. <u>Rôle élargi</u> : une seule voix qui explique.']]],
+  ['La route du quartier', [
+    ['#ff5fa8','C','Christelle','★','La débutante rieuse et superstitieuse. <u>Un seul caractère</u> (on retire celui en deuil).'],
+    ['#ffc93c','R','RALL','★★','Le bluffeur, ment sur sa main une fois sur deux. Gardé tel quel.'],
+    ['#3d8bff','P','Penalty','★★★','Le maître du quartier, compte les cartes. <u>Toujours vivant</u>.'],
+    ['#e9b94e','N','Le Ngonzormorrr','★★★★','Le masque d’or, le boss. Nom gardé (il est unique) ; <u>dans le code, il s’appellera enfin « ngonzormorrr »</u>, plus « mbarga ».']]],
+  ['Les champions de la League', [
+    ['#ff8a2a','A','Mami Ange','★','La mère du maquis, vend ses beignets entre deux parties. Gardée, <u>redessinée</u>.'],
+    ['#9b6bff','N','Nadège','★★','L’étudiante qui calcule tout. <u>Remplace Caroline</u> : deux « C » (Christelle, Caroline) se confondaient.'],
+    ['#2fd08a','B','Le Cobra','★★','L’arnaqueur aux lunettes noires. <u>« Boris le Cobra » raccourci</u> : un surnom suffit.'],
+    ['#ff4a4a','I','Ismaël','★★','Le benskineur, joue aussi vite qu’il roule. Gardé, <u>redessiné avec son casque</u>.'],
+    ['#b0475a','T','Papa Tchinda','★★★','Le patriarche patient, chapeau traditionnel. Gardé, redessiné.'],
+    ['#8a9a4a','M','Adjudant Mballa','★★★','Le militaire, discipline et ordre. Gardé, redessiné.'],
+    ['#6ab7ff','J','Junior','★★★','Le prodige de 16 ans. <u>Remplace Stéphane</u>, qui était aussi le joueur du roman.'],
+    ['#d9a441','M','Mado','★★','La commerçante du marché, tranchante. <u>Reprise de l’ancienne enquête</u> : elle a déjà ses répliques.'],
+    ['#c9c9d6','A','Armand Ondoua','★★★★','L’homme en costume, la finale de la League. <u>Fusion</u> de « l’homme en costume » et d’Armand : c’était le même.'],
+    ['#ff7ad9','P','Princesse','★★','La reine du coupé-décalé, joue pour le spectacle. <u>Nouvelle</u> : il manquait des femmes (4 sur 15).']]],
+  ['Et toi', [['#ffffff','?','Ton avatar','','<u>Nouveau</u> : un avatar dans le même style (teint, coiffure, habits), pour ceux qui n’ont pas de photo. Fini les simples initiales.']]]
+];
+$('list').innerHTML = L.map(([g, rows])=> '<div class="grp">'+g+'</div>'+rows.map(([c, ini, n, st, d])=> '<div class="li" style="--c:'+c+'"><i>'+ini+'</i><span><b>'+n+(st ? '<em>'+st+'</em>' : '')+'</b><small>'+d+'</small></span></div>').join('')).join('');
+})();
+</script>
+</body></html>
