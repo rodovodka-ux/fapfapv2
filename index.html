@@ -1210,6 +1210,109 @@
   @keyframes cardPop{ from{ opacity:0; transform:translateY(18px) scale(.96); } }
   @keyframes veil{ from{ opacity:0; } }
   @media (prefers-reduced-motion: reduce){ .launch::after{ animation:none; } .ln-shot, .ln-shot small, .ln-logo img{ transition:none; } .bn-card, .sg-card{ animation:none !important; } }
+  /* v90 · « Le clac » (maquette-intro, n°2): about 12 s, each credit stays readable ~2 s; from the second opening of
+     the day, a short version (the fan and the logo, 2.5 s). Only transforms and fades: light for any phone. */
+  .ln2{ background:radial-gradient(70% 55% at 50% 48%, #8a1414 0%, #3a0606 55%, #0a0202 100%); }
+  .ln2::before{ display:none; }
+  .ln2 .ln-skip{ z-index:60; }
+  .l2-stage{ position:absolute; inset:0; overflow:hidden; }
+  .l2-stage.l2-shake{ animation:l2Shk .45s cubic-bezier(.3,.7,.4,1); }
+  @keyframes l2Shk{ 10%{ transform:translate(-8px,6px) rotate(-.6deg); } 25%{ transform:translate(7px,-6px) rotate(.5deg); } 40%{ transform:translate(-5px,-3px); } 60%{ transform:translate(4px,4px); } 80%{ transform:translate(-2px,1px); } }
+  .l2-felt{ position:absolute; inset:0; background:repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 6px, transparent 6px 12px); }
+  .l2-cone{ position:absolute; left:50%; top:-10%; width:120%; height:80%; margin-left:-60%; background:radial-gradient(50% 60% at 50% 0%, rgba(255,236,200,.35), transparent 70%); opacity:0; animation:l2Cone .25s steps(3) .2s forwards; }
+  @keyframes l2Cone{ 0%{ opacity:0; } 50%{ opacity:1; } 70%{ opacity:.3; } 100%{ opacity:1; } }
+  .l2-slam{ position:absolute; left:50%; top:46%; width:120px; height:170px; margin:-85px -60px; border-radius:12px; background:#fffaf0; border:3px solid #000; box-shadow:0 14px 30px rgba(0,0,0,.6); z-index:22; opacity:0; display:grid; place-items:center; animation:l2Slam .5s cubic-bezier(.6,0,1,.6) .9s forwards, l2SlamOut .5s ease 2.2s forwards; }
+  .l2-slam b{ font:700 70px/1 'Fredoka', sans-serif; color:#c8283a; } .l2-slam i{ position:absolute; left:10px; top:6px; font:700 28px 'Fredoka', sans-serif; font-style:normal; color:#c8283a; }
+  @keyframes l2Slam{ from{ opacity:1; transform:translateY(-160px) scale(2.6) rotate(-18deg); } to{ opacity:1; transform:rotate(-4deg); } }
+  @keyframes l2SlamOut{ to{ opacity:0; transform:rotate(-4deg) scale(.85) translateY(30px); } }
+  .l2-clac{ position:absolute; left:0; right:0; top:22%; text-align:center; font:400 64px 'Anton', Impact, sans-serif; color:#fff; -webkit-text-stroke:2px #000; text-shadow:0 6px 0 #000, 0 0 30px rgba(255,80,40,.8); z-index:28; opacity:0; animation:l2Clac .9s cubic-bezier(.2,1.6,.4,1) 1.4s forwards; }
+  @keyframes l2Clac{ 0%{ opacity:0; transform:scale(.3) rotate(-10deg); } 30%{ opacity:1; transform:scale(1.15) rotate(3deg); } 70%{ opacity:1; transform:scale(1) rotate(0); } 100%{ opacity:0; transform:scale(1.1); } }
+  .l2-ring{ position:absolute; left:50%; top:46%; width:40px; height:40px; margin:-20px; border-radius:50%; border:4px solid #fff6d8; z-index:26; opacity:0; animation:l2Ring .7s ease-out 1.4s forwards; }
+  @keyframes l2Ring{ from{ opacity:1; transform:scale(.5); } to{ opacity:0; transform:scale(14); border-width:1px; } }
+  .l2-sparks i{ position:absolute; left:50%; top:46%; width:5px; height:5px; margin:-2.5px; border-radius:50%; background:#ffe08a; box-shadow:0 0 8px #ffb000; z-index:27; opacity:0; animation:l2Spark .9s cubic-bezier(.16,1,.3,1) 1.4s forwards; }
+  @keyframes l2Spark{ from{ opacity:1; transform:translate(0,0); } to{ opacity:0; transform:translate(var(--x), var(--y)); } }
+  .l2-flash{ position:absolute; inset:0; z-index:34; background:#fff; opacity:0; pointer-events:none; animation:l2Flash .3s ease-out 1.4s forwards; }
+  @keyframes l2Flash{ 0%{ opacity:0; } 30%{ opacity:.7; } 100%{ opacity:0; } }
+  .l2-fade{ position:absolute; inset:0; z-index:40; background:#000; pointer-events:none; animation:l2Fade 1s ease forwards; }
+  @keyframes l2Fade{ to{ opacity:0; } }
+  .l2-deal{ position:absolute; left:50%; top:47%; width:160px; height:224px; margin:-112px -80px; perspective:900px; z-index:23; opacity:0;
+    animation:l2DealIn .45s cubic-bezier(.16,1,.3,1) forwards, l2DealOut .4s ease-in forwards; animation-delay:calc(2.4s + var(--k)*2.6s), calc(4.6s + var(--k)*2.6s); }
+  .l2-deal[data-i="0"]{ --k:0; } .l2-deal[data-i="1"]{ --k:1; } .l2-deal[data-i="2"]{ --k:2; }
+  .l2-in{ position:absolute; inset:0; transform-style:preserve-3d; animation:l2Flip .5s cubic-bezier(.3,1.3,.5,1) forwards; animation-delay:calc(2.7s + var(--k)*2.6s); }
+  .l2-bk, .l2-f{ position:absolute; inset:0; border-radius:14px; border:3px solid #000; -webkit-backface-visibility:hidden; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px; }
+  .l2-bk{ background:repeating-radial-gradient(circle, rgba(242,199,106,.25) 0 1px, transparent 1px 5px), linear-gradient(160deg, #4a1219, #22080c); }
+  .l2-bk::after{ content:'FF'; font:800 26px 'Unbounded', sans-serif; color:rgba(242,199,106,.6); }
+  .l2-f{ background:#fffaf0; color:#141210; transform:rotateY(180deg); box-shadow:0 14px 30px rgba(0,0,0,.5); }
+  .l2-f small{ font:900 10px 'Nunito', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#c8283a; } .l2-f b{ font:700 24px/1.1 'Cinzel', Georgia, serif; margin-top:10px; }
+  @keyframes l2DealIn{ from{ opacity:1; transform:translate(-260px, 40px) rotate(-30deg) scale(.6); } to{ opacity:1; transform:none; } }
+  @keyframes l2DealOut{ to{ opacity:0; transform:translate(260px, -30px) rotate(25deg) scale(.7); } }
+  @keyframes l2Flip{ to{ transform:rotateY(180deg); } }
+  .l2-fan{ position:absolute; left:50%; top:54%; z-index:21; }
+  .l2-fan i{ position:absolute; width:56px; height:80px; margin:-80px -28px 0; border-radius:8px; background:#fffaf0; border:2.5px solid #000; transform-origin:50% 140%; opacity:0; box-shadow:0 6px 12px rgba(0,0,0,.5); animation:l2Fan .6s cubic-bezier(.2,1.4,.4,1) var(--l2-fan, 10.2s) forwards; }
+  @keyframes l2Fan{ from{ opacity:0; transform:rotate(0) translateY(40px); } to{ opacity:1; transform:rotate(var(--r)); } }
+  .l2-logo{ position:absolute; left:50%; top:50%; width:min(78vw, 360px); translate:-50% -58%; z-index:25; opacity:0; animation:l2Rise .9s cubic-bezier(.16,1,.3,1) var(--l2-logo, 10.5s) forwards; }
+  .l2-logo svg, .l2-logo img{ width:100%; height:auto; display:block; filter:drop-shadow(0 0 30px rgba(255,201,60,.3)); }
+  .l2-logo svg{ animation:l2Shine .8s ease-in-out calc(var(--l2-logo, 10.5s) + .8s); }
+  @keyframes l2Rise{ from{ opacity:0; transform:translateY(60px) scale(.7); } to{ opacity:1; transform:none; } }
+  @keyframes l2Shine{ 50%{ filter:drop-shadow(0 0 30px rgba(255,201,60,.3)) brightness(1.6); } }
+  .l2-tag{ position:absolute; left:0; right:0; top:66%; z-index:25; text-align:center; font:800 11px 'Nunito', sans-serif; letter-spacing:.32em; text-transform:uppercase; color:#f2c76a; opacity:0; animation:l2Tag .8s ease var(--l2-tag, 11.5s) forwards; }
+  @keyframes l2Tag{ from{ opacity:0; letter-spacing:.8em; } to{ opacity:1; letter-spacing:.32em; } }
+  /* the short version: no slam, no credits, the fan and the logo right away */
+  .ln2.short{ --l2-fan:.2s; --l2-logo:.45s; --l2-tag:1.2s; }
+  .ln2.short :is(.l2-cone, .l2-slam, .l2-clac, .l2-ring, .l2-sparks, .l2-flash, .l2-deal){ display:none; }
+  @media (prefers-reduced-motion: reduce){ .ln2 .l2-stage *{ animation-duration:.01s !important; animation-delay:0s !important; } }
+  /* v90 · installing the game (maquette-installer): the band at the top of the home screen, the one-time invitation,
+     the animated tutorial. Only moves and fades. (The home theme styles its buttons with many ids: these need more.) */
+  #instBand#instBand#instBand#instBand#instBand#instBand.inst-band{ display:flex; align-items:center; gap:10px; width:100%; margin:10px 0 4px; padding:10px 12px; border-radius:18px; background:linear-gradient(90deg, #e00000, #8f0000) !important; border:2.5px solid #000 !important; box-shadow:0 4px 0 #000 !important; position:relative; overflow:hidden; color:#fff !important; text-align:left; font:inherit; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+  #instBand#instBand#instBand#instBand#instBand#instBand.inst-band.hidden{ display:none; }
+  .inst-band::after{ content:''; position:absolute; top:0; bottom:0; width:40%; left:-50%; background:linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent); animation:ibSheen 3.2s ease-in-out infinite; pointer-events:none; }
+  @keyframes ibSheen{ 0%,60%{ left:-50%; } 100%{ left:120%; } }
+  .inst-band .ib-ic, .inst-inv .ii-ic{ display:grid; place-items:center; background:#16100b; border:2px solid #e9b94e; font:700 13px 'Fredoka', sans-serif; color:#f1c257; flex:none; }
+  .inst-band .ib-ic{ width:38px; height:38px; border-radius:11px; animation:ibHop 2.4s ease-in-out infinite; }
+  @keyframes ibHop{ 0%,70%,100%{ transform:none; } 78%{ transform:translateY(-5px); } 86%{ transform:none; } 92%{ transform:translateY(-2px); } }
+  .inst-band .ib-t{ min-width:0; } .inst-band .ib-t b{ display:block; font:700 15px 'Fredoka', sans-serif; color:#fff; } .inst-band .ib-t small{ display:block; font:800 11px/1.3 'Nunito', sans-serif; color:#ffd8d8; }
+  .inst-band em{ margin-left:auto; font-style:normal; padding:6px 10px; border-radius:12px; background:#fff; color:#111; font:900 11.5px 'Nunito', sans-serif; border:2px solid #000; flex:none; }
+  .inst-inv{ position:fixed; inset:0; z-index:1050; background:rgba(0,0,0,.6); display:flex; align-items:flex-end; animation:veil .3s ease both; }
+  .inst-inv.hidden{ display:none; }
+  .ii-sheet{ width:100%; max-width:520px; margin:0 auto; padding:20px 16px calc(22px + env(safe-area-inset-bottom, 0px)); border-radius:26px 26px 0 0; background:#120505; border-top:2px solid #e00000; text-align:center; color:#fff6f2; animation:iiUp .45s cubic-bezier(.16,1,.3,1); }
+  @keyframes iiUp{ from{ transform:translateY(100%); } }
+  .inst-inv .ii-ic{ width:72px; height:72px; margin:0 auto 10px; border-radius:18px; border-width:3px; font-size:24px; box-shadow:0 8px 20px rgba(0,0,0,.5); animation:iiLand .7s cubic-bezier(.3,1.5,.5,1) .2s both; }
+  @keyframes iiLand{ from{ transform:translateY(-14px) scale(.9); opacity:0; } }
+  .ii-sheet h4{ font:700 19px 'Fredoka', sans-serif; } .ii-sheet p{ color:#d9b9b9; font:700 13px 'Nunito', sans-serif; margin:6px 0 12px; }
+  .ii-perks{ display:grid; gap:7px; margin-bottom:14px; text-align:left; } .ii-perks div{ display:flex; gap:9px; align-items:center; font:800 12.5px 'Nunito', sans-serif; } .ii-perks i{ width:24px; height:24px; border-radius:8px; background:#e00000; display:grid; place-items:center; font-style:normal; font-size:12px; flex:none; border:2px solid #000; }
+  .ii-cta{ display:block; width:100%; padding:14px; border-radius:16px; background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); border:2.5px solid #000; box-shadow:0 5px 0 #000; font:700 16px 'Fredoka', sans-serif; color:#fff; }
+  .ii-later{ display:block; width:100%; margin-top:10px; padding:6px; background:none; border:0; color:#c9a3a3; font:800 12.5px 'Nunito', sans-serif; }
+  /* the tutorial: a mini phone, a finger that shows each touch on a 6 s loop, the step lit below */
+  .it-demo{ position:relative; width:190px; height:300px; margin:4px auto 12px; border-radius:26px; border:3px solid #000; background:#f4f1ea; overflow:hidden; box-shadow:0 10px 24px rgba(0,0,0,.5); }
+  .it-demo .pg{ position:absolute; inset:0 0 34px; background:linear-gradient(180deg, #2a0a0a, #0e0404); display:grid; place-items:center; font:700 22px 'Fredoka', sans-serif; color:#ffd88a; }
+  .it-demo .bar{ position:absolute; left:0; right:0; bottom:0; height:34px; background:#f4f1ea; border-top:1px solid #ccc; display:flex; justify-content:space-around; align-items:center; }
+  .it-demo .bar i{ width:16px; height:16px; border-radius:4px; background:#c9c9c9; } .it-demo .bar i.sh{ background:#3D7FD9; position:relative; }
+  .it-demo .bar i.sh::after{ content:'↑'; position:absolute; inset:0; color:#fff; font:900 12px/16px 'Nunito', sans-serif; text-align:center; }
+  .it-demo .mn{ position:absolute; left:6px; right:6px; bottom:6px; border-radius:14px; background:#fff; border:1px solid #ccc; padding:8px; transform:translateY(120%); }
+  .it-demo .mn div{ padding:8px; border-radius:8px; font:800 10px 'Nunito', sans-serif; color:#333; background:#f2f2f2; margin-top:5px; }
+  .it-demo .hm{ position:absolute; inset:0; background:linear-gradient(160deg, #3a6ea8, #1b3558); opacity:0; display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding:30px 14px; align-content:start; }
+  .it-demo .hm i{ aspect-ratio:1; border-radius:10px; background:rgba(255,255,255,.35); }
+  .it-demo .hm i.ff{ background:#16100b; border:2px solid #e9b94e; display:grid; place-items:center; font:700 11px 'Fredoka', sans-serif; color:#f1c257; font-style:normal; transform:scale(0); }
+  .it-demo .fg{ position:absolute; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.85); border:2px solid #000; box-shadow:0 4px 10px rgba(0,0,0,.4); z-index:5; left:50%; top:110%; }
+  .it-demo .fg::after{ content:''; position:absolute; inset:-8px; border-radius:50%; border:3px solid rgba(255,255,255,.9); opacity:0; }
+  .it-demo.ios .fg{ animation:itFIos 6s ease-in-out infinite; } .it-demo .fg::after{ animation:itTap 6s ease-out infinite; }
+  @keyframes itFIos{ 0%{ left:60%; top:110%; } 14%{ left:44%; top:89%; } 32%{ left:44%; top:89%; } 46%{ left:40%; top:72%; } 62%{ left:40%; top:72%; } 80%,100%{ left:60%; top:110%; } }
+  @keyframes itTap{ 0%,16%{ opacity:0; transform:scale(.6); } 20%{ opacity:1; transform:scale(1); } 26%,48%{ opacity:0; transform:scale(1.5); } 52%{ opacity:1; transform:scale(1); } 58%,100%{ opacity:0; transform:scale(1.5); } }
+  .it-demo.ios .mn{ animation:itMenu 6s cubic-bezier(.16,1,.3,1) infinite; } @keyframes itMenu{ 0%,22%{ transform:translateY(120%); } 30%,64%{ transform:none; } 70%,100%{ transform:translateY(120%); } }
+  .it-demo.ios .mn .hit{ animation:itHit 6s steps(1) infinite; } @keyframes itHit{ 0%,50%{ background:#f2f2f2; color:#333; } 52%,64%{ background:#ffd8d8; color:#a00; } 66%,100%{ background:#f2f2f2; color:#333; } }
+  .it-demo .hm{ animation:itHome 6s ease infinite; } @keyframes itHome{ 0%,66%{ opacity:0; } 72%,96%{ opacity:1; } 100%{ opacity:0; } }
+  .it-demo .hm .ff{ animation:itIcon 6s cubic-bezier(.3,1.6,.5,1) infinite; } @keyframes itIcon{ 0%,72%{ transform:scale(0); } 80%,96%{ transform:scale(1); } 100%{ transform:scale(0); } }
+  .it-demo .ab{ position:absolute; left:20px; right:20px; top:45%; padding:10px; border-radius:20px; background:#2FB36B; border:2px solid #000; color:#fff; text-align:center; font:900 12px 'Nunito', sans-serif; }
+  .it-demo .cf{ position:absolute; left:12px; right:12px; top:30%; padding:12px; border-radius:14px; background:#fff; color:#222; font:800 10.5px 'Nunito', sans-serif; box-shadow:0 8px 20px rgba(0,0,0,.4); opacity:0; }
+  .it-demo .cf b{ display:block; text-align:right; color:#1a73e8; margin-top:8px; }
+  .it-demo.and .fg{ animation:itFAnd 6s ease-in-out infinite; }
+  @keyframes itFAnd{ 0%{ left:60%; top:110%; } 14%{ left:44%; top:47%; } 32%{ left:44%; top:47%; } 46%{ left:72%; top:44%; } 62%{ left:72%; top:44%; } 80%,100%{ left:60%; top:110%; } }
+  .it-demo.and .cf{ animation:itConf 6s ease infinite; } @keyframes itConf{ 0%,24%{ opacity:0; transform:scale(.9); } 30%,62%{ opacity:1; transform:none; } 68%,100%{ opacity:0; } }
+  .it-steps{ display:grid; gap:8px; margin-bottom:12px; }
+  .it-st{ display:flex; gap:10px; align-items:center; padding:9px 10px; border-radius:14px; background:#170707; border:2px solid #000; color:#fff6f2; font:800 12.5px/1.35 'Nunito', sans-serif; opacity:.45; transition:opacity .3s, border-color .3s; }
+  .it-st i{ width:24px; height:24px; border-radius:50%; background:#2a1010; display:grid; place-items:center; font:900 12px 'Nunito', sans-serif; font-style:normal; flex:none; }
+  .it-st.on{ opacity:1; border-color:#e00000; } .it-st.on i{ background:#e00000; }
+  @media (prefers-reduced-motion: reduce){ .inst-band::after, .inst-band .ib-ic, .it-demo *{ animation:none !important; } .it-demo .hm, .it-demo .hm .ff{ opacity:1; transform:none; } }
   .ln-skip{ position:absolute; right:16px; bottom:calc(18px + env(safe-area-inset-bottom, 0px)); padding:8px 14px; border-radius:99px; border:1px solid rgba(255,246,220,.25); background:rgba(255,246,220,.06); color:#e9dcc2; font:700 13px 'Nunito', system-ui, sans-serif; }
   @keyframes lnGlow{ from{ transform:translate(-6%, -4%); } to{ transform:translate(6%, 4%); } }
   /* ---- the beta notice and the suggestion box ---- */
@@ -4362,12 +4465,26 @@
   <p class="ag-foot">Nul n’entre ici s’il est babylone.</p>
 </div>
 <!-- The opening credits, at every launch (a touch skips them), then the beta notice once per version -->
-<div class="launch" id="launch" aria-label="Générique d’ouverture">
-  <div class="ln-shot" data-i="0"><small>Yowalé Distribution</small><b>présente</b></div>
-  <div class="ln-shot" data-i="1"><small>Une création de</small><b>Nitcheu Roland</b></div>
-  <div class="ln-shot" data-i="2"><small>Direction artistique</small><b>Franck Lado</b></div>
-  <div class="ln-shot ln-logo" data-i="3"><img src="art/logo.png" alt="Fap Fap" width="600" height="312"><small>Yaoundé · la nuit · les cartes</small></div>
+<!-- v90 « Le clac »: a 3 slammed on the red table, the credits dealt on cards that turn over, the fan, the medallion -->
+<div class="launch ln2" id="launch" aria-label="Générique d’ouverture">
+  <div class="l2-stage" id="l2Stage">
+    <div class="l2-felt"></div><div class="l2-cone"></div>
+    <div class="l2-slam"><i>3</i><b>♥</b></div><div class="l2-clac">CLAC !</div>
+    <div class="l2-deal" data-i="0"><div class="l2-in"><div class="l2-bk"></div><div class="l2-f"><small>Yowalé Distribution</small><b>présente</b></div></div></div>
+    <div class="l2-deal" data-i="1"><div class="l2-in"><div class="l2-bk"></div><div class="l2-f"><small>Une création de</small><b>Nitcheu Roland</b></div></div></div>
+    <div class="l2-deal" data-i="2"><div class="l2-in"><div class="l2-bk"></div><div class="l2-f"><small>Direction artistique</small><b>Franck Lado</b></div></div></div>
+    <div class="l2-fan"><i style="--r:-30deg"></i><i style="--r:-15deg"></i><i style="--r:0deg"></i><i style="--r:15deg"></i><i style="--r:30deg"></i></div>
+    <div class="ln-logo l2-logo"><img src="art/logo.png" alt="Fap Fap" width="600" height="312"></div>
+    <div class="l2-tag">Yaoundé · la nuit · les cartes</div>
+    <i class="l2-ring"></i><div class="l2-sparks"></div>
+    <div class="l2-flash"></div><div class="l2-fade"></div>
+  </div>
   <button class="ln-skip" id="lnSkip">Passer ›</button>
+</div>
+<div class="inst-inv hidden" id="instInvite" role="dialog" aria-modal="true" aria-labelledby="iiT">
+  <div class="ii-sheet"><span class="ii-ic">FF</span><h4 id="iiT">Mets Fap Fap sur ton téléphone</h4><p>Comme une vraie application, à côté de WhatsApp.</p>
+    <div class="ii-perks"><div><i>⤢</i>En plein écran, sans la barre du navigateur</div><div><i>🔔</i>Prévenu quand on te défie ou te dépasse</div><div><i>⚡</i>Il s’ouvre tout de suite, même sans réseau</div></div>
+    <button class="ii-cta" data-go>Voir comment (2 gestes)</button><button class="ii-later" data-later>Plus tard · c’est aussi en haut de l’accueil</button></div>
 </div>
 <div class="beta-note hidden" id="betaNote" role="dialog" aria-modal="true" aria-labelledby="bnT">
   <div class="bn-card">
@@ -4747,6 +4864,8 @@
       <button class="gl solid gl-round press og" id="btnRich" aria-label="Les plus riches du quartier"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg></button>
       <button class="gl solid gl-round press og" id="btnShowAccount" aria-label="Mon compte"><svg class="i" aria-hidden="true"><use href="#i-cloud"/></svg><i class="tile-dot hidden" id="acctDot"></i></button>
     </div>
+    <!-- v90: installing the game, at the top while it is not installed -->
+    <button class="inst-band hidden" id="instBand"><span class="ib-ic">FF</span><span class="ib-t"><b>Installe Fap Fap</b><small>Plein écran, et on te prévient quand on te dépasse</small></span><em>2 gestes</em></button>
 
     <div class="home-top">
       <h2 class="logo neon-logo" aria-label="Fap Fap"><span class="neon-plate" id="neonPlate"><svg class="neon-sign" viewBox="0 0 400 120" aria-hidden="true"><defs><filter id="neonBlur" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="n-glow" filter="url(#neonBlur)"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-tube"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g><g class="n-gas"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow2"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-flow"><text class="p" x="10" y="92">FAP</text><text class="b" x="212" y="92">FAP</text></g><g class="n-shine" transform="translate(-1.2 -1.6)"><text x="10" y="92">FAP</text><text x="212" y="92">FAP</text></g></svg></span></h2>
@@ -13765,12 +13884,24 @@
       ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><g class="v3-pulse"><rect x="18" y="22" width="52" height="18" rx="9" fill="#2FB36B" stroke="#1b120c"/><text x="44" y="34" text-anchor="middle" font-size="8.5" font-weight="800" fill="#fff" font-family="Nunito">Installer</text></g>')+'<div>Touche le bouton <b>Installer</b> ci-dessous : le téléphone te demande de confirmer.</div>',
       ill('<rect x="8" y="8" width="72" height="46" rx="6" fill="#f4f4f4" stroke="#1b120c" stroke-width="2"/><text x="72" y="20" font-size="12" font-weight="900" text-anchor="end" font-family="Nunito" class="v3-pulse">⋮</text><rect x="22" y="28" width="56" height="12" rx="3" fill="#FFC93C" stroke="#1b120c"/><text x="50" y="37" text-anchor="middle" font-size="7" font-weight="800" font-family="Nunito">Installer l’application</text>')+'<div>Pas de bouton ? Ouvre le menu <b>⋮</b> du navigateur, puis <b>« Installer l’application »</b> (ou « Ajouter à l’écran d’accueil »).</div>'];
     const os = document.getElementById('installBody').dataset.os || (ios ? 'ios' : 'and');
+    // v90: the animated tutorial first (a finger on a mini phone, on a loop), the detailed steps below it
+    const home = '<div class="hm">'+'<i></i>'.repeat(6)+'<i class="ff">FF</i></div><span class="fg"></span>';
+    const demo = os==='ios'
+      ? '<div class="it-demo ios"><div class="pg">FAP FAP</div><div class="bar"><i></i><i></i><i class="sh"></i><i></i><i></i></div><div class="mn"><div>Copier</div><div class="hit">Sur l’écran d’accueil  ⊞</div><div>Signets</div></div>'+home+'</div>'
+      : '<div class="it-demo and"><div class="pg">FAP FAP</div><div class="ab">Installer Fap Fap</div><div class="cf">Installer l’application ?<b>INSTALLER</b></div>'+home+'</div>';
+    const S = os==='ios' ? ['Touche <b>Partager</b> en bas de Safari', 'Touche « <b>Sur l’écran d’accueil</b> »', 'Fap Fap est sur ton téléphone !'] : ['Touche « <b>Installer Fap Fap</b> »', 'Confirme : <b>Installer</b>', 'Fap Fap est sur ton téléphone !'];
     document.getElementById('installBody').innerHTML = '<div class="v3-card"><p class="v3-p" style="margin-top:0"><b>Une fois installé, Fap Fap s’ouvre comme une vraie application</b> : en plein écran, sans la barre du navigateur, et il peut te prévenir quand on te dépasse au classement.</p>'
       +'<div class="v3-seg"><div role="button" tabindex="0" data-os="ios" class="'+(os==='ios' ? 'on' : '')+'">iPhone</div><div role="button" tabindex="0" data-os="and" class="'+(os==='and' ? 'on' : '')+'">Android</div></div>'
-      +(os==='ios' ? IOS : AND).map((h, i)=> '<div class="v3-step"><span class="v3-n">'+(i + 1)+'</span>'+h+'</div>').join('')
+      + demo + '<div class="it-steps">'+S.map((s, i)=> '<div class="it-st"><i>'+(i + 1)+'</i><span>'+s+'</span></div>').join('')+'</div>'
       +(os==='and' && can ? '<div role="button" tabindex="0" class="v3-go" id="v3InstallGo">Installer Fap Fap</div>' : '<div role="button" tabindex="0" class="v3-go" data-nav-back>J’ai compris</div>')+'</div>'
+      +'<div class="v3-card"><h3>En détail</h3>'+(os==='ios' ? IOS : AND).map((h, i)=> '<div class="v3-step"><span class="v3-n">'+(i + 1)+'</span>'+h+'</div>').join('')+'</div>'
       +'<p class="v3-note">Sur iPhone, les notifications du jeu ne marchent qu’une fois le jeu installé et ouvert depuis son icône.</p>';
     document.getElementById('installBody').dataset.os = os;
+    // the step lights up in time with the finger (the loop lasts 6 s); stops by itself once the page is closed
+    clearInterval(renderInstall.t); const t0 = performance.now();
+    const light = ()=>{ const st = document.querySelectorAll('#installBody .it-st'); if(!st.length || !document.getElementById('installBody').offsetParent){ clearInterval(renderInstall.t); return; }
+      const t = (performance.now() - t0) % 6000, k = t<2600 ? 0 : t<4100 ? 1 : 2; st.forEach((e, i)=> e.classList.toggle('on', i===k)); };
+    document.querySelector('#installBody .it-st').classList.add('on'); renderInstall.t = setInterval(light, 200);
   }
   document.getElementById('installBody').addEventListener('click', e=>{
     const o = e.target.closest('[data-os]'); if(o){ document.getElementById('installBody').dataset.os = o.dataset.os; renderInstall(); return; }
@@ -13778,6 +13909,7 @@
   });
   // the home card « Installer le jeu » now opens the tutorial (on every phone where the game is not installed yet)
   document.getElementById('btnInstall').addEventListener('click', e=>{ e.stopImmediatePropagation(); ensureAudio(); track('v3_install_open'); renderInstall(); Nav.go('installPage'); }, true);
+  document.getElementById('instBand').addEventListener('click', ()=>{ ensureAudio(); track('v90_install_band'); renderInstall(); Nav.go('installPage'); });
 
   // ---- « Mon style »: the default CORA and claque effects (or « au hasard »), and the table your guests play on ----
   const V3_FX_IC = {meteore:'meteorite', foudre:'foudre', billets:'billets', artifice:'artifice', trounoir:'trounoir', clac:'claque', onde:'onde', feu:'feu', eclair:'foudre',
@@ -13815,6 +13947,7 @@
     const shx = document.getElementById('v3Sheet'); if(shx) shx.classList.remove('on');
     const bi = document.getElementById('btnInstall');
     if(bi && typeof isStandalone==='function') bi.classList.toggle('hidden', isStandalone());
+    const ib = document.getElementById('instBand'); if(ib) ib.classList.toggle('hidden', isStandalone());
     const hf = document.querySelector('#btnGoPlay .hero-faces');
     if(hf && !hf.dataset.v3){ hf.dataset.v3 = 1; hf.innerHTML = ['aristide', 'penalty', 'gervais'].map(id=> '<span class="avatar" data-char="'+id+'" style="--s:46px"></span>').join(''); fillAllAvatars(hf); }
     const hs = document.querySelector('#btnGoPlay .hero-text small'); if(hs) hs.textContent = 'Partie rapide · le quartier · en ligne · Carré';
@@ -13846,25 +13979,62 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v89';
+  const APP_VERSION = 'v90';
   (function launch(){
-    const el = document.getElementById('launch'), shots = el.querySelectorAll('.ln-shot');
-    if(DEV_HOST && /[?&]debug\b/.test(location.search)){ el.remove(); return; }
-    let i = -1, t = 0, over = false;
+    const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
+    if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
+    // the full film once a day, then the short one (the fan and the logo)
+    const day = new Date().toDateString(); let seen = ''; try{ seen = localStorage.getItem('fapfap_intro_day') || ''; }catch(e){}
+    const short = seen===day && !/[?&]intro=full\b/.test(location.search); try{ localStorage.setItem('fapfap_intro_day', day); }catch(e){}
+    if(short) el.classList.add('short');
+    stage.querySelector('.l2-sparks').innerHTML = Array.from({length:16}, (_, i)=>{ const a = i/16*Math.PI*2, d = 90 + Math.random()*90; return '<i style="--x:'+Math.round(Math.cos(a)*d)+'px;--y:'+Math.round(Math.sin(a)*d)+'px"></i>'; }).join('');
+    const T = [];
+    let over = false;
     // the home screen plays its entrance as the credits fade, so the player sees it arrive instead of finding it there
-    const end = ()=>{ if(over) return; over = true; clearTimeout(t); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
-      if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); if(!pvMaybeOpen()) betaNotice(); };
-    const next = ()=>{ if(i >= 0) shots[i].classList.remove('on'); i++; if(i >= shots.length) return end(); shots[i].classList.add('on'); t = setTimeout(next, i===shots.length - 1 ? 2200 : 1900); };
+    const end = ()=>{ if(over) return; over = true; T.forEach(clearTimeout); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
+      if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); if(!pvMaybeOpen()){ if(!betaNotice()) setTimeout(installInvite, 500); } };
     el.addEventListener('click', end);
-    setTimeout(next, 250);
+    T.push(setTimeout(end, short ? 2600 : 12900));
+    if(!short) T.push(setTimeout(()=>{ stage.classList.remove('l2-shake'); void stage.offsetWidth; stage.classList.add('l2-shake'); }, 1400));
+    // the sound, made live (no file): only where the phone lets a page play sound before a first touch
+    if(prefs.mute) return;
+    let c = null; try{ c = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ return; }
+    if(!c || c.state!=='running'){ try{ c && c.close(); }catch(e){} return; }
+    const now = c.currentTime;
+    const noise = (t, dur, f0, f1, vol, q)=>{ const b = c.createBuffer(1, c.sampleRate*dur, c.sampleRate), d = b.getChannelData(0); for(let i = 0; i<d.length; i++) d[i] = Math.random()*2 - 1;
+      const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain(); s.buffer = b; f.type = 'bandpass'; f.Q.value = q || 1.2; f.frequency.setValueAtTime(f0, now + t); f.frequency.exponentialRampToValueAtTime(f1, now + t + dur);
+      g.gain.setValueAtTime(.0001, now + t); g.gain.exponentialRampToValueAtTime(vol, now + t + dur*.4); g.gain.exponentialRampToValueAtTime(.0001, now + t + dur); s.connect(f); f.connect(g); g.connect(c.destination); s.start(now + t); };
+    const tone = (t, fr, dur, vol, type)=>{ const o = c.createOscillator(), g = c.createGain(); o.type = type || 'triangle'; o.frequency.value = fr;
+      g.gain.setValueAtTime(.0001, now + t); g.gain.exponentialRampToValueAtTime(vol, now + t + .02); g.gain.exponentialRampToValueAtTime(.0001, now + t + dur); o.connect(g); g.connect(c.destination); o.start(now + t); o.stop(now + t + dur + .05); };
+    const boom = (t, vol)=>{ const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(140, now + t); o.frequency.exponentialRampToValueAtTime(38, now + t + .5);
+      g.gain.setValueAtTime(vol, now + t); g.gain.exponentialRampToValueAtTime(.0001, now + t + .8); o.connect(g); g.connect(c.destination); o.start(now + t); o.stop(now + t + .9); noise(t, .25, 3000, 400, .5, .7); };
+    const chord = t=>{ [392, 494, 587, 784].forEach((f, i)=> tone(t + i*.04, f, 1.6, .06)); tone(t, 98, 1.8, .2, 'sine'); };
+    const k = short ? -10 : 0; // the short version keeps only the fan and the chord
+    if(!short){ noise(.2, .3, 200, 900, .05, .8); noise(.9, .45, 400, 2500, .15, .7); boom(1.4, 1.1); [2.4, 5, 7.6].forEach(t=>{ noise(t, .25, 3000, 1500, .25, 2); tone(t + .3, 660, .3, .05); }); }
+    [10.2, 10.25, 10.3, 10.35, 10.4].forEach(t=> noise(t + k, .15, 2500, 1500, .15, 2));
+    chord(10.6 + k); tone(11.3 + k, 1568, .6, .05);
+    setTimeout(()=>{ try{ c.close(); }catch(e){} }, short ? 4000 : 14500);
   })();
   function betaNotice(force){
     let seen = ''; try{ seen = localStorage.getItem('fapfap_beta_seen') || ''; }catch(e){}
-    if(seen===APP_VERSION && !force) return;
+    if(seen===APP_VERSION && !force) return false;
     const n = document.getElementById('betaNote'); n.classList.remove('hidden');
     const close = ()=>{ n.classList.add('hidden'); try{ localStorage.setItem('fapfap_beta_seen', APP_VERSION); }catch(e){} };
-    document.getElementById('bnOk').onclick = close;
+    document.getElementById('bnOk').onclick = ()=>{ close(); if(!force) setTimeout(installInvite, 400); };
     document.getElementById('bnIdea').onclick = ()=>{ close(); openSuggest(); };
+    return true;
+  }
+  // v90: the install invitation, once on this phone, right after the opening (never inside the installed app)
+  function installInvite(){
+    let done = false; try{ done = localStorage.getItem('fapfap_inst_inv')==='1'; }catch(e){}
+    const ln = document.getElementById('launch');
+    if(done || isStandalone() || !inHome() || (ln && !ln.classList.contains('done'))) return;
+    if(['ageGate','betaNote','sugg','pvOverlay'].some(id=>{ const x = document.getElementById(id); return x && !x.classList.contains('hidden'); })) return;
+    try{ localStorage.setItem('fapfap_inst_inv', '1'); }catch(e){}
+    const o = document.getElementById('instInvite'); o.classList.remove('hidden'); track('v90_install_invite');
+    const close = ()=> o.classList.add('hidden');
+    o.onclick = e=>{ if(e.target===o || e.target.closest('[data-later]')){ close(); return; }
+      if(e.target.closest('[data-go]')){ close(); ensureAudio(); renderInstall(); Nav.go('installPage'); } };
   }
   document.getElementById('betaTag').addEventListener('click', ()=> betaNotice(true));
 
@@ -15692,7 +15862,7 @@
   window.addEventListener('appinstalled', ()=>{
     track('install');
     installPrompt = null;
-    document.getElementById('btnInstall').classList.add('hidden');
+    document.getElementById('btnInstall').classList.add('hidden'); document.getElementById('instBand').classList.add('hidden');
     showToast('Fap Fap est installé !', 'Retrouve-le sur ton écran d’accueil.', {ms:2600});
   });
   // iPhones never fire beforeinstallprompt: explain the Safari steps instead
