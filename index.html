@@ -18,6 +18,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Unbounded:wght@300;700;800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<!-- v94: the 16 characters' faces (one drawn style, shared with the League) -->
+<script src="persos.js"></script>
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -1285,6 +1287,20 @@
   #matchOverOverlay .mo-row #btnRematch{ min-width:0; flex:1.2; margin-top:6px !important; }
   #matchOverOverlay .mo-row .mo-other{ flex:1; margin-top:6px; padding:12px 10px; border-radius:16px; background:#1e0f0b; color:#fff; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 15px 'Fredoka', sans-serif; }
   #matchOverOverlay .mo-row .mo-other.hidden{ display:none; }
+  /* v94 · Réglages: how much the opponents talk */
+  #talkPick.talk-row{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; cursor:default; }
+  #talkPick .talk-seg{ display:flex; gap:4px; padding:3px; border-radius:12px; background:rgba(0,0,0,.35); }
+  #talkPick .talk-seg button{ padding:6px 9px; border-radius:9px; border:0; background:none; color:inherit; font:800 12px 'Nunito', sans-serif; opacity:.7; }
+  #talkPick .talk-seg button.on{ background:#e00000; color:#fff; opacity:1; }
+  /* v94 · the troupe's faces (persos.js) in every round portrait, cropped on the face; they blink, the smoke rises */
+  .avatar[data-ffp], [data-ffp]{ position:relative; overflow:hidden; }
+  .ffp-f{ position:absolute; inset:0; display:block; overflow:hidden; border-radius:inherit; }
+  .ffp-f svg{ position:absolute; width:150%; height:auto; left:-25%; top:-10%; display:block; }
+  [data-ffp].talking .ffp-f svg{ animation:ffpTalk .28s ease-in-out 4 alternate; }
+  @keyframes ffpTalk{ to{ transform:translateY(-2.5%) scale(1.02); } }
+  .ffp-f .blink{ transform-origin:100px 98px; animation:ffpBlink 5.5s infinite; } @keyframes ffpBlink{ 0%,93%,100%{ transform:scaleY(1); } 95%{ transform:scaleY(.1); } }
+  .ffp-f .smoke{ animation:ffpSmoke 2.6s ease-in-out infinite; } @keyframes ffpSmoke{ 0%{ opacity:0; transform:translateY(4px); } 40%{ opacity:.8; } 100%{ opacity:0; transform:translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce){ .ffp-f .blink, .ffp-f .smoke, [data-ffp].talking .ffp-f svg{ animation:none; } }
   /* v92 · the goal of the day (home screen, under « Jouer ») */
   #dayGoal#dayGoal#dayGoal#dayGoal#dayGoal#dayGoal.day-goal{ display:block; width:100%; margin:10px 0; padding:11px 12px; border-radius:18px; background:#1e0f0b !important; border:2px solid #e9b94e !important; box-shadow:0 4px 0 #000 !important; color:#fff6f2 !important; text-align:left; font:inherit; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   #dayGoal#dayGoal#dayGoal#dayGoal#dayGoal#dayGoal.day-goal.hidden{ display:none; }
@@ -4653,14 +4669,14 @@
       <div class="sq-bubble" id="sqBubblePenalty"></div>
     </div>
     <div class="sq-seat sq-left" id="sqSeatAristide">
-      <div class="sq-name"><span class="avatar" data-char="aristide" style="--s:26px"></span>RALL</div>
+      <div class="sq-name"><span class="avatar" data-char="aristide" style="--s:26px"></span>Rall</div>
       <div class="sq-cards" id="sqCardsAristide"></div>
       <div class="sq-hist" id="sqHistAristide"></div>
       <div class="sq-cur" id="sqCurAristide"></div>
       <div class="sq-bubble" id="sqBubbleAristide"></div>
     </div>
     <div class="sq-seat sq-right" id="sqSeatGervais">
-      <div class="sq-name"><span class="avatar" data-char="gervais" style="--s:26px"></span>Christelle</div>
+      <div class="sq-name"><span class="avatar" data-char="gervais" style="--s:26px"></span>Alida</div>
       <div class="sq-cards" id="sqCardsGervais"></div>
       <div class="sq-hist" id="sqHistGervais"></div>
       <div class="sq-cur" id="sqCurGervais"></div>
@@ -4906,7 +4922,7 @@
   <p>Tu viens de réussir un CORA contre Penalty. Tu connais l'essentiel : commander, suivre la couleur, prendre le contrôle, et gagner sur la dernière carte.</p>
   <p class="small-note">Il reste deux armes à découvrir : la Passe et les victoires automatiques. Tout est dans les règles.</p>
   <p id="tutoRep" class="rematch-info"></p>
-  <button class="primary big" id="btnTutoPlay">Affronter Christelle</button>
+  <button class="primary big" id="btnTutoPlay">Affronter Alida</button>
   <button id="btnTutoRules"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg> Lire les règles</button>
   <button class="ghost" id="btnTutoMenu">Retour à l'accueil</button>
 </div>
@@ -4932,9 +4948,9 @@
     <!-- v90/v92: one red band under the logo: install the game, save the account, or both (filled by homeBand) -->
     <button class="inst-band hidden" id="instBand"></button>
 
-    <section class="og-king" id="ogKing" aria-label="Le Ngonzormorrr">
-      <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le masque du Ngonzormorrr"></div>
-      <div class="og-bubble" id="ogBubble"><span class="who">Le Ngonzormorrr</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span><button class="og-dare" id="ogDare">Ose me défier ›</button></div>
+    <section class="og-king" id="ogKing" aria-label="Le Masque">
+      <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le Masque"></div>
+      <div class="og-bubble" id="ogBubble"><span class="who">Le Masque</span><span id="ogSay">Tu me regardes ? On ne regarde pas le masque dans les yeux.</span><button class="og-dare" id="ogDare">Ose me défier ›</button></div>
     </section>
 
     <!-- v83: the account, suggested with its reason until it is saved -->
@@ -4967,7 +4983,7 @@
     <!-- v80: the Fap-Fap League replaces the story modes (league.html, opened in #zhFrame above the game) -->
     <button class="lg-home press" id="btnLeague" style="--d:2">
       <span class="lg-ecu" aria-hidden="true"><svg viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lgEcuS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff1414"/><stop offset=".6" stop-color="#e00000"/><stop offset="1" stop-color="#b00000"/></linearGradient><linearGradient id="lgEcuG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".5" stop-color="#e2ad45"/><stop offset="1" stop-color="#9a6614"/></linearGradient><clipPath id="lgEcuC"><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z"/></clipPath></defs><path d="M120 8 L220 36 V128 C220 200 174 246 120 270 C66 246 20 200 20 128 V36 Z" fill="#000"/><path d="M120 14 L214 40 V128 C214 196 170 240 120 262 C70 240 26 196 26 128 V40 Z" fill="url(#lgEcuS)" stroke="url(#lgEcuG)" stroke-width="5"/><g clip-path="url(#lgEcuC)"><rect x="96" y="0" width="48" height="280" fill="#0b0b0b"/><rect x="96" y="0" width="48" height="280" fill="none" stroke="url(#lgEcuG)" stroke-width="2"/><path class="lg-shine" d="M40 0 L90 0 L10 280 L-40 280 Z" fill="#fff"/></g><path d="M120 34 l7 14 15 2 -11 10 3 15 -14 -7 -14 7 3 -15 -11 -10 15 -2 z" fill="url(#lgEcuG)" stroke="#000" stroke-width="2"/><g transform="translate(92 142) rotate(-18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#141210">♠</text></g><g transform="translate(148 142) rotate(18)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♦</text></g><g transform="translate(120 134)"><rect x="-17" y="-24" width="34" height="48" rx="5" fill="#fffaf0" stroke="#000" stroke-width="2.5"/><text x="0" y="8" text-anchor="middle" font-size="21" fill="#c8283a">♥</text></g></svg></span>
-      <span class="lg-txt"><small id="lgHomeTag">Nouveau · Saison 1</small><b>FAP·FAP<em>LEAGUE</em></b><span id="lgHomeSub">32 quartiers de Yaoundé et Douala. Un seul roi.</span>
+      <span class="lg-txt"><small id="lgHomeTag">Nouveau · Saison 1</small><b>FAP·FAP<em>LEAGUE</em></b><span id="lgHomeSub">16 quartiers, des matchs aller-retour. Un seul roi.</span>
         <span class="lg-live hidden" id="lgHomeLive"></span>
         <span class="lg-cta" id="lgHomeCta">Entrer dans la League</span></span>
     </button>
@@ -4979,7 +4995,7 @@
       </button>
       <button class="gl solid hcard press og deep" id="btnLesson" style="--d:3">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-cap"/></svg></span>
-        <b>La leçon</b><small>avec Maître Tsala</small>
+        <b>La leçon</b><small>avec Mr Kamga</small>
       </button>
       <button class="gl solid hcard press og deep" id="btnShowRules" style="--d:3">
         <span class="gl-sym"><svg class="i" aria-hidden="true"><use href="#i-book"/></svg></span>
@@ -5070,7 +5086,7 @@
     <button class="mode-card" id="modeAI" style="--d:0">
       <span class="mode-faces"><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="penalty" style="--s:38px"></span></span>
       <b>La route du quartier</b>
-      <small>Affronte RALL, le roi du bluff, puis Penalty, le maître du quartier.</small>
+      <small>Affronte Rall, le roi du bluff, puis Penalty, le maître du quartier.</small>
     </button>
     <button class="mode-card mode-online" id="modeMP" style="--d:1">
       <span class="mode-ico"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg></span>
@@ -5080,7 +5096,7 @@
     <button class="mode-card mode-carre" id="modeSquare" style="--d:2">
       <span class="mode-faces"><span class="avatar" data-char="penalty" style="--s:38px"></span><span class="avatar" data-char="aristide" style="--s:38px"></span><span class="avatar" data-char="gervais" style="--s:38px"></span></span>
       <b>Carré la Pute</b>
-      <small>Toi, RALL, Penalty et un invité de ton choix. Le vainqueur de chaque manche élimine qui il veut.</small>
+      <small>Toi, Rall, Penalty et un invité de ton choix. Le vainqueur de chaque manche élimine qui il veut.</small>
     </button>
   </div>
 </div>
@@ -5180,7 +5196,7 @@
     <div class="format-pick rich-tabs" role="tablist" aria-label="Classement">
       <button class="fmt" data-rt="world" role="tab"><b>Tout le quartier</b><small>Les vrais joueurs</small></button>
       <button class="fmt" data-rt="friends" role="tab"><b>Mes amis</b><small id="richFriendsTabSub">Défie-les en un geste</small></button>
-      <button class="fmt" data-rt="local" role="tab"><b>L’ordinateur</b><small>Christelle, RALL, Penalty…</small></button>
+      <button class="fmt" data-rt="local" role="tab"><b>L’ordinateur</b><small>Alida, Rall, Penalty…</small></button>
     </div>
     <div id="richFriendsBox" class="hidden">
       <p class="page-intro" id="richFriendsIntro">Tes amis, et qui est en ligne en ce moment. Touche un ami pour le défier.</p>
@@ -5357,6 +5373,7 @@
     <div class="set-group">
       <h3>Jeu</h3>
       <button class="set-row hidden" id="btnTogglePush"><span><svg class="i" aria-hidden="true"><use href="#i-users"/></svg> Notifications de défi (jeu fermé)</span><span class="switch"></span></button>
+      <div class="set-row talk-row" id="talkPick"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Les adversaires parlent</span><span class="talk-seg"><button type="button" data-talk="bavard">Bavards</button><button type="button" data-talk="normal">Normal</button><button type="button" data-talk="silencieux">Silencieux</button></span></div>
       <button class="set-row" id="btnToggleQuips"><span><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg> Répliques piquantes des adversaires</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleVibrate"><span><svg class="i" aria-hidden="true"><use href="#i-vibrate"/></svg> Vibrations</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleNoir"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Nuit noire (fond noir, éclairé par l’ampoule)</span><span class="switch"></span></button>
@@ -5365,7 +5382,7 @@
         <button class="fmt" data-pal="neon" role="radio"><b>Nuit néon</b><small>Bleu nuit, rouge, cyan</small></button>
       </div>
       <button class="set-row" id="btnToggleCalm"><span><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg> Réduire les animations</span><span class="switch"></span></button>
-      <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Mode Or : le Ngonzormorrr à l’accueil</span><span class="switch"></span></button>
+      <button class="set-row" id="btnToggleThemeOr"><span><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg> Mode Or : le Masque à l’accueil</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleLamp"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Ampoule au-dessus de la table</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleTrail"><span><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg> Traînée lumineuse du doigt</span><span class="switch"></span></button>
       <button class="set-row" id="btnToggleShare"><span><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg> Toujours partager (sans couper)</span><span class="switch"></span></button>
@@ -6054,12 +6071,8 @@
       ran++;
     }
     if(ran===0) return heuristicLead(state.aiHand);
-    let bestCard=null, bestAvg=-Infinity;
-    state.aiHand.forEach(c=>{
-      const avg = totals[c.suit+'-'+c.rank]/ran;
-      if(avg>bestAvg){ bestAvg=avg; bestCard=c; }
-    });
-    return bestCard;
+    // v94: the character's style chooses between the moves that are almost as good as the best
+    return aiStylePick(state.aiHand.map(c=> ({opt:c, avg: totals[c.suit+'-'+c.rank]/ran})), state.aiHand, null);
   }
   function pimcBestDefend(lead){
     const hand = state.aiHand;
@@ -6097,9 +6110,8 @@
       ran++;
     }
     if(ran===0) return heuristicDefend(hand, lead);
-    let bestIdx=0, bestAvg=-Infinity;
-    totals.forEach((sum,idx)=>{ const avg=sum/ran; if(avg>bestAvg){ bestAvg=avg; bestIdx=idx; } });
-    return options[bestIdx];
+    // v94: the character's style chooses between the moves that are almost as good as the best
+    return aiStylePick(options.map((opt, idx)=> ({opt, avg: totals[idx]/ran})), hand, lead);
   }
 
   // ---- game state ----
@@ -7409,7 +7421,7 @@
   Object.keys(STORY_OPP).forEach(id=>{ if(DUEL_PERSONAS[id]) DUEL_PERSONAS[id].lockedHint = 'Fap-Fap League · bats '+DUEL_PERSONAS[id].name+' en League'; });
   // when the book opens one of them: a medal says so, once
   function announceStoryOpps(){ try{ const seen = profile.oppSeen = profile.oppSeen || {}; Object.keys(STORY_OPP).forEach(id=>{ if(!seen[id] && storyOppOpen(id)){ seen[id] = 1; saveProfile(); trophyPop({icon:'user', name:DUEL_PERSONAS[id].name, kind:'Nouvel adversaire · route du quartier et Carré'}); } }); }catch(e){} }
-  const MASK_NAME = 'Le Ngonzormorrr';
+  const MASK_NAME = 'Le Masque';
   const maskOn = ()=> mode==='ai' && duelOpp==='mbarga' && !storyRun && !tuto && !daily;
   // one of his lines; who reminds you of your record
   function maskLine(kind){
@@ -7448,7 +7460,7 @@
     const truth = Math.random()<0.5;
     const showStrong = truth ? strong : !strong;
     const STRONG = ["Ma main est lourde ce soir, mola. Très lourde.","Mon 3 dort ici, tranquille. Je te préviens, c'est tout.","J'ai les 10, j'ai le 3, j'ai tout. Abandonne, ça ira plus vite.","Regarde mes yeux. Tu vois ? C'est la main d'un champion."];
-    const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Christelle n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
+    const WEAK = ["Aïe… mauvaise main. Sois gentil avec moi.","Je n'ai rien. Vraiment rien. Tu peux y aller doucement ?","Pff, ces cartes-là, même Eva n'en voudrait pas.","Je joue juste pour passer le temps, j'ai que des petites."];
     gameTimeout(()=>{ if(state && !state.handOver) penaltySay([ (showStrong ? STRONG : WEAK)[Math.floor(Math.random()*4)] ]); }, 1500 + lastDealMs);
   }
   // v65: the novel is gone; the road of the quarter keeps only RALL and Penalty (the others live on in the investigation)
@@ -7529,6 +7541,161 @@
   // merged into each opponent's own lines (new arrays: Penalty's base lines are shared with the Carré)
   Object.keys(QUIPS).forEach(id=>{ const p = DUEL_PERSONAS[id]; if(!p) return; p.lines = Object.assign({}, p.lines);
     Object.keys(QUIPS[id]).forEach(k=>{ p.lines[k] = (p.lines[k] || []).concat(QUIPS[id][k]); }); });
+
+  // ===================== v94 · LA TROUPE DES 16 =====================
+  // His names (only Rall and Penalty are kept) and one character each, everywhere. The game's historical ids stay
+  // (they are in every saved profile): gervais = Alida, aristide = Rall, mbarga = Le Masque, mami = Maman Rosine,
+  // caroline = Pam-Pam, cobra = Push, ismael = Daryck, tchinda = Mr Kamga, mballa = Commissaire Ngo Bassa,
+  // stephane = Nassim; eva, tiko, banquier, systeme and dila are new. Faces: persos.js.
+  // Nobody is weak: everyone thinks at least as hard as Penalty did, and nobody forgets a victoire automatique. What
+  // sets them apart is their style (see aiStylePick): what they choose between two moves that are almost as good.
+  //   style  safe (the best move) · random (never the same) · cora (keeps its 3s for the end) · cheap (takes back with
+  //          the smallest card) · revenge (takes back from whoever just took) · tilt (all-in when behind)
+  //   tempo  how long it thinks (1 = normal) · feint  how often it plays the genjutsu when it can
+  const sp = s=> s.split('|');
+  const T = (o)=>{ const l = {}; Object.keys(o).forEach(k=> l[k] = sp(o[k])); return l; };
+  const TROUPE = {
+    penalty: {style:'safe', tempo:1.1, feint:.6, pimcMs:650, pimcSamples:180},
+    aristide: {name:'Rall', style:'safe', tempo:.8, feint:.9, pimcMs:500, pimcSamples:150, tagline:'Le roi du bluff. Ce qu’il dit de sa main est vrai… une fois sur deux.'},
+    mbarga: {name:'Le Masque', style:'safe', tempo:1.2, feint:.8, tagline:'Un masque d’or. Personne ne sait qui est derrière. Gains × 5 si tu le bats.'},
+    tchinda: {name:'Mr Kamga', stars:4, style:'cora', tempo:1.3, feint:.7, pimcMs:650, pimcSamples:180, repWin:170,
+      tagline:'L’ancien du quartier. Il garde ses 3 pour la fin et ne se presse jamais.',
+      lines:T({control:'Doucement. Le pli vient tout seul.|Je prends. Sans me presser.|Tu vois ? On ne court pas après les cartes.', win:'Le 3 attend toujours son heure.|Patience, mon fils. Patience.|Tu as joué vite. Moi, j’ai joué juste.', cora:'CORA. Il attendait depuis le début.|Le 3, au bon moment. CORA.', glacee:'33 Glacée. Deux 3 gardés au chaud.|Deux 3. Tu as vu venir ? Non.', surprise:'Tiens. Tu as appris quelque chose.|Bien joué. Vraiment.', lose:'Tu as mérité celle-là.|Bien. Le vieux a encore à apprendre.', behind:'Le score n’est pas la fin.|Je n’ai pas encore sorti mes 3.', missed:'J’ai laissé passer. Ça arrive aux vieux.', slow:'Réfléchis, c’est bien. Mais pas toute la nuit.', mistake:'Tu avais la carte. Tu ne l’as pas jouée.', youLoseStreak:'Encore une. Respire.', youWinStreak:'Deux de suite ? Garde la tête froide.', rematch:'Rassieds-toi. On recommence doucement.'})},
+    gervais: {name:'Alida', stars:3, brain:'pimc', style:'cheap', tempo:.9, feint:.7, pimcMs:500, pimcSamples:150, announce:[1, 1], repWin:130,
+      tagline:'Très forte, elle a toujours le dernier mot. Elle reprend la main avec la plus petite carte qui suffit.',
+      lines:T({control:'Merci, chéri. Je reprends.|Celle-là, je l’ai même pas sentie.|Tu commandes ? Moi je décide.', win:'Rejoue, chéri. Si t’oses.|J’ai gagné sans forcer.|Tu voulais une leçon ? La voilà.', cora:'CORA. Et avec le sourire.|Un 3 pour finir. Classe.', glacee:'33 Glacée. Assieds-toi.|Deux 3. Tu peux applaudir.', surprise:'Ah ? Tu sais jouer en fait.|Pas mal. Ne t’habitue pas.', lose:'Profite. Ça n’arrivera plus.|Une manche. Tu veux une médaille ?', behind:'Garde ton sourire. J’arrive.|Tu mènes. Pour l’instant.', missed:'J’étais occupée à te regarder perdre.', slow:'Tu réfléchis ou tu pries ?|Prends ton temps, chéri. Je m’ennuie.', mistake:'Oh… tu l’avais pourtant, cette carte.', youLoseStreak:'Deux de suite. Tu fais exprès ?|Tu perds avec élégance au moins.', youWinStreak:'Ne t’emballe pas, chéri.', rematch:'Encore ? Tu aimes souffrir.'})},
+    eva: {name:'Eva', stars:3, brain:'pimc', style:'random', tempo:.8, feint:.8, pimcMs:500, pimcSamples:150, announce:[1, 1], repWin:130,
+      tagline:'La crush de Penalty. Blagueuse, toujours le sourire… et impossible à lire.',
+      lines:T({control:'Hop ! Celle-là c’est pour moi.|Penalty m’a appris ce coup !|Oups, je prends. Désolée. Pas désolée.', win:'Penalty, tu as vu ? J’ai gagné !|Hi hi. Je joue comme mon chéri.|Trop facile. Tu veux un bisou de consolation ?', cora:'CORA ! Penalty va être fier !|Un 3 ! Je l’ai fait !', glacee:'33 Glacée ! Je vais l’appeler tout de suite !|Deux 3 ! Quelqu’un filme ?', surprise:'Eh ! Tu m’as eue !|Mais tu triches ou quoi ?', lose:'Pas grave, je rigole quand même.|Tu as gagné, mais moi j’ai Penalty.', behind:'Attends, je me concentre… non, je rigole.|Je mène pas ? C’est pour te faire plaisir.', missed:'J’avais une victoire ? Je rêvais de Penalty.', slow:'Tu dors ? Penalty jouerait déjà.|Allez, joue, j’ai un rendez-vous !', mistake:'Hi hi. Tu l’avais, celle-là.', youLoseStreak:'Encore perdu ? Je t’aime bien quand même.', youWinStreak:'Doucement, tu vas me faire pleurer.', rematch:'Revanche ! Mais je rigole encore.'})},
+    ismael: {name:'Daryck', stars:3, style:'cora', tempo:.6, feint:.8, pimcMs:450, pimcSamples:130, announce:[1, 1], repWin:130,
+      tagline:'Le pote fêtard de Penalty. Il joue vite et vise toujours le gros coup.',
+      lines:T({control:'Allez, on accélère !|Je prends, et on va au snack.|Tranquille, mon gars.', win:'C’est la fête ! Tournée générale !|On finit vite, la soirée continue !|Facile. Je t’offre une bière ?', cora:'CORA ! Musique !|Un 3 ! On danse !', glacee:'33 Glacée ! Ce soir on ne dort pas !|Deux 3 ! Appelle tout le quartier !', surprise:'Oh ! Tu m’as coupé le son !|Eh mola, doucement !', lose:'Pas grave, la nuit est jeune.|Tu as gagné ? On fête quand même.', behind:'Je m’échauffe, c’est tout.|Le gros coup arrive, attends.', missed:'J’avais une victoire ? J’étais déjà au snack.', slow:'Joue vite, la bière chauffe !|On a une soirée, mon frère.', mistake:'Tu dansais ou quoi ? Tu l’avais !', youLoseStreak:'Encore ? Viens, on va boire pour oublier.', youWinStreak:'Eh calme-toi, c’est moi la star.', rematch:'Encore une ! La dernière… promis.'})},
+    stephane: {name:'Nassim', stars:3, style:'safe', tempo:1.2, feint:.5, pimcMs:650, pimcSamples:180, announce:[1, 1], repWin:150,
+      tagline:'Calme et sérieux. Il parle peu, il choisit toujours le coup le plus sûr.',
+      lines:T({control:'Hm.|Je prends.|Calme.', win:'Bien.|C’est fini.|Merci.', cora:'CORA.|Un 3.', glacee:'33 Glacée.|Deux 3. Voilà.', surprise:'Intéressant.|Je note.', lose:'Bien joué.|On rejoue.', behind:'Rien ne presse.|J’attends.', missed:'Hm. Dommage.', slow:'…|Prends ton temps.', mistake:'Tu l’avais.', youLoseStreak:'Encore.', youWinStreak:'Calme-toi.', rematch:'D’accord.'})},
+    tiko: {name:'Tiko la Mélo', stars:3, brain:'pimc', style:'cora', tempo:.9, feint:.95, pimcMs:500, pimcSamples:150, announce:[1, 1], repWin:140,
+      tagline:'Le frimeur, toujours bien sapé. Il cherche le coup qui fait crier la table.',
+      lines:T({control:'Regarde bien. C’est ça, le style.|Avec classe, mon frère.|Je prends. Et je reste beau.', win:'Gagner, c’est bien. Gagner avec style, c’est moi.|Prends une photo, ça va vite.|Le patron, c’est le mieux habillé.', cora:'CORA ! Pour la photo !|Un 3, et le nœud papillon est droit.', glacee:'33 Glacée ! Vous avez filmé, j’espère ?|Deux 3. Applaudissez.', surprise:'Hé ! Tu as froissé ma chemise !|Pas mal. Presque élégant.', lose:'Je perds, mais regarde comme je perds bien.|Ma veste te remercie.', behind:'Le spectacle commence à la fin.|Je garde le meilleur pour la photo.', missed:'J’ajustais ma montre.', slow:'Joue, la lumière baisse pour mes photos.', mistake:'Tu avais la carte. Aucun style.', youLoseStreak:'Encore ? Achète-toi une veste au moins.', youWinStreak:'Doucement, tu vas transpirer.', rematch:'Revanche. Je change juste de lunettes.'})},
+    cobra: {name:'Push', stars:3, style:'safe', tempo:1.7, feint:.6, pimcMs:600, pimcSamples:170, announce:[1, 1], repWin:150,
+      tagline:'Clope au bec, l’air tranquille. Il prend son temps et use tes nerfs.',
+      lines:T({control:'Tranquille…|Je prends. Pas de stress.|Tu commandes, moi je fume.', win:'Je t’avais dit : toute la nuit.|Lentement. Comme toujours.|Merci pour la patience.', cora:'CORA. Pff.|Un 3… et une taffe.', glacee:'33 Glacée. Sans transpirer.|Deux 3. Tranquille.', surprise:'Hm. Tu m’as réveillé.|Pas mal…', lose:'Bon. J’allume une autre.|Celle-là, je te la laisse.', behind:'J’ai toute la nuit, moi.|Le score ? Je regarde à la fin.', missed:'J’étais dans la fumée.', slow:'Prends ton temps. Moi j’ai toute la nuit.|Tu réfléchis ? Moi je fume.', mistake:'Tu l’avais. Tu as tremblé.', youLoseStreak:'Encore. Tu t’énerves, je le vois.', youWinStreak:'Calme. Ça tourne vite, ici.', rematch:'D’accord. Je finis ma clope.'})},
+    banquier: {name:'Mr le Banquier', stars:4, brain:'pimc', style:'cora', tempo:1, feint:.7, pimcMs:550, pimcSamples:160, announce:[1, 1], repWin:170,
+      tagline:'Très riche, il insulte tout le monde et joue pour humilier.',
+      lines:T({control:'Merci, mendiant.|Je prends. Comme j’achète tout.|Tu joues avec l’argent de ta mère ?', win:'Encaissé. Au suivant, pauvre.|Ton salaire ne paie même pas mes cartes.|Va pleurer à ton guichet.', cora:'CORA. Intérêts compris.|Un 3. Je facture double.', glacee:'33 Glacée. Ta dette vient de tripler.|Deux 3. Saisie immédiate.', surprise:'Tiens, le pauvre a de la chance.|Coup de chance. Ça ne s’achète pas, hein ?', lose:'Garde la monnaie.|Une manche. Je t’en achète dix.', behind:'Je n’ai pas encore investi.|Profite, misérable.', missed:'Je comptais mes billets.', slow:'Le temps, c’est de l’argent. Le tien ne vaut rien.', mistake:'Tu avais la carte, idiot.', youLoseStreak:'Encore ? Tu es à découvert.', youWinStreak:'Calme-toi, tu n’es pas actionnaire.', rematch:'Revanche ? Tu as encore de quoi payer ?'})},
+    systeme: {name:'Système', stars:4, brain:'pimc', style:'safe', tempo:1, feint:.9, pimcMs:750, pimcSamples:220, announce:[1, 1], repWin:180,
+      tagline:'Crâne d’œuf, drôle et bavard. Il lit tout ce que tu fais, et il bluffe en parlant.',
+      lines:T({control:'Je savais que tu allais jouer ça.|Merci, j’avais lu ta main.|Système, mon frère. Tout est calculé.', win:'C’était écrit depuis la deuxième carte.|Le système ne tombe jamais en panne.|Tu veux que je t’explique ? Non, c’est payant.', cora:'CORA ! Le système, c’est le système !|Un 3, comme prévu, comme toujours.', glacee:'33 Glacée ! Mathématique.|Deux 3. Je l’avais dit, non ?', surprise:'Eh ! Ça, ce n’était pas dans mon calcul !|Bug dans le système ! Respect.', lose:'Une erreur de calcul. Ça arrive une fois par an.|Bon. Je recalcule.', behind:'Le système charge… patience.|Tu mènes ? C’est voulu. Si si.', missed:'Je parlais trop, j’ai raté l’annonce.', slow:'Tu réfléchis ? Moi j’ai déjà fini de calculer.', mistake:'Tu l’avais ! Je l’ai vu, moi.', youLoseStreak:'Deux de suite. Ton système est en panne.', youWinStreak:'Tu crois que tu as compris ? Non.', rematch:'Revanche. Le système est relancé.'})},
+    dila: {name:'Dila', stars:4, brain:'pimc', style:'tilt', tempo:.9, feint:.7, pimcMs:550, pimcSamples:160, announce:[1, 1], repWin:170,
+      tagline:'Le dealer du quartier. Quand il perd, il menace de ne plus te servir.',
+      lines:T({control:'Je prends. Note bien qui te sert.|Doucement avec moi.|Tu veux encore être servi ?', win:'Voilà. Tu peux revenir me voir.|Bien. Tu restes client.|Le quartier tourne avec moi.', cora:'CORA. Livraison express.|Un 3. Marchandise de qualité.', glacee:'33 Glacée. C’est la maison qui offre.|Deux 3. Ce soir, c’est moi le patron.', surprise:'Eh ! Tu joues avec qui là ?|Attention à toi.', lose:'Tu gagnes encore, je ne te sers plus.|D’accord. Ton nom est noté.', behind:'Tu me fais perdre, tu sais ce que ça veut dire ?|Je n’oublie personne.', missed:'J’avais la tête au business.', slow:'Joue. J’ai des clients qui attendent.', mistake:'Tu l’avais. Tu as peur de moi ?', youLoseStreak:'Bien. Reste à ta place.', youWinStreak:'Continue comme ça et tu marches à pied ce soir.', rematch:'Revanche. Et cette fois tu perds.'})},
+    caroline: {name:'Pam-Pam', stars:4, style:'revenge', tempo:.8, feint:.7, pimcMs:550, pimcSamples:160, announce:[1, 1], repWin:170,
+      tagline:'La plus belle du quartier, toujours fâchée. Tu lui prends la main ? Elle te la reprend.',
+      lines:T({control:'Tu m’as prise ? Je te reprends.|Voilà. Ne me touche plus.|Tchip. Trop facile.', win:'Tu croyais que j’allais te laisser ça ?|Ne me regarde même pas.|Je suis belle ET je gagne. Désolée.', cora:'CORA. Ferme ta bouche.|Un 3. Tu pleures ?', glacee:'33 Glacée. Ne me parle plus ce soir.|Deux 3. Va t’asseoir.', surprise:'Quoi ?! Tu oses ?|Toi là… tu vas me le payer.', lose:'Ne crie pas, ça m’énerve.|Tu as eu de la chance. Arrête de sourire.', behind:'Continue de sourire. Je déteste ça.|Tu mènes ? Ça ne va pas durer.', missed:'Tu m’as énervée, j’ai oublié.', slow:'Tu vas jouer aujourd’hui ou pas ?|Dépêche, tu m’agaces.', mistake:'Sérieux ? Tu l’avais.', youLoseStreak:'Bien fait.|Encore ? Hi.', youWinStreak:'Arrête de te prendre pour quelqu’un.', rematch:'Revanche. Et je ne serai pas gentille.'})},
+    mami: {name:'Maman Rosine', stars:3, brain:'pimc', style:'safe', tempo:1.1, feint:.5, pimcMs:600, pimcSamples:170, announce:[1, 1], repWin:150,
+      tagline:'La patronne du maquis où l’on joue. Elle vide ton jeu avec ses longues couleurs.',
+      lines:T({control:'Chez moi, on paie ses dettes.|Je prends, mon enfant.|Mama voit tout.', win:'Va payer ta bière maintenant.|Mama ne fait pas crédit.|Rentre chez toi, il est tard.', cora:'CORA ! Comme ma sauce : ça pique.|Un 3, servi chaud.', glacee:'33 Glacée ! Le maquis est fermé pour toi.|Deux 3. Paie et sors.', surprise:'Eh ! Mon enfant a grandi.|Tiens donc.', lose:'Bon. Celle-là, c’est la maison qui offre.|Profite, c’est rare.', behind:'La marmite chauffe doucement.|Mama a le temps.', missed:'Je servais une table.', slow:'Joue, mes clients attendent.', mistake:'Tu l’avais, mon fils. Réveille-toi.', youLoseStreak:'Encore une bière ? Ça console.', youWinStreak:'Doucement, tu n’es pas le patron ici.', rematch:'Rassieds-toi. Mais tu paies d’abord.'})},
+    mballa: {name:'Commissaire Ngo Bassa', stars:3, style:'safe', tempo:1, feint:.6, pimcMs:600, pimcSamples:170, announce:[1, 1], repWin:150,
+      tagline:'Commissaire du quartier. Chaque règle au bon moment, jamais un bluff.',
+      lines:T({control:'Contrôle. Je prends.|Selon le règlement, c’est à moi.|Circulez.', win:'Affaire classée.|Le règlement, c’est le règlement.|Vous êtes en règle ? Non. Perdu.', cora:'CORA. Procès-verbal dressé.|Un 3. Conforme.', glacee:'33 Glacée. Flagrant délit.|Deux 3. Garde à vue.', surprise:'Hm. Je vais vérifier ce coup.|Infraction ? Non. Bien joué.', lose:'Je note. On se reverra.|Bien. Le dossier reste ouvert.', behind:'L’enquête continue.|Je reprends le contrôle.', missed:'Erreur de procédure.', slow:'Délai réglementaire dépassé.', mistake:'Vous aviez la carte. Faute grave.', youLoseStreak:'Deuxième infraction.', youWinStreak:'Ne dépassez pas la vitesse autorisée.', rematch:'Nouvelle audience. Asseyez-vous.'})}
+  };
+  Object.keys(TROUPE).forEach(id=>{
+    const t = TROUPE[id], p = DUEL_PERSONAS[id] || (DUEL_PERSONAS[id] = {stars:3, brain:'pimc', lines:{}});
+    ['name','stars','tagline','repWin','style','tempo','feint'].forEach(k=>{ if(t[k]!=null) p[k] = t[k]; });
+    p.brain = 'pimc'; p.pimcMs = Math.max(p.pimcMs || 0, t.pimcMs || 450); p.pimcSamples = Math.max(p.pimcSamples || 0, t.pimcSamples || 120);
+    if(!t.announce) p.announce = [1, 1]; else p.announce = t.announce;
+    if(t.lines) p.lines = t.lines; // the new characters speak with their own voice only
+  });
+  // the mask's name in his own lines
+  Object.keys(DUEL_PERSONAS.mbarga.lines).forEach(k=>{ DUEL_PERSONAS.mbarga.lines[k] = DUEL_PERSONAS.mbarga.lines[k].map(s=> s.replace(/Le Ngonzormorrr/g, 'Le Masque').replace(/Ngonzormorrr/g, 'Masque').replace(/Christelle/g, 'Alida').replace(/RALL/g, 'Rall')); });
+  // the newcomers join the League's champions (beat them there to meet them on the road and at the Carré)
+  ['eva','tiko','banquier','systeme','dila'].forEach(id=>{ STORY_OPP[id] = {league:1}; DUEL_PERSONAS[id].lockedHint = 'Fap-Fap League · bats '+DUEL_PERSONAS[id].name+' en League'; DUEL_PERSONAS[id].story = 1; });
+  CARRE_GUESTS.push('eva','tiko','banquier','systeme','dila');
+
+  // ---- their table talk: short, about the real game (the card you just played, the suit you no longer have, the 3
+  // they fear), to read you, to lie to you, to rattle you. {c} = a card (« 7 Tchaka »), {s} = a suit.
+  //   dors  you followed low while holding the card that took control · petit  you followed low (you had nothing better)
+  //   vide  you played off-suit: they know you have no more of it · devine  they guess your 3 · manip  they lie about
+  //   their hand as they lead · peur  two cards left, not in control: they keep the one that stops your CORA
+  //   pique  you just took control: a jab
+  const TALK_BASE = T({dors:'Tu dors ?|Tu avais mieux, non ?|Réveille-toi !', petit:'Un {c} ? C’est tout ?|Petit, ça.', vide:'Plus de {s} chez toi. Je le sais.|Ah, plus de {s}… noté.', devine:'Ton 3 de {s}, je le sens.|Tu caches un 3. {s}, je parie.', manip:'Je n’ai plus rien, vas-y.|Joue ton gros, je n’ai rien.', peur:'Je garde mon {c}. Ton 3 ne passera pas.|Le {c} reste avec moi. Je connais tes 3.', pique:'Profite.|Ça ne va pas durer.'});
+  const TALK = {
+    aristide: T({dors:'Tu dors ou bien, mola ?|Grand, tu dors debout ?|Tu avais la carte et tu joues {c} ?', petit:'{c} ? Tu es né hier ou bien ?|Avec {c}, tu vas où ?', vide:'Plus de {s} chez toi, mola. Merci.', devine:'Ton 3 de {s}, je le vois d’ici.|Je sais où est ton 3, grand.', manip:'Mon 3 dort ici, tranquille.|Ma main est lourde ce soir. Très lourde.|Je n’ai que des petites, vas-y doucement.', peur:'Je garde mon {c}, mola. Ton CORA, oublie.', pique:'Profite, ça arrive une fois par an.|Tu prends ? C’est un prêt.'}),
+    penalty: T({dors:'Tu dors ?|Tu avais mieux. Je l’ai vu.', petit:'{c}. Je m’en doutais.', vide:'Plus de {s}. Je compte, tu sais.', devine:'Il reste un 3 de {s}. Chez toi, je pense.', manip:'Joue ce que tu veux. J’ai compté.', peur:'Mon {c} reste. Ton 3 de {s}, je l’attends.', pique:'Je retiens comment tu joues.'}),
+    systeme: T({dors:'Tu dors ? Le système, lui, ne dort jamais !|Eh ! Tu avais la carte, je l’ai vu !', petit:'{c} ? Ça, c’est pas un système, c’est la panique.', vide:'Tu as joué libre… donc plus de {s} chez toi, hein !|Plus de {s}. Merci pour l’info, mon frère.', devine:'Ton 3 ? {s}. Je parie mon crâne.|Le 3 de {s} est chez toi. Le système l’a vu.', manip:'Moi ? Je n’ai rien. Rien du tout. Promis.|Commande {s}, je n’en ai pas. Ou si. Devine.', peur:'Je garde le {c}. Ton CORA, le système l’a annulé.', pique:'Profite, c’est un bug.'}),
+    caroline: T({dors:'Sérieux ? Tu dors ?|Tu l’avais et tu joues {c} ? Pff.', petit:'{c}… pathétique.', vide:'Plus de {s} ? Évidemment.', devine:'Ton 3, je le sens. {s}. Ne mens pas.', manip:'Vas-y, je n’ai rien. Enfin… peut-être.', peur:'Je garde mon {c}. Ton 3, tu peux le ranger.', pique:'Tu m’as prise ? Tu vas me le payer.|Ne souris pas.'}),
+    gervais: T({dors:'Tu dors, chéri ?|Réveille-toi, tu l’avais !', petit:'Un {c} ? Mignon.', vide:'Plus de {s} ? Je note, chéri.', devine:'Ton 3 de {s}… je le sens d’ici.', manip:'Je n’ai rien, chéri. Vas-y.', peur:'Mon {c} reste ici. Ton 3 aussi, chéri.', pique:'Profite. Ça ne va pas durer.'}),
+    dila: T({dors:'Tu dors ? Fais attention à toi.', petit:'{c} ? Tu te moques de moi ?', vide:'Plus de {s}. Je sais tout ce qui se passe ici.', devine:'Ton 3 de {s}. Je sais tout, je te dis.', manip:'Joue. Je n’ai rien. Fais-moi confiance.', peur:'Je garde mon {c}. Ton 3, tu ne le vendras pas ici.', pique:'Tu me prends ça ? Ton nom est noté.'}),
+    banquier: T({dors:'Tu dors, mendiant ?', petit:'{c} ? Même ça, c’est trop cher pour toi.', vide:'Plus de {s} ? Tu es à découvert.', devine:'Ton 3 de {s}. Je l’ai déjà facturé.', manip:'Je n’ai rien. Comme toi tous les mois.', peur:'Le {c} reste dans mon coffre. Ton 3 aussi.', pique:'Prends. Je t’en achète dix.'}),
+    eva: T({dors:'Tu dors ? Hi hi.|Eh, tu l’avais !', petit:'{c} ? Trop mignon.', vide:'Plus de {s} ? Hi hi, je sais tout.', devine:'Ton 3 de {s} ? Je devine, hein !', manip:'Je n’ai rien, je te jure. Hi hi.', peur:'Je garde mon {c}. Penalty m’a appris ça !', pique:'Profite, mon cœur est à Penalty.'}),
+    cobra: T({dors:'Tu dormais ? Moi aussi, presque.', petit:'{c}… tranquille.', vide:'Plus de {s}. Tranquille.', devine:'Ton 3… {s}. J’ai le temps de le voir.', manip:'Rien en main. Juste ma clope.', peur:'Je garde le {c}. Pas de stress.', pique:'Tu t’énerves. Je le vois.'})
+  };
+  const tFill = (s, c, suit)=> s.replace(/\{c\}/g, c ? c.rank+' '+c.suit : '').replace(/\{s\}/g, suit || (c && c.suit) || '');
+  function talkLevel(){ if(prefs.noQuips) return 0; return prefs.talk==='bavard' ? 6 : prefs.talk==='silencieux' ? 0 : 3; }
+  // one remark, if the moment deserves it: never more than the level per hand, never two within 2.5 s
+  function oppTalk(kind, card, suit, chance){
+    try{
+      if(mode!=='ai' || tuto || !state || state.handOver) return false;
+      const max = talkLevel(); if(!max || (state.talkN||0) >= max) return false;
+      if(Math.random() > (chance==null ? .6 : chance) * (max>3 ? 1.4 : 1)) return false;
+      if(Date.now() - lastTalkAt < 2500) return false;
+      const pool = (TALK[duelOpp] && TALK[duelOpp][kind]) || TALK_BASE[kind]; if(!pool || !pool.length) return false;
+      state.talkN = (state.talkN||0) + 1;
+      penaltySay([tFill(pool[Math.floor(Math.random()*pool.length)], card, suit)], kind==='dors' || kind==='petit' ? 'mistake' : kind==='pique' ? 'behind' : 'control');
+      return true;
+    }catch(e){ return false; }
+  }
+  // the 3s nobody has seen yet (in the opponent's hand or still in the deck): what they fear, what they guess
+  function unseenThrees(){
+    const seen = new Set(); state.aiHand.forEach(c=> seen.add(c.suit+c.rank)); state.history.forEach(e=>{ if(e.type==='card') seen.add(e.card.suit+e.card.rank); });
+    return ['Black','Tchaka','Coubie','Zing'].filter(s=> !seen.has(s+'3') && !(state.knownVoid && state.knownVoid.you && state.knownVoid.you.has(s)));
+  }
+  // after a contested trick: what they say about the card you just played
+  function talkTrick(actor, card, leadCard, winner){
+    if(actor!=='you' || !card || !leadCard) return;
+    if(card.suit===leadCard.suit && card.rank<leadCard.rank){
+      const slept = state.playerHand.some(c=> c.suit===leadCard.suit && c.rank>leadCard.rank);
+      if(slept){ QS.sleptSaid = true; oppTalk('dors', card, null, .95); } else oppTalk('petit', card, null, .3);
+    } else if(card.suit!==leadCard.suit) oppTalk('vide', card, leadCard.suit, .55);
+    else if(winner==='you') oppTalk('pique', card, null, .3);
+  }
+  // as they lead: a guess about your 3, or a lie about their hand (the bluffers lie more)
+  function talkLead(card){
+    const bluffer = ['aristide','systeme','caroline','dila','eva','gervais'].includes(duelOpp);
+    const t3 = unseenThrees();
+    if(t3.length && Math.random()<.45) oppTalk('devine', null, t3[Math.floor(Math.random()*t3.length)], .45);
+    else oppTalk('manip', card, card.suit, bluffer ? .5 : .2);
+  }
+  // two cards left, answering, not in control: which card stops your CORA? (the search already keeps the right one;
+  // here the fear shows)
+  function talkFear(kept){
+    if(!kept) return;
+    const t3 = unseenThrees();
+    if(t3.includes(kept.suit) && kept.rank>=8) oppTalk('peur', kept, kept.suit, .8);
+  }
+  // how long they think: quick when the move is obvious, longer when it is close or decisive, by character
+  function aiThinkMs(){
+    const p = oppPersona(), h = state.aiHand, ls = state.leadSuit;
+    const n = ls ? (h.filter(c=> c.suit===ls).length || h.length) : h.length;
+    let ms = n<=1 ? 520 : 760 + 230*Math.min(n, 4) + (h.length<=2 ? 380 : 0);
+    ms *= (p.tempo || 1) * (.85 + Math.random()*.35);
+    return Math.round(Math.min(ms, 3600));
+  }
+  // between moves that are almost as good, the character decides (never a worse move than that)
+  function aiStylePick(cands, hand, lead){
+    if(!cands.length) return null;
+    let best = cands[0]; cands.forEach(c=>{ if(c.avg>best.avg) best = c; });
+    const near = cands.filter(c=> c.avg >= best.avg - .08);
+    if(near.length<2) return best.opt;
+    const p = oppPersona(); let st = p.style || 'safe';
+    if(st==='tilt') st = scores.ai < scores.you ? 'cora' : 'safe';
+    const card = c=> c.opt && (c.opt.card || (c.opt.suit ? c.opt : null));
+    if(st==='random') return near[Math.floor(Math.random()*near.length)].opt;
+    if(st==='cora' && hand.some(c=> c.rank===3)){ const keep = near.filter(c=>{ const k = card(c); return k && k.rank!==3; }); if(keep.length) return keep.sort((a, b)=> b.avg - a.avg)[0].opt; }
+    if(st==='cheap' && lead){ const w = near.filter(c=>{ const k = card(c); return k && k.suit===lead.suit && k.rank>lead.rank; }).sort((a, b)=> card(a).rank - card(b).rank); if(w.length) return w[0].opt; }
+    if(st==='revenge' && lead){ const tw = state.trickWinners, last = tw && tw[tw.length - 1];
+      if(last && last.winner==='you'){ const w = near.filter(c=>{ const k = card(c); return k && k.suit===lead.suit && k.rank>lead.rank; }); if(w.length) return w.sort((a, b)=> b.avg - a.avg)[0].opt; } }
+    return best.opt;
+  }
   const QUIP_KINDS = ['youLoseStreak','youWinStreak','youAlmost','choke','comeback','theyComeback','slow','mistake','rematch','rematchWon'];
   // the state of the match the remarks look at (reset by newMatch)
   const QS = {aiRun:0, youRun:0, oppDown:0, youDown:0, cameBack:false, theyCameBack:false, slowSaid:false, turnAt:0, sleptSaid:false, last:null};
@@ -8350,7 +8517,7 @@
   const ACC_RULES = {
     lunettes:{how:'Gagner 3 parties', ok:p=> totalWins(p) >= 3, n:p=> Math.min(3, totalWins(p))+' / 3'},
     chapeau:{how:'Réussir 5 CORA', ok:p=> st_(p, 'coras') >= 5, n:p=> Math.min(5, st_(p, 'coras'))+' / 5'},
-    diamant:{how:'Battre le Ngonzormorrr', ok:p=> lw(p, 'mbarga') >= 1},
+    diamant:{how:'Battre le Masque', ok:p=> lw(p, 'mbarga') >= 1},
     casquette:{how:'Gagner 10 parties', ok:p=> totalWins(p) >= 10, n:p=> Math.min(10, totalWins(p))+' / 10'},
     curedent:{how:'Battre Penalty 3 fois', ok:p=> ((p.book && p.book.ended) || []).length > 0 || ((p.ladder && p.ladder.penalty && p.ladder.penalty.w) || 0) >= 3}
   };
@@ -8381,6 +8548,12 @@
   function fillAvatar(el, charId, label){
     if(!el) return;
     // the opponent at the table, and the players of the Carré: a living character
+    // v94: the troupe's drawn faces everywhere (persos.js), at the table too
+    if(charId && window.FFP && FFP.artOf(charId)){
+      if(el._rig && el._rig.destroy){ try{ el._rig.destroy(); }catch(e){} el._rig = null; }
+      el.classList.remove('has-rig'); FFP.put(el, charId); return;
+    }
+    delete el.dataset.ffp;
     if(charId && (el.id==='oppAvatar' || el.dataset.seat) && Rig.mount(el, Rig.castOf(charId))) return;
     el.classList.remove('has-rig');
     const p = DUEL_PERSONAS[charId];
@@ -8397,6 +8570,11 @@
     el.classList.remove('has-rig'); el.innerHTML = '<img class="av-photo" alt="">'; el.firstChild.src = ph;
   }
   function fillAllAvatars(root){ (root||document).querySelectorAll('.avatar[data-char]').forEach(el=> fillAvatar(el, el.dataset.char)); }
+  // v94: a drawn face reacts like the old animated ones did (same calls, four expressions)
+  { const _react = Rig.react, _talk = Rig.talk;
+    const EXF = {Content:'happy', Fier:'happy', Bluff:'neutral', 'En colère':'vexed', 'Gêné':'vexed', 'Choqué':'cora', Surpris:'cora'};
+    Rig.react = (el, k, ms)=>{ if(el && el.dataset && el.dataset.ffp){ FFP.react(el, EXF[k] || 'neutral', ms || 1500); return; } return _react(el, k, ms); };
+    Rig.talk = (el, ms)=>{ if(el && el.dataset && el.dataset.ffp){ el.classList.add('talking'); clearTimeout(el._tk); el._tk = setTimeout(()=> el.classList.remove('talking'), ms || 1400); return; } return _talk(el, ms); }; }
   // other players' faces (v71): the server gives a short fingerprint of each photo with the lists; the phone keeps
   // the photos it already has (localStorage, the 40 last seen) and only downloads the new or changed ones
   const Photos = (()=>{
@@ -8642,8 +8820,8 @@
     if(document.body.classList.contains('calm')) return;
     const sel = who==='ai' ? '#oppAvatar, #oppTableArt' : '.sq-name .avatar[data-seat="'+who+'"]';
     document.querySelectorAll(sel).forEach(el=>{
-      if(el._rig && kind!=='speaking') Rig.react(el, kind==='hop' ? 'Content' : 'En colère', 1300);
-    if(el._rig && kind==='speaking') Rig.talk(el, 1400);
+      if((el._rig || el.dataset.ffp) && kind!=='speaking') Rig.react(el, kind==='hop' ? 'Content' : 'En colère', 1300);
+    if((el._rig || el.dataset.ffp) && kind==='speaking') Rig.talk(el, 1400);
     el.classList.remove('speaking','hop','shake'); void el.offsetWidth; el.classList.add(kind);
       clearTimeout(el._fxT);
       el._fxT = setTimeout(()=> el.classList.remove(kind), kind==='speaking' ? 1800 : 700);
@@ -8735,7 +8913,7 @@
     {id:'remontada',    icon:'flame', name:'Remontada',                 desc:'Gagner un match après avoir été mené de 3 points.'},
     {id:'serie3',       icon:'trend', name:'En série',                  desc:'Gagner 3 matchs d’affilée.'},
     {id:'revanche',     icon:'repeat', name:'Revanche servie',           desc:'Gagner juste après avoir perdu contre le même adversaire.'},
-    {id:'beat_aristide',icon:'hush', name:'RALL se tait',              desc:'Battre RALL.'},
+    {id:'beat_aristide',icon:'hush', name:'Rall se tait',              desc:'Battre Rall.'},
     {id:'beat_penalty', icon:'book', name:'Plus fort que le manuel',   desc:'Battre Penalty.'},
     {id:'survivant',    icon:'home', name:'Dernier survivant',         desc:'Gagner une partie de Carré la Pute.'},
     {id:'double',       icon:'users', name:'Coup double',               desc:'Éliminer deux joueurs d’un coup en Carré.'},
@@ -8763,7 +8941,7 @@
     {id:'x_chips10k',icon:'coin',    name:'Poches pleines',           desc:'Avoir 10 000 jetons.',                    test:p=> (p.chipsBest||0)>=10000},
     {id:'x_chips100k',icon:'coin',   name:'Petit patron',             desc:'Avoir 100 000 jetons.',                   test:p=> (p.chipsBest||0)>=100000},
     {id:'x_chips1m', icon:'crown',   name:'Millionnaire du quartier', desc:'Avoir 1 000 000 de jetons.',              test:p=> (p.chipsBest||0)>=1000000},
-    {id:'x_rall10',  icon:'repeat',  name:'Bluff démasqué',           desc:'Battre RALL 10 fois.',                    test:p=> lw(p,'aristide')>=10},
+    {id:'x_rall10',  icon:'repeat',  name:'Bluff démasqué',           desc:'Battre Rall 10 fois.',                    test:p=> lw(p,'aristide')>=10},
     {id:'x_pen10',   icon:'book',    name:'L’élève devenu maître',    desc:'Battre Penalty 10 fois.',                 test:p=> lw(p,'penalty')>=10},
     {id:'x_carre10', icon:'home',    name:'Roi du Carré',             desc:'Gagner 10 parties de Carré.',             test:p=> (p.squareWins||0)>=10},
     {id:'x_carre50', icon:'home',    name:'Le Carré, c’est chez moi', desc:'Gagner 50 parties de Carré.',             test:p=> (p.squareWins||0)>=50},
@@ -9225,6 +9403,10 @@
   document.querySelectorAll('#palPick .fmt').forEach(b=> b.addEventListener('click', ()=>{ prefs.pal = b.dataset.pal; savePrefs(); applyPalette(); }));
   toggle('btnToggleNoir',    ()=>{ prefs.noir = (prefs.noir===false); document.body.classList.toggle('noir', prefs.noir!==false); dispatchEvent(new Event('resize')); });
   toggle('btnToggleQuips',   ()=>{ prefs.noQuips = !prefs.noQuips; });
+  // v94: how much the opponents talk during play (« moments clés » by default)
+  function paintTalk(){ const v = prefs.talk || 'normal'; document.querySelectorAll('#talkPick [data-talk]').forEach(b=> b.classList.toggle('on', b.dataset.talk===v)); }
+  document.querySelectorAll('#talkPick [data-talk]').forEach(b=> b.addEventListener('click', ()=>{ prefs.talk = b.dataset.talk; savePrefs(); paintTalk(); vibrate(10); }));
+  paintTalk();
   toggle('btnToggleVibrate', ()=>{ prefs.noVibrate = !prefs.noVibrate; if(!prefs.noVibrate) vibrate(30); });
   toggle('btnToggleCalm',    ()=>{ prefs.calm = !prefs.calm; applyCalm(); });
   toggle('btnToggleTrail',   ()=>{ prefs.noTrail = !prefs.noTrail; });
@@ -11070,7 +11252,8 @@
     scenePlace();
     DScene.enter();
     Rig.setLight({dx:-.35, dy:-.9, I:.95, col:[1,.89,.7], amb:[.32,.3,.38], rim:[1,.85,.6], rimI:.45});
-    Music.play(currentTableId());
+    // (away in the League you hear his table's music, not yours)
+    Music.play(currentTableId(), !!(storyRun && storyRun.league && storyRun.home===false));
     AmbRec.play(currentTableId());
     ['pauseOverlay','confirmRestartOverlay'].forEach(hide);
     // (the phone's back button then opens the pause menu: see backPressed)
@@ -11094,6 +11277,8 @@
     // who deals: the winner of the last hand played against this same opponent (a rematch continues the table);
     // drawn at random only for a first game
     dealer = (lastDeal && lastDeal.key===dealKey()) ? lastDeal.dealer : (Math.random()<0.5 ? 'you' : 'ai');
+    // v94 · League, home and away: the one who receives deals the first hand
+    if(storyRun && storyRun.league && typeof storyRun.home==='boolean') dealer = storyRun.home ? 'you' : 'ai';
     beginHand();
     maskIntro();
   }
@@ -11880,7 +12065,9 @@
     }
     state.trickWinners.push({rank:winningCard.rank, winner, card:winningCard, lose: winner===actor ? leadCard : card}); // contested — eligible for CORA/glacée (lose: for « Pourquoi » at the end)
     rigTrick(winner);
-    if(state.youSlept && winner==='ai' && !QS.sleptSaid){ QS.sleptSaid = true; quip('mistake', 700); }
+    // v94: what they say about the card you just played (« Tu dors ? »…) — it replaces the old once-a-match remark
+    if(mode==='ai') talkTrick(actor, card, leadCard, winner);
+    else if(state.youSlept && winner==='ai' && !QS.sleptSaid){ QS.sleptSaid = true; quip('mistake', 700); }
     state.leader = winner;
     state.leadSuit = null; state._leadCard=null; state._leadActor=null;
     renderAll();
@@ -12606,7 +12793,7 @@
     if(aiShouldAct){
       locked = true;
       renderAll();
-      if(mode!=='mp') gameTimeout(aiTakeTurn, pace(1000));
+      if(mode!=='mp') gameTimeout(aiTakeTurn, pace(mode==='ai' && !tuto && state.aiHand.length ? aiThinkMs() : 1000));
       // in MP mode: just wait — the opponent's 'play'/'passe' network message will call resolvePlay('ai', ...) directly
     } else {
       locked = false;
@@ -12637,6 +12824,7 @@
       const card = claqued || (brain==='pimc' ? pimcBestLead() : brain==='easy' ? easyLead(state.aiHand) : heuristicLead(state.aiHand));
       removeCard(state.aiHand, card);
       if(mode==='ai' && scores.ai<scores.you) oppChatter(L('behind'));
+      if(mode==='ai' && !claqued) talkLead(card);
       resolvePlay('ai', card, false);
     } else if(isDumpTurn('ai')){
       const cards = [...state.aiHand];
@@ -12647,9 +12835,17 @@
       if(!state.claque && mode==='ai' && claqueOrder('ai')){ slamAll('ai'); return; }
       const leadInfo = {suit:state.leadSuit, rank:state._leadCard.rank, actor:state._leadActor};
       const brain = oppPersona().brain;
-      const opt = brain==='pimc' ? pimcBestDefend(leadInfo) : brain==='easy' ? easyDefend(state.aiHand, leadInfo) : heuristicDefend(state.aiHand, leadInfo);
-      // the genjutsu: with a big card and a 3 left and nothing in the commanded suit, some characters throw the big one on purpose
-      if(opt.type==='card' && !tuto) feintChoice(state.aiHand, leadInfo.suit, duelOpp, c=> opt.card = c);
+      let opt = brain==='pimc' ? pimcBestDefend(leadInfo) : brain==='easy' ? easyDefend(state.aiHand, leadInfo) : heuristicDefend(state.aiHand, leadInfo);
+      // the genjutsu (v94): with a big card and a 3 left and nothing in the commanded suit, the characters throw the big
+      // one on purpose and keep the 3 — it never costs them anything (the last trick ends the same way), except when
+      // their Passe protects them from a 33 Glacée (your lead is a 3): then they pass
+      if(!tuto && mode==='ai'){
+        const big = feintSetup(state.aiHand, leadInfo.suit);
+        const voidThere = big && state.knownVoid && state.knownVoid.you && state.knownVoid.you.has(big.suit);
+        if(big && !voidThere && !(opt.type==='passe' && leadInfo.rank===3) && Math.random() < (oppPersona().feint!=null ? oppPersona().feint : .6)) opt = {type:'card', card:big};
+      } else if(opt.type==='card' && !tuto) feintChoice(state.aiHand, leadInfo.suit, duelOpp, c=> opt.card = c);
+      // two cards left and you command: they keep the card that stops your CORA, and say so
+      if(mode==='ai' && opt.type==='card' && state.aiHand.length===2) talkFear(state.aiHand.find(c=> c!==opt.card));
       if(opt.type==='card' && opt.card.suit===leadInfo.suit && opt.card.rank<leadInfo.rank){
         const hadWinner = state.aiHand.some(c=>c.suit===leadInfo.suit && c.rank>leadInfo.rank);
         if(hadWinner) state.sandbaggedThisHand = true;
@@ -12668,7 +12864,8 @@
   // A house rule: with two cards left — a big one and a 3 — and nothing in the commanded suit, a player throws the BIG
   // card on purpose and keeps the 3 (normally nobody would). If the card that wins the last trick is of the suit he
   // sacrificed and weaker than it, the card he threw would have won: the hand is his, for 1 point.
-  const FEINT_RATE = {gervais:.35, mami:.1, aristide:.3, caroline:.2, cobra:.45, ismael:.25, tchinda:.2, mballa:.3, stephane:.35, penalty:.4, mbarga:.5};
+  // (v94: the rates of the troupe — see TROUPE; every character plays it now, the bluffers and show-offs most)
+  const FEINT_RATE = {gervais:.7, mami:.5, aristide:.9, caroline:.7, cobra:.6, ismael:.8, tchinda:.7, mballa:.6, stephane:.5, penalty:.6, mbarga:.8, eva:.8, tiko:.95, banquier:.7, systeme:.9, dila:.7};
   function feintSetup(hand, leadSuit){
     if(hand.length!==2 || hand.some(c=> c.suit===leadSuit)) return null;
     const three = hand.find(c=> c.rank===3), big = hand.find(c=> c.rank>3);
@@ -13633,7 +13830,7 @@
   // Afterwards « Tes premiers pas » stays at the top of the home screen until its four steps are done.
   const PV = {open:false};
   const PV_STEPS = [
-    {t:'Gagner ta première partie', s:'Contre Christelle', r:'+500', go:'Jouer contre Christelle'},
+    {t:'Gagner ta première partie', s:'Contre Alida', r:'+500', go:'Jouer contre Alida'},
     {t:'Gagner 3 parties contre le quartier', s:'', r:'+1 000', chips:1000, go:'Jouer'},
     {t:'Battre un vrai joueur en ligne', s:'Ton nom monte au classement', r:'+2 000', chips:2000, go:'Jouer en ligne'},
     {t:'Entrer dans la Fap-Fap League', s:'Défends ton quartier', r:'Cadre d’or', frame:'or', go:'Ouvrir la League'}
@@ -14109,7 +14306,7 @@
   })();
 
   // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v93';
+  const APP_VERSION = 'v94';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14241,30 +14438,30 @@
   // ---- Quotes from the neighbourhood, scrolling at the bottom of the home screen ----
   const QUOTES = [
     ['Le 3 ne prévient pas. Il frappe.', 'Penalty'],
-    ['Ici on ne joue pas aux cartes, on règle les comptes du quartier.', 'RALL'],
-    ['Mieux vaut un 3 en main que deux 10 en rêve.', 'Maître Tsala'],
-    ['Même le délestage attend la fin de la manche.', 'RALL'],
+    ['Ici on ne joue pas aux cartes, on règle les comptes du quartier.', 'Rall'],
+    ['Mieux vaut un 3 en main que deux 10 en rêve.', 'Mr Kamga'],
+    ['Même le délestage attend la fin de la manche.', 'Rall'],
     ['Commander Black sans Black, c’est le ndem assuré.', 'Penalty'],
-    ['Le kongossa, c’est après la partie. Jamais pendant.', 'Maître Tsala'],
-    ['Tu as mangé quoi ce matin pour jouer comme ça ?', 'RALL'],
-    ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Christelle'],
+    ['Le kongossa, c’est après la partie. Jamais pendant.', 'Mr Kamga'],
+    ['Tu as mangé quoi ce matin pour jouer comme ça ?', 'Rall'],
+    ['Ma grand-mère disait : garde ton 3 pour la fin. Elle avait raison.', 'Eva'],
     ['On dit quoi ? On dit CORA !', 'Penalty'],
-    ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Christelle'],
-    ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Maître Tsala'],
+    ['Le ndolè refroidit, mais la manche ne s’arrête pas.', 'Eva'],
+    ['Celui qui passe ne trépasse pas. Il attend son heure.', 'Mr Kamga'],
     ['Au quartier, le contrôle se prend. Il ne se demande pas.', 'Penalty'],
-    ['Tchaka sur la table, silence dans la salle.', 'RALL'],
+    ['Tchaka sur la table, silence dans la salle.', 'Rall'],
     ['Ce n’est pas la chance, c’est le manuel. Chapitre 5.', 'Penalty'],
-    ['La 33 Glacée, ça ne se raconte pas : ça se montre.', 'RALL'],
-    ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Christelle'],
-    ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Maître Tsala'],
-    ['Mola, range ton 10. On a déjà compris.', 'RALL'],
+    ['La 33 Glacée, ça ne se raconte pas : ça se montre.', 'Rall'],
+    ['Ne souffle pas sur mes cartes, elles sont fragiles.', 'Eva'],
+    ['Celui qui rit à la quatrième carte pleure à la cinquième.', 'Mr Kamga'],
+    ['Mola, range ton 10. On a déjà compris.', 'Rall'],
     ['Le Fap Fap, c’est comme le benskin : il faut savoir quand freiner.', 'Penalty'],
-    ['Tu mènes ? Le score aime les menteurs.', 'Maître Tsala'],
+    ['Tu mènes ? Le score aime les menteurs.', 'Mr Kamga'],
     ['Ça va aller… mais pas pour toi cette manche.', 'Penalty'],
-    ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Christelle'],
-    ['Tu partages ou tu coupes ? Décide, le taxi attend.', 'RALL'],
-    ['Un CORA le matin, la journée est bénie.', 'Christelle'],
-    ['On ne joue pas contre Penalty. On joue après lui.', 'Maître Tsala']
+    ['Ici, même les moustiques de l’ampoule connaissent les règles.', 'Eva'],
+    ['Tu partages ou tu coupes ? Décide, le taxi attend.', 'Rall'],
+    ['Un CORA le matin, la journée est bénie.', 'Eva'],
+    ['On ne joue pas contre Penalty. On joue après lui.', 'Mr Kamga']
   ];
   (function quoteTicker(){
     const el = document.getElementById('quoteText');
@@ -14541,7 +14738,7 @@
       glacee: PENALTY_GLACEE_LINES, lose: PENALTY_LOSE_LINES
     },
     aristide: {
-      name:'RALL',
+      name:'Rall',
       control: ["Vous êtes nés hier ou bien ?","Merci pour le cadeau, mola.","Prévisible comme le délestage.","Range-toi, je passe."],
       win: ["Comme d'habitude. Au suivant.","Qui veut des cours ? Je fais des prix.","Rentrez dormir, il est tard pour vous.","Même le délestage fait des pauses. Vous, non.","Vous jouez comme des gens qui doivent rembourser la tontine ce soir."],
       cora: ["CORA ! Dites bonjour au 3.","Un CORA, sans transpirer, mola."],
@@ -14549,7 +14746,7 @@
       lose: ["OK. Ça, c'était un accident.","Profitez, ça arrive une fois par an.","Calmez-vous. Vous avez gagné aux cartes, pas le marché central."]
     },
     gervais: {
-      name:'Christelle',
+      name:'Alida',
       control: ["Je l'ai ! … je l'ai, non ?","Ne soufflez pas sur mes cartes.","Ma grand-mère m'a dit de jouer celle-là."],
       win: ["J'ai gagné ?! Attendez, je vérifie.","Ma prière a marché !","Je vais le raconter à toute la famille."],
       cora: ["Un CORA ?! Mon 3 porte-bonheur !","CORA ! J'ai crié trop fort, pardon."],
@@ -14557,6 +14754,8 @@
       lose: ["C'est la chaise. Elle me porte la poisse.","Pas grave, je n'ai pas dormi.","Qui a mélangé ? Voilà. Tout s'explique."]
     }
   };
+  // v94: at the Carré too, Alida speaks with her own voice (and the newcomers with theirs, see TROUPE)
+  { const g = DUEL_PERSONAS.gervais.lines; Object.assign(SQ_PERSONAS.gervais, {control:g.control, win:g.win, cora:g.cora, glacee:g.glacee, lose:g.lose}); }
   // ===================== Seats =====================
   // Four places around the table, in playing order: you (bottom) → right → top → left. Each seat belongs to
   // someone: 'local' (you), 'ai' (Christelle / Penalty / RALL), 'remote' (a friend online) or 'absent' (a 2- or
@@ -16105,8 +16304,8 @@
     {kind:'entree', id:'or',   name:'Entrée en or',  price:6000, isNew:1, desc:'En ligne, ton nom arrive en lettres d’or, avec des étoiles.'},
     {kind:'voix', id:'',          name:'Sans voix',     price:0,    desc:'Le CORA, en silence.'},
     {kind:'voix', id:'penalty',   name:'Voix de Penalty', price:3000, isNew:1, desc:'Une voix grave crie « CORA ! » à ta place.'},
-    {kind:'voix', id:'christelle',name:'Voix de Christelle', price:3000, isNew:1, desc:'« CORA ! », avec le sourire.'},
-    {kind:'voix', id:'tsala',     name:'Voix de Maître Tsala', price:3000, isNew:1, desc:'Lentement, comme un maître : « CO-RA. »'},
+    {kind:'voix', id:'christelle',name:'Voix d’Alida', price:3000, isNew:1, desc:'« CORA ! », avec le sourire.'},
+    {kind:'voix', id:'tsala',     name:'Voix de Mr Kamga', price:3000, isNew:1, desc:'Lentement, comme un maître : « CO-RA. »'},
     {kind:'musique', id:'',          name:'La musique de la table', price:0, desc:'Chaque table garde sa propre musique.'},
     {kind:'musique', id:'makossa',   name:'Makossa',    price:2000, isNew:1, track:'veranda', desc:'Le makossa, sur toutes les tables.'},
     {kind:'musique', id:'bikutsi',   name:'Marché Mokolo', price:2000, isNew:1, track:'wax', desc:'Ça bouge, ça vit, sur toutes les tables.'},
@@ -16826,6 +17025,11 @@
     // in the League, each game is played on a table drawn among all those of the game (v83)
     const lgTables = d.league && !d.table ? SKINS.table.map(s=> s.id).concat(SHOP_TABLES.map(t=> t.id)).filter(id=> id!=='verre') : null;
     storyRun = {zh:true, league:!!d.league, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table || (lgTables ? lgTables[Math.floor(Math.random()*lgTables.length)] : null)};
+    // v94 · League, home and away: at home your own table and music (you deal); away his table and his music (he deals)
+    if(d.league && typeof d.home==='boolean'){
+      storyRun.home = d.home;
+      storyRun.table = d.home ? null : (d.table || storyRun.table);
+    }
     const label = d.league ? 'Fap-Fap League' : 'Zéro à Héros';
     // the League's Carré: 3 or 4 seats, each one worn by a character of the game (its portrait, its lines, a name with its neighbourhood)
     if(d.carre){
@@ -16870,7 +17074,7 @@
       if(won){ sfxMatchWin(); bigImpact(); burstConfetti(40); } else sfxMatchLose();
       touchDayStreak();
       const visit = pvFirstEnd(won);
-      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Christelle n’a rien vu venir.' : 'Christelle a eu le dernier pli.', {big:true, celebrate:won, ms:1700});
+      showToast(won ? 'Victoire !' : 'Défaite…', won ? 'Alida n’a rien vu venir.' : 'Alida a eu le dernier pli.', {big:true, celebrate:won, ms:1700});
       setTimeout(()=>{ goToMainMenu(); if(visit) pvOpen('after', won); else renderPvSteps(); }, 1900);
       return;
     }

@@ -456,6 +456,16 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .ol-spin{ width:34px; height:34px; margin:0 auto 14px; border-radius:50%; border:4px solid #2a0f0f; border-top-color:var(--red); animation:olSpin 1s linear infinite; } @keyframes olSpin{ to{ rotate:360deg; } }
 @media (prefers-reduced-motion: reduce){ .ol-seats .av.pop, .ol-slot.in, .ol-ball.go, .ol-sheet{ animation:none; } }
 </style>
+<!-- v94: the troupe's faces, shared with the game -->
+<script src="persos.js"></script>
+<style>
+/* v94: a champion's drawn face in a round portrait */
+.ffp-f{ position:absolute; inset:0; display:block; overflow:hidden; border-radius:inherit; }
+.ffp-f svg{ position:absolute; width:150%; height:auto; left:-25%; top:-10%; display:block; }
+.ffp-f .blink{ transform-origin:100px 98px; animation:ffpBlink 5.5s infinite; } @keyframes ffpBlink{ 0%,93%,100%{ transform:scaleY(1); } 95%{ transform:scaleY(.1); } }
+.por .ffp-wrap{ position:absolute; inset:0; border-radius:inherit; overflow:hidden; }
+@media (prefers-reduced-motion: reduce){ .ffp-f .blink{ animation:none; } }
+</style>
 </head>
 <body>
 <div class="sky" id="sky">
@@ -520,7 +530,7 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 
 <!-- SOIRÉE -->
 <section class="scene" id="night">
-  <div class="hd"><button class="round back" id="nightBack" aria-label="Retour">‹</button><div class="grow"><span class="eyebrow" id="ntEyebrow"></span><h2>La soirée</h2></div><span class="chips"><i></i><span id="chips2">—</span></span></div>
+  <div class="hd"><button class="round back" id="nightBack" aria-label="Retour">‹</button><div class="grow"><span class="eyebrow" id="ntEyebrow"></span><h2>Le match</h2></div><span class="chips"><i></i><span id="chips2">—</span></span></div>
   <div class="scroll"><div id="nightBody"></div></div>
 </section>
 
@@ -620,26 +630,32 @@ const Q = [
 ].map(([name, code, city, c1, c2], i)=> ({i, name, code, city, c1, c2}));
 const crest = (q, sm)=> '<span class="crest'+(sm ? ' sm' : '')+'" style="--c1:'+q.c1+';--c2:'+q.c2+'"><b>'+q.code+'</b>'+(q.city==='D' ? '<i>DLA</i>' : '')+'</span>';
 // the champions: the game's own characters (their AI, their lines, their portraits)
+// v94: the troupe of 16, one per neighbourhood of the season (the game's ids, so their AI and their lines follow);
+// nobody is weak: st only nudges the simulated matches
 const CH = {
-  gervais:{name:'Christelle', art:'christelle', st:1}, aristide:{name:'RALL', art:'rall', st:2}, penalty:{name:'Penalty', art:'penalty', st:3},
-  mami:{name:'Mami Ange', art:'mami-ange', st:1}, caroline:{name:'Caroline', art:'caroline', st:2}, cobra:{name:'Boris le Cobra', art:'cobra', st:2},
-  ismael:{name:'Ismaël', art:'ismael', st:2}, tchinda:{name:'Papa Tchinda', art:'tchinda', st:3}, mballa:{name:'Adjudant Mballa', art:'mballa', st:3},
-  stephane:{name:'Stéphane', art:'stephane', st:3}, mbarga:{name:'Le Ngonzormorrr', art:'masque', st:4}
+  penalty:{name:'Penalty', st:4}, aristide:{name:'Rall', st:3}, tchinda:{name:'Mr Kamga', st:4}, gervais:{name:'Alida', st:3},
+  eva:{name:'Eva', st:3}, ismael:{name:'Daryck', st:3}, stephane:{name:'Nassim', st:3}, tiko:{name:'Tiko la Mélo', st:3},
+  cobra:{name:'Push', st:3}, banquier:{name:'Mr le Banquier', st:4}, systeme:{name:'Système', st:4}, dila:{name:'Dila', st:4},
+  caroline:{name:'Pam-Pam', st:4}, mami:{name:'Maman Rosine', st:3}, mballa:{name:'Commissaire Ngo Bassa', st:3}, mbarga:{name:'Le Masque', st:5}
 };
+Object.keys(CH).forEach(id=>{ CH[id].id = id; });
 const CH_IDS = Object.keys(CH);
-// the champions already repainted (art/zh) show their painted face; the others keep their drawing until theirs is ready
-const PAINTED = ['christelle', 'rall', 'penalty'];
-const champPic = c=> PAINTED.includes(c.art) ? 'art/zh/'+c.art+'.webp' : 'art/d/perso-'+c.art+'.svg';
+// away, you play on the champion's table and hear its music
+const CH_TABLE = {penalty:'stade', aristide:'bar', tchinda:'chambre', gervais:'salon', eva:'kribi', ismael:'club', stephane:'zinc', tiko:'rooftop',
+  cobra:'auvent', banquier:'verre', systeme:'taxi', dila:'lounge', caroline:'piscine', mami:'tripot', mballa:'police', mbarga:'salon'};
+// a champion's face (persos.js), cropped round
+const champFace = c=> window.FFP ? FFP.face(c.id) && ('<span class="ffp-f" style="background:radial-gradient(90% 80% at 50% 28%, '+FFP.info(c.id).c2+', '+FFP.info(c.id).c3+')">'+FFP.face(c.id)+'</span>') : '';
 const ROUND = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale'};
 const ROUND_SHORT = {r16:'Huitième', qf:'Quart', sf:'Demie', f:'Finale'};
-const PRIME = {manche:200, soiree:800, qualif:2500, r16:3000, qf:5000, sf:8000, f:20000};
-const G = 'ABCDEFGH';
+// the money (separate from the points of the tournament): a prize for each match won, for qualifying, for each round
+const PRIME = {manche:400, soiree:800, qualif:3000, qf:5000, sf:8000, f:20000};
+// v94: 16 neighbourhoods, 4 groups of 4
+const G = 'ABCD';
 // a group's six evenings: everyone meets everyone twice, once at home, once away
 const ROBIN = [[[0,1],[2,3]], [[3,0],[1,2]], [[0,2],[1,3]], [[1,0],[3,2]], [[0,3],[2,1]], [[2,0],[3,1]]];
+// v94: a match is one duel, you against the other neighbourhood's champion (no more games for 3 or 4 in the League)
 const MANCHES = [
-  {k:'duel', ic:'1 v 1', name:'Jeu à 2', sub:'Toi contre le champion adverse'},
-  {k:'trois', ic:'3', name:'Jeu à 3', sub:'Un arbitre du quartier voisin s’assoit : s’il gagne, la manche est nulle'},
-  {k:'carre', ic:'2 v 2', name:'Carré la Pute', sub:'Toi et ton coéquipier contre les leurs : le dernier debout fait gagner son quartier'}
+  {k:'duel', ic:'1 v 1', name:'Le match', sub:'Toi contre le champion adverse'}
 ];
 
 function rng(seed){ return ()=>{ seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -647,41 +663,42 @@ const hashStr = s=>{ let h = 2166136261; for(let i = 0; i<s.length; i++){ h ^= s
 function shuffle(arr, r){ arr = arr.slice(); for(let i = arr.length - 1; i>0; i--){ const j = Math.floor(r()*(i+1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
 // ===================== the season (plain data: ready to be shared online one day) =====================
-const KEY = 'fapfap_league_v1', LPKEY = 'fapfap_league_lp';
+// (v94: a new key — the old 32-neighbourhood seasons with their evenings of three games are not continued)
+const KEY = 'fapfap_league_v2', LPKEY = 'fapfap_league_lp';
 let S = null;
-try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===1) S = s; }catch(e){}
+try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===2) S = s; }catch(e){}
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 const seedOf = n=> 20261026 + (n - 1) * 7919;
 
 // the draw: same seed, same groups for every player of the season
-function seasonDraw(seed){
-  const order = shuffle(Q.map(q=> q.i), rng(seed)), picks = [];
-  for(let p = 0; p<4; p++) for(let g = 0; g<8; g++) picks.push({q: order[p*8 + g], g, pot: p});
+// v94: 16 neighbourhoods — yours and 15 others of the season — in 4 pots of 4
+function seasonDraw(seed, me){
+  const others = shuffle(Q.map(q=> q.i).filter(i=> i!==me), rng(seed)).slice(0, 15), order = shuffle(others.concat([me]), rng(seed ^ 0x2545f491)), picks = [];
+  for(let p = 0; p<4; p++) for(let g = 0; g<4; g++) picks.push({q: order[p*4 + g], g, pot: p});
   return picks;
 }
-// each neighbourhood's champion and strength for the season
-function seasonCast(seed){
+// each neighbourhood's champion (one character each, never twice) and strength for the season
+function seasonCast(seed, teams){
   const r = rng(seed ^ 0x5bd1e995), champ = {}, str = {};
-  const ids = shuffle(Q.map(q=> q.i), r);
-  ids.forEach((q, k)=>{ const c = CH_IDS[k % CH_IDS.length]; champ[q] = c; str[q] = 46 + Math.floor(r()*26) + CH[c].st * 7; });
+  const ids = shuffle(CH_IDS, r);
+  teams.forEach((q, k)=>{ const c = ids[k % ids.length]; champ[q] = c; str[q] = 50 + Math.floor(r()*20) + CH[c].st * 6; });
   return {champ, str};
 }
 function newSeason(n, me){
-  const seed = seedOf(n), picks = seasonDraw(seed), cast = seasonCast(seed);
+  const seed = seedOf(n), picks = seasonDraw(seed, me), cast = seasonCast(seed, picks.map(p=> p.q));
   const groups = [...G].map((_, g)=> picks.filter(p=> p.g===g).sort((a, b)=> a.pot - b.pot).map(p=> p.q));
   const fx = [];
   groups.forEach((t, g)=> ROBIN.forEach((day, d)=> day.forEach(([h, a], k)=> fx.push({id:'g'+g+'d'+(d+1)+'k'+k, g, day:d+1, h:t[h], a:t[a], r:null}))));
-  return {v:1, n, seed, me, groups, fx, champ:cast.champ, str:cast.str, phase:'groups', day:1, ko:{}, round:null, leg:0, cur:null, out:false, champion:null, earned:0, history:[]};
+  return {v:2, n, seed, me, groups, fx, champ:cast.champ, str:cast.str, phase:'groups', day:1, ko:{}, round:null, leg:0, cur:null, out:false, champion:null, earned:0, history:[]};
 }
 const str = q=> S.str[q] || 60;
 const champOf = q=> CH[S.champ[q]] ? S.champ[q] : 'penalty';
 
-// a simulated evening between two neighbourhoods: three hands, the middle one can be drawn
+// v94: a simulated match between two neighbourhoods: one duel; the winner's score is 1, 2 for a CORA, 3 for a 33 Glacée
 function simNight(h, a, r, neutral){
   const ph = str(h) / (str(h) + str(a)) + (neutral ? 0 : .04);
-  let mh = 0, ma = 0;
-  for(let k = 0; k<3; k++){ if(k===1 && r()<.18) continue; if(r()<ph) mh++; else ma++; }
-  return {h:mh, a:ma, w: mh>ma ? h : ma>mh ? a : (r()<ph ? h : a), qz: mh===ma};
+  const k = r(), goals = k<.03 ? 3 : k<.15 ? 2 : 1;
+  return r()<ph ? {h:goals, a:0, w:h} : {h:0, a:goals, w:a};
 }
 
 // ---- group tables ----
@@ -702,13 +719,14 @@ function tie(a, b, single){ return {a, b, legs: single ? [{h:null, a:null, r:nul
 function aggOf(t){ let A = 0, B = 0; t.legs.forEach(l=>{ if(!l.r) return; const hq = l.h==null ? t.a : l.h; if(hq===t.a){ A += l.r.h; B += l.r.a; } else { A += l.r.a; B += l.r.h; } }); return {a:A, b:B}; }
 function legSides(t, k){ const l = t.legs[k]; return l.h==null ? {h:t.a, a:t.b, neutral:true} : {h:l.h, a:l.a, neutral:false}; }
 function buildRound(){
-  if(S.round==='r16'){
+  // v94: from the 4 groups straight to the quarter-finals (a group winner meets another group's runner-up)
+  if(S.round==='qf'){
     const W = [], R = [];
-    for(let g = 0; g<8; g++){ const st = standings(g); W[g] = st[0].q; R[g] = st[1].q; }
-    S.ko.r16 = [[0,1],[1,0],[2,3],[3,2],[4,5],[5,4],[6,7],[7,6]].map(([x, y])=> tie(W[x], R[y]));
+    for(let g = 0; g<4; g++){ const st = standings(g); W[g] = st[0].q; R[g] = st[1].q; }
+    S.ko.qf = [[0,1],[1,0],[2,3],[3,2]].map(([x, y])=> tie(W[x], R[y]));
   } else {
-    const prev = {qf:'r16', sf:'qf', f:'sf'}[S.round], w = S.ko[prev].map(t=> t.w);
-    const pairs = S.round==='qf' ? [[0,2],[1,3],[4,6],[5,7]] : S.round==='sf' ? [[0,1],[2,3]] : [[0,1]];
+    const prev = {sf:'qf', f:'sf'}[S.round], w = S.ko[prev].map(t=> t.w);
+    const pairs = S.round==='sf' ? [[0,2],[1,3]] : [[0,1]];
     S.ko[S.round] = pairs.map(([x, y])=> tie(w[x], w[y], S.round==='f'));
   }
   S.leg = 0;
@@ -736,7 +754,7 @@ function afterGroupNight(){
   if(S.day<6) S.day++;
   else {
     const pos = standings(myGroup()).findIndex(x=> x.q===S.me);
-    S.phase = 'ko'; S.round = 'r16'; buildRound();
+    S.phase = 'ko'; S.round = 'qf'; buildRound();
     if(pos<=1) msgs.push({k:'qualif', pos});
     else { S.out = true; msgs.push({k:'outGroups', pos}); }
   }
@@ -750,14 +768,14 @@ function advanceKO(){
   const mine = round.find(t=> t.a===S.me || t.b===S.me), msgs = [];
   if(S.round==='f'){ S.champion = round[0].w; S.phase = 'done'; return msgs; }
   if(mine && !S.out){ if(mine.w===S.me) msgs.push({k:'through', round:S.round}); else { S.out = true; msgs.push({k:'outKO', round:S.round}); } }
-  S.round = {r16:'qf', qf:'sf', sf:'f'}[S.round]; buildRound();
+  S.round = {qf:'sf', sf:'f'}[S.round]; buildRound();
   return msgs;
 }
 // when the player is out, the rest of the season plays itself
 function simulateToEnd(){
   let guard = 0;
   while(S.champion==null && guard++ < 50){
-    if(S.phase==='groups'){ const r = rng(S.seed + S.day * 101); S.fx.filter(f=> f.day===S.day && !f.r).forEach(f=> f.r = simNight(f.h, f.a, r)); if(S.day<6) S.day++; else { S.phase = 'ko'; S.round = 'r16'; buildRound(); } continue; }
+    if(S.phase==='groups'){ const r = rng(S.seed + S.day * 101); S.fx.filter(f=> f.day===S.day && !f.r).forEach(f=> f.r = simNight(f.h, f.a, r)); if(S.day<6) S.day++; else { S.phase = 'ko'; S.round = 'qf'; buildRound(); } continue; }
     const r = rng(S.seed + 5000 + guard * 17);
     S.ko[S.round].forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, r, s.neutral); } });
     advanceKO();
@@ -793,7 +811,7 @@ function lpTick(){
   if(idle>3 && since>0){
     const days = Math.min(since, idle - 3), before = L.lp;
     L.lp = Math.round(L.lp * Math.pow(.96, days)); L.decayed = now;
-    if(before - L.lp>0) msgs.push('Ton classement s’use : −'+(before - L.lp)+' LP en '+idle+' jours sans soirée. Défends ta place !');
+    if(before - L.lp>0) msgs.push('Ton classement s’use : −'+(before - L.lp)+' LP en '+idle+' jours sans match. Défends ta place !');
   }
   lpSave();
   return msgs;
@@ -1033,14 +1051,14 @@ async function drawOne(p, g){
 }
 async function startDraw(){
   stopDraw(); const g = gen; speed = 1; $('fast').textContent = 'Accélérer';
-  DRAW = seasonDraw(S.seed);
+  DRAW = seasonDraw(S.seed, S.me);
   groupsEl.innerHTML = [...G].map(x=> '<div class="grp"><h4>'+x+'</h4>'+'<div class="slot"></div>'.repeat(4)+'</div>').join('');
   [...groupsEl.children].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:400, delay:i*40, fill:'backwards'}));
   for(let i = 0; i<DRAW.length; i++){
     const p = DRAW[i];
-    if(i % 8===0){
+    if(i % 4===0){
       await A($('pot'), [{opacity:1}, {opacity:0}], {duration:150, fill:'forwards'});
-      $('pot').textContent = 'Chapeau '+(p.pot + 1); fillBowl(8);
+      $('pot').textContent = 'Chapeau '+(p.pot + 1); fillBowl(4);
       [...bowl.children].forEach((b, k)=> A(b, [{opacity:0, transform:'translateY(-30px)'}, {opacity:1, transform:'none'}], {duration:420, delay:k*40, easing:BACK, fill:'backwards'}));
       await A($('pot'), [{opacity:0}, {opacity:1}], {duration:250, fill:'forwards'});
       await sleep(500);
@@ -1052,7 +1070,7 @@ async function startDraw(){
   $('pot').textContent = 'Tirage terminé';
   await sleep(900); if(g===gen) finishDraw();
 }
-async function finishDraw(){ stopDraw(); await show('hub'); renderHub(true); toast('Bienvenue dans la League ! Ta première soirée t’attend.', 3800); }
+async function finishDraw(){ stopDraw(); await show('hub'); renderHub(true); toast('Bienvenue dans la League ! Ton premier match t’attend.', 3800); }
 $('fast').addEventListener('click', ()=>{ speed = speed===1 ? 3 : 1; $('fast').textContent = speed===1 ? 'Accélérer' : 'Vitesse normale'; });
 $('skip').addEventListener('click', ()=>{ stopDraw(); DRAW.forEach(p=> place(p)); $('pot').textContent = 'Tirage terminé'; setTimeout(finishDraw, 600); });
 
@@ -1075,7 +1093,7 @@ function lpCard(compact){
   const T = lpTable(), me = T.find(x=> x.me), d = divOf(L.lp), nd = nextDiv(L.lp);
   const above = T[me.pos - 2], below = T[me.pos];
   let alert = '';
-  if(below && L.lp - below.lp<=40) alert = '<div class="alert bad">'+esc(below.name)+' ('+esc(below.q.name)+') n’est qu’à '+(L.lp - below.lp)+' LP derrière toi : une soirée et ta place saute.</div>';
+  if(below && L.lp - below.lp<=40) alert = '<div class="alert bad">'+esc(below.name)+' ('+esc(below.q.name)+') n’est qu’à '+(L.lp - below.lp)+' LP derrière toi : un match et ta place saute.</div>';
   else if(above) alert = '<div class="alert">Plus que '+(above.lp - L.lp + 1)+' LP pour dépasser '+esc(above.name)+' ('+esc(above.q.name)+') et monter '+(me.pos - 1===1 ? '1ᵉʳ' : (me.pos - 1)+'ᵉ')+'.</div>';
   const prog = nd ? Math.min(1, (L.lp - d[0]) / (nd[0] - d[0])) : 1;
   let html = '<div class="card"><h3>Classement des joueurs<span>'+MONTHS[new Date().getMonth()]+'</span></h3><div class="lp-me"><div><div class="big">'+fmt(L.lp)+'<small>LP</small></div><span class="div">'+d[1]+'</span></div><div style="flex:1;text-align:right;font:800 30px var(--disp);color:var(--gold)">'+me.pos+'<small style="font:700 12px var(--ui);color:var(--mute)">'+(me.pos===1 ? 'ᵉʳ' : 'ᵉ')+'/'+T.length+'</small></div></div>'+
@@ -1098,9 +1116,9 @@ function matchCard(m){
   // v87: the evening in big, face to face, on the red of the stadium
   return '<div class="hero"><div class="kick">'+label+'</div>'+
     '<div class="vs"><div class="side">'+crest(you)+esc(you.name)+'<small>Toi</small></div><div class="x">VS</div><div class="side">'+crest(th)+esc(th.name)+'<small>'+esc(c.name)+'</small></div></div>'+
-    '<div class="vs-meta">'+(home==null ? 'Terrain neutre : le Grand Carrefour' : home ? 'À domicile, au maquis de '+esc(you.name) : 'À l’extérieur, chez '+esc(th.name)+' : leur public te chambre')+'</div>'+
-    '<div class="fmt"><span><b>Manche 1</b>Jeu à 2</span><span><b>Manche 2</b>Jeu à 3</span><span><b>Manche 3</b>Carré la Pute</span><span><b>Égalité</b>Quiz</span></div>'+
-    '<button class="cta dark wide" id="goNight">'+(S.cur && !S.cur.done ? 'Reprendre la soirée' : 'Jouer la soirée')+'</button>'+agg+'</div>';
+    '<div class="vs-meta">'+(home==null ? 'Terrain neutre : le Grand Carrefour' : home ? 'À domicile : ta table, ta musique, tu distribues' : 'À l’extérieur : la table de '+esc(c.name)+', sa musique, il distribue')+'</div>'+
+    '<div class="fmt"><span><b>Le match</b>1 duel contre '+esc(c.name)+'</span><span><b>Victoire</b>3 points</span><span><b>Jetons</b>+'+fmt(PRIME.manche)+'</span>'+(m.kind==='ko' ? '<span><b>Égalité</b>Manche décisive</span>' : '')+'</div>'+
+    '<button class="cta dark wide" id="goNight">'+(S.cur && !S.cur.done ? 'Reprendre le match' : 'Jouer le match')+'</button>'+agg+'</div>';
 }
 function renderHub(animate){
   $('hubEyebrow').textContent = 'Saison '+S.n+' · '+Q[S.me].name;
@@ -1121,7 +1139,7 @@ function renderHub(animate){
     } else if(S.out){
       h += '<div class="card"><h3>Ta saison s’arrête ici</h3><p class="note" style="text-align:left">'+esc(Q[S.me].name)+' est éliminé. La League continue sans toi : regarde qui va soulever le trophée, puis reviens plus fort la saison prochaine.</p><button class="cta wide" id="simEnd" style="margin-top:12px">Voir la fin de la saison</button></div>' + tiles();
     }
-    if(S.phase==='groups' || (S.out && S.round==='r16' && !S.ko.r16.some(t=> t.legs[0].r))){
+    if(S.phase==='groups' || (S.out && S.round==='qf' && !S.ko.qf.some(t=> t.legs[0].r))){
       const g = myGroup();
       h += '<div class="card"><h3>Groupe '+G[g]+'<span>2 premiers qualifiés</span></h3><div class="tbl-h"><span>QUARTIER</span><span>J</span><span>DIF</span><span>PTS</span></div>'+standings(g).map((x, i)=> teamRow(x, i, {qual:1})).join('')+'</div>';
       const mine = S.fx.filter(f=> f.g===g && (f.h===S.me || f.a===S.me)).sort((a, b)=> a.day - b.day);
@@ -1136,21 +1154,21 @@ function renderHub(animate){
       if(t) h += '<div class="card"><h3>'+ROUND[S.round]+'</h3>'+tieRow(t)+'</div>';
     }
     // the road to the final
-    const steps = [['Poules'], ['8es'], ['Quarts'], ['Demi'], ['Finale']], at = S.champion!=null ? 5 : S.phase==='groups' ? 0 : ['r16','qf','sf','f'].indexOf(S.round) + 1;
+    const steps = [['Poules'], ['Quarts'], ['Demi'], ['Finale']], at = S.champion!=null ? 4 : S.phase==='groups' ? 0 : ['qf','sf','f'].indexOf(S.round) + 1;
     h += '<div class="card"><h3>La route<span>jusqu’à la finale</span></h3><div class="road">'+steps.map((s, i)=> '<span class="'+(i<at ? 'done' : i===at ? 'now' : '')+'">'+s[0]+'</span>').join('')+'</div></div>';
     h += lpCard(true);
   } else if(tab==='groupes'){
     h += '<div class="minigrp">'+S.groups.map((_, g)=> '<div class="card"><h3>Groupe '+G[g]+'</h3>'+standings(g).map((x, i)=>{ const q = Q[x.q]; return '<div class="row'+(x.q===S.me ? ' me' : '')+(i<2 && S.phase!=='groups' ? ' q' : '')+'">'+crest(q, 1)+'<span class="n">'+esc(q.name)+'</span><span class="v p">'+x.pts+'</span></div>'; }).join('')+'</div>').join('')+'</div>';
-    h += '<p class="note">Victoire : 3 points. Égalité de points : différence de manches, puis manches gagnées.</p>';
+    h += '<p class="note">Les points du tournoi sont à part des jetons : victoire 3 points, défaite 0. Égalité de points : différence de manches (un CORA compte 2), puis manches gagnées.</p>';
   } else if(tab==='tableau'){
-    const rounds = ['r16','qf','sf','f'].filter(r=> S.ko[r]);
-    if(!rounds.length) h += '<div class="card"><h3>Le tableau final</h3><p class="note" style="text-align:left">Les huitièmes de finale commencent après la 6ᵉ journée : les 2 premiers de chaque groupe, en aller-retour. Puis quarts, demies, et la finale au Grand Carrefour.</p></div>';
+    const rounds = ['qf','sf','f'].filter(r=> S.ko[r]);
+    if(!rounds.length) h += '<div class="card"><h3>Le tableau final</h3><p class="note" style="text-align:left">Les quarts de finale commencent après la 6ᵉ journée : les 2 premiers de chaque groupe, en aller-retour. Puis les demies, et la finale au Grand Carrefour, en un seul match.</p></div>';
     rounds.forEach(r=>{ h += '<div class="ko-round"><h4>'+ROUND[r]+'</h4>'+S.ko[r].map(t=> tieRow(t, r)).join('')+'</div>'; });
-    if(rounds.length) h += '<p class="note">Score = manches cumulées sur l’aller et le retour. * départagé au quiz.</p>';
+    if(rounds.length) h += '<p class="note">Score = manches cumulées sur l’aller et le retour (un CORA compte 2, une 33 Glacée 3). * départagé à la manche décisive.</p>';
     if(S.champion!=null) h += '<div class="card" style="text-align:center"><h3 style="justify-content:center">Champion</h3><div style="display:flex;justify-content:center">'+crest(Q[S.champion])+'</div><p style="font:700 16px var(--disp);margin:10px 0 0">'+esc(Q[S.champion].name)+'</p></div>';
   } else {
     h += lpCard(false);
-    h += '<div class="card"><h3>Comment gagner des LP</h3><div class="day"><span class="who">Soirée gagnée</span><span class="chip win">+30</span></div><div class="day"><span class="who">Manche gagnée</span><span class="chip win">+6 (×2 CORA, ×4 double)</span></div><div class="day"><span class="who">Titre de champion</span><span class="chip win">+200</span></div><div class="day"><span class="who">Soirée perdue</span><span class="chip loss">−12</span></div><div class="day"><span class="who">Plus de 3 jours sans jouer</span><span class="chip loss">−4 % par jour</span></div></div>';
+    h += '<div class="card"><h3>Comment gagner des LP</h3><div class="day"><span class="who">Match gagné</span><span class="chip win">+30</span></div><div class="day"><span class="who">Gagné par CORA</span><span class="chip win">+12 (+18 en 33 Glacée)</span></div><div class="day"><span class="who">Titre de champion</span><span class="chip win">+200</span></div><div class="day"><span class="who">Match perdu</span><span class="chip loss">−12</span></div><div class="day"><span class="who">Plus de 3 jours sans jouer</span><span class="chip loss">−4 % par jour</span></div></div>';
   }
   const body = $('hubBody'); body.innerHTML = h;
   if(animate) [...body.querySelectorAll('.card, .hero, .tiles, .ko-round, .minigrp > .card')].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(16px)'}, {opacity:1, transform:'none'}], {duration:480, delay:Math.min(i*70, 420), fill:'backwards'}));
@@ -1170,8 +1188,8 @@ async function startNight(){
   const m = curMatch(); if(!m) return;
   const them = m.h===S.me ? m.a : m.h;
   if(!S.cur || S.cur.key!==keyOf(m)){
-    const rc = champOf(them), mate = personaFor(S.me, keyOf(m)+'mate', [rc]), ref = personaFor(them, keyOf(m)+'ref', [rc, mate]), rmate = personaFor(them, keyOf(m)+'rmate', [rc, mate, ref]);
-    S.cur = {key:keyOf(m), them, m:[null, null, null], rc, mate, ref, rmate, done:false, qz:null};
+    const rc = champOf(them);
+    S.cur = {key:keyOf(m), them, m:[null], rc, done:false, qz:null, dec:false};
     save();
     await walkout(m);
   } else { await show('night'); renderNight(); }
@@ -1182,10 +1200,10 @@ async function walkout(m){
   $('wkTag').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[S.round]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
   $('wkTitle').textContent = home==null ? 'Le Grand Carrefour, ce soir' : home ? 'Au maquis de '+you.name : 'Chez '+th.name;
   $('wkL').innerHTML = '<div class="por"><div class="you">TOI</div>'+crest(you)+'</div><b>'+esc(you.name)+'</b><small>Ton quartier</small>';
-  $('wkR').innerHTML = '<div class="por"><img alt="" src="'+champPic(c)+'">'+crest(th)+'</div><b>'+esc(th.name)+'</b><small>'+esc(c.name)+'</small>';
+  $('wkR').innerHTML = '<div class="por"><span class="ffp-wrap">'+champFace(c)+'</span>'+crest(th)+'</div><b>'+esc(th.name)+'</b><small>'+esc(c.name)+'</small>';
   $('wkLine').textContent = home==null ? 'Terrain neutre. Les deux quartiers ont fait le déplacement : il n’y a plus de place debout.'
-    : home ? 'Ton public a sorti les casseroles et les vuvuzelas. '+c.name+' arrive sous les sifflets.'
-    : 'Ici, personne ne t’applaudit. Le public de '+th.name+' scande le nom de '+c.name+'.';
+    : home ? 'Ton public a sorti les casseroles et les vuvuzelas. '+c.name+' arrive sous les sifflets. Ta table, ta musique : c’est toi qui distribues.'
+    : 'Ici, personne ne t’applaudit. Le public de '+th.name+' scande le nom de '+c.name+'. Sa table, sa musique : c’est lui qui distribue.';
   await show('walk');
   anthem(true);
   ['wkTag','wkTitle','wkVs','wkLine','wkGo'].forEach(id=> $(id).style.opacity = 0);
@@ -1199,7 +1217,9 @@ async function walkout(m){
   A($('wkGo'), [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:250});
 }
 $('wkGo').addEventListener('click', async ()=>{ await show('night'); renderNight(true); });
-function score(){ let me = 0, th = 0; S.cur.m.forEach(x=>{ if(!x) return; if(x.r==='me') me++; else if(x.r==='them') th++; }); return {me, th}; }
+// v94: the match's score = the winner's points of the duel (1, CORA 2, 33 Glacée 3); the decisive game is not counted
+const goalsOf = x=> x>=4 ? 3 : x>=2 ? 2 : 1;
+function score(){ let me = 0, th = 0; S.cur.m.forEach((x, i)=>{ if(!x || (S.cur.dec && i===1)) return; if(x.r==='me') me += goalsOf(x.x); else if(x.r==='them') th += goalsOf(x.x); }); return {me, th}; }
 function renderNight(animate){
   const m = curMatch(), C = S.cur; if(!m || !C) return show('hub', true).then(()=> renderHub(true));
   const you = Q[S.me], th = Q[C.them], sc = score();
@@ -1207,63 +1227,59 @@ function renderNight(animate){
   let agg = '';
   if(m.kind==='ko' && m.leg===1){ const g = aggOf(m.t), mine = (m.t.a===S.me ? g.a : g.b) + sc.me, their = (m.t.a===S.me ? g.b : g.a) + sc.th; agg = '<span class="agg">Cumul aller-retour : '+mine+' – '+their+'</span>'; }
   let h = '<div class="board"><div class="tm">'+crest(you)+esc(you.name)+'</div><div><div class="sc"><span id="scMe">'+sc.me+'</span><em>–</em><span id="scTh">'+sc.th+'</span></div>'+agg+'</div><div class="tm">'+crest(th)+esc(th.name)+'</div></div>';
+  // v94: one duel; in a knock-out tie still level after both legs, one decisive game
   const nextI = C.m.findIndex(x=> !x);
-  MANCHES.forEach((mm, i)=>{
-    const x = C.m[i];
+  C.m.forEach((x, i)=>{
+    const dec = C.dec && i===1;
     let right = '';
-    if(x){ right = x.r==='me' ? '<span class="res chip win">Gagnée'+(x.x>1 ? ' ×'+x.x : '')+'</span>' : x.r==='them' ? '<span class="res chip loss">Perdue'+(x.x>1 ? ' ×'+x.x : '')+'</span>' : '<span class="res chip neu">Nulle</span>'; }
+    if(x){ right = x.r==='me' ? '<span class="res chip win">Gagné'+(x.x>1 ? ' ×'+x.x : '')+'</span>' : '<span class="res chip loss">Perdu'+(x.x>1 ? ' ×'+x.x : '')+'</span>'; }
     else if(i===nextI) right = '<button class="cta" data-play="'+i+'">Jouer</button>';
-    const who = mm.k==='duel' ? 'Contre '+CH[C.rc].name : mm.k==='trois' ? 'Contre '+CH[C.rc].name+', arbitre : '+CH[C.ref].name : 'Avec '+CH[C.mate].name+' contre '+CH[C.rc].name+' et '+CH[C.rmate].name;
-    h += '<div class="manche'+(i===nextI ? ' next' : '')+'"><span class="ic">'+mm.ic+'</span><div class="tx"><b>Manche '+(i+1)+' · '+mm.name+'</b><small>'+esc(who)+'</small></div>'+right+'</div>';
+    h += '<div class="manche'+(i===nextI ? ' next' : '')+'"><span class="ic">1 v 1</span><div class="tx"><b>'+(dec ? 'Manche décisive' : 'Le match')+'</b><small>'+esc('Contre '+CH[C.rc].name+(dec ? ' · le cumul est à égalité' : ''))+'</small></div>'+right+'</div>';
   });
-  // all three hands are in but the evening was left before its end (the quiz, a closed app): finish it
-  if(nextI===-1) h += '<button class="cta wide" id="endNow" style="margin-top:6px">'+(sc.me===sc.th ? 'Départager au quiz' : 'Voir le résultat')+'</button>';
-  h += '<p class="note">Chaque manche gagnée rapporte '+fmt(PRIME.manche)+' jetons (×2 sur un CORA, ×4 sur une 33 Glacée). La soirée gagnée : '+fmt(PRIME.soiree)+'.</p>';
+  // the duel is in but the match was left before its end (a closed app): finish it
+  if(nextI===-1) h += '<button class="cta wide" id="endNow" style="margin-top:6px">Voir le résultat</button>';
+  h += '<p class="note"><b>Points du tournoi</b> : victoire 3, défaite 0. <b>Jetons</b>, à part : '+fmt(PRIME.manche)+' pour une victoire (×2 sur un CORA, ×4 sur une 33 Glacée).</p>';
   $('nightBody').innerHTML = h;
   if(animate) [...$('nightBody').children].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:460, delay:i*80, fill:'backwards'}));
   $('nightBody').querySelectorAll('[data-play]').forEach(b=> b.addEventListener('click', ()=> playManche(+b.dataset.play)));
   const en = $('endNow'); if(en) en.addEventListener('click', endNight);
 }
 function playManche(i){
-  const C = S.cur, mm = MANCHES[i], th = Q[C.them], id = 'L'+Date.now().toString(36)+i, title = mm.name+' · '+Q[S.me].name+' – '+th.name;
-  const tag = n=> n+' · '+th.name, mine = n=> n+' · '+Q[S.me].name;
-  let msg;
-  if(mm.k==='duel') msg = {zh:'play', id, league:1, persona:C.rc, target:1, title};
-  else if(mm.k==='trois') msg = {zh:'play', id, league:1, carre:3, title, seats:{gervais:{p:C.rc, name:tag(CH[C.rc].name)}, aristide:{p:C.ref, name:CH[C.ref].name+' (arbitre)'}}};
-  else msg = {zh:'play', id, league:1, carre:4, title, seats:{penalty:{p:C.rc, name:tag(CH[C.rc].name)}, gervais:{p:C.rmate, name:tag(CH[C.rmate].name)}, aristide:{p:C.mate, name:mine(CH[C.mate].name)}}};
+  const C = S.cur, m = curMatch(), th = Q[C.them], id = 'L'+Date.now().toString(36)+i, dec = C.dec && i===1;
+  const title = (dec ? 'Manche décisive' : 'Le match')+' · '+Q[S.me].name+' – '+th.name;
+  // v94: home or away decides the table, the music and who deals (the neutral final: drawn by the game)
+  const home = m && !m.neutral ? m.h===S.me : null;
+  const msg = {zh:'play', id, league:1, persona:C.rc, target:1, title};
+  if(home!=null){ msg.home = home; if(!home) msg.table = CH_TABLE[C.rc] || null; }
   pending = {id, done: d=> onResult(i, d)};
-  $('waitT').textContent = 'Manche '+(i+1)+' · '+mm.name; $('wait').classList.add('on');
+  $('waitT').textContent = dec ? 'Manche décisive' : 'Le match'; $('wait').classList.add('on');
   if(SIM || !host){
-    // alone (tests): the hand is simulated
+    // alone (tests): the duel is simulated
     setTimeout(()=>{ if(!pending || pending.id!==id) return; const won = Math.random()<.55, x = Math.random()<.12 ? 2 : Math.random()<.03 ? 4 : 1;
-      const champ = mm.k==='duel' ? null : won ? 'you' : (mm.k==='trois' ? (Math.random()<.7 ? 'gervais' : 'aristide') : (Math.random()<.5 ? 'penalty' : 'gervais'));
-      const p = pending; pending = null; $('wait').classList.remove('on'); p.done({won, champ, mult:x}); }, 700);
+      const p = pending; pending = null; $('wait').classList.remove('on'); p.done({won, mult:x}); }, 700);
   } else post(msg);
 }
 async function onResult(i, d){
-  const C = S.cur, mm = MANCHES[i];
-  let r;
-  if(d.forfeit) r = 'them';
-  else if(mm.k==='duel') r = d.won ? 'me' : 'them';
-  else if(mm.k==='trois') r = d.champ==='you' ? 'me' : d.champ==='gervais' ? 'them' : 'nul';
-  else r = (d.champ==='you' || d.champ==='aristide') ? 'me' : 'them';
+  const C = S.cur, dec = C.dec && i===1;
+  const r = d.forfeit ? 'them' : d.won ? 'me' : 'them';
   const x = Math.max(1, Math.min(4, d.mult|0 || 1));
   C.m[i] = {r, x};
+  if(dec) C.qz = r; // the decisive game settles the tie (it does not add to the score)
   if(r==='me'){ const p = PRIME.manche * x; pay(p); S.earned += p; lpAdd(6 * x); }
   save();
   await show('night'); renderNight();
   const el = $(r==='me' ? 'scMe' : 'scTh');
-  if(el && r!=='nul') A(el, [{transform:'scale(1.8)', color:r==='me' ? '#92e8b0' : '#ffb4a6'}, {transform:'scale(1)', color:'#eef1ff'}], {duration:700, easing:BACK, fill:'none'});
+  if(el) A(el, [{transform:'scale(1.8)', color:r==='me' ? '#92e8b0' : '#ffb4a6'}, {transform:'scale(1)', color:'#eef1ff'}], {duration:700, easing:BACK, fill:'none'});
   fanfare(r==='me'); buzz(r==='me' ? [20, 30, 40] : 30);
-  toast(r==='me' ? 'Manche '+(i+1)+' pour '+Q[S.me].name+(x>1 ? ' · gain ×'+x+' !' : ' !') : r==='them' ? 'Manche '+(i+1)+' pour '+Q[C.them].name+'.' : 'Manche nulle : l’arbitre a tout raflé.', 2600);
+  toast(r==='me' ? (dec ? 'Manche décisive gagnée !' : 'Victoire pour '+Q[S.me].name+(x>1 ? ' · gain ×'+x+' !' : ' !')) : (dec ? 'Manche décisive perdue.' : 'Victoire pour '+Q[C.them].name+'.'), 2600);
   if(C.m.every(Boolean)){ await sleep(1400); endNight(); }
 }
 async function endNight(){
   const C = S.cur, m = curMatch(), sc = score();
-  let needQuiz = false;
-  if(m.kind==='g' || m.t.legs.length===1) needQuiz = sc.me===sc.th;
-  else if(m.leg===1){ const g = aggOf(m.t), mine = (m.t.a===S.me ? g.a : g.b) + sc.me, their = (m.t.a===S.me ? g.b : g.a) + sc.th; needQuiz = mine===their; }
-  if(needQuiz && C.qz==null){ C.qz = 'pending'; save(); return startQuiz(); }
+  // a knock-out tie still level on the aggregate after the return leg: one decisive game (it replaces the old quiz)
+  let level = false;
+  if(m.kind==='ko' && m.t.legs.length>1 && m.leg===1){ const g = aggOf(m.t), mine = (m.t.a===S.me ? g.a : g.b) + sc.me, their = (m.t.a===S.me ? g.b : g.a) + sc.th; level = mine===their; }
+  if(level && !C.dec){ C.dec = true; C.m.push(null); save(); await show('night'); renderNight(true); toast('Égalité au cumul : une manche décisive !', 3000); return; }
   finishNight();
 }
 function finishNight(){
@@ -1280,8 +1296,8 @@ function finishNight(){
     } else wonNight = sc.me>sc.th;
   }
   const gains = [];
-  C.m.forEach((x, i)=>{ if(x.r==='me') gains.push(['Manche '+(i+1)+(x.x>1 ? ' (×'+x.x+')' : ''), PRIME.manche * x.x]); });
-  if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Soirée gagnée', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); post({zh:'pts', n:5, night:1}); }
+  C.m.forEach((x, i)=>{ if(x.r==='me') gains.push([(C.dec && i===1 ? 'Manche décisive' : 'Match gagné')+(x.x>1 ? ' (×'+x.x+')' : ''), PRIME.manche * x.x]); });
+  if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Bonus du quartier', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); post({zh:'pts', n:5, night:1}); }
   else lpAdd(-12);
   S.history.push({k:C.key, me:sc.me, th:sc.th, w:wonNight});
   S.cur = null;
@@ -1295,7 +1311,7 @@ function finishNight(){
     if(S.champion===S.me){ pay(PRIME.f); S.earned += PRIME.f; gains.push(['Titre de champion', PRIME.f]); lpAdd(200); post({zh:'pts', n:50, title:1}); }
     msgs.forEach(x=>{ if(x.k==='through'){ pay(PRIME[was]); S.earned += PRIME[was]; gains.push([ROUND[was]+' passés', PRIME[was]]); } });
   }
-  msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les huitièmes', PRIME.qualif]); } });
+  msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les quarts', PRIME.qualif]); } });
   save();
   showResult(m, sc, wonNight, gains, msgs);
 }
@@ -1307,13 +1323,13 @@ async function showResult(m, sc, won, gains, msgs){
   $('rsK').textContent = decisive ? (S.champion===S.me ? 'CHAMPION' : won ? 'QUALIFIÉ' : 'ÉLIMINÉ') : won ? 'VICTOIRE' : sc.me===sc.th && m.kind==='ko' ? 'MATCH NUL' : 'DÉFAITE';
   $('rsSc').textContent = sc.me+' – '+sc.th;
   let line = '';
-  if(decisive && m.t.legs.length>1){ const g = aggOf(m.t), mine = m.t.a===S.me ? g.a : g.b, their = m.t.a===S.me ? g.b : g.a; line = 'Cumul aller-retour : '+mine+' – '+their+(quizzed ? ', départagé au quiz' : ''); }
-  else if(quizzed) line = 'Égalité, départagée au quiz';
-  $('rsT').textContent = (won ? Q[S.me].name : C_them.name)+(decisive ? ' passe' : ' gagne la soirée');
+  if(decisive && m.t.legs.length>1){ const g = aggOf(m.t), mine = m.t.a===S.me ? g.a : g.b, their = m.t.a===S.me ? g.b : g.a; line = 'Cumul aller-retour : '+mine+' – '+their+(quizzed ? ', départagé à la manche décisive' : ''); }
+  else if(quizzed) line = 'Égalité, départagée à la manche décisive';
+  $('rsT').textContent = (won ? Q[S.me].name : C_them.name)+(decisive ? ' passe' : ' gagne le match');
   if(decisive && m.t.legs.length===1) $('rsT').textContent = won ? Q[S.me].name+' gagne la finale' : C_them.name+' gagne la finale';
   let s = won ? 'Le quartier chante ton nom jusqu’au matin.' : 'Le maquis est silencieux ce soir. La prochaine sera la bonne.';
   if(m.kind==='ko' && m.t.legs.length>1 && m.leg===0) s = won ? 'Avantage pour le match retour.' : sc.me===sc.th ? 'Tout reste à faire au retour.' : 'Il faudra renverser ça au retour.';
-  if(qual) s = 'Qualifié ! '+Q[S.me].name+' finit '+nth(qual.pos)+' du groupe et file en huitièmes de finale.';
+  if(qual) s = 'Qualifié ! '+Q[S.me].name+' finit '+nth(qual.pos)+' du groupe et file en quarts de finale.';
   if(thr) s = 'Qualifié pour les '+(ROUND[S.round] || '').toLowerCase()+' !';
   if(out) s = out.k==='outGroups' ? Q[S.me].name+' finit '+nth(out.pos)+' du groupe : éliminé. Reviens plus fort la saison prochaine.' : 'Éliminé en '+ROUND[out.round].toLowerCase()+'. Le quartier est fier quand même.';
   if(line) s = line+'. '+s;
