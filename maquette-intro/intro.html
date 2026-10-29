@@ -92,10 +92,10 @@ h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:90
 .play.s2 .deal .in{ animation:flip .5s cubic-bezier(.3,1.3,.5,1) forwards; } @keyframes flip{ to{ transform:rotateY(180deg); } }
 .s2 .fan{ position:absolute; left:50%; top:54%; z-index:21; }
 .s2 .fan i{ position:absolute; width:56px; height:80px; margin:-80px -28px 0; border-radius:8px; background:#fffaf0; border:2.5px solid #000; transform-origin:50% 140%; opacity:0; box-shadow:0 6px 12px rgba(0,0,0,.5); }
-.play.s2 .fan i{ animation:fan .6s cubic-bezier(.2,1.4,.4,1) 6.2s forwards; } @keyframes fan{ from{ opacity:0; transform:rotate(0) translateY(40px); } to{ opacity:1; transform:rotate(var(--r)); } }
-.play.s2 .logo{ animation:logoRise .9s cubic-bezier(.16,1,.3,1) 6.5s forwards; } @keyframes logoRise{ from{ opacity:0; transform:translateY(60px) scale(.7); } to{ opacity:1; transform:none; } }
-.play.s2 .logo svg{ animation:shine .8s ease-in-out 7.3s; } @keyframes shine{ 50%{ filter:drop-shadow(0 0 30px rgba(255,201,60,.3)) brightness(1.6); } }
-.play.s2 .tag{ animation:tagIn .8s ease 7.5s forwards; }
+.play.s2 .fan i{ animation:fan .6s cubic-bezier(.2,1.4,.4,1) 10.2s forwards; } @keyframes fan{ from{ opacity:0; transform:rotate(0) translateY(40px); } to{ opacity:1; transform:rotate(var(--r)); } }
+.play.s2 .logo{ animation:logoRise .9s cubic-bezier(.16,1,.3,1) 10.5s forwards; } @keyframes logoRise{ from{ opacity:0; transform:translateY(60px) scale(.7); } to{ opacity:1; transform:none; } }
+.play.s2 .logo svg{ animation:shine .8s ease-in-out 11.3s; } @keyframes shine{ 50%{ filter:drop-shadow(0 0 30px rgba(255,201,60,.3)) brightness(1.6); } }
+.play.s2 .tag{ animation:tagIn .8s ease 11.5s forwards; }
 
 /* ===== 3 · LE NÉON SOUS LA PLUIE : une rue la nuit, l'enseigne grésille et s'allume, son reflet dans la flaque ===== */
 .s3{ background:linear-gradient(180deg, #04050d 0%, #0b0d1e 55%, #050508 100%); }
@@ -188,9 +188,9 @@ const D = [
     sound:()=>{ pad(0, [55, 82.4], 4.6, .03); noise(.3, 4.3, 300, 2400, .12, .8); [0.6, 1.85, 3.1].forEach(t=> tone(t, 880, .25, .05)); noise(4.4, .5, 6000, 800, .5, .6); [4.7, 4.75, 4.8, 4.85].forEach(t=> noise(t, .25, 2500, 1200, .2, 2)); noise(5.9, .45, 600, 3000, .25, 1); boom(6.4, 1); chord(6.5); } },
   { name:'Le clac', why:'Gros plan sur une table rouge, une lampe s’allume en grésillant. Une main claque un 3 sur la table : « CLAC ! », onde de choc, étincelles. Puis trois cartes sont distribuées et se retournent, chacune porte un crédit. Enfin l’éventail s’ouvre et le logo monte, avec un reflet d’or.',
     html:()=> '<div class="felt"></div><div class="cone"></div><div class="slam"><i>3</i><b>♥</b></div><div class="clac">CLAC !</div>'+sparks(16)
-      + CREDITS.map((c, i)=> '<div class="deal" style="animation-delay:'+(2.5 + i*1.2)+'s,'+(3.5 + i*1.2)+'s"><div class="in" style="animation-delay:'+(2.75 + i*1.2)+'s"><div class="bk"></div><div class="f"><small>'+c[0]+'</small><b>'+c[1]+'</b></div></div></div>').join('')
+      + CREDITS.map((c, i)=> '<div class="deal" style="animation-delay:'+(2.4 + i*2.6)+'s,'+(4.6 + i*2.6)+'s"><div class="in" style="animation-delay:'+(2.7 + i*2.6)+'s"><div class="bk"></div><div class="f"><small>'+c[0]+'</small><b>'+c[1]+'</b></div></div></div>').join('')
       +'<div class="fan">'+[-30, -15, 0, 15, 30].map(r=> '<i style="--r:'+r+'deg"></i>').join('')+'</div><div class="logo">'+ffLogo()+'</div><div class="tag">Yaoundé · la nuit · les cartes</div>'+common,
-    sound:()=>{ buzz(.2, .3); noise(.9, .45, 400, 2500, .15, .7); boom(1.4, 1.1); [2.5, 3.7, 4.9].forEach(t=>{ noise(t, .25, 3000, 1500, .25, 2); tone(t + .3, 660, .3, .05); }); [6.2, 6.25, 6.3, 6.35, 6.4].forEach(t=> noise(t, .15, 2500, 1500, .15, 2)); chord(6.6); tone(7.3, 1568, .6, .05); } },
+    sound:()=>{ buzz(.2, .3); noise(.9, .45, 400, 2500, .15, .7); boom(1.4, 1.1); [2.4, 5, 7.6].forEach(t=>{ noise(t, .25, 3000, 1500, .25, 2); tone(t + .3, 660, .3, .05); }); [10.2, 10.25, 10.3, 10.35, 10.4].forEach(t=> noise(t, .15, 2500, 1500, .15, 2)); chord(10.6); tone(11.3, 1568, .6, .05); } },
   { name:'Le néon sous la pluie', why:'Une rue de quartier sous la pluie. L’enseigne « FAP FAP » grésille et s’allume lettre par lettre en rouge, « YAOUNDÉ » en cyan, et elle se reflète dans la flaque. Les crédits passent sous l’enseigne. Puis l’enseigne s’efface dans un éclair et le logo apparaît.',
     html:()=> '<div class="cam"><div class="wall"></div><div class="ground"></div><div class="glow"></div><div class="out"><div class="sign"><span class="w">'+'FAP FAP'.split('').map((c, i)=> '<span style="animation-delay:'+(.8 + i*.14).toFixed(2)+'s">'+(c===' ' ? '&nbsp;' : c)+'</span>').join('')+'</span><span class="sub">YAOUNDÉ</span></div><div class="refl"><span>FAP FAP</span></div></div></div>'
       +'<canvas class="rain" id="rainCv"></canvas>'
