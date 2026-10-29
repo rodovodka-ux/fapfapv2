@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0505">
+<title>Audit · lots 2 et 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Maquette : les lots 2 et 3 de l'audit. Même disposition que le jeu, seulement ce qui change. */
+*{ box-sizing:border-box; margin:0; -webkit-tap-highlight-color:transparent; }
+html,body{ background:#0b0505; color:#fff6f2; font:700 14px/1.4 'Nunito', system-ui, sans-serif; }
+body{ padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 30px); overflow-x:hidden; }
+h1{ font:700 22px/1.15 'Fredoka', sans-serif; } h1 small{ display:block; font:900 10.5px 'Nunito'; letter-spacing:.18em; text-transform:uppercase; color:#ff4a4a; margin-bottom:5px; }
+.lead{ color:#c9a3a3; margin:6px 0 12px; font-size:13px; }
+.tabs{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; margin-bottom:10px; }
+.tab{ padding:9px 2px; border-radius:14px; text-align:center; background:#170707; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11px 'Nunito'; color:#c9a3a3; cursor:pointer; }
+.tab.on{ background:#e00000; color:#fff; }
+.what{ color:#c9a3a3; font-size:13px; margin-bottom:12px; } .what b{ color:#fff; }
+.cmp{ display:grid; grid-template-columns:1fr; gap:14px; }
+@media (min-width:760px){ .cmp{ grid-template-columns:1fr 1fr; } }
+.lab{ text-align:center; font:900 11px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#c9a3a3; margin-bottom:6px; } .lab.new{ color:#ff4a4a; }
+.phone{ position:relative; width:min(340px, 100%); margin:0 auto; aspect-ratio:375/667; border-radius:36px; border:4px solid #000; overflow:hidden; box-shadow:0 18px 40px rgba(0,0,0,.6), 0 0 0 2px #2a2a2a; background:radial-gradient(120% 55% at 20% 0%, #3a1a10 0%, #120606 45%, #070202 80%); }
+.scr{ position:absolute; inset:0; padding:14px 11px 70px; overflow:hidden; }
+.fold{ position:absolute; left:0; right:0; bottom:58px; height:0; border-top:2px dashed rgba(255,74,74,.6); z-index:9; }
+.fold span{ position:absolute; right:8px; top:-18px; font:900 9px 'Nunito'; color:#ff6a6a; background:#0b0505; padding:1px 6px; border-radius:6px; }
+.coin{ width:11px; height:11px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff3c4, #e6b23a 55%, #7a4a10); border:1.5px solid #000; display:inline-block; }
+.top{ display:flex; gap:5px; align-items:center; } .pill{ display:flex; align-items:center; gap:5px; padding:5px 9px; border-radius:20px; background:#1e0f0b; border:2px solid #000; font:900 11.5px 'Nunito'; } .rnd{ width:28px; height:28px; border-radius:50%; background:#1e0f0b; border:2px solid #000; margin-left:auto; } .rnd + .rnd{ margin-left:0; }
+.band{ display:flex; align-items:center; gap:8px; margin:9px 0; padding:8px 10px; border-radius:15px; background:linear-gradient(90deg, #e00000, #8f0000); border:2.5px solid #000; box-shadow:0 3px 0 #000; }
+.band .ic{ width:32px; height:32px; border-radius:9px; background:#16100b; border:2px solid #e9b94e; display:grid; place-items:center; font:700 11px 'Fredoka'; color:#f1c257; flex:none; }
+.band b{ display:block; font:700 13px 'Fredoka'; } .band small{ display:block; font:800 9.5px/1.25 'Nunito'; color:#ffd8d8; }
+.band em{ margin-left:auto; font-style:normal; padding:5px 8px; border-radius:10px; background:#fff; color:#111; font:900 10px 'Nunito'; border:2px solid #000; flex:none; }
+.acct{ margin:9px 0; padding:9px 10px; border-radius:15px; background:#2a0d0b; border:2px solid #7a2a20; display:flex; gap:8px; align-items:center; } .acct b{ display:block; font:800 12px 'Nunito'; } .acct small{ font:700 10px 'Nunito'; color:#e0b5b0; } .acct em{ margin-left:auto; font-style:normal; padding:5px 8px; border-radius:10px; background:#e00000; font:900 10px 'Nunito'; border:2px solid #000; flex:none; }
+.logo{ text-align:center; font:700 54px/1 'Fredoka'; color:#ffd88a; text-shadow:0 0 18px rgba(255,170,60,.5), 0 4px 0 #000; margin:34px 0 14px; }
+.logo.sm{ font-size:38px; margin:8px 0 4px; }
+.tag{ text-align:center; color:#d9b9b9; font:800 10.5px 'Nunito'; } .beta{ display:block; width:max-content; margin:5px auto 0; padding:2px 9px; border-radius:20px; background:#E24B4A; font:900 9px 'Nunito'; letter-spacing:.12em; }
+.rank{ margin:10px 0; padding:10px; border-radius:16px; background:#1e0f0b; border:2px solid #000; display:flex; gap:8px; align-items:center; height:127px; }
+.rank i{ width:40px; height:40px; border-radius:50%; border:2px dashed #7a5a5a; flex:none; } .rank b{ font:700 13px 'Fredoka'; } .rank small{ display:block; font:800 10px 'Nunito'; color:#c9a3a3; }
+.play{ margin:10px 0; padding:14px; min-height:112px; border-radius:20px; background:linear-gradient(160deg, #ff2a2a, #b00000); border:2.5px solid #000; box-shadow:0 5px 0 #000; display:flex; align-items:center; gap:10px; }
+.play .fc{ display:flex; } .play .fc i{ width:34px; height:34px; border-radius:50%; background:#5a3020; border:2px solid #000; margin-left:-8px; } .play .fc i:first-child{ margin-left:0; }
+.play b{ font:700 22px 'Fredoka'; display:block; } .play small{ font:800 10px 'Nunito'; color:#ffd8d8; }
+.goal{ margin:10px 0; padding:10px; border-radius:16px; background:#1e0f0b; border:2px solid #e9b94e; }
+.goal .h{ display:flex; justify-content:space-between; font:900 10px 'Nunito'; letter-spacing:.12em; text-transform:uppercase; color:#f1c257; }
+.goal b{ display:block; font:700 14px 'Fredoka'; margin:4px 0 6px; } .goal .bar{ height:8px; border-radius:6px; background:#000; overflow:hidden; } .goal .bar i{ display:block; height:100%; width:50%; background:linear-gradient(90deg, #f1c257, #ff8a00); }
+.goal .r{ display:flex; justify-content:space-between; margin-top:5px; font:800 10px 'Nunito'; color:#c9a3a3; } .goal .r em{ font-style:normal; color:#fff; display:flex; gap:4px; align-items:center; }
+.league{ margin:10px 0; height:120px; border-radius:18px; background:linear-gradient(160deg, #3a0000, #120000); border:2px solid #000; display:grid; place-items:center; font:700 18px 'Fredoka'; color:#ff4a4a; }
+.tb{ position:absolute; left:8px; right:8px; bottom:8px; height:46px; border-radius:18px; background:#1e0f0b; border:2px solid #000; display:flex; justify-content:space-around; align-items:center; z-index:10; } .tb i{ width:20px; height:20px; border-radius:6px; background:#4a3530; } .tb i.on{ background:#e00000; }
+
+/* end of the game */
+.dim{ position:absolute; inset:0; background:radial-gradient(70% 50% at 50% 30%, #2a0808, #070202); }
+.end{ position:absolute; left:12px; right:12px; top:60px; text-align:center; }
+.end .av{ width:52px; height:52px; margin:0 auto -14px; border-radius:50%; background:#5a3020; border:3px solid #000; position:relative; z-index:2; display:grid; place-items:center; font:700 18px 'Fredoka'; }
+.card{ border-radius:20px; padding:22px 14px 14px; border:2.5px solid #000; box-shadow:0 5px 0 #000; }
+.card.cream{ background:#fffaf0; color:#141210; }
+.card.dark{ background:linear-gradient(180deg, #2a0d0b, #160606); border-color:#000; color:#fff6f2; box-shadow:0 5px 0 #000, inset 0 0 0 1.5px #5a1a14; }
+.card .k{ font:900 10px 'Nunito'; letter-spacing:.24em; color:#ff4a4a; } .card.cream .k{ color:#141210; }
+.card h3{ font:700 21px/1.15 'Fredoka'; margin:4px 0; } .card p{ font:700 11.5px 'Nunito'; color:#8a7a70; font-style:italic; } .card.dark p{ color:#d9b9b9; }
+.why{ margin-top:10px; padding:9px 10px; border-radius:14px; background:#000; border:1.5px solid #5a1a14; text-align:left; font:800 11.5px/1.35 'Nunito'; color:#fff6f2; display:flex; gap:8px; align-items:flex-start; }
+.why .mc{ flex:none; width:30px; height:42px; border-radius:6px; background:#fffaf0; border:2px solid #000; display:grid; place-items:center; color:#c8283a; font:700 13px 'Fredoka'; }
+.why small{ display:block; color:#f1c257; font:900 9.5px 'Nunito'; letter-spacing:.14em; text-transform:uppercase; margin-bottom:2px; }
+.rep{ margin-top:10px; border-radius:16px; padding:10px; border:2.5px solid #000; text-align:left; } .rep.cream{ background:#fffaf0; color:#141210; } .rep.dark{ background:#1e0f0b; color:#fff6f2; }
+.rep .row{ display:flex; justify-content:space-between; font:800 12px 'Nunito'; } .rep .bar{ height:7px; border-radius:5px; background:#3a2a20; margin:6px 0; overflow:hidden; } .rep .bar i{ display:block; width:8%; height:100%; background:#e00000; }
+.btns{ margin-top:14px; display:grid; gap:8px; }
+.btn{ padding:12px; border-radius:16px; border:2.5px solid #000; box-shadow:0 4px 0 #000; font:700 15px 'Fredoka'; text-align:center; }
+.btn.green{ background:#2FB36B; color:#fff; } .btn.red{ background:linear-gradient(180deg, #ff2a2a, #e00000 55%, #a80000); color:#fff; } .btn.ghost{ background:#1e0f0b; color:#fff; }
+.btn2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.link{ font:800 11.5px 'Nunito'; color:#c9a3a3; text-decoration:underline; }
+
+/* collection */
+.ph{ display:flex; align-items:center; gap:8px; margin-bottom:8px; } .ph i{ width:30px; height:30px; border-radius:50%; background:#1e0f0b; border:2px solid #000; } .ph b{ font:700 18px 'Fredoka'; }
+.ctabs{ position:sticky; top:0; display:flex; gap:5px; padding:6px 0; background:#120606; z-index:5; overflow:hidden; }
+.ctabs span{ flex:none; padding:6px 10px; border-radius:12px; background:#1e0f0b; border:2px solid #000; font:900 11px 'Nunito'; color:#c9a3a3; } .ctabs span.on{ background:#e00000; color:#fff; }
+.ctabs span small{ font:800 9px 'Nunito'; opacity:.8; margin-left:3px; }
+.sec{ font:900 10px 'Nunito'; letter-spacing:.16em; text-transform:uppercase; color:#c9a3a3; margin:10px 0 6px; }
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.it{ border-radius:13px; background:#1e0f0b; border:2px solid #000; padding:6px; } .it .im{ height:52px; border-radius:9px; background:linear-gradient(160deg, #6a2a10, #2a0a05); margin-bottom:5px; } .it b{ display:block; font:800 10.5px 'Nunito'; } .it em{ display:inline-block; margin-top:4px; font-style:normal; padding:2px 8px; border-radius:8px; background:#fff; color:#111; font:900 9.5px 'Nunito'; } .it.on em{ background:#2FB36B; color:#fff; }
+.it .im.b{ background:linear-gradient(160deg, #10406a, #05152a); } .it .im.g{ background:linear-gradient(160deg, #1a6a30, #05250a); } .it .im.p{ background:linear-gradient(160deg, #5a1a6a, #1a052a); }
+.long{ color:#c9a3a3; font:800 11px 'Nunito'; text-align:center; margin-top:8px; }
+.note{ margin-top:16px; color:#c9a3a3; font-size:12.5px; line-height:1.5; } .note b{ color:#fff; }
+</style></head>
+<body>
+<h1><small>Maquette · à valider</small>Audit : lots 2 et 3</h1>
+<p class="lead">À gauche, le jeu aujourd’hui ; à droite, la proposition. Écran d’un iPhone SE (le plus petit). Les dispositions restent les mêmes : on ne change que ce qui gêne.</p>
+<div class="tabs" id="tabs"><div class="tab on" data-s="0">1. Accueil</div><div class="tab" data-s="1">2. Fin de partie</div><div class="tab" data-s="2">3. Collection</div><div class="tab" data-s="3">4. Objectif</div></div>
+<p class="what" id="what"></p>
+<div class="cmp" id="cmp"></div>
+<p class="note"><b>Rien n’est retiré :</b> la bande « sauvegarde ton compte », le classement, la League, le défi du jour, la leçon, les règles et la boîte à suggestions restent tous sur l’accueil, dans le même ordre. L’objectif du jour est un ajout ; ses récompenses (jetons) sont à régler avec toi.</p>
+<script>
+(()=>{
+const $ = id=> document.getElementById(id);
+const TB = '<div class="tb"><i class="on"></i><i></i><i></i><i></i><i></i></div>';
+const FOLD = '<div class="fold"><span>bas de l’écran</span></div>';
+const top = '<div class="top"><span class="pill"><i class="coin"></i>12 400</span><span class="pill">+300</span><span class="rnd"></span><span class="rnd"></span><span class="rnd"></span></div>';
+const S = [
+  { what:'<b>Le bouton « Jouer » visible dès l’ouverture.</b> Aujourd’hui, sur un petit téléphone, il est sous le bas de l’écran (ligne rouge). Proposition : l’installation et la sauvegarde du compte réunies dans une seule bande rouge (deux boutons), et le logo un peu plus petit.',
+    old: top+'<div class="band"><span class="ic">FF</span><span><b>Installe Fap Fap</b><small>Plein écran, et on te prévient quand on te dépasse</small></span><em>2 gestes</em></div><div class="logo">FAP FAP</div><div class="tag">Yaoundé · la nuit · les cartes</div><span class="beta">VERSION BÊTA</span><div class="acct"><span><b>Tu as beaucoup à perdre</b><small>Change de téléphone et tu perds tes 12 400 jetons et ta place.</small></span><em>Sauvegarder</em></div><div class="rank"><i></i><span><b>Toi</b><small>Nkolbisson · 10 points</small></span></div><div class="play"><span class="fc"><i></i><i></i><i></i></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div>'+FOLD+TB,
+    neu: top+'<div class="logo sm">FAP FAP</div><div class="tag">Yaoundé · la nuit · les cartes <span class="beta" style="display:inline-block;margin:0 0 0 4px">BÊTA</span></div><div class="band"><span class="ic">FF</span><span><b>Protège ta partie</b><small>12 400 jetons sur ce seul téléphone</small></span><em style="background:#ffd34a">Sauvegarder</em><em style="margin-left:4px">Installer</em></div><div class="rank"><i></i><span><b>Toi</b><small>Nkolbisson · 10 points</small></span></div><div class="play"><span class="fc"><i></i><i></i><i></i></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div><div class="league">FAP·FAP LEAGUE</div>'+FOLD+TB },
+  { what:'<b>L’écran de fin aux couleurs du jeu</b> (même disposition), avec une ligne qui explique <b>pourquoi</b> la partie est perdue (ou gagnée), et un bouton <b>« Autre adversaire »</b> à côté de la revanche, pour enchaîner sans repasser par l’accueil.',
+    old: '<div class="dim" style="background:#1a1430"></div><div class="end"><div class="av">R</div><div class="card cream"><div class="k">DÉFAITE</div><h3>RALL gagne la partie.</h3><p>« Comme d’habitude. Au suivant. » — RALL<br>(Ton bilan contre RALL : 0 victoire, 1 défaite.)</p></div><div class="rep cream"><div class="row"><span>Petit joueur</span><span>+20 réputation</span></div><div class="bar"><i></i></div><div class="row" style="font-size:10.5px"><span>Match joué</span><span>+20</span></div></div><div class="btns"><div class="btn green">⟲ Revanche</div><span class="link">Retour à l’accueil</span></div></div>',
+    neu: '<div class="dim"></div><div class="end"><div class="av">R</div><div class="card dark"><div class="k">DÉFAITE</div><h3>RALL gagne la partie.</h3><p>« Comme d’habitude. Au suivant. » — RALL<br>Contre RALL : 0 victoire, 1 défaite.</p><div class="why"><span class="mc">9♥</span><span><small>Pourquoi</small>RALL a gardé le contrôle avec le <b>9 de Coubie</b> : ton 4 était trop petit pour le reprendre.</span></div></div><div class="rep dark"><div class="row"><span>Petit joueur</span><span>+20 réputation</span></div><div class="bar"><i></i></div><div class="row" style="font-size:10.5px;color:#c9a3a3"><span>Match joué</span><span>+20</span></div></div><div class="btns"><div class="btn2"><div class="btn red">⟲ Revanche</div><div class="btn ghost">Autre adversaire</div></div><span class="link">Retour à l’accueil</span></div></div>' },
+  { what:'<b>Ma collection avec des onglets en haut</b> qui restent visibles : Tables, Effets, Cartes, Profil. Un toucher et on saute à la bonne partie, au lieu de faire défiler 5 écrans.',
+    old: '<div class="ph"><i></i><b>Ma collection</b></div><div class="sec">Mes tables · 12 / 17</div><div class="grid">'+'<div class="it"><div class="im"></div><b>Le tripot</b><em>Mettre</em></div><div class="it"><div class="im b"></div><b>Bar au néon</b><em>Mettre</em></div><div class="it"><div class="im g"></div><b>Le maquis</b><em>Mettre</em></div><div class="it on"><div class="im p"></div><b>Plage de Kribi</b><em>✓ Sur ta table</em></div><div class="it"><div class="im"></div><b>Club VIP</b><em>Mettre</em></div><div class="it"><div class="im b"></div><b>Rooftop</b><em>Mettre</em></div></div><p class="long">… puis les effets, les claques, les victoires, les dos de cartes, les faces, les cadres, les titres, les voix… (environ 5 écrans à faire défiler)</p>'+TB,
+    neu: '<div class="ph"><i></i><b>Ma collection</b></div><div class="ctabs"><span class="on">Tables<small>12</small></span><span>Effets<small>9</small></span><span>Cartes<small>8</small></span><span>Profil<small>6</small></span></div><div class="sec">Mes tables · 12 / 17</div><div class="grid"><div class="it"><div class="im"></div><b>Le tripot</b><em>Mettre</em></div><div class="it"><div class="im b"></div><b>Bar au néon</b><em>Mettre</em></div><div class="it"><div class="im g"></div><b>Le maquis</b><em>Mettre</em></div><div class="it on"><div class="im p"></div><b>Plage de Kribi</b><em>✓ Sur ta table</em></div><div class="it"><div class="im"></div><b>Club VIP</b><em>Mettre</em></div><div class="it"><div class="im b"></div><b>Rooftop</b><em>Mettre</em></div></div><p class="long">Les onglets restent collés en haut pendant qu’on fait défiler.</p>'+TB },
+  { what:'<b>Un objectif du jour sur l’accueil</b>, juste sous « Jouer » : une petite mission qui change chaque jour (gagner 2 parties, faire un CORA, jouer en ligne…), avec une barre de progression et des jetons à la clé. Une raison de revenir chaque jour.',
+    old: top+'<div class="logo sm">FAP FAP</div><div class="tag">Yaoundé · la nuit · les cartes</div><div class="rank"><i></i><span><b>Toi</b><small>Nkolbisson · 10 points</small></span></div><div class="play"><span class="fc"><i></i><i></i><i></i></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div><div class="league">FAP·FAP LEAGUE</div>'+TB,
+    neu: top+'<div class="logo sm">FAP FAP</div><div class="tag">Yaoundé · la nuit · les cartes</div><div class="rank"><i></i><span><b>Toi</b><small>Nkolbisson · 10 points</small></span></div><div class="play"><span class="fc"><i></i><i></i><i></i></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div><div class="goal"><div class="h"><span>Objectif du jour</span><span>encore 9 h</span></div><b>Gagne 2 parties</b><div class="bar"><i></i></div><div class="r"><span>1 / 2</span><em><i class="coin"></i>+300 jetons</em></div></div><div class="league" style="height:80px">FAP·FAP LEAGUE</div>'+TB }
+];
+function go(i){
+  document.querySelectorAll('#tabs .tab').forEach(t=> t.classList.toggle('on', +t.dataset.s===i));
+  $('what').innerHTML = S[i].what;
+  $('cmp').innerHTML = '<div><div class="lab">Aujourd’hui</div><div class="phone"><div class="scr">'+S[i].old+'</div></div></div><div><div class="lab new">Proposition</div><div class="phone"><div class="scr">'+S[i].neu+'</div></div></div>';
+}
+$('tabs').addEventListener('click', e=>{ const t = e.target.closest('[data-s]'); if(t) go(+t.dataset.s); });
+go(0);
+})();
+</script>
+</body></html>
