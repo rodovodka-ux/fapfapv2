@@ -1,6 +1,6 @@
 // Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v101';
+const CACHE = 'fapfap-v102';
 // persos.js carries the version in its name: a new game never meets the old faces still kept by the previous cache
 const CORE = ['./', './index.html', './persos.js?v=101','./manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
@@ -41,7 +41,7 @@ self.addEventListener('notificationclick', (event)=>{
     if(open){
       // a friend request opens the bell, a challenge opens the room
       // a reminder of Tout le quartier opens its ranking (an announcement just brings the game forward)
-      if(d.kind === 'rappel'){ if(/[?&]quartier=1\b/.test(url)) open.postMessage({type:'quartier'}); }
+      if(d.kind === 'rappel'){ if(/[?&]quartier=1\b/.test(url)) open.postMessage({type:'quartier'}); else if(/[?&]l16=1\b/.test(url)) open.postMessage({type:'l16'}); }
       else if(d.kind === 'msg') open.postMessage({type:'msg', from: d.from});
       else open.postMessage(d.kind === 'ami' ? {type:'amis'} : {type:'defi', code: d.code, name: d.name});
       return open.focus();

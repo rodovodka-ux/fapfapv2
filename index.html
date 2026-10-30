@@ -2907,6 +2907,62 @@
   .lg-live i{ font-style:normal; flex:none; padding:2px 6px; border-radius:6px; background:#e00000; font:800 9px 'Manrope', sans-serif; letter-spacing:.12em; }
   .lg-live b{ color:#f2c76a; }
   @media (prefers-reduced-motion: reduce){ .lg-shine{ animation:none; } }
+  /* v102 · the online League of 16 in evidence (his choice A + B): a poster under « Jouer », a ribbon on top, an invitation once a day */
+  #olHome#olHome.olh{ position:relative; display:block; width:100%; margin-top:12px; padding:14px; border-radius:22px !important; overflow:hidden; text-align:left; cursor:pointer; color:#fff !important; font:inherit;
+    background:radial-gradient(90% 70% at 100% 0%, rgba(255,40,40,.55), transparent 60%), radial-gradient(120% 90% at 0% 120%, #3c0000, #120202 60%) !important;
+    border:2.5px solid #000 !important; box-shadow:0 6px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.4) !important; }
+  #olHome.olh.hidden, .olh-rib.hidden{ display:none !important; }
+  .olh::before{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(100deg, transparent 0 28px, rgba(255,255,255,.035) 28px 56px); pointer-events:none; }
+  .olh > *{ position:relative; }
+  .olh-live{ display:inline-flex; align-items:center; gap:6px; padding:4px 9px 4px 7px; border-radius:8px; background:#e00000; border:1.5px solid #000; font:800 10px 'Manrope', sans-serif; letter-spacing:.14em; color:#fff; text-transform:uppercase; }
+  .olh-live i{ width:7px; height:7px; border-radius:50%; background:#fff; animation:olhBlink 1.2s ease-in-out infinite; } @keyframes olhBlink{ 50%{ opacity:.2; } }
+  .olh h3{ margin:9px 0 2px; font:800 22px/1.05 'Unbounded', sans-serif; color:#fff; } .olh h3 em{ font-style:normal; color:#f2c76a; }
+  .olh-sub{ display:block; font:700 12.5px/1.35 'Manrope', sans-serif; color:#f0caca; margin:0 0 10px; }
+  .olh-seats{ display:grid; grid-template-columns:repeat(8, 1fr); gap:5px; margin:4px 0 8px; }
+  .olh-seat{ aspect-ratio:1; border-radius:50%; border:2px solid #000; display:grid; place-items:center; font:900 11px 'Nunito', sans-serif; color:#2b0b05; overflow:hidden; }
+  .olh-seat.free{ background:rgba(255,255,255,.06); border:1.5px dashed rgba(242,199,106,.55); color:rgba(242,199,106,.7); }
+  .olh-seat.you{ background:transparent; border:2px solid #f2c76a; color:#f2c76a; font-size:10px; animation:olhPulse 1.6s ease-in-out infinite; } @keyframes olhPulse{ 50%{ box-shadow:0 0 0 4px rgba(242,199,106,.25); } }
+  .olh-count{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; font:800 12px 'Manrope', sans-serif; margin-bottom:10px; }
+  .olh-count b{ font:800 20px 'Unbounded', sans-serif; } .olh-count b small{ font:700 11px 'Manrope', sans-serif; color:#c9a9a9; } .olh-count > span{ color:#f2c76a; text-align:right; }
+  .olh-pot{ display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:14px; background:rgba(0,0,0,.45); margin-bottom:11px; }
+  .olh-pot .olh-coin{ width:22px; height:22px; flex:none; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe9a8, #f2c76a 50%, #a87a24); border:1.5px solid #6b4a10; }
+  .olh-pot > span:not(.olh-coin){ flex:1; font:700 11.5px/1.3 'Manrope', sans-serif; color:#e8cfcf; } .olh-pot b{ font:800 16px 'Unbounded', sans-serif; color:#f2c76a; white-space:nowrap; }
+  .olh-cta{ display:block; text-align:center; padding:13px 10px; border-radius:16px; border:2.5px solid #000; box-shadow:0 4px 0 #000; background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02; font:900 16px 'Nunito', sans-serif; }
+  .olh-cta small{ display:block; font:800 11px 'Nunito', sans-serif; opacity:.75; }
+  .olh-cta.red{ background:linear-gradient(180deg,#ff2a2a,#e00000 55%,#a80000); color:#fff; }
+  .olh-vs{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; border-radius:16px; background:rgba(0,0,0,.45); margin:6px 0 11px; }
+  .olh-who{ flex:1; min-width:0; text-align:center; font:800 12px 'Manrope', sans-serif; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .olh-who .olh-seat{ width:46px; margin:0 auto 4px; font-size:15px; } .olh-who small{ display:block; font:700 10.5px 'Manrope', sans-serif; color:#c9a9a9; }
+  .olh-x{ font:800 16px 'Unbounded', sans-serif; color:#f2c76a; }
+  .olh-timer{ display:block; text-align:center; font:800 12px 'Manrope', sans-serif; color:#ffd1d1; margin:-3px 0 10px; } .olh-timer b{ color:#fff; }
+  .olh-rib{ display:flex; align-items:center; gap:8px; width:100%; margin:0 0 10px; padding:9px 11px; border-radius:14px; text-align:left; cursor:pointer; font:800 12.5px 'Manrope', sans-serif; color:#fff;
+    background:linear-gradient(90deg,#e00000,#8f0000); border:2px solid #000; box-shadow:0 3px 0 #000; }
+  .olh-rib b{ color:#ffe08f; } .olh-rib em{ margin-left:auto; font-style:normal; font:900 18px 'Nunito', sans-serif; }
+  .olh-rib .olh-live{ background:#fff; color:#e00000; } .olh-rib .olh-live i{ background:#e00000; }
+  .olh-sheet .v3-sheet{ background:linear-gradient(180deg,#2a0606,#140303); color:#fff; border-top:2.5px solid #000; box-shadow:0 -8px 30px rgba(0,0,0,.6), inset 0 1.5px 0 rgba(242,199,106,.4); padding-top:12px; }
+  .olh-sheet .v3-grip{ background:rgba(255,255,255,.25); }
+  .olh-sheet h3{ margin:8px 0 4px; font:800 19px/1.15 'Unbounded', sans-serif; color:#fff; } .olh-sheet h3 em{ font-style:normal; color:#f2c76a; }
+  .olh-sheet p{ margin:0 0 12px; color:#ebd0d0; font:600 13px/1.4 'Manrope', sans-serif; }
+  .olh-stack{ display:flex; align-items:center; gap:10px; margin:2px 0 12px; } .olh-stack > span:first-child{ display:flex; } .olh-stack .olh-seat{ width:34px; margin-left:-9px; } .olh-stack .olh-seat:first-child{ margin-left:0; }
+  .olh-stack small{ font:700 12px/1.3 'Manrope', sans-serif; color:#e8cfcf; } .olh-stack small b{ color:#fff; }
+  .olh-later{ display:block; width:100%; margin-top:10px; padding:8px; background:none; border:0; font:800 13px 'Nunito', sans-serif; color:#b99; cursor:pointer; }
+  @media (prefers-reduced-motion: reduce){ .olh-live i, .olh-seat.you{ animation:none; } }
+  /* the themes force their text colours on the home screen and the sheets: the poster keeps its own (same trick as #playPage) */
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olRib, #olhSheet) :is(h3, .olh-who, .olh-count b, .olh-live, .olh-timer b, .olh-stack small b){ color:#fff !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) :is(h3 em, .olh-pot b, .olh-count > span, .olh-x){ color:#f2c76a !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) :is(.olh-sub, .olh-pot > span:not(.olh-coin), .olh-stack small, p){ color:#ebd0d0 !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) :is(.olh-count b small, .olh-who small){ color:#c9a9a9 !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-timer{ color:#ffd1d1 !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-seat{ color:#2b0b05 !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-seat.free, body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-seat.you{ color:#f2c76a !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-cta{ color:#2b1a02 !important; } body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-cta.red{ color:#fff !important; }
+  body:not(#z):not(#y):not(#x) #olRib{ color:#fff !important; background:linear-gradient(90deg,#e00000,#8f0000) !important; border:2px solid #000 !important; box-shadow:0 3px 0 #000 !important; border-radius:14px !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-live{ background:#e00000 !important; } body:not(#z):not(#y):not(#x) #olRib .olh-live{ background:#fff !important; } body:not(#z):not(#y):not(#x) #olRib b{ color:#ffe08f !important; } body:not(#z):not(#y):not(#x) #olRib .olh-live{ color:#e00000 !important; }
+  body:not(#z):not(#y):not(#x) #olhSheet .olh-later{ color:#b99 !important; }
+  body:not(#z):not(#y):not(#x) #olHome#olHome.olh{ background:radial-gradient(90% 70% at 100% 0%, rgba(255,40,40,.55), transparent 60%), radial-gradient(120% 90% at 0% 120%, #3c0000, #120202 60%) !important;
+    border:2.5px solid #000 !important; box-shadow:0 6px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.4) !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-cta small{ color:#5a3a08 !important; opacity:1; } body:not(#z):not(#y):not(#x) :is(#olHome, #olhSheet) .olh-cta.red small{ color:#ffd9d9 !important; }
+  body:not(#z):not(#y):not(#x) :is(#olHome, #olRib, #olhSheet .v3-sheet){ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
   /* v89: a player's sheet shows their numbers and their three best strengths */
   #playerSheet, #friendInviteOverlay{ z-index:1200; } /* above the League and the quarter: a sheet opened there, an invitation to a League match received there */
   body:not(#z):not(#y):not(#x) #playerSheet .ps-sheet{ background:linear-gradient(180deg, color-mix(in srgb, var(--d-mango, #e0313f) 18%, #140606), #0e0404 40%) !important; border:2.5px solid #000 !important; box-shadow:0 10px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.25) !important; color:#fff6f2 !important; }
@@ -4990,6 +5046,8 @@
     </div>
     <!-- v90/v92: one red band under the logo: install the game, save the account, or both (filled by homeBand) -->
     <button class="inst-band hidden" id="instBand"></button>
+    <!-- v102 (his choice A + B): the online League's ribbon, at the very top while seats are free -->
+    <button class="olh-rib hidden" id="olRib"></button>
 
     <section class="og-king" id="ogKing" aria-label="Le Masque">
       <div class="og-king-head" id="ogHead" role="button" tabindex="0" aria-label="Le Masque"></div>
@@ -5007,6 +5065,8 @@
       <span class="hero-text"><b>Jouer</b><small>Route du quartier · Ami en ligne · Carré la Pute</small></span>
       <span class="gl-chev"><svg class="i" aria-hidden="true"><use href="#i-chev"/></svg></span>
     </button>
+    <!-- v102: the online League of 16, its own big poster right under « Jouer » (filled by olHomeRender) -->
+    <button class="olh hidden" id="olHome"></button>
     <!-- v92 (audit, lot 3): the goal of the day, a small mission that changes at midnight -->
     <button class="day-goal hidden" id="dayGoal"></button>
 
@@ -14428,7 +14488,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v101';
+  const APP_VERSION = 'v102';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -16872,10 +16932,118 @@
     $id('zhOverlay').classList.remove('hidden'); ZH.open = true;
     zhSendChips(); if(window.l16Home) window.l16Home(true);
   }
+  // v101: straight to the online League (the daily reminder's link): the frame's « hello » asks for it once it is loaded
+  function zhOpenOnline(){
+    const fresh = !$id('zhFrame').getAttribute('src');
+    ZH.wantOnline = fresh; zhOpen();
+    if(!fresh) zhPost({zh:'online'});
+  }
+  window.zhOpenOnline = zhOpenOnline;
   function zhClose(){ $id('zhOverlay').classList.add('hidden'); ZH.open = false; renderChips(); renderMenuRank(); renderLeagueHome(); announceStoryOpps(); }
   document.getElementById('btnLeague').addEventListener('click', ()=>{ ensureAudio(); zhOpen(); });
+  // ---- v102 (his choice A + B): the online League of 16 in evidence on the home screen ----
+  // A: its own poster under « Jouer » (the 16 seats filling up, the pot, a big button), straight to the online League;
+  // B: a red ribbon on top while seats are free, and an invitation sheet once a day. All read from the last L16 state.
+  const OLH_COL = ['#f2c76a','#8fd3ff','#ff9db0','#9be7a9','#d7b8ff','#ffb46b'];
+  const olhSeat = (p, cls)=>{ const n = String((p && p.name) || '?').trim(), c = OLH_COL[[...String((p && p.uid) || n)].reduce((s, ch)=> s + ch.charCodeAt(0), 0) % OLH_COL.length];
+    return '<span class="olh-seat'+(cls ? ' '+cls : '')+'" style="background:'+c+'">'+escHtml((n.charAt(0) || '?').toUpperCase())+'</span>'; };
+  const olhFmt = n=> String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const olhEl = id=> document.getElementById(id); // ($id is declared further down the file)
+  // where the player stands: 'match' (a match to play now), 'running' (in a League, nothing to play), 'joined', 'open', 'live', or null
+  function olhState(){
+    const L = window.l16Get && window.l16Get(); if(!L) return null;
+    const me = L.me, lg = L.league;
+    if(lg && lg.status!=='done'){
+      const next = (lg.matches || []).find(m=> m.status==='todo' && (m.a===me || m.b===me) && !m.mine_sent && new Date(m.opens) <= new Date());
+      return {k: next ? 'match' : 'running', L, lg, next};
+    }
+    if(L.open) return {k: L.open.joined ? 'joined' : 'open', L, o:L.open};
+    if(L.live && L.live.leader) return {k:'live', L};
+    return null;
+  }
+  function olHomeRender(){
+    const card = olhEl('olHome'), rib = olhEl('olRib'); if(!card || !rib) return;
+    const st = olhState();
+    let h = '';
+    if(st && (st.k==='open' || st.k==='joined')){
+      const o = st.o, n = o.count|0, left = Math.max(0, 16 - n), pot = 20000 + 2000 * n, pl = o.players || [];
+      let seats = pl.slice(0, 16).map(p=> olhSeat(p, p.uid===st.L.me ? 'me' : '')).join('');
+      if(st.k==='open' && n < 16) seats += '<span class="olh-seat you">Toi</span>';
+      for(let i = n + (st.k==='open' ? 1 : 0); i < 16; i++) seats += '<span class="olh-seat free">?</span>';
+      h = '<span class="olh-live"><i></i>'+(st.k==='joined' ? 'Tu es inscrit' : 'En ligne · vrais joueurs')+'</span>'
+        +'<h3>LEAGUE <em>#'+o.n+'</em></h3>'
+        +'<span class="olh-sub">'+(st.k==='joined' ? 'Elle démarre dès qu’elle est pleine. Invite tes amis pour aller plus vite.' : '16 joueurs, un seul roi. Les 3 premiers gagnent la cagnotte.')+'</span>'
+        +'<span class="olh-seats">'+seats+'</span>'
+        +'<span class="olh-count"><b>'+n+'<small> / 16 inscrits</small></b><span>'+(left ? 'plus que '+left+' place'+(left>1 ? 's' : '') : 'complet')+'</span></span>'
+        +'<span class="olh-pot"><span class="olh-coin"></span><span>La cagnotte grossit à chaque inscrit</span><b>'+olhFmt(pot)+'</b></span>'
+        +(st.k==='joined' ? '<span class="olh-cta red">Voir les inscrits</span>' : '<span class="olh-cta">Je prends ma place<small>2 000 jetons · ils vont dans la cagnotte</small></span>');
+    } else if(st && (st.k==='match' || st.k==='running')){
+      const lg = st.lg, me = (lg.players || []).find(p=> p.uid===st.L.me) || {}, grp = me.grp;
+      const where = 'LEAGUE <em>#'+lg.n+'</em>'+(lg.status==='groups' && grp!=null ? ' · Poule '+'ABCD'[grp] : '');
+      if(st.k==='match'){
+        const m = st.next, oppId = m.a===st.L.me ? m.b : m.a, opp = (lg.players || []).find(p=> p.uid===oppId) || {name:'Ton adversaire'};
+        const hrs = Math.max(0, Math.ceil((new Date(m.deadline) - Date.now()) / 3600e3)), on = typeof Lobby!=='undefined' && Lobby.online && Lobby.online.has(oppId);
+        h = '<span class="olh-live"><i></i>Ton match t’attend</span><h3>'+where+'</h3>'
+          +'<span class="olh-vs"><span class="olh-who">'+olhSeat({uid:st.L.me, name:(prefs.name||'Toi')})+'Toi</span><span class="olh-x">VS</span><span class="olh-who">'+olhSeat(opp)+escHtml(opp.name||'')+'<small>'+(on ? '● en ligne' : 'pas en ligne')+'</small></span></span>'
+          +'<span class="olh-timer">Il te reste <b>'+hrs+' h</b> pour jouer ce match</span>'
+          +'<span class="olh-cta red">Jouer maintenant</span>';
+      } else {
+        h = '<span class="olh-live"><i></i>Ta League est en cours</span><h3>'+where+'</h3>'
+          +'<span class="olh-sub">Tes matchs de ce tour sont joués. Le tour suivant s’ouvre dès que les autres ont fini.</span>'
+          +'<span class="olh-cta red">Voir le classement</span>';
+      }
+    } else if(st && st.k==='live'){
+      const lv = st.L.live;
+      h = '<span class="olh-live"><i></i>En direct</span><h3>LEAGUE <em>#'+lv.n+'</em></h3>'
+        +'<span class="olh-sub"><b style="color:#f2c76a">'+escHtml(lv.leader.name||'')+'</b> est en tête. La prochaine League ouvre ses inscriptions juste après.</span>'
+        +'<span class="olh-cta red">Regarder la League</span>';
+    }
+    card.innerHTML = h; card.classList.toggle('hidden', !h);
+    // B: the ribbon, only while you can still take a seat
+    const ribOn = st && st.k==='open' && (st.o.count|0) < 16, left = ribOn ? 16 - (st.o.count|0) : 0;
+    rib.innerHTML = ribOn ? '<span class="olh-live"><i></i>Live</span><span>League en ligne · <b>plus que '+left+' place'+(left>1 ? 's' : '')+'</b></span><em>›</em>' : '';
+    rib.classList.toggle('hidden', !ribOn);
+    // the old line on the neighbourhood League's card said the same thing: the poster carries it now
+    const live = olhEl('lgHomeLive'); if(live && h) live.classList.add('hidden');
+    if(ribOn) olhInviteSoon();
+  }
+  // B: the invitation sheet, once a day, on the home screen only, never over another window
+  let olhInvT = 0;
+  function olhInviteSoon(){ if(!olhInvT) olhInvT = setTimeout(olhInvite, 6000); }
+  function olhInvite(){
+    olhInvT = 0;
+    const day = new Date().toISOString().slice(0, 10);
+    let seen = ''; try{ seen = localStorage.getItem('fapfap_l16_inv') || ''; }catch(e){}
+    if(seen===day) return;
+    const st = olhState(); if(!st || st.k!=='open' || (st.o.count|0) >= 16) return;
+    if(!inHome() || (typeof QZ!=='undefined' && QZ.open) || ZH.open || (typeof PV!=='undefined' && PV.open) || document.querySelector('.v3-sheet-wrap.on')){ olhInvT = setTimeout(olhInvite, 4000); return; }
+    const busy = document.getElementById('launch') || ['ageGate','betaNote','sugg','pvOverlay'].some(id=>{ const el = document.getElementById(id); return el && !el.classList.contains('hidden'); });
+    if(busy){ olhInvT = setTimeout(olhInvite, 4000); return; }
+    try{ localStorage.setItem('fapfap_l16_inv', day); }catch(e){}
+    const o = st.o, n = o.count|0, left = 16 - n, pl = (o.players || []).slice().reverse();
+    const qn = typeof profile.quartier==='number' && QUARTIERS[profile.quartier];
+    const who = pl.length ? '<b>'+pl.slice(0, 2).map(p=> escHtml(p.name||'')).join(', ')+'</b>'+(pl.length > 2 ? ' et '+(pl.length - 2)+' autre'+(pl.length - 2>1 ? 's' : '') : '')+(pl.length>1 ? ' sont inscrits' : ' est inscrit') : 'Sois le premier inscrit';
+    let sh = olhEl('olhSheet');
+    if(!sh){ sh = document.createElement('div'); sh.id = 'olhSheet'; sh.className = 'v3-sheet-wrap olh-sheet'; document.body.appendChild(sh);
+      sh.addEventListener('click', e=>{
+        if(e.target.closest('[data-go]')){ sh.classList.remove('on'); ensureAudio(); zhOpenOnline(); }
+        else if(e.target.closest('[data-close]')) sh.classList.remove('on');
+      }); }
+    sh.innerHTML = '<div class="v3-dim" data-close="1"></div><div class="v3-sheet"><span class="v3-grip"></span>'
+      +'<span class="olh-live"><i></i>League en ligne #'+o.n+'</span>'
+      +'<h3>'+(qn ? escHtml(qn)+' a besoin de toi' : escHtml((prefs.name||'').trim() || 'Champion')+', on t’attend')+' <em>ce soir</em></h3>'
+      +'<p>16 vrais joueurs, chacun pour son quartier. Les 3 premiers se partagent la cagnotte.</p>'
+      +'<div class="olh-stack"><span>'+pl.slice(0, 4).map(p=> olhSeat(p)).join('')+'</span><small>'+who+'</small></div>'
+      +'<div class="olh-pot"><span class="olh-coin"></span><span>À gagner · plus que '+left+' place'+(left>1 ? 's' : '')+'</span><b>'+olhFmt(20000 + 2000 * n)+'</b></div>'
+      +'<button class="olh-cta" data-go="1" style="width:100%">Je m’inscris · 2 000</button>'
+      +'<button class="olh-later" data-close="1">Plus tard</button></div>';
+    sh.classList.add('on');
+  }
+  olhEl('olHome').addEventListener('click', ()=>{ ensureAudio(); zhOpenOnline(); });
+  olhEl('olRib').addEventListener('click', ()=>{ ensureAudio(); zhOpenOnline(); });
   // the home card tells where the player's season stands (read from the League's own save)
   function renderLeagueHome(){
+    try{ olHomeRender(); }catch(e){}
     // v89: the online League of 16 on the card — your next match, or who leads, or how many seats are left
     try{
       const L = window.l16Get && window.l16Get(), live = document.getElementById('lgHomeLive');
@@ -17146,12 +17314,12 @@
   window.qzHomeShown = qzHomeShown; window.qzKingCheck = qzKingCheck; window.qzOpen = qOpen;
   // a notification of the quarter (or ?quartier=1) opens the page
   // (after the start: the cloud's constants are declared further down)
-  setTimeout(()=>{ if(/[?&]quartier=1\b/.test(location.search)) qOpen(); else if(inHome()) qzHomeShown(); }, 1500);
+  setTimeout(()=>{ if(/[?&]quartier=1\b/.test(location.search)) qOpen(); else if(/[?&]l16=1\b/.test(location.search)) zhOpenOnline(); else if(inHome()) qzHomeShown(); }, 1500);
   window.addEventListener('message', e=>{
     const f = $id('zhFrame');
     if(e.origin!==location.origin || !f || e.source!==f.contentWindow) return;
     const d = e.data || {};
-    if(d.zh==='hello') zhSendChips();
+    if(d.zh==='hello'){ zhSendChips(); if(ZH.wantOnline){ ZH.wantOnline = false; zhPost({zh:'online'}); } }
     // money only moves in round amounts, never more than a million at once
     if(d.zh==='tx'){ const n = Math.max(-1e6, Math.min(1e6, Math.round(+d.amount||0))); if(n) chipsAdd(n); zhSendChips(); }
     if(d.zh==='set'){ const n = Math.max(0, Math.min(1e6, Math.round(+d.chips||0))); if(profile.chips==null) chipsInit(); chipsAdd(n - profile.chips); zhSendChips(); }
@@ -18718,6 +18886,7 @@
       // v99: a message notification opens the conversation
       if(d.type==='msg'){ const f = friendList().find(x=> x.id===d.from); if(f && !inGame() && !mpNet) openChat(f); else bellRefresh(); }
       if(d.type==='quartier' && !inGame() && !mpNet && window.qzOpen) window.qzOpen();
+      if(d.type==='l16' && !inGame() && !mpNet && window.zhOpenOnline) window.zhOpenOnline();
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
     });
   }

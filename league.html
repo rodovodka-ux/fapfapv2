@@ -615,6 +615,8 @@ window.addEventListener('message', e=>{
   if(d.zh==='door') doorPaint(d);
   if(d.zh==='result' && pending && d.id===pending.id){ const p = pending; pending = null; $('wait').classList.remove('on'); p.done(d); }
   if(d.zh==='back') goBack();
+  // v101: the daily reminder (or a tap on the online League elsewhere in the game) opens straight on it
+  if(d.zh==='online') setTimeout(()=> $('toOnline').click(), 50);
 });
 function paintChips(){ ['chips','chips2'].forEach(id=>{ if($(id)) $(id).textContent = chips==null ? '—' : fmt(chips); }); }
 function pay(n, why){ if(!n) return; if(host) post({zh:'tx', amount:n}); else if(chips!=null){ chips += n; paintChips(); } }
