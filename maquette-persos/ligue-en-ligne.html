@@ -1,0 +1,217 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>League en ligne · maquette</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;700;800&family=Manrope:wght@600;700;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<style>
+:root{ --red:#e00000; --gold:#f2c76a; --ink:#000; --bg:#120404; --mute:#c9a9a9; }
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:#fff; font:600 14px/1.4 'Manrope', system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+.wrap{ max-width:430px; margin:0 auto; padding:14px 16px 40px; }
+h1{ font:800 19px 'Unbounded', sans-serif; margin:4px 0 4px; }
+.intro{ color:var(--mute); font-size:13px; margin:0 0 12px; }
+.tabs{ position:sticky; top:0; z-index:5; display:flex; gap:6px; padding:8px 0; background:var(--bg); }
+.tabs button{ flex:1; border:2px solid #000; border-radius:12px; padding:9px 4px; background:#2a0d0b; color:#fff; font:900 13px 'Nunito', sans-serif; box-shadow:0 3px 0 #000; cursor:pointer; }
+.tabs button.on{ background:var(--red); }
+.opt{ display:none; } .opt.on{ display:block; }
+.say{ background:#1f0909; border:1px solid #3a1414; border-radius:14px; padding:11px 12px; margin:10px 0 14px; font-size:13px; color:#ead6d6; }
+.say b{ color:var(--gold); }
+.lbl{ font:800 10.5px 'Manrope', sans-serif; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin:18px 0 8px; }
+
+/* the phone */
+.phone{ position:relative; border-radius:30px; border:3px solid #2b2b2b; background:radial-gradient(120% 60% at 20% 0%, #3a2212 0%, #160707 55%, #0b0303 100%); overflow:hidden; padding:14px 12px 76px; min-height:560px; }
+.topbar{ display:flex; gap:6px; align-items:center; margin-bottom:10px; }
+.pill{ display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.55); border:2px solid #000; font:900 13px 'Nunito', sans-serif; }
+.coin{ width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe9a8, #f2c76a 50%, #a87a24); border:1.5px solid #6b4a10; display:inline-block; flex:none; }
+.logo{ text-align:center; font:900 34px 'Nunito', sans-serif; letter-spacing:.04em; color:#ffe1a0; text-shadow:0 3px 0 #000, 0 0 18px rgba(255,190,90,.45); margin:6px 0 10px; }
+.btn-play{ display:flex; align-items:center; gap:10px; padding:14px; border-radius:20px; background:linear-gradient(170deg,#ff3d3d,#d40000); border:2.5px solid #000; box-shadow:0 5px 0 #000; }
+.btn-play b{ font:900 26px 'Nunito', sans-serif; text-shadow:0 2px 0 #000; } .btn-play small{ display:block; font:800 12px 'Nunito'; color:#ffe1e1; }
+.faces{ display:flex; } .faces .av{ margin-left:-10px; } .faces .av:first-child{ margin-left:0; }
+.av{ width:38px; height:38px; border-radius:50%; border:2.5px solid #000; display:grid; place-items:center; font:900 14px 'Nunito', sans-serif; color:#2b0b05; flex:none; }
+.ghostcard{ margin-top:12px; padding:12px; border-radius:18px; background:rgba(0,0,0,.35); border:2px dashed rgba(255,255,255,.12); color:#8d7070; font:800 12px 'Nunito'; text-align:center; }
+.tabbar{ position:absolute; left:10px; right:10px; bottom:10px; display:flex; justify-content:space-around; padding:9px 6px; border-radius:20px; background:#1a1212; border:2px solid #000; font:800 10px 'Nunito'; color:#a99; }
+.tabbar span{ position:relative; text-align:center; } .tabbar span.on{ color:#fff; }
+.tabbar .dot{ position:absolute; top:-9px; right:-12px; min-width:16px; height:16px; padding:0 4px; border-radius:8px; background:var(--red); border:1.5px solid #000; color:#fff; font:900 9.5px/13px 'Nunito'; }
+
+/* A: the big online League poster */
+.ol{ position:relative; margin-top:14px; border-radius:22px; overflow:hidden; border:2.5px solid #000; box-shadow:0 6px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.4);
+  background:radial-gradient(90% 70% at 100% 0%, rgba(255,40,40,.55), transparent 60%), radial-gradient(120% 90% at 0% 120%, #3c0000, #120202 60%); padding:14px 14px 14px; }
+.ol::before{ content:''; position:absolute; inset:0; background:repeating-linear-gradient(100deg, transparent 0 28px, rgba(255,255,255,.035) 28px 56px); pointer-events:none; }
+.live{ display:inline-flex; align-items:center; gap:6px; padding:4px 9px 4px 7px; border-radius:8px; background:var(--red); border:1.5px solid #000; font:800 10px 'Manrope'; letter-spacing:.14em; }
+.live i{ width:7px; height:7px; border-radius:50%; background:#fff; animation:blink 1.2s ease-in-out infinite; } @keyframes blink{ 50%{ opacity:.2; } }
+.ol h2{ position:relative; margin:9px 0 2px; font:800 22px/1.05 'Unbounded', sans-serif; }
+.ol h2 em{ font-style:normal; color:var(--gold); }
+.ol .sub{ position:relative; font:700 12.5px 'Manrope'; color:#f0caca; margin:0 0 10px; }
+.seats{ position:relative; display:grid; grid-template-columns:repeat(8, 1fr); gap:5px; margin:4px 0 8px; }
+.seat{ aspect-ratio:1; border-radius:50%; border:2px solid #000; display:grid; place-items:center; font:900 11px 'Nunito'; color:#2b0b05; }
+.seat.free{ background:rgba(255,255,255,.06); border:1.5px dashed rgba(242,199,106,.55); color:rgba(242,199,106,.7); }
+.seat.you{ background:transparent; border:2px solid var(--gold); color:var(--gold); animation:pulse 1.6s ease-in-out infinite; } @keyframes pulse{ 50%{ box-shadow:0 0 0 4px rgba(242,199,106,.25); } }
+.count{ position:relative; display:flex; justify-content:space-between; align-items:baseline; font:800 12px 'Manrope'; margin-bottom:10px; }
+.count b{ font:800 20px 'Unbounded'; } .count b small{ font:700 11px 'Manrope'; color:var(--mute); }
+.count .left{ color:var(--gold); }
+.pot{ position:relative; display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:14px; background:rgba(0,0,0,.45); margin-bottom:11px; }
+.pot span:not(.coin){ flex:1; font:700 11.5px/1.3 'Manrope'; color:#e8cfcf; } .pot b{ font:800 16px 'Unbounded'; color:var(--gold); white-space:nowrap; }
+.cta{ position:relative; display:block; width:100%; text-align:center; padding:13px 10px; border-radius:16px; border:2.5px solid #000; box-shadow:0 4px 0 #000;
+  background:linear-gradient(180deg,#ffe6a6,#f2c76a 55%,#c9973b); color:#2b1a02; font:900 16px 'Nunito'; }
+.cta small{ display:block; font:800 11px 'Nunito'; opacity:.75; }
+.cta.red{ background:linear-gradient(180deg,#ff2a2a,#e00000 55%,#a80000); color:#fff; }
+.vsrow{ position:relative; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; border-radius:16px; background:rgba(0,0,0,.45); margin:6px 0 11px; }
+.vsrow .who{ text-align:center; flex:1; font:800 12px 'Manrope'; } .vsrow .who .av{ margin:0 auto 4px; width:46px; height:46px; }
+.vsrow .x{ font:800 16px 'Unbounded'; color:var(--gold); } .vsrow .t{ display:block; font:700 10.5px 'Manrope'; color:var(--mute); }
+.timer{ position:relative; text-align:center; font:800 12px 'Manrope'; color:#ffd1d1; margin:-3px 0 10px; } .timer b{ color:#fff; }
+.offline{ margin-top:12px; display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:16px; background:#140606; border:2px solid #000; box-shadow:0 4px 0 #000; }
+.offline b{ display:block; font:900 14px 'Nunito'; } .offline small{ font:700 11px 'Manrope'; color:var(--mute); }
+.offline .ec{ width:34px; height:40px; flex:none; border-radius:6px 6px 14px 14px; background:linear-gradient(90deg,#e00000 0 38%,#111 38% 62%,#e00000 62%); border:2px solid #000; }
+.offline em{ margin-left:auto; font-style:normal; font:900 18px 'Nunito'; color:var(--gold); }
+
+/* B: the ribbon and the invitation */
+.ribbon{ display:flex; align-items:center; gap:8px; padding:9px 11px; border-radius:14px; background:linear-gradient(90deg,#e00000,#8f0000); border:2px solid #000; box-shadow:0 3px 0 #000; font:800 12.5px 'Manrope'; margin-bottom:10px; }
+.ribbon b{ color:#ffe08f; } .ribbon em{ margin-left:auto; font-style:normal; font:900 18px 'Nunito'; }
+.dim{ position:absolute; inset:0; background:rgba(0,0,0,.62); }
+.sheet{ position:absolute; left:0; right:0; bottom:0; padding:16px 16px 20px; border-radius:24px 24px 0 0; background:linear-gradient(180deg,#2a0606,#140303); border-top:2.5px solid #000; box-shadow:0 -8px 30px rgba(0,0,0,.6), inset 0 1.5px 0 rgba(242,199,106,.4); }
+.grip{ display:block; width:42px; height:5px; border-radius:3px; background:rgba(255,255,255,.25); margin:0 auto 12px; }
+.sheet h3{ margin:8px 0 4px; font:800 19px/1.15 'Unbounded'; } .sheet h3 em{ font-style:normal; color:var(--gold); }
+.sheet p{ margin:0 0 12px; color:#ebd0d0; font-size:13px; }
+.later{ display:block; text-align:center; margin-top:10px; font:800 13px 'Nunito'; color:#b99; }
+.stack{ display:flex; align-items:center; gap:10px; margin:2px 0 12px; } .stack small{ font:700 12px 'Manrope'; color:#e8cfcf; } .stack small b{ color:#fff; }
+
+/* C: the two doors of the League, and the Play screen */
+.head{ display:flex; align-items:center; gap:10px; font:900 22px 'Nunito'; margin-bottom:12px; } .head i{ width:34px; height:34px; border-radius:50%; background:#000; display:grid; place-items:center; font-style:normal; }
+.doors{ display:grid; gap:10px; }
+.door{ position:relative; border-radius:20px; border:2.5px solid #000; box-shadow:0 5px 0 #000; padding:14px; overflow:hidden; }
+.door.on{ background:radial-gradient(90% 80% at 100% 0%, rgba(255,40,40,.6), transparent 60%), #1c0303; box-shadow:0 5px 0 #000, inset 0 0 0 1.5px rgba(242,199,106,.5); }
+.door.off{ background:#160909; }
+.door .k{ font:800 10px 'Manrope'; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+.door b{ display:block; font:800 18px/1.15 'Unbounded'; margin:6px 0 4px; } .door p{ margin:0; font-size:12.5px; color:#e3c7c7; }
+.door .tagbig{ position:absolute; right:12px; top:12px; }
+.modes{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
+.modes div{ text-align:center; padding:9px 2px 7px; border-radius:14px; background:#2a0d0b; border:2px solid #000; box-shadow:0 3px 0 #000; font:900 11px 'Nunito'; } .modes div i{ display:block; font-style:normal; font-size:15px; }
+.modes div.hot{ background:var(--red); position:relative; } .modes div.hot::after{ content:'LIVE'; position:absolute; top:-8px; right:-4px; padding:1px 5px; border-radius:6px; background:#fff; color:var(--red); border:1.5px solid #000; font:900 8.5px 'Nunito'; }
+.note{ margin-top:10px; font-size:12px; color:var(--mute); }
+.reco{ margin-top:22px; padding:14px; border-radius:16px; background:#1f0909; border:2px solid var(--gold); }
+.reco h2{ margin:0 0 6px; font:800 15px 'Unbounded'; color:var(--gold); } .reco p{ margin:0 0 6px; font-size:13px; color:#ead6d6; }
+.lock{ border-radius:26px; padding:18px 12px 22px; background:linear-gradient(160deg,#2b3a6b,#5b2d5e 55%,#1d1030); border:3px solid #2b2b2b; }
+.lk-time{ text-align:center; font:300 54px/1 'Unbounded'; color:rgba(255,255,255,.92); margin:4px 0 16px; }
+.notif{ display:flex; gap:10px; padding:11px 12px; border-radius:18px; background:rgba(245,240,240,.82); color:#1a1a1a; -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+.notif .ni{ width:34px; height:34px; flex:none; border-radius:9px; background:#e00000; display:grid; place-items:center; font-size:18px; border:1.5px solid #000; }
+.notif .nh{ display:flex; justify-content:space-between; font:700 11px 'Manrope'; color:#555; margin-bottom:1px; } .notif .nh b{ font:800 11px 'Manrope'; color:#555; letter-spacing:.04em; }
+.notif > div > b{ display:block; font:800 13.5px/1.25 'Manrope'; } .notif p{ margin:2px 0 0; font:600 13px/1.3 'Manrope'; color:#222; }
+@media (prefers-reduced-motion: reduce){ .live i, .seat.you{ animation:none; } }
+</style></head><body><div class="wrap">
+<h1>Mettre la League en ligne en évidence</h1>
+<p class="intro">Aujourd’hui, elle n’est qu’une petite ligne « EN LIGNE · 5 / 16 inscrits » dans la carte de la League du quartier. Si on touche la carte, on tombe dans la League hors ligne. Voici 3 façons de la rendre visible. Elles se combinent.</p>
+<div class="tabs"><button class="on" data-o="a">A · L’affiche</button><button data-o="b">B · L’invitation</button><button data-o="c">C · Partout</button></div>
+
+<!-- ================= A ================= -->
+<section class="opt on" id="a">
+<div class="say"><b>A · Sa propre grande carte sur l’accueil</b>, juste sous « Jouer ». On voit les 16 places qui se remplissent avec les têtes des vrais joueurs, la cagnotte qui grossit, et un gros bouton pour prendre sa place. Elle ouvre <b>directement</b> la League en ligne, pas celle du quartier. La League hors ligne descend en dessous, plus petite.</div>
+<div class="lbl">Quand les inscriptions sont ouvertes</div>
+<div class="phone">
+  <div class="topbar"><span class="pill"><span class="coin"></span>557 250</span><span class="pill" style="margin-left:auto">🔔</span></div>
+  <div class="logo">FAP FAP</div>
+  <div class="btn-play"><span class="faces" id="fA"></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div>
+  <div class="ol">
+    <span class="live"><i></i>EN LIGNE · VRAIS JOUEURS</span>
+    <h2>LEAGUE <em>#1</em></h2>
+    <p class="sub">16 joueurs, un seul roi. Les 3 premiers gagnent la cagnotte.</p>
+    <div class="seats" id="seats1"></div>
+    <div class="count"><b>5<small> / 16 inscrits</small></b><span class="left">plus que 11 places</span></div>
+    <div class="pot"><span class="coin" style="width:22px;height:22px"></span><span>La cagnotte grossit à chaque inscrit</span><b>30 000</b></div>
+    <span class="cta">Je prends ma place<small>2 000 jetons · ils vont dans la cagnotte</small></span>
+  </div>
+  <div class="offline"><span class="ec"></span><span><b>League du quartier</b><small>Saison 3 · Mvog-Ada · journée 1 sur 6</small></span><em>›</em></div>
+  <div class="tabbar"><span class="on">Accueil</span><span>Profil</span><span>Boutique</span><span>Collection</span><span>Réglages</span></div>
+</div>
+<div class="lbl">Quand ta League est lancée</div>
+<div class="phone" style="min-height:0">
+  <div class="ol" style="margin-top:0">
+    <span class="live"><i></i>TON MATCH T’ATTEND</span>
+    <h2>LEAGUE <em>#1</em> · Poule B</h2>
+    <p class="sub">Tu es 2ᵉ de ta poule. Les 2 premiers passent.</p>
+    <div class="vsrow"><span class="who"><span class="av" style="background:#f2c76a">T</span>Toi<span class="t">Mvog-Ada</span></span><span class="x">VS</span><span class="who"><span class="av" style="background:#8fd3ff">K</span>Kevin237<span class="t">● en ligne</span></span></div>
+    <p class="timer">Il te reste <b>31 h</b> pour jouer ce match</p>
+    <span class="cta red">Jouer maintenant</span>
+  </div>
+</div>
+</section>
+
+<!-- ================= B ================= -->
+<section class="opt" id="b">
+<div class="say"><b>B · Le jeu vient te chercher.</b> Un bandeau rouge tout en haut de l’accueil. Et une fois par jour, quand une League en ligne s’ouvre ou qu’il reste peu de places, une fenêtre d’invitation qui monte du bas : qui est déjà inscrit, la cagnotte, s’inscrire en un geste. « Plus tard » la ferme jusqu’au lendemain.</div>
+<div class="lbl">L’accueil avec le bandeau</div>
+<div class="phone" style="min-height:0;padding-bottom:14px">
+  <div class="topbar"><span class="pill"><span class="coin"></span>557 250</span><span class="pill" style="margin-left:auto">🔔</span></div>
+  <div class="ribbon"><span class="live" style="background:#fff;color:var(--red)"><i style="background:var(--red)"></i>LIVE</span><span>League en ligne · <b>plus que 11 places</b></span><em>›</em></div>
+  <div class="logo">FAP FAP</div>
+  <div class="btn-play"><span class="faces" id="fB"></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div>
+</div>
+<div class="lbl">L’invitation du jour</div>
+<div class="phone">
+  <div class="topbar"><span class="pill"><span class="coin"></span>557 250</span></div>
+  <div class="logo">FAP FAP</div>
+  <div class="btn-play"><span class="faces" id="fB2"></span><span><b>Jouer</b><small>Partie rapide · le quartier · en ligne · Carré</small></span></div>
+  <div class="dim"></div>
+  <div class="sheet"><span class="grip"></span>
+    <span class="live"><i></i>LEAGUE EN LIGNE #1</span>
+    <h3>Mvog-Ada a besoin de toi <em>ce soir</em></h3>
+    <p>16 vrais joueurs, chacun pour son quartier. Les 3 premiers se partagent la cagnotte.</p>
+    <div class="stack"><span class="faces" id="fReg"></span><small><b>Kevin237, Mama Bella</b> et 3 autres sont inscrits</small></div>
+    <div class="pot"><span class="coin" style="width:22px;height:22px"></span><span>À gagner · plus que 11 places</span><b>30 000</b></div>
+    <span class="cta">Je m’inscris · 2 000</span>
+    <span class="later">Plus tard</span>
+  </div>
+</div>
+</section>
+
+<!-- ================= C ================= -->
+<section class="opt" id="c">
+<div class="say"><b>C · La League en ligne partout où on cherche à jouer.</b> Dans l’écran Jouer, le bouton « League » devient « League en ligne » avec un badge LIVE. En entrant dans la League, on choisit entre deux grandes portes de même taille, au lieu d’un petit bouton en bas. Et l’onglet Accueil porte une pastille tant que tu as un match à jouer.</div>
+<div class="lbl">L’écran Jouer</div>
+<div class="phone" style="min-height:0;padding-bottom:76px">
+  <div class="head"><i>‹</i>Jouer</div>
+  <div class="modes"><div><i>1v1</i>Duel</div><div><i>4</i>Carré</div><div><i>⚡</i>Ami</div><div class="hot"><i>🏆</i>League</div></div>
+  <div class="ol" style="margin-top:0">
+    <span class="live"><i></i>EN LIGNE</span>
+    <h2>LEAGUE <em>#1</em> · 5 / 16</h2>
+    <p class="sub">Plus que 11 places · 30 000 jetons à gagner</p>
+    <span class="cta">Je prends ma place · 2 000</span>
+  </div>
+  <div class="tabbar"><span class="on">Accueil<i class="dot">1</i></span><span>Profil</span><span>Boutique</span><span>Collection</span><span>Réglages</span></div>
+</div>
+<div class="lbl">L’entrée de la League : deux portes</div>
+<div class="phone" style="min-height:0;padding-bottom:14px">
+  <div class="head"><i>‹</i>Fap-Fap League</div>
+  <div class="doors">
+    <div class="door on"><span class="live tagbig"><i></i>LIVE</span><span class="k">Contre de vrais joueurs</span><b>League en ligne</b><p>16 joueurs · 5 inscrits · cagnotte 30 000 jetons. Les 3 premiers gagnent.</p><span class="cta" style="margin-top:12px">Je prends ma place</span></div>
+    <div class="door off"><span class="k">Contre les personnages</span><b>League du quartier</b><p>24 quartiers, à ton rythme, même sans réseau. Saison 3 · Mvog-Ada.</p><span class="cta red" style="margin-top:12px">Continuer ma saison</span></div>
+  </div>
+</div>
+</section>
+
+<div class="lbl" style="margin-top:22px">La notification de chaque jour (avec toutes les options)</div>
+<div class="lock"><div class="lk-time">13:00</div>
+  <div class="notif"><span class="ni">🃏</span><div><div class="nh"><b>FAP FAP</b><small>maintenant</small></div><b>🏆 Kevin237, la League en ligne t’attend</b><p>La League en ligne #1 t’attend : plus que 11 places, 30 000 jetons à gagner. Inscris-toi et teste-toi contre de vrais joueurs !</p></div></div>
+</div>
+<p class="note">Elle part <b>une fois par jour, à 13 h</b>, avec le pseudo du joueur, à chaque joueur qui a activé les notifications et qui n’est inscrit à aucune League en ligne. Seuls ceux qui ont choisi « Aucune » ne la reçoivent pas. Quand on la touche, le jeu s’ouvre <b>directement sur l’inscription</b>. Elle s’arrête dès que le joueur est inscrit et reprend quand sa League est finie.</p>
+
+<div class="reco"><h2>Ce que je te conseille</h2>
+<p><b>A + B ensemble.</b> A, c’est la grande carte toujours visible sur l’accueil, donc impossible à rater. B, c’est le jeu qui vient chercher ceux qui ne descendent pas jusqu’à elle : le bandeau, et l’invitation une fois par jour seulement, pour ne pas fatiguer.</p>
+<p>On peut aussi ajouter <b>les deux portes de C</b>, pour que personne n’entre dans la League du quartier en croyant être en ligne.</p></div>
+</div>
+<script src="../persos.js?v=101"></script>
+<script>
+const COL = ['#f2c76a','#8fd3ff','#ff9db0','#9be7a9','#d7b8ff','#ffb46b'];
+const reg = ['K','M','J','A','S'];
+const av = (t, i)=> '<span class="av" style="background:'+COL[i % COL.length]+'">'+t+'</span>';
+let s = reg.map((t, i)=> '<span class="seat" style="background:'+COL[i % COL.length]+'">'+t+'</span>').join('') + '<span class="seat you">Toi</span>';
+for(let i = 6; i < 16; i++) s += '<span class="seat free">?</span>';
+document.getElementById('seats1').innerHTML = s;
+// the characters on « Jouer » wear their drawn faces, as in the game; the real players keep their initials
+const ch = id=>{ const P = window.FFP && FFP.info(id); return P ? '<span class="av" style="overflow:hidden;background:radial-gradient(90% 80% at 50% 28%,'+P.c2+','+P.c3+')">'+FFP.face(id).replace('<svg', '<svg style="width:100%;height:100%;display:block"')+'</span>' : ''; };
+['fA','fB','fB2'].forEach(id=> document.getElementById(id).innerHTML = ['penalty','rall','alida'].map(ch).join(''));
+document.getElementById('fReg').innerHTML = reg.slice(0, 4).map(av).join('');
+document.querySelectorAll('.tabs button').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('.tabs button').forEach(x=> x.classList.toggle('on', x===b));
+  document.querySelectorAll('.opt').forEach(o=> o.classList.toggle('on', o.id===b.dataset.o));
+  window.scrollTo({top:0});
+});
+</script>
+</body></html>
