@@ -1,0 +1,24 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Les 8 nouveaux</title>
+<style>
+body{background:#140808;color:#f1e9e0;font:14px/1.4 system-ui,sans-serif;margin:0;padding:14px 16px 30px}
+h1{font-size:20px;margin:0 0 4px}p.s{margin:0 0 14px;color:#c9b8a8;font-size:13px}
+.c{background:#1f0d0d;border:1px solid #3a1818;border-radius:16px;padding:12px;margin-bottom:12px}
+.h{display:flex;align-items:center;gap:10px}.h b{font-size:16px}.h small{display:block;color:#e9b94e;font-size:12px}
+.lv{margin-left:auto;color:#e9b94e;font-size:13px;white-space:nowrap}
+.fs{display:flex;gap:6px;margin:10px 0 8px}.f{width:25%;aspect-ratio:1;border-radius:50%;overflow:hidden;display:block}.f svg{width:100%;height:100%;display:block}
+.w{font-size:13px;color:#dcccbc;margin:0 0 6px}.st{font-size:12.5px;color:#bfae9e;margin:0}.st b{color:#fff}
+.say{font-style:italic;color:#ffd9a0;font-size:13px;margin:6px 0 0}
+</style></head><body>
+<h1>Les 8 nouveaux personnages</h1>
+<p class="s">Un par quartier restant. Visage neutre, content, vexé, et au moment du CORA.</p>
+<div id="o"></div>
+<script src="../persos.js"></script>
+<script>
+const ids = ['jojo','kiki','mbida','pasteur','mimi','brice','bella','zamba'];
+document.getElementById('o').innerHTML = ids.map(id=>{ const P = FFP.BY[id];
+  return '<div class="c"><div class="h"><div><b>'+P.name+'</b><small>'+P.role+' · '+P.q+'</small></div><span class="lv">'+'★'.repeat(P.lvl)+'<span style="opacity:.25">'+'★'.repeat(5 - P.lvl)+'</span></span></div>'
+    +'<div class="fs">'+['neutral','happy','vexed','cora'].map(e=> '<span class="f" style="background:radial-gradient(90% 80% at 50% 28%,'+P.c2+','+P.c3+')">'+FFP.face(id, e)+'</span>').join('')+'</div>'
+    +'<p class="w">'+P.who+'</p><p class="st">'+P.style+'</p><p class="say">'+P.say+'</p></div>'; }).join('');
+</script>
+</body></html>
