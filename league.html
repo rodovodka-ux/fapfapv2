@@ -605,11 +605,13 @@ const esc = s=> String(s).replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&
 const host = window.parent!==window ? window.parent : null;
 const SIM = !host || /[?&]sim\b/.test(location.search);
 let chips = null, pending = null;
+// v100: the player's neighbourhood, for good (the game's profile.quartier): the League no longer asks it every season
+let myQ = null;
 function post(m){ if(host) try{ host.postMessage(m, location.origin); }catch(e){} }
 window.addEventListener('message', e=>{
   if(e.origin!==location.origin || !host || e.source!==host) return;
   const d = e.data || {};
-  if(d.zh==='chips'){ chips = d.chips; paintChips(); }
+  if(d.zh==='chips'){ chips = d.chips; paintChips(); if(d.q!=null && d.q>=0 && d.q<Q.length) myQ = d.q; }
   if(d.zh==='door') doorPaint(d);
   if(d.zh==='result' && pending && d.id===pending.id){ const p = pending; pending = null; $('wait').classList.remove('on'); p.done(d); }
   if(d.zh==='back') goBack();
@@ -637,13 +639,21 @@ const CH = {
   penalty:{name:'Penalty', st:4}, aristide:{name:'Rall', st:3}, tchinda:{name:'Mr Kamga', st:4}, gervais:{name:'Alida', st:3},
   eva:{name:'Eva', st:3}, ismael:{name:'Daryck', st:3}, stephane:{name:'Nassim', st:3}, tiko:{name:'Tiko la Mélo', st:3},
   cobra:{name:'Push', st:3}, banquier:{name:'Mr le Banquier', st:4}, systeme:{name:'Système', st:4}, dila:{name:'Dila', st:4},
-  caroline:{name:'Pam-Pam', st:4}, mami:{name:'Maman Rosine', st:3}, mballa:{name:'Commissaire Ngo Bassa', st:3}, mbarga:{name:'Le Masque', st:5}
+  caroline:{name:'Pam-Pam', st:4}, mami:{name:'Maman Rosine', st:3}, mballa:{name:'Commissaire Ngo Bassa', st:3}, mbarga:{name:'Le Masque', st:5},
+  // v100: the 8 newcomers, each with their level
+  jojo:{name:'Petit Jojo', st:1}, kiki:{name:'Kiki la Coiffeuse', st:2}, mbida:{name:'Tonton Mbida', st:2}, pasteur:{name:'Pasteur Nkodo', st:3},
+  mimi:{name:'Mimi Call-Box', st:3}, brice:{name:'Brice l’Étudiant', st:3}, bella:{name:'Ya Bella', st:4}, zamba:{name:'Zamba le Revenant', st:5}
 };
 Object.keys(CH).forEach(id=>{ CH[id].id = id; });
 const CH_IDS = Object.keys(CH);
+// v100: each character defends their own neighbourhood, every season (persos.js holds the map)
+const CH_HOME = {};
+CH_IDS.forEach(id=>{ const inf = window.FFP && FFP.info(id), q = inf && Q.find(x=> x.name===inf.q); if(q) CH_HOME[id] = q.i; });
+const HOME_CH = {}; Object.keys(CH_HOME).forEach(id=> HOME_CH[CH_HOME[id]] = id);
 // away, you play on the champion's table and hear its music
 const CH_TABLE = {penalty:'stade', aristide:'bar', tchinda:'chambre', gervais:'salon', eva:'kribi', ismael:'club', stephane:'zinc', tiko:'rooftop',
-  cobra:'auvent', banquier:'verre', systeme:'taxi', dila:'lounge', caroline:'piscine', mami:'tripot', mballa:'police', mbarga:'salon'};
+  cobra:'auvent', banquier:'verre', systeme:'taxi', dila:'lounge', caroline:'piscine', mami:'tripot', mballa:'police', mbarga:'salon',
+  jojo:'stade', kiki:'salon', mbida:'taxi', pasteur:'lounge', mimi:'zinc', brice:'chambre', bella:'auvent', zamba:'club'};
 // a champion's face (persos.js), cropped round
 const champFace = c=> window.FFP ? FFP.face(c.id) && ('<span class="ffp-f" style="background:radial-gradient(90% 80% at 50% 28%, '+FFP.info(c.id).c2+', '+FFP.info(c.id).c3+')">'+FFP.face(c.id)+'</span>') : '';
 const ROUND = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale', p3:'Match pour la 3ᵉ place'};
@@ -675,18 +685,20 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} 
 const seedOf = n=> 20261026 + (n - 1) * 7919;
 
 // the draw: same seed, same groups for every player of the season
-// v99: 24 neighbourhoods — yours and 23 others of the season — in 4 pots of 6 (one per group)
+// v100: 24 neighbourhoods — yours and the homes of the characters — in 4 pots of 6 (one per group). The 24
+// characters each have their neighbourhood: if yours is one of them, its character sits this season out; if not,
+// one character (drawn by the season's seed) rests so that there are 24.
 function seasonDraw(seed, me){
-  const others = shuffle(Q.map(q=> q.i).filter(i=> i!==me), rng(seed)).slice(0, 23), order = shuffle(others.concat([me]), rng(seed ^ 0x2545f491)), picks = [];
+  let homes = Object.keys(HOME_CH).map(Number).filter(i=> i!==me);
+  if(homes.length>23) homes = shuffle(homes, rng(seed ^ 0x9e3779b9)).slice(0, 23);
+  const order = shuffle(homes.concat([me]), rng(seed ^ 0x2545f491)), picks = [];
   for(let p = 0; p<4; p++) for(let g = 0; g<6; g++) picks.push({q: order[p*6 + g], g, pot: p});
   return picks;
 }
-// each neighbourhood's champion and strength for the season (16 characters for 24 neighbourhoods: 8 of them lead
-// two; the draw's order keeps the two in different groups)
+// each neighbourhood's champion (always the one who lives there) and strength for the season
 function seasonCast(seed, teams){
-  const r = rng(seed ^ 0x5bd1e995), champ = {}, str = {};
-  const ids = shuffle(CH_IDS, r);
-  teams.forEach((q, k)=>{ const c = ids[k % ids.length]; champ[q] = c; str[q] = 50 + Math.floor(r()*20) + CH[c].st * 6; });
+  const r = rng(seed ^ 0x5bd1e995), champ = {}, str = {}, spare = shuffle(CH_IDS, r);
+  teams.forEach((q, k)=>{ const c = HOME_CH[q] || spare[k % spare.length]; champ[q] = c; str[q] = 50 + Math.floor(r()*20) + CH[c].st * 6; });
   return {champ, str};
 }
 function newSeason(n, me){
@@ -984,6 +996,7 @@ $('enter').addEventListener('click', async ()=>{
   document.querySelectorAll('#intro .lamp').forEach(l=> A(l, [{opacity:.7}, {opacity:1}], {duration:200}));
   await A($('ecu'), [{transform:'scale(1)', opacity:1}, {transform:'scale(4)', opacity:0}], {duration:520, easing:IN});
   if(S){ await show('hub'); renderHub(true); }
+  else if(myQ!=null) await startSeason();
   else { await show('choose'); enterGrid(); }
   $('ecu').getAnimations().forEach(a=> a.cancel()); $('ecu').style.opacity = 1;
 });
@@ -1019,14 +1032,18 @@ $('grid').addEventListener('click', e=>{
 renderGrid();
 let nextSeasonN = (L.lastSeason || 0) + 1;
 $('chEyebrow').textContent = 'Saison '+nextSeasonN;
-$('toDraw').addEventListener('click', async ()=>{
+$('toDraw').addEventListener('click', ()=> startSeason());
+// v100: a player who already has a neighbourhood goes straight to the draw (it is theirs for good)
+async function startSeason(){
+  if(myQ!=null) pickQ = myQ;
   if(pickQ==null) return;
   S = newSeason(nextSeasonN, pickQ); save();
   post({zh:'quartier', q:pickQ}); // Tout le quartier: the player's neighbourhood, if they have none yet
+  myQ = pickQ;
   L.lastSeason = S.n; lpSave();
   $('pick').classList.remove('on');
   await show('draw'); startDraw();
-});
+}
 
 // ===================== 3. the draw =====================
 const groupsEl = $('groups'), bowl = $('bowl');
@@ -1204,7 +1221,8 @@ function renderHub(animate){
   const body = $('hubBody'); body.innerHTML = h;
   if(animate) [...body.querySelectorAll('.card, .hero, .tiles, .ko-round, .minigrp > .card')].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(16px)'}, {opacity:1, transform:'none'}], {duration:480, delay:Math.min(i*70, 420), fill:'backwards'}));
   const go = $('goNight'); if(go) go.addEventListener('click', startNight);
-  const ns = $('newSeason'); if(ns) ns.addEventListener('click', ()=>{ nextSeasonN = S.n + 1; const keep = S.me; pickQ = keep; S = null; save(); localStorage.removeItem(KEY); renderGrid(); $('chEyebrow').textContent = 'Saison '+nextSeasonN; show('choose').then(()=>{ enterGrid(); $('pick').classList.add('on'); const q = Q[keep]; const pc = $('pickCrest'); pc.style.setProperty('--c1', q.c1); pc.style.setProperty('--c2', q.c2); pc.querySelector('b').textContent = q.code; $('pickName').textContent = q.name; }); });
+  const ns = $('newSeason'); if(ns) ns.addEventListener('click', ()=>{ nextSeasonN = S.n + 1; const keep = S.me; pickQ = keep; S = null; save(); localStorage.removeItem(KEY);
+    if(myQ!=null){ startSeason(); return; } renderGrid(); $('chEyebrow').textContent = 'Saison '+nextSeasonN; show('choose').then(()=>{ enterGrid(); $('pick').classList.add('on'); const q = Q[keep]; const pc = $('pickCrest'); pc.style.setProperty('--c1', q.c1); pc.style.setProperty('--c2', q.c2); pc.querySelector('b').textContent = q.code; $('pickName').textContent = q.name; }); });
   const se = $('simEnd'); if(se) se.addEventListener('click', ()=>{ simulateToEnd(); save(); tab = 'tableau'; document.querySelectorAll('[data-tab]').forEach(x=> x.classList.toggle('on', x.dataset.tab==='tableau')); renderHub(true); toast(Q[S.champion].name+' remporte la saison '+S.n+'.', 3600); });
 }
 
