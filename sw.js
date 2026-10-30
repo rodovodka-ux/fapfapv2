@@ -1,7 +1,8 @@
 // Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v100';
-const CORE = ['./', './index.html', './persos.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
+const CACHE = 'fapfap-v101';
+// persos.js carries the version in its name: a new game never meets the old faces still kept by the previous cache
+const CORE = ['./', './index.html', './persos.js?v=101','./manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
 self.addEventListener('install', (event)=>{
   event.waitUntil(caches.open(CACHE).then(c=> c.addAll(CORE)).then(()=> self.skipWaiting()));

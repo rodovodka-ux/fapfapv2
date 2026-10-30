@@ -19,7 +19,7 @@
 <!-- loaded without blocking the page: on a weak connection the game opens at once, the fonts follow -->
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Unbounded:wght@300;700;800&family=Manrope:wght@500;600;700;800&family=Playfair+Display:wght@900&family=Cinzel:wght@700;800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Anton&family=Special+Elite&family=Tilt+Neon&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <!-- v94: the 16 characters' faces (one drawn style, shared with the League) -->
-<script src="persos.js"></script>
+<script src="persos.js?v=101"></script>
 <!-- supabase-js (online play) is loaded on demand at runtime (see loadSupabase) with CDN fallbacks,
      so a single blocked/unreachable CDN never breaks the multiplayer mode silently. -->
 <style>
@@ -14428,7 +14428,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v100';
+  const APP_VERSION = 'v101';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
