@@ -1,6 +1,6 @@
 // Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v98';
+const CACHE = 'fapfap-v99';
 const CORE = ['./', './index.html', './persos.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 
 self.addEventListener('install', (event)=>{
@@ -27,7 +27,7 @@ self.addEventListener('push', (event)=>{
     tag: d.tag || 'fapfap',
     renotify: true,
     vibrate: [80, 60, 80],
-    data: { url: d.url || './', code: d.code || '', name: d.name || '', kind: d.kind || 'defi' }
+    data: { url: d.url || './', code: d.code || '', name: d.name || '', kind: d.kind || 'defi', from: d.from || '' }
   }));
 });
 // …and a touch on it opens the game on the invitation (the open game if there is one, a new window otherwise)
@@ -41,6 +41,7 @@ self.addEventListener('notificationclick', (event)=>{
       // a friend request opens the bell, a challenge opens the room
       // a reminder of Tout le quartier opens its ranking (an announcement just brings the game forward)
       if(d.kind === 'rappel'){ if(/[?&]quartier=1\b/.test(url)) open.postMessage({type:'quartier'}); }
+      else if(d.kind === 'msg') open.postMessage({type:'msg', from: d.from});
       else open.postMessage(d.kind === 'ami' ? {type:'amis'} : {type:'defi', code: d.code, name: d.name});
       return open.focus();
     }

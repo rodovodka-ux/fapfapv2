@@ -104,7 +104,7 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .pick .cta{ padding:15px 18px; font-size:11px; }
 
 /* ============ TIRAGE ============ */
-.groups{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; padding:0 10px; flex:none; }
+.groups{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; padding:0 10px; flex:none; } /* v99: 6 groups, 2 rows of 3 */
 .grp{ border-radius:14px; background:rgba(255,255,255,.045); padding:7px 5px 5px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.07); }
 .grp h4{ margin:0 0 3px; text-align:center; font:700 11px var(--disp); color:var(--gold); letter-spacing:.1em; }
 .slot{ height:26px; border-radius:8px; margin-top:3px; background:rgba(0,0,0,.28); display:flex; align-items:center; gap:4px; padding:0 3px; overflow:hidden; }
@@ -479,7 +479,7 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
   <i class="lamp l1"></i><i class="lamp l2"></i><i class="lamp l3"></i><i class="lamp l4"></i><div class="pitch" id="pitch"></div>
   <div class="ecuwrap" id="ecuwrap"><span class="ecu" id="ecu"></span><div class="dust" id="dust"></div></div>
   <div class="unroll" id="leagueWord">SAISON 1</div>
-  <div class="season" id="seasonTxt">YAOUNDÉ — DOUALA<br>32 QUARTIERS · UN SEUL ROI</div>
+  <div class="season" id="seasonTxt">YAOUNDÉ — DOUALA<br>24 QUARTIERS · UN SEUL ROI</div>
   <div class="introBtns" id="introBtns"><button class="cta" id="enter">Entrer dans la League</button>
     <button class="ol-door" id="toOnline"><i>EN LIGNE</i><span><b>La League à 16</b><small id="doorSub">16 vrais joueurs · les 3 premiers gagnent</small></span><em>›</em></button>
     <button class="ghost" id="closeLg">Retour au jeu</button></div>
@@ -610,6 +610,7 @@ window.addEventListener('message', e=>{
   if(e.origin!==location.origin || !host || e.source!==host) return;
   const d = e.data || {};
   if(d.zh==='chips'){ chips = d.chips; paintChips(); }
+  if(d.zh==='door') doorPaint(d);
   if(d.zh==='result' && pending && d.id===pending.id){ const p = pending; pending = null; $('wait').classList.remove('on'); p.done(d); }
   if(d.zh==='back') goBack();
 });
@@ -645,12 +646,15 @@ const CH_TABLE = {penalty:'stade', aristide:'bar', tchinda:'chambre', gervais:'s
   cobra:'auvent', banquier:'verre', systeme:'taxi', dila:'lounge', caroline:'piscine', mami:'tripot', mballa:'police', mbarga:'salon'};
 // a champion's face (persos.js), cropped round
 const champFace = c=> window.FFP ? FFP.face(c.id) && ('<span class="ffp-f" style="background:radial-gradient(90% 80% at 50% 28%, '+FFP.info(c.id).c2+', '+FFP.info(c.id).c3+')">'+FFP.face(c.id)+'</span>') : '';
-const ROUND = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale'};
-const ROUND_SHORT = {r16:'Huitième', qf:'Quart', sf:'Demie', f:'Finale'};
-// the money (separate from the points of the tournament): a prize for each match won, for qualifying, for each round
-const PRIME = {manche:400, soiree:800, qualif:3000, qf:5000, sf:8000, f:20000};
-// v94: 16 neighbourhoods, 4 groups of 4
-const G = 'ABCD';
+const ROUND = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale', p3:'Match pour la 3ᵉ place'};
+const ROUND_SHORT = {r16:'Huitième', qf:'Quart', sf:'Demie', f:'Finale', p3:'3ᵉ place'};
+// the money (separate from the points of the tournament): a prize for each manche won, for qualifying, for each round
+// passed, and v99 the podium: the champion (f), the finalist and the 3rd
+const PRIME = {manche:400, soiree:800, qualif:3000, r16:4000, qf:5000, sf:8000, f:20000, finalist:10000, p3:6000};
+// v99: 24 neighbourhoods, 6 groups of 4; the 2 first of each group and the 4 best thirds go to the round of 16
+const G = 'ABCDEF';
+// v99: a match = 2 manches; a knock-out tie still level adds a decisive manche (index NM)
+const NM = 2;
 // a group's six evenings: everyone meets everyone twice, once at home, once away
 const ROBIN = [[[0,1],[2,3]], [[3,0],[1,2]], [[0,2],[1,3]], [[1,0],[3,2]], [[0,3],[2,1]], [[2,0],[3,1]]];
 // v94: a match is one duel, you against the other neighbourhood's champion (no more games for 3 or 4 in the League)
@@ -663,21 +667,22 @@ const hashStr = s=>{ let h = 2166136261; for(let i = 0; i<s.length; i++){ h ^= s
 function shuffle(arr, r){ arr = arr.slice(); for(let i = arr.length - 1; i>0; i--){ const j = Math.floor(r()*(i+1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
 // ===================== the season (plain data: ready to be shared online one day) =====================
-// (v94: a new key — the old 32-neighbourhood seasons with their evenings of three games are not continued)
-const KEY = 'fapfap_league_v2', LPKEY = 'fapfap_league_lp';
+// (v99: a new key — the 16-neighbourhood seasons of one duel per match are not continued)
+const KEY = 'fapfap_league_v3', LPKEY = 'fapfap_league_lp';
 let S = null;
-try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===2) S = s; }catch(e){}
+try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===3) S = s; }catch(e){}
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 const seedOf = n=> 20261026 + (n - 1) * 7919;
 
 // the draw: same seed, same groups for every player of the season
-// v94: 16 neighbourhoods — yours and 15 others of the season — in 4 pots of 4
+// v99: 24 neighbourhoods — yours and 23 others of the season — in 4 pots of 6 (one per group)
 function seasonDraw(seed, me){
-  const others = shuffle(Q.map(q=> q.i).filter(i=> i!==me), rng(seed)).slice(0, 15), order = shuffle(others.concat([me]), rng(seed ^ 0x2545f491)), picks = [];
-  for(let p = 0; p<4; p++) for(let g = 0; g<4; g++) picks.push({q: order[p*4 + g], g, pot: p});
+  const others = shuffle(Q.map(q=> q.i).filter(i=> i!==me), rng(seed)).slice(0, 23), order = shuffle(others.concat([me]), rng(seed ^ 0x2545f491)), picks = [];
+  for(let p = 0; p<4; p++) for(let g = 0; g<6; g++) picks.push({q: order[p*6 + g], g, pot: p});
   return picks;
 }
-// each neighbourhood's champion (one character each, never twice) and strength for the season
+// each neighbourhood's champion and strength for the season (16 characters for 24 neighbourhoods: 8 of them lead
+// two; the draw's order keeps the two in different groups)
 function seasonCast(seed, teams){
   const r = rng(seed ^ 0x5bd1e995), champ = {}, str = {};
   const ids = shuffle(CH_IDS, r);
@@ -689,54 +694,71 @@ function newSeason(n, me){
   const groups = [...G].map((_, g)=> picks.filter(p=> p.g===g).sort((a, b)=> a.pot - b.pot).map(p=> p.q));
   const fx = [];
   groups.forEach((t, g)=> ROBIN.forEach((day, d)=> day.forEach(([h, a], k)=> fx.push({id:'g'+g+'d'+(d+1)+'k'+k, g, day:d+1, h:t[h], a:t[a], r:null}))));
-  return {v:2, n, seed, me, groups, fx, champ:cast.champ, str:cast.str, phase:'groups', day:1, ko:{}, round:null, leg:0, cur:null, out:false, champion:null, earned:0, history:[]};
+  return {v:3, n, seed, me, groups, fx, champ:cast.champ, str:cast.str, phase:'groups', day:1, ko:{}, round:null, leg:0, cur:null, out:false, champion:null, podium:null, earned:0, history:[]};
 }
 const str = q=> S.str[q] || 60;
 const champOf = q=> CH[S.champ[q]] ? S.champ[q] : 'penalty';
 
-// v94: a simulated match between two neighbourhoods: one duel; the winner's score is 1, 2 for a CORA, 3 for a 33 Glacée
+// v99: a simulated match between two neighbourhoods: 2 manches; each manche won scores 1, 2 for a CORA, 3 for a
+// 33 Glacée; level = a draw (w null)
 function simNight(h, a, r, neutral){
   const ph = str(h) / (str(h) + str(a)) + (neutral ? 0 : .04);
-  const k = r(), goals = k<.03 ? 3 : k<.15 ? 2 : 1;
-  return r()<ph ? {h:goals, a:0, w:h} : {h:0, a:goals, w:a};
+  let H = 0, Aw = 0;
+  for(let i = 0; i<NM; i++){ const k = r(), goals = k<.03 ? 3 : k<.15 ? 2 : 1; if(r()<ph) H += goals; else Aw += goals; }
+  return {h:H, a:Aw, w: H>Aw ? h : Aw>H ? a : null};
 }
 
 // ---- group tables ----
+const cmpRow = (x, y)=> y.pts - x.pts || (y.mg - y.mp) - (x.mg - x.mp) || y.mg - x.mg || str(y.q) - str(x.q);
 function standings(g){
-  const t = S.groups[g].map(q=> ({q, j:0, w:0, l:0, mg:0, mp:0, pts:0}));
+  const t = S.groups[g].map(q=> ({q, j:0, w:0, d:0, l:0, mg:0, mp:0, pts:0}));
   const by = q=> t.find(x=> x.q===q);
   S.fx.filter(f=> f.g===g && f.r).forEach(f=>{
     const H = by(f.h), Aw = by(f.a);
     H.j++; Aw.j++; H.mg += f.r.h; H.mp += f.r.a; Aw.mg += f.r.a; Aw.mp += f.r.h;
-    if(f.r.w===f.h){ H.w++; H.pts += 3; Aw.l++; } else { Aw.w++; Aw.pts += 3; H.l++; }
+    // v99: like football: a win 3 points, a draw 1, a defeat 0
+    if(f.r.w===f.h){ H.w++; H.pts += 3; Aw.l++; } else if(f.r.w===f.a){ Aw.w++; Aw.pts += 3; H.l++; } else { H.d++; Aw.d++; H.pts++; Aw.pts++; }
   });
-  return t.sort((x, y)=> y.pts - x.pts || (y.mg - y.mp) - (x.mg - x.mp) || y.mg - x.mg || str(y.q) - str(x.q));
+  return t.sort(cmpRow);
 }
 const myGroup = ()=> S.groups.findIndex(t=> t.includes(S.me));
+// v99: the six thirds ranked together (points, difference, manches won); the 4 best go through
+function thirds(){ return S.groups.map((_, g)=> Object.assign({g}, standings(g)[2])).sort(cmpRow); }
+const bestThird = q=> thirds().slice(0, 4).some(x=> x.q===q);
 
 // ---- knock-out ----
 function tie(a, b, single){ return {a, b, legs: single ? [{h:null, a:null, r:null}] : [{h:b, a:a, r:null}, {h:a, a:b, r:null}], w:null, qz:false}; }
 function aggOf(t){ let A = 0, B = 0; t.legs.forEach(l=>{ if(!l.r) return; const hq = l.h==null ? t.a : l.h; if(hq===t.a){ A += l.r.h; B += l.r.a; } else { A += l.r.a; B += l.r.h; } }); return {a:A, b:B}; }
 function legSides(t, k){ const l = t.legs[k]; return l.h==null ? {h:t.a, a:t.b, neutral:true} : {h:l.h, a:l.a, neutral:false}; }
 function buildRound(){
-  // v94: from the 4 groups straight to the quarter-finals (a group winner meets another group's runner-up)
-  if(S.round==='qf'){
-    const W = [], R = [];
-    for(let g = 0; g<4; g++){ const st = standings(g); W[g] = st[0].q; R[g] = st[1].q; }
-    S.ko.qf = [[0,1],[1,0],[2,3],[3,2]].map(([x, y])=> tie(W[x], R[y]));
+  // v99: the round of 16 — the 8 seeds (6 group winners + the 2 best runners-up) each meet one of the other 8
+  // (4 runners-up + the 4 best thirds), never a team of their own group; the seeds play the return leg at home
+  if(S.round==='r16'){
+    const st = S.groups.map((_, g)=> standings(g)), rows = k=> st.map((s, g)=> Object.assign({g}, s[k])).sort(cmpRow);
+    const W = rows(0), R = rows(1), T = rows(2).slice(0, 4), A = W.concat(R.slice(0, 2)), B = shuffle(R.slice(2).concat(T), rng(S.seed ^ 0x16a3));
+    const used = [], pair = [];
+    const fit = i=>{ if(i===A.length) return true; for(let j = 0; j<B.length; j++){ if(used[j] || B[j].g===A[i].g) continue; used[j] = true; pair[i] = B[j]; if(fit(i + 1)) return true; used[j] = false; } return false; };
+    if(!fit(0)) A.forEach((_, i)=> pair[i] = B[i]);
+    // the seeds spread over the bracket: the two best can only meet in the final
+    S.ko.r16 = [0,7,3,4,1,6,2,5].map(k=> tie(A[k].q, pair[k].q));
   } else {
-    const prev = {sf:'qf', f:'sf'}[S.round], w = S.ko[prev].map(t=> t.w);
-    const pairs = S.round==='sf' ? [[0,2],[1,3]] : [[0,1]];
-    S.ko[S.round] = pairs.map(([x, y])=> tie(w[x], w[y], S.round==='f'));
+    const prev = {qf:'r16', sf:'qf', f:'sf'}[S.round], w = S.ko[prev].map(t=> t.w);
+    S.ko[S.round] = Array.from({length:w.length/2}, (_, i)=> tie(w[2*i], w[2*i + 1], S.round==='f'));
+    // the two beaten semi-finalists play for the 3rd place, the same evening as the final (one match, neutral)
+    if(S.round==='f') S.ko.p3 = [tie(...S.ko.sf.map(t=> t.w===t.a ? t.b : t.a), true)];
   }
   S.leg = 0;
 }
+// the ties being played: the final's evening holds the final and the match for the 3rd place
+const roundTies = ()=> S.round==='f' ? S.ko.f.concat(S.ko.p3 || []) : S.ko[S.round] || [];
+// the round of the player's own tie (the 3rd place match is played during the round « f »)
+const myRound = ()=>{ const t = myTie(); return t && S.ko.p3 && S.ko.p3.includes(t) ? 'p3' : S.round; };
 function resolveTie(t, r){
   const g = aggOf(t);
   if(g.a!==g.b) t.w = g.a>g.b ? t.a : t.b;
   else { t.qz = true; t.w = r() < str(t.a) / (str(t.a) + str(t.b)) ? t.a : t.b; }
 }
-const myTie = ()=> S.round && S.ko[S.round] ? S.ko[S.round].find(t=> t.a===S.me || t.b===S.me) : null;
+const myTie = ()=> S.round && S.ko[S.round] ? roundTies().find(t=> t.a===S.me || t.b===S.me) : null;
 
 // what the player plays next
 function nextMatch(){
@@ -753,31 +775,36 @@ function afterGroupNight(){
   S.fx.filter(f=> f.day===S.day && !f.r).forEach(f=> f.r = simNight(f.h, f.a, r));
   if(S.day<6) S.day++;
   else {
-    const pos = standings(myGroup()).findIndex(x=> x.q===S.me);
-    S.phase = 'ko'; S.round = 'qf'; buildRound();
-    if(pos<=1) msgs.push({k:'qualif', pos});
+    const pos = standings(myGroup()).findIndex(x=> x.q===S.me), third = pos===2 && bestThird(S.me);
+    S.phase = 'ko'; S.round = 'r16'; buildRound();
+    if(pos<=1 || third) msgs.push({k:'qualif', pos, third});
     else { S.out = true; msgs.push({k:'outGroups', pos}); }
   }
   return msgs;
 }
 function advanceKO(){
   // every tie of the round has played this leg: next leg, or the round is decided
-  const round = S.ko[S.round], legs = round[0].legs.length, r = rng(S.seed + 31337 + Object.keys(S.ko).length);
+  const round = roundTies(), legs = round[0].legs.length, r = rng(S.seed + 31337 + Object.keys(S.ko).length);
   if(S.leg + 1 < legs){ S.leg++; return []; }
   round.forEach(t=>{ if(t.w==null) resolveTie(t, r); });
   const mine = round.find(t=> t.a===S.me || t.b===S.me), msgs = [];
-  if(S.round==='f'){ S.champion = round[0].w; S.phase = 'done'; return msgs; }
-  if(mine && !S.out){ if(mine.w===S.me) msgs.push({k:'through', round:S.round}); else { S.out = true; msgs.push({k:'outKO', round:S.round}); } }
-  S.round = {qf:'sf', sf:'f'}[S.round]; buildRound();
+  // v99: the podium — the final's winner, its loser, the winner of the match for the 3rd place
+  if(S.round==='f'){ const f = S.ko.f[0], p = S.ko.p3[0]; S.champion = f.w; S.podium = [f.w, f.w===f.a ? f.b : f.a, p.w]; S.phase = 'done'; return msgs; }
+  if(mine && !S.out){
+    if(mine.w===S.me) msgs.push({k:'through', round:S.round});
+    else if(S.round==='sf') msgs.push({k:'toP3'}); // a beaten semi-finalist still plays for a medal
+    else { S.out = true; msgs.push({k:'outKO', round:S.round}); }
+  }
+  S.round = {r16:'qf', qf:'sf', sf:'f'}[S.round]; buildRound();
   return msgs;
 }
 // when the player is out, the rest of the season plays itself
 function simulateToEnd(){
   let guard = 0;
-  while(S.champion==null && guard++ < 50){
-    if(S.phase==='groups'){ const r = rng(S.seed + S.day * 101); S.fx.filter(f=> f.day===S.day && !f.r).forEach(f=> f.r = simNight(f.h, f.a, r)); if(S.day<6) S.day++; else { S.phase = 'ko'; S.round = 'qf'; buildRound(); } continue; }
+  while(S.champion==null && guard++ < 60){
+    if(S.phase==='groups'){ const r = rng(S.seed + S.day * 101); S.fx.filter(f=> f.day===S.day && !f.r).forEach(f=> f.r = simNight(f.h, f.a, r)); if(S.day<6) S.day++; else { S.phase = 'ko'; S.round = 'r16'; buildRound(); } continue; }
     const r = rng(S.seed + 5000 + guard * 17);
-    S.ko[S.round].forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, r, s.neutral); } });
+    roundTies().forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, r, s.neutral); } });
     advanceKO();
   }
 }
@@ -962,10 +989,10 @@ $('enter').addEventListener('click', async ()=>{
 });
 function phaseLine(){
   if(!S) return '';
-  if(S.champion!=null) return S.champion===S.me ? 'Champion !' : 'Saison terminée';
+  if(S.champion!=null) return S.champion===S.me ? 'Champion !' : S.podium && S.podium[1]===S.me ? 'Finaliste' : S.podium && S.podium[2]===S.me ? '3ᵉ place' : 'Saison terminée';
   if(S.out) return 'Éliminé · la saison continue';
   if(S.phase==='groups') return 'Groupe '+G[myGroup()]+' · journée '+S.day+' sur 6';
-  return ROUND[S.round] + (S.ko[S.round][0].legs.length>1 ? ' · match '+(S.leg ? 'retour' : 'aller') : '');
+  return ROUND[myRound()] + (S.ko[S.round][0].legs.length>1 ? ' · match '+(S.leg ? 'retour' : 'aller') : '');
 }
 
 // ===================== 2. the neighbourhood =====================
@@ -1056,9 +1083,9 @@ async function startDraw(){
   [...groupsEl.children].forEach((el, i)=> A(el, [{opacity:0, transform:'translateY(10px)'}, {opacity:1, transform:'none'}], {duration:400, delay:i*40, fill:'backwards'}));
   for(let i = 0; i<DRAW.length; i++){
     const p = DRAW[i];
-    if(i % 4===0){
+    if(i % 6===0){
       await A($('pot'), [{opacity:1}, {opacity:0}], {duration:150, fill:'forwards'});
-      $('pot').textContent = 'Chapeau '+(p.pot + 1); fillBowl(4);
+      $('pot').textContent = 'Chapeau '+(p.pot + 1); fillBowl(6);
       [...bowl.children].forEach((b, k)=> A(b, [{opacity:0, transform:'translateY(-30px)'}, {opacity:1, transform:'none'}], {duration:420, delay:k*40, easing:BACK, fill:'backwards'}));
       await A($('pot'), [{opacity:0}, {opacity:1}], {duration:250, fill:'forwards'});
       await sleep(500);
@@ -1082,7 +1109,7 @@ document.querySelectorAll('[data-tab]').forEach(b=> b.addEventListener('click', 
 }));
 function teamRow(x, i, opts){
   const q = Q[x.q];
-  return '<div class="row'+(x.q===S.me ? ' me' : '')+(opts && opts.qual && i<2 ? ' q' : '')+'"><span class="pos">'+(i+1)+'</span>'+crest(q, 1)+'<span class="n">'+esc(q.name)+'</span><span class="v">'+x.j+'</span><span class="v">'+(x.mg - x.mp>0 ? '+' : '')+(x.mg - x.mp)+'</span><span class="v p">'+x.pts+'</span></div>';
+  return '<div class="row'+(x.q===S.me ? ' me' : '')+((opts && opts.qual && i<2) || (opts && opts.top && i<opts.top) ? ' q' : '')+'"><span class="pos">'+(i+1)+'</span>'+crest(q, 1)+'<span class="n">'+esc(q.name)+'</span><span class="v">'+x.j+'</span><span class="v">'+(x.mg - x.mp>0 ? '+' : '')+(x.mg - x.mp)+'</span><span class="v p">'+x.pts+'</span></div>';
 }
 function tieRow(t, round){
   const a = Q[t.a], b = Q[t.b], g = aggOf(t), played = t.legs.some(l=> l.r);
@@ -1110,14 +1137,14 @@ function lpCard(compact){
 function matchCard(m){
   const you = Q[S.me], th = Q[m.h===S.me ? m.a : m.h], home = m.neutral ? null : m.h===S.me;
   const c = CH[champOf(th.i)];
-  const label = m.kind==='g' ? 'Journée '+S.day+' · groupe '+G[myGroup()] : ROUND[S.round]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
+  const label = m.kind==='g' ? 'Journée '+S.day+' · groupe '+G[myGroup()] : ROUND[myRound()]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
   let agg = '';
-  if(m.kind==='ko' && m.leg===1){ const g = aggOf(m.t), mine = m.t.a===S.me ? g.a : g.b, their = m.t.a===S.me ? g.b : g.a; agg = '<p class="note">Match aller : '+mine+' – '+their+' (manches). Tout se joue ce soir.</p>'; }
+  if(m.kind==='ko' && m.leg===1){ const g = aggOf(m.t), mine = m.t.a===S.me ? g.a : g.b, their = m.t.a===S.me ? g.b : g.a; agg = '<p class="note">Match aller : '+mine+' – '+their+' (points de manches). Tout se joue ce soir.</p>'; }
   // v87: the evening in big, face to face, on the red of the stadium
   return '<div class="hero"><div class="kick">'+label+'</div>'+
     '<div class="vs"><div class="side">'+crest(you)+esc(you.name)+'<small>Toi</small></div><div class="x">VS</div><div class="side">'+crest(th)+esc(th.name)+'<small>'+esc(c.name)+'</small></div></div>'+
     '<div class="vs-meta">'+(home==null ? 'Terrain neutre : le Grand Carrefour' : home ? 'À domicile : ta table, ta musique, tu distribues' : 'À l’extérieur : la table de '+esc(c.name)+', sa musique, il distribue')+'</div>'+
-    '<div class="fmt"><span><b>Le match</b>1 duel contre '+esc(c.name)+'</span><span><b>Victoire</b>3 points</span><span><b>Jetons</b>+'+fmt(PRIME.manche)+'</span>'+(m.kind==='ko' ? '<span><b>Égalité</b>Manche décisive</span>' : '')+'</div>'+
+    '<div class="fmt"><span><b>Le match</b>2 manches contre '+esc(c.name)+'</span>'+(m.kind==='g' ? '<span><b>Points</b>Victoire 3 · nul 1</span>' : '<span><b>Égalité</b>Manche décisive</span>')+'<span><b>Jetons</b>+'+fmt(PRIME.manche)+' par manche</span></div>'+
     '<button class="cta dark wide" id="goNight">'+(S.cur && !S.cur.done ? 'Reprendre le match' : 'Jouer le match')+'</button>'+agg+'</div>';
 }
 function renderHub(animate){
@@ -1131,41 +1158,45 @@ function renderHub(animate){
         const st = standings(myGroup()), pos = st.findIndex(x=> x.q===S.me) + 1, mine = st[pos - 1];
         return '<div class="tiles"><div><b>'+pos+'<sup>'+(pos===1 ? 'er' : 'e')+'</sup></b><small>du groupe</small></div><div><b>'+mine.pts+'</b><small>points</small></div><div><b>'+fmt(S.earned || 0)+'</b><small>jetons de primes</small></div></div>';
       }
-      return '<div class="tiles"><div><b style="font-size:15px;line-height:1.5">'+(S.champion!=null ? 'Fini' : S.out ? 'Éliminé' : ROUND_SHORT[S.round])+'</b><small>'+(S.out ? 'la saison continue' : 'ton tour')+'</small></div><div><b>'+fmt(L.lp)+'</b><small>LP</small></div><div><b>'+fmt(S.earned || 0)+'</b><small>jetons de primes</small></div></div>';
+      return '<div class="tiles"><div><b style="font-size:15px;line-height:1.5">'+(S.champion!=null ? 'Fini' : S.out ? 'Éliminé' : ROUND_SHORT[myRound()])+'</b><small>'+(S.out ? 'la saison continue' : 'ton tour')+'</small></div><div><b>'+fmt(L.lp)+'</b><small>LP</small></div><div><b>'+fmt(S.earned || 0)+'</b><small>jetons de primes</small></div></div>';
     };
     if(m) h += matchCard(m) + tiles();
     else if(S.champion!=null){
-      h += '<div class="card"><h3>Saison terminée</h3><div class="phase">'+crest(Q[S.champion])+'<div><b>'+esc(Q[S.champion].name)+'</b><small>Champion de la saison '+S.n+'</small></div></div><button class="cta wide" id="newSeason" style="margin-top:16px">Nouvelle saison</button></div>';
+      // v99: the podium of the season
+      const pod = S.podium || [S.champion];
+      h += '<div class="card"><h3>Saison terminée<span>le podium</span></h3>'+pod.map((q, i)=> q==null ? '' : '<div class="phase'+(q===S.me ? ' me' : '')+'"'+(i ? ' style="margin-top:10px"' : '')+'>'+crest(Q[q])+'<div><b>'+esc(Q[q].name)+(q===S.me ? ' (toi)' : '')+'</b><small>'+['Champion de la saison '+S.n, 'Finaliste', '3ᵉ place'][i]+'</small></div></div>').join('')+'<button class="cta wide" id="newSeason" style="margin-top:16px">Nouvelle saison</button></div>';
     } else if(S.out){
       h += '<div class="card"><h3>Ta saison s’arrête ici</h3><p class="note" style="text-align:left">'+esc(Q[S.me].name)+' est éliminé. La League continue sans toi : regarde qui va soulever le trophée, puis reviens plus fort la saison prochaine.</p><button class="cta wide" id="simEnd" style="margin-top:12px">Voir la fin de la saison</button></div>' + tiles();
     }
-    if(S.phase==='groups' || (S.out && S.round==='qf' && !S.ko.qf.some(t=> t.legs[0].r))){
+    if(S.phase==='groups' || (S.out && S.round==='r16' && !S.ko.r16.some(t=> t.legs[0].r))){
       const g = myGroup();
-      h += '<div class="card"><h3>Groupe '+G[g]+'<span>2 premiers qualifiés</span></h3><div class="tbl-h"><span>QUARTIER</span><span>J</span><span>DIF</span><span>PTS</span></div>'+standings(g).map((x, i)=> teamRow(x, i, {qual:1})).join('')+'</div>';
+      h += '<div class="card"><h3>Groupe '+G[g]+'<span>2 premiers + 4 meilleurs 3es</span></h3><div class="tbl-h"><span>QUARTIER</span><span>J</span><span>DIF</span><span>PTS</span></div>'+standings(g).map((x, i)=> teamRow(x, i, {qual:1})).join('')+'</div>';
       const mine = S.fx.filter(f=> f.g===g && (f.h===S.me || f.a===S.me)).sort((a, b)=> a.day - b.day);
       h += '<div class="card"><h3>Calendrier · aller-retour</h3>'+mine.map(f=>{
         const home = f.h===S.me, o = Q[home ? f.a : f.h];
         let tag = '<span class="chip '+(home ? 'dom' : 'ext')+'">'+(home ? 'Domicile' : 'Extérieur')+'</span>';
-        if(f.r){ const my = home ? f.r.h : f.r.a, th = home ? f.r.a : f.r.h, w = f.r.w===S.me; tag = '<span class="chip '+(w ? 'win' : 'loss')+'">'+(w ? 'V ' : 'D ')+my+'–'+th+(f.r.qz ? ' Q' : '')+'</span>'; }
+        if(f.r){ const my = home ? f.r.h : f.r.a, th = home ? f.r.a : f.r.h, w = f.r.w===S.me, n = f.r.w==null; tag = '<span class="chip '+(w ? 'win' : n ? 'dom' : 'loss')+'">'+(w ? 'V ' : n ? 'N ' : 'D ')+my+'–'+th+'</span>'; }
         return '<div class="day"><span class="j">J'+f.day+'</span>'+crest(o, 1)+'<span class="who">'+esc(o.name)+'</span>'+tag+'</div>';
       }).join('')+'</div>';
     } else if(S.round && S.ko[S.round]){
-      const t = myTie() || (S.ko[S.round].find(t=> t.a===S.me || t.b===S.me));
-      if(t) h += '<div class="card"><h3>'+ROUND[S.round]+'</h3>'+tieRow(t)+'</div>';
+      const t = myTie();
+      if(t) h += '<div class="card"><h3>'+ROUND[myRound()]+'</h3>'+tieRow(t)+'</div>';
     }
     // the road to the final
-    const steps = [['Poules'], ['Quarts'], ['Demi'], ['Finale']], at = S.champion!=null ? 4 : S.phase==='groups' ? 0 : ['qf','sf','f'].indexOf(S.round) + 1;
+    const steps = [['Poules'], ['8es'], ['Quarts'], ['Demi'], ['Finale']], at = S.champion!=null ? 5 : S.phase==='groups' ? 0 : ['r16','qf','sf','f'].indexOf(S.round) + 1;
     h += '<div class="card"><h3>La route<span>jusqu’à la finale</span></h3><div class="road">'+steps.map((s, i)=> '<span class="'+(i<at ? 'done' : i===at ? 'now' : '')+'">'+s[0]+'</span>').join('')+'</div></div>';
     h += lpCard(true);
   } else if(tab==='groupes'){
     h += '<div class="minigrp">'+S.groups.map((_, g)=> '<div class="card"><h3>Groupe '+G[g]+'</h3>'+standings(g).map((x, i)=>{ const q = Q[x.q]; return '<div class="row'+(x.q===S.me ? ' me' : '')+(i<2 && S.phase!=='groups' ? ' q' : '')+'">'+crest(q, 1)+'<span class="n">'+esc(q.name)+'</span><span class="v p">'+x.pts+'</span></div>'; }).join('')+'</div>').join('')+'</div>';
-    h += '<p class="note">Les points du tournoi sont à part des jetons : victoire 3 points, défaite 0. Égalité de points : différence de manches (un CORA compte 2), puis manches gagnées.</p>';
+    // v99: the six thirds side by side: the 4 best go to the round of 16
+    h += '<div class="card"><h3>Meilleurs troisièmes<span>les 4 premiers passent</span></h3><div class="tbl-h"><span>QUARTIER</span><span>J</span><span>DIF</span><span>PTS</span></div>'+thirds().map((x, i)=> teamRow(x, i, {top:4})).join('')+'</div>';
+    h += '<p class="note">Les points du tournoi sont à part des jetons : victoire 3 points, nul 1, défaite 0. Égalité de points : différence de manches (un CORA compte 2, une 33 Glacée 3), puis manches gagnées.</p>';
   } else if(tab==='tableau'){
-    const rounds = ['qf','sf','f'].filter(r=> S.ko[r]);
-    if(!rounds.length) h += '<div class="card"><h3>Le tableau final</h3><p class="note" style="text-align:left">Les quarts de finale commencent après la 6ᵉ journée : les 2 premiers de chaque groupe, en aller-retour. Puis les demies, et la finale au Grand Carrefour, en un seul match.</p></div>';
+    const rounds = ['r16','qf','sf','p3','f'].filter(r=> S.ko[r]);
+    if(!rounds.length) h += '<div class="card"><h3>Le tableau final</h3><p class="note" style="text-align:left">Les huitièmes de finale commencent après la 6ᵉ journée : les 2 premiers de chaque groupe et les 4 meilleurs troisièmes, en aller-retour. Puis les quarts, les demies, et le soir de la finale au Grand Carrefour : le match pour la 3ᵉ place et la finale, en un seul match chacun.</p></div>';
     rounds.forEach(r=>{ h += '<div class="ko-round"><h4>'+ROUND[r]+'</h4>'+S.ko[r].map(t=> tieRow(t, r)).join('')+'</div>'; });
-    if(rounds.length) h += '<p class="note">Score = manches cumulées sur l’aller et le retour (un CORA compte 2, une 33 Glacée 3). * départagé à la manche décisive.</p>';
-    if(S.champion!=null) h += '<div class="card" style="text-align:center"><h3 style="justify-content:center">Champion</h3><div style="display:flex;justify-content:center">'+crest(Q[S.champion])+'</div><p style="font:700 16px var(--disp);margin:10px 0 0">'+esc(Q[S.champion].name)+'</p></div>';
+    if(rounds.length) h += '<p class="note">Score = points de manches cumulés sur l’aller et le retour (une manche gagnée 1, un CORA 2, une 33 Glacée 3). * départagé à la manche décisive.</p>';
+    if(S.champion!=null){ const pod = S.podium || [S.champion]; h += '<div class="card" style="text-align:center"><h3 style="justify-content:center">Le podium</h3><div style="display:flex;justify-content:center;gap:14px;align-items:flex-end">'+[1, 0, 2].map(i=> pod[i]==null ? '' : '<div style="text-align:center;'+(i ? 'opacity:.85' : '')+'">'+crest(Q[pod[i]])+'<p style="font:700 '+(i ? 12 : 15)+'px var(--disp);margin:8px 0 0">'+esc(Q[pod[i]].name)+'</p><small style="color:var(--mute)">'+['1ᵉʳ','2ᵉ','3ᵉ'][i]+'</small></div>').join('')+'</div></div>'; }
   } else {
     h += lpCard(false);
     h += '<div class="card"><h3>Comment gagner des LP</h3><div class="day"><span class="who">Match gagné</span><span class="chip win">+30</span></div><div class="day"><span class="who">Gagné par CORA</span><span class="chip win">+12 (+18 en 33 Glacée)</span></div><div class="day"><span class="who">Titre de champion</span><span class="chip win">+200</span></div><div class="day"><span class="who">Match perdu</span><span class="chip loss">−12</span></div><div class="day"><span class="who">Plus de 3 jours sans jouer</span><span class="chip loss">−4 % par jour</span></div></div>';
@@ -1189,15 +1220,15 @@ async function startNight(){
   const them = m.h===S.me ? m.a : m.h;
   if(!S.cur || S.cur.key!==keyOf(m)){
     const rc = champOf(them);
-    S.cur = {key:keyOf(m), them, m:[null], rc, done:false, qz:null, dec:false};
+    S.cur = {key:keyOf(m), them, m:Array(NM).fill(null), rc, done:false, qz:null, dec:false};
     save();
     await walkout(m);
   } else { await show('night'); renderNight(); }
 }
-const keyOf = m=> m.kind==='g' ? m.f.id : S.round+'-'+S.ko[S.round].indexOf(m.t)+'-'+m.leg;
+const keyOf = m=>{ if(m.kind==='g') return m.f.id; const rd = S.ko.p3 && S.ko.p3.includes(m.t) ? 'p3' : S.round; return rd+'-'+S.ko[rd].indexOf(m.t)+'-'+m.leg; };
 async function walkout(m){
   const you = Q[S.me], th = Q[S.cur.them], c = CH[S.cur.rc], home = m.neutral ? null : m.h===S.me;
-  $('wkTag').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[S.round]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
+  $('wkTag').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[myRound()]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
   $('wkTitle').textContent = home==null ? 'Le Grand Carrefour, ce soir' : home ? 'Au maquis de '+you.name : 'Chez '+th.name;
   $('wkL').innerHTML = '<div class="por"><div class="you">TOI</div>'+crest(you)+'</div><b>'+esc(you.name)+'</b><small>Ton quartier</small>';
   $('wkR').innerHTML = '<div class="por"><span class="ffp-wrap">'+champFace(c)+'</span>'+crest(th)+'</div><b>'+esc(th.name)+'</b><small>'+esc(c.name)+'</small>';
@@ -1217,42 +1248,44 @@ async function walkout(m){
   A($('wkGo'), [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:250});
 }
 $('wkGo').addEventListener('click', async ()=>{ await show('night'); renderNight(true); });
-// v94: the match's score = the winner's points of the duel (1, CORA 2, 33 Glacée 3); the decisive game is not counted
+// v99: the match's score = the points of its 2 manches (each manche won 1, CORA 2, 33 Glacée 3); the decisive manche
+// is not counted
 const goalsOf = x=> x>=4 ? 3 : x>=2 ? 2 : 1;
-function score(){ let me = 0, th = 0; S.cur.m.forEach((x, i)=>{ if(!x || (S.cur.dec && i===1)) return; if(x.r==='me') me += goalsOf(x.x); else if(x.r==='them') th += goalsOf(x.x); }); return {me, th}; }
+function score(){ let me = 0, th = 0; S.cur.m.forEach((x, i)=>{ if(!x || (S.cur.dec && i===NM)) return; if(x.r==='me') me += goalsOf(x.x); else if(x.r==='them') th += goalsOf(x.x); }); return {me, th}; }
+const mancheName = i=> S.cur && S.cur.dec && i===NM ? 'Manche décisive' : 'Manche '+(i + 1);
 function renderNight(animate){
   const m = curMatch(), C = S.cur; if(!m || !C) return show('hub', true).then(()=> renderHub(true));
   const you = Q[S.me], th = Q[C.them], sc = score();
-  $('ntEyebrow').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[S.round]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
+  $('ntEyebrow').textContent = m.kind==='g' ? 'Journée '+S.day+' · Groupe '+G[myGroup()] : ROUND[myRound()]+(m.t.legs.length>1 ? ' · '+(m.leg ? 'retour' : 'aller') : '');
   let agg = '';
   if(m.kind==='ko' && m.leg===1){ const g = aggOf(m.t), mine = (m.t.a===S.me ? g.a : g.b) + sc.me, their = (m.t.a===S.me ? g.b : g.a) + sc.th; agg = '<span class="agg">Cumul aller-retour : '+mine+' – '+their+'</span>'; }
   let h = '<div class="board"><div class="tm">'+crest(you)+esc(you.name)+'</div><div><div class="sc"><span id="scMe">'+sc.me+'</span><em>–</em><span id="scTh">'+sc.th+'</span></div>'+agg+'</div><div class="tm">'+crest(th)+esc(th.name)+'</div></div>';
-  // v94: one duel; in a knock-out tie still level after both legs, one decisive game
+  // v99: two manches; in a knock-out tie still level at the end, one decisive manche
   const nextI = C.m.findIndex(x=> !x);
   C.m.forEach((x, i)=>{
-    const dec = C.dec && i===1;
+    const dec = C.dec && i===NM;
     let right = '';
     if(x){ right = x.r==='me' ? '<span class="res chip win">Gagné'+(x.x>1 ? ' ×'+x.x : '')+'</span>' : '<span class="res chip loss">Perdu'+(x.x>1 ? ' ×'+x.x : '')+'</span>'; }
     else if(i===nextI) right = '<button class="cta" data-play="'+i+'">Jouer</button>';
-    h += '<div class="manche'+(i===nextI ? ' next' : '')+'"><span class="ic">1 v 1</span><div class="tx"><b>'+(dec ? 'Manche décisive' : 'Le match')+'</b><small>'+esc('Contre '+CH[C.rc].name+(dec ? ' · le cumul est à égalité' : ''))+'</small></div>'+right+'</div>';
+    h += '<div class="manche'+(i===nextI ? ' next' : '')+'"><span class="ic">1 v 1</span><div class="tx"><b>'+mancheName(i)+'</b><small>'+esc('Contre '+CH[C.rc].name+(dec ? ' · égalité, elle départage' : ''))+'</small></div>'+right+'</div>';
   });
-  // the duel is in but the match was left before its end (a closed app): finish it
+  // the manches are in but the match was left before its end (a closed app): finish it
   if(nextI===-1) h += '<button class="cta wide" id="endNow" style="margin-top:6px">Voir le résultat</button>';
-  h += '<p class="note"><b>Points du tournoi</b> : victoire 3, défaite 0. <b>Jetons</b>, à part : '+fmt(PRIME.manche)+' pour une victoire (×2 sur un CORA, ×4 sur une 33 Glacée).</p>';
+  h += '<p class="note"><b>Score</b> : chaque manche gagnée vaut 1 (CORA 2, 33 Glacée 3). <b>Points du tournoi</b> : victoire 3, nul 1, défaite 0. <b>Jetons</b>, à part : '+fmt(PRIME.manche)+' par manche gagnée (×2 sur un CORA, ×4 sur une 33 Glacée).</p>';
   $('nightBody').innerHTML = h;
   if(animate) [...$('nightBody').children].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:460, delay:i*80, fill:'backwards'}));
   $('nightBody').querySelectorAll('[data-play]').forEach(b=> b.addEventListener('click', ()=> playManche(+b.dataset.play)));
   const en = $('endNow'); if(en) en.addEventListener('click', endNight);
 }
 function playManche(i){
-  const C = S.cur, m = curMatch(), th = Q[C.them], id = 'L'+Date.now().toString(36)+i, dec = C.dec && i===1;
-  const title = (dec ? 'Manche décisive' : 'Le match')+' · '+Q[S.me].name+' – '+th.name;
+  const C = S.cur, m = curMatch(), th = Q[C.them], id = 'L'+Date.now().toString(36)+i, dec = C.dec && i===NM;
+  const title = mancheName(i)+' · '+Q[S.me].name+' – '+th.name;
   // v94: home or away decides the table, the music and who deals (the neutral final: drawn by the game)
   const home = m && !m.neutral ? m.h===S.me : null;
   const msg = {zh:'play', id, league:1, persona:C.rc, target:1, title};
   if(home!=null){ msg.home = home; if(!home) msg.table = CH_TABLE[C.rc] || null; }
   pending = {id, done: d=> onResult(i, d)};
-  $('waitT').textContent = dec ? 'Manche décisive' : 'Le match'; $('wait').classList.add('on');
+  $('waitT').textContent = mancheName(i); $('wait').classList.add('on');
   if(SIM || !host){
     // alone (tests): the duel is simulated
     setTimeout(()=>{ if(!pending || pending.id!==id) return; const won = Math.random()<.55, x = Math.random()<.12 ? 2 : Math.random()<.03 ? 4 : 1;
@@ -1260,7 +1293,7 @@ function playManche(i){
   } else post(msg);
 }
 async function onResult(i, d){
-  const C = S.cur, dec = C.dec && i===1;
+  const C = S.cur, dec = C.dec && i===NM;
   const r = d.forfeit ? 'them' : d.won ? 'me' : 'them';
   const x = Math.max(1, Math.min(4, d.mult|0 || 1));
   C.m[i] = {r, x};
@@ -1271,22 +1304,25 @@ async function onResult(i, d){
   const el = $(r==='me' ? 'scMe' : 'scTh');
   if(el) A(el, [{transform:'scale(1.8)', color:r==='me' ? '#92e8b0' : '#ffb4a6'}, {transform:'scale(1)', color:'#eef1ff'}], {duration:700, easing:BACK, fill:'none'});
   fanfare(r==='me'); buzz(r==='me' ? [20, 30, 40] : 30);
-  toast(r==='me' ? (dec ? 'Manche décisive gagnée !' : 'Victoire pour '+Q[S.me].name+(x>1 ? ' · gain ×'+x+' !' : ' !')) : (dec ? 'Manche décisive perdue.' : 'Victoire pour '+Q[C.them].name+'.'), 2600);
+  toast(r==='me' ? (dec ? 'Manche décisive gagnée !' : mancheName(i)+' pour '+Q[S.me].name+(x>1 ? ' · gain ×'+x+' !' : ' !')) : (dec ? 'Manche décisive perdue.' : mancheName(i)+' pour '+Q[C.them].name+'.'), 2600);
   if(C.m.every(Boolean)){ await sleep(1400); endNight(); }
 }
 async function endNight(){
   const C = S.cur, m = curMatch(), sc = score();
-  // a knock-out tie still level on the aggregate after the return leg: one decisive game (it replaces the old quiz)
+  // a knock-out tie still level at its end (the aggregate after the return leg, or the single match of the final
+  // and of the 3rd place): one decisive manche
   let level = false;
   if(m.kind==='ko' && m.t.legs.length>1 && m.leg===1){ const g = aggOf(m.t), mine = (m.t.a===S.me ? g.a : g.b) + sc.me, their = (m.t.a===S.me ? g.b : g.a) + sc.th; level = mine===their; }
+  if(m.kind==='ko' && m.t.legs.length===1) level = sc.me===sc.th;
   if(level && !C.dec){ C.dec = true; C.m.push(null); save(); await show('night'); renderNight(true); toast('Égalité au cumul : une manche décisive !', 3000); return; }
   finishNight();
 }
 function finishNight(){
   const C = S.cur, m = curMatch(), sc = score(), home = m.h===S.me;
   const r = {h: home ? sc.me : sc.th, a: home ? sc.th : sc.me};
-  let wonNight;
-  if(m.kind==='g'){ wonNight = sc.me>sc.th || (sc.me===sc.th && C.qz==='me'); r.w = wonNight ? S.me : C.them; r.qz = sc.me===sc.th; m.f.r = r; }
+  let wonNight, draw = false;
+  // v99: a group match can end level (1 point each)
+  if(m.kind==='g'){ r.w = sc.me>sc.th ? S.me : sc.th>sc.me ? C.them : null; wonNight = r.w===S.me; draw = r.w==null; m.f.r = r; }
   else {
     m.t.legs[m.leg].r = r;
     if(m.t.legs.length===1 || m.leg===1){
@@ -1296,42 +1332,51 @@ function finishNight(){
     } else wonNight = sc.me>sc.th;
   }
   const gains = [];
-  C.m.forEach((x, i)=>{ if(x.r==='me') gains.push([(C.dec && i===1 ? 'Manche décisive' : 'Match gagné')+(x.x>1 ? ' (×'+x.x+')' : ''), PRIME.manche * x.x]); });
+  C.m.forEach((x, i)=>{ if(x.r==='me') gains.push([(C.dec && i===NM ? 'Manche décisive' : 'Manche '+(i + 1)+' gagnée')+(x.x>1 ? ' (×'+x.x+')' : ''), PRIME.manche * x.x]); });
   if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Bonus du quartier', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); post({zh:'pts', n:5, night:1}); }
-  else lpAdd(-12);
+  else lpAdd(draw ? 5 : -12);
   S.history.push({k:C.key, me:sc.me, th:sc.th, w:wonNight});
   S.cur = null;
   // the rest of the matchday, then the season moves on
-  let msgs;
+  let msgs, rd = null;
   if(m.kind==='g') msgs = afterGroupNight();
   else {
     const rr = rng(S.seed + 7000 + S.leg * 13 + Object.keys(S.ko).length * 977);
-    S.ko[S.round].forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, rr, s.neutral); } });
+    rd = myRound();
+    roundTies().forEach(t=>{ const l = t.legs[S.leg]; if(!l.r){ const s = legSides(t, S.leg); l.r = simNight(s.h, s.a, rr, s.neutral); } });
     const was = S.round; msgs = advanceKO();
+    // v99: the podium is paid — champion, finalist, 3rd
     if(S.champion===S.me){ pay(PRIME.f); S.earned += PRIME.f; gains.push(['Titre de champion', PRIME.f]); lpAdd(200); post({zh:'pts', n:50, title:1}); }
+    else if(S.podium && S.podium[1]===S.me){ pay(PRIME.finalist); S.earned += PRIME.finalist; gains.push(['Finaliste', PRIME.finalist]); lpAdd(80); post({zh:'pts', n:25}); }
+    else if(S.podium && S.podium[2]===S.me){ pay(PRIME.p3); S.earned += PRIME.p3; gains.push(['3ᵉ place', PRIME.p3]); lpAdd(50); post({zh:'pts', n:15}); }
     msgs.forEach(x=>{ if(x.k==='through'){ pay(PRIME[was]); S.earned += PRIME[was]; gains.push([ROUND[was]+' passés', PRIME[was]]); } });
   }
-  msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les quarts', PRIME.qualif]); } });
+  msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les huitièmes', PRIME.qualif]); } });
   save();
-  showResult(m, sc, wonNight, gains, msgs);
+  showResult(m, sc, wonNight, gains, msgs, draw, rd);
 }
-async function showResult(m, sc, won, gains, msgs){
+async function showResult(m, sc, won, gains, msgs, draw, rd){
   const C_them = Q[(m.h===S.me ? m.a : m.h)];
-  const champ = S.champion===S.me, out = msgs.find(x=> x.k==='outGroups' || x.k==='outKO'), qual = msgs.find(x=> x.k==='qualif'), thr = msgs.find(x=> x.k==='through');
-  const decisive = m.kind==='ko' && (m.t.legs.length===1 || m.leg===1), quizzed = m.kind==='g' ? m.f.r.qz : decisive && m.t.qz;
+  const champ = S.champion===S.me, out = msgs.find(x=> x.k==='outGroups' || x.k==='outKO'), qual = msgs.find(x=> x.k==='qualif'), thr = msgs.find(x=> x.k==='through'), toP3 = msgs.find(x=> x.k==='toP3');
+  const decisive = m.kind==='ko' && (m.t.legs.length===1 || m.leg===1), quizzed = decisive && m.t.qz;
   const nth = p=> p===0 ? '1ʳᵉ' : (p + 1)+'ᵉ';
-  $('rsK').textContent = decisive ? (S.champion===S.me ? 'CHAMPION' : won ? 'QUALIFIÉ' : 'ÉLIMINÉ') : won ? 'VICTOIRE' : sc.me===sc.th && m.kind==='ko' ? 'MATCH NUL' : 'DÉFAITE';
+  $('rsK').textContent = decisive ? (champ ? 'CHAMPION' : rd==='f' ? 'FINALISTE' : rd==='p3' ? (won ? '3ᵉ PLACE' : '4ᵉ PLACE') : won ? 'QUALIFIÉ' : toP3 ? 'DEMI PERDUE' : 'ÉLIMINÉ')
+    : won ? 'VICTOIRE' : sc.me===sc.th ? 'MATCH NUL' : 'DÉFAITE';
   $('rsSc').textContent = sc.me+' – '+sc.th;
   let line = '';
   if(decisive && m.t.legs.length>1){ const g = aggOf(m.t), mine = m.t.a===S.me ? g.a : g.b, their = m.t.a===S.me ? g.b : g.a; line = 'Cumul aller-retour : '+mine+' – '+their+(quizzed ? ', départagé à la manche décisive' : ''); }
   else if(quizzed) line = 'Égalité, départagée à la manche décisive';
-  $('rsT').textContent = (won ? Q[S.me].name : C_them.name)+(decisive ? ' passe' : ' gagne le match');
-  if(decisive && m.t.legs.length===1) $('rsT').textContent = won ? Q[S.me].name+' gagne la finale' : C_them.name+' gagne la finale';
-  let s = won ? 'Le quartier chante ton nom jusqu’au matin.' : 'Le maquis est silencieux ce soir. La prochaine sera la bonne.';
+  $('rsT').textContent = draw ? 'Match nul' : (won ? Q[S.me].name : C_them.name)+(decisive ? ' passe' : ' gagne le match');
+  if(decisive && rd==='f') $('rsT').textContent = won ? Q[S.me].name+' gagne la finale' : C_them.name+' gagne la finale';
+  if(decisive && rd==='p3') $('rsT').textContent = (won ? Q[S.me].name : C_them.name)+' prend la 3ᵉ place';
+  let s = won ? 'Le quartier chante ton nom jusqu’au matin.' : draw ? 'Un point chacun. Rien n’est joué dans ce groupe.' : 'Le maquis est silencieux ce soir. La prochaine sera la bonne.';
   if(m.kind==='ko' && m.t.legs.length>1 && m.leg===0) s = won ? 'Avantage pour le match retour.' : sc.me===sc.th ? 'Tout reste à faire au retour.' : 'Il faudra renverser ça au retour.';
-  if(qual) s = 'Qualifié ! '+Q[S.me].name+' finit '+nth(qual.pos)+' du groupe et file en quarts de finale.';
-  if(thr) s = 'Qualifié pour les '+(ROUND[S.round] || '').toLowerCase()+' !';
-  if(out) s = out.k==='outGroups' ? Q[S.me].name+' finit '+nth(out.pos)+' du groupe : éliminé. Reviens plus fort la saison prochaine.' : 'Éliminé en '+ROUND[out.round].toLowerCase()+'. Le quartier est fier quand même.';
+  if(qual) s = 'Qualifié ! '+Q[S.me].name+' finit '+nth(qual.pos)+' du groupe'+(qual.third ? ', parmi les 4 meilleurs troisièmes,' : '')+' et file en huitièmes de finale.';
+  if(thr) s = 'Qualifié pour '+({qf:'les quarts de finale', sf:'les demi-finales', f:'la finale'}[S.round] || 'la suite')+' !';
+  if(toP3) s = 'La finale s’éloigne, mais il reste une médaille : le match pour la 3ᵉ place, le soir de la finale.';
+  if(rd==='f' && !champ) s = 'Finaliste ! Le quartier rentre avec la médaille d’argent et '+fmt(PRIME.finalist)+' jetons.';
+  if(rd==='p3') s = won ? 'Sur le podium ! 3ᵉ place et '+fmt(PRIME.p3)+' jetons.' : 'Au pied du podium. La saison prochaine sera la bonne.';
+  if(out) s = out.k==='outGroups' ? Q[S.me].name+' finit '+nth(out.pos)+' du groupe : éliminé'+(out.pos===2 ? ' (pas parmi les 4 meilleurs troisièmes)' : '')+'. Reviens plus fort la saison prochaine.' : 'Éliminé en '+ROUND[out.round].toLowerCase()+'. Le quartier est fier quand même.';
   if(line) s = line+'. '+s;
   $('rsS').textContent = s;
   $('rsG').innerHTML = gains.length ? gains.map(([k, v])=> '<div><span>'+esc(k)+'</span><b>+'+fmt(v)+'</b></div>').join('') : '';
@@ -1399,8 +1444,8 @@ const QZ = [
   ['Quelle couleur n’a pas de 10 ?', ['Le Black', 'Le Zing', 'La Coubie', 'Le Tchaka'], 0],
   ['Mise de 1 000, ton adversaire te fait un CORA. Tu paies…', ['2 000', '1 000', '3 000', '4 000'], 0],
   ['Mise de 500, on te fait une 33 Glacée. Tu paies…', ['2 000', '1 000', '1 500', '500'], 0],
-  ['Combien de manches dans une soirée de League ?', ['3', '2', '5', '1'], 0],
-  ['Combien de quartiers jouent la Fap-Fap League ?', ['32', '16', '24', '64'], 0],
+  ['Combien de manches dans un match de League ?', ['2', '3', '5', '1'], 0],
+  ['Combien de quartiers jouent la Fap-Fap League ?', ['24', '16', '32', '64'], 0],
   ['La Passe : avec combien de cartes en main peut-on passer ?', ['2', '1', '3', '5'], 0]
 ];
 let QS = null;
@@ -1460,7 +1505,7 @@ if(lpMsgs.length) setTimeout(()=> lpMsgs.forEach((m, i)=> setTimeout(()=> toast(
 if(S && S.cur && S.cur.qz==='pending') S.cur.qz = null;
 paintChips();
 // test hook (local only): window.__lg
-if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__lg = {get S(){ return S; }, set S(v){ S = v; }, newSeason, simulateToEnd, standings, renderHub, show, startNight, onResult, finishNight, lpTick, get L(){ return L; }, save};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__lg = {get S(){ return S; }, set S(v){ S = v; }, newSeason, simulateToEnd, standings, renderHub, show, startNight, onResult, finishNight, lpTick, get L(){ return L; }, save, nextMatch, endNight, thirds, doorPaint};
 
 // ===================== 9. THE ONLINE LEAGUE OF 16 (v89) =====================
 // The server runs it (supabase-league16.sql); the game passes the messages: {zh:'l16', op:'state'|'join'|'ready'|'play'} out,
@@ -1507,6 +1552,14 @@ function olStage(L){
 const STAGE_TXT = {g:'Poules', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale', p3:'La 3ᵉ place', done:'Terminée'};
 function olDay(L){ return L.started ? Math.min(7, Math.floor((Date.now() - new Date(L.started)) / 864e5) + 1) : 1; }
 
+// v99: the door says live how many are in (the game sends it on opening, and again with every state)
+function doorPaint(s){
+  const el = $('doorSub'); if(!el) return;
+  if(s.open){
+    const n = s.open.count|0, left = Math.max(0, 16 - n);
+    el.textContent = n+' / 16 inscrits · '+(left ? 'plus que '+left+' place'+(left>1 ? 's' : '') : 'complet')+(s.open.joined ? ' · tu y es' : '');
+  } else if(s.league && s.league.status!=='done') el.textContent = 'League #'+s.league.n+' en cours · '+(STAGE_TXT[s.league.status] || 'les matchs');
+}
 // ---- talking to the game (or to the demo) ----
 function olAsk(op, extra){
   if(host){ OL.wait = true; post(Object.assign({zh:'l16', op}, extra || {})); return; }
@@ -1521,6 +1574,7 @@ window.addEventListener('message', e=>{
   if(d.op==='state'){
     if(!d.ok){ OL.s = false; olRender(); return; }
     OL.s = d.data; OL.me = d.me; OL.online = new Set(d.online || []); OL.name = d.name || ''; OL.q = d.q; if(d.chips!=null){ chips = d.chips; paintChips(); }
+    doorPaint(d.data || {});
     olRender();
   }
 });

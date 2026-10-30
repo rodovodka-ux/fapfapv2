@@ -3183,6 +3183,7 @@
   .ps-btns{ width:100%; display:flex; gap:8px; } .ps-btns button{ flex:1; }
   #friendInviteOverlay .ps-sheet{ animation: hxIn .35s cubic-bezier(.2,.8,.2,1) both; }
   #friendInviteOverlay{ z-index:70; }
+  #friendInviteOverlay.ingame{ z-index:1300; } /* v99: a challenge received at the table, above the game */
   /* la fiche : bilan, retirer en discret */
   .ps-rec{ margin:0 0 10px; font-size:13px; font-weight:800; padding:6px 12px; border-radius:12px; background:rgba(255,255,255,0.07); }
   .ps-rec b.w{ color:#7ee0a0; } .ps-rec b.l{ color:#ff8a7a; }
@@ -13878,7 +13879,7 @@
     {t:'Entrer dans la Fap-Fap League', s:'Défends ton quartier', r:'Cadre d’or', frame:'or', go:'Ouvrir la League'}
   ];
   const pvAiWins = ()=> Object.values(profile.ladder || {}).reduce((s, r)=> s + ((r && r.w) || 0), 0);
-  const pvLeague = ()=>{ try{ return !!localStorage.getItem('fapfap_league_v1'); }catch(e){ return false; } };
+  const pvLeague = ()=>{ try{ return !!(localStorage.getItem('fapfap_league_v3') || localStorage.getItem('fapfap_league_v1')); }catch(e){ return false; } };
   function pvAgeOk(){ try{ return localStorage.getItem('fapfap_age_ok')==='1'; }catch(e){ return false; } }
   // a new phone, or a player who never finished a game and has no name: the whole visit
   function pvNeedsVisit(){
@@ -14388,8 +14389,8 @@
     });
   })();
 
-  // ---- Opening credits at every launch (a touch skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v98';
+  // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
+  const APP_VERSION = 'v99';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14403,11 +14404,21 @@
     // the home screen plays its entrance as the credits fade, so the player sees it arrive instead of finding it there
     const end = ()=>{ if(over) return; over = true; T.forEach(clearTimeout); el.classList.add('done'); setTimeout(()=> el.remove(), 800);
       if(Nav.stack.length===1 && Nav.stack[0]==='menuOverlay') playHomeIntro(); if(!pvMaybeOpen()){ if(!betaNotice()) setTimeout(installInvite, 500); } };
-    el.addEventListener('click', end);
-    // v95: the film's clock started with the page, not with this script (seconds later on a phone): the end and the
-    // shake follow the film, so the logo never stays frozen and the shake lands on the « CLAC ! »
-    const filmAt = performance.now();
-    if(!/[?&]intro=hold\b/.test(location.search)) T.push(setTimeout(end, Math.max(700, (short ? 2600 : 12900) - filmAt))); // (hold: tests look at it frame by frame)
+    // v99: only « Passer » skips the film (a stray touch on the screen used to cut it)
+    document.getElementById('lnSkip').addEventListener('click', e=>{ e.stopPropagation(); end(); });
+    // v99: the film tells where it is. On a phone it only starts once the game's script has loaded (2 to 6 s after
+    // the page opened): the v95 clock, counted from the page, cut it before the logo. Its own animations say how far
+    // it has played; it ends 0.7 s after its last line has appeared, never on a guessed clock.
+    const fade = stage.querySelector('.l2-fade'), fa = fade && fade.getAnimations()[0];
+    const filmAt = fa && fa.currentTime!=null ? Math.max(0, +fa.currentTime) : 0;
+    const tag = stage.querySelector('.l2-tag');
+    if(!/[?&]intro=hold\b/.test(location.search)){ // (hold: tests look at it frame by frame)
+      // what is left of the last line's animation (its delay included), read from the film itself
+      const ta = tag && tag.getAnimations()[0];
+      const left = ta ? ta.effect.getComputedTiming().endTime - Math.max(0, +ta.currentTime || 0) : (short ? 2000 : 12300) - filmAt;
+      T.push(setTimeout(end, Math.max(700, left + 700)));
+      if(tag) tag.addEventListener('animationend', e=>{ if(e.target===tag) T.push(setTimeout(end, 700)); });
+    }
     if(!short && filmAt < 1400) T.push(setTimeout(()=>{ stage.classList.remove('l2-shake'); void stage.offsetWidth; stage.classList.add('l2-shake'); }, 1400 - filmAt));
     // the sound, made live (no file): only where the phone lets a page play sound before a first touch
     if(prefs.mute) return;
@@ -16807,13 +16818,19 @@
   };
   const ZH = {open:false};
   function zhPost(m){ const f = $id('zhFrame'); try{ if(f.contentWindow) f.contentWindow.postMessage(m, location.origin); }catch(e){} }
-  function zhSendChips(){ if(profile.chips==null) chipsInit(); zhPost({zh:'chips', chips:profile.chips, name:(prefs.name||'').trim(), photo:myPhoto()}); }
+  function zhSendChips(){ if(profile.chips==null) chipsInit(); zhPost({zh:'chips', chips:profile.chips, name:(prefs.name||'').trim(), photo:myPhoto()}); zhDoor(); }
+  // v99: the League's door shows how many are in (from the last state read by the game)
+  function zhDoor(){
+    const s = window.l16Get && window.l16Get(); if(!s) return;
+    zhPost({zh:'door', open: s.open ? {n:s.open.n, count:s.open.count|0, joined:!!s.open.joined} : null, league: s.league ? {n:s.league.n, status:s.league.status} : null});
+  }
+  window.zhDoor = zhDoor;
   // v80: the frame now holds the Fap-Fap League (league.html); the stories are gone, the bridge stays the same
   function zhOpen(){
     const f = $id('zhFrame');
     if(!f.getAttribute('src')) f.setAttribute('src', 'league.html?in=game');
     $id('zhOverlay').classList.remove('hidden'); ZH.open = true;
-    zhSendChips();
+    zhSendChips(); if(window.l16Home) window.l16Home(true);
   }
   function zhClose(){ $id('zhOverlay').classList.add('hidden'); ZH.open = false; renderChips(); renderMenuRank(); renderLeagueHome(); announceStoryOpps(); }
   document.getElementById('btnLeague').addEventListener('click', ()=>{ ensureAudio(); zhOpen(); });
@@ -16838,16 +16855,17 @@
       }
     }catch(e){}
     try{
-      const s = JSON.parse(localStorage.getItem('fapfap_league_v1') || 'null');
-      if(!s || s.v!==1) return;
+      // v99: the season of the League's own save (v3: 24 neighbourhoods; it was still reading the old v1 one)
+      const s = JSON.parse(localStorage.getItem('fapfap_league_v3') || 'null');
+      if(!s || s.v!==3) return;
       const Q_NAMES = ['Mokolo','Briqueterie','Mvog-Ada','Mvog-Mbi','Essos','Nkolbisson','Biyem-Assi','Obili','Melen','Mendong','Ekounou','Emana','Nkoldongo','Etoudi','Mimboman','Madagascar','Cité Verte','Elig-Edzoa','Mvan','Tsinga','Messa','Nlongkak','Bastos','Odza','New-Bell','Akwa','Deïdo','Bépanda','Ndokotti','Bonabéri','Makepe','Village'];
-      const ROUNDS = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale'};
+      const ROUNDS = {r16:'Huitièmes de finale', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale ou la 3ᵉ place'};
       const me = Q_NAMES[s.me] || '', el = id=> document.getElementById(id); // ($id is declared further down the file)
       el('lgHomeTag').textContent = 'Saison '+s.n+' · '+me;
       el('lgHomeSub').textContent = s.champion!=null ? (s.champion===s.me ? me+' est champion ! Une nouvelle saison t’attend.' : 'Saison terminée. Une nouvelle saison t’attend.')
         : s.out ? me+' est éliminé. Regarde qui va gagner, puis reviens plus fort.'
-        : s.phase==='groups' ? 'Journée '+s.day+' sur 6 · ta soirée t’attend ce soir.' : (ROUNDS[s.round] || '')+' · tout se joue ce soir.';
-      el('lgHomeCta').textContent = s.cur ? 'Reprendre la soirée' : 'Continuer ma saison';
+        : s.phase==='groups' ? 'Journée '+s.day+' sur 6 · ton match t’attend ce soir.' : (ROUNDS[s.round] || '')+' · tout se joue ce soir.';
+      el('lgHomeCta').textContent = s.cur ? 'Reprendre le match' : 'Continuer ma saison';
     }catch(e){}
   }
   renderLeagueHome();
@@ -17996,7 +18014,8 @@
     Friends.unread[p.from] = (Friends.unread[p.from]|0) + 1;
     if(Friends.inbox) Friends.inbox.unread = (Friends.inbox.unread|0) + 1; else bellRefresh();
     friendsUi();
-    if(!inGame()) showToast(String(p.name||'Un ami').replace(/[<>]/g, '').slice(0,16), String(p.body||'Nouveau message').slice(0,80), {ms:2800});
+    // v99: also at the table, shorter (a message is no longer lost until the next visit to the bell)
+    showToast(String(p.name||'Un ami').replace(/[<>]/g, '').slice(0,16), String(p.body||'Nouveau message').slice(0,80), {ms: inGame() ? 1800 : 2800});
     vibrate([30]);
   }
 
@@ -18098,7 +18117,8 @@
   }
   window.renderBell = renderBell;
   $id('btnBell').addEventListener('click', ()=> Nav.go('bellPage'));
-  setInterval(()=>{ if(!document.hidden && myUid() && (inHome() || Nav.cur()==='richPage')) bellRefresh(); }, 90000);
+  // v99: on every screen but an online game (before: only the home and the friends page, so nothing arrived elsewhere)
+  setInterval(()=>{ if(!document.hidden && myUid() && !mpNet) bellRefresh(); }, 90000);
   setTimeout(bellRefresh, 2500);
   // a friend-request notification, or ?amis=1: straight to the bell
   if(/[?&]amis=1\b/.test(location.search)){
@@ -18182,6 +18202,8 @@
       if(error) throw error;
       m.id = data; m.wait = false; drawMsgs();
       lobbySend('fmsg', {to:c.id, from:myUid(), name:myNameNow(), body:txt.slice(0, 80)});
+      // v99: a friend away from the game is woken by a notification (kind « msg » of fapfap-push)
+      if(!isOnline(c.id)) try{ supaClient.functions.invoke('fapfap-push', { body: { to:c.id, kind:'msg', name:myNameNow(), body:txt.slice(0, 80) } }); }catch(e){}
     }catch(e){
       c.msgs = c.msgs.filter(x=> x!==m); drawMsgs();
       const why = (e && e.message) || '';
@@ -18203,7 +18225,9 @@
   async function lobbyJoin(){
     const uid = myUid();
     if(!CLOUD_ON || !uid || !supaClient || Lobby.joining) return;
-    if(Lobby.ch && Lobby.uid===uid) return;
+    // v99: a channel that the phone's sleep or a network cut has closed is joined again (before, it stayed dead:
+    // the challenges and messages of friends were never heard until the game was restarted)
+    if(Lobby.ch && Lobby.uid===uid && /^(joined|joining)$/.test(Lobby.ch.state || 'joined')) return;
     Lobby.joining = true;
     try{
       if(Lobby.ch){ try{ supaClient.removeChannel(Lobby.ch); }catch(e){} Lobby.ch = null; }
@@ -18211,13 +18235,21 @@
       ch.on('presence', {event:'sync'}, ()=>{ Lobby.online = new Set(Object.keys(ch.presenceState())); lobbyRefreshUi(); });
       ch.on('broadcast', {event:'inv'}, ({payload})=> lobbyOnInvite(payload));
       ch.on('broadcast', {event:'inv-no'}, ({payload})=> lobbyOnDecline(payload));
+      ch.on('broadcast', {event:'inv-seen'}, ({payload: p})=>{ if(p && p.to===myUid() && Lobby.pending && p.code===Lobby.pending.code) Lobby.pending.seen = true; });
       ch.on('broadcast', {event:'fr'}, ({payload})=> lobbyOnFriend(payload));
       ch.on('broadcast', {event:'fmsg'}, ({payload})=> lobbyOnMsg(payload));
-      ch.subscribe(async st=>{ if(st==='SUBSCRIBED'){ try{ await ch.track({name:(prefs.name||'').trim().slice(0,16)}); }catch(e){} } });
+      ch.subscribe(async st=>{
+        if(st==='SUBSCRIBED'){ try{ await ch.track({name:(prefs.name||'').trim().slice(0,16)}); }catch(e){} }
+        else if(/CHANNEL_ERROR|TIMED_OUT|CLOSED/.test(st) && Lobby.ch===ch){ clearTimeout(Lobby.reT); Lobby.reT = setTimeout(lobbyJoin, 5000); }
+      });
       Lobby.ch = ch; Lobby.uid = uid;
     }catch(e){}
     Lobby.joining = false;
   }
+  // back in the game (screen on again, network back): listen again at once, and read what arrived meanwhile
+  const lobbyWake = ()=>{ if(document.visibilityState!=='visible' || !CLOUD_ON || !myUid()) return; lobbyJoin(); if(typeof bellRefresh==='function') try{ bellRefresh(); }catch(e){} };
+  document.addEventListener('visibilitychange', lobbyWake);
+  window.addEventListener('online', lobbyWake);
   const isOnline = id=> Lobby.online.has(id);
   function lobbySend(event, payload){ try{ if(Lobby.ch) Lobby.ch.send({type:'broadcast', event, payload}); }catch(e){} }
   function lobbyRefreshUi(){
@@ -18370,14 +18402,16 @@
     Lobby.pending = {id:f.id, name:f.name, code};
     const send = ()=> lobbySend('inv', {to:f.id, from:myUid(), name:myName, code, stake: mpStakeChoice(), l16: (window.L16cur && window.L16cur.id) || 0});
     send();
+    // v99: « en ligne » can be a phone asleep with the game in the background (it doesn't hear the lobby): unless
+    // the friend's phone says it has the challenge on screen (« inv-seen ») within 2.5 s, the notification leaves
+    // (before: only after 10 s, so the challenge arrived late or not at all)
+    setTimeout(()=>{ if(still() && Lobby.pending && Lobby.pending.code===code && !Lobby.pending.seen) pushChallenge(f, code); }, 2500);
     st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
     let n = 0;
-    // repeated for a minute, in case the friend's phone was asleep for a moment; a phone with the game left in
-    // the background doesn't hear the lobby, so after 10 s a notification is sent as well
+    // repeated for a minute, in case the friend's phone was asleep for a moment
     Lobby.invT = setInterval(()=>{
       if(!still() || ++n>12){ clearInterval(Lobby.invT); if(n>12 && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
       send();
-      if(n===2) pushChallenge(f, code);
     }, 5000);
   }
   function lobbyOnDecline(p){
@@ -18389,21 +18423,38 @@
   function lobbyOnInvite(p){
     if(!p || p.to!==myUid() || !/^[A-Z0-9]{4}$/.test(p.code||'')) return;
     if(Lobby.incoming && Lobby.incoming.code===p.code) return; // the same challenge, sent again
-    if(inGame() || mpNet || storyRun){ lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'busy'}); return; }
+    // v99: only an online game already running says « busy »; during a game against the computer the challenge
+    // comes first: shown over the table, the local game paused behind it
+    if(mpNet || (mode==='square' && sq && (sq.online || sq.remote))){ lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'busy'}); return; }
     Lobby.incoming = p;
+    lobbySend('inv-seen', {to:p.from, from:myUid(), code:p.code});
+    const local = inGame();
     $id('fiTitle').textContent = String(p.name||'Un joueur').slice(0,16)+((p.l16|0)>0 ? ' : ton match de League !' : ' te défie !');
-    $id('fiText').textContent = (p.l16|0)>0 ? 'Votre match de la League en ligne : le premier à 2 manches gagne. Il t’attend maintenant, tu y vas ?'
-      : (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?';
+    $id('fiText').textContent = ((p.l16|0)>0 ? 'Votre match de la League en ligne : le premier à 2 manches gagne. Il t’attend maintenant, tu y vas ?'
+      : (isFriend(p.from) ? 'Ton ami' : 'Ce joueur')+' t’attend pour un duel de Fap Fap'+((p.stake|0)>0 ? ', mise proposée : '+fmtChips(p.stake|0)+' jetons chacun (tu la confirmeras avant de jouer)' : ' (partie amicale)')+'. Tu acceptes ?')
+      + (!local ? '' : storyRun && storyRun.zh ? ' Ta partie en cours s’arrête : ce match de ta League hors ligne sera compté perdu.'
+        : ' Ta partie en cours s’arrête'+(matchStake>0 && mode==='ai' ? ', ta mise de '+fmtChips(matchStake)+' jetons t’est rendue.' : '.'));
     Photos.fill($id('fiAvatar'), p.from, p.name);
+    Lobby.fiPaused = local && !paused;
+    if(Lobby.fiPaused) setPaused(true);
+    $id('friendInviteOverlay').classList.toggle('ingame', local);
     show('friendInviteOverlay');
     vibrate([60,80,60]);
     sfx((c,t)=>{ [76,83,88].forEach((m,i)=> fmNote(c, sfxBus, t+i*0.12, mtof(m), {vol:0.07, dur:0.4, ratio:2, index:1})); });
     clearTimeout(Lobby.incomingT);
-    Lobby.incomingT = setTimeout(()=>{ if(Lobby.incoming===p){ hide('friendInviteOverlay'); Lobby.incoming = null; } }, 60000);
+    Lobby.incomingT = setTimeout(()=>{ if(Lobby.incoming===p){ hide('friendInviteOverlay'); Lobby.incoming = null; fiResume(); } }, 60000);
   }
+  // the local game paused under a challenge starts again once it is turned down (or forgotten)
+  function fiResume(){ if(Lobby.fiPaused){ Lobby.fiPaused = false; if($id('pauseOverlay').classList.contains('hidden')) setPaused(false); } }
   $id('fiYes').addEventListener('click', ()=>{
     const p = Lobby.incoming; hide('friendInviteOverlay'); if(!p) return;
     ensureAudio();
+    // leaving a game against the computer for the challenge: its stake comes back (the online duel takes priority)
+    if(inGame()){
+      Lobby.fiPaused = false;
+      if(mode==='ai' && matchStake>0){ chipsAdd(matchStake); matchStake = 0; saveProfile(); renderChips(); }
+      goToMainMenu();
+    }
     window.L16cur = (p.l16|0)>0 ? {id:p.l16|0, opp:p.from, name:String(p.name||'').slice(0,16), at:Date.now()} : null;
     if(ZH.open) zhClose();
     myName = (prefs.name||'').trim() || 'Toi';
@@ -18417,6 +18468,7 @@
   $id('fiNo').addEventListener('click', ()=>{
     const p = Lobby.incoming; hide('friendInviteOverlay');
     if(p) lobbySend('inv-no', {to:p.from, from:myUid(), code:p.code, why:'no'});
+    fiResume();
   });
 
   // ===================== The online League of 16 (v89) =====================
@@ -18502,7 +18554,17 @@
   // a normal online game is never counted as a League match
   $id('modeMP').addEventListener('click', ()=>{ window.L16cur = null; }, true);
   // the home card: refreshed at most once a minute
-  window.l16Home = ()=>{ if(CLOUD_ON && Date.now() - L16.at > 60000){ L16.at = Date.now(); l16Flush().then(l16State).catch(()=>{}); } };
+  // v99: L16.at only moves on a real answer, so a failed first read (slow network at launch) is tried again
+  // 15 s later instead of waiting a minute with « 0 inscrit » on screen; opening the League forces a fresh read
+  window.l16Home = force=>{
+    if(!CLOUD_ON || L16.loading || Date.now() - L16.at < (force ? 10000 : 60000)) return;
+    L16.loading = true;
+    l16Flush().then(l16State).catch(()=>{}).then(()=>{
+      L16.loading = false; if(window.zhDoor) window.zhDoor();
+      if(L16.state) L16.tries = 0;
+      else if((L16.tries = (L16.tries||0) + 1) < 6) setTimeout(()=> window.l16Home(true), 15000);
+    });
+  };
   window.l16Get = ()=> L16.state;
   setTimeout(()=> window.l16Home && window.l16Home(), 2500);
   // after an online duel: add the opponent as a friend in one touch
@@ -18613,6 +18675,8 @@
     navigator.serviceWorker.addEventListener('message', e=>{
       const d = e.data || {};
       if(d.type==='amis'){ if(!inGame() && !mpNet) Nav.go('bellPage'); else bellRefresh(); }
+      // v99: a message notification opens the conversation
+      if(d.type==='msg'){ const f = friendList().find(x=> x.id===d.from); if(f && !inGame() && !mpNet) openChat(f); else bellRefresh(); }
       if(d.type==='quartier' && !inGame() && !mpNet && window.qzOpen) window.qzOpen();
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
     });
@@ -18629,7 +18693,7 @@
     window.__ff = { DScene, Nav, getProfile: ()=> profile, psRenderCard, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
-      myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openPlayerSheet, pushChallenge, pushFriendReq,
+      myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openPlayerSheet, pushChallenge, pushFriendReq, lobbyOnInvite, isPaused: ()=> paused,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, FX2, glaceeCertificate, awardPoints, Rig, Rig2, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
