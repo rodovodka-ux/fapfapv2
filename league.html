@@ -399,6 +399,10 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .ol-waitT{ text-align:center; font:800 14px var(--ui); margin:0 0 12px; } .ol-waitT b{ color:var(--gold); }
 .ol-plist{ display:grid; gap:6px; } .ol-prow{ display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 8px; border-radius:14px; background:#0e0404; }
 .ol-prow b{ display:block; font:800 13px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ol-prow small{ color:var(--mute); font:700 11px var(--ui); } .ol-prow.me{ background:rgba(224,0,0,.22); }
+/* v104: the open matches, one row each with its own button */
+.ol-mlist{ display:grid; gap:6px; margin-top:12px; } .ol-mrow{ display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:center; padding:7px 8px; border-radius:14px; background:#0e0404; }
+.ol-mrow b{ display:block; font:800 13px var(--ui); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ol-mrow small{ color:var(--mute); font:700 11px var(--ui); }
+.ol-mrow button{ width:auto; min-width:78px; padding:9px 14px; margin:0; font-size:13px; } .ol-mrow em{ color:var(--mute); font:700 11px var(--ui); font-style:normal; }
 .ol-dot{ width:8px; height:8px; border-radius:50%; background:var(--good); display:inline-block; box-shadow:0 0 8px var(--good); margin-right:4px; vertical-align:1px; }
 .ol-live{ display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; background:var(--red); font:800 10px var(--ui); letter-spacing:.12em; color:#fff; }
 .ol-live::before{ content:''; width:7px; height:7px; border-radius:50%; background:#fff; animation:olBlink 1s infinite; } @keyframes olBlink{ 50%{ opacity:.2; } }
@@ -1553,14 +1557,31 @@ function hoursLeft(t){ const h = Math.max(0, Math.round((new Date(t) - Date.now(
 function whenTxt(t){ const d = new Date(t), now = new Date(), h = d.getHours(), day = d.toDateString()===now.toDateString() ? 'aujourd’hui' : new Date(now.getTime() + 864e5).toDateString()===d.toDateString() ? 'demain' : ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()]; return day+' '+h+' h'; }
 function ago(t){ const m = Math.max(1, Math.round((Date.now() - new Date(t)) / 60000)); return m<60 ? 'il y a '+m+' min' : m<1440 ? 'il y a '+Math.round(m/60)+' h' : 'il y a '+Math.round(m/1440)+' j'; }
 
-// the table of a group: 3 points a win, then rounds won, then CORA (as the server)
+// the table of a group (v104, the offline League's rules, as the server): 3 points a win, 1 a draw, then goal difference, then goals
 function olTable(L, g){
   const ps = (L.players || []).filter(p=> p.grp===g);
-  const rows = ps.map(p=>{ const r = {uid:p.uid, p, pts:0, played:0, won:0, rounds:0, coras:0, t:new Date(p.joined || 0)};
+  const rows = ps.map(p=>{ const r = {uid:p.uid, p, pts:0, played:0, won:0, drawn:0, gf:0, ga:0, t:new Date(p.joined || 0)};
     (L.matches || []).forEach(m=>{ if(m.stage!=='g' || (m.a!==p.uid && m.b!==p.uid) || m.status==='todo') return; r.played++;
-      if(m.winner===p.uid){ r.pts += 3; r.won++; } if(m.status==='done'){ r.rounds += m.a===p.uid ? m.ra : m.rb; r.coras += m.a===p.uid ? m.ca : m.cb; } });
+      if(m.winner===p.uid){ r.pts += 3; r.won++; } else if(m.status==='done' && !m.winner){ r.pts += 1; r.drawn++; }
+      if(m.status==='done' || m.status==='forfeit'){ r.gf += m.a===p.uid ? m.ra : m.rb; r.ga += m.a===p.uid ? m.rb : m.ra; } });
     return r; });
-  return rows.sort((a, b)=> b.pts - a.pts || b.rounds - a.rounds || b.coras - a.coras);
+  return rows.sort((a, b)=> b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga) || b.gf - a.gf || a.t - b.t);
+}
+// v104 · a match seen from me: my goals, his goals, and whether it decides a knock-out tie (the second leg, or the final)
+const olMy = (m, u)=> m.a===u ? [m.ra, m.rb] : [m.rb, m.ra];
+const olDecides = m=> m.stage!=='g' && (m.leg|0)!==1;
+const olFirstLeg = (L, m)=> (m.leg|0)===2 ? (L.matches || []).find(x=> x.stage===m.stage && x.slot===m.slot && (x.leg|0)===1 && (m.stage!=='g' || x.grp===m.grp)) : null;
+const LEG_TXT = m=> (m.leg|0)===1 ? 'aller' : (m.leg|0)===2 ? 'retour' : '';
+// the tag of a played match, seen from me
+function olResTag(L, x){
+  if(x.status==='void') return '<span class="tag n">Annulé</span>';
+  if(x.status==='forfeit') return x.winner===OL.me ? '<span class="tag w">Forfait gagné</span>' : '<span class="tag l">Forfait</span>';
+  const [g1, g2] = olMy(x, OL.me), sc = g1+'-'+g2;
+  if(olDecides(x)){
+    const out = x.stage==='f' || x.stage==='p3' ? (x.winner===OL.me ? 'Gagné ' : 'Perdu ') : (x.winner===OL.me ? 'Qualifié · ' : 'Éliminé · ');
+    return '<span class="tag '+(x.winner===OL.me ? 'w' : 'l')+'">'+out+sc+(x.ca + x.cb ? ' · prol.' : '')+'</span>';
+  }
+  return g1>g2 ? '<span class="tag w">Gagné '+sc+'</span>' : g1<g2 ? '<span class="tag l">Perdu '+sc+'</span>' : '<span class="tag n">Nul '+sc+'</span>';
 }
 function olStage(L){
   if(L.status==='done') return 'done';
@@ -1571,6 +1592,8 @@ function olStage(L){
   return 'g';
 }
 const STAGE_TXT = {g:'Poules', qf:'Quarts de finale', sf:'Demi-finales', f:'La finale', p3:'La 3ᵉ place', done:'Terminée'};
+// v104: the number of groups (2 when the League started with fewer than 12)
+function olNG(L){ return Math.max(1, ...(L.players || []).map(p=> (p.grp==null ? -1 : p.grp) + 1)); }
 function olDay(L){ return L.started ? Math.min(7, Math.floor((Date.now() - new Date(L.started)) / 864e5) + 1) : 1; }
 
 // v99: the door says live how many are in (the game sends it on opening, and again with every state)
@@ -1578,7 +1601,8 @@ function doorPaint(s){
   const el = $('doorSub'); if(!el) return;
   if(s.open){
     const n = s.open.count|0, left = Math.max(0, 16 - n);
-    el.textContent = n+' / 16 inscrits · '+(left ? 'plus que '+left+' place'+(left>1 ? 's' : '') : 'complet')+(s.open.joined ? ' · tu y es' : '');
+    el.textContent = s.open.free ? 'Sur invitation · '+n+' / 16'+(s.open.joined ? ' · tu y es' : s.open.invite && s.open.invite.status==='sent' ? ' · tu es sélectionné !' : '')
+      : n+' / 16 inscrits · '+(left ? 'plus que '+left+' place'+(left>1 ? 's' : '') : 'complet')+(s.open.joined ? ' · tu y es' : '');
   } else if(s.league && s.league.status!=='done') el.textContent = 'League #'+s.league.n+' en cours · '+(STAGE_TXT[s.league.status] || 'les matchs');
 }
 // ---- talking to the game (or to the demo) ----
@@ -1626,7 +1650,7 @@ function olRender(anim){
     if(L.status!=='open' && !olDrawSeen(L)){ olDraw(L); return; }
     if(L.status==='done'){ setHead('League #'+L.n+' · terminée', 'Le podium'); h = olPodium(L); }
     else { showTabs = true; h = OL.tab==='groups' ? olGroups(L) : OL.tab==='bracket' ? olBracket(L) : OL.tab==='live' ? olLive(L) : olMine(L);
-      setHead('League #'+L.n+' · jour '+olDay(L)+' / 7', OL.tab==='groups' ? 'Les 4 poules' : OL.tab==='bracket' ? 'Le tableau' : OL.tab==='live' ? 'En direct' : 'Ma League'); }
+      setHead('League #'+L.n+' · jour '+olDay(L)+' / 7', OL.tab==='groups' ? 'Les '+olNG(L)+' poules' : OL.tab==='bracket' ? 'Le tableau' : OL.tab==='live' ? 'En direct' : 'Ma League'); }
   }
   else if(s.open && s.open.joined){ setHead('League #'+s.open.n+' · inscrit', 'Ça se remplit'); h = olWait(s.open); }
   else if(s.open){ setHead('League en ligne', 'Inscriptions'); h = olSignup(s.open); }
@@ -1637,7 +1661,30 @@ function olRender(anim){
   if(anim) [...body.querySelectorAll('.card, .ol-next, .ol-lead, .ol-round, .ol-phase')].forEach((c, i)=> A(c, [{opacity:0, transform:'translateY(14px)'}, {opacity:1, transform:'none'}], {duration:420, delay:Math.min(i*60, 360), fill:'backwards'}));
   olWire();
 }
+// v104: the free edition, on invitation: the best active players are picked, 48 h to say yes
+function olHow(){
+  return '<div class="card"><h3>Comment ça se passe</h3><div class="ol-how">'
+    +'<div><i>1</i><span><b>Les poules · 4 jours</b><small>Aller et retour contre chaque joueur de ta poule, tout s’ouvre au tirage. Victoire 3 points, nul 1. Les 2 premiers passent.</small></span></div>'
+    +'<div><i>2</i><span><b>Phase finale · 24 h par tour</b><small>Aller et retour, au cumul des buts. Égalité : une manche de prolongation.</small></span></div>'
+    +'<div><i>3</i><span><b>La finale · jour 7</b><small>Un seul match, et celui de la 3ᵉ place.</small></span></div></div>'
+    +'<p class="ol-qn">Les règles de la League locale : un match = <b>2 mi-temps</b> (2 manches), contre un vrai joueur. Une manche gagnée = 1 but, un CORA = 2 buts, une 33 Glacée = 3 buts. Touche <b>« Je suis dispo »</b> : tes adversaires sont prévenus sur leur téléphone.</p></div>';
+}
+function olInvite(o){
+  const n = o.count, pot = o.pot || 50000, inv = o.invite, open = inv && inv.status==='sent' && new Date(inv.expires) > new Date();
+  const seats = Array.from({length:16}, (_, i)=> i<n ? avatar(o.players[i], o.players[i] && o.players[i].uid===OL.me) : '<span class="av empty">?</span>').join('');
+  let h = '<div class="ol-big"><span class="ecu">'+ecuSvg(true)+'</span><b>LEAGUE <span>#'+o.n+'</span></b><p>Sur invitation · gratuite · '+fmt(pot)+' jetons à gagner</p></div>';
+  if(open) h += '<div class="card"><h3>Tu es sélectionné !</h3><p class="ol-qn" style="margin:0 0 12px">Tu fais partie des meilleurs joueurs du moment. L’inscription est <b>offerte</b>. Réponds avant '+whenTxt(inv.expires)+', sinon ta place passe au joueur suivant.</p>'
+    +'<button class="cta wide" id="olAccept">J’accepte ma place<small>Gratuit · '+fmt(pot*.6)+' jetons pour le champion</small></button><button class="ghost wide" id="olDecline" style="margin-top:8px">Je laisse ma place</button></div>';
+  else h += '<div class="card"><h3>Sur invitation</h3><p class="ol-qn" style="margin:0">Cette édition est réservée aux joueurs sélectionnés. '+(inv && inv.status==='no' ? 'Tu as laissé ta place.' : inv ? 'Ton invitation a expiré.' : 'Joue, monte en réputation : les places libérées vont aux meilleurs joueurs actifs.')+'</p></div>';
+  h += '<div class="card"><div class="ol-count"><b>'+n+'<small> / 16 acceptés</small></b><span>'+(o.starts ? 'départ '+whenTxt(o.starts) : '')+'</span></div><div class="ol-bar"><i style="width:'+(n/16*100)+'%"></i></div>'
+    +'<div class="ol-seats">'+seats+'</div><p class="ol-qn" style="margin:0">Elle démarre <b>à 16</b>, ou à la date prévue dès qu’il y a au moins 8 joueurs.</p></div>'
+    +(n ? '<div class="card"><h3>Déjà là<span>'+n+'</span></h3><div class="ol-plist">'+olRows(o.players)+'</div></div>' : '')
+    +'<div class="card"><h3>La cagnotte<span>offerte par le jeu</span></h3><div class="ol-pot"><div><b>'+fmt(pot*.6)+'</b><small>1ᵉʳ · 60 %</small></div><div><b>'+fmt(pot*.3)+'</b><small>2ᵉ · 30 %</small></div><div><b>'+fmt(pot*.1)+'</b><small>3ᵉ · 10 %</small></div></div></div>'
+    +olHow();
+  return h;
+}
 function olSignup(o){
+  if(o.free) return olInvite(o);
   const n = o.count, pot = BASE + ENTRY*n, full = BASE + ENTRY*16;
   const seats = Array.from({length:16}, (_, i)=> i<n ? avatar(o.players[i], o.players[i] && o.players[i].uid===OL.me) : '<span class="av empty">?</span>').join('');
   return '<div class="ol-big"><span class="ecu">'+ecuSvg(true)+'</span><b>LEAGUE <span>#'+o.n+'</span></b><p>16 joueurs · 7 jours · 3 récompensés</p></div>'
@@ -1648,11 +1695,7 @@ function olSignup(o){
     +'<div class="card"><h3>La cagnotte<span>que des jetons</span></h3><div class="ol-potTot"><span>À gagner aujourd’hui</span><b><i class="coin"></i>'+fmt(pot)+'</b></div>'
     +'<div class="ol-pot"><div><b>'+fmt(pot*.6)+'</b><small>1ᵉʳ · 60 %</small></div><div><b>'+fmt(pot*.3)+'</b><small>2ᵉ · 30 %</small></div><div><b>'+fmt(pot*.1)+'</b><small>3ᵉ · 10 %</small></div></div>'
     +'<p class="ol-qn">'+fmt(BASE)+' offerts par le jeu + '+fmt(ENTRY)+' par inscrit. À 16 joueurs : <b>'+fmt(full)+'</b>.</p></div>'
-    +'<div class="card"><h3>Comment ça se passe</h3><div class="ol-how">'
-    +'<div><i>1</i><span><b>Les poules · jours 1 à 3</b><small>4 groupes de 4. Tu joues 3 matchs. Les 2 premiers passent.</small></span></div>'
-    +'<div><i>2</i><span><b>Quarts et demies · jours 4 et 5</b><small>Un match par tour. Le perdant sort.</small></span></div>'
-    +'<div><i>3</i><span><b>La finale · jour 7</b><small>Et le match pour la 3ᵉ place, juste avant.</small></span></div></div>'
-    +'<p class="ol-qn">Un match = premier à 2 manches, contre un vrai joueur. Tu as <b>48 h</b> pour le jouer, sinon forfait.</p></div>'
+    +olHow()
     +'<button class="cta wide" id="olJoin">M’inscrire<small>'+fmt(ENTRY)+' jetons · ils vont dans la cagnotte</small></button>';
 }
 // the players already in, the last one first: face, name, neighbourhood, online now or not
@@ -1672,16 +1715,17 @@ function olWait(o){
 function olDrawSeen(L){ try{ return localStorage.getItem('fapfap_l16_draw_'+L.id)==='1'; }catch(e){ return true; } }
 function olDraw(L){
   OL.drawT.forEach(clearTimeout); OL.drawT = [];
-  $('olEyebrow').textContent = 'League #'+L.n+' · 16 / 16'; $('olTitle').textContent = 'Le tirage';
+  // v104: 2 or 4 groups, of uneven sizes when the League starts with fewer than 16
+  const nP = (L.players || []).length, nG = olNG(L), byG = Array.from({length:nG}, (_, g)=> (L.players || []).filter(p=> p.grp===g)), rows = Math.max(...byG.map(x=> x.length), 1);
+  $('olEyebrow').textContent = 'League #'+L.n+' · '+nP+' joueurs'; $('olTitle').textContent = 'Le tirage';
   $('olTabs').classList.add('hidden'); $('online').classList.add('notabs');
   const mine = (olP(L, OL.me) || {}).grp;
-  $('olBody').innerHTML = '<div class="ol-drawT"><b>16 / 16</b><small>4 poules de 4 · les 2 premiers passent</small></div><div class="ol-groups">'
-    +'ABCD'.split('').map((g, i)=> '<div class="ol-grp'+(i===mine ? ' mine' : '')+'" data-g="'+i+'"><h4>Poule '+g+(i===mine ? '<span>TA POULE</span>' : '')+'</h4>'+'<div class="ol-slot"></div>'.repeat(4)+'</div>').join('')
+  $('olBody').innerHTML = '<div class="ol-drawT"><b>'+nP+' joueurs</b><small>'+nG+' poules · les 2 premiers passent</small></div><div class="ol-groups">'
+    +'ABCD'.slice(0, nG).split('').map((g, i)=> '<div class="ol-grp'+(i===mine ? ' mine' : '')+'" data-g="'+i+'"><h4>Poule '+g+(i===mine ? '<span>TA POULE</span>' : '')+'</h4>'+'<div class="ol-slot"></div>'.repeat(byG[i].length)+'</div>').join('')
     +'</div><button class="cta wide" id="olDrawGo" style="margin-top:14px;opacity:.35;pointer-events:none">Voir ma League</button>';
   let ball = document.querySelector('.ol-ball'); if(!ball){ ball = document.createElement('div'); ball.className = 'ol-ball'; document.body.appendChild(ball); }
-  const byG = [0, 1, 2, 3].map(g=> (L.players || []).filter(p=> p.grp===g));
   let k = 0;
-  for(let r = 0; r<4; r++) for(let g = 0; g<4; g++){
+  for(let r = 0; r<rows; r++) for(let g = 0; g<nG; g++){
     const p = byG[g][r]; if(!p) continue;
     const at = 300 + (k++)*(reduce ? 0 : 340);
     OL.drawT.push(setTimeout(()=>{
@@ -1700,7 +1744,7 @@ function myNext(L){
 }
 function olLeader(L){
   let best = null;
-  [0, 1, 2, 3].forEach(g=> olTable(L, g).forEach(r=>{ if(!best || r.pts>best.pts || (r.pts===best.pts && r.rounds>best.rounds)) best = r; }));
+  Array.from({length:olNG(L)}, (_, g)=> g).forEach(g=> olTable(L, g).forEach(r=>{ if(!best || r.pts>best.pts || (r.pts===best.pts && r.gf - r.ga > best.gf - best.ga)) best = r; }));
   return best;
 }
 function olMine(L){
@@ -1709,11 +1753,28 @@ function olMine(L){
   let h = '';
   if(lead && lead.pts>0) h += '<div class="ol-lead"><svg viewBox="0 0 26 20"><path d="M2 17 L4 5 L9 11 L13 2 L17 11 L22 5 L24 17 Z" fill="#f2c76a" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/></svg><div class="t"><small>En tête de la League</small><b>'+(lead.uid===OL.me ? 'Toi' : esc(lead.p.name))+' · '+esc(qName(lead.p))+' · '+lead.pts+' pts</b></div>'+(pos ? '<em>Ta poule<b>'+pos+(pos===1 ? 'ᵉʳ' : 'ᵉ')+'</b></em>' : '')+'</div>';
   const ph = st==='g' ? 0 : st==='f' || st==='done' ? 2 : 1;
-  h += '<div class="ol-phase">'+[['Poules','jours 1 à 3'],['Quarts · demies','jours 4 et 5'],['Finale','jour 7']].map((x, i)=> '<span class="'+(i===ph ? 'now' : i<ph ? 'done' : '')+'">'+x[0]+'<small>'+x[1]+'</small></span>').join('')+'</div>';
-  const m = myNext(L);
+  h += '<div class="ol-phase">'+[['Poules','jours 1 à 4'],['Phase finale','jours 5 et 6'],['Finale','jour 7']].map((x, i)=> '<span class="'+(i===ph ? 'now' : i<ph ? 'done' : '')+'">'+x[0]+'<small>'+x[1]+'</small></span>').join('')+'</div>';
+  // v104: every open match at once, each opponent's presence, and « Je suis dispo » for all of them
+  const opened = (L.matches || []).filter(x=> x.status==='todo' && (x.a===OL.me || x.b===OL.me) && new Date(x.opens) <= new Date()).sort((a, b)=> new Date(a.deadline) - new Date(b.deadline) || a.id - b.id);
+  const meP = olP(L, OL.me), iDispo = !!(meP && meP.dispo) || OL.dispoAt > Date.now() - 15*60000;
+  if(opened.length){
+    h += '<div class="ol-next"><div class="k">À jouer · '+opened.length+' match'+(opened.length>1 ? 's' : '')+' · '+hoursLeft(opened[0].deadline)+' h pour le premier</div>'
+      +(iDispo ? '<p class="ol-wait2" style="margin:4px 0 10px"><span class="ol-dot"></span><b>Tu es dispo</b> pour 15 minutes : tes adversaires sont prévenus. Reste dans le jeu, leur défi arrive ici.</p>'
+        : '<button class="cta wide" id="olDispo">Je suis dispo maintenant<small>Tous tes adversaires reçoivent une notification · 15 minutes</small></button>')
+      +'<div class="ol-mlist">'+opened.map(x=>{
+        const oid = x.a===OL.me ? x.b : x.a, op = olP(L, oid), on = OL.online.has(oid), dp = !!(op && op.dispo), sent = x.mine_sent;
+        // v104: aller then retour; a knock-out retour waits for the aller (it carries its goals, and the prolongation)
+        const lb = (x.stage==='g' ? 'Poule '+'ABCD'[x.grp] : STAGE_TXT[x.stage])+(LEG_TXT(x) ? ' · '+LEG_TXT(x) : '');
+        const fl = olFirstLeg(L, x), wait = x.stage!=='g' && fl && fl.status==='todo', agg = fl && fl.status!=='todo' ? olMy(fl, OL.me) : [0, 0];
+        return '<div class="ol-mrow">'+avatar(op)+'<span><b>'+esc(op ? op.name : '?')+'</b><small>'+lb+(x.stage!=='g' && fl && !wait ? ' · aller '+agg[0]+'-'+agg[1] : '')+' · '+(dp ? '<span class="ol-dot"></span>dispo maintenant' : on ? '<span class="ol-dot"></span>en ligne' : 'hors ligne')+'</small></span>'
+          +(sent ? '<em>résultat envoyé</em>' : wait ? '<em>après l’aller</em>' : '<button class="'+(on || dp ? 'cta dark' : 'ghost')+' olPlay" data-m="'+x.id+'" data-o="'+esc(oid)+'" data-n="'+esc(op ? op.name : '')+'" data-a="'+(x.stage!=='g' ? agg.join(',') : '0,0')+'" data-k="'+(olDecides(x) ? 1 : 0)+'">'+(on || dp ? 'Jouer' : 'Appeler')+'</button>')+'</div>';
+      }).join('')+'</div><p class="ol-qn" style="margin:8px 0 0">Tu dis « dispo » et l’autre ne vient jamais avant la fin du délai ? <b>Tu gagnes par forfait.</b></p></div>';
+  }
+  const m = opened.length ? null : myNext(L);
   if(m){
     const oppId = m.a===OL.me ? m.b : m.a, opp = olP(L, oppId), open = new Date(m.opens) <= new Date(), iReady = m.a===OL.me ? m.ready_a : m.ready_b, heReady = m.a===OL.me ? m.ready_b : m.ready_a;
-    const lbl = m.stage==='g' ? 'poule '+'ABCD'[m.grp]+' · match '+(tb.length ? Math.min(3, (tb.find(r=> r.uid===OL.me) || {played:0}).played + 1) : 1)+' / 3' : STAGE_TXT[m.stage].toLowerCase();
+    const nG = (L.matches || []).filter(x=> x.stage==='g' && (x.a===OL.me || x.b===OL.me)).length;
+    const lbl = m.stage==='g' ? 'poule '+'ABCD'[m.grp]+' · match '+Math.min(nG, (tb.find(r=> r.uid===OL.me) || {played:0}).played + 1)+' / '+nG : STAGE_TXT[m.stage].toLowerCase()+(LEG_TXT(m) ? ' · '+LEG_TXT(m) : '');
     const on = OL.online.has(oppId);
     h += '<div class="ol-next"><div class="k">Ton prochain match · '+lbl+'</div>'
       +'<div class="ol-vs"><div>'+avatar(me, true)+'<b>Toi</b><small>'+esc(qName(me))+'</small></div><em>VS</em><div>'+avatar(opp)+'<b>'+esc(opp ? opp.name : '?')+'</b><small>'+(on ? '<span class="ol-dot"></span>en ligne' : esc(qName(opp)))+'</small></div></div>';
@@ -1721,28 +1782,29 @@ function olMine(L){
     else if(m.mine_sent) h += '<p class="ol-wait2">Ton résultat est envoyé. On attend celui de '+esc(opp ? opp.name : 'ton adversaire')+' pour l’inscrire.</p>';
     else {
       h += '<div class="ol-timer"><b>'+hoursLeft(m.deadline)+' h</b><span>pour le jouer · avant '+whenTxt(m.deadline)+'</span></div>'
-        +'<button class="cta dark wide" id="olPlay" data-m="'+m.id+'" data-o="'+esc(oppId)+'" data-n="'+esc(opp ? opp.name : '')+'">'+(on ? 'Le défier maintenant' : 'L’appeler à jouer')+'<small>'+(on ? 'Il est en ligne : il reçoit ton défi tout de suite' : 'Il reçoit une notification sur son téléphone')+'</small></button>'
+        +'<button class="cta dark wide" id="olPlay" data-m="'+m.id+'" data-o="'+esc(oppId)+'" data-n="'+esc(opp ? opp.name : '')+'" data-a="'+(m.stage!=='g' && olFirstLeg(L, m) ? olMy(olFirstLeg(L, m), OL.me).join(',') : '0,0')+'" data-k="'+(olDecides(m) ? 1 : 0)+'">'+(on ? 'Le défier maintenant' : 'L’appeler à jouer')+'<small>'+(on ? 'Il est en ligne : il reçoit ton défi tout de suite' : 'Il reçoit une notification sur son téléphone')+'</small></button>'
         +(iReady ? '<p class="ol-wait2">Tu t’es dit prêt'+(heReady ? ', lui aussi : lancez la partie !' : '. S’il ne vient pas avant la fin du délai, tu gagnes par forfait.')+'</p>'
           : '<button class="ghost wide" id="olReady" data-m="'+m.id+'" style="margin-top:10px">Je suis prêt<small style="display:block;font:700 10.5px var(--ui);color:var(--mute);margin-top:2px">s’il ne vient pas à temps, tu gagnes par forfait</small></button>');
     }
     h += '</div>';
-  } else if(st!=='done'){
+  } else if(st!=='done' && !opened.length){
     h += '<div class="card"><h3>'+(me && L.matches.some(x=> x.stage!=='g' && (x.a===OL.me || x.b===OL.me)) ? 'Tu attends le prochain tour' : 'Ton parcours')+'</h3><p class="ol-qn" style="margin:0">'
       +(olOut(L) ? 'Tu es éliminé de cette League. Suis la suite dans le Tableau, et inscris-toi à la suivante.' : 'Tous tes matchs de ce tour sont joués. Le tour suivant s’ouvre dès que les autres ont fini.')+'</p></div>';
   }
-  if(g!=null && st==='g') h += '<div class="card"><h3>Ta poule '+'ABCD'[g]+'<span>2 premiers qualifiés</span></h3>'+olTblHtml(tb)+'<p class="ol-qn">Égalité de points : les manches gagnées, puis les CORA.</p></div>';
+  if(g!=null && st==='g') h += '<div class="card"><h3>Ta poule '+'ABCD'[g]+'<span>2 premiers qualifiés</span></h3>'+olTblHtml(tb)+'<p class="ol-qn">Victoire 3 points, nul 1. Égalité de points : la différence de buts, puis les buts marqués.</p></div>';
   const mine = (L.matches || []).filter(x=> x.a===OL.me || x.b===OL.me).sort((a, b)=> a.id - b.id);
   if(mine.length) h += '<div class="card"><h3>Tes matchs</h3><div class="ol-prog">'+mine.map(x=>{
     const o = x.a===OL.me ? x.b : x.a, tag = x.status==='todo' ? (new Date(x.opens) <= new Date() ? '<span class="tag r">À jouer</span>' : '<span class="tag n">'+whenTxt(x.opens)+'</span>')
-      : x.status==='void' ? '<span class="tag n">Annulé</span>' : x.winner===OL.me ? '<span class="tag w">'+(x.status==='forfeit' ? 'Forfait gagné' : 'Gagné '+Math.max(x.ra, x.rb)+'-'+Math.min(x.ra, x.rb))+'</span>' : '<span class="tag l">'+(x.status==='forfeit' ? 'Forfait' : 'Perdu '+Math.min(x.ra, x.rb)+'-'+Math.max(x.ra, x.rb))+'</span>';
-    return '<div><i>'+(x.stage==='g' ? 'Poule' : x.stage==='qf' ? 'Quart' : x.stage==='sf' ? 'Demie' : x.stage==='p3' ? '3ᵉ pl.' : 'Finale')+'</i><span>Toi – '+who(L, o)+'</span>'+tag+'</div>'; }).join('')+'</div></div>';
+      : olResTag(L, x);
+    return '<div><i>'+(x.stage==='g' ? 'Poule' : x.stage==='qf' ? 'Quart' : x.stage==='sf' ? 'Demie' : x.stage==='p3' ? '3ᵉ pl.' : 'Finale')+(LEG_TXT(x) ? '<small style="display:block;opacity:.7">'+LEG_TXT(x)+'</small>' : '')+'</i><span>Toi – '+who(L, o)+'</span>'+tag+'</div>'; }).join('')+'</div></div>';
   h += olFeedCard(L, 4);
   olOvertake(L, g, pos, tb);
   return h;
 }
-function olOut(L){ return (L.matches || []).some(m=> m.stage!=='g' && m.stage!=='p3' && m.status!=='todo' && (m.a===OL.me || m.b===OL.me) && m.winner!==OL.me) || (olStage(L)!=='g' && !(L.matches || []).some(m=> m.stage!=='g' && (m.a===OL.me || m.b===OL.me))); }
+function olOut(L){ return (L.matches || []).some(m=> olDecides(m) && m.stage!=='p3' && m.status!=='todo' && (m.a===OL.me || m.b===OL.me) && m.winner!==OL.me) || (olStage(L)!=='g' && !(L.matches || []).some(m=> m.stage!=='g' && (m.a===OL.me || m.b===OL.me))); }
 function olTblHtml(tb){
-  return '<table class="ol-tbl"><tr><th></th><th>Joueur</th><th>J</th><th>Pts</th></tr>'+tb.map((r, i)=> '<tr class="'+(r.uid===OL.me ? 'me ' : '')+(i===2 ? 'cut' : '')+'"><td>'+(i + 1)+'</td><td><span class="nm">'+avatar(r.p, r.uid===OL.me)+'<span>'+(r.uid===OL.me ? 'Toi' : esc(r.p.name))+'</span></span></td><td>'+r.played+'</td><td><b class="p">'+r.pts+'</b></td></tr>').join('')+'</table>';
+  const df = r=> (r.gf - r.ga > 0 ? '+' : '')+(r.gf - r.ga);
+  return '<table class="ol-tbl"><tr><th></th><th>Joueur</th><th>J</th><th>Diff</th><th>Pts</th></tr>'+tb.map((r, i)=> '<tr class="'+(r.uid===OL.me ? 'me ' : '')+(i===2 ? 'cut' : '')+'"><td>'+(i + 1)+'</td><td><span class="nm">'+avatar(r.p, r.uid===OL.me)+'<span>'+(r.uid===OL.me ? 'Toi' : esc(r.p.name))+'</span></span></td><td>'+r.played+'</td><td>'+df(r)+'</td><td><b class="p">'+r.pts+'</b></td></tr>').join('')+'</table>';
 }
 // « X t'a dépassé » : compared with the last place this phone saw
 function olOvertake(L, g, pos, tb){
@@ -1755,8 +1817,12 @@ function olOvertake(L, g, pos, tb){
 }
 function olFeed(L){
   return (L.matches || []).filter(m=> m.status==='done' || m.status==='forfeit').sort((a, b)=> new Date(b.done) - new Date(a.done)).map(m=>{
-    const w = m.winner, l = w===m.a ? m.b : m.a, wc = w===m.a ? m.ca : m.cb, stage = m.stage==='g' ? '' : ' ('+STAGE_TXT[m.stage].toLowerCase()+')';
-    return {at:m.done, html: m.status==='forfeit' ? '<b>'+who(L, w)+'</b> gagne par forfait'+stage+' : '+who(L, l)+' n’est pas venu.' : '<b>'+who(L, w)+'</b> bat '+who(L, l)+' '+Math.max(m.ra, m.rb)+'-'+Math.min(m.ra, m.rb)+(wc ? ' avec '+(wc>1 ? wc+' CORA' : 'un CORA')+' !' : '')+stage};
+    const w = m.winner, l = w===m.a ? m.b : m.a, stage = (m.stage==='g' ? '' : ' · '+STAGE_TXT[m.stage].toLowerCase())+(LEG_TXT(m) ? ' '+LEG_TXT(m) : '');
+    if(m.status==='forfeit') return {at:m.done, html:'<b>'+who(L, w)+'</b> gagne par forfait'+stage+' : '+who(L, l)+' n’est pas venu.'};
+    // v104: the score in goals, A first; a draw; who goes through a knock-out tie (on aggregate or in the prolongation)
+    const bold = u=> u===w ? '<b>'+who(L, u)+'</b>' : who(L, u);
+    const ko = olDecides(m) && m.stage!=='f' && m.stage!=='p3' && w ? ' : <b>'+who(L, w)+'</b> passe'+(m.ca + m.cb ? ' en prolongation' : (m.leg|0)===2 ? ' au cumul' : '') : m.ca + m.cb && w ? ' (prolongation pour <b>'+who(L, w)+'</b>)' : '';
+    return {at:m.done, html: bold(m.a)+' '+m.ra+'-'+m.rb+' '+bold(m.b)+(m.stage==='g' && !w ? ' · match nul' : '')+stage+ko};
   });
 }
 function olFeedCard(L, n){
@@ -1765,24 +1831,30 @@ function olFeedCard(L, n){
 }
 function olGroups(L){
   const mine = (olP(L, OL.me) || {}).grp;
-  return [0, 1, 2, 3].map(g=> '<div class="card"><h3>Poule '+'ABCD'[g]+(g===mine ? '<span style="color:#fff">ta poule</span>' : '<span>3 journées</span>')+'</h3>'+olTblHtml(olTable(L, g))+'</div>').join('')
+  return Array.from({length:olNG(L)}, (_, g)=> g).map(g=> '<div class="card"><h3>Poule '+'ABCD'[g]+(g===mine ? '<span style="color:#fff">ta poule</span>' : '<span>2 premiers qualifiés</span>')+'</h3>'+olTblHtml(olTable(L, g))+'</div>').join('')
     +'<p class="ol-qn" style="text-align:center">La ligne verte : au-dessus, on passe en quarts. Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre.</p>';
 }
-function olTie(L, m, cls){
+// v104 · a tie = its legs (aller and retour, or the one final match): the aggregate seen from A of the first leg
+function olTie(L, legs, cls){
+  const m = legs && legs[0];
   if(!m) return '<div class="ol-tie '+(cls || '')+'"><span class="s tbd"><span>à venir</span></span><span class="sc" style="color:var(--mute)">VS</span><span class="s r tbd"><span>à venir</span></span></div>';
-  const me = m.a===OL.me || m.b===OL.me, played = m.status!=='todo';
-  const side = (u, r)=> '<span class="s'+(r ? ' r' : '')+(played && m.winner && m.winner!==u ? ' out' : '')+'">'+(r ? '<span>'+who(L, u)+'</span>'+avatar(olP(L, u), u===OL.me) : avatar(olP(L, u), u===OL.me)+'<span>'+who(L, u)+'</span>')+'</span>';
-  const sc = !played ? (new Date(m.opens) <= new Date() ? '<span style="color:var(--mute)">en cours</span>' : 'VS') : m.status==='forfeit' ? 'forfait' : m.ra+'-'+m.rb;
+  const last = legs[legs.length - 1], me = m.a===OL.me || m.b===OL.me, played = last.status!=='todo', w = played ? last.winner : null;
+  const side = (u, r)=> '<span class="s'+(r ? ' r' : '')+(w && w!==u ? ' out' : '')+'">'+(r ? '<span>'+who(L, u)+'</span>'+avatar(olP(L, u), u===OL.me) : avatar(olP(L, u), u===OL.me)+'<span>'+who(L, u)+'</span>')+'</span>';
+  const done = legs.filter(x=> x.status!=='todo'), tot = done.reduce((s, x)=> { const g = olMy(x, m.a); return [s[0] + g[0], s[1] + g[1]]; }, [0, 0]);
+  const sub = legs.length>1 && done.length ? '<small style="display:block;font-size:9.5px;color:var(--mute);font-weight:700">'+done.map(x=> LEG_TXT(x)+' '+(x.status==='forfeit' ? 'forfait' : olMy(x, m.a).join('-'))).join(' · ')+(legs.some(x=> x.ca + x.cb) ? ' · prol.' : '')+'</small>' : '';
+  const sc = !done.length ? (new Date(m.opens) <= new Date() ? '<span style="color:var(--mute)">en cours</span>' : 'VS') : legs.length===1 && m.status==='forfeit' ? 'forfait' : tot.join('-')+(legs.length===1 && (m.ca + m.cb) ? '<small style="display:block;font-size:9.5px;color:var(--mute);font-weight:700">prol.</small>' : '')+sub;
   return '<div class="ol-tie'+(me ? ' me' : '')+(cls ? ' '+cls : '')+'">'+side(m.a)+'<span class="sc">'+sc+'</span>'+side(m.b, 1)+'</div>';
 }
 function olBracket(L){
-  const by = st=> (L.matches || []).filter(m=> m.stage===st).sort((a, b)=> a.slot - b.slot);
-  const qf = by('qf'), sf = by('sf'), f = by('f')[0], p3 = by('p3')[0];
-  let h = '<div class="ol-round"><h4>Quarts de finale<span>jour 4</span></h4>'+[0, 1, 2, 3].map(i=> olTie(L, qf[i])).join('')+'<p class="ol-qn" style="margin:2px 2px 0">Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre.</p></div>';
-  h += '<div class="ol-round"><h4>Demi-finales<span>jour 5</span></h4>'+[0, 1].map(i=> olTie(L, sf[i])).join('')+'</div>';
-  h += '<div class="ol-round"><h4>La 3ᵉ place<span>jour 7</span></h4>'+olTie(L, p3)+'</div>';
-  h += '<div class="ol-round"><h4>La finale<span>jour 7</span></h4>'+olTie(L, f, 'final')+'</div>';
-  if(!qf.length) h += '<p class="ol-qn" style="text-align:center">Le tableau se remplit à la fin des poules.</p>';
+  const ties = st=>{ const by = {}; (L.matches || []).filter(m=> m.stage===st).sort((a, b)=> (a.leg|0) - (b.leg|0)).forEach(m=> (by[m.slot] = by[m.slot] || []).push(m)); return Object.keys(by).sort((a, b)=> a - b).map(k=> by[k]); };
+  const qf = ties('qf'), sf = ties('sf'), f = ties('f')[0], p3 = ties('p3')[0];
+  // v104: with 2 groups there are no quarter-finals, the semis come straight after the groups
+  const four = olNG(L)>=4;
+  let h = four ? '<div class="ol-round"><h4>Quarts de finale<span>aller-retour · 24 h</span></h4>'+[0, 1, 2, 3].map(i=> olTie(L, qf[i])).join('')+'<p class="ol-qn" style="margin:2px 2px 0">Le 1ᵉʳ d’une poule affronte le 2ᵉ d’une autre. Au cumul des buts, prolongation s’il y a égalité.</p></div>' : '';
+  h += '<div class="ol-round"><h4>Demi-finales<span>aller-retour · 24 h</span></h4>'+[0, 1].map(i=> olTie(L, sf[i])).join('')+(four ? '' : '<p class="ol-qn" style="margin:2px 2px 0">Le 1ᵉʳ d’une poule affronte le 2ᵉ de l’autre. Au cumul des buts, prolongation s’il y a égalité.</p>')+'</div>';
+  h += '<div class="ol-round"><h4>La 3ᵉ place<span>match unique · 24 h</span></h4>'+olTie(L, p3)+'</div>';
+  h += '<div class="ol-round"><h4>La finale<span>match unique · 24 h</span></h4>'+olTie(L, f, 'final')+'</div>';
+  if(!(four ? qf : sf).length) h += '<p class="ol-qn" style="text-align:center">Le tableau se remplit à la fin des poules.</p>';
   return h;
 }
 function olLive(L){
@@ -1794,7 +1866,7 @@ function olLive(L){
 function olPodium(L){
   const f = (L.matches || []).find(m=> m.stage==='f'), p3 = (L.matches || []).find(m=> m.stage==='p3');
   const first = f && f.winner, second = f && (f.winner===f.a ? f.b : f.a), third = p3 && p3.winner;
-  const pot = BASE + ENTRY*(L.players || []).length;
+  const pot = L.pot || BASE + ENTRY*(L.players || []).length;
   const step = (cls, u, place, amount)=>{ const p = olP(L, u); return '<div class="'+cls+'">'+avatar(p, u===OL.me)+'<b>'+who(L, u)+'</b><small>'+esc(qName(p))+'</small><span class="gain"><i class="coin"></i>'+fmt(amount)+'</span><div class="st">'+place+'</div></div>'; };
   let h = '<div class="ol-drawT" style="padding-bottom:4px"><b>CHAMPION</b><small>'+who(L, first)+' · '+esc(qName(olP(L, first)))+'</small></div>'
     +'<div class="ol-pod">'+step('p2', second, 2, pot*.3)+step('p1', first, 1, pot*.6)+step('p3', third, 3, pot*.1)+'</div>';
@@ -1820,7 +1892,15 @@ function olWire(){
     if(navigator.share) navigator.share({title:'Fap-Fap League', text:txt, url}).catch(()=>{});
     else window.open('https://wa.me/?text='+encodeURIComponent(txt + url), '_blank');
   };
-  const p = $('olPlay'); if(p) p.onclick = ()=>{ buzz(12); olAsk('play', {match:+p.dataset.m, opp:p.dataset.o, name:p.dataset.n}); };
+  // v104: one button per open match (with the first leg's goals, and whether a tie ends in a prolongation), « Je suis dispo », the invitation
+  const play = b=>{ buzz(12); olAsk('play', {match:+b.dataset.m, opp:b.dataset.o, name:b.dataset.n, agg:String(b.dataset.a || '0,0').split(',').map(Number), ko:b.dataset.k==='1'}); };
+  const p = $('olPlay'); if(p) p.onclick = ()=> play(p);
+  document.querySelectorAll('.olPlay').forEach(b=> b.onclick = ()=> play(b));
+  const dp = $('olDispo'); if(dp) dp.onclick = ()=>{ buzz(15); OL.dispoAt = Date.now(); olAsk('dispo'); };
+  const ac = $('olAccept'); if(ac) ac.onclick = ()=>{ buzz(15); olAsk('accept', {yes:true}); };
+  const dc = $('olDecline'); if(dc) dc.onclick = ()=>{ olSheet('<h4>Laisser ta place ?</h4><p class="ol-qn">Elle ira au joueur actif suivant. Tu ne pourras plus la reprendre.</p><button class="cta dark wide" id="olDeclineOk">Oui, je laisse ma place</button><button class="ghost" data-close>Non, je réfléchis</button>');
+    $('olDeclineOk').onclick = ()=>{ $('olSheet').classList.remove('on'); olAsk('accept', {yes:false}); };
+  };
   const r = $('olReady'); if(r) r.onclick = ()=>{ buzz(10); olAsk('ready', {match:+r.dataset.m}); };
   const rt = $('olRetry'); if(rt) rt.onclick = ()=>{ OL.s = null; olRender(); olAsk('state'); };
   const nx = $('olNextL'); if(nx) nx.onclick = ()=>{ OL.s.league = null; olRender(true); };
@@ -1843,21 +1923,28 @@ function olDemo(op, x){
       G.forEach((g, gi)=> g.forEach(i=> players[i].grp = gi));
       const ms = []; let id = 1;
       const day = d=> new Date(t0 + d*864e5).toISOString();
-      const res = (a, b, wa, ca, done)=> ({ra:wa ? 2 : 1, rb:wa ? 1 : 2, ca:ca||0, cb:0, winner:wa ? a : b, status:'done', done});
-      G.forEach((g, gi)=>{ [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach(([i, j], k)=>{
-        const a = 'u'+g[i], b = 'u'+g[j], r = Math.floor(k/2), m = {id:id++, stage:'g', grp:gi, slot:k + 1, a, b, opens:day(r), deadline:day(r + 2), ready_a:false, ready_b:false, status:'todo', winner:null, ra:0, rb:0, ca:0, cb:0, done:null, mine_sent:false};
-        const played = mode==='groups' ? r===0 || (r===1 && (a!=='u11' && b!=='u11') && k % 2) : true;
-        if(played) Object.assign(m, res(a, b, (gi + k) % 3 !== 0, (k % 4===0) ? 1 : 0, day(r + .5)));
-        ms.push(m); }); });
+      // v104: goals over 2 halves (a hand 1, CORA 2, 33 Glacée 3), draws, aller-retour, prolongation (x: 1 = A wins it, 2 = B)
+      const SC = [[3,1],[2,2],[1,2],[4,1],[2,0],[1,3],[2,1],[0,2],[3,3],[1,4],[2,3]];
+      const TODO = {status:'todo', winner:null, ra:0, rb:0, ca:0, cb:0, done:null};
+      const res = (a, b, s, done, x)=> ({ra:s[0], rb:s[1], ca:x===1 ? 1 : 0, cb:x===2 ? 1 : 0, winner:s[0]>s[1] || x===1 ? a : s[1]>s[0] || x===2 ? b : null, status:'done', done});
+      G.forEach((g, gi)=>{ [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]].forEach(([i, j], k)=> [1, 2].forEach(leg=>{
+        const a = 'u'+g[leg===1 ? i : j], b = 'u'+g[leg===1 ? j : i], m = Object.assign({id:id++, stage:'g', grp:gi, slot:k + 1, leg, a, b, opens:day(0), deadline:day(4), ready_a:false, ready_b:false, mine_sent:false}, TODO);
+        const played = mode==='groups' ? (leg===1 && k<4) || (a!=='u11' && b!=='u11' && k % 2) : true;
+        if(played) Object.assign(m, res(a, b, SC[(gi*7 + k*3 + leg) % SC.length], day(.3 + k*.4 + leg*.1)));
+        ms.push(m); })); });
+      // a knock-out tie: the aller (A at home), the retour (B at home), the aggregate, the prolongation; todo: 1 = retour to play, 2 = both
+      const ko = (st, slot, a, b, s1, s2, t, todo)=>{
+        const base = {stage:st, slot, opens:day(t), deadline:day(t + 1), ready_a:false, ready_b:false, mine_sent:false};
+        if(!s2){ ms.push(Object.assign({id:id++, leg:0, a, b}, base, todo ? TODO : res(a, b, s1, day(t + .6), s1[2]))); return; }
+        ms.push(Object.assign({id:id++, leg:1, a, b}, base, todo===2 ? TODO : res(a, b, s1, day(t + .4))));
+        const ta = s1[0] + s2[1], tb = s1[1] + s2[0], x = s2[2] || 0;
+        ms.push(Object.assign({id:id++, leg:2, a:b, b:a}, base, todo ? TODO : Object.assign(res(b, a, s2, day(t + .5), x), {winner:ta>tb ? a : tb>ta ? b : x===1 ? b : a})));
+      };
       if(mode!=='groups'){
-        const pairs = [['u3','u7'], ['u8','u6'], ['u0','u12'], ['u5','u11']];
-        pairs.forEach(([a, b], i)=> ms.push(Object.assign({id:id++, stage:'qf', slot:i + 1, a, b, opens:day(3.2), deadline:day(4.2), ready_a:true, ready_b:true, done:day(3.6), mine_sent:false}, res(a, b, b!=='u11', 1, day(3.6)), b==='u11' ? {winner:'u11', ra:1, rb:2} : {})));
-        ms.push({id:id++, stage:'sf', slot:1, a:'u3', b:'u0', opens:day(4.3), deadline:day(5.3), ready_a:false, ready_b:false, status:mode==='ko' ? 'todo' : 'done', winner:mode==='ko' ? null : 'u0', ra:mode==='ko' ? 0 : 1, rb:mode==='ko' ? 0 : 2, ca:0, cb:1, done:mode==='ko' ? null : day(4.8), mine_sent:false});
-        ms.push({id:id++, stage:'sf', slot:2, a:'u8', b:'u11', opens:day(4.3), deadline:day(5.3), ready_a:false, ready_b:false, status:mode==='ko' ? 'todo' : 'done', winner:mode==='ko' ? null : 'u11', ra:mode==='ko' ? 0 : 0, rb:mode==='ko' ? 0 : 2, ca:0, cb:2, done:mode==='ko' ? null : day(4.9), mine_sent:false});
-        if(mode==='done'){
-          ms.push({id:id++, stage:'f', slot:1, a:'u0', b:'u11', opens:day(6), deadline:day(7), status:'done', winner:'u0', ra:2, rb:1, ca:1, cb:0, done:day(6.8)});
-          ms.push({id:id++, stage:'p3', slot:1, a:'u3', b:'u8', opens:day(6), deadline:day(7), status:'done', winner:'u8', ra:1, rb:2, ca:0, cb:0, done:day(6.7)});
-        }
+        ko('qf', 1, 'u3', 'u7', [3,1], [2,2], 3.4); ko('qf', 2, 'u8', 'u6', [1,2], [1,3], 3.4);
+        ko('qf', 3, 'u0', 'u12', [2,1], [2,1,2], 3.4); ko('qf', 4, 'u5', 'u11', [2,1], [4,1], 3.4);
+        ko('sf', 1, 'u3', 'u0', [2,2], [3,1], 4.1, mode==='ko' ? 2 : 0); ko('sf', 2, 'u8', 'u11', [1,2], [2,2], 4.1, mode==='ko' ? 1 : 0);
+        if(mode==='done'){ ko('f', 1, 'u0', 'u11', [2,2,1], null, 6); ko('p3', 1, 'u3', 'u8', [1,3], null, 6); }
       }
       st.league = {id:1, n:1, status:mode==='done' ? 'done' : mode==='groups' ? 'groups' : 'ko', started:new Date(t0).toISOString(), ended:mode==='done' ? new Date().toISOString() : null, champion:mode==='done' ? 'u0' : null, players, matches:ms, prize:mode==='done' ? {place:2, amount:15600, claimed:false} : null};
       st.open = {id:2, n:2, count:3, joined:false, players:players.slice(0, 3)};

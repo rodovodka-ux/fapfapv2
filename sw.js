@@ -1,6 +1,6 @@
 // Fap Fap — service worker: lets the installed game open instantly and play against the AI without network.
 // Bump CACHE whenever index.html changes, so every phone picks up the new version.
-const CACHE = 'fapfap-v103';
+const CACHE = 'fapfap-v104';
 // persos.js carries the version in its name: a new game never meets the old faces still kept by the previous cache
 const CORE = ['./', './index.html', './persos.js?v=101','./manifest.webmanifest', './icon-192.png', './icon-512.png', './art/d/lieu-yaounde.svg'];
 

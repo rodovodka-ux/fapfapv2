@@ -6597,7 +6597,8 @@
     if(mpIsHost){
       dealer = Math.random()<0.5 ? 'you' : 'ai';
       mpSend({t:'hello', name: myName, uid: (Cloud && Cloud.user && Cloud.user.id) || null, ent: (profile.equip && profile.equip.entree) || ''}); // so the guest knows who they're facing
-      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake, table: currentTableId(), l16: (window.L16cur && window.L16cur.id) || 0}); // flip perspective for the other side; the host's table for both; a League match tells its number
+      mpSend({t:'start', dealer: dealer==='you' ? 'ai' : 'you', target: TARGET_SCORE, stake: mpStake, table: currentTableId(), l16: (window.L16cur && window.L16cur.id) || 0,
+        l16x: window.L16cur ? {agg:[(window.L16cur.agg||[0,0])[1], (window.L16cur.agg||[0,0])[0]], ko:!!window.L16cur.ko} : 0}); // flip perspective for the other side; the host's table for both; a League match tells its number (and, v104, the goals of the first leg, the other way round)
       beginHand();
     }
     // guest waits for the 'start' message to know who deals first
@@ -6625,7 +6626,10 @@
       mpMatchStarted = true; mpForfeit = false;
       TARGET_SCORE = msg.target===1 ? 1 : 2; // the host chose the format
       mpStake = Math.max(0, msg.stake|0);   // …and the stake
-      if((msg.l16|0)>0) window.L16cur = {id:msg.l16|0, opp:oppUid, name:oppNameVal}; // …and whether it's a match of the online League (v89)
+      if((msg.l16|0)>0){ // …and whether it's a match of the online League (v89), with the aggregate before this match (v104)
+        const x = msg.l16x || {}, ag = Array.isArray(x.agg) ? x.agg : [0, 0];
+        window.L16cur = {id:msg.l16|0, opp:oppUid, name:oppNameVal, agg:[Math.max(0, ag[0]|0), Math.max(0, ag[1]|0)], ko:!!x.ko};
+      }
       if(tableExists(msg.table)){ guestTable = msg.table; wearTable(guestTable); } // …and the table
       startMatchTracking();
       takeMpStake();
@@ -11424,7 +11428,7 @@
   let matchMaxDeficit = 0; // biggest lead the opponent ever had this match — for the "Remontada" trophy
   function startMatchTracking(){
     repStart(); matchMaxDeficit = 0; matchManches = [];
-    document.querySelector('.scorebar .mid').textContent = TARGET_SCORE===1 ? 'Partie unique' : 'En 3 manches · premier à 2';
+    document.querySelector('.scorebar .mid').textContent = mode==='mp' && window.L16cur ? 'League · 2 mi-temps · manches gagnées' : TARGET_SCORE===1 ? 'Partie unique' : 'En 3 manches · premier à 2';
   }
   // the table remembers who won the last hand against whom (this phone, this session)
   let lastDeal = null;
@@ -12144,7 +12148,8 @@
     if(mode!=='ai' && mode!=='mp') return false;
     if(state.history.some(e=> e.actor===actor)) return false;           // he has already played
     const hand = actor==='you' ? state.playerHand : state.aiHand;
-    return hand.length===5 && BANK_TOTALS.includes(handTotal(hand));
+    // v104: a hand that already wins on its own (three 3s, five of a suit…) is never offered the bank
+    return hand.length===5 && BANK_TOTALS.includes(handTotal(hand)) && !checkAutoWin(hand);
   }
   // the computer gives a bad hand up: no 3 to save it and almost no strong cards
   function aiWantsBank(){
@@ -13414,8 +13419,17 @@
     // the effect plays, then: the next hand at once, or VICTOIRE / DÉFAITE and the panel a second later
     const fxEnd = isGlacee ? 2100 : isCora ? 1800 : isAutoWin ? 2600 : 250;
     const cont = ()=>{
-      if(scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
-        const w = scores.you>=TARGET_SCORE ? 'you' : 'ai';
+      // v104 · a match of the online League: two halves, always both played, then a prolongation if the tie is level
+      const lg = mode==='mp' && window.L16cur ? l16Leg() : null;
+      if(lg && !lg.end){
+        if(lg.half) showToast('Mi-temps · '+lg.gy+' – '+lg.gt, 'Dernière mi-temps : une manche = 1 but, CORA 2, 33 Glacée 3.', {ms:2600});
+        if(lg.extra) showToast('Prolongation !', 'Égalité'+(window.L16cur.agg[0] + window.L16cur.agg[1] ? ' au cumul' : '')+' : une manche décide qui gagne. Ses buts ne comptent pas au score.', {big:true, ms:3200});
+        gameTimeout(()=>{ document.getElementById('btnNext').classList.remove('hidden'); }, 600);
+        return;
+      }
+      if(lg || scores.you>=TARGET_SCORE || scores.ai>=TARGET_SCORE){
+        const w = lg ? lg.w : scores.you>=TARGET_SCORE ? 'you' : 'ai';
+        l16LegRes = lg;
         // on the glass table, a CORA that wins the match breaks it
         const glass = w==='you' && (isGlacee||isCora) && currentTableId()==='verre';
         if(glass) FX2.breakGlass();
@@ -13426,6 +13440,22 @@
     // only the 33 Glacée earns a certificate: it waits for the player before the game goes on
     if(isGlacee && who==='you' && !tuto) gameTimeout(()=> glaceeCertificate(oppName(), cont), fxEnd + 200);
     else gameTimeout(cont, fxEnd);
+  }
+
+  // v104 · where a League match stands (the rules of the offline League): a hand won = 1 goal, a CORA 2, a 33 Glacée 3;
+  // after the 2 halves, the goals (plus the first leg's) decide; level in a knock-out tie → one more hand, the prolongation.
+  let l16LegRes = null;
+  function l16Leg(){
+    const c = window.L16cur, n = matchManches.length, goal = m=> m.mult>=4 ? 3 : m.mult>=2 ? 2 : 1;
+    const half = matchManches.slice(0, 2), gy = half.reduce((s, m)=> s + (m.you ? goal(m) : 0), 0), gt = half.reduce((s, m)=> s + (m.you ? 0 : goal(m)), 0);
+    if(n<2) return {end:false, half:true, gy, gt};
+    const ag = c.agg || [0, 0], ty = gy + ag[0], tt = gt + ag[1];
+    if(ty===tt && c.ko){
+      if(n===2) return {end:false, extra:true, gy, gt};
+      const x = matchManches[2];
+      return {end:true, w:x.you ? 'you' : 'ai', gy, gt, ty, tt, xy:x.you ? 1 : 0, xt:x.you ? 0 : 1};
+    }
+    return {end:true, w:ty>tt ? 'you' : ty<tt ? 'ai' : 'draw', gy, gt, ty, tt, xy:0, xt:0};
   }
 
   document.getElementById('btnNext').addEventListener('click', ()=>{
@@ -13811,7 +13841,7 @@
     chipsAdd(back);
     return {delta: back - stake, line: 'Mise '+fmtChips(stake)+(odds!==1 && matchManches.some(m=> m.you) ? ' · cote ×'+String(odds).replace('.',',') : '')+' · '+parts.join(' · ')};
   }
-  function settleStake(won){
+  function settleStake(won, lg){
     const res = {stake:matchStake, delta:0, mult:0, bonus:0};
     if(mode==='ai'){
       if(won) chipsAdd(50), res.delta += 50; // every win against the computer pays a little, even friendly ones
@@ -13825,10 +13855,10 @@
       if(matchStake>0){ const p = payHands(matchStake, 1); res.delta = p.delta; res.line = p.line; }
       mpLogAdd({k:'duel', o:oppNameVal, u:oppUid||undefined, s:matchStake, d:res.delta, r: won ? 'V' : 'D', f: mpForfeit ? 1 : 0});
       // a match of the online League (v89): each phone sends the score; the server keeps it when both agree
+      // v104: the goals of the 2 halves, and who won the prolongation; a forfeit counts 3-0
       if(window.L16cur && window.l16Report){
-        const mine = matchManches.filter(m=> m.you).length, theirs = matchManches.length - mine;
-        window.l16Report(mpForfeit ? (won ? 2 : 0) : Math.min(2, mine), mpForfeit ? (won ? 0 : 2) : Math.min(2, theirs),
-          matchManches.filter(m=> m.you && m.mult>=2).length, matchManches.filter(m=> !m.you && m.mult>=2).length);
+        if(mpForfeit || !lg) window.l16Report(won ? 3 : 0, won ? 0 : 3, 0, 0);
+        else window.l16Report(Math.min(6, lg.gy), Math.min(6, lg.gt), lg.xy, lg.xt);
       }
     }
     saveProfile();
@@ -14511,7 +14541,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v103';
+  const APP_VERSION = 'v104';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14845,7 +14875,9 @@
     document.getElementById('btnOtherOpp').classList.toggle('hidden', mode!=='ai');
   }
   function showMatchOver(who){
-    const won = who==='you'; QS.last = won ? 'won' : 'lost';
+    const won = who==='you', draw = who==='draw'; QS.last = won ? 'won' : 'lost';
+    // v104 · a League match ends on goals (and can be a draw); the result is kept for settleStake, then forgotten
+    const lg = mode==='mp' && window.L16cur ? l16LegRes : null; l16LegRes = null;
     if(storyRun && mode==='ai'){ storyMatchEnd(won); return; }
     const mine = scores.you, theirs = scores.ai;
     let unlockedMbarga = false;
@@ -14878,9 +14910,9 @@
     } else if(mode==='mp'){
       profile.onlineGames = (profile.onlineGames||0)+1;
       if(won){ profile.onlineWins = (profile.onlineWins||0)+1; repAdd(80, 'Victoire en ligne'); unlockTrophy('premiere'); unlockTrophy('en_ligne'); }
-      else repAdd(25, 'Match en ligne');
+      else repAdd(draw ? 40 : 25, draw ? 'Match nul en ligne' : 'Match en ligne');
       saveProfile(); checkExploits();
-      qzOnlineDuel(won);
+      if(!draw) qzOnlineDuel(won);
     }
     document.getElementById('matchOverTitle').textContent = TARGET_SCORE===1
       ? (won ? 'Tu gagnes la partie !' : oppName()+' gagne la partie.')
@@ -14904,13 +14936,21 @@
       const rec = profile.ladder[duelOpp] || {w:0, l:0};
       text +=' (Ton bilan contre '+oppName()+' : '+rec.w+' victoire'+(rec.w>1?'s':'')+', '+rec.l+' défaite'+(rec.l>1?'s':'')+'.)';
     }
+    if(lg){
+      // the score in goals, and for a knock-out tie the aggregate or the prolongation
+      const ko = window.L16cur.ko, ag = window.L16cur.agg || [0, 0], first = ag[0] + ag[1] > 0; // a second leg
+      document.getElementById('matchOverTitle').textContent = draw ? 'Match nul '+lg.gy+' à '+lg.gt : won ? 'Tu gagnes '+lg.gy+' à '+lg.gt+' !' : oppName()+' gagne '+lg.gt+' à '+lg.gy+'.';
+      text = lg.xy || lg.xt ? (won ? 'Égalité'+(first ? ' au cumul ('+lg.ty+'-'+lg.tt+')' : '')+', et tu gagnes la prolongation : tu passes !' : 'Égalité'+(first ? ' au cumul ('+lg.ty+'-'+lg.tt+')' : '')+', '+oppName()+' gagne la prolongation.')
+        : ko && first ? 'Cumul aller-retour : '+lg.ty+' à '+lg.tt+'. '+(won ? 'Tu passes au tour suivant !' : oppName()+' passe au tour suivant.')
+        : draw ? 'Un point chacun dans la poule.' : won ? '3 points pour toi dans la League.' : 'La League continue : il reste des matchs.';
+    }
     if(mode==='mp' && mpForfeit){
       document.getElementById('matchOverTitle').textContent = 'Victoire par forfait !';
-      text = oppName()+' a quitté la partie ('+mine+' à '+theirs+'). Le pot est pour toi.';
+      text = oppName()+' a quitté la partie ('+mine+' à '+theirs+'). '+(window.L16cur ? 'Le match compte 3 à 0 pour toi.' : 'Le pot est pour toi.');
     }
     document.getElementById('matchOverText').textContent = text;
     moWhy(won);
-    document.getElementById('moKicker').textContent = won ? 'Victoire' : 'Défaite';
+    document.getElementById('moKicker').textContent = won ? 'Victoire' : draw ? 'Match nul' : 'Défaite';
     track('match_end', {mode, opp: mode==='ai' ? duelOpp : null, won, score: mine+'-'+theirs});
     touchDayStreak();
     renderRepPanel(repCommit());
@@ -14919,9 +14959,9 @@
     refreshRematchUI(); refreshFriendBtnMo();
     if(maskOn() && won) document.getElementById('btnRematch').innerHTML = ico('flame')+' Revanche (il l’exige)';
     const mo = document.getElementById('matchOverOverlay');
-    mo.dataset.result = won ? 'win' : 'lose';
+    mo.dataset.result = won ? 'win' : draw ? 'draw' : 'lose';
     // the chips: what the stake brought (or cost), with the coins flying to you on a win
-    const chips = settleStake(won);
+    const chips = settleStake(won, lg);
     const cr = document.getElementById('chipsResult');
     if(chips.delta!==0 || chips.stake>0){
       cr.classList.remove('hidden');
@@ -18773,8 +18813,11 @@
     st.textContent = 'Défi envoyé à '+f.name+'… Dès qu’il accepte, la partie commence.';
     let n = 0;
     // repeated for a minute, in case the friend's phone was asleep for a moment
+    // v104: a League match keeps calling for 10 minutes (the opponent may be on his way to the game)
+    const tries = (window.L16cur && window.L16cur.id) ? 120 : 12;
+    if(tries>12) st.textContent = 'Match de League : '+f.name+' est appelé. La salle reste ouverte 10 minutes.';
     Lobby.invT = setInterval(()=>{
-      if(!still() || ++n>12){ clearInterval(Lobby.invT); if(n>12 && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
+      if(!still() || ++n>tries){ clearInterval(Lobby.invT); if(n>tries && !mpMatchStarted && mpNet) st.textContent = f.name+' ne répond pas. Envoie-lui le lien par WhatsApp :'; return; }
       send();
     }, 5000);
   }
@@ -18820,6 +18863,8 @@
       goToMainMenu();
     }
     window.L16cur = (p.l16|0)>0 ? {id:p.l16|0, opp:p.from, name:String(p.name||'').slice(0,16), at:Date.now()} : null;
+    // v104: entering a League match counts as « ready » on both sides, so one result is enough to close it
+    if(window.L16cur && supaClient) try{ supaClient.rpc('fapfap_l16_ready', {p_match:window.L16cur.id}); }catch(e){}
     if(ZH.open) zhClose();
     myName = (prefs.name||'').trim() || 'Toi';
     $id('mpCodeInput').value = p.code;
@@ -18837,7 +18882,7 @@
 
   // ===================== The online League of 16 (v89) =====================
   // league.html (in #zhFrame) shows it; the game talks to the server (fapfap_l16_*) and plays the matches online.
-  // A League match = the online duel, first to 2 rounds, no stake; window.L16cur says which match is on the table.
+  // A League match = the online duel in 2 halves (v104, the offline League's rules), no stake; window.L16cur says which match is on the table.
   const L16 = {state:null, at:0, busy:false};
   window.L16cur = null;
   async function l16Rpc(fn, args){
@@ -18856,6 +18901,8 @@
     try{
       const rows = await l16Rpc('fapfap_l16_claim');
       (rows || []).forEach((z, i)=>{
+        // v104: place 0 = an entry fee given back (League cancelled, or an edition that became free)
+        if(!z.place){ chipsAdd(z.amount|0); saveProfile(); renderChips(); cloudSchedule(); setTimeout(()=> showToast('+'+fmtChips(z.amount|0)+' jetons rendus', 'Ton inscription à la League t’est remboursée.', {ms:3200}), 900 + i*2600); return; }
         chipsAdd(z.amount|0); profile.l16Podiums = (profile.l16Podiums||0) + 1; if(z.place===1) profile.l16Titles = (profile.l16Titles||0) + 1;
         saveProfile(); renderChips(); cloudSchedule(); if(typeof checkExploits==='function') checkExploits();
         setTimeout(()=> trophyPop({icon:'crown', name:'+'+fmtChips(z.amount|0)+' jetons', kind:(z.place===1 ? 'Champion' : (z.place)+'ᵉ place')+' de la League #'+z.league}), 900 + i*2600);
@@ -18886,10 +18933,28 @@
         return;
       }
       if(d.op==='ready'){ await l16Rpc('fapfap_l16_ready', {p_match:d.match|0}); await l16Send(); return; }
+      // v104: the free edition's invitation (yes = in for free, no = the seat goes to the next active player)
+      if(d.op==='accept'){
+        if(d.yes && !(prefs.name||'').trim()){ l16Post('error', {msg:'Choisis d’abord ton pseudo dans ton profil.'}); return; }
+        const r = await l16Rpc('fapfap_l16_accept', {p_yes:!!d.yes, p_name:(prefs.name||'').trim() || 'x', p_quartier: profile.quartier==null ? -1 : profile.quartier});
+        if(r && r.error) l16Post('error', {msg:r.error});
+        else if(d.yes){ profile.l16Joined = (profile.l16Joined||0) + 1; saveProfile(); cloudSchedule(); track('l16_accept'); }
+        await l16Send(); return;
+      }
+      // v104: « Je suis dispo »: every opponent with an open match hears it (Messages tab + a notification)
+      if(d.op==='dispo'){
+        const r = await l16Rpc('fapfap_l16_dispo');
+        if(r && r.error){ l16Post('error', {msg:r.error}); return; }
+        (r && r.opps || []).forEach(o=>{ try{ supaClient.functions.invoke('fapfap-push', { body: { to:o.uid, kind:'l16', name:myNameNow() } }); }catch(e){} });
+        track('l16_dispo');
+        await l16Send(); return;
+      }
       if(d.op==='play'){
         if(!d.opp) return;
         try{ await l16Rpc('fapfap_l16_ready', {p_match:d.match|0}); }catch(e){}
-        window.L16cur = {id:d.match|0, opp:String(d.opp), name:String(d.name || 'Ton adversaire').slice(0, 16), at:Date.now()};
+        // v104: the goals already scored in the first leg (mine, his), and whether a tie ends in a prolongation
+        const ag = Array.isArray(d.agg) ? d.agg : [0, 0];
+        window.L16cur = {id:d.match|0, opp:String(d.opp), name:String(d.name || 'Ton adversaire').slice(0, 16), at:Date.now(), agg:[Math.max(0, ag[0]|0), Math.max(0, ag[1]|0)], ko:!!d.ko};
         zhClose();
         challengeFriend({id:String(d.opp), name:window.L16cur.name});
         return;
@@ -18904,7 +18969,7 @@
     const send = ()=> l16Rpc('fapfap_l16_report', {p_match:c.id, p_me:me, p_them:them, p_cme:cme, p_cthem:cthem});
     try{
       const r = await send();
-      showToast(me>them ? 'Victoire enregistrée dans la League' : 'Match enregistré dans la League', r && r.closed ? 'Le classement est à jour.' : r && r.dispute ? 'Vos deux résultats ne collent pas : le délai tranchera.' : 'En attente du résultat de '+c.name+'.', {ms:2800});
+      showToast('Résultat enregistré dans la League · '+me+'-'+them, r && r.closed ? 'Le classement est à jour.' : r && r.dispute ? 'Vos deux résultats ne collent pas : le délai tranchera.' : 'En attente du résultat de '+c.name+'.', {ms:2800});
       L16.at = 0;
     }catch(e){
       profile.l16Pending = {id:c.id, me, them, cme, cthem}; saveProfile();
