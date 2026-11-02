@@ -2169,6 +2169,45 @@
     border:1px solid rgba(244,184,96,0.3); background:rgba(255,255,255,0.06); color:var(--cream); }
   .chat-form input:focus{ border-color:var(--bulb); }
   .chat-form button{ width:46px; height:46px; padding:0; border-radius:50%; font-size:18px; flex-shrink:0; box-shadow:0 3px 0 #8a4e0c; }
+  /* v105 · online turn clock */
+  .turn-clock{ display:inline-flex; align-items:center; justify-content:center; gap:3px; min-width:42px; padding:2px 9px; border-radius:999px;
+    font:800 12.5px var(--font-ui); font-variant-numeric:tabular-nums; color:#20160a; background:#ffd88c; box-shadow:0 2px 0 #8a4e0c; }
+  .turn-clock.mine{ display:table; margin:0 auto 4px; }
+  .turn-clock.hidden{ display:none; }
+  .turn-clock.warn{ background:#d9542e; color:#fff; box-shadow:0 2px 0 #7a2a12; animation: clockBeat 1s infinite; }
+  @keyframes clockBeat{ 0%,100%{ transform:scale(1); } 15%{ transform:scale(1.15); } }
+  body.calm .turn-clock.warn{ animation:none; }
+  /* v105 · voice notes */
+  .vn-fab, .vn-mic{ touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  .vn-fab{ position:fixed; right:13px; top:calc(44% + 60px); z-index:56; width:44px; height:44px; padding:0; border-radius:50%; display:grid; place-items:center;
+    background: rgba(20,12,6,0.72); color:#ffd88c; border:1.5px solid rgba(244,184,96,0.55); box-shadow:0 6px 16px rgba(0,0,0,0.45); }
+  .vn-fab svg.i, .vn-mic svg.i{ width:21px; height:21px; margin:0; }
+  .chat-form .vn-mic{ background:rgba(255,255,255,0.08); color:var(--bulb); border:1px solid rgba(244,184,96,0.35); box-shadow:none; }
+  .vn-fab.rec, .chat-form .vn-mic.rec{ background:#d9542e; color:#fff; border-color:#ff8a66; transform:scale(1.18); box-shadow:0 0 0 8px rgba(217,84,46,0.25), 0 0 0 16px rgba(217,84,46,0.12); transition:transform .15s; }
+  /* sits right next to the mic being held (placed by vnPlaceRec), never over the middle of the table */
+  .vn-rec{ position:fixed; top:var(--y, 50%); right:var(--r, 10px); transform:translateY(-100%); z-index:60; display:flex; align-items:center; gap:7px; flex-wrap:wrap; justify-content:center;
+    width:max-content; max-width:150px; padding:7px 11px; border-radius:16px; background:rgba(18,10,5,0.94); border:1.5px solid #d9542e; color:#fff; box-shadow:0 12px 30px rgba(0,0,0,0.6); pointer-events:none; }
+  .vn-rec .dot{ width:11px; height:11px; border-radius:50%; background:#ff4d2e; animation: vnBlink 1s infinite; }
+  .vn-rec b{ font-variant-numeric:tabular-nums; font-size:17px; }
+  .vn-rec .bar{ width:44px; height:5px; border-radius:3px; background:rgba(255,255,255,0.15); overflow:hidden; }
+  .vn-rec .bar i{ display:block; height:100%; width:calc(var(--p,0) * 100%); background:#ff8a66; }
+  .vn-rec small{ flex-basis:100%; text-align:center; font-size:11px; line-height:1.25; color:var(--dust); }
+  .vn-rec.cancel{ border-color:#888; }
+  .vn-rec.cancel .dot{ background:#888; animation:none; }
+  .vn-rec.cancel small{ color:#ff8a66; font-weight:700; }
+  @keyframes vnBlink{ 50%{ opacity:0.25; } }
+  .msg.vn{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-width:190px; }
+  .msg.vn .msg-who{ flex-basis:100%; margin:0; }
+  .vn-play{ width:34px; height:34px; min-height:0; padding:0 !important; border-radius:50%; display:grid; place-items:center; flex:none; border:none;
+    background:rgba(0,0,0,0.18); color:inherit; box-shadow:none; }
+  .msg.them .vn-play{ background:var(--bulb); color:#20160a; }
+  .vn-play svg.i{ width:16px; height:16px; margin:0; }
+  .vn-wave{ flex:1; display:flex; align-items:center; gap:2px; height:24px; min-width:80px; }
+  .vn-wave i{ flex:1; border-radius:2px; background:currentColor; opacity:0.35; }
+  .vn-wave i.on{ opacity:1; }
+  .vn-len{ font-size:11.5px; font-variant-numeric:tabular-nums; opacity:0.8; min-width:30px; text-align:right; }
+  .msg.vn.gone{ min-width:0; opacity:0.55; font-style:italic; font-size:12.5px; }
+  .msg.vn.bad .vn-len{ opacity:1; font-weight:700; }
   .emote-layer{ position:fixed; inset:0; pointer-events:none; z-index:59; overflow:hidden; }
   .emote{ position:absolute; left:var(--x); bottom:24%; display:flex; flex-direction:column; align-items:center; gap:2px; animation: emoteRise 2.1s cubic-bezier(.2,.8,.3,1) forwards; }
   .emote.theirs{ bottom:auto; top:30%; animation-name: emoteFall; }
@@ -4599,6 +4638,8 @@
   <symbol id="i-belloff" viewBox="0 0 24 24"><path d="M6 9.5a6 6 0 0 1 12 0c0 5.5 2.5 7 2.5 7h-17S6 15 6 9.5zM10 20a2 2 0 0 0 4 0M3 3l18 18"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2.2l1.6-2.2h5.4L16.3 7h2.2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.4"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11-11 11"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor"/></symbol>
   <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-5.5 16-3-6.5L4 12zm7.5 1.5L20 4"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
@@ -4733,7 +4774,7 @@
 <div class="gamearea">
   <div class="centerstage">
     <div class="ai-zone">
-      <div class="ai-label"><span class="avatar" id="oppAvatar" style="--s:34px"></span><span><span id="oppLabelName">Penalty</span> · <span id="aiCount">5 cartes</span></span></div>
+      <div class="ai-label"><span class="avatar" id="oppAvatar" style="--s:34px"></span><span><span id="oppLabelName">Penalty</span> · <span id="aiCount">5 cartes</span></span><span class="turn-clock hidden" id="oppClock"></span></div>
       <img class="opp-table-art" id="oppTableArt" alt="" hidden>
       <div class="ai-hands">
         <div class="ai-cards" id="aiCardsRow"></div>
@@ -4754,6 +4795,7 @@
     <div class="hand-zone">
       <div class="my-bubble" id="myBubble"></div>
       <div class="coach hidden" id="coach"><span class="avatar" data-char="penalty" style="--s:38px"></span><span id="coachText"></span></div>
+      <div class="turn-clock mine hidden" id="myClock"></div>
       <div class="hand-label" id="handLabel">Ta main</div>
       <div class="hand-pov-wrap">
         <div class="hand" id="playerHand"></div>
@@ -5344,8 +5386,8 @@
   <header class="page-head chat-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><button class="chat-who" id="chatWho"><span class="avatar" id="chatAv" style="--s:36px"></span><span><b id="chatName">Ami</b><small id="chatSt"></small></span></button><button class="chat-defi" id="chatDefi" aria-label="Défier"><svg class="i" aria-hidden="true"><use href="#i-cards"/></svg></button></header>
   <div class="chat-msgs" id="chatMsgs" aria-live="polite"></div>
   <div class="chat-bar">
-    <div class="chat-quick" id="chatQuick"></div>
-    <form class="chat-form" id="chatForm" autocomplete="off"><input id="chatInput" maxlength="300" placeholder="Écris à ton ami…" aria-label="Message"><button class="primary" id="chatSend" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></form>
+    <div class="chat-quick" id="dmQuick"></div>
+    <form class="chat-form" id="dmForm" autocomplete="off"><input id="dmInput" maxlength="300" placeholder="Écris à ton ami…" aria-label="Message"><button class="primary" id="dmSendBtn" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></form>
   </div>
 </div>
 
@@ -5610,6 +5652,9 @@
 
 <!-- ===================== Online chat ===================== -->
 <button class="chat-fab hidden" id="chatFab" aria-label="Ouvrir le chat"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg><span class="chat-badge hidden" id="chatBadge">0</span></button>
+<!-- v105 · voice notes: hold to talk, let go to send, slide away to cancel -->
+<button class="vn-fab hidden" id="vnFab" aria-label="Maintiens pour envoyer une note vocale"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></button>
+<div class="vn-rec hidden" id="vnRec"><span class="dot"></span><b id="vnRecTime">0:00</b><span class="bar"><i></i></span><small id="vnRecHint">Glisse pour annuler</small></div>
 <div class="emote-layer" id="emoteLayer"></div>
 <div class="chat-sheet hidden" id="chatSheet">
   <div class="chat-head">
@@ -5623,6 +5668,7 @@
   <div class="chat-quick" id="chatQuick"></div>
   <form class="chat-form" id="chatForm" autocomplete="off">
     <input id="chatInput" maxlength="200" placeholder="Écris un message…" enterkeyhint="send">
+    <button class="vn-mic" id="vnMic" type="button" aria-label="Maintiens pour envoyer une note vocale"><svg class="i" aria-hidden="true"><use href="#i-mic"/></svg></button>
     <button class="primary" id="chatSend" type="submit" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button>
   </form>
 </div>
@@ -6349,6 +6395,7 @@
     mpOutbox.clear(); mpInBuffer.clear();
     mpRematch = {me:false, opp:false};
     showNetBanner(null);
+    vnWipe(false); turnClockStop();
     roomReset();
   }
 
@@ -6651,6 +6698,7 @@
       return;
     }
     if(msg.t==='chat'){ chatReceive(msg); return; }
+    if(msg.t==='vn'){ vnReceive(msg); return; }
     if(msg.t==='bank'){
       // the guest gives his hand up (22-24 points); only the host decides, and checks it really was allowed
       if(mpIsHost && canBank('ai')) resolveBank('ai');
@@ -8873,6 +8921,7 @@
     chatEl('chatFab').classList.toggle('hidden', !chatOn());
     if(!chatOn()) closeChat();
     chatBadge();
+    vnRefresh();
   }
   function chatBadge(){
     const b = chatEl('chatBadge');
@@ -8892,6 +8941,7 @@
   }
   function resetChat(){
     chat.unread = 0; chat.sent = [];
+    vnWipe(false);
     chatEl('chatList').innerHTML = '';
     chatLine('sys', 'Le chat est ouvert : dis bonjour à '+oppName()+'.');
     refreshChatUI();
@@ -8977,6 +9027,206 @@
       chatLine('sys', chat.muted ? 'Messages en silencieux : ils arrivent ici sans bulle ni son.' : 'Notifications du chat réactivées.');
     });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && chatIsOpen()) closeChat(); });
+  })();
+
+  // ---- v105 · Voice notes in the online chat ----
+  // Hold the mic, speak, let go: the note travels in small pieces over the match line (nothing is stored on a
+  // server) and both phones wipe it when the match ends, so it never fills the memory. Slide away to cancel.
+  const VN_MAX_MS = 15000, VN_CHUNK = 12000, VN_MAX_CHUNKS = 40;
+  const vn = { rec:null, stream:null, parts:[], t0:0, ms:0, timer:null, cancel:false, held:false, starting:false, x:0, y:0, btn:null, urls:[], inbox:new Map(), playing:null, seq:0 };
+  function vnSupported(){ return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder); }
+  function vnMime(){
+    for(const m of ['audio/webm;codecs=opus','audio/mp4','audio/ogg;codecs=opus','audio/webm']){ try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){} }
+    return '';
+  }
+  function vnFmt(ms){ const s = Math.max(0, Math.round(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  function vnRefresh(){
+    chatEl('vnFab').classList.toggle('hidden', !chatOn() || !vnSupported());
+    chatEl('vnMic').classList.toggle('hidden', !vnSupported());
+  }
+  function vnHint(){ showToast('Maintiens pour parler 🎤', 'Garde le doigt sur le micro, parle, puis relâche.', {ms:2200}); }
+  async function vnStart(e, btn){
+    if(!chatOn() || vn.rec || vn.starting) return;
+    e.preventDefault();
+    vn.btn = btn; vn.x = e.clientX; vn.y = e.clientY; vn.cancel = false; vn.held = true; vn.starting = true;
+    let stream;
+    try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); }
+    catch(err){ vn.starting = false; showToast('Micro bloqué', 'Autorise le micro pour Fap Fap dans les réglages du navigateur.', {ms:3200}); return; }
+    vn.starting = false;
+    // released before the mic was ready (a quick tap, or the permission question): nothing to record
+    if(!vn.held || !chatOn()){ stream.getTracks().forEach(t=> t.stop()); return; }
+    const mime = vnMime();
+    let rec;
+    try{ rec = new MediaRecorder(stream, mime ? {mimeType:mime, audioBitsPerSecond:24000} : {audioBitsPerSecond:24000}); }
+    catch(err){ stream.getTracks().forEach(t=> t.stop()); showToast('Note vocale impossible', 'Ce navigateur ne sait pas enregistrer ici.', {ms:2600}); return; }
+    vn.stream = stream; vn.rec = rec; vn.parts = []; vn.t0 = Date.now();
+    rec.ondataavailable = ev=>{ if(ev.data && ev.data.size) vn.parts.push(ev.data); };
+    rec.onstop = vnFinish;
+    rec.start();
+    btn.classList.add('rec');
+    // the little timer sits on the right edge, just above the buttons: never over the cards
+    const pill = chatEl('vnRec'), top = (btn.id==='vnFab' ? chatEl('chatFab') : btn).getBoundingClientRect();
+    pill.style.setProperty('--y', Math.round(top.top - 8)+'px');
+    pill.style.setProperty('--r', Math.max(6, Math.round(innerWidth - top.right))+'px');
+    pill.classList.remove('hidden','cancel');
+    chatEl('vnRecHint').textContent = 'Glisse pour annuler';
+    duckMusic(true); // the music steps back so the voice is clear
+    vibrate(15);
+    vn.timer = setInterval(vnTick, 100); vnTick();
+  }
+  function vnTick(){
+    const ms = Date.now()-vn.t0;
+    chatEl('vnRecTime').textContent = vnFmt(ms);
+    chatEl('vnRec').style.setProperty('--p', Math.min(1, ms/VN_MAX_MS));
+    if(ms>=VN_MAX_MS) vnStop(false, ''); // 15 s max: sent automatically
+  }
+  function vnMove(e){
+    if(!vn.rec) return;
+    const far = Math.hypot(e.clientX-vn.x, e.clientY-vn.y) > 70;
+    if(far===vn.cancel) return;
+    vn.cancel = far;
+    chatEl('vnRec').classList.toggle('cancel', far);
+    chatEl('vnRecHint').textContent = far ? 'Relâche pour annuler' : 'Glisse pour annuler';
+    if(far) vibrate(10);
+  }
+  function vnRelease(cancelled){
+    if(!vn.held) return;
+    vn.held = false;
+    if(vn.starting){ vnHint(); return; }
+    if(!vn.rec) return;
+    const short = Date.now()-vn.t0 < 600;
+    vnStop(cancelled || vn.cancel || short, short ? 'short' : (cancelled || vn.cancel) ? 'cancel' : '');
+  }
+  function vnStop(cancel, why){
+    const rec = vn.rec; if(!rec) return;
+    vn.cancel = cancel; vn.ms = Math.min(VN_MAX_MS, Date.now()-vn.t0); vn.held = false;
+    clearInterval(vn.timer); vn.timer = null;
+    if(vn.btn) vn.btn.classList.remove('rec');
+    chatEl('vnRec').classList.add('hidden');
+    if(!vn.playing) duckMusic(false);
+    if(why==='short') vnHint();
+    else if(why==='cancel') showToast('Note annulée', '', {ms:1200});
+    try{ if(rec.state!=='inactive') rec.stop(); else vnFinish(); }catch(e){ vnFinish(); }
+  }
+  function vnFinish(){
+    const rec = vn.rec; vn.rec = null;
+    if(vn.stream){ vn.stream.getTracks().forEach(t=> t.stop()); vn.stream = null; } // the phone's mic light goes off
+    const parts = vn.parts; vn.parts = [];
+    if(vn.cancel || !parts.length || !chatOn()) return;
+    vnSendBlob(new Blob(parts, {type:(rec && rec.mimeType) || 'audio/webm'}), vn.ms);
+  }
+  function vnSendBlob(blob, ms){
+    const fr = new FileReader();
+    fr.onload = ()=>{
+      if(!chatOn()) return;
+      const b64 = String(fr.result).split(',')[1] || '';
+      const n = Math.ceil(b64.length/VN_CHUNK);
+      if(!n) return;
+      if(n>VN_MAX_CHUNKS){ showToast('Note trop lourde', 'Fais un peu plus court.', {ms:2200}); return; }
+      const id = myNetId+'-'+(++vn.seq);
+      for(let i=0;i<n;i++) mpSend({t:'vn', id, i, n, mime:blob.type, ms, d:b64.slice(i*VN_CHUNK, (i+1)*VN_CHUNK)});
+      chat.sent.push(Date.now());
+      vnBubble('me', URL.createObjectURL(blob), ms);
+      if(!chatIsOpen()) showMyBubble('🎤 Note vocale · '+vnFmt(ms));
+      try{ chime(880,0.08,0.04,0,0.3); }catch(e){}
+    };
+    fr.readAsDataURL(blob);
+  }
+  function vnReceive(msg){
+    if(!chatOn() || typeof msg.id!=='string' || typeof msg.d!=='string') return;
+    const n = msg.n|0, i = msg.i|0;
+    if(n<1 || n>VN_MAX_CHUNKS || i<0 || i>=n || msg.d.length>VN_CHUNK) return;
+    let e = vn.inbox.get(msg.id);
+    if(!e){ e = {parts:new Array(n), got:0}; vn.inbox.set(msg.id, e); }
+    if(e.parts.length!==n) return;
+    if(e.parts[i]==null){ e.parts[i] = msg.d; e.got++; }
+    if(e.got<n) return;
+    vn.inbox.delete(msg.id);
+    let blob;
+    try{
+      const bin = atob(e.parts.join(''));
+      const u8 = new Uint8Array(bin.length);
+      for(let k=0;k<bin.length;k++) u8[k] = bin.charCodeAt(k);
+      const mime = /^audio\/[\w.+-]+(;\s*codecs=[\w.]+)?$/.test(msg.mime||'') ? msg.mime : 'audio/webm';
+      blob = new Blob([u8], {type:mime});
+    }catch(err){ return; }
+    const ms = Math.min(VN_MAX_MS, Math.max(0, +msg.ms||0));
+    const audio = vnBubble('them', URL.createObjectURL(blob), ms);
+    if(chat.muted) return; // kept in the chat, but no sound, bubble or badge
+    avatarFx('ai', 'speaking');
+    if(!chatIsOpen()){ showOppBubble('🎤 Note vocale · '+vnFmt(ms)); chat.unread++; chatBadge(); }
+    vibrate(20);
+    vnPlay(audio); // plays straight away like a walkie-talkie; tap the bubble to hear it again
+  }
+  function vnBubble(who, url, ms){
+    vn.urls.push(url);
+    const list = chatEl('chatList');
+    const row = document.createElement('div');
+    row.className = 'msg vn '+who;
+    if(who==='them'){ const nm = document.createElement('span'); nm.className = 'msg-who'; nm.textContent = oppName(); row.appendChild(nm); }
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'vn-play'; b.setAttribute('aria-label', 'Écouter la note vocale');
+    const icon = k=> b.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-'+k+'"/></svg>';
+    icon('play');
+    const wave = document.createElement('span'); wave.className = 'vn-wave';
+    for(let k=0;k<18;k++){ const bar = document.createElement('i'); bar.style.height = (25 + Math.round(Math.abs(Math.sin(k*1.7 + ms))*75))+'%'; wave.appendChild(bar); }
+    const len = document.createElement('span'); len.className = 'vn-len'; len.textContent = vnFmt(ms);
+    row.append(b, wave, len);
+    const audio = new Audio(); audio.preload = 'auto'; audio.src = url;
+    const bars = wave.children;
+    const paint = p=>{ for(let k=0;k<bars.length;k++) bars[k].classList.toggle('on', k/bars.length < p); };
+    audio.ontimeupdate = ()=>{
+      const d = isFinite(audio.duration) && audio.duration>0 ? audio.duration : ms/1000;
+      paint(audio.currentTime/d); len.textContent = vnFmt((d-audio.currentTime)*1000);
+    };
+    // while a note plays, the game's music steps back, then returns
+    audio.onplay = ()=>{ icon('pause'); duckMusic(true); };
+    audio.onpause = ()=>{ icon('play'); if(vn.playing===audio && !vn.rec) duckMusic(false); };
+    audio.onended = ()=>{ icon('play'); paint(0); len.textContent = vnFmt(ms); if(vn.playing===audio){ vn.playing = null; if(!vn.rec) duckMusic(false); } };
+    audio.onerror = ()=>{ if(row._dead) return; row.classList.add('bad'); len.textContent = 'illisible'; };
+    b.addEventListener('click', ()=> vnPlay(audio));
+    row._audio = audio;
+    list.appendChild(row);
+    while(list.children.length>120) list.removeChild(list.firstChild);
+    list.scrollTop = list.scrollHeight;
+    return audio;
+  }
+  function vnPlay(audio){
+    if(!audio) return;
+    if(vn.playing && vn.playing!==audio){ try{ vn.playing.pause(); }catch(e){} }
+    if(!audio.paused){ audio.pause(); return; }
+    vn.playing = audio;
+    const p = audio.play();
+    if(p && p.catch) p.catch(()=>{}); // a browser that blocks autoplay: the bubble is there, one tap plays it
+  }
+  // end of the match: every voice note of this match leaves the phone's memory, on both sides
+  function vnWipe(say){
+    if(vn.rec) vnStop(true, '');
+    vn.held = false;
+    if(vn.playing){ try{ vn.playing.pause(); }catch(e){} vn.playing = null; duckMusic(false); }
+    let had = false;
+    document.querySelectorAll('#chatList .msg.vn:not(.gone)').forEach(row=>{
+      had = true;
+      const a = row._audio;
+      if(a){ row._dead = true; try{ a.pause(); a.removeAttribute('src'); a.load(); }catch(e){} row._audio = null; }
+      row.className = 'msg vn gone '+(row.classList.contains('me') ? 'me' : 'them');
+      row.replaceChildren(document.createTextNode('🎤 note vocale effacée'));
+    });
+    vn.urls.forEach(u=> URL.revokeObjectURL(u)); vn.urls = []; vn.inbox.clear();
+    if(had && say) chatLine('sys', 'Fin du match : les notes vocales ont été effacées.');
+  }
+  (function buildVoiceNotes(){
+    ['vnFab','vnMic'].forEach(idName=>{
+      const btn = chatEl(idName);
+      btn.addEventListener('pointerdown', e=> vnStart(e, btn));
+      btn.addEventListener('contextmenu', e=> e.preventDefault());
+      btn.addEventListener('click', e=> e.preventDefault()); // never submits the chat form
+    });
+    window.addEventListener('pointermove', vnMove, {passive:true});
+    window.addEventListener('pointerup', ()=> vnRelease(false));
+    window.addEventListener('pointercancel', ()=> vnRelease(true));
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden) vnRelease(true); });
+    vnRefresh();
   })();
 
   // ---- Little portrait reactions: 'speaking' (pulse), 'hop' (joy), 'shake' (annoyed) ----
@@ -11828,6 +12078,7 @@
 
     document.querySelector('.hand-zone').classList.toggle('active-turn', yourTurn);
     document.querySelector('.ai-zone').classList.toggle('active-turn', !yourTurn && !state.handOver);
+    turnClockSync();
     const armEl = document.querySelector('.ai-hands');
     if(armEl) armEl.classList.toggle('impatient', locked && !yourTurn && !state.handOver);
 
@@ -11956,6 +12207,61 @@
     // online, the game can't wait forever for someone who left their phone: it opens and confirms on its own
     if(o.autoMs) timer = setTimeout(()=>{ flip(); setTimeout(finish, 2500); }, o.autoMs);
     show('revealOverlay');
+  }
+
+  // ---- v105 · Online turn clock: 20 s per move ----
+  // Each phone counts down for the player whose move it is. When MY time runs out, my phone plays for me
+  // (my smallest legal card, or my 2 cards when I'm "en passe"); the other phone does the same for its player.
+  // The clock pauses while a window is open (reveal, offer…) or while the line is down.
+  const TURN_S = 20;
+  const turnClock = { key:'', end:0, last:0, timer:null, beep:-1 };
+  function turnWho(){
+    if(!state || state.handOver) return null;
+    if((!state.leadSuit && state.leader==='you') || (state.leadSuit && state._leadActor==='ai')) return state.playerHand.length ? 'you' : null;
+    if((!state.leadSuit && state.leader==='ai') || (state.leadSuit && state._leadActor==='you')) return state.aiHand.length ? 'ai' : null;
+    return null;
+  }
+  function turnClockOn(){ return mode==='mp' && mpMatchStarted && !!state && !state.handOver; }
+  function turnClockSync(){
+    if(!turnClockOn()){ turnClockStop(); return; }
+    const who = turnWho();
+    const key = who ? [who, state.trickWinners.length, state.playerHand.length, state.aiHand.length, state.leadSuit||'', state.passer||'', scores.you, scores.ai].join('|') : '';
+    if(key!==turnClock.key){ turnClock.key = key; turnClock.end = Date.now() + TURN_S*1000; turnClock.beep = -1; }
+    if(!turnClock.timer){ turnClock.last = Date.now(); turnClock.timer = setInterval(turnClockTick, 250); }
+    turnClockTick();
+  }
+  function turnClockStop(){
+    clearInterval(turnClock.timer); turnClock.timer = null; turnClock.key = '';
+    ['myClock','oppClock'].forEach(i=>{ const el = document.getElementById(i); if(el) el.classList.add('hidden'); });
+  }
+  function turnClockTick(){
+    if(!turnClockOn()){ turnClockStop(); return; }
+    const now = Date.now(), dt = now - turnClock.last; turnClock.last = now;
+    const paused = !!document.querySelector('.overlay:not(.hidden)') || !document.getElementById('netBanner').classList.contains('hidden');
+    if(paused) turnClock.end += dt;
+    const who = turnClock.key ? turnClock.key.split('|')[0] : null;
+    const left = Math.max(0, Math.ceil((turnClock.end - now)/1000));
+    const mine = document.getElementById('myClock'), opp = document.getElementById('oppClock');
+    [[mine,'you'],[opp,'ai']].forEach(([el, side])=>{
+      const on = who===side;
+      el.classList.toggle('hidden', !on);
+      if(!on) return;
+      el.textContent = '⏱ '+left+' s';
+      el.classList.toggle('warn', left<=5);
+    });
+    if(who!=='you' || paused) return;
+    if(left<=5 && left>0 && turnClock.beep!==left){ turnClock.beep = left; try{ chime(left===1 ? 990 : 660, 0.06, 0.035, 0, 0); }catch(e){} if(left===5) vibrate(25); }
+    if(now>=turnClock.end && !locked) turnAutoPlay();
+  }
+  function turnAutoPlay(){
+    if(!state || state.handOver || locked || turnWho()!=='you') return;
+    turnClock.end = Date.now() + 3000; // one try; if the move is refused, try again a bit later
+    showToast('Temps écoulé ⏱', 'Ton téléphone a joué pour toi.', {ms:1800});
+    if(isDumpTurn('you')) return playerDump();
+    const hand = state.playerHand;
+    const pool = state.leadSuit && hasSuit(hand, state.leadSuit) ? hand.filter(c=> c.suit===state.leadSuit) : hand;
+    const card = pool.slice().sort((a,b)=> a.rank-b.rank)[0];
+    if(card) playerPlays(card);
   }
 
   // ---- playing cards ----
@@ -14541,7 +14847,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v104';
+  const APP_VERSION = 'v105';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -14878,6 +15184,7 @@
     const won = who==='you', draw = who==='draw'; QS.last = won ? 'won' : 'lost';
     // v104 · a League match ends on goals (and can be a draw); the result is kept for settleStake, then forgotten
     const lg = mode==='mp' && window.L16cur ? l16LegRes : null; l16LegRes = null;
+    if(mode==='mp'){ vnWipe(true); turnClockStop(); } // v105: the match's voice notes are wiped on both phones
     if(storyRun && mode==='ai'){ storyMatchEnd(won); return; }
     const mine = scores.you, theirs = scores.ai;
     let unlockedMbarga = false;
@@ -18403,14 +18710,14 @@
   }
   // v103: a message notification opening the game: straight to that conversation
   { const m = location.search.match(/[?&]msg=([0-9a-f-]{36})/i);
-    if(m){ try{ history.replaceState(null, '', location.pathname); }catch(e){} setTimeout(()=>{ if(inHome()) openChat({id:m[1], name:'Joueur'}); }, 1200); } }
+    if(m){ try{ history.replaceState(null, '', location.pathname); }catch(e){} setTimeout(()=>{ if(inHome()) openDm({id:m[1], name:'Joueur'}); }, 1200); } }
 
   // ---- la conversation : gardée sur le serveur, réponses rapides du quartier ----
   const QUICK = ['On se tape une partie ?', 'J’arrive, attends-moi', 'Tu as peur ou bien ?', 'Donne-moi ma revanche !', 'Mola, c’est comment ?',
     'Tu as eu la chance seulement', 'Ce soir tu vas voir ton ennemi', 'Pas maintenant, je suis occupé', 'On est ensemble !'];
-  $id('chatQuick').innerHTML = QUICK.map((q, i)=> '<button type="button" data-q="'+i+'">'+q+'</button>').join('');
-  $id('chatQuick').addEventListener('click', e=>{ const b = e.target.closest('[data-q]'); if(b) chatSend(QUICK[+b.dataset.q]); });
-  function openChat(f){
+  $id('dmQuick').innerHTML = QUICK.map((q, i)=> '<button type="button" data-q="'+i+'">'+q+'</button>').join('');
+  $id('dmQuick').addEventListener('click', e=>{ const b = e.target.closest('[data-q]'); if(b) dmSend(QUICK[+b.dataset.q]); });
+  function openDm(f){
     if(!f || !f.id) return;
     if(!Friends.chat || Friends.chat.id!==f.id) Friends.chat = {id:f.id, name:f.name || 'Ami', msgs:[], loading:true};
     hide('playerSheet'); Lobby.sheet = null;
@@ -18469,7 +18776,7 @@
     });
     box.scrollTop = box.scrollHeight;
   }
-  async function chatSend(txt){
+  async function dmSend(txt){
     const c = Friends.chat;
     txt = String(txt||'').replace(/\s+/g, ' ').trim().slice(0, 300);
     if(!c || !txt) return;
@@ -18487,10 +18794,10 @@
       c.msgs = c.msgs.filter(x=> x!==m); drawMsgs();
       const why = (e && e.message) || '';
       showToast('Message non envoyé', /blocked/.test(why) ? 'Ce joueur ne reçoit pas tes messages.' : /unknown/.test(why) ? 'Ce joueur n’existe plus.' : /limit/.test(why) ? 'Doucement ! Attends une minute.' : 'Pas de connexion. Réessaie.', {ms:2400});
-      if(!/blocked|unknown|limit/.test(why) && !$id('chatInput').value) $id('chatInput').value = txt;
+      if(!/blocked|unknown|limit/.test(why) && !$id('dmInput').value) $id('dmInput').value = txt;
     }
   }
-  $id('chatForm').addEventListener('submit', e=>{ e.preventDefault(); const i = $id('chatInput'); const t = i.value; i.value = ''; chatSend(t); });
+  $id('dmForm').addEventListener('submit', e=>{ e.preventDefault(); const i = $id('dmInput'); const t = i.value; i.value = ''; dmSend(t); });
   $id('chatWho').addEventListener('click', ()=>{ const c = Friends.chat; if(c) openPlayerSheet(friendList().find(f=> f.id===c.id) || {id:c.id, name:c.name}); });
   $id('chatDefi').addEventListener('click', ()=>{ const c = Friends.chat; if(c) challengeFriend({id:c.id, name:c.name}); });
 
@@ -18552,7 +18859,7 @@
       const list = Msgs.q.length>=2 ? (Msgs.search.res || []) : msgsRecent();
       if(Msgs.q.length>=2 && Msgs.search.busy) s.insertAdjacentHTML('beforeend', '<p class="msg-hint">Recherche…</p>');
       else if(!list.length) s.insertAdjacentHTML('beforeend', '<p class="msg-hint">'+(Msgs.q.length>=2 ? 'Aucun joueur à ce nom.' : 'Tape au moins 2 lettres du pseudo.')+'</p>');
-      list.forEach(p=>{ const r = friendRow({id:p.id, name:p.name}, p.sub || '', '', 'tappable'); r.addEventListener('click', ()=>{ Msgs.search = null; openChat({id:p.id, name:p.name}); }); s.appendChild(r); });
+      list.forEach(p=>{ const r = friendRow({id:p.id, name:p.name}, p.sub || '', '', 'tappable'); r.addEventListener('click', ()=>{ Msgs.search = null; openDm({id:p.id, name:p.name}); }); s.appendChild(r); });
       const q = s.querySelector('#msgQ'); q.value = Msgs.q;
       q.addEventListener('input', ()=> msgsSearch(q.value));
       if(typing){ q.focus(); try{ q.setSelectionRange(q.value.length, q.value.length); }catch(e){} }
@@ -18586,7 +18893,7 @@
       const f = {id:c.pid, name:String(c.name||'Joueur').slice(0,16)};
       const r = friendRow(f, (c.last_mine ? 'Toi : ' : '')+String(c.last_body||''), '<span class="msg-time"></span>'+(c.unread ? '<span class="unread-n">'+(c.unread>9 ? '9+' : c.unread)+'</span>' : ''), 'tappable'+(c.unread ? ' new' : ''));
       r.querySelector('.msg-time').textContent = msgTime(Date.parse(c.last_at));
-      r.addEventListener('click', ()=> openChat(f));
+      r.addEventListener('click', ()=> openDm(f));
       s.appendChild(r);
     });
     box.appendChild(s);
@@ -18683,7 +18990,7 @@
       const r = friendRow(f, n ? n+(n>1 ? ' nouveaux messages' : ' nouveau message') : sub,
         (n ? '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>' : '')+'<button class="rich-go fr-write" aria-label="Écrire à '+(f.name||'').replace(/[<>"&]/g, '')+'">'+ico('chat')+'</button><button class="rich-go'+(isOnline(f.id) ? ' on' : '')+'">'+ico('cards')+' Défier</button>', 'tappable'+(n ? ' new' : ''));
       r.addEventListener('click', ()=> openPlayerSheet(f));
-      r.querySelector('.fr-write').addEventListener('click', e=>{ e.stopPropagation(); openChat(f); });
+      r.querySelector('.fr-write').addEventListener('click', e=>{ e.stopPropagation(); openDm(f); });
       r.querySelector('.rich-go:not(.fr-write)').addEventListener('click', e=>{ e.stopPropagation(); challengeFriend(f); });
       return r;
     }));
@@ -18771,7 +19078,7 @@
     rec.innerHTML = (h.w + h.l) ? 'Entre vous : tu gagnes <b class="w">'+Math.round(h.w / (h.w + h.l) * 100)+' %</b> de vos duels' : 'Pas encore de partie en ligne entre vous';
   }
   $id('psClose').addEventListener('click', ()=>{ hide('playerSheet'); Lobby.sheet = null; });
-  $id('psWrite').addEventListener('click', ()=>{ const p = Lobby.sheet; if(p) openChat(friendList().find(f=> f.id===p.id) || p); });
+  $id('psWrite').addEventListener('click', ()=>{ const p = Lobby.sheet; if(p) openDm(friendList().find(f=> f.id===p.id) || p); });
   $id('psFriend').addEventListener('click', ()=>{
     const p = Lobby.sheet; if(!p) return;
     if(isFriend(p.id)) askConfirm('Retirer '+(p.name||'ce joueur')+' ?', 'Vous ne serez plus amis, et vous ne pourrez plus vous écrire tant que vous ne l’êtes pas à nouveau.', 'Retirer', ()=>{ hide('playerSheet'); Lobby.sheet = null; removeFriend(p.id); });
@@ -19105,7 +19412,7 @@
       const d = e.data || {};
       if(d.type==='amis'){ if(!inGame() && !mpNet) Nav.go('bellPage'); else bellRefresh(); }
       // v99: a message notification opens the conversation
-      if(d.type==='msg' && d.from){ if(!inGame() && !mpNet) openChat({id:d.from, name:String(d.name||'Joueur').replace(/[<>]/g, '').slice(0, 16)}); else bellRefresh(); }
+      if(d.type==='msg' && d.from){ if(!inGame() && !mpNet) openDm({id:d.from, name:String(d.name||'Joueur').replace(/[<>]/g, '').slice(0, 16)}); else bellRefresh(); }
       if(d.type==='quartier' && !inGame() && !mpNet && window.qzOpen) window.qzOpen();
       if(d.type==='l16' && !inGame() && !mpNet && window.zhOpenOnline) window.zhOpenOnline();
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
@@ -19123,9 +19430,10 @@
     window.__ff = { DScene, Nav, getProfile: ()=> profile, psRenderCard, quip, QS, QUIPS, awardPoints, getPersona:()=> oppPersona(), getScores:()=> scores, checkAutoWin, canPasse, aiTakeTurn, claqueOrder, dumpBestFollow, search, evalTerminal,
       getState: ()=>state, getSq: ()=>sq, getLocked: ()=>locked, renderAll, renderSquare, showMatchOver,
       setScores: (y,a)=>{ scores = {you:y, ai:a}; }, dailyDeck, makeFeatImage,
-      myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openPlayerSheet, pushChallenge, pushFriendReq, lobbyOnInvite, isPaused: ()=> paused,
+      myUid, Friends, addFriend, answerFriend, removeFriend, friendsSync, bellRefresh, openChat, openDm, openPlayerSheet, pushChallenge, pushFriendReq, lobbyOnInvite, isPaused: ()=> paused,
       openChoiceForPlayer, showOppRitual, meteorStrike, showAutoWinReveal, endHandAutoWin, showCertificate, FX2, glaceeCertificate, awardPoints, Rig, Rig2, Music, TRACKS, parseChord, getAudio: ()=>audioCtx, getMaster: ()=>master, sfx: {sfxCardPlay, sfxDeal, sfxBigWin, sfxMatchWin, sfxMatchLose, sfxHandWin, sfxHandLose, sfxPasse, sfxTrickWinYou, sfxTrickWinAI, sfxTap, sfxSwipe, chime},
       getMp: ()=>({pending: mpOutbox.size, peer: mpPeerId, started: mpMatchStarted, host: mpIsHost, mode, scores}),
+      vnBubble, vnWipe, vnSendBlob, getTurnClock: ()=> turnClock, hostGame, joinGame,
       storyMatchEnd: won=> storyMatchEnd(won), getStory: ()=> stGet(), getStoryRun: ()=> storyRun, sqChampionScreen,
       lobbyOnInvite, Lobby, myUid, canBank, resolveBank, sqCanBank, sqBank, sqBeginHand, slamAll, sqStartClaque, crackAt, shock, getProfile: ()=> profile, renderOppSelect, Book,
       playerPlays, genjutsuFx, feintWinner, sqClaqueOrder, setLocked: v=>{ locked = v; },
