@@ -216,7 +216,27 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
 .wk-p > small{ font:700 11.5px var(--ui); color:var(--mute); }
 .wk-vs{ font:800 30px var(--disp); color:var(--gold); padding-bottom:70px; opacity:0; }
 .wk-line{ font:600 13px/1.5 var(--ui); color:#cfd5f5; max-width:300px; opacity:0; margin:6px auto 0; }
-#walk .cta{ margin-top:26px; opacity:0; }
+#walk .cta{ margin-top:22px; opacity:0; }
+/* v106 · the champion speaks */
+.wk-say{ position:relative; max-width:330px; margin:14px auto 0; padding:12px 14px 10px; border-radius:18px; text-align:left; opacity:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.04)); box-shadow:inset 0 0 0 1px rgba(242,199,106,.35); }
+.wk-say::before{ content:""; position:absolute; top:-7px; right:26%; width:14px; height:14px; transform:rotate(45deg); background:rgba(255,255,255,.1); box-shadow:inset 1px 1px 0 rgba(242,199,106,.35); }
+.wk-say .ws-q{ display:block; font:700 14px/1.45 var(--ui); color:#fff; }
+.wk-say .ws-n{ display:block; margin-top:4px; text-align:right; font:800 11.5px var(--ui); color:var(--gold); }
+.wk-say .ws-f{ display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+.wk-say .ws-f i{ font-style:normal; font:700 10.5px var(--ui); color:#cfd5f5; padding:3px 8px; border-radius:999px; background:rgba(255,255,255,.07); }
+.rs-say{ display:flex; gap:10px; align-items:flex-start; max-width:340px; margin:12px auto 0; text-align:left; }
+.rs-say:empty{ display:none; }
+.rs-say p{ margin:0; font:600 13.5px/1.45 var(--ui); color:#eef1ff; }
+.rs-say p b{ display:block; margin-top:3px; font:800 11px var(--ui); color:var(--gold); }
+.nw-f{ flex:none; width:38px; height:38px; border-radius:50%; overflow:hidden; display:grid; place-items:center; background:rgba(255,255,255,.08); }
+.nw-f .ffp-f{ width:100%; height:100%; display:block; }
+.nw-f svg{ width:100%; height:100%; }
+.nw-me{ font-size:18px; }
+.news .nw{ display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid rgba(255,255,255,.06); }
+.news .nw:first-of-type{ border-top:none; }
+.news .nw p{ margin:0; font:600 12.5px/1.45 var(--ui); color:#dfe3fb; }
+@media (max-height:700px){ .wk-p .por{ max-width:118px; } .wk-duo{ margin:14px 0 6px; } .wk-line{ display:none; } }
 
 /* ============ SOIRÉE ============ */
 #night .scroll{ padding:4px 16px calc(var(--bot) + 24px); }
@@ -529,6 +549,7 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
     <div class="wk-p" id="wkR"></div>
   </div>
   <p class="wk-line" id="wkLine"></p>
+  <div class="wk-say" id="wkSay"></div>
   <button class="cta" id="wkGo">C’est parti</button>
 </section>
 
@@ -556,6 +577,7 @@ button{ font:inherit; color:inherit; border:0; background:none; cursor:pointer; 
   <div class="rs-sc" id="rsSc"></div>
   <div class="rs-t" id="rsT"></div>
   <p class="rs-s" id="rsS"></p>
+  <div class="rs-say" id="rsSay"></div>
   <div class="gains" id="rsG"></div>
   <div class="others" id="rsO"></div>
   <button class="cta" id="rsGo">Continuer</button>
@@ -687,7 +709,7 @@ function shuffle(arr, r){ arr = arr.slice(); for(let i = arr.length - 1; i>0; i-
 const KEY = 'fapfap_league_v3', LPKEY = 'fapfap_league_lp';
 let S = null;
 try{ const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if(s && s.v===3) S = s; }catch(e){}
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} memSeasonEnd(); }
 const seedOf = n=> 20261026 + (n - 1) * 7919;
 
 // the draw: same seed, same groups for every player of the season
@@ -716,6 +738,147 @@ function newSeason(n, me){
 }
 const str = q=> S.str[q] || 60;
 const champOf = q=> CH[S.champ[q]] ? S.champ[q] : 'penalty';
+
+// ===================== v106 · the characters remember =====================
+// A memory that outlives the seasons: every match against you (score, who won), who knocked whom out and when,
+// the champions of past seasons, and a few of your habits sent back by the game. Before the match the character
+// talks to you from that memory, after it they react, and between evenings the quarter talks.
+const MKEY = 'fapfap_league_mem';
+let M = null;
+try{ M = JSON.parse(localStorage.getItem(MKEY) || 'null'); }catch(e){}
+if(!M || M.v!==1) M = {v:1, ch:{}, seasons:[], hab:{pt:0, po:0, cora:0, glacee:0}};
+function memSave(){ try{ localStorage.setItem(MKEY, JSON.stringify(M)); }catch(e){} }
+const memOf = id=> M.ch[id] || (M.ch[id] = {w:0, l:0, d:0, last:null, iOut:null, outMe:null});
+// each character's own words. {w} = when (« Saison 2, en quart de finale » or « La dernière fois »)
+// first: never met · rev: you beat them last · gloat: they beat you last · draw: last one level · win / lose: after the match
+const SAY = {
+  penalty:{first:'On ne s’est jamais croisés. Assieds-toi, je vais compter tes cartes.', rev:'{w}, tu m’as battu. J’ai rejoué cette partie cent fois dans ma tête. Plus jamais.', gloat:'{w}, je t’ai battu. Tu as réfléchi depuis, ou tu reviens perdre pareil ?', draw:'Un nul entre toi et moi. Ça ne me ressemble pas. On règle ça.', win:'Je te l’avais dit : je compte tout. Même tes regrets.', lose:'Bien joué. Je retiens tout ce que tu as fait ce soir. Tout.'},
+  aristide:{first:'Toi c’est qui même ? On ne m’a pas parlé de toi au quartier.', rev:'{w}, tu m’as eu. Ce soir je mens mieux, et tu vas tout croire.', gloat:'{w}, je t’ai roulé dans la farine. Tu es né hier ou bien ?', draw:'Un nul ? Mon frère, moi je ne partage pas. On recommence.', win:'Tu as cru à tout ! Rentre dormir, demain on rejoue.', lose:'Hum. Tu ne crois plus mes histoires. Je vais en inventer d’autres.'},
+  tchinda:{first:'Bienvenue. Joue doucement : le 3 attend son heure.', rev:'{w}, tu m’as donné une leçon. Un bon élève rend toujours la leçon.', gloat:'{w}, je t’ai battu avec patience. Tu as appris depuis ?', draw:'Un nul, c’est une leçon pour deux. Ce soir, un seul apprendra.', win:'Tu as joué trop vite. Le 3 attendait. Moi aussi.', lose:'Tu as su attendre ton heure ce soir. Je suis fier de toi. Presque.'},
+  gervais:{first:'C’est toi la nouvelle tête ? Mignon. Dommage pour toi.', rev:'{w}, tu m’as battue, chéri. Tout le salon en parle encore. Ce soir je fais taire tout le monde.', gloat:'{w}, je t’ai mangé, chéri. Tu reviens pour le dessert ?', draw:'Un nul ? Chéri, je n’ai même pas transpiré. Ce soir je finis le travail.', win:'Rejoue, chéri. Celle-là, je l’ai même pas sentie.', lose:'D’accord, d’accord… Mais garde ta bouche fermée au quartier, hein.'},
+  eva:{first:'Ce soir, Penalty va entendre parler de moi. Pas de toi : de moi.', rev:'{w}, tu m’as battue devant Penalty. Tu sais la honte que j’ai eue ?', gloat:'{w}, je t’ai battu ! Penalty a même souri. Tu reviens me faire plaisir ?', draw:'Un nul… Penalty dit qu’un nul, c’est rien. Ce soir je veux tout.', win:'J’ai gagné ! Quelqu’un a filmé ? Il faut que Penalty voie ça !', lose:'Ne dis rien à Penalty, s’il te plaît. Je vais m’entraîner.'},
+  ismael:{first:'Enchanté ! On joue, et après tout le monde au snack. C’est le perdant qui paie.', rev:'{w}, tu m’as battu et j’ai payé la bière de tout le monde. Ce soir c’est ton tour.', gloat:'{w}, je t’ai battu et on a fêté jusqu’au matin. On remet ça ?', draw:'Un nul, personne ne paie. Ce soir, quelqu’un va payer.', win:'Snack ! Snack ! Et c’est toi qui invites, c’est la règle.', lose:'Bon… la soirée est gâtée. Mais je reviendrai avec la musique.'},
+  stephane:{first:'Assieds-toi. Joue.', rev:'{w}. Je n’ai pas oublié.', gloat:'{w}. Encore.', draw:'Égalité. Pas pour longtemps.', win:'Bonne nuit.', lose:'Bien joué.'},
+  tiko:{first:'Première fois face à moi ? Prends des photos, c’est gratuit.', rev:'{w}, tu m’as battu sans style. Ce soir je gagne avec la manière.', gloat:'{w}, je t’ai battu en dansant. Tu as mis des chaussures propres ce soir ?', draw:'Un nul, ce n’est pas un spectacle. Ce soir : CORA ou rien.', win:'Regarde-moi bien. C’est comme ça qu’on gagne avec style.', lose:'Tu as gagné, d’accord. Mais avoue : j’étais plus beau.'},
+  cobra:{first:'Prends ton temps. Moi j’ai toute la nuit.', rev:'{w}, tu m’as battu. Depuis, j’ai eu toute la nuit pour y penser. Toutes les nuits.', gloat:'{w}, je t’ai usé jusqu’à la dernière carte. Tu as dormi depuis ?', draw:'Un nul. On a encore toute la nuit pour régler ça.', win:'Je t’avais dit que j’avais toute la nuit.', lose:'Tu as tenu plus longtemps que moi. Respect. Pour ce soir.'},
+  banquier:{first:'Un nouveau client. Combien vaut ta dignité ce soir ?', rev:'{w}, tu m’as coûté cher. Ce soir je récupère, avec les intérêts.', gloat:'{w}, je t’ai dépouillé. Tu joues encore avec l’argent de ta mère ?', draw:'Un nul, c’est de l’argent qui dort. Je n’aime pas l’argent qui dort.', win:'Merci pour le dépôt. Repasse quand tu veux.', lose:'Prends. Pour moi, c’est de la monnaie. Mais je n’oublie aucune dette.'},
+  systeme:{first:'Ah, c’est toi ? On m’a dit que tu joues libre. On va voir ça.', rev:'{w}, tu m’as battu. J’ai tout noté : tes Zing, tes Coubie, tout.', gloat:'{w}, je t’ai lu comme un journal. Tu as tourné la page depuis ?', draw:'Nul ? Le système n’accepte pas le nul. On relance.', win:'Tu as joué libre… donc plus de Zing chez toi, hein ! Je l’ai vu venir.', lose:'Eh ! Tu as cassé le système ce soir. Ça n’arrive pas deux fois.'},
+  dila:{first:'Nouveau visage. Ici on ne fait pas crédit.', rev:'{w}, tu m’as battu chez moi. Depuis, je ne te sers plus rien.', gloat:'{w}, je t’ai fini. Tu reviens chercher quoi encore ?', draw:'Un nul, c’est une affaire pas terminée. Je termine toujours mes affaires.', win:'Tu perds, alors reviens. Ici, les perdants sont toujours servis.', lose:'Tu gagnes encore, je ne te sers plus. Je te préviens.'},
+  caroline:{first:'Tu me regardes comme ça pourquoi ? Joue.', rev:'{w}, tu m’as prise. Tu vas me le payer, je te l’avais dit.', gloat:'{w}, je t’ai battu et tu boudes encore ? C’est moi qui boude ici.', draw:'Un nul ? Ça m’énerve encore plus qu’une défaite.', win:'Voilà. Maintenant tu sais pourquoi on ne me fâche pas.', lose:'Tu m’as prise. Encore. Ne me parle plus. … Si, reviens jouer.'},
+  mami:{first:'Bienvenue dans mon maquis. Chez moi, on paie ses dettes avant de rejouer.', rev:'{w}, tu m’as battue dans mon propre maquis. Ce soir, mon enfant, tu paies la note.', gloat:'{w}, je t’ai corrigé comme mes propres enfants. Tu reviens chercher la suite ?', draw:'Un nul ? Chez moi, on ne laisse pas l’ardoise ouverte.', win:'Va manger, mon enfant. Tu joueras mieux le ventre plein.', lose:'Hé ! Tu as bien joué. Prends une bière, c’est pour la maison. Une seule.'},
+  mballa:{first:'Contrôle. Nom, quartier, et tes cartes sur la table.', rev:'{w}, tu m’as battue. J’ai relu le règlement : tout était en ordre. Malheureusement.', gloat:'{w}, je t’ai battu dans les règles. Le règlement n’a pas changé.', draw:'Match nul enregistré. Le dossier reste ouvert.', win:'Victoire. Je l’annonce. C’est le règlement.', lose:'Défaite constatée. Je signe le procès-verbal. Mais le dossier reste ouvert.'},
+  mbarga:{first:'Je t’attendais. Je sais toujours qui va venir.', rev:'{w}, tu m’as battu. Je l’avais vu venir. Je voulais savoir si toi aussi.', gloat:'{w}, je t’ai battu. Au fond, tu le savais avant moi.', draw:'Un nul. Je l’avais prévu. Ce soir, je n’ai prévu qu’une seule fin.', win:'Je savais que tu allais jouer ça. Je sais toujours.', lose:'Intéressant. Tu m’as surpris. Ça n’arrive presque jamais.'},
+  jojo:{first:'S’il te plaît, laisse-moi jouer une seule ! Juste une !', rev:'{w}, tu m’as battu et tout le quartier s’est moqué de moi. Ce soir, je suis grand.', gloat:'{w}, je t’ai battu ! Je l’ai raconté à toute l’école !', draw:'Un nul contre toi ! Maman dit que c’est déjà bien. Moi je veux gagner.', win:'J’ai gagné ! J’ai gagné ! Je vais le dire à tout le monde !', lose:'C’est pas grave… Tu m’apprends ton coup, après ?'},
+  kiki:{first:'Tu sais ce qu’on dit sur toi au salon ? Rien. Personne ne te connaît. Pas encore.', rev:'{w}, tu m’as battue. Tout le salon en a parlé. Ce soir, c’est toi qu’on va coiffer.', gloat:'{w}, je t’ai battu. Et crois-moi : tout le quartier le sait.', draw:'Un nul ? Ce n’est même pas une histoire à raconter. Donne-moi une histoire.', win:'Attends que je raconte ça au salon demain matin…', lose:'T’inquiète, au salon je dirai que j’étais malade.'},
+  mbida:{first:'Vite vite, j’ai un client à Mvog-Mbi ! On joue ?', rev:'{w}, tu m’as battu et j’ai raté trois clients. Ce soir, tu me rembourses.', gloat:'{w}, je t’ai déposé direct à la défaite. Course gratuite. Tu remontes ?', draw:'Un nul, c’est une course sans client : ça ne paie pas l’essence.', win:'Terminus ! Tout le monde descend. Moi, je repars.', lose:'Bon, tu m’as dépassé. Mais sur la route, c’est moi le plus fort.'},
+  pasteur:{first:'Que la paix soit avec toi. Je ne bluffe pas : le mensonge est un péché.', rev:'{w}, tu m’as battu. J’ai pardonné. Mais je n’ai pas oublié.', gloat:'{w}, je t’ai battu. Le Seigneur était avec moi. Il l’est encore ce soir.', draw:'Un nul. Même le Seigneur attend la fin pour juger.', win:'Je ne bluffe pas. Je t’avais prévenu.', lose:'Bénie soit ta main. Ce soir, elle était meilleure que la mienne.'},
+  mimi:{first:'Crédit, transfert, partie de Fap Fap : je fais tout. Toi, tu fais quoi ?', rev:'{w}, tu m’as battue. Depuis, j’ai rechargé mon crédit et mes idées.', gloat:'{w}, je t’ai battu. Je te refais un transfert de défaite ?', draw:'Un nul ? C’est un appel qui coupe. On rappelle.', win:'Transaction réussie. Merci d’avoir choisi Mimi.', lose:'Crédit épuisé pour ce soir. Je recharge et je reviens.'},
+  brice:{first:'Aucune donnée sur toi. Intéressant. Je vais en collecter.', rev:'{w}, tu m’as battu. Probabilité que ça se reproduise : 12 %. J’ai calculé.', gloat:'{w}, je t’ai battu. Statistiquement, tu vas refaire les mêmes erreurs.', draw:'Un nul : hypothèse non vérifiée. On refait l’expérience.', win:'Statistiquement, ton 3 était chez toi à 62 %. Et tu l’as sorti trop tôt.', lose:'Ce résultat sort de mon intervalle de confiance. Je recalcule tout.'},
+  bella:{first:'Au marché comme ici : je ne perds jamais sur une affaire.', rev:'{w}, tu m’as battue. Ma seule mauvaise affaire de l’année. Ce soir, je me rattrape.', gloat:'{w}, je t’ai vendu une défaite au prix fort. Tu reviens en racheter ?', draw:'Un nul ? Au marché, on ne repart pas sans conclure.', win:'Bonne affaire pour moi. Reviens demain, j’aurai encore de la marchandise.', lose:'Tu as bien négocié ce soir. Mais au marché, la roue tourne.'},
+  zamba:{first:'Dix ans que j’attends cette table. Assieds-toi.', rev:'{w}, tu m’as battu. J’ai déjà attendu dix ans une fois. Je peux attendre une saison.', gloat:'{w}, je t’ai battu. Les anciens n’oublient pas comment on gagne.', draw:'Un nul. De mon temps, on jouait jusqu’à ce qu’il y ait un vainqueur.', win:'Je suis revenu pour ça. Dis-le à ceux qui m’avaient oublié.', lose:'Tu as la main des grands. J’ai connu ça, avant.'}
+};
+const RD_TXT = {g:'en poules', r16:'en huitième de finale', qf:'en quart de finale', sf:'en demi-finale', f:'en finale', p3:'dans le match pour la 3ᵉ place'};
+function memWhen(e){
+  if(!e) return 'La dernière fois';
+  if(e.rd==='g' || !RD_TXT[e.rd]) return e.s===S.n ? 'La dernière fois' : 'Saison '+e.s;
+  return (e.s===S.n ? 'Cette saison' : 'Saison '+e.s)+', '+RD_TXT[e.rd];
+}
+function sayLine(id, k, e){ const L = SAY[id] || SAY.penalty; return (L[k] || L.first).replace('{w}', memWhen(e)); }
+// what they bring up before the match: the latest thing that happened between you
+function talkBefore(id){
+  const c = memOf(id), last = c.last;
+  if(!last) return {k:'first', text:sayLine(id, 'first')};
+  // a knock-out decided between you weighs more than a group evening
+  const ko = [c.iOut && {k:'rev', e:c.iOut}, c.outMe && {k:'gloat', e:c.outMe}].filter(Boolean).sort((a, b)=> b.e.s - a.e.s || (b.e.t||0) - (a.e.t||0))[0];
+  const pick = last.res==='w' ? {k:'rev', e:last} : last.res==='l' ? {k:'gloat', e:last} : {k:'draw', e:last};
+  // an old knock-out comes back at your first meeting of a new season; after that, the latest match speaks
+  const use = ko && (ko.e.t===last.t || (last.s<S.n && ko.e.s>=S.n - 2)) ? ko : pick;
+  let text = sayLine(id, use.k, use.e);
+  // their habits radar: they noticed how you play
+  const h = M.hab, sharp = ['penalty','systeme','brice','mbarga','tchinda'].includes(id);
+  const hr = (seed=> ((seed * 9301 + 49297) % 233280) / 233280)(hashStr(id + S.n + S.day + (S.round||'')));
+  if(sharp || hr<.4){
+    if(h.po>=8 && h.pt/h.po>=.45) text += ' Et je sais que tu pars souvent en passe. Ce soir, je t’attends là.';
+    else if(h.po>=10 && h.pt/h.po<.1) text += ' Toi, tu ne pars jamais en passe. Je vais en profiter.';
+    else if(h.cora + h.glacee>=3) text += ' Et surveille ton 3 : je sais que tu aimes finir sur un CORA.';
+  }
+  return {k:use.k, text, e:use.e};
+}
+// the match goes into the memory (from your side: w = you won)
+function memMatch(id, sc, won, draw, m, rd){
+  const c = memOf(id), res = draw ? 'd' : won ? 'w' : 'l', t = Date.now();
+  c[res]++;
+  const decisive = m.kind==='ko' && (m.t.legs.length===1 || m.leg===1);
+  c.last = {s:S.n, rd: m.kind==='g' ? 'g' : rd, me:sc.me, th:sc.th, res, ko:decisive, t};
+  if(decisive){ if(won) c.iOut = {s:S.n, rd, t}; else c.outMe = {s:S.n, rd, t}; }
+  memSave();
+}
+// what the game noticed about your play (sent back with each result)
+function memHabits(d){
+  if(d.hab){ M.hab.pt += Math.max(0, d.hab.pt|0); M.hab.po += Math.max(0, d.hab.po|0); }
+  if(d.won && (d.mult|0)===4) M.hab.glacee++; else if(d.won && (d.mult|0)>=2) M.hab.cora++;
+  memSave();
+}
+// the past champions: the quarter remembers who lifted the trophy
+function memSeasonEnd(){
+  if(!S || S.champion==null || M.seasons.some(x=> x.n===S.n)) return;
+  M.seasons.push({n:S.n, champ:S.champion, champC:S.champ[S.champion], me:S.champion===S.me});
+  if(M.seasons.length>30) M.seasons.shift();
+  memSave();
+}
+const lastChamp = ()=> M.seasons.find(x=> x.n===S.n - 1) || null;
+// the little facts shown under their words
+function walkFacts(id){
+  const c = memOf(id), f = [], lc = lastChamp(), name = CH[id].name;
+  if(lc && !lc.me && lc.champC===id) f.push('👑 Champion de la saison '+lc.n);
+  if(lc && lc.me) f.push('👑 Tu es champion en titre : tout le monde veut te battre');
+  if(c.w + c.l + c.d) f.push('Vos matchs : '+c.w+' V · '+c.d+' N · '+c.l+' D');
+  if(c.outMe) f.push(name+' a gagné votre '+(ROUND_SHORT[c.outMe.rd] || 'match').toLowerCase()+' (saison '+c.outMe.s+')');
+  if(c.iOut) f.push('Tu as sorti '+name+' en '+(ROUND_SHORT[c.iOut.rd] || 'match').toLowerCase()+' (saison '+c.iOut.s+')');
+  return f;
+}
+// ---- the quarter talks: other results of the last evening, what they say about you, the past champions ----
+const NEWS_W = ['{W} bat {L} {s}. À {QW}, la musique a tourné jusqu’au matin.', '{W} ({QW}) bat {L} {s}. {L} a quitté la table sans un mot.', 'Soirée chaude à {QW} : {W} s’impose {s} face à {L}.', '{W} punit {L} {s}. On dit que {L} prépare déjà sa revanche.'];
+const NEWS_UP = ['Personne ne l’attendait : {W} bat {L} {s}. Tout {QL} est en deuil.', 'Le coup de la soirée : {W} fait tomber {L}, {s}.'];
+const NEWS_D = ['{A} et {B} se quittent sur un nul, {s}. Personne n’est content.', 'Rien de fait entre {A} et {B} : {s}. Ils se reverront.'];
+function lastEvening(){
+  // the most recent evening that was played without you
+  if(S.phase==='groups' || S.round==='r16' && !S.ko.r16.some(t=> t.legs[0].r)){
+    const days = S.fx.filter(f=> f.r).map(f=> f.day); if(!days.length) return [];
+    const d = Math.max(...days);
+    return S.fx.filter(f=> f.day===d && f.r && f.h!==S.me && f.a!==S.me).map(f=> ({h:f.h, a:f.a, r:f.r}));
+  }
+  const out = [];
+  ['f','sf','qf','r16'].some(rd=>{
+    const ts = (S.ko[rd] || []).concat(rd==='f' ? S.ko.p3 || [] : []);
+    ts.forEach(t=>{ for(let k = t.legs.length - 1; k>=0; k--){ const l = t.legs[k]; if(!l.r) continue; const s = legSides(t, k); if(s.h!==S.me && s.a!==S.me) out.push({h:s.h, a:s.a, r:l.r}); break; } });
+    return out.length>0;
+  });
+  return out;
+}
+function newsCard(){
+  const items = [], r = rng(S.seed + (S.day||0) * 7 + Object.keys(S.ko).length * 131 + S.history.length);
+  const pick = a=> a[Math.floor(r()*a.length)];
+  const fill = (t, o)=> t.replace(/\{(\w+)\}/g, (_, k)=> esc(o[k]));
+  const games = lastEvening().map(g=> Object.assign(g, {gap: Math.abs(g.r.h - g.r.a), up: g.r.w!=null && str(g.r.w) < str(g.r.w===g.h ? g.a : g.h) - 6})).sort((a, b)=> (b.up - a.up) || (b.gap - a.gap)).slice(0, 2);
+  games.forEach(g=>{
+    if(g.r.w==null){ items.push({c:champOf(g.h), t:fill(pick(NEWS_D), {A:CH[champOf(g.h)].name, B:CH[champOf(g.a)].name, s:g.r.h+'–'+g.r.a})}); return; }
+    const W = g.r.w, Lq = W===g.h ? g.a : g.h, sw = W===g.h ? g.r.h : g.r.a, sl = W===g.h ? g.r.a : g.r.h;
+    items.push({c:champOf(W), t:fill(pick(g.up ? NEWS_UP : NEWS_W), {W:CH[champOf(W)].name, L:CH[champOf(Lq)].name, QW:Q[W].name, QL:Q[Lq].name, s:sw+'–'+sl})});
+  });
+  // someone of this season who has a score to settle with you talks about it in their quarter
+  const grudge = Object.values(S.champ).filter((id, i, a)=> a.indexOf(id)===i && M.ch[id] && (M.ch[id].iOut || M.ch[id].last && M.ch[id].last.res!=='d'))
+    .sort((a, b)=> (M.ch[b].last.t||0) - (M.ch[a].last.t||0))[0];
+  if(grudge){
+    const q = Object.keys(S.champ).find(k=> S.champ[k]===grudge), tb = talkBefore(grudge);
+    items.push({c:grudge, t:esc(CH[grudge].name)+(tb.k==='rev' ? ' parle encore de toi à '+esc(Q[q].name)+' : « ' : ' raconte à tout '+esc(Q[q].name)+' son match contre toi : « ')+esc(sayLine(grudge, tb.k, tb.e))+' »'});
+  }
+  const lc = lastChamp();
+  if(lc && !lc.me) items.push({c:lc.champC, t:'Le trophée de la saison '+lc.n+' dort à '+esc(Q[lc.champ].name)+'. '+esc(CH[lc.champC] ? CH[lc.champC].name : 'Son champion')+' jure que personne ne le lui prendra.'});
+  else if(lc && lc.me) items.push({c:null, t:'Tout le monde sait que '+esc(Q[S.me].name)+' a gagné la saison '+lc.n+'. Ce soir, chaque table veut ta peau.'});
+  if(!items.length) return '';
+  return '<div class="card news"><h3>Le fil du quartier<span>on en parle au maquis</span></h3>'+items.map(it=> '<div class="nw">'+(it.c && CH[it.c] ? '<span class="nw-f">'+champFace(CH[it.c])+'</span>' : '<span class="nw-f nw-me">📣</span>')+'<p>'+it.t+'</p></div>').join('')+'</div>';
+}
 
 // v99: a simulated match between two neighbourhoods: 2 manches; each manche won scores 1, 2 for a CORA, 3 for a
 // 33 Glacée; level = a draw (w null)
@@ -1183,7 +1346,7 @@ function renderHub(animate){
       }
       return '<div class="tiles"><div><b style="font-size:15px;line-height:1.5">'+(S.champion!=null ? 'Fini' : S.out ? 'Éliminé' : ROUND_SHORT[myRound()])+'</b><small>'+(S.out ? 'la saison continue' : 'ton tour')+'</small></div><div><b>'+fmt(L.lp)+'</b><small>LP</small></div><div><b>'+fmt(S.earned || 0)+'</b><small>jetons de primes</small></div></div>';
     };
-    if(m) h += matchCard(m) + tiles();
+    if(m) h += matchCard(m) + tiles() + newsCard();
     else if(S.champion!=null){
       // v99: the podium of the season
       const pod = S.podium || [S.champion];
@@ -1244,7 +1407,7 @@ async function startNight(){
   const them = m.h===S.me ? m.a : m.h;
   if(!S.cur || S.cur.key!==keyOf(m)){
     const rc = champOf(them);
-    S.cur = {key:keyOf(m), them, m:Array(NM).fill(null), rc, done:false, qz:null, dec:false};
+    S.cur = {key:keyOf(m), them, m:Array(NM).fill(null), rc, done:false, qz:null, dec:false, say:talkBefore(rc)};
     save();
     await walkout(m);
   } else { await show('night'); renderNight(); }
@@ -1259,9 +1422,13 @@ async function walkout(m){
   $('wkLine').textContent = home==null ? 'Terrain neutre. Les deux quartiers ont fait le déplacement : il n’y a plus de place debout.'
     : home ? 'Ton public a sorti les casseroles et les vuvuzelas. '+c.name+' arrive sous les sifflets. Ta table, ta musique : c’est toi qui distribues.'
     : 'Ici, personne ne t’applaudit. Le public de '+th.name+' scande le nom de '+c.name+'. Sa table, sa musique : c’est lui qui distribue.';
+  // v106 · the champion speaks to you, from what you lived together
+  const say = S.cur.say || (S.cur.say = talkBefore(S.cur.rc)), facts = walkFacts(S.cur.rc);
+  if(say.k==='rev') facts.push('🔥 Soif de revanche : '+c.name+' va réfléchir plus longtemps à chaque coup');
+  $('wkSay').innerHTML = '<span class="ws-q">« '+esc(say.text)+' »</span><span class="ws-n">— '+esc(c.name)+'</span>'+(facts.length ? '<span class="ws-f">'+facts.map(f=> '<i>'+esc(f)+'</i>').join('')+'</span>' : '');
   await show('walk');
   anthem(true);
-  ['wkTag','wkTitle','wkVs','wkLine','wkGo'].forEach(id=> $(id).style.opacity = 0);
+  ['wkTag','wkTitle','wkVs','wkLine','wkSay','wkGo'].forEach(id=> $(id).style.opacity = 0);
   A($('wkTag'), [{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:500, delay:150});
   A($('wkTitle'), [{opacity:0, transform:'translateY(8px)'}, {opacity:1, transform:'none'}], {duration:500, delay:300});
   A($('wkL'), [{opacity:0, transform:'translateX(-60px)'}, {opacity:1, transform:'none'}], {duration:700, delay:500});
@@ -1269,7 +1436,8 @@ async function walkout(m){
   await A($('wkVs'), [{opacity:0, transform:'scale(2.2)'}, {opacity:1, transform:'scale(1)'}], {duration:480, delay:1100, easing:BACK});
   buzz(20); tick(true);
   A($('wkLine'), [{opacity:0}, {opacity:1}], {duration:500});
-  A($('wkGo'), [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:250});
+  A($('wkSay'), [{opacity:0, transform:'translateY(10px) scale(.96)'}, {opacity:1, transform:'none'}], {duration:520, delay:350, easing:BACK});
+  A($('wkGo'), [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:700});
 }
 $('wkGo').addEventListener('click', async ()=>{ await show('night'); renderNight(true); });
 // v99: the match's score = the points of its 2 manches (each manche won 1, CORA 2, 33 Glacée 3); the decisive manche
@@ -1307,7 +1475,7 @@ function playManche(i){
   const title = mancheName(i)+' · '+Q[S.me].name+' – '+th.name;
   // v94: home or away decides the table, the music and who deals (the neutral final: drawn by the game)
   const home = m && !m.neutral ? m.h===S.me : null;
-  const msg = {zh:'play', id, league:1, persona:C.rc, target:1, title};
+  const msg = {zh:'play', id, league:1, persona:C.rc, target:1, title, rage: !!(C.say && C.say.k==='rev')};
   if(home!=null){ msg.home = home; if(!home) msg.table = CH_TABLE[C.rc] || null; }
   pending = {id, done: d=> onResult(i, d)};
   $('waitT').textContent = mancheName(i); $('wait').classList.add('on');
@@ -1322,6 +1490,7 @@ async function onResult(i, d){
   const r = d.forfeit ? 'them' : d.won ? 'me' : 'them';
   const x = Math.max(1, Math.min(4, d.mult|0 || 1));
   C.m[i] = {r, x};
+  if(!d.forfeit) memHabits(d);
   if(dec) C.qz = r; // the decisive game settles the tie (it does not add to the score)
   if(r==='me'){ const p = PRIME.manche * x; pay(p); S.earned += p; lpAdd(6 * x); }
   save();
@@ -1343,7 +1512,7 @@ async function endNight(){
   finishNight();
 }
 function finishNight(){
-  const C = S.cur, m = curMatch(), sc = score(), home = m.h===S.me;
+  const C = S.cur, m = curMatch(), sc = score(), home = m.h===S.me, rdNow = m.kind==='ko' ? myRound() : 'g';
   const r = {h: home ? sc.me : sc.th, a: home ? sc.th : sc.me};
   let wonNight, draw = false;
   // v99: a group match can end level (1 point each)
@@ -1361,6 +1530,8 @@ function finishNight(){
   if(wonNight){ pay(PRIME.soiree); S.earned += PRIME.soiree; gains.push(['Bonus du quartier', PRIME.soiree]); lpAdd(30); post({zh:'beat', persona:C.rc}); post({zh:'pts', n:5, night:1}); }
   else lpAdd(draw ? 5 : -12);
   S.history.push({k:C.key, me:sc.me, th:sc.th, w:wonNight});
+  memMatch(C.rc, sc, wonNight, draw, m, rdNow); // v106: they will remember this evening
+  const rc = C.rc;
   S.cur = null;
   // the rest of the matchday, then the season moves on
   let msgs, rd = null;
@@ -1378,9 +1549,9 @@ function finishNight(){
   }
   msgs.forEach(x=>{ if(x.k==='qualif'){ pay(PRIME.qualif); S.earned += PRIME.qualif; gains.push(['Qualifié pour les huitièmes', PRIME.qualif]); } });
   save();
-  showResult(m, sc, wonNight, gains, msgs, draw, rd);
+  showResult(m, sc, wonNight, gains, msgs, draw, rd, rc);
 }
-async function showResult(m, sc, won, gains, msgs, draw, rd){
+async function showResult(m, sc, won, gains, msgs, draw, rd, rc){
   const C_them = Q[(m.h===S.me ? m.a : m.h)];
   const champ = S.champion===S.me, out = msgs.find(x=> x.k==='outGroups' || x.k==='outKO'), qual = msgs.find(x=> x.k==='qualif'), thr = msgs.find(x=> x.k==='through'), toP3 = msgs.find(x=> x.k==='toP3');
   const decisive = m.kind==='ko' && (m.t.legs.length===1 || m.leg===1), quizzed = decisive && m.t.qz;
@@ -1404,6 +1575,8 @@ async function showResult(m, sc, won, gains, msgs, draw, rd){
   if(out) s = out.k==='outGroups' ? Q[S.me].name+' finit '+nth(out.pos)+' du groupe : éliminé'+(out.pos===2 ? ' (pas parmi les 4 meilleurs troisièmes)' : '')+'. Reviens plus fort la saison prochaine.' : 'Éliminé en '+ROUND[out.round].toLowerCase()+'. Le quartier est fier quand même.';
   if(line) s = line+'. '+s;
   $('rsS').textContent = s;
+  // v106 · their reaction, in their own words
+  $('rsSay').innerHTML = rc && CH[rc] ? '<span class="nw-f">'+champFace(CH[rc])+'</span><p>« '+esc(sayLine(rc, draw ? 'draw' : won ? 'lose' : 'win'))+' »<b>— '+esc(CH[rc].name)+'</b></p>' : '';
   $('rsG').innerHTML = gains.length ? gains.map(([k, v])=> '<div><span>'+esc(k)+'</span><b>+'+fmt(v)+'</b></div>').join('') : '';
   // the other results of the evening, in the player's group
   let o = '';
@@ -1411,11 +1584,11 @@ async function showResult(m, sc, won, gains, msgs, draw, rd){
   $('rsO').innerHTML = o;
   $('rsGo').textContent = champ ? 'Soulever le trophée' : 'Continuer';
   await show('result');
-  const kids = ['rsK','rsSc','rsT','rsS','rsG','rsO','rsGo'].map($);
+  const kids = ['rsK','rsSc','rsT','rsS','rsG','rsO','rsGo','rsSay'].map($);
   kids.forEach(k=> k.style.opacity = 0);
   A(kids[0], [{opacity:0, letterSpacing:'.6em'}, {opacity:1, letterSpacing:'.3em'}], {duration:700});
   A(kids[1], [{opacity:0, transform:'scale(.6)'}, {opacity:1, transform:'scale(1)'}], {duration:600, delay:200, easing:BACK});
-  [2,3,4,5,6].forEach((k, i)=> A(kids[k], [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:450 + i*120}));
+  [2,3,7,4,5,6].forEach((k, i)=> A(kids[k], [{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:500, delay:450 + i*120}));
   fanfare(won);
   if(won) confetti([Q[S.me].c1, Q[S.me].c2, '#f2c76a', '#ffffff']);
 }
@@ -1530,7 +1703,7 @@ if(lpMsgs.length) setTimeout(()=> lpMsgs.forEach((m, i)=> setTimeout(()=> toast(
 if(S && S.cur && S.cur.qz==='pending') S.cur.qz = null;
 paintChips();
 // test hook (local only): window.__lg
-if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__lg = {get S(){ return S; }, set S(v){ S = v; }, newSeason, simulateToEnd, standings, renderHub, show, startNight, onResult, finishNight, lpTick, get L(){ return L; }, save, nextMatch, endNight, thirds, doorPaint};
+if(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.__lg = {get S(){ return S; }, set S(v){ S = v; }, newSeason, simulateToEnd, standings, renderHub, show, startNight, onResult, finishNight, lpTick, get L(){ return L; }, save, nextMatch, endNight, thirds, doorPaint, get M(){ return M; }, SAY, talkBefore, newsCard, walkFacts, memSave};
 
 // ===================== 9. THE ONLINE LEAGUE OF 16 (v89) =====================
 // The server runs it (supabase-league16.sql); the game passes the messages: {zh:'l16', op:'state'|'join'|'ready'|'play'} out,

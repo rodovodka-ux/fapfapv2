@@ -6203,8 +6203,10 @@
   // the same search() engine, and picks whichever move performs best on average across all of them.
   // It never looks at the player's actual hand.
   // how hard to think comes from the opponent (RALL: 280 ms / 70 deals, Penalty: 450 / 120, the mask: 1100 / 340)
-  function pimcBudgetMs(){ return oppPersona().pimcMs || 450; }
-  function pimcMaxSamples(){ return oppPersona().pimcSamples || 120; }
+  // v106 · in the League, a character out for revenge thinks 60 % longer (more imagined hands, same honesty)
+  const pimcRage = ()=> storyRun && storyRun.rage ? 1.6 : 1;
+  function pimcBudgetMs(){ return Math.round((oppPersona().pimcMs || 450) * pimcRage()); }
+  function pimcMaxSamples(){ return Math.round((oppPersona().pimcSamples || 120) * pimcRage()); }
   function unseenPoolFor(myHand){
     const usedKeys = new Set();
     myHand.forEach(c=>usedKeys.add(c.suit+'-'+c.rank));
@@ -14847,7 +14849,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v105';
+  const APP_VERSION = 'v106';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -17715,6 +17717,8 @@
     const lgTables = d.league && !d.table ? SKINS.table.map(s=> s.id).concat(SHOP_TABLES.map(t=> t.id)).filter(id=> id!=='verre') : null;
     storyRun = {zh:true, league:!!d.league, id:String(d.id||''), bet:0, odds:1, rule:null, m:d, target0:TARGET_SCORE, art:{}, sqp:{}, table:d.table || (lgTables ? lgTables[Math.floor(Math.random()*lgTables.length)] : null)};
     // v94 · League, home and away: at home your own table and music (you deal); away his table and his music (he deals)
+    // v106 · a character who wants revenge thinks longer on every move (never by looking at your cards)
+    if(d.league){ storyRun.rage = !!d.rage; storyRun.pt0 = profile.passeTaken||0; storyRun.po0 = profile.passeOpportunities||0; }
     if(d.league && typeof d.home==='boolean'){
       storyRun.home = d.home;
       storyRun.table = d.home ? null : (d.table || storyRun.table);
@@ -17777,7 +17781,9 @@
       // for the League: who survived the Carré, and what the deciding hand was worth (×2 CORA, ×4 33 Glacée)
       const sqGame = mode==='square' && sq, champ = sqGame ? sq.championSeat : null;
       const mult = sqGame ? (sq.lastMult || 1) : (matchManches.length ? matchManches[matchManches.length - 1].mult : 1);
-      setTimeout(()=>{ goToMainMenu(); zhOpen(); zhPost({zh:'result', id:run.id, won, you, them, champ, mult}); }, 1900);
+      // v106 · the League's characters remember how you play: how often you went « en passe » this game
+      const hab = run.league ? {pt: Math.max(0, (profile.passeTaken||0) - (run.pt0||0)), po: Math.max(0, (profile.passeOpportunities||0) - (run.po0||0))} : null;
+      setTimeout(()=>{ goToMainMenu(); zhOpen(); zhPost({zh:'result', id:run.id, won, you, them, champ, mult, hab}); }, 1900);
       return;
     }
     if(run && run.book){
