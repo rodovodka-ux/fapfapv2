@@ -2351,13 +2351,29 @@
   /* the floating tab bar */
   .tabbar{ position:fixed; left:50%; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index:5;
     width:min(420px, calc(100% - 24px)); height:68px; border-radius:999px; display:flex; align-items:center; padding:6px; }
-  .tabbar > .tb-lens{ position:absolute; top:6px; bottom:6px; left:6px; width:calc((100% - 12px)/5); border-radius:999px; z-index:2;
+  .tabbar > .tb-lens{ position:absolute; top:6px; bottom:6px; left:6px; width:calc((100% - 12px)/6); border-radius:999px; z-index:2;
     background: rgba(255,255,255,0.16); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 12px rgba(255,255,255,0.12), 0 4px 14px rgba(0,0,0,0.2);
     transition: transform .55s var(--spring); }
   .tabbar .tab{ flex:1; min-width:0; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; padding:0;
     border:none; background:none; box-shadow:none; color:var(--gl-soft); font-size:10.5px; font-weight:700; border-radius:999px; }
   .tabbar .tab svg.i{ width:23px; height:23px; margin:0; transition: transform .45s var(--spring); }
   .tabbar .tab.on{ color:#fff; }
+  /* v103: the Messages tab and page */
+  .tabbar .tab{ position:relative; }
+  .tab-n{ position:absolute; top:4px; left:calc(50% + 6px); min-width:17px; height:17px; padding:0 4px; border-radius:9px; background:#e00000; color:#fff; border:1.5px solid #000; font:900 10px/14px 'Nunito', sans-serif; z-index:3; }
+  .msg-new{ width:40px; height:40px; border-radius:50%; display:grid; place-items:center; background:#e00000; color:#fff; border:2px solid #000; box-shadow:0 3px 0 #000; padding:0; }
+  .msg-new svg.i{ width:20px; height:20px; }
+  .msg-guide{ margin:0 0 14px; padding:13px 14px; border-radius:16px; background:linear-gradient(160deg,#3a0a0a,#1c0505); border:2px solid #000; box-shadow:0 4px 0 #000; color:#f3dede; font-size:13px; }
+  .msg-guide b{ display:block; font-size:14.5px; color:#fff; margin-bottom:4px; } .msg-guide ol{ margin:6px 0 0; padding-left:20px; } .msg-guide li{ margin:3px 0; } .msg-guide li b{ display:inline; font-size:inherit; color:#f2c76a; margin:0; }
+  .msg-guide p{ margin:0 0 10px; } .msg-guide button{ width:100%; }
+  .msg-search input{ width:100%; box-sizing:border-box; padding:12px 14px; border-radius:14px; border:2px solid #000; background:#fff; color:#111; font:700 15px system-ui, sans-serif; margin-bottom:8px; }
+  .msg-hint{ margin:6px 4px; font-size:12.5px; opacity:.75; }
+  .msg-time{ font-size:11px; opacity:.7; margin-right:6px; white-space:nowrap; }
+  .msg-logo{ width:42px; height:42px; flex:none; border-radius:50%; display:grid; place-items:center; background:#e00000; color:#fff; border:2px solid #000; font:900 15px 'Nunito', sans-serif; }
+  .msg-logo svg.i{ width:20px; height:20px; }
+  .msg-note{ position:relative; margin:6px 0 0 52px; padding:10px 12px 18px; border-radius:14px; background:rgba(255,255,255,.07); font-size:13px; }
+  .msg-note.new{ background:rgba(242,199,106,.14); } .msg-note b{ display:block; margin-bottom:2px; } .msg-note p{ margin:0; opacity:.9; }
+  .msg-note time{ position:absolute; right:10px; bottom:4px; font-size:10.5px; opacity:.6; }
   .tabbar .tab.on svg.i{ transform: scale(1.12); color: var(--p1); filter: drop-shadow(0 0 6px var(--p2)); }
   .tabbar .tab:active{ transform:none; }
   /* entrance */
@@ -4194,7 +4210,7 @@
   /* the tab bar */
   body.ui-d:not(#z) #homeTabbar{ background:#fff !important; border:3px solid var(--d-ink) !important; box-shadow:0 5px 0 var(--d-ink) !important; border-radius:24px !important; }
   body.ui-d:not(#z) #homeTabbar .tb-lens{ display:none !important; }
-  body.ui-d:not(#z) #homeTabbar .tab{ color:var(--d-mute) !important; font:800 11px var(--d-b) !important; border-radius:16px; margin:5px 2px; }
+  body.ui-d:not(#z) #homeTabbar .tab{ color:var(--d-mute) !important; font:800 10px var(--d-b) !important; letter-spacing:-.01em; border-radius:16px; margin:5px 2px; }
   body.ui-d:not(#z) #homeTabbar .tab.on{ background:var(--d-mango) !important; color:var(--d-ink) !important; box-shadow:inset 0 0 0 2.5px var(--d-ink); }
   body.ui-d:not(#z) #homeTabbar .tab.on svg.i{ color:var(--d-ink) !important; filter:none !important; }
 
@@ -5129,6 +5145,7 @@
   <nav class="lg gl tabbar og" id="homeTabbar" aria-label="Menu principal">
     <span class="tb-lens" id="tabLens"></span>
     <button class="tab on" id="tabHome"><svg class="i" aria-hidden="true"><use href="#i-home"/></svg>Accueil</button>
+    <button class="tab" id="tabMsgs"><svg class="i" aria-hidden="true"><use href="#i-chat"/></svg>Messages<span class="tab-n hidden" id="tabMsgsN"></span></button>
     <button class="tab" id="btnShowStats"><svg class="i" aria-hidden="true"><use href="#i-user"/></svg>Profil</button>
     <button class="tab" id="btnShowShop"><svg class="i" aria-hidden="true"><use href="#i-bag"/></svg>Boutique</button>
     <button class="tab" id="btnShowSkins"><svg class="i" aria-hidden="true"><use href="#i-palette"/></svg>Collection</button>
@@ -5330,6 +5347,11 @@
     <div class="chat-quick" id="chatQuick"></div>
     <form class="chat-form" id="chatForm" autocomplete="off"><input id="chatInput" maxlength="300" placeholder="Écris à ton ami…" aria-label="Message"><button class="primary" id="chatSend" aria-label="Envoyer"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></form>
   </div>
+</div>
+
+<div class="overlay page hidden" id="msgPage">
+  <header class="page-head"><button class="back-btn" data-nav-back aria-label="Retour">‹</button><h2>Messages</h2><button class="msg-new" id="msgNew" aria-label="Écrire à un joueur"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg></button></header>
+  <div class="page-body" id="msgBody"></div>
 </div>
 
 <div class="overlay page hidden" id="accountPage">
@@ -9637,7 +9659,7 @@
   // the scene behind the glass: the table while a game is on screen, the bar everywhere else
   function syncScene(){ document.body.classList.toggle('in-game', Nav.stack.length===0); if(window.tabsSync) window.tabsSync(); }
   // the five pages of the bottom tab bar, in its order
-  const TAB_PAGES = ['menuOverlay','statsOverlay','shopPage','skinsOverlay','settingsPage'];
+  const TAB_PAGES = ['menuOverlay','msgPage','statsOverlay','shopPage','skinsOverlay','settingsPage'];
   // going to a tab: from home it opens on top of home; from another tab it takes that tab's place, sliding the
   // way of the bar (so "back" from any tab always lands on Accueil)
   function goTab(id){
@@ -9749,6 +9771,7 @@
     else if(id==='richPage'){ renderRich(); showRichTab(prefs.richTab || 'world'); }
     else if(id==='bellPage'){ if(window.renderBell) window.renderBell(); }
     else if(id==='chatPage'){ if(window.renderChat) window.renderChat(); }
+    else if(id==='msgPage'){ if(window.renderMsgs) window.renderMsgs(); }
     else if(id==='accountPage'){ renderAccount(); cloudInit(); }
     else if(id==='shopPage') renderShop();
     else if(id==='shopTablePage') Music.play(SX.table, true); // hear the table you are looking at
@@ -14488,7 +14511,7 @@
   })();
 
   // ---- Opening credits at every launch (« Passer » skips them), then the beta notice once per version ----
-  const APP_VERSION = 'v102';
+  const APP_VERSION = 'v103';
   (function launch(){
     const el = document.getElementById('launch'), stage = document.getElementById('l2Stage');
     if(DEV_HOST && /[?&]debug\b/.test(location.search) && !/[?&]intro\b/.test(location.search)){ el.remove(); return; }
@@ -18221,7 +18244,8 @@
     if(c && c.id===p.from && Nav.cur()==='chatPage' && !document.hidden){ chatLoad(); sfxTap(); return; }
     Friends.unread[p.from] = (Friends.unread[p.from]|0) + 1;
     if(Friends.inbox) Friends.inbox.unread = (Friends.inbox.unread|0) + 1; else bellRefresh();
-    friendsUi();
+    friendsUi(); bellBadge();
+    if(Nav.cur()==='msgPage' && !document.hidden) renderMsgs();
     // v99: also at the table, shorter (a message is no longer lost until the next visit to the bell)
     showToast(String(p.name||'Un ami').replace(/[<>]/g, '').slice(0,16), String(p.body||'Nouveau message').slice(0,80), {ms: inGame() ? 1800 : 2800});
     vibrate([30]);
@@ -18254,6 +18278,7 @@
     b.setAttribute('aria-label', n ? 'Notifications : '+n+' nouvelle'+(n>1 ? 's' : '') : 'Notifications');
     if(n > Friends.lastN){ b.classList.remove('ring'); void b.offsetWidth; b.classList.add('ring'); }
     Friends.lastN = n;
+    msgsBadge();
   }
   function agoText(t){
     const s = (Date.now() - t)/1000, d = new Date(t);
@@ -18289,12 +18314,15 @@
       r.querySelector('[data-a=no]').addEventListener('click', ()=> answerFriend(f.id, false));
       return r;
     }));
-    bellSection(box, 'Messages', friendList().filter(f=> Friends.unread[f.id]).map(f=>{
-      const n = Friends.unread[f.id];
-      const r = friendRow(f, n+(n>1 ? ' nouveaux messages' : ' nouveau message'), '<span class="unread-n">'+(n>9 ? '9+' : n)+'</span>', 'new tappable');
-      r.addEventListener('click', ()=> openChat(f));
+    // v103: every unread message (friends or not, and the game's own) waits in the Messages tab
+    const mn = (ib.unread|0) + (ib.game|0);
+    bellSection(box, 'Messages', mn ? [(()=>{
+      const r = document.createElement('div'); r.className = 'bell-row new tappable';
+      r.innerHTML = '<span class="msg-logo">'+ico('chat')+'</span><span class="bn"><b>Messages</b><small></small></span><span class="bell-acts"><span class="unread-n">'+(mn>9 ? '9+' : mn)+'</span></span>';
+      r.querySelector('small').textContent = mn+(mn>1 ? ' nouveaux messages' : ' nouveau message');
+      r.addEventListener('click', ()=> goTab('msgPage'));
       return r;
-    }));
+    })()] : []);
     bellSection(box, 'Défis manqués', (ib.missed||[]).map(m=>{
       const t = Date.parse(m.at), f = {id:m.pid, name:String(m.name||'Un joueur').slice(0,16)};
       const r = friendRow(f, 'T’a défié '+agoText(t), '<button data-a="defi">'+ico('cards')+' Défier</button>', t > seen ? 'new' : '');
@@ -18333,6 +18361,9 @@
     try{ history.replaceState(null, '', location.pathname); }catch(e){}
     setTimeout(()=>{ if(inHome()) Nav.go('bellPage'); }, 900);
   }
+  // v103: a message notification opening the game: straight to that conversation
+  { const m = location.search.match(/[?&]msg=([0-9a-f-]{36})/i);
+    if(m){ try{ history.replaceState(null, '', location.pathname); }catch(e){} setTimeout(()=>{ if(inHome()) openChat({id:m[1], name:'Joueur'}); }, 1200); } }
 
   // ---- la conversation : gardée sur le serveur, réponses rapides du quartier ----
   const QUICK = ['On se tape une partie ?', 'J’arrive, attends-moi', 'Tu as peur ou bien ?', 'Donne-moi ma revanche !', 'Mola, c’est comment ?',
@@ -18415,13 +18446,138 @@
     }catch(e){
       c.msgs = c.msgs.filter(x=> x!==m); drawMsgs();
       const why = (e && e.message) || '';
-      showToast('Message non envoyé', /not friends/.test(why) ? 'Vous n’êtes plus amis.' : /limit/.test(why) ? 'Doucement ! Attends une minute.' : 'Pas de connexion. Réessaie.', {ms:2400});
-      if(!/not friends|limit/.test(why) && !$id('chatInput').value) $id('chatInput').value = txt;
+      showToast('Message non envoyé', /blocked/.test(why) ? 'Ce joueur ne reçoit pas tes messages.' : /unknown/.test(why) ? 'Ce joueur n’existe plus.' : /limit/.test(why) ? 'Doucement ! Attends une minute.' : 'Pas de connexion. Réessaie.', {ms:2400});
+      if(!/blocked|unknown|limit/.test(why) && !$id('chatInput').value) $id('chatInput').value = txt;
     }
   }
   $id('chatForm').addEventListener('submit', e=>{ e.preventDefault(); const i = $id('chatInput'); const t = i.value; i.value = ''; chatSend(t); });
   $id('chatWho').addEventListener('click', ()=>{ const c = Friends.chat; if(c) openPlayerSheet(friendList().find(f=> f.id===c.id) || {id:c.id, name:c.name}); });
   $id('chatDefi').addEventListener('click', ()=>{ const c = Friends.chat; if(c) challengeFriend({id:c.id, name:c.name}); });
+
+  // ===================== v103 : l'onglet Messages — toutes les conversations, les messages du jeu, écrire à tout joueur =====================
+  const Msgs = {list:null, game:null, gameOpen:false, search:null, q:''};
+  async function msgsRpc(fn, args){
+    if(!CLOUD_ON || !(await cloudInit()) || !supaClient || !myUid()) throw new Error('offline');
+    const { data, error } = await supaClient.rpc(fn, args || {});
+    if(error) throw error;
+    return data;
+  }
+  function msgsBadge(){
+    const ib = Friends.inbox || {}, n = (ib.unread|0) + (ib.game|0), el = $id('tabMsgsN');
+    el.classList.toggle('hidden', !n); el.textContent = n>9 ? '9+' : String(n);
+  }
+  window.msgsBadge = msgsBadge;
+  // the players met online (this phone's history), to write to them without searching
+  function msgsRecent(){
+    const seen = new Set(), out = [];
+    friendList().forEach(f=>{ if(!seen.has(f.id)){ seen.add(f.id); out.push({id:f.id, name:f.name, sub:'Ton ami'}); } });
+    (Array.isArray(profile.mpLog) ? profile.mpLog : []).slice().reverse().forEach(e=>{
+      if(e.u && e.u!==myUid() && !seen.has(e.u)){ seen.add(e.u); out.push({id:e.u, name:String(e.o||'Joueur').slice(0,16), sub:'Vous avez joué ensemble'}); }
+    });
+    return out.slice(0, 12);
+  }
+  // the notifications, explained step by step where they are missing (iPhone: only from the home screen)
+  function msgsGuide(box){
+    if(!VAPID_PUBLIC || !CLOUD_ON) return;
+    const ok = !!prefs.push && 'Notification' in window && Notification.permission==='granted';
+    if(ok) return;
+    const g = document.createElement('div'); g.className = 'msg-guide';
+    if(isIOS && !isStandalone()){
+      g.innerHTML = '<b>Reçois tes messages jeu fermé</b><ol><li>Touche <b>Partager</b> en bas de Safari</li><li>Choisis <b>« Sur l’écran d’accueil »</b></li><li>Ouvre Fap Fap depuis sa nouvelle icône, puis reviens ici</li></ol>';
+    } else if('Notification' in window && Notification.permission==='denied'){
+      g.innerHTML = '<b>Les notifications sont bloquées</b><p>Ouvre les réglages du téléphone › Notifications › ton navigateur (ou Fap Fap) › Autoriser. Puis reviens ici.</p>';
+    } else {
+      g.innerHTML = '<b>Reçois tes messages jeu fermé</b><p>Ton téléphone sonnera pour un message, un défi ou ton match de League.</p><button class="primary" type="button">Activer les notifications</button>';
+      g.querySelector('button').addEventListener('click', ()=> pushEnable().then(()=>{ if(window.pushSettingsRow) window.pushSettingsRow(); drawMsgList(); }));
+    }
+    box.appendChild(g);
+  }
+  function msgTime(t){
+    const d = new Date(t), now = new Date();
+    if(d.toDateString()===now.toDateString()) return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    if(now - d < 6*864e5) return ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'][d.getDay()];
+    return d.getDate()+'/'+(d.getMonth()+1);
+  }
+  function drawMsgList(){
+    const box = $id('msgBody'); if(!box) return;
+    const typing = document.activeElement && document.activeElement.id==='msgQ';
+    box.textContent = '';
+    if(!CLOUD_ON || !myUid()){ box.innerHTML = '<div class="rich-empty">Connecte-toi à ton compte pour écrire aux autres joueurs.</div>'; return; }
+    msgsGuide(box);
+    // writing to someone new: search by name, or pick a friend / a recent opponent
+    if(Msgs.search){
+      const s = document.createElement('section'); s.className = 'bell-sec msg-search';
+      s.innerHTML = '<h3>Écrire à…</h3><input type="search" id="msgQ" maxlength="16" placeholder="Pseudo du joueur" autocomplete="off" aria-label="Pseudo du joueur">';
+      box.appendChild(s);
+      const list = Msgs.q.length>=2 ? (Msgs.search.res || []) : msgsRecent();
+      if(Msgs.q.length>=2 && Msgs.search.busy) s.insertAdjacentHTML('beforeend', '<p class="msg-hint">Recherche…</p>');
+      else if(!list.length) s.insertAdjacentHTML('beforeend', '<p class="msg-hint">'+(Msgs.q.length>=2 ? 'Aucun joueur à ce nom.' : 'Tape au moins 2 lettres du pseudo.')+'</p>');
+      list.forEach(p=>{ const r = friendRow({id:p.id, name:p.name}, p.sub || '', '', 'tappable'); r.addEventListener('click', ()=>{ Msgs.search = null; openChat({id:p.id, name:p.name}); }); s.appendChild(r); });
+      const q = s.querySelector('#msgQ'); q.value = Msgs.q;
+      q.addEventListener('input', ()=> msgsSearch(q.value));
+      if(typing){ q.focus(); try{ q.setSelectionRange(q.value.length, q.value.length); }catch(e){} }
+      else if(!Msgs.search.focused){ Msgs.search.focused = true; setTimeout(()=> q.focus(), 60); }
+    }
+    // the game's own messages (League selection, matches…)
+    const ib = Friends.inbox || {}, gn = ib.game|0;
+    if(gn || (Msgs.game && Msgs.game.length)){
+      const s = document.createElement('section'); s.className = 'bell-sec';
+      const r = document.createElement('div'); r.className = 'bell-row tappable msg-fap'+(gn ? ' new' : '');
+      r.innerHTML = '<span class="msg-logo">FF</span><span class="bn"><b>Fap Fap</b><small></small></span><span class="bell-acts">'+(gn ? '<span class="unread-n">'+(gn>9 ? '9+' : gn)+'</span>' : '')+'</span>';
+      r.querySelector('small').textContent = gn ? gn+(gn>1 ? ' nouveaux messages du jeu' : ' nouveau message du jeu') : 'Les nouvelles du jeu';
+      r.addEventListener('click', msgsGameToggle);
+      s.appendChild(r);
+      if(Msgs.gameOpen) (Msgs.game || []).forEach(m=>{
+        const el = document.createElement('div'); el.className = 'msg-note'+(m.unread ? ' new' : '');
+        el.innerHTML = '<b></b><p></p><time></time>';
+        el.querySelector('b').textContent = m.title; el.querySelector('p').textContent = m.body; el.querySelector('time').textContent = msgTime(Date.parse(m.created_at));
+        // the message leads where its notification led: the neighbourhood ranking, the online League
+        const go = /quartier=1/.test(m.url||'') ? window.qzOpen : /l16=1/.test(m.url||'') ? window.zhOpenOnline : null;
+        if(go){ el.classList.add('tappable'); el.addEventListener('click', ()=> go()); }
+        s.appendChild(el);
+      });
+      box.appendChild(s);
+    }
+    const s = document.createElement('section'); s.className = 'bell-sec';
+    const h = document.createElement('h3'); h.textContent = 'Conversations'; s.appendChild(h);
+    if(Msgs.list===null) s.insertAdjacentHTML('beforeend', '<p class="msg-hint">Chargement…</p>');
+    else if(!Msgs.list.length) s.insertAdjacentHTML('beforeend', '<div class="rich-empty">Pas encore de conversation.<br>Touche le bouton en haut à droite pour écrire à un joueur.</div>');
+    else Msgs.list.forEach(c=>{
+      const f = {id:c.pid, name:String(c.name||'Joueur').slice(0,16)};
+      const r = friendRow(f, (c.last_mine ? 'Toi : ' : '')+String(c.last_body||''), '<span class="msg-time"></span>'+(c.unread ? '<span class="unread-n">'+(c.unread>9 ? '9+' : c.unread)+'</span>' : ''), 'tappable'+(c.unread ? ' new' : ''));
+      r.querySelector('.msg-time').textContent = msgTime(Date.parse(c.last_at));
+      r.addEventListener('click', ()=> openChat(f));
+      s.appendChild(r);
+    });
+    box.appendChild(s);
+  }
+  let msgsSearchT = 0;
+  function msgsSearch(q){
+    Msgs.q = String(q||'').trim().slice(0, 16);
+    clearTimeout(msgsSearchT);
+    if(Msgs.q.length<2){ Msgs.search.res = null; drawMsgList(); return; }
+    Msgs.search.busy = true;
+    msgsSearchT = setTimeout(async ()=>{
+      const asked = Msgs.q;
+      try{ const d = await msgsRpc('fapfap_player_search', {p_q:asked}); if(Msgs.search && Msgs.q===asked) Msgs.search.res = (d||[]).map(p=> ({id:p.pid, name:String(p.name||'Joueur').slice(0,16), sub:(p.rep|0)+' de réputation'})); }catch(e){ if(Msgs.search) Msgs.search.res = []; }
+      if(Msgs.search && Msgs.q===asked){ Msgs.search.busy = false; drawMsgList(); }
+    }, 350);
+  }
+  async function msgsGameToggle(){
+    Msgs.gameOpen = !Msgs.gameOpen;
+    if(Msgs.gameOpen){
+      try{ Msgs.game = await msgsRpc('fapfap_game_msgs'); if(Friends.inbox) Friends.inbox.game = 0; bellBadge(); }catch(e){ Msgs.game = Msgs.game || []; }
+    }
+    drawMsgList();
+  }
+  async function renderMsgs(){
+    drawMsgList();
+    bellRefresh();
+    try{ Msgs.list = await msgsRpc('fapfap_convos'); }catch(e){ if(Msgs.list===null) Msgs.list = []; }
+    if(Nav.cur()==='msgPage') drawMsgList();
+  }
+  window.renderMsgs = renderMsgs;
+  $id('msgNew').addEventListener('click', ()=>{ Msgs.search = Msgs.search ? null : {res:null}; Msgs.q = ''; drawMsgList(); $id('msgBody').scrollTop = 0; });
   // the record between two players, from this phone's own history of online games
   function headToHead(p){
     const log = Array.isArray(profile.mpLog) ? profile.mpLog : [];
@@ -18884,7 +19040,7 @@
       const d = e.data || {};
       if(d.type==='amis'){ if(!inGame() && !mpNet) Nav.go('bellPage'); else bellRefresh(); }
       // v99: a message notification opens the conversation
-      if(d.type==='msg'){ const f = friendList().find(x=> x.id===d.from); if(f && !inGame() && !mpNet) openChat(f); else bellRefresh(); }
+      if(d.type==='msg' && d.from){ if(!inGame() && !mpNet) openChat({id:d.from, name:String(d.name||'Joueur').replace(/[<>]/g, '').slice(0, 16)}); else bellRefresh(); }
       if(d.type==='quartier' && !inGame() && !mpNet && window.qzOpen) window.qzOpen();
       if(d.type==='l16' && !inGame() && !mpNet && window.zhOpenOnline) window.zhOpenOnline();
       if(d.type==='defi') openInviteLink(String(d.code||'').toUpperCase(), String(d.name||'').replace(/[<>]/g, '').slice(0, 16));
